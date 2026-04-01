@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // ISSUE: KT-81913
 
 fun foo1(b: (Any, Any) -> Unit) { }
@@ -28,51 +27,51 @@ fun main() {
     foo1(::<!INAPPLICABLE_CANDIDATE!>ofString<!>)
     foo1(::<!INAPPLICABLE_CANDIDATE!>ofInt<!>)
 
-    foo2(::<!INAPPLICABLE_CANDIDATE!>of<!>)
+    foo2(::of)
     foo2(::<!INAPPLICABLE_CANDIDATE!>ofString<!>)
     foo2(::<!INAPPLICABLE_CANDIDATE!>ofInt<!>)
 
-    foo22(::<!INAPPLICABLE_CANDIDATE!>of<!>)
+    foo22(::of)
     foo22(::<!INAPPLICABLE_CANDIDATE!>ofString<!>)
     foo22(::<!INAPPLICABLE_CANDIDATE!>ofInt<!>)
 
-    foo23(::<!INAPPLICABLE_CANDIDATE!>of<!>)
+    foo23(::of)
     foo23(::<!INAPPLICABLE_CANDIDATE!>ofString<!>)
     foo23(::<!INAPPLICABLE_CANDIDATE!>ofInt<!>)
 
-    foo24(::<!INAPPLICABLE_CANDIDATE!>of<!>)
+    foo24(::of)
     foo24(::<!INAPPLICABLE_CANDIDATE!>ofString<!>)
     foo24(::<!INAPPLICABLE_CANDIDATE!>ofInt<!>)
 
-    foo3(::<!INAPPLICABLE_CANDIDATE!>of<!>)
+    foo3(::of)
     foo3(::<!INAPPLICABLE_CANDIDATE!>ofString<!>)
     foo3(::<!INAPPLICABLE_CANDIDATE!>ofInt<!>)
 
-    foo32(::<!INAPPLICABLE_CANDIDATE!>of<!>)
+    foo32(::of)
     foo32(::<!INAPPLICABLE_CANDIDATE!>ofString<!>)
     foo32(::<!INAPPLICABLE_CANDIDATE!>ofInt<!>)
 
-    foo33(::<!INAPPLICABLE_CANDIDATE!>of<!>)
+    foo33(::of)
     foo33(::<!INAPPLICABLE_CANDIDATE!>ofString<!>)
     foo33(::<!INAPPLICABLE_CANDIDATE!>ofInt<!>)
 
-    foo34(::<!INAPPLICABLE_CANDIDATE!>of<!>)
+    foo34(::of)
     foo34(::<!INAPPLICABLE_CANDIDATE!>ofString<!>)
     foo34(::<!INAPPLICABLE_CANDIDATE!>ofInt<!>)
 
-    foo4(::<!INAPPLICABLE_CANDIDATE!>of<!>)
+    foo4(::of)
     foo4(::<!INAPPLICABLE_CANDIDATE!>ofString<!>)
     foo4(::<!INAPPLICABLE_CANDIDATE!>ofInt<!>)
 
-    foo42(::<!INAPPLICABLE_CANDIDATE!>of<!>)
+    foo42(::of)
     foo42(::<!INAPPLICABLE_CANDIDATE!>ofString<!>)
     foo42(::<!INAPPLICABLE_CANDIDATE!>ofInt<!>)
 
-    foo43(::<!INAPPLICABLE_CANDIDATE!>of<!>)
+    foo43(::of)
     foo43(::<!INAPPLICABLE_CANDIDATE!>ofString<!>)
     foo43(::<!INAPPLICABLE_CANDIDATE!>ofInt<!>)
 
-    foo44(::<!INAPPLICABLE_CANDIDATE!>of<!>)
+    foo44(::of)
     foo44(::<!INAPPLICABLE_CANDIDATE!>ofString<!>)
     foo44(::<!INAPPLICABLE_CANDIDATE!>ofInt<!>)
 }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
@@ -37,10 +36,7 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         val INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL by error<KtElement>()
         val INAPPLICABLE_THREAD_LOCAL by error<KtElement>()
         val INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL by error<KtElement>()
-        val INVALID_CHARACTERS_NATIVE by deprecationError<PsiElement>(
-            LanguageFeature.ProhibitInvalidCharsInNativeIdentifiers,
-            PositioningStrategy.NAME_IDENTIFIER
-        ) {
+        val INVALID_CHARACTERS_NATIVE_ERROR by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER) {
             parameter<String>("message")
         }
         val REDUNDANT_SWIFT_REFINEMENT by error<KtElement>()
@@ -115,5 +111,20 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         val IDENTITY_HASH_CODE_ON_VALUE_TYPE by warning<KtElement> {
             parameter<ConeKotlinType>("type")
         }
+        val VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED by error<KtElement> {
+            parameter<FirBasedSymbol<*>>("function")
+        }
+        val OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED by error<KtElement>(PositioningStrategy.OVERRIDE_MODIFIER) {
+            parameter<FirBasedSymbol<*>>("method")
+        }
+        val CALLABLE_REFERENCES_TO_VARIADIC_C_FUNCTIONS_ARE_NOT_SUPPORTED by error<KtElement> {
+            parameter<FirBasedSymbol<*>>("function")
+        }
+        val CALLABLE_REFERENCES_TO_VARIADIC_OBJECTIVE_C_METHODS_ARE_NOT_SUPPORTED by error<KtElement> {
+            parameter<FirBasedSymbol<*>>("function")
+        }
+        val STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS by error<KtElement> {}
+        val VARIADIC_OBJC_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF by error<KtElement> {}
+        val VARIADIC_C_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF by error<KtElement> {}
     }
 }

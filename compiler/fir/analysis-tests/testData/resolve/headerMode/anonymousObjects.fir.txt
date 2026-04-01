@@ -1,0 +1,3 @@
+FILE: anonymousObjects.kt
+    public final fun useAnonObject(): R|kotlin/Unit| {
+    }

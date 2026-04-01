@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
+import org.jetbrains.kotlin.gradle.targets.native.DisableNativeCacheSettings
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.internal.getOriginalPlatformLibrariesForTargetWithKonanDistribution
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
@@ -45,11 +46,16 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.project.model.LanguageSettings
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
+import java.io.Serializable
+import java.util.Locale
 import javax.inject.Inject
+import kotlin.collections.map
 
 /**
  * A task producing a final binary from a compilation.
@@ -126,30 +132,60 @@ constructor(
     @get:Input
     val baseName: String by lazyConvention { binary.baseName }
 
+    @get:Internal
+    internal val disableCacheSettings: ListProperty<DisableNativeCacheSettings> = objectFactory.listPropertyWithConvention(
+        binary.disableCacheSettings
+    )
+
     @get:Input
-    internal val binaryName: String by lazyConvention { binary.name }
+    internal val binaryName: Provider<String> = objectFactory.providerWithLazyConvention { binary.name }
+
+    @get:Input
+    internal val binaryBuildType: Provider<String> = objectFactory.providerWithLazyConvention {
+        binary.buildType.name.lowercase(Locale.ROOT).replaceFirstChar { it.titlecase(Locale.ROOT) }
+    }
 
     @Suppress("DEPRECATION_ERROR")
     @Deprecated("Use toolOptions to configure the task")
     @get:Internal
     val languageSettings: LanguageSettings = compilation.defaultSourceSet.languageSettings
 
-    @get:Input
+    @get:Internal
     internal val disableCache: Provider<Boolean> = objects.propertyWithConvention(
-        simpleKotlinNativeVersion.map { version ->
-            binary.disableCacheSettings.any { disableSetting ->
-                disableSetting.version == KotlinToolingVersion(version)
+        simpleKotlinNativeVersion
+            .map { KotlinToolingVersion(it) }
+            .zip(disableCacheSettings) { version, settings ->
+                settings.any { disableSetting ->
+                    disableSetting.version.major == version.major &&
+                            disableSetting.version.minor == version.minor &&
+                            disableSetting.version.patch == version.patch
+                }
             }
-        }
     )
 
-    @get:Input
+    @get:Internal
     internal val konanCacheKind: Provider<NativeCacheKind> = konanPropertiesService.zip(disableCache) { service, isCacheDisabled ->
         if (isCacheDisabled) {
             NativeCacheKind.NONE
         } else {
             service.defaultCacheKindForTarget(konanTarget)
         }
+    }
+
+    @get:Input
+    internal val effectiveCacheSettings: Provider<CacheSettingsInput> =
+        konanPropertiesService.zip(disableCache) { service, isCacheDisabled ->
+            if (service.cacheWorksFor(konanTarget)) {
+                val cacheKind = if (isCacheDisabled) NativeCacheKind.NONE else service.defaultCacheKindForTarget(konanTarget)
+                CacheSettingsInput.Configured(cacheKind)
+            } else {
+                CacheSettingsInput.NonCacheableTarget
+            }
+        }
+
+    internal sealed interface CacheSettingsInput : Serializable {
+        object NonCacheableTarget : CacheSettingsInput
+        data class Configured(val kind: NativeCacheKind) : CacheSettingsInput
     }
 
     @Suppress("unused", "UNCHECKED_CAST")
@@ -198,8 +234,16 @@ constructor(
     @get:Input
     val linkerOpts: List<String> by lazyConvention { binary.linkerOpts }
 
+    /**
+     * FIXME: KT-85118 This @Input annotation is incorrect and will not be part of KotlinNativeLink fingerprint because it is now used to
+     * pass linker options in doFirst
+     */
     @get:Input
     internal val additionalLinkerOpts: MutableList<String> = mutableListOf()
+
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:InputFiles
+    internal abstract val linkerOptionsProducerFingerprint: ConfigurableFileCollection
 
     @get:Input
     val binaryOptions: Map<String, String> by lazy { PropertiesProvider(project).nativeBinaryOptions + binary.binaryOptions }
@@ -237,24 +281,8 @@ constructor(
     internal val externalDependenciesBuildCompilerArgs: ListProperty<String> = objectFactory.listProperty<String>().empty()
 
     private val gradleUserHomeDir = project.gradle.gradleUserHomeDir
-    private val cacheBuilderSettings by lazy {
-        CacheBuilder.Settings(
-            konanHome = kotlinNativeProvider.flatMap { it.bundleDirectory }.map { File(it) },
-            konanCacheKind = konanCacheKind,
-            gradleUserHomeDir = gradleUserHomeDir,
-            konanTarget = konanTarget,
-            toolOptions = toolOptions,
-            externalDependenciesArgs = externalDependenciesBuildCompilerArgs.get(),
-            debuggable = binary.debuggable,
-            optimized = binary.optimized,
-            konanDataDir = kotlinNativeProvider.flatMap { it.konanDataDir.map { File(it) } },
-            kotlinCompilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel,
-            forceDisableRunningInProcess = forceDisableRunningInProcess,
-        )
-    }
 
     private class CacheSettings(
-        val orchestration: NativeCacheOrchestration,
         val icEnabled: Boolean,
         val threads: Int,
         val gradleUserHomeDir: File,
@@ -262,7 +290,6 @@ constructor(
     )
 
     private val cacheSettings = CacheSettings(
-        project.getKonanCacheOrchestration(),
         project.isKonanIncrementalCompilationEnabled(),
         project.getKonanParallelThreads(),
         project.gradle.gradleUserHomeDir,
@@ -305,8 +332,8 @@ constructor(
         dependencyClasspath { args ->
             args.libraries = runSafe {
                 libraries.exclude(excludeDependencies).files.filterKlibsPassedToCompiler()
-            }?.toPathsArray()
-            args.exportedLibraries = runSafe { exportLibraries.files.filterKlibsPassedToCompiler() }?.toPathsArray()
+            }?.toPathsArray() ?: emptyArray()
+            args.exportedLibraries = runSafe { exportLibraries.files.filterKlibsPassedToCompiler() }?.toPathsArray() ?: emptyArray()
             args.friendModules = runSafe { friendModule.files.toList().takeIf { it.isNotEmpty() } }
                 ?.joinToString(File.pathSeparator) { it.absolutePath }
         }
@@ -341,7 +368,7 @@ constructor(
             }
 
             """
-                |Following dependencies exported in the $binaryName binary are not specified as API-dependencies of a corresponding source set:
+                |Following dependencies exported in the ${binaryName.get()} binary are not specified as API-dependencies of a corresponding source set:
                 |
                 $failedDependenciesList
                 |
@@ -355,11 +382,41 @@ constructor(
             reportDiagnostic(
                 KotlinToolingDiagnostics.IncompatibleBinaryTaskConfiguration(
                     path,
-                    binaryName,
+                    binaryName.get(),
                     debuggable,
                     optimized
                 )
             )
+        }
+    }
+
+    private fun validateDisabledNativeCache() {
+        if (hasDisabledNativeCache) {
+            val diagnostics = disableCacheSettings.get().map { disableCache ->
+                if (konanPropertiesService.get().defaultCacheKindForTarget(konanTarget) == NativeCacheKind.NONE) {
+                    KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic(
+                        binaryBuildType.get(),
+                        binaryName.get(),
+                        konanTarget.visibleName,
+                        HostManager.platformName()
+                    )
+                } else {
+                    val version = simpleKotlinNativeVersion.map { version ->
+                        KotlinToolingVersion(version).toKotlinVersion()
+                    }
+
+                    KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic(
+                        version.get(),
+                        binaryBuildType.get(),
+                        binaryName.get(),
+                        konanTarget.visibleName,
+                        disableCache.reason,
+                        disableCache.issueUrl
+                    )
+                }
+            }
+
+            diagnostics.forEach { reportDiagnostic(it) }
         }
     }
 
@@ -453,6 +510,7 @@ constructor(
 
         addBuildMetricsForTaskAction(metricsReporter = metricsReporter, languageVersion = null) {
             validateBinaryConfiguration()
+            validateDisabledNativeCache()
             validatedExportedLibraries()
 
             val output = outputFile.get()
@@ -460,36 +518,19 @@ constructor(
 
             val additionalOptions = mutableListOf<String>().apply {
                 addAll(externalDependenciesBuildCompilerArgs.get())
-                when (cacheSettings.orchestration) {
-                    NativeCacheOrchestration.Compiler -> {
-                        if (konanCacheKind.get() != NativeCacheKind.NONE
-                            && !optimized
-                            && konanPropertiesService.get().cacheWorksFor(konanTarget)
-                        ) {
-                            add("-Xauto-cache-from=${cacheSettings.gradleUserHomeDir}")
-                            add("-Xbackend-threads=${cacheSettings.threads}")
-                            if (cacheSettings.icEnabled) {
-                                val icCacheDir = cacheSettings.gradleBuildDir
-                                    .resolve("kotlin-native-ic-cache")
-                                    .resolve(binaryName)
-                                icCacheDir.mkdirs()
-                                add("-Xenable-incremental-compilation")
-                                add("-Xic-cache-dir=$icCacheDir")
-                            }
-                        }
-                    }
-                    NativeCacheOrchestration.Gradle -> {
-                        if (cacheSettings.icEnabled) {
-                            logger.warn(
-                                "K/N incremental compilation only works in conjunction with kotlin.native.cacheOrchestration=compiler"
-                            )
-                        }
-                        val cacheBuilder = CacheBuilder(
-                            settings = cacheBuilderSettings,
-                            konanPropertiesService = konanPropertiesService.get(),
-                            nativeCompilerRunner = nativeCompilerRunner,
-                        )
-                        addAll(cacheBuilder.buildCompilerArgs(resolvedConfiguration))
+                if (konanCacheKind.get() != NativeCacheKind.NONE
+                    && !optimized
+                    && konanPropertiesService.get().cacheWorksFor(konanTarget)
+                ) {
+                    add("-Xauto-cache-from=${cacheSettings.gradleUserHomeDir}")
+                    add("-Xbackend-threads=${cacheSettings.threads}")
+                    if (cacheSettings.icEnabled) {
+                        val icCacheDir = cacheSettings.gradleBuildDir
+                            .resolve("kotlin-native-ic-cache")
+                            .resolve(binaryName.get())
+                        icCacheDir.mkdirs()
+                        add("-Xenable-incremental-compilation")
+                        add("-Xic-cache-dir=$icCacheDir")
                     }
                 }
             }
@@ -514,4 +555,5 @@ constructor(
 
 internal val String.asValidFrameworkName get() = replace('-', '_')
 
+private val KotlinNativeLink.hasDisabledNativeCache get() = disableCacheSettings.get().isNotEmpty()
 private val KotlinNativeLink.hasIncompatibleConfiguration get() = (debuggable && optimized) || (!debuggable && !optimized)

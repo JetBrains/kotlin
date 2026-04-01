@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.protobuf.Internal.EnumLite
 import org.junit.Test
 
 class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
@@ -428,14 +427,14 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
     @Test
     fun testNonComposableFunctionReferenceWithStableExtensionReceiverMemoization() =
         verifyGoldenComposeIrTransform(
-            extra = """
-            class Stable
-            fun Stable.foo() {}
-        """,
-            source = """
+            "",
+            """
             import androidx.compose.runtime.Composable
             import androidx.compose.runtime.NonRestartableComposable
             import androidx.compose.runtime.remember
+
+            class Stable
+            fun Stable.foo() {}
 
             @NonRestartableComposable
             @Composable
@@ -1066,7 +1065,7 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
         """,
         additionalPaths = listOf(
             Classpath.jarFor<EnumTestProtos>(), // protobuf-test-classes
-            Classpath.jarFor<EnumLite>() // protobuf-lite
+            Classpath.jarFor<com.google.protobuf.Internal.EnumLite>() // protobuf-lite
         )
     )
 

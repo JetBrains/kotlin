@@ -35,40 +35,40 @@ KtSuperTypeList(166,175): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(166,175): 'MyClass()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(166,173): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(166,173): 'MyClass'
   null
@@ -167,9 +167,32 @@ KtBlockExpression(333,403): '{'
   null
 
 KtBinaryExpression(339,353): 'i + EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i
+        isSafeNavigation = false
+        type = OperatorHolder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = enumArg
+            receiverType = null
+            returnType = MyEnum
+            symbol = enumArg: MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /OperatorHolder.plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         EnumValue1 -> (KaVariableSignature:
           name = enumArg
           receiverType = null
@@ -178,53 +201,51 @@ KtBinaryExpression(339,353): 'i + EnumValue1'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i
-          isSafeNavigation = false
-          type = OperatorHolder
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = enumArg
-              receiverType = null
-              returnType = MyEnum
-              symbol = enumArg: MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /OperatorHolder.plus
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(339,340): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = OperatorHolder
-          symbol = i: OperatorHolder
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = OperatorHolder
+        symbol = i: OperatorHolder
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(341,342): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i
+        isSafeNavigation = false
+        type = OperatorHolder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = enumArg
+            receiverType = null
+            returnType = MyEnum
+            symbol = enumArg: MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /OperatorHolder.plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         EnumValue1 -> (KaVariableSignature:
           name = enumArg
           receiverType = null
@@ -233,56 +254,54 @@ KtOperationReferenceExpression(341,342): '+'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i
-          isSafeNavigation = false
-          type = OperatorHolder
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = enumArg
-              receiverType = null
-              returnType = MyEnum
-              symbol = enumArg: MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /OperatorHolder.plus
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(343,353): 'EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = EnumValue1
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = EnumValue1
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = EnumValue1
-          receiverType = null
-          returnType = MyEnum
-          symbol = /MyEnum.EnumValue1
-          contextParameters = []
-          callableId = /MyEnum.EnumValue1
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = EnumValue1
+        receiverType = null
+        returnType = MyEnum
+        symbol = /MyEnum.EnumValue1
+        contextParameters = []
+        callableId = /MyEnum.EnumValue1
       typeArgumentsMapping = {}
 
 KtBinaryExpression(358,377): 'i + InheritorObject'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i
+        isSafeNavigation = false
+        type = OperatorHolder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = enumArg
+            receiverType = null
+            returnType = MyEnum
+            symbol = enumArg: MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /OperatorHolder.plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         InheritorObject -> (KaVariableSignature:
           name = enumArg
           receiverType = null
@@ -291,53 +310,51 @@ KtBinaryExpression(358,377): 'i + InheritorObject'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i
-          isSafeNavigation = false
-          type = OperatorHolder
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = enumArg
-              receiverType = null
-              returnType = MyEnum
-              symbol = enumArg: MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /OperatorHolder.plus
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(358,359): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = OperatorHolder
-          symbol = i: OperatorHolder
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = OperatorHolder
+        symbol = i: OperatorHolder
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(360,361): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i
+        isSafeNavigation = false
+        type = OperatorHolder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = enumArg
+            receiverType = null
+            returnType = MyEnum
+            symbol = enumArg: MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /OperatorHolder.plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         InheritorObject -> (KaVariableSignature:
           name = enumArg
           receiverType = null
@@ -346,40 +363,39 @@ KtOperationReferenceExpression(360,361): '+'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i
-          isSafeNavigation = false
-          type = OperatorHolder
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = enumArg
-              receiverType = null
-              returnType = MyEnum
-              symbol = enumArg: MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /OperatorHolder.plus
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(362,377): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
 KtBinaryExpression(382,401): 'i - InheritorObject'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i
+        isSafeNavigation = false
+        type = OperatorHolder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /OperatorHolder.minus(<dispatch receiver>: OperatorHolder, arg: MyClass): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = arg: MyClass
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /OperatorHolder.minus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         InheritorObject -> (KaVariableSignature:
           name = arg
           receiverType = null
@@ -388,53 +404,51 @@ KtBinaryExpression(382,401): 'i - InheritorObject'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i
-          isSafeNavigation = false
-          type = OperatorHolder
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /OperatorHolder.minus(<dispatch receiver>: OperatorHolder, arg: MyClass): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyClass
-              symbol = arg: MyClass
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /OperatorHolder.minus
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(382,383): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = OperatorHolder
-          symbol = i: OperatorHolder
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = OperatorHolder
+        symbol = i: OperatorHolder
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(384,385): '-'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i
+        isSafeNavigation = false
+        type = OperatorHolder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /OperatorHolder.minus(<dispatch receiver>: OperatorHolder, arg: MyClass): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = arg: MyClass
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /OperatorHolder.minus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         InheritorObject -> (KaVariableSignature:
           name = arg
           receiverType = null
@@ -443,30 +457,6 @@ KtOperationReferenceExpression(384,385): '-'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i
-          isSafeNavigation = false
-          type = OperatorHolder
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /OperatorHolder.minus(<dispatch receiver>: OperatorHolder, arg: MyClass): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyClass
-              symbol = arg: MyClass
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /OperatorHolder.minus
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(386,401): 'InheritorObject'
   null

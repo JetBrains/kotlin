@@ -14,11 +14,12 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: true
     location: PROPERTY
-    modality: ABSTRACT
+    modality: OPEN
     origin: DELEGATED
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
@@ -28,6 +29,7 @@ KaKotlinPropertySymbol:
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isVal: true
       location: LOCAL
       modality: FINAL
@@ -87,6 +89,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isVal: true
     location: LOCAL
     modality: FINAL
@@ -117,6 +120,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: true
@@ -135,6 +139,7 @@ KaKotlinPropertySymbol:
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true
@@ -162,6 +167,7 @@ KaKotlinPropertySymbol:
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isVal: true
       location: LOCAL
       modality: FINAL
@@ -196,6 +202,7 @@ KaKotlinPropertySymbol:
         isCrossinline: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
         isVal: true
@@ -236,10 +243,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getZoo
   javaSetterName: setZoo
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -303,11 +308,12 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: true
     location: PROPERTY
-    modality: ABSTRACT
+    modality: OPEN
     origin: DELEGATED
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -360,10 +366,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getFoo
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -399,6 +403,7 @@ KaNamedFunctionSymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isVal: true
     location: LOCAL
     modality: FINAL
@@ -451,11 +456,12 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: true
     location: PROPERTY
-    modality: ABSTRACT
+    modality: OPEN
     origin: DELEGATED
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -506,6 +512,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: true
@@ -524,6 +531,7 @@ KaKotlinPropertySymbol:
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true
@@ -561,6 +569,7 @@ KaKotlinPropertySymbol:
         isCrossinline: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
         isVal: true
@@ -601,10 +610,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getBar
   javaSetterName: setBar
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -624,11 +631,12 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: true
     location: PROPERTY
-    modality: ABSTRACT
+    modality: OPEN
     origin: DELEGATED
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
@@ -638,6 +646,7 @@ KaKotlinPropertySymbol:
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isVal: true
       location: LOCAL
       modality: FINAL
@@ -697,6 +706,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isVal: true
     location: LOCAL
     modality: FINAL
@@ -729,9 +739,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getDoo
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null

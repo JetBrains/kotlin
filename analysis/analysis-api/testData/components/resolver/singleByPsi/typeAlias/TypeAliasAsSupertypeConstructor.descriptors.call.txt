@@ -1,17 +1,17 @@
 KtNameReferenceExpression(56,58): 'CA'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = test.CA
-          symbol = <constructor>(): test.C
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.CA
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}

@@ -1,0 +1,7 @@
+KtBinaryExpression(238,262): 'variable[0] += MyClass()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.get(<dispatch receiver>: MyClass, i: kotlin.Int): MyClass,
+      /MyClass.plus(<dispatch receiver>: MyClass, v: MyClass): MyClass,
+      /MyClass.set(<dispatch receiver>: MyClass, i: kotlin.Int, v: MyClass): kotlin.Unit
+    ]

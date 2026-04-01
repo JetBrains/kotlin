@@ -9,7 +9,6 @@ actual class LibClass1{ actual fun foo(): String = "OK" }
 actual typealias LibClass2 = LibClass1
 
 // MODULE: app-common(lib-common)
-
 fun test_common(lc1: LibClass1, lc2: LibClass2) {
     lc1.foo()
     lc2.foo()

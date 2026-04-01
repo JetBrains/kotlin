@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.builders
 
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_MULTIPLE_API_VERSIONS_SETTING
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
@@ -42,7 +43,11 @@ class LanguageVersionSettingsBuilder {
     }
 
     fun <T> withFlag(flag: AnalysisFlag<T>, value: T) {
-        analysisFlags[flag] = value
+        if (value == flag.defaultValue) {
+            analysisFlags.remove(flag)
+        } else {
+            analysisFlags[flag] = value
+        }
     }
 
     fun configureUsingDirectives(
@@ -50,7 +55,11 @@ class LanguageVersionSettingsBuilder {
         environmentConfigurators: List<AbstractEnvironmentConfigurator>,
         useK2: Boolean
     ) {
-        val apiVersion = directives.singleOrZeroValue(LanguageSettingsDirectives.API_VERSION)
+        val apiVersion = if (ALLOW_MULTIPLE_API_VERSIONS_SETTING in directives) {
+            directives[LanguageSettingsDirectives.API_VERSION].lastOrNull()
+        } else {
+            directives.singleOrZeroValue(LanguageSettingsDirectives.API_VERSION)
+        }
         if (apiVersion != null) {
             this.apiVersion = apiVersion
             val languageVersion = maxOf(LanguageVersion.LATEST_STABLE, LanguageVersion.fromVersionString(apiVersion.versionString)!!)
@@ -78,7 +87,8 @@ class LanguageVersionSettingsBuilder {
                 )
             }
             languageVersion = languageVersionDirective
-            if (languageVersion < LanguageVersion.fromVersionString(this.apiVersion.versionString)!!) {
+            if (ALLOW_MULTIPLE_API_VERSIONS_SETTING !in directives &&
+                languageVersion < LanguageVersion.fromVersionString(this.apiVersion.versionString)!!) {
                 error(
                     """
                         Language version must be larger than or equal to the API version.
@@ -106,12 +116,12 @@ class LanguageVersionSettingsBuilder {
             analysisFlag(AnalysisFlags.stdlibCompilation, trueOrNull(LanguageSettingsDirectives.STDLIB_COMPILATION in directives)),
             analysisFlag(AnalysisFlags.lenientMode, trueOrNull(LanguageSettingsDirectives.LENIENT_MODE in directives)),
             analysisFlag(AnalysisFlags.headerMode, trueOrNull(LanguageSettingsDirectives.HEADER_MODE in directives)),
+            analysisFlag(AnalysisFlags.ideMode, trueOrNull(LanguageSettingsDirectives.IDE_MODE in directives)),
 
             analysisFlag(JvmAnalysisFlags.jvmDefaultMode, directives.singleOrZeroValue(LanguageSettingsDirectives.JVM_DEFAULT_MODE)),
             analysisFlag(JvmAnalysisFlags.inheritMultifileParts, trueOrNull(LanguageSettingsDirectives.INHERIT_MULTIFILE_PARTS in directives)),
             analysisFlag(JvmAnalysisFlags.sanitizeParentheses, trueOrNull(LanguageSettingsDirectives.SANITIZE_PARENTHESES in directives)),
             analysisFlag(JvmAnalysisFlags.enableJvmPreview, trueOrNull(LanguageSettingsDirectives.ENABLE_JVM_PREVIEW in directives)),
-            analysisFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib, trueOrNull(LanguageSettingsDirectives.EXPECT_BUILTINS_AS_PART_OF_STDLIB in directives)),
 
             analysisFlag(AnalysisFlags.explicitApiVersion, trueOrNull(apiVersion != null)),
         )

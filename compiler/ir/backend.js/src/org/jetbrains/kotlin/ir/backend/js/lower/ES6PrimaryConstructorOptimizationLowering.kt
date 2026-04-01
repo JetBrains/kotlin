@@ -8,18 +8,18 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
-import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.needsBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.originalConstructor
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -36,6 +36,7 @@ private var IrClass.possibilityToOptimizeForEsClass: MutableReference<Boolean>? 
 /**
  * Optimization: replaces synthetically generated static factory method with a plain old ES6 constructor whenever it's possible.
  */
+@PhasePrerequisites(ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering::class)
 class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (!context.es6mode || declaration !is IrFunction || !declaration.shouldBeConvertedToPlainConstructor) {
@@ -66,13 +67,11 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
         return factory.buildConstructor {
             updateFrom(original)
             isPrimary = true
-            returnType = original.returnType
             origin = IrDeclarationOrigin.DEFINED
         }.also { constructor ->
             constructor.copyAnnotationsFrom(original)
-            constructor.copyTypeParametersFrom(original)
-            val substitutionMap = makeTypeParameterSubstitutionMap(original, constructor)
-            constructor.copyParameters(original.nonDispatchParameters, substitutionMap)
+            constructor.copyFunctionSignatureFrom(original)
+            constructor.parameters = nonDispatchParameters
             constructor.parent = irClass
 
             if (irClass.isExported(context)) {
@@ -170,6 +169,7 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
 /**
  * Optimization: replaces usages of synthetically generated static factory method with a plain old ES6 constructor whenever it's possible.
  */
+@PhasePrerequisites(ES6ConstructorBoxParameterOptimizationLowering::class, ES6PrimaryConstructorOptimizationLowering::class)
 class ES6PrimaryConstructorUsageOptimizationLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {

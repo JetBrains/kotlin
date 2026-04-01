@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("project-tests-convention")
     id("java-test-fixtures")
 }
@@ -21,6 +20,7 @@ dependencies {
 
     testFixturesApi("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
     testFixturesApi(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 sourceSets {

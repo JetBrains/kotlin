@@ -5,16 +5,13 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.config
 
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 
 abstract class FirLanguageVersionSettingsChecker {
     /**
      * This API allows us to check language version settings independently of particular code pieces.
-     *
-     * [rawReport] allows to report a diagnostic directly to a message collector.
-     * This function accepts isError: Boolean and message: String as parameters.
      */
     context(context: CheckerContext)
-    abstract fun check(reporter: BaseDiagnosticsCollector.RawReporter)
+    abstract fun check(reporter: DiagnosticReporter)
 }

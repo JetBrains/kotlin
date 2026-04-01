@@ -2,5 +2,9 @@ KtNameReferenceExpression(64,68): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
     symbols:
+      extension receiver with type kotlin.String
+    resolveToSymbols:
       (in Foo) val kotlin.String.foo: kotlin.Any

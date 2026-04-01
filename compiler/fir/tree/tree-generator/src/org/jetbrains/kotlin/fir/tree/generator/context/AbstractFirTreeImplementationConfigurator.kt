@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.context
 
-import org.jetbrains.kotlin.fir.tree.generator.constructClassLikeTypeImport
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
-import org.jetbrains.kotlin.fir.tree.generator.standardClassIdsType
+import org.jetbrains.kotlin.fir.tree.generator.standardTypes
 import org.jetbrains.kotlin.generators.tree.config.AbstractImplementationConfigurator
 
 abstract class AbstractFirTreeImplementationConfigurator :
@@ -19,10 +18,10 @@ abstract class AbstractFirTreeImplementationConfigurator :
 
     protected fun ImplementationContext.defaultBuiltInType(type: String) {
         default("coneTypeOrNull") {
-            value = "StandardClassIds.$type.constructClassLikeType()"
+            value = "StandardTypes.$type"
             isMutable = false
         }
-        additionalImports(standardClassIdsType, constructClassLikeTypeImport)
+        additionalImports(standardTypes)
     }
 
     protected fun ImplementationContext.noSource() {

@@ -111,7 +111,7 @@ val semaphore = AtomicInt(0)
     worker.requestTermination().result
 }
 
-fun <T: Any> ensureWeakIs(weak: WeakReference<T>, expected: T?) {
+@NoInline fun <T: Any> ensureWeakIs(weak: WeakReference<T>, expected: T?) {
     assertEquals(expected, weak.get())
 }
 

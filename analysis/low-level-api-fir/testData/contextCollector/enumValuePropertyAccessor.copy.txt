@@ -31,7 +31,8 @@ Tower Data Context:
                 FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
                 FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
                 FirRegularPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
-                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+                    public static get(): R|kotlin/enums/EnumEntries<Direction>|
+        Static scope owner symbol: FirRegularClassSymbol public final enum class Direction : R|kotlin/Enum<Direction>|
     Element 9
         Implicit receiver:
             FirAnonymousObjectSymbol object : R|Direction|
@@ -74,6 +75,6 @@ FILE: [ResolvedTo(IMPORTS)] enumValuePropertyAccessor.kt
         }
 
         public final static [ResolvedTo(RAW_FIR)] val entries: R|kotlin/enums/EnumEntries<Direction>|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Direction>|
+            public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Direction>|
 
     }

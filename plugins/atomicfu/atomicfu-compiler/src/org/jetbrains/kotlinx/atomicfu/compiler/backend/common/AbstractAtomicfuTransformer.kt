@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlinx.atomicfu.compiler.backend.common
 
+import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.wrapWithCompilationException
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
-import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -23,13 +24,13 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.*
 import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrorMessages.CONSTRAINTS_MESSAGE
-import kotlin.collections.plus
 
 abstract class AbstractAtomicfuTransformer(
     val pluginContext: IrPluginContext,
@@ -68,6 +69,21 @@ abstract class AbstractAtomicfuTransformer(
     abstract val atomicfuPropertyTransformer: AtomicPropertiesTransformer
     abstract val atomicfuFunctionCallTransformer: AtomicFunctionCallTransformer
 
+    private inline fun <T> IrFile.tryWithCompilationExceptionOnFailure(block: IrFile.() -> T): T {
+        try {
+            return block()
+        } catch (ce: CompilationException) {
+            ce.initializeFileDetails(this)
+            throw ce
+        } catch (e: Throwable) {
+            throw e.wrapWithCompilationException("kotlinx-atomicfu compiler plugin internal error", this, null)
+        }
+    }
+
+    private fun <D> IrFile.tryTransform(transformer: IrTransformer<D>, data: D) {
+        tryWithCompilationExceptionOnFailure { transform(transformer, data) }
+    }
+
     fun transform(moduleFragment: IrModuleFragment) {
         transformAtomicProperties(moduleFragment)
         transformAtomicExtensions(moduleFragment)
@@ -75,38 +91,40 @@ abstract class AbstractAtomicfuTransformer(
         remapValueParameters(moduleFragment)
         finalTransformationCheck(moduleFragment)
         for (irFile in moduleFragment.files) {
-            irFile.patchDeclarationParents()
+            irFile.tryWithCompilationExceptionOnFailure { patchDeclarationParents() }
         }
     }
 
     private fun transformAtomicProperties(moduleFragment: IrModuleFragment) {
         for (irFile in moduleFragment.files) {
-            irFile.transform(atomicfuPropertyTransformer, null)
+            irFile.tryTransform(atomicfuPropertyTransformer, null)
         }
     }
 
     private fun transformAtomicExtensions(moduleFragment: IrModuleFragment) {
         for (irFile in moduleFragment.files) {
-            irFile.transform(atomicfuExtensionsTransformer, null)
+            irFile.tryTransform(atomicfuExtensionsTransformer, null)
         }
     }
 
     private fun transformAtomicFunctions(moduleFragment: IrModuleFragment) {
         for (irFile in moduleFragment.files) {
-            irFile.transform(atomicfuFunctionCallTransformer, null)
+            irFile.tryTransform(atomicfuFunctionCallTransformer, null)
         }
     }
 
     private fun remapValueParameters(moduleFragment: IrModuleFragment) {
         for (irFile in moduleFragment.files) {
-            irFile.transform(RemapValueParameters(), null)
+            irFile.tryTransform(RemapValueParameters(), null)
         }
     }
 
     private fun finalTransformationCheck(moduleFragment: IrModuleFragment) {
         val finalTransformationChecker = FinalTransformationChecker()
         for (irFile in moduleFragment.files) {
-            irFile.accept(finalTransformationChecker, null)
+            irFile.tryWithCompilationExceptionOnFailure {
+                accept(finalTransformationChecker, null)
+            }
         }
     }
 
@@ -353,7 +371,9 @@ abstract class AbstractAtomicfuTransformer(
             val receiverParameter = expression.symbol.owner.parameters.let {
                 it.find { it.kind == IrParameterKind.ExtensionReceiver } ?: it.find { it.kind == IrParameterKind.DispatchReceiver }
             } ?: return super.visitCall(expression, data)
-            val receiver = expression.arguments[receiverParameter.indexInParameters]!!
+            val receiver = requireNotNull(expression.arguments[receiverParameter.indexInParameters]) {
+                "Expected receiver of the call ${expression.render()}, but found null."
+            }
             val receiverProperty = if (receiver is IrTypeOperatorCallImpl) receiver.argument else receiver // <get-_a>()
             if (!receiverProperty.type.isAtomicType()) return super.visitCall(expression, data)
             val valueType = if (receiver is IrTypeOperatorCallImpl) {
@@ -802,9 +822,8 @@ abstract class AbstractAtomicfuTransformer(
             parameters += atomicExtension.parameters.subList(0, extensionParameterIndex)
                 .map { it.deepCopyWithSymbols(this) }
             addAtomicHandlerValueParameters(atomicHandlerType, valueType)
-            atomicExtension.parameters.subList(extensionParameterIndex + 1, atomicExtension.parameters.size).forEach {
-                addValueParameter(it.name, it.type)
-            }
+            parameters += atomicExtension.parameters.subList(extensionParameterIndex + 1, atomicExtension.parameters.size)
+                .map { it.deepCopyWithSymbols(this) }
 
             returnType = atomicExtension.returnType
             this.parent = atomicExtension.parent

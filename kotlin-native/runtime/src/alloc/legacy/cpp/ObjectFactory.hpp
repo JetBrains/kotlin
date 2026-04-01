@@ -54,7 +54,12 @@ public:
         constexpr static size_t DataOffset() noexcept { return AlignUp(sizeof(Node), DataAlignment); }
 
     public:
-        ~Node() = default;
+        ~Node() {
+            // Avoid recursive destruction of a lonked list
+            while (next_) {
+                next_ = std::move(next_->next_);
+            }
+        }
 
         constexpr static uint64_t GetSizeForDataSize(uint64_t dataSize) noexcept {
             uint64_t dataSizeAligned = AlignUp<uint64_t>(dataSize, DataAlignment);

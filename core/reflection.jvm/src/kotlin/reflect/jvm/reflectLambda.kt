@@ -16,11 +16,16 @@
 
 package kotlin.reflect.jvm
 
+import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 import kotlin.annotation.AnnotationTarget.*
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.internal.DescriptorKFunction
@@ -43,11 +48,20 @@ fun <R> Function<R>.reflect(): KFunction<R>? {
     )
 
     val descriptor = deserializeToDescriptor(
-        javaClass, proto, nameResolver, TypeTable(proto.typeTable), metadataVersion, MemberDeserializer::loadFunction
+        javaClass, ReflectedLambdaFakeContainerSource, proto, nameResolver, TypeTable(proto.typeTable), metadataVersion,
+        MemberDeserializer::loadFunction,
     )
 
     @Suppress("UNCHECKED_CAST")
     return DescriptorKFunction(EmptyContainerForLocal, descriptor) as KFunction<R>
+}
+
+internal object ReflectedLambdaFakeContainerSource : DeserializedContainerSource {
+    override val incompatibility: IncompatibleVersionErrorData<*>? get() = null
+    override val preReleaseInfo: PreReleaseInfo get() = PreReleaseInfo.DEFAULT_VISIBLE
+    override val abiStability: DeserializedContainerAbiStability get() = DeserializedContainerAbiStability.STABLE
+    override val presentableString: String get() = this::class.java.simpleName
+    override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }
 
 /**

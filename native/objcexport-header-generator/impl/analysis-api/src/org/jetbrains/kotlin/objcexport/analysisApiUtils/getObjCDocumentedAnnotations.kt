@@ -38,6 +38,7 @@ internal fun KaSession.getObjCDocumentedAnnotations(list: KaAnnotationList): Lis
 
 private val mustBeDocumentedAnnotationsStopList = setOf(
     StandardNames.FqNames.deprecated,
+    KonanFqNames.objCEnum,
     KonanFqNames.objCName,
-    KonanFqNames.shouldRefineInSwift
+    KonanFqNames.shouldRefineInSwift,
 )

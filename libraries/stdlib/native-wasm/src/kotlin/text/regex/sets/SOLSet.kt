@@ -47,4 +47,8 @@ internal class SOLSet(val lt: AbstractLineTerminator, val multiline: Boolean = f
     override fun hasConsumed(matchResult: MatchResultImpl): Boolean = false
     override val name: String
         get() = "^"
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        // does nothing interesting
+    }
 }

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
@@ -428,6 +429,9 @@ class IrSourcePrinterVisitor(
         val prop = function.correspondingPropertySymbol?.owner
 
         if (prop != null && !function.hasComposableAnnotation()) {
+            if (prop.backingField?.hasAnnotation(JvmStandardClassIds.Annotations.JvmField) == true) {
+                print("${prop.parent.kotlinFqName}.")
+            }
             val propName = prop.name.asString()
             print(propName)
             if (function == prop.setter) {
@@ -974,19 +978,39 @@ class IrSourcePrinterVisitor(
         val receiver = expression.receiver
         val owner = expression.symbol.owner
         val parent = owner.parent
-        if (receiver != null) {
-            expression.receiver?.print()
-        } else if (owner.isStatic && parent is IrClass) {
-            print(parent.name)
+        val propertyCorrespondingToScope = (currentScope.owner as? IrSimpleFunction)?.correspondingPropertySymbol
+
+        if (propertyCorrespondingToScope != null &&
+            propertyCorrespondingToScope == owner.correspondingPropertySymbol
+        ) {
+            // `currentScope.owner` is a getter or setter that acts on the backing field accessed by
+            // `expression`.
+            print("field")
+        } else {
+            if (receiver != null) {
+                expression.receiver?.print()
+            } else if (owner.isStatic && parent is IrClass) {
+                print(parent.name)
+            }
+            print(".")
+            print(owner.name)
         }
-        print(".")
-        print(owner.name)
     }
 
     override fun visitSetField(expression: IrSetField) {
-        expression.receiver?.print()
-        print(".")
-        print(expression.symbol.owner.name)
+        val owner = expression.symbol.owner
+        val propertyCorrespondingToScope = (currentScope.owner as? IrSimpleFunction)?.correspondingPropertySymbol
+
+        if (propertyCorrespondingToScope != null &&
+            propertyCorrespondingToScope == owner.correspondingPropertySymbol
+        ) {
+            // `currentScope.owner` is a setter for the backing field that `expression` modifies.
+            print("field")
+        } else {
+            expression.receiver?.print()
+            print(".")
+            print(owner.name)
+        }
         print(" = ")
         expression.value.printWithExplicitBlock()
     }

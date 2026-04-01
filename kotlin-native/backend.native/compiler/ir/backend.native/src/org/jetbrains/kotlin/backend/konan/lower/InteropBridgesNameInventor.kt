@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
 import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 import org.jetbrains.kotlin.ir.util.fileOrNull
@@ -80,9 +80,9 @@ internal class InteropBridgesNameInventor(val generationState: NativeGenerationS
         irBody.transform(transformer, data = null)
     }
 
-    sealed class Bridge(val function: IrSimpleFunction, val annotation: IrConstructorCall) {
-        class CToKotlin(function: IrSimpleFunction, annotation: IrConstructorCall) : Bridge(function, annotation)
-        class KotlinToC(function: IrSimpleFunction, annotation: IrConstructorCall) : Bridge(function, annotation)
+    sealed class Bridge(val function: IrSimpleFunction, val annotation: IrAnnotation) {
+        class CToKotlin(function: IrSimpleFunction, annotation: IrAnnotation) : Bridge(function, annotation)
+        class KotlinToC(function: IrSimpleFunction, annotation: IrAnnotation) : Bridge(function, annotation)
     }
 
     private inner class InteropBridgeCollector(val irFile: IrFile?, val uniqueName: String) : IrElementTransformerVoid() {

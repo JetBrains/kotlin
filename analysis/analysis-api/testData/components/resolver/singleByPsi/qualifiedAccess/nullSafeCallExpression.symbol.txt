@@ -1,0 +1,5 @@
+KtNameReferenceExpression(50,52): 'aa'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val aa: A?
+    ]

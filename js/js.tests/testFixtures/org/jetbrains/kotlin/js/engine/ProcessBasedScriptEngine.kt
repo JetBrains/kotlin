@@ -16,9 +16,9 @@ private val counter = AtomicInteger(0)
 
 abstract class ProcessBasedScriptEngine(
     private val executablePath: String,
+    private val replPath: String,
     private val doTrace: Boolean
 ) : ScriptEngine {
-
     private var process: Process? = null
     private val buffer = ByteArray(1024)
 
@@ -80,7 +80,7 @@ abstract class ProcessBasedScriptEngine(
     }
 
     override fun release() {
-        process?.destroy()
+        eval("!exit")
         process = null
         if (doTrace)
             println("Release repl.js #${counter.decrementAndGet()} in thread ${Thread.currentThread().id}")
@@ -95,10 +95,7 @@ abstract class ProcessBasedScriptEngine(
 
         if (doTrace)
             println("Started repl.js #${counter.getAndIncrement()} in thread ${Thread.currentThread().id}")
-        val builder = ProcessBuilder(
-            executablePath,
-            "js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js",
-        )
+        val builder = ProcessBuilder(executablePath, replPath)
         return builder.start().also {
             process = it
         }

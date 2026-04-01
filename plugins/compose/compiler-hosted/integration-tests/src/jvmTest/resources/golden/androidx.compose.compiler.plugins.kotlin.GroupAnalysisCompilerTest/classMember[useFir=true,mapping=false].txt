@@ -20,5 +20,5 @@ class TestImpl : Test {
 TestImpl {
     file: Test.kt
     Test(Landroidx/compose/runtime/Composer;I)V
-        RestartGroup { key: <key>, line: 11 }
+        Root { key: <key>, line: 11 }
 }

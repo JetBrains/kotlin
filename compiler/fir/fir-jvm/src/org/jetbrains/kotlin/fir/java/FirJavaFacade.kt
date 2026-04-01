@@ -482,6 +482,7 @@ private fun createDeclarationsForJavaRecord(
                     returnTypeRef = component.type.toFirJavaTypeRef(session, source)
                     name = component.name
                     isVararg = component.isVararg
+                    annotationList = FirLazyJavaAnnotationList(component, moduleData)
                 }
             }
         }.apply {
@@ -525,6 +526,7 @@ private fun convertJavaFieldToFir(
             containingClassForStaticMemberAttr = classId.toLookupTag()
             // TODO: check if this works properly with annotations that take the enum class as an argument
             setAnnotationsFromJava(session, fakeSource, javaField)
+            replaceDeprecationsProvider(annotations.getDeprecationsProviderFromAnnotations(session, fromJava = true))
         }
         else -> buildJavaField {
             this.containingClassSymbol = containingClassSymbol
@@ -585,6 +587,7 @@ private fun convertJavaMethodToFir(
     ).apply {
         isStatic = javaMethod.isStatic
         hasStableParameterNames = false
+        isExternal = javaMethod.isNative
     }
 
     return buildJavaMethod {
@@ -596,7 +599,6 @@ private fun convertJavaMethodToFir(
         isFromSource = javaMethod.isFromSource
         val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
         returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource)
-        isStatic = javaMethod.isStatic
         javaMethod.typeParameters.mapTo(typeParameters) { it.toFirTypeParameter(methodSymbol, moduleData) }
         for ((index, valueParameter) in javaMethod.valueParameters.withIndex()) {
             valueParameters += valueParameter.toFirValueParameter(session, methodSymbol, moduleData, index)

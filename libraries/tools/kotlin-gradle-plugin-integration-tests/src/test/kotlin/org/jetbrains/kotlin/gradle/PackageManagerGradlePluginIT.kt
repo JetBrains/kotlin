@@ -194,9 +194,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
             jsOptions = super.defaultBuildOptions.jsOptions?.copy(
                 yarn = yarn
             ),
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-        )
+        ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @DisplayName("js composite build works with lock file persistence")
     @GradleTest
@@ -220,15 +218,15 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
         storeTask: String,
     ) {
         build(upgradeTask) {
-            assertTasksExecuted(":base:publicPackageJson")
-            assertTasksExecuted(":lib:lib-2:publicPackageJson")
+            assertTasksExecuted(":base:jsPublicPackageJson")
+            assertTasksExecuted(":lib:lib-2:jsPublicPackageJson")
             assertTasksExecuted(":kotlinNpmInstall")
             assertTasksExecuted(":$upgradeTask")
         }
 
-        build(":nodeTest") {
-            assertTasksUpToDate(":base:publicPackageJson")
-            assertTasksUpToDate(":lib:lib-2:publicPackageJson")
+        build(":jsNodeTest") {
+            assertTasksUpToDate(":base:jsPublicPackageJson")
+            assertTasksUpToDate(":lib:lib-2:jsPublicPackageJson")
             assertTasksUpToDate(":kotlinNpmInstall")
             assertTasksExecuted(":$storeTask")
         }
@@ -291,8 +289,14 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
         buildGradleKts.modify {
             it + "\n" +
                     """
-                        dependencies {
-                            implementation(npm("decamelize", "6.0.0"))
+                        kotlin {
+                            sourceSets {
+                                jsMain {
+                                    dependencies {
+                                        implementation(npm("decamelize", "6.0.0"))
+                                    }
+                                }
+                            }
                         }
                             
                         rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class.java) {
@@ -350,8 +354,14 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
         buildGradleKts.modify {
             it + "\n" +
                     """
-                        dependencies {
-                            implementation(npm("decamelize", "6.0.0"))
+                        kotlin {
+                            sourceSets {
+                                jsMain {
+                                    dependencies {
+                                        implementation(npm("decamelize", "6.0.0"))
+                                    }
+                                }
+                            }
                         }
                             
                         rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class.java) {
@@ -410,8 +420,14 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
         buildGradleKts.modify {
             it + "\n" +
                     """
-                        dependencies {
-                            implementation(npm("decamelize", "6.0.0"))
+                        kotlin {
+                            sourceSets {
+                                jsMain {
+                                    dependencies {
+                                        implementation(npm("decamelize", "6.0.0"))
+                                    }
+                                }
+                            }
                         }
                             
                         rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class.java) {
@@ -518,8 +534,14 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
         buildGradleKts.modify {
             it + "\n" +
                     """
-                        dependencies {
-                            implementation(npm("puppeteer", "11.0.0"))
+                        kotlin {
+                            sourceSets {
+                                jsMain {
+                                    dependencies {
+                                        implementation(npm("puppeteer", "11.0.0"))
+                                    }
+                                }
+                            }
                         }
                         """.trimIndent()
         }

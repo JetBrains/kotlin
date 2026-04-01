@@ -1,7 +1,13 @@
 // WITH_STDLIB
-// TARGET_BACKEND: JVM_IR, WASM
-// IGNORE_BACKEND: ANDROID
-// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// ^ KT-83349 Wrong hashCode values in instantiated annotations
+
+// This test fails on Native with test grouping and package renaming enabled,
+// because the latter doesn't yet handle annotation toString implementations properly.
+// Disable test grouping as a workaround:
+// NATIVE_STANDALONE
+
+package test
 
 annotation class A(val t: String = "d")
 annotation class B(
@@ -12,8 +18,8 @@ annotation class B(
 fun box(): String {
     val s = B().toString()
 
-    if (!(s.contains("@B("))) return "Fail1"
-    if (!(s.contains("a=@A(t=d)"))) return "Fail2"
+    if (!(s.contains("@test.B("))) return "Fail1"
+    if (!(s.contains("a=@test.A(t=d)"))) return "Fail2"
     if (!s.contains("arr=[]")) return "Fail3"
 
     return "OK"

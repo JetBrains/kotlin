@@ -1,6 +1,7 @@
+import GeneratorInputKind.RuntimeClasspath
+
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("project-tests-convention")
 }
 
@@ -9,7 +10,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-fun extraSourceSet(name: String, extendMain: Boolean = true, jpsKind: String? = null): Pair<SourceSet, Configuration> {
+fun extraSourceSet(name: String, extendMain: Boolean = true): Pair<SourceSet, Configuration> {
     val sourceSet = sourceSets.create(name) {
         java.srcDir(name)
     }
@@ -19,10 +20,6 @@ fun extraSourceSet(name: String, extendMain: Boolean = true, jpsKind: String? = 
         configurations[sourceSet.runtimeOnlyConfigurationName]
             .extendsFrom(configurations.runtimeClasspath.get())
     }
-    if (jpsKind != null) {
-        // For Pill
-        sourceSet.extra["jpsKind"] = jpsKind
-    }
     return sourceSet to api
 }
 
@@ -30,7 +27,7 @@ val (builtinsSourceSet, builtinsApi) = extraSourceSet("builtins", extendMain = f
 val (evaluateSourceSet, evaluateApi) = extraSourceSet("evaluate")
 val (interpreterSourceSet, interpreterApi) = extraSourceSet("interpreter")
 val (protobufSourceSet, protobufApi) = extraSourceSet("protobuf")
-val (protobufCompareSourceSet, protobufCompareApi) = extraSourceSet("protobufCompare", jpsKind = SourceSet.TEST_SOURCE_SET_NAME)
+val (protobufCompareSourceSet, protobufCompareApi) = extraSourceSet("protobufCompare")
 val (wasmSourceSet, wasmApi) = extraSourceSet("wasm")
 val (nativeInteropRuntimeSourceSet, nativeInteropRuntimeApi) = extraSourceSet("nativeInteropRuntime")
 
@@ -74,13 +71,10 @@ dependencies {
     testImplementation(testFixtures(project(":kotlinx-serialization-compiler-plugin")))
     testImplementation(projectTests(":kotlin-atomicfu-compiler-plugin"))
     testImplementation(testFixtures(project(":kotlin-dataframe-compiler-plugin")))
-    testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
-    testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
     testImplementation(testFixtures(project(":plugins:plugin-sandbox")))
     testImplementation(testFixtures(project(":plugins:plugin-sandbox:plugin-sandbox-ic-test")))
     testImplementation(testFixtures(project(":plugins:plugins-interactions-testing")))
     testImplementation(testFixtures(project(":generators:test-generator")))
-    testImplementation(testFixtures(project(":generators:analysis-api-generator")))
     testImplementation(testFixtures(project(":plugins:scripting:scripting-tests")))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(project(":compiler:arguments"))
@@ -102,31 +96,89 @@ projectTests {
     }
 }
 
-val generateCompilerArgumentsCopy by generator("org.jetbrains.kotlin.generators.arguments.GenerateCompilerArgumentsCopyKt")
+val generateCompilerArgumentsCopy by generator(
+    "org.jetbrains.kotlin.generators.arguments.GenerateCompilerArgumentsCopyKt",
+    testSourceSet,
+    inputKind = RuntimeClasspath
+)
 
-val generateProtoBuf by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufKt", protobufSourceSet)
-val generateProtoBufCompare by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufCompare", protobufCompareSourceSet)
+val generateProtoBuf by generator(
+    "org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufKt",
+    protobufSourceSet,
+    inputKind = RuntimeClasspath
+)
 
-val generateGradleCompilerTypes by generator("org.jetbrains.kotlin.generators.arguments.GenerateGradleCompilerTypesKt") {
+val generateProtoBufCompare by generator(
+    "org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufCompare",
+    protobufCompareSourceSet,
+    inputKind = RuntimeClasspath
+)
+
+val generateGradleCompilerTypes by generator(
+    "org.jetbrains.kotlin.generators.arguments.GenerateGradleCompilerTypesKt",
+    testSourceSet,
+    inputKind = RuntimeClasspath
+) {
     description = "Generate Kotlin compiler arguments types Gradle representation"
 }
-val generateGradleOptions by generator("org.jetbrains.kotlin.generators.arguments.GenerateGradleOptionsKt") {
+
+val generateGradleOptions by generator(
+    "org.jetbrains.kotlin.generators.arguments.GenerateGradleOptionsKt",
+    testSourceSet,
+    inputKind = RuntimeClasspath
+) {
     dependsOn(generateGradleCompilerTypes)
     description = "Generate Gradle plugin compiler options"
 }
-val generateUnsupportedGradleLanguageVersionsMetadata by generator("org.jetbrains.kotlin.generators.arguments.GenerateUnsupportedGradleLanguageVersionsMetadataKt") {
+
+val generateUnsupportedGradleLanguageVersionsMetadata by generator(
+    "org.jetbrains.kotlin.generators.arguments.GenerateUnsupportedGradleLanguageVersionsMetadataKt",
+    testSourceSet,
+    inputKind = RuntimeClasspath
+) {
     description = "Generate Gradle plugin unsupported Kotlin language versions lifecycle metadata"
 }
-val generateKeywordStrings by generator("org.jetbrains.kotlin.generators.frontend.GenerateKeywordStrings")
 
-val generateBuiltins by generator("org.jetbrains.kotlin.generators.builtins.generateBuiltIns.GenerateBuiltInsKt", builtinsSourceSet)
-val generateOperationsMap by generator("org.jetbrains.kotlin.generators.evaluate.GenerateOperationsMapKt", evaluateSourceSet)
-val generateInterpreterMap by generator("org.jetbrains.kotlin.generators.interpreter.GenerateInterpreterMapKt", interpreterSourceSet)
-val generateWasmIntrinsics by generator("org.jetbrains.kotlin.generators.wasm.WasmIntrinsicGeneratorKt", wasmSourceSet)
+val generateKeywordStrings by generator(
+    "org.jetbrains.kotlin.generators.frontend.GenerateKeywordStrings",
+    testSourceSet,
+    inputKind = RuntimeClasspath
+)
+
+val generateDescriptorRendererOptionsCopy by generator(
+    "org.jetbrains.kotlin.generators.frontend.GenerateDescriptorRendererOptionsCopy",
+    testSourceSet,
+    inputKind = RuntimeClasspath
+)
+
+val generateBuiltins by generator(
+    "org.jetbrains.kotlin.generators.builtins.generateBuiltIns.GenerateBuiltInsKt",
+    builtinsSourceSet,
+    inputKind = RuntimeClasspath
+)
+
+val generateOperationsMap by generator(
+    "org.jetbrains.kotlin.generators.evaluate.GenerateOperationsMapKt",
+    evaluateSourceSet,
+    inputKind = RuntimeClasspath
+)
+
+val generateInterpreterMap by generator(
+    "org.jetbrains.kotlin.generators.interpreter.GenerateInterpreterMapKt",
+    interpreterSourceSet,
+    inputKind = RuntimeClasspath
+)
+
+val generateWasmIntrinsics by generator(
+    "org.jetbrains.kotlin.generators.wasm.WasmIntrinsicGeneratorKt",
+    wasmSourceSet,
+    inputKind = RuntimeClasspath
+)
 
 val generateNativeInteropRuntime by generator(
     "org.jetbrains.kotlin.generators.native.interopRuntime.NativeInteropRuntimeGeneratorKt",
-    nativeInteropRuntimeSourceSet
+    nativeInteropRuntimeSourceSet,
+    inputKind = RuntimeClasspath,
 )
 
 testsJar()

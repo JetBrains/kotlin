@@ -1,1 +1,1 @@
-Declaration deprecation: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+Declaration deprecation: null

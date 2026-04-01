@@ -1,0 +1,5 @@
+KtBinaryExpression(136,144): 'b1 == b2'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.equals(<dispatch receiver>: A, other: kotlin.Any?): kotlin.Boolean
+    ]

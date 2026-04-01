@@ -111,6 +111,7 @@ public fun <@OnlyInputTypes T> assertNotSame(illegal: T, actual: T, message: Str
 @SinceKotlin("1.5")
 @InlineOnly
 @OptIn(ExperimentalStdlibApi::class)
+@IgnorableReturnValue
 public inline fun <reified T> assertIs(value: Any?, message: String? = null): T {
     contract { returns() implies (value is T) }
     assertIsOfType(value, typeOf<T>(), value is T, message)
@@ -157,6 +158,7 @@ public inline fun <T : Any, R> assertNotNull(actual: T?, message: String? = null
 
 /** Asserts that the [actual] value is `null`, with an optional [message]. */
 public fun assertNull(actual: Any?, message: String? = null) {
+    contract { returns() implies (actual == null) }
     asserter.assertNull(message, actual)
 }
 

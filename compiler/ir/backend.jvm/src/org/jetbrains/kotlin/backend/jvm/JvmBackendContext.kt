@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -46,9 +45,6 @@ class JvmBackendContext(
     val symbolTable: SymbolTable,
     val generatorExtensions: JvmGeneratorExtensions,
     val backendExtension: JvmBackendExtension,
-    val irSerializer: JvmIrSerializer?,
-    val irDeserializer: JvmIrDeserializer,
-    val irProviders: List<IrProvider>,
     val irPluginContext: IrPluginContext?,
     val evaluatorData: JvmEvaluatorData?
 ) : CommonBackendContext {

@@ -3,13 +3,17 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in KotlinClass) var KotlinClass.foo: Foo<kotlin.Any>
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: null
       symbols:
+        Nothing (Unresolved reference)
+      resolveToSymbols:
         (in KotlinClass) override fun getFoo(): Foo<kotlin.Any>
 
 <caret_2>:
@@ -17,13 +21,17 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in KotlinClass) var KotlinClass.foo: Foo<kotlin.Any>
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: null
       symbols:
+        Nothing (Unresolved reference)
+      resolveToSymbols:
         (in KotlinClass) override fun setFoo(foo: Foo<kotlin.Any>)
 
 <caret_3>:
@@ -31,11 +39,15 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in KotlinClass) var KotlinClass.foo: Foo<kotlin.Any>
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: null
       symbols:
+        Nothing (Unresolved reference)
+      resolveToSymbols:
         (in KotlinClass) override fun getFoo(): Foo<kotlin.Any>

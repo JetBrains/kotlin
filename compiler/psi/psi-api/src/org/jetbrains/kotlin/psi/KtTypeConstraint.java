@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,15 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 import java.util.List;
 
+/**
+ * Represents a single type constraint in a {@code where} clause.
+ *
+ * <h3>Example:</h3>
+ * <pre>{@code
+ * fun <T> sort(list: List<T>) where T : Comparable<T> {}
+ * //                                ^_______________^
+ * }</pre>
+ */
 public class KtTypeConstraint extends KtElementImplStub<KotlinPlaceHolderStub<KtTypeConstraint>>
         implements KtAnnotated, KtAnnotationsContainer {
     public KtTypeConstraint(@NotNull ASTNode node) {

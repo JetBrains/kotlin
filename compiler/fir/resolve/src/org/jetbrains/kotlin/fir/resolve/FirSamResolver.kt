@@ -119,7 +119,7 @@ class FirSamResolver(
 
         val (_, unsubstitutedFunctionType) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
 
-        val functionType = firRegularClass.buildSubstitutorWithUpperBounds(session, type).substituteOrNull(unsubstitutedFunctionType)
+        val functionType = firRegularClass.buildSubstitutorWithUpperBounds(type).substituteOrNull(unsubstitutedFunctionType)
             ?: unsubstitutedFunctionType
 
         require(functionType is ConeLookupTagBasedType) {
@@ -137,6 +137,23 @@ class FirSamResolver(
         }
 
         return samConstructorsCache.getValue(firClassOrTypeAlias.symbol, this)?.fir
+    }
+
+    /**
+     * Returns the single abstract function of a functional interface, or `null` if [firClassOrTypeAlias]
+     * is not a functional interface.
+     *
+     * **Note**: this function is used only from the Analysis API, not from the compiler itself.
+     */
+    fun getSamFunction(firClassOrTypeAlias: FirClassLikeDeclaration): FirNamedFunctionSymbol? {
+        val firRegularClass = when (firClassOrTypeAlias) {
+            is FirRegularClass -> firClassOrTypeAlias
+            is FirTypeAlias -> firClassOrTypeAlias.symbol.resolvedExpandedTypeRef.coneTypeSafe<ConeClassLikeType>()
+                ?.fullyExpandedType()?.lookupTag?.toRegularClassSymbol()?.fir
+            else -> null
+        } ?: return null
+
+        return resolveFunctionTypeIfSamInterface(firRegularClass)?.symbol
     }
 
     fun buildSamConstructorForRegularClass(classSymbol: FirRegularClassSymbol): FirNamedFunctionSymbol? {
@@ -240,7 +257,7 @@ class FirSamResolver(
         // The constructor is something like `fun <T, ...> C(...): C<T, ...>`, meaning the type parameters
         // we need to replace are owned by it, not by the class (see the substitutor in `buildSamConstructor`
         // for `FirRegularClass` above).
-        val substitutor = samConstructorForClass.buildSubstitutorWithUpperBounds(session, type)
+        val substitutor = samConstructorForClass.buildSubstitutorWithUpperBounds(type)
         val newParameterTypes = samConstructorForClass.valueParameters.map {
             substitutor.substituteOrSelf(it.returnTypeRef.coneType)
         }
@@ -282,7 +299,7 @@ class FirSamResolver(
     private fun resolveFunctionTypeIfSamInterface(firRegularClass: FirRegularClass): SAMInfo<ConeLookupTagBasedType>? {
         return resolvedFunctionType.getOrPut(firRegularClass) {
             if (!firRegularClass.status.isFun) return@getOrPut null
-            val abstractMethod = firRegularClass.getSingleAbstractMethodOrNull(session, scopeSession) ?: return@getOrPut null
+            val abstractMethod = firRegularClass.getSingleAbstractMethodOrNull() ?: return@getOrPut null
 
             val typeFromExtension = samConversionTransformers.firstNotNullOfOrNull {
                 it.getCustomFunctionTypeForSamConversion(abstractMethod)
@@ -307,7 +324,8 @@ class FirSamResolver(
  *
  * See Non-wildcard parametrization in JLS 8 p.9.9 for clarification
  */
-private fun FirTypeParameterRefsOwner.buildSubstitutorWithUpperBounds(session: FirSession, type: ConeClassLikeType): ConeSubstitutor {
+context(c: SessionHolder)
+private fun FirTypeParameterRefsOwner.buildSubstitutorWithUpperBounds(type: ConeClassLikeType): ConeSubstitutor {
     if (typeParameters.isEmpty()) return ConeSubstitutor.Empty
 
     val substitutionMap = typeParameters.zip(type.typeArguments).associate { (parameter, projection) ->
@@ -326,11 +344,11 @@ private fun FirTypeParameterRefsOwner.buildSubstitutorWithUpperBounds(session: F
                             ConeErrorType(diagnostic)
                         }
                     }
-                ?: session.builtinTypes.nullableAnyType.coneType
+                ?: c.session.builtinTypes.nullableAnyType.coneType
         Pair(parameter.symbol, typeArgument)
     }
 
-    return substitutorByMap(substitutionMap, session)
+    return substitutorByMap(substitutionMap, c.session)
 }
 
 private fun ConeKotlinType.containsReferenceToOtherTypeParameter(owner: FirTypeParameterRefsOwner): Boolean {
@@ -339,22 +357,21 @@ private fun ConeKotlinType.containsReferenceToOtherTypeParameter(owner: FirTypeP
     }
 }
 
-private fun FirRegularClass.getSingleAbstractMethodOrNull(
-    session: FirSession,
-    scopeSession: ScopeSession,
-): FirNamedFunction? {
+context(c: SessionAndScopeSessionHolder)
+private fun FirRegularClass.getSingleAbstractMethodOrNull(): FirNamedFunction? {
     if (classKind != ClassKind.INTERFACE || hasMoreThenOneAbstractFunctionOrHasAbstractProperty()) return null
 
-    val samCandidateNames = computeSamCandidateNames(session)
-    return findSingleAbstractMethodByNames(session, scopeSession, samCandidateNames)
+    val samCandidateNames = computeSamCandidateNames()
+    return findSingleAbstractMethodByNames(samCandidateNames)
 }
 
-private fun FirRegularClass.computeSamCandidateNames(session: FirSession): Set<Name> {
+context(c: SessionHolder)
+private fun FirRegularClass.computeSamCandidateNames(): Set<Name> {
     val classes =
         // Note: we search only for names in this function, so substitution is not needed      V
-        lookupSuperTypes(this, lookupInterfaces = true, deep = true, useSiteSession = session, substituteTypes = false)
+        lookupSuperTypes(this, lookupInterfaces = true, deep = true, useSiteSession = c.session, substituteTypes = false)
             .mapNotNullTo(mutableListOf(this)) {
-                (it.lookupTag.toRegularClassSymbol(session))?.fir
+                (it.lookupTag.toRegularClassSymbol())?.fir
             }
 
     val samCandidateNames = mutableSetOf<Name>()
@@ -375,17 +392,12 @@ private fun FirRegularClass.computeSamCandidateNames(session: FirSession): Set<N
     return samCandidateNames
 }
 
-private fun FirRegularClass.findSingleAbstractMethodByNames(
-    session: FirSession,
-    scopeSession: ScopeSession,
-    samCandidateNames: Set<Name>,
-): FirNamedFunction? {
+context(c: SessionAndScopeSessionHolder)
+private fun FirRegularClass.findSingleAbstractMethodByNames(samCandidateNames: Set<Name>): FirNamedFunction? {
     var resultMethod: FirNamedFunction? = null
     var metIncorrectMember = false
 
     val classUseSiteMemberScope = this.unsubstitutedScope(
-        session,
-        scopeSession,
         withForcedTypeCalculator = false,
         memberRequiredPhase = null,
     )

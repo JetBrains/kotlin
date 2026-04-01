@@ -217,3 +217,7 @@ fun IrType.isNullableContinuation(): Boolean = isClassType(StandardNames.CONTINU
 
 // FIR and backend instances have different mask.
 fun IrType.isKClass(): Boolean = isClassType(StandardNames.FqNames.kClass, false)
+
+private fun IrClass.isClassTypeWithSignature(signature: IdSignature.CommonSignature) = signature == symbol.signature
+
+fun IrClass.isAny() = this.isClassTypeWithSignature(IdSignatureValues.any)

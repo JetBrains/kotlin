@@ -58,7 +58,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
 
     public static Test copy$default(Test p0, android.util.Size p1, android.util.Size p2, int p3, java.lang.Object p4)
 
-    public int describeContents()
+    public final int describeContents()
 
     public boolean equals(java.lang.Object other)
 
@@ -70,10 +70,10 @@ public final class Test : java/lang/Object, android/os/Parcelable {
 
     public java.lang.String toString()
 
-    public void writeToParcel(android.os.Parcel out, int flags) {
+    public final void writeToParcel(android.os.Parcel dest, int flags) {
         LABEL (L0)
           ALOAD (1)
-          LDC (out)
+          LDC (dest)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (1)
           ALOAD (0)
@@ -96,6 +96,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
           ALOAD (3)
           INVOKEVIRTUAL (android/os/Parcel, writeSize, (Landroid/util/Size;)V)
         LABEL (L2)
+        LINENUMBER (10)
           RETURN
         LABEL (L3)
     }
@@ -161,7 +162,7 @@ public final class TestF : java/lang/Object, android/os/Parcelable {
 
     public static TestF copy$default(TestF p0, android.util.SizeF p1, android.util.SizeF p2, int p3, java.lang.Object p4)
 
-    public int describeContents()
+    public final int describeContents()
 
     public boolean equals(java.lang.Object other)
 
@@ -173,10 +174,10 @@ public final class TestF : java/lang/Object, android/os/Parcelable {
 
     public java.lang.String toString()
 
-    public void writeToParcel(android.os.Parcel out, int flags) {
+    public final void writeToParcel(android.os.Parcel dest, int flags) {
         LABEL (L0)
           ALOAD (1)
-          LDC (out)
+          LDC (dest)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (1)
           ALOAD (0)
@@ -199,6 +200,7 @@ public final class TestF : java/lang/Object, android/os/Parcelable {
           ALOAD (3)
           INVOKEVIRTUAL (android/os/Parcel, writeSizeF, (Landroid/util/SizeF;)V)
         LABEL (L2)
+        LINENUMBER (13)
           RETURN
         LABEL (L3)
     }

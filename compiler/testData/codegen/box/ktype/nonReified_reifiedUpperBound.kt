@@ -1,10 +1,14 @@
 // WITH_STDLIB
 // WITH_REFLECT
 
-import kotlin.test.*
+// FILE: lib.kt
 import kotlin.reflect.*
 
 inline fun <reified T, R : T> reifiedUpperBound() = typeOf<List<R>>()
+
+// FILE: main.kt
+import kotlin.test.*
+import kotlin.reflect.*
 
 fun box(): String {
     val l = reifiedUpperBound<Any, Any>()

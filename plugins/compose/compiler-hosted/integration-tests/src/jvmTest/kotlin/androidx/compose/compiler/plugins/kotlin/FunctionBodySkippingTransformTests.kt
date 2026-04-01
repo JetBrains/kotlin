@@ -409,12 +409,12 @@ class FunctionBodySkippingTransformTests(
 
     @Test
     fun testComposableLambdaWithUnstableParams(): Unit = comparisonPropagation(
+        "",
         """
             class Foo(var value: Int = 0)
             @Composable fun A(x: Int) {}
             @Composable fun B(y: Foo) {}
-        """,
-        """
+
             val foo = @Composable { x: Int, y: Foo ->
                 A(x)
                 B(y)
@@ -466,10 +466,10 @@ class FunctionBodySkippingTransformTests(
 
     @Test
     fun testUnstableVarargParams(): Unit = comparisonPropagation(
+        "",
         """
             class Foo(var value: Int = 0)
-        """,
-        """
+
             @Composable
             fun B(vararg values: Foo) {
                 print(values)
@@ -579,11 +579,10 @@ class FunctionBodySkippingTransformTests(
 
     @Test
     fun testStableUnstableParams(): Unit = comparisonPropagation(
+        "",
         """
-            @Composable fun A(x: Int = 0, y: Int = 0): Int { return 10 }
             class Foo(var value: Int = 0)
-        """,
-        """
+
             @Composable fun CanSkip(a: Int = 0, b: Foo = Foo()) {
                 used(a)
                 used(b)
@@ -595,6 +594,21 @@ class FunctionBodySkippingTransformTests(
             }
             @Composable fun NoParams() {
                 print("Hello World")
+            }
+        """
+    )
+
+    @Test
+    fun testParamsOfStableAndUnstableTypesFromAnotherFile(): Unit = comparisonPropagation(
+        """
+            internal class Stable(val value: Int)
+            internal class Unstable(var value: Int)
+        """,
+        """
+            @Composable
+            internal fun Test(stable: Stable, unstable: Unstable) {
+                used(stable)
+                used(unstable)
             }
         """
     )
@@ -640,14 +654,14 @@ class FunctionBodySkippingTransformTests(
 
     @Test
     fun testInlineClassDefaultParameter(): Unit = comparisonPropagation(
+        unchecked = "",
         """
             inline class Color(val value: Int) {
                 companion object {
                     val Unset = Color(0)
                 }
             }
-        """,
-        """
+
             @Composable
             fun A(text: String) {
                 B(text)
@@ -671,8 +685,6 @@ class FunctionBodySkippingTransformTests(
                 Bam
             }
             const val constInt: Int = 123
-            val normInt = 345
-            val stableTopLevelProp: Modifier = Modifier
             @Composable fun C(x: Any?) {}
             @Stable
             interface Modifier {
@@ -688,6 +700,9 @@ class FunctionBodySkippingTransformTests(
             @Composable fun D(content: @Composable() () -> Unit) {}
         """,
         """
+            val normInt = 345
+            val stableTopLevelProp: Modifier = Modifier
+
             // all of these should result in 0b0110
             @Composable fun A() {
                 val x = 123
@@ -757,28 +772,26 @@ class FunctionBodySkippingTransformTests(
 
     @Test
     fun testSingleUnstableParam(): Unit = comparisonPropagation(
+        "",
         """
-            @Composable fun A(x: Foo) {}
             class Foo(var value: Int = 0)
-        """,
-        """
+
             @Composable
             fun Test(x: Foo) {
-                A(x)
+                used(x)
             }
         """
     )
 
     @Test
     fun testSingleUnstableParamWithDefault(): Unit = comparisonPropagation(
+        "",
         """
-            @Composable fun A(x: Foo) {}
-            class Foo
-        """,
-        """
+            class Foo(var value: Int = 0)
+
             @Composable
             fun Test(x: Foo = Foo()) {
-                A(x)
+                used(x)
             }
         """
     )
@@ -896,9 +909,10 @@ class FunctionBodySkippingTransformTests(
     fun testDifferentParameters(): Unit = comparisonPropagation(
         """
             @Composable fun B(a: Int, b: Int, c: Int, d: Int) {}
-            val fooGlobal = 10
         """,
         """
+            val fooGlobal = 10
+
             @Composable
             fun A(x: Int) {
                 B(
@@ -1209,12 +1223,12 @@ class FunctionBodySkippingTransformTests(
 
     @Test
     fun testUnusedParameters(): Unit = comparisonPropagation(
+        "",
         """
             class Unstable(var count: Int)
             class Stable(val count: Int)
             interface MaybeStable
-        """,
-        """
+
             @Composable
             fun Unskippable(a: Unstable, b: Stable, c: MaybeStable) {
                 used(a)

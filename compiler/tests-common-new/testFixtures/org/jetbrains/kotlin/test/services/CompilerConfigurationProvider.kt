@@ -8,11 +8,16 @@ package org.jetbrains.kotlin.test.services
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.cli.common.setupKlibAbiCompatibilityLevel
+import org.jetbrains.kotlin.cli.create
+import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.javac.registerJavac
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK
+import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PROJECT_CONFIGURATION_CALLBACK
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.js.config.*
@@ -66,15 +71,22 @@ abstract class CompilerConfigurationProvider(val testServices: TestServices) : T
         return getKotlinCoreEnvironment(module).project
     }
 
-    fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
-        val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
+    fun registerCompilerExtensions(
+        extensionStorage: CompilerPluginRegistrar.ExtensionStorage,
+        module: TestModule,
+        configuration: CompilerConfiguration,
+    ) {
         for (configurator in configurators) {
-            configurator.legacyRegisterCompilerExtensions(project, module, configuration)
             with(configurator) {
                 extensionStorage.registerCompilerExtensions(module, configuration)
             }
         }
-        extensionStorage.registerInProject(project)
+    }
+
+    fun configureProject(project: Project, module: TestModule, configuration: CompilerConfiguration) {
+        for (configurator in configurators) {
+            configurator.legacyRegisterCompilerExtensions(project, module, configuration)
+        }
     }
 
     open fun getPackagePartProviderFactory(module: TestModule): (GlobalSearchScope) -> JvmPackagePartProvider {
@@ -109,7 +121,7 @@ open class CompilerConfigurationProviderImpl(
         val configFiles = platform.platformToEnvironmentConfigFiles()
         val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(
             testRootDisposable,
-            CompilerConfiguration()
+            CompilerConfiguration.create()
         )
         val configuration = getCompilerConfiguration(module, CompilationStage.FIRST)
         val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment, configuration)
@@ -117,7 +129,14 @@ open class CompilerConfigurationProviderImpl(
             projectEnv,
             configuration,
             configFiles
-        ).also { registerCompilerExtensions(projectEnv.project, module, configuration) }
+        ).also {
+            val extensionStorage = it.configuration.extensionsStorage!!
+            registerCompilerExtensions(extensionStorage, module, configuration)
+            if (!testServices.cliBasedFacadesEnabled) {
+                configureProject(projectEnv.project, module, configuration)
+                extensionStorage.registerInProject(projectEnv.project)
+            }
+        }
     }
 
     @OptIn(TestInfrastructureInternals::class)
@@ -129,8 +148,11 @@ open class CompilerConfigurationProviderImpl(
     fun createCompilerConfiguration(module: TestModule, compilationStage: CompilationStage): CompilerConfiguration {
         return createCompilerConfiguration(testServices, module, configurators, compilationStage).also { configuration ->
             if (testServices.cliBasedFacadesEnabled) {
-                configuration.put(TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK) { project ->
-                    registerCompilerExtensions(project, module, configuration)
+                configuration.put(TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK) { extensionStorage ->
+                    registerCompilerExtensions(extensionStorage, module, configuration)
+                }
+                configuration.put(TEST_ONLY_PROJECT_CONFIGURATION_CALLBACK) {
+                    configureProject(it, module, configuration)
                 }
             }
         }
@@ -154,7 +176,7 @@ fun createCompilerConfiguration(
     configurators: List<AbstractEnvironmentConfigurator>,
     compilationStage: CompilationStage,
 ): CompilerConfiguration {
-    val configuration = CompilerConfiguration()
+    val configuration = CompilerConfiguration.create()
     configuration[CommonConfigurationKeys.MODULE_NAME] = module.name
 
     if (JsEnvironmentConfigurationDirectives.GENERATE_STRICT_IMPLICIT_EXPORT in module.directives) {
@@ -165,7 +187,7 @@ fun createCompilerConfiguration(
         configuration.generateDts = true
     }
 
-    if (JsEnvironmentConfigurationDirectives.ES6_MODE in module.directives) {
+    if (JsEnvironmentConfigurationDirectives.ES6_MODE in module.directives || JsEnvironmentConfigurationDirectives.DELEGATE_JS_TRANSPILATION in module.directives) {
         configuration.useEs6Classes = true
         configuration.compileSuspendAsJsGenerator = true
         configuration.compileLambdasAsEs6ArrowFunctions = JsEnvironmentConfigurationDirectives.DISABLE_ES6_ARROWS !in module.directives
@@ -187,6 +209,7 @@ fun createCompilerConfiguration(
     configuration.messageCollector = messageCollector
     configuration.languageVersionSettings = module.languageVersionSettings
     configuration.targetPlatform = module.targetPlatform(testServices)
+    configuration.setupKlibAbiCompatibilityLevel()
 
     for (configurator in configurators) {
         if (compilationStage == configurator.compilationStage) {

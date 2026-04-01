@@ -46,11 +46,7 @@ abstract class BasicIrModuleDeserializer(
 
     protected open val ir: KlibIrComponent get() = klib.irOrFail
 
-    override val moduleDependencies by lazy {
-        moduleDescriptor.allDependencyModules
-            .filter { it != moduleDescriptor }
-            .map { linker.resolveModuleDeserializer(it, null) }
-    }
+    override val moduleDependencies: Collection<IrModuleDeserializer> = emptyList()
 
     override fun fileDeserializers(): Collection<IrFileDeserializer> {
         return fileToDeserializerMap.values.filterNot { strategyResolver(it.file.fileEntry.name).onDemand }
@@ -61,9 +57,9 @@ abstract class BasicIrModuleDeserializer(
         fileDeserializationStates = buildList {
             for (i in 0 until fileCount) {
                 val fileStream = ir.irFile(i).codedInputStream
-                val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
+                val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.getEmptyRegistry())
                 val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, i))
-                val file = fileReader.createFile(moduleFragment, fileProto, linker.irInterner)
+                val file = fileReader.createFile(moduleFragment, fileProto, linker.fileEntryDeserializer)
 
                 this += deserializeIrFile(fileProto, file, fileReader, i, delegate, allowErrorNodes)
 
@@ -82,7 +78,7 @@ abstract class BasicIrModuleDeserializer(
             ?: error("No deserializer for file $file in module ${moduleDescriptor.name}")
 
     // TODO: fix to topLevel checker
-    override fun contains(idSig: IdSignature): Boolean = idSig in moduleReversedFileIndex
+    override fun contains(idSig: IdSignature): Boolean = idSig.topLevelSignature() in moduleReversedFileIndex
 
     override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
         val topLevelSignature = idSig.topLevelSignature()
@@ -222,11 +218,6 @@ abstract class BasicIrModuleDeserializer(
             }
         }
     }
-}
-
-fun IrModuleDeserializer.findModuleDeserializerForTopLevelId(idSignature: IdSignature): IrModuleDeserializer? {
-    if (idSignature in this) return this
-    return moduleDependencies.firstOrNull { idSignature in it }
 }
 
 val ByteArray.codedInputStream: CodedInputStream

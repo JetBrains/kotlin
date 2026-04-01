@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Binaries
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.test.TargetBackend
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.opentest4j.TestAbortedException
 import java.io.File
 
@@ -112,6 +113,10 @@ class NativeCompilerInvocationTestArtifactBuilder(
 
             compilation.result.assertSuccess() // <-- trigger compilation
         } else {
+            assumeTrue(
+                srcFiles[0].defFileIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget)
+            )
+
             val compilation = CInteropCompilation(
                 settings,
                 TestCompilerArgs(compilerArguments),

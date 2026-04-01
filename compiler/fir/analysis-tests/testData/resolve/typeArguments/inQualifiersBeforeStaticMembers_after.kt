@@ -1,0 +1,53 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-84185
+// JDK_KIND: FULL_JDK_21
+//   ^ to allow static member in inner class in Java
+// LANGUAGE: +ForbidUselessTypeArgumentsIn25
+
+// FILE: JavaUtils.java
+
+public class JavaUtils<T> {
+    public static void foo() { return; }
+    public static String bar;
+
+    public static class Nested {
+        public static void foo() { return; }
+    }
+
+    public class Inner {
+        public static void foo() { return; }
+    }
+}
+
+// FILE: main.kt
+
+enum class E {
+    X;
+}
+
+typealias ET = E
+
+typealias JT<T> = JavaUtils<T>
+
+fun test() {
+    E<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>.X
+    E<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int, String><!>.X
+
+    E<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>.values()
+    E<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int, String><!>.valueOf("E")
+
+    ET<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>.X
+    ET<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>.entries
+
+    JavaUtils<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.foo()
+    JavaUtils<!TYPE_ARGUMENTS_NOT_ALLOWED!><Nothing><!>.bar
+    JavaUtils.Nested<!TYPE_ARGUMENTS_NOT_ALLOWED!><Any?><!>.foo()
+    JavaUtils<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>.Inner.foo()
+    JavaUtils<Int>.Inner<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>.foo()
+
+    JT<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.foo()
+    JT<!TYPE_ARGUMENTS_NOT_ALLOWED!><Nothing><!>.bar
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, lambdaLiteral, nullableType,
+stringLiteral, typeParameter */

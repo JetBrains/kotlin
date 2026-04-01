@@ -6,6 +6,7 @@
 package kotlin.native.internal
 
 import kotlin.UnsupportedOperationException
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.internal.throwIrLinkageError
 import kotlin.reflect.*
 
@@ -34,12 +35,13 @@ internal abstract class KProperty0ImplBase<out R>(reflectionTargetLinkageError: 
 }
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal final class KProperty0Impl<out R>(
         private val _name: String?,
         reflectionTargetLinkageError: String?,
         override val getter: KFunction0<R>,
 ) : KProperty0ImplBase<R>(reflectionTargetLinkageError) {
-    override val name: String get() = maybeThrowPLError() ?: _name!!
+    override val name: String get() = _name!!
 
     override fun equals(other: Any?): Boolean {
         maybeThrowPLError()
@@ -75,12 +77,13 @@ internal abstract class KProperty1ImplBase<T, out R>(reflectionTargetLinkageErro
 }
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal class KProperty1Impl<T, out R>(
         private val _name: String?,
         reflectionTargetLinkageError: String?,
         override val getter: KFunction1<T, R>,
 ) : KProperty1ImplBase<T, R>(reflectionTargetLinkageError) {
-    override val name: String get() = maybeThrowPLError() ?: _name!!
+    override val name: String get() = _name!!
 
     override fun equals(other: Any?): Boolean {
         maybeThrowPLError()
@@ -117,12 +120,13 @@ internal abstract class KProperty2ImplBase<T1, T2, out R>(reflectionTargetLinkag
 }
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal class KProperty2Impl<T1, T2, out R>(
         private val _name: String?,
         reflectionTargetLinkageError: String?,
         override val getter: KFunction2<T1, T2, R>,
 ) : KProperty2ImplBase<T1, T2, R>(reflectionTargetLinkageError) {
-    override val name: String get() = maybeThrowPLError() ?: _name!!
+    override val name: String get() = _name!!
 
     override fun equals(other: Any?): Boolean {
         maybeThrowPLError()
@@ -145,13 +149,14 @@ internal class KProperty2Impl<T1, T2, out R>(
 
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal class KMutableProperty0Impl<R>(
         private val _name: String?,
         reflectionTargetLinkageError: String?,
         override val getter: KFunction0<R>,
         val setter: (R) -> Unit
 ) : KProperty0ImplBase<R>(reflectionTargetLinkageError), KMutableProperty0<R> {
-    override val name: String get() = maybeThrowPLError() ?: _name!!
+    override val name: String get() = _name!!
 
     override fun set(value: R): Unit {
         setter(value)
@@ -177,13 +182,14 @@ internal class KMutableProperty0Impl<R>(
 }
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal class KMutableProperty1Impl<T, R>(
         private val _name: String?,
         reflectionTargetLinkageError: String?,
         override val getter: KFunction1<T, R>,
         val setter: (T, R) -> Unit,
 ) : KProperty1ImplBase<T, R>(reflectionTargetLinkageError), KMutableProperty1<T, R> {
-    override val name: String get() = maybeThrowPLError() ?: _name!!
+    override val name: String get() = _name!!
 
     override fun set(receiver: T, value: R): Unit {
         setter(receiver, value)
@@ -209,13 +215,14 @@ internal class KMutableProperty1Impl<T, R>(
 }
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal class KMutableProperty2Impl<T1, T2, R>(
         private val _name: String?,
         reflectionTargetLinkageError: String?,
         override val getter: KFunction2<T1, T2, R>,
         val setter: (T1, T2, R) -> Unit,
 ) : KProperty2ImplBase<T1, T2, R>(reflectionTargetLinkageError), KMutableProperty2<T1, T2, R> {
-    override val name: String get() = maybeThrowPLError() ?: _name!!
+    override val name: String get() = _name!!
 
     override fun set(receiver1: T1, receiver2: T2, value: R): Unit {
         setter(receiver1, receiver2, value)
@@ -252,6 +259,7 @@ internal abstract class KLocalDelegatedPropertyImplBase<out R> : KProperty0<R> {
 }
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal class KLocalDelegatedPropertyImpl<out R>(override val name: String, override val returnType: KType) : KLocalDelegatedPropertyImplBase<R>() {
     override fun toString(): String {
         return "property $name (Kotlin reflection is not available)"
@@ -259,6 +267,7 @@ internal class KLocalDelegatedPropertyImpl<out R>(override val name: String, ove
 }
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal class KLocalDelegatedMutablePropertyImpl<R>(override val name: String, override val returnType: KType) :
         KLocalDelegatedPropertyImplBase<R>(), KMutableProperty0<R> {
     override fun set(value: R): Unit {

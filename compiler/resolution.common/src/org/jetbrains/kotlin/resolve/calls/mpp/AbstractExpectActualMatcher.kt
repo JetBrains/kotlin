@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.mpp
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.mpp.*
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker.sizesAreEqualAndElementsNotEqualBy
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
@@ -203,6 +204,14 @@ object AbstractExpectActualMatcher {
 
         if (!areCompatibleTypeParameterUpperBounds(expectedTypeParameters, actualTypeParameters, substitutor)) {
             return ExpectActualMatchingCompatibility.FunctionTypeParameterUpperBounds
+        }
+
+        if (
+            actualDeclaration.shouldMatchByParameterNames &&
+            expectDeclaration.shouldMatchByParameterNames &&
+            sizesAreEqualAndElementsNotEqualBy(expectedValueParameters, actualValueParameters) { nameOf(it) }
+        ) {
+            return ExpectActualMatchingCompatibility.ParameterNames
         }
 
         return ExpectActualMatchingCompatibility.MatchedSuccessfully

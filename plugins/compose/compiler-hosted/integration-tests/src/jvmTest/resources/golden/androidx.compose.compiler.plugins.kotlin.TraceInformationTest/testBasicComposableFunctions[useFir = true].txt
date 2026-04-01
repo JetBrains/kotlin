@@ -36,7 +36,10 @@ class A {
       tmp0_rcvr.B(x, %composer, updateChangedFlags(%changed or 0b0001))
     }
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @Composable
 fun C(%composer: Composer?, %changed: Int) {

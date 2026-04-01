@@ -11,7 +11,7 @@ FILE: typeParametersInEnum.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<A>|
-            public get(): R|kotlin/enums/EnumEntries<A>|
+            public static get(): R|kotlin/enums/EnumEntries<A>|
 
     }
     public final enum class B : R|kotlin/Enum<B>| {
@@ -26,6 +26,6 @@ FILE: typeParametersInEnum.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<B>|
-            public get(): R|kotlin/enums/EnumEntries<B>|
+            public static get(): R|kotlin/enums/EnumEntries<B>|
 
     }

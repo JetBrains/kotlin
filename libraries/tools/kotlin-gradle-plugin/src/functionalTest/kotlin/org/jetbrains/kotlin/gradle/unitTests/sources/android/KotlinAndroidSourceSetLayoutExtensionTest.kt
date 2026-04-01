@@ -10,14 +10,11 @@ package org.jetbrains.kotlin.gradle.unitTests.sources.android
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.sources.android.kotlinAndroidSourceSetLayout
-import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import org.jetbrains.kotlin.gradle.plugin.sources.android.singleTargetAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.setMultiplatformAndroidSourceSetLayoutVersion
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class KotlinAndroidSourceSetLayoutExtensionTest {
 
@@ -26,12 +23,6 @@ class KotlinAndroidSourceSetLayoutExtensionTest {
         val project = ProjectBuilder.builder().build()
         project.plugins.apply(KotlinAndroidPluginWrapper::class.java)
 
-        assertEquals(singleTargetAndroidSourceSetLayout, project.kotlinAndroidSourceSetLayout)
-
-        project.setMultiplatformAndroidSourceSetLayoutVersion(1)
-        assertEquals(singleTargetAndroidSourceSetLayout, project.kotlinAndroidSourceSetLayout)
-
-        project.setMultiplatformAndroidSourceSetLayoutVersion(2)
         assertEquals(singleTargetAndroidSourceSetLayout, project.kotlinAndroidSourceSetLayout)
     }
 
@@ -42,32 +33,5 @@ class KotlinAndroidSourceSetLayoutExtensionTest {
             multiplatformAndroidSourceSetLayoutV2, project.kotlinAndroidSourceSetLayout,
             "Expected v2 being set as default"
         )
-    }
-
-    @Test
-    fun testConfiguredV2() {
-        val project = buildProjectWithMPP()
-
-        project.setMultiplatformAndroidSourceSetLayoutVersion(2)
-        assertEquals(multiplatformAndroidSourceSetLayoutV2, project.kotlinAndroidSourceSetLayout)
-    }
-
-    @Test
-    fun configuredV1() {
-        val project = buildProjectWithMPP()
-
-        project.setMultiplatformAndroidSourceSetLayoutVersion(1)
-        assertEquals(multiplatformAndroidSourceSetLayoutV1, project.kotlinAndroidSourceSetLayout)
-    }
-
-    @Test
-    fun failsOnUnsupportedVersion() {
-        val project = buildProjectWithMPP()
-
-        /* Test unhappy path: Layout version 0 is unknown/unsupported */
-        project.setMultiplatformAndroidSourceSetLayoutVersion(0)
-        assertFailsWith<IllegalArgumentException> {
-            project.kotlinAndroidSourceSetLayout
-        }
     }
 }

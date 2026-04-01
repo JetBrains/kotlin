@@ -1,0 +1,67 @@
+// This file was generated automatically. See the README.md file
+// DO NOT MODIFY IT MANUALLY.
+
+package org.jetbrains.kotlin.gradle.plugin.mpp
+
+import java.io.Serializable
+import kotlin.Comparable
+import kotlin.Deprecated
+import kotlin.Int
+import kotlin.String
+
+/**
+ *
+ * Provides type-safe constants for Kotlin versions, used in the DSL to disable the native cache.
+ *
+ * Disabling the native cache is not recommended and should only be used as a temporary workaround.
+ * This class follows a rolling deprecation cycle to ensure that any cache-disabling configuration
+ * is reviewed after a Kotlin update.
+ *
+ * Only the three most recent versions are included:
+ * - **N (Latest):** The version constant is available.
+ * - **N-1 (Deprecated):** The constant is marked with a deprecation warning.
+ * - **N-2 (Error):** The constant is marked with a deprecation error.
+ * - **N-3 (Dropped):** The constant is removed, causing a compilation failure.
+ *
+ * This forces a review of the cache-disabling configuration. If the problem is resolved,
+ * remove the DSL entry. If not, update to the latest version constant.
+ *
+ * @since 2.3.20
+ */
+@KotlinNativeCacheApi
+public sealed class DisableCacheInKotlinVersion private constructor(
+  /**
+   * The major version number.
+   */
+  public val major: Int,
+  /**
+   * The minor version number.
+   */
+  public val minor: Int,
+  /**
+   * The patch version number.
+   */
+  public val patch: Int,
+) : Comparable<DisableCacheInKotlinVersion>,
+    Serializable {
+  /**
+   * Returns the string representation of this version (e.g., 'v2_3_0').
+   */
+  override fun toString(): String = "v${major}_${minor}_${patch}"
+
+  /**
+   * Compares this version to another version.
+   */
+  override fun compareTo(other: DisableCacheInKotlinVersion): Int = compareValuesBy(this, other, { it.major }, { it.minor }, { it.patch })
+
+  /**
+   * Represents the Kotlin version constant for 2.3.20.
+   */
+  @Deprecated(message = "Disabling native cache for this Kotlin version is deprecated. Please re-evaluate if this is still needed. If so, update to the latest version constant. If not, remove this DSL entry.")
+  public object `2_3_20` : DisableCacheInKotlinVersion(2, 3, 20)
+
+  /**
+   * Represents the Kotlin version constant for 2.4.0.
+   */
+  public object `2_4_0` : DisableCacheInKotlinVersion(2, 4, 0)
+}

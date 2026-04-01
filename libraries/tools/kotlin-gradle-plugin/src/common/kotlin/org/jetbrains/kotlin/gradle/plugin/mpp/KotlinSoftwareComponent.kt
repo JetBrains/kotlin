@@ -85,18 +85,11 @@ abstract class KotlinSoftwareComponent(
         // if (onlyPublishUklib) return
 
         mutableSetOf<DefaultKotlinUsageContext>().apply {
-            val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
-            val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { allMetadataArtifact ->
-                allMetadataArtifact.classifier = project.psmJarClassifier ?: ""
-            }
-
             this += DefaultKotlinUsageContext(
                 compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
                 mavenScope = KotlinUsageContext.MavenScope.COMPILE,
-                dependencyConfigurationName = metadataTarget.apiElementsConfigurationName,
-                overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
+                dependencyConfigurationName = metadataTarget.apiElementsConfigurationName
             )
-
 
             val sourcesElements = metadataTarget.sourcesElementsConfigurationName
             if (metadataTarget.isSourcesPublishable) {

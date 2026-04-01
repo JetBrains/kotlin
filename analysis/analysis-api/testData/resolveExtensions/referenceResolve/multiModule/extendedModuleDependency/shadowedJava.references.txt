@@ -2,5 +2,7 @@ KtNameReferenceExpression(118,127): 'TestClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'TestClass'.>
     symbols:
       Nothing (Unresolved reference)

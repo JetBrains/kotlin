@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.isEnabled
 
 object FirJsNameCharsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping.isEnabled()) {
@@ -42,7 +45,7 @@ object FirJsNameCharsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common)
             return
         }
 
-        val stableName = FirJsStableName.createStableNameOrNull(declaration.symbol, context.session) ?: return
+        val stableName = FirJsStableName.createStableNameOrNull(declaration.symbol) ?: return
         if ((sanitizeName(stableName.name) != stableName.name)) {
             reporter.reportOn(declaration.source, FirJsErrors.NAME_CONTAINS_ILLEGAL_CHARS)
         }

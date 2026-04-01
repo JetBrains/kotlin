@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentFunctionFactory
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.shouldBeCompiledAsGenerator
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
@@ -31,6 +32,9 @@ class JsDefaultArgumentFunctionFactory(context: CommonBackendContext) : DefaultA
 
         if (!original.isTopLevel) {
             introduceContextParam()
+            // It's required since the default member functions delegating to original functions
+            // and delegation to generator should be either done from a non-generator function or with yield* statement
+            if (original.shouldBeCompiledAsGenerator) shouldBeCompiledAsGenerator = false
         }
     }
 

@@ -11,7 +11,6 @@ description = "Kotlin Serialization Compiler Plugin"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("d8-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
@@ -71,20 +70,13 @@ dependencies {
     embedded(project(":kotlinx-serialization-compiler-plugin.backend")) { isTransitive = false }
     embedded(project(":kotlinx-serialization-compiler-plugin.cli")) { isTransitive = false }
 
-    testFixturesApi(project(":compiler:backend"))
-    testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":kotlinx-serialization-compiler-plugin.cli"))
 
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(project(":compiler:fir:plugin-utils"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
-    testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
-    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
+    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir:low-level-api-fir-compiler-tests")))
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
@@ -106,9 +98,6 @@ dependencies {
     serializationPluginForTests(project(":kotlinx-serialization-compiler-plugin"))
 
     testRuntimeOnly(intellijCore())
-    testRuntimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testRuntimeOnly(project(":core:descriptors.runtime"))
-    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     // Dependencies for Kotlin/Native test infra:
     testFixturesApi(testFixtures(project(":native:native.tests")))
@@ -202,15 +191,16 @@ projectTests {
 }
 
 fun Test.setUpJsIrBoxTests() {
-    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+    useJsIrBoxTests(buildDir = layout.buildDirectory)
 
-    val localJsCoreRuntimeForTests: FileCollection = coreJsIrRuntimeForTests
-    val localJsJsonRuntimeForTests: FileCollection = jsonJsIrRuntimeForTests
-
-    doFirst {
-        systemProperty("serialization.core.path", localJsCoreRuntimeForTests.asPath)
-        systemProperty("serialization.json.path", localJsJsonRuntimeForTests.asPath)
-    }
+    jvmArgumentProviders.add(objects.newInstance<SystemPropertyClasspathProvider>().apply {
+        classpath.from(coreJsIrRuntimeForTests)
+        property.set("serialization.core.path")
+    })
+    jvmArgumentProviders.add(objects.newInstance<SystemPropertyClasspathProvider>().apply {
+        classpath.from(jsonJsIrRuntimeForTests)
+        property.set("serialization.json.path")
+    })
 }
 
 //region Workaround for KT-76495 and KTIJ-33877

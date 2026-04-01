@@ -8,14 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirScript
+import org.jetbrains.kotlin.fir.declarations.*
 
 /**
  * [target] element and optionally its subgraph to be lazily resolved by LL FIR lazy resolver.
@@ -112,6 +105,7 @@ internal sealed class LLFirResolveTarget(val designation: FirDesignation) {
                     is FirFile -> it.name
                     is FirRegularClass -> it.name
                     is FirScript -> it.name
+                    is FirReplSnippet -> it.name
                     else -> errorWithFirSpecificEntries("Unsupported path declaration: ${it::class.simpleName}", fir = it)
                 }
             }
@@ -131,6 +125,7 @@ internal sealed class LLFirResolveTarget(val designation: FirDesignation) {
         is FirAnonymousInitializer -> ("<init-block>")
         is FirFile -> fir.name
         is FirScript -> fir.name.asString()
+        is FirReplSnippet -> fir.name.asString()
         else -> "???"
     }
 }

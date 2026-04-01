@@ -1,16 +1,13 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_STATE_MACHINE
-// JVM_ABI_K1_K2_DIFF: KT-62464
 
-// In this test the following transformation are occuring:
+// In this test the following transformation of flow$1 are occuring:
 //   flow$1 -> flowWith$$inlined$flow$1
 //   flow$1 -> check$$inlined$flow$1
-//   flow$1 -> flowWith$$inlined$flow$2
-//   flowWith$$inlined$flow$2 -> check$$inlined$flowWith$1
+//   flowWith$$inlined$flow$1 -> check$$inlined$flowWith$1
 
-// All thansformations, except the third, shall generate state-machine.
-// The third shall not generate state-machine, since it is retransformed.
+// All thansformations shall generate state-machine.
 
 // FILE: inline.kt
 package flow

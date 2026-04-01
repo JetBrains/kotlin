@@ -93,7 +93,7 @@ object O {
     operator fun provideDelegate(x: Any?, y: Any?): C = C()
 }
 
-val x: String by <!OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR!>O<!>
+val x: String by <!OPT_IN_USAGE_ERROR!>O<!>
 
 @Marker
 class OperatorContainer : Comparable<OperatorContainer> {
@@ -129,7 +129,7 @@ fun operatorContainerUsage(s: String, a: AnotherContainer) {
     val res1 = s <!OPT_IN_USAGE_ERROR!>-<!> s
     val res2 = <!OPT_IN_USAGE_ERROR!>s<!>()
     val res3 = <!OPT_IN_USAGE_ERROR!>res1<!> <!OPT_IN_USAGE_ERROR!>><!> <!OPT_IN_USAGE_ERROR!>res2<!>
-    for (c in <!OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR!>a<!>) {}
+    for (c in <!OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR!>a<!>) {}
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, annotationUseSiteTargetProperty,

@@ -1,0 +1,5 @@
+KtNameReferenceExpression(86,88): 'BB'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /AA.BB
+    ]

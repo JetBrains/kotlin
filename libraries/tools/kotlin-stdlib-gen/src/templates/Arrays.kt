@@ -1078,13 +1078,57 @@ object ArrayOps : TemplateGroupBase() {
                 sample("samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf")
                 returns("SELF")
                 on(Platform.JS) {
+                    /**
+                     * Benchmarking showed that when copying a small number of elements (typically < 20),
+                     * a simple loop is consistently faster than calling `TypedArray.set` or `TypedArray.slice`
+                     * across JS engines. We chose OPTIMAL_LOOP_COPY_THRESHOLD as an arbitrary threshold based on those results.
+                     **/
                     when (primitive!!) {
-                        PrimitiveType.Boolean ->
-                            body { "return withType(\"BooleanArray\", arrayCopyResize(this, newSize, false))" }
-                        PrimitiveType.Char ->
-                            body { "return withType(\"CharArray\", fillFrom(this, ${primitive}Array(newSize)))" }
-                        else ->
-                            body { "return fillFrom(this, ${primitive}Array(newSize))" }
+                        PrimitiveType.Boolean -> body {
+                            "return withType(\"BooleanArray\", arrayCopyResize(this, newSize, false))"
+                        }
+                        PrimitiveType.Long -> {
+                            annotation("@OptIn(JsIntrinsic::class)")
+                            body {
+                                """
+                                if (!isLongCompiledToBigInt()) return fillFrom(this, LongArray(newSize))
+                                val size = this.size
+                                return when {
+                                    newSize < OPTIMAL_LOOP_COPY_THRESHOLD || size < OPTIMAL_LOOP_COPY_THRESHOLD -> fillFrom(this, ${primitive}Array(newSize))
+                                    newSize > size -> LongArray(newSize).also { copy ->
+                                        copy.asDynamic().set(this)
+                                    }
+                                    else -> this.asDynamic().slice(0, newSize)
+                                }
+                            """.trimIndent()
+                            }
+                        }
+                        PrimitiveType.Char -> body {
+                            """
+                            val size = this.size
+                            val copy = when {
+                                newSize < OPTIMAL_LOOP_COPY_THRESHOLD || size < OPTIMAL_LOOP_COPY_THRESHOLD -> fillFrom(this, CharArray(newSize))
+                                newSize > size -> CharArray(newSize).also { copy ->
+                                    copy.asDynamic().set(this)
+                                }
+                                else -> this.asDynamic().slice(0, newSize)
+                            }
+                            
+                            return withType("CharArray", copy)
+                            """.trimIndent()
+                        }
+                        else -> body {
+                            """
+                            val size = this.size
+                            return when {
+                                newSize < OPTIMAL_LOOP_COPY_THRESHOLD || size < OPTIMAL_LOOP_COPY_THRESHOLD -> fillFrom(this, ${primitive}Array(newSize))
+                                newSize > size -> ${primitive}Array(newSize).also { copy ->
+                                    copy.asDynamic().set(this)
+                                }
+                                else -> this.asDynamic().slice(0, newSize)
+                            }
+                            """.trimIndent()
+                        }
                     }
                     body { newSizeCheck + "\n" + body }
                 }
@@ -1480,6 +1524,18 @@ object ArrayOps : TemplateGroupBase() {
             body { """return ArrayList<T>(this.unsafeCast<Array<Any?>>())""" }
         }
 
+        val iteratorWithSizeField = if (target == KotlinTarget.Native || target == KotlinTarget.WASM) """
+                override fun iterator(): Iterator<T> = object : Iterator<T> {
+                    val size_ = size
+                    var index = 0
+                    override fun next(): T {
+                        if (index >= size_) throw NoSuchElementException()
+                        return this@asList[index++]
+                    }
+                    override fun hasNext(): Boolean = index < size_
+                }
+        """ else ""
+
         val objectLiteralImpl = if (primitive in PrimitiveType.floatingPointPrimitives) """
             return object : AbstractList<T>(), RandomAccess {
                 override val size: Int get() = this@asList.size
@@ -1488,6 +1544,7 @@ object ArrayOps : TemplateGroupBase() {
                 override fun get(index: Int): T = this@asList[index]
                 override fun indexOf(element: T): Int = this@asList.indexOfFirst { it.toBits() == element.toBits() }
                 override fun lastIndexOf(element: T): Int = this@asList.indexOfLast { it.toBits() == element.toBits() }
+                $iteratorWithSizeField
             }
             """
         else """
@@ -1498,6 +1555,7 @@ object ArrayOps : TemplateGroupBase() {
                 override fun get(index: Int): T = this@asList[index]
                 override fun indexOf(element: T): Int = this@asList.indexOf(element)
                 override fun lastIndexOf(element: T): Int = this@asList.lastIndexOf(element)
+                $iteratorWithSizeField
             }
             """
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) {

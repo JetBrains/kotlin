@@ -55,7 +55,10 @@ class StableDelegate {
   fun getValue(thisObj: Any?, property: KProperty<*>): Int {
     return 10
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 0)
 class UnstableDelegate {
@@ -66,38 +69,62 @@ class UnstableDelegate {
   fun getValue(thisObj: Any?, property: KProperty<*>): Int {
     return 10
   }
-  static val %stable: Int = 8
+  val %stable: Int = 8
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 0)
 class Unstable {
   var value: Int = 0
-  static val %stable: Int = 8
+  val %stable: Int = 8
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 1)
 class EmptyClass {
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 1)
 class SingleStableVal(val p1: Int) {
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 1)
 class SingleParamProp<T> (val p1: T) {
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 2)
 class SingleParamNonProp<T> (p1: T) {
   val p2: Int = p1.hashCode()
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 1)
 class DoubleParamSingleProp<T, V> (val p1: T, p2: V) {
   val p3: Int = p2.hashCode()
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 0)
 class X<T> (val p1: List<T>) {
-  static val %stable: Int = 8
+  val %stable: Int = 8
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 1)
 class NonBackingFieldUnstableProp {
@@ -105,7 +132,10 @@ class NonBackingFieldUnstableProp {
     get() {
       TODO()
     }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 1)
 class NonBackingFieldUnstableVarProp {
@@ -115,27 +145,36 @@ class NonBackingFieldUnstableVarProp {
     }
     set(value) {
     }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 1)
 class StableDelegateProp {
   var p1: StableDelegate = StableDelegate()
     get() {
-      return <this>.p1%delegate.getValue(<this>, ::p1)
+      return field.getValue(<this>, ::p1)
     }
     set(value) {
-      <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
+      field.setValue(<this>, ::p1, <set-?>)
     }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 0)
 class UnstableDelegateProp {
   var p1: UnstableDelegate = UnstableDelegate()
     get() {
-      return <this>.p1%delegate.getValue(<this>, ::p1)
+      return field.getValue(<this>, ::p1)
     }
     set(value) {
-      <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
+      field.setValue(<this>, ::p1, <set-?>)
     }
-  static val %stable: Int = 8
+  val %stable: Int = 8
+    get() {
+      return field
+    }
 }

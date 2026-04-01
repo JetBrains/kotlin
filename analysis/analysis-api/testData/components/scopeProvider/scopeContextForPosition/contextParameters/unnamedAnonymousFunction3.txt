@@ -32,6 +32,7 @@ scopes:
         isCrossinline: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
         isVal: true
@@ -139,4 +140,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 10
-

@@ -10,18 +10,21 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
+import org.jetbrains.kotlin.fir.types.getConstructor
 import org.jetbrains.kotlin.fir.types.lookupTagIfAny
 import org.jetbrains.kotlin.renderer.renderFlexibleMutabilityOrArrayElementVarianceType
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import java.text.MessageFormat
 
 open class ConeTypeRendererForReadability(
-    private val preRenderedConstructors: Map<TypeConstructorMarker, String>? = null,
+    private val preRenderedConstructors: Map<TypeConstructorMarker, String?>? = null,
     private val idRendererCreator: () -> ConeIdRenderer,
 ) : ConeTypeRendererForDebugInfo(coneAttributeRendererForReadability = ConeAttributeRenderer.None) {
     constructor(
         builder: StringBuilder,
-        preRenderedConstructors: Map<TypeConstructorMarker, String>? = null,
+        preRenderedConstructors: Map<TypeConstructorMarker, String?>? = null,
         idRendererCreator: () -> ConeIdRenderer,
     ) : this(preRenderedConstructors, idRendererCreator) {
         this.builder = builder
@@ -48,9 +51,14 @@ open class ConeTypeRendererForReadability(
     }
 
     private fun renderBound(bound: ConeKotlinType): String {
-        val renderer = ConeTypeRendererForReadability(StringBuilder(), preRenderedConstructors, idRendererCreator)
-        renderer.render(bound)
-        return renderer.builder.toString()
+        return with(newRenderer()) {
+            render(bound)
+            builder.toString()
+        }
+    }
+
+    private fun newRenderer(): ConeTypeRendererForReadability {
+        return ConeTypeRendererForReadability(StringBuilder(), preRenderedConstructors, idRendererCreator)
     }
 
     private fun renderFlexibleTypeCompact(lowerRendered: String, upperRendered: String): String? {
@@ -69,13 +77,22 @@ open class ConeTypeRendererForReadability(
         )
     }
 
-    override fun renderConstructor(constructor: TypeConstructorMarker, nullabilityMarker: String) {
+    override fun renderSimpleType(type: ConeSimpleKotlinType, nullabilityMarker: String) {
+        val constructor = type.getConstructor()
         preRenderedConstructors?.get(constructor)?.let {
-            builder.append(it.replace("^", nullabilityMarker))
+            val formatted = MessageFormat.format(it, *type.typeArguments.map { renderTypeArgument(it) }.toTypedArray(), nullabilityMarker)
+            builder.append(formatted)
             return
         }
 
-        super.renderConstructor(constructor, nullabilityMarker)
+        super.renderSimpleType(type, nullabilityMarker)
+    }
+
+    private fun renderTypeArgument(typeArgument: ConeTypeProjection): String {
+        return with(newRenderer()) {
+            typeArgument.render()
+            builder.toString()
+        }
     }
 
     override fun couldBenefitFromParenthesizing(projection: ConeTypeProjection): Boolean {

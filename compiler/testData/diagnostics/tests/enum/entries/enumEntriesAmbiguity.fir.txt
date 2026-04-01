@@ -13,7 +13,7 @@ FILE: enumEntriesAmbiguity.fir.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<Ambiguous>|
-            public get(): R|kotlin/enums/EnumEntries<Ambiguous>|
+            public static get(): R|kotlin/enums/EnumEntries<Ambiguous>|
 
     }
     public final val e: R|kotlin/Int| = Q|Ambiguous|.R|/Ambiguous.entries|.R|SubstitutionOverride</Ambiguous.ordinal: R|kotlin/Int|>|

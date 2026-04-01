@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirReplExpressionReference
 import org.jetbrains.kotlin.fir.resolve.FirRegularTowerDataContexts
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -35,6 +37,7 @@ import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.hasResolvedType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -276,6 +279,14 @@ open class ReturnTypeCalculatorWithJump(
         implicitBodyResolveComputationSession.calculateAndStoreNonTrivialLoop(declaration.symbol)
     }
 
+    private val FirCallableSymbol<*>.isUnresolvedReplProperty: Boolean
+        get() {
+            if (this !is FirRegularPropertySymbol || isReplSnippetDeclaration != true) return false
+            val initializer = fir.initializer as? FirReplExpressionReference
+            val delegate = fir.delegate as? FirReplExpressionReference
+            return initializer?.hasResolvedType != true && delegate?.hasResolvedType != true
+        }
+
     private fun computeReturnTypeRef(declaration: FirCallableDeclaration): FirResolvedTypeRef {
         val symbolForStatus = when {
             declaration is FirBackingField -> declaration.propertySymbol
@@ -285,6 +296,9 @@ open class ReturnTypeCalculatorWithJump(
         val computedReturnType = when (val status = implicitBodyResolveComputationSession.getStatus(symbolForStatus)) {
             is ImplicitBodyResolveComputationStatus.Computed -> status.resolvedTypeRef
             is ImplicitBodyResolveComputationStatus.Computing -> recursionInImplicitTypeRef(declaration)
+            // REPL properties cannot be resolved directly, the eval function must be resolved first.
+            // TODO(KT-84153): reconsider what error is reported here.
+            else if symbolForStatus.isUnresolvedReplProperty -> recursionInImplicitTypeRef(declaration)
             else -> null
         }
 

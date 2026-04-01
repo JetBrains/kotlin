@@ -262,19 +262,15 @@ internal class PartiallyLinkedIrTreePatcher(
                     blockBody.statements.removeAll { it is IrDelegatingConstructorCall }
                 }
 
+                // Errors for members of unlinked classes have minor significance,
+                // such members are unusable anyway since their dispatch receiver (class) is unusable.
+                // Errors for annotations have minor significance.
+                val issueSignificance = PartialLinkageIssueSignificance.minorIf {
+                    declaration.isDirectMemberOf(unusableClassifierInSignature) || declaration.isAnnotationConstructor()
+                }
                 // IMPORTANT: Unlike it's done for IrSimpleFunction don't clean-up statements. Insert PL linkage as the first one.
                 // This is necessary to preserve anonymous initializer call and delegating constructor call in place.
-                blockBody.statements.add(
-                    0, partialLinkageCase.throwLinkageError(
-                        declaration,
-                        // Note: Don't log errors for members of unlinked class.
-                        // - All such members are unusable anyway since their dispatch receiver (class) is unusable.
-                        // - Also, this reduces the number of compiler error messages and makes the compiler output less polluted.
-                        doNotLog = declaration.isDirectMemberOf(unusableClassifierInSignature)
-                                // A workaround for KT-72965: Do not log PL errors for @SubclassOptInRequired annotation sites.
-                                || declaration.symbol.isSubclassOptInRequiredAnnotationConstructor()
-                    )
-                )
+                blockBody.statements.add(0, partialLinkageCase.throwLinkageError(declaration, issueSignificance))
             }
 
             return declaration.transformChildren()
@@ -312,14 +308,14 @@ internal class PartiallyLinkedIrTreePatcher(
                 // Clean initializer body. Don't process underlying statements.
                 blockBody.statements.clear()
 
+                // Errors for members of unlinked classes have minor significance,
+                // such members are unusable anyway since their dispatch receiver (class) is unusable.
+                val issueSignificance = PartialLinkageIssueSignificance.minorIf {
+                    declaration.isDirectMemberOf(unusableClassifierInSignature)
+                }
+
                 // Generate IR call that throws linkage error. Report compiler warning.
-                blockBody.statements += partialLinkageCase.throwLinkageError(
-                    declaration,
-                    // Note: Don't log errors for members of unlinked class.
-                    // - All such members are unusable anyway since their dispatch receiver (class) is unusable.
-                    // - Also, this reduces the number of compiler error messages and makes the compiler output less polluted.
-                    doNotLog = declaration.isDirectMemberOf(unusableClassifierInSignature)
-                )
+                blockBody.statements += partialLinkageCase.throwLinkageError(declaration, issueSignificance)
 
                 // Don't remove inline functions, this may harm linkage in K/N backend with enabled static caches.
                 if (!declaration.isInline) {
@@ -473,8 +469,11 @@ internal class PartiallyLinkedIrTreePatcher(
             }
         }
 
-        private fun PartialLinkageCase.throwLinkageError(declaration: IrDeclaration, doNotLog: Boolean = false): IrCall =
-            supportForLowerings.throwLinkageError(this, declaration, currentFile, doNotLog)
+        private fun PartialLinkageCase.throwLinkageError(
+            declaration: IrDeclaration,
+            significance: PartialLinkageIssueSignificance = PartialLinkageIssueSignificance.MAJOR,
+        ): IrCall =
+            supportForLowerings.throwLinkageError(this, declaration, currentFile, significance)
     }
 
     private open inner class ExpressionTransformer(startingFile: PLFile) : FileAwareIrElementTransformerVoid(startingFile) {
@@ -621,6 +620,7 @@ internal class PartiallyLinkedIrTreePatcher(
         override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression = inlinedBlock.maybeThrowLinkageError {
             val error = inlinedBlock.checkReferencedDeclaration(inlinedBlock.inlinedFunctionSymbol)
             if (error != null) {
+                supportForLowerings.renderAndLogLinkageError(error, inlinedBlock, currentFile, PartialLinkageIssueSignificance.MINOR)
                 inlinedBlock.inlinedFunctionSymbol = null
             }
             null
@@ -629,15 +629,11 @@ internal class PartiallyLinkedIrTreePatcher(
         override fun visitExpression(expression: IrExpression) = expression.maybeThrowLinkageError { null }
 
         protected inline fun <T : IrExpression> T.maybeThrowLinkageError(
-            doNotLogWhen: (PartialLinkageCase) -> Boolean = { false },
+            significance: PartialLinkageIssueSignificance = PartialLinkageIssueSignificance.MAJOR,
             computePartialLinkageCase: T.() -> PartialLinkageCase?,
-        ): IrExpression = maybeThrowLinkageError(
-            transformer = this@ExpressionTransformer,
-            doNotLogWhen = doNotLogWhen,
-            computePartialLinkageCase = {
-                computePartialLinkageCase() ?: checkExpressionType(type) // Check something that is always present in every expression.
-            },
-        ).also { onAfterMaybeThrowLinkageError() }
+        ): IrExpression = maybeThrowLinkageError(this@ExpressionTransformer, significance) {
+            computePartialLinkageCase() ?: checkExpressionType(type) // Check something that is always present in every expression.
+        }.also { onAfterMaybeThrowLinkageError() }
 
         // Custom post-check. Can be overridden.
         protected open fun IrExpression.onAfterMaybeThrowLinkageError() = Unit
@@ -730,8 +726,8 @@ internal class PartiallyLinkedIrTreePatcher(
                     // OK. Used in the same module.
                     null
                 }
-                containingModule.shouldBeSkipped -> {
-                    // Optimization: Don't check visibility of declarations in stdlib & co.
+                containingModule == PLModule.SyntheticBuiltInFunctions -> {
+                    // Optimization: Don't check the visibility of synthetic built-in functions.
                     null
                 }
                 !declaration.isEffectivelyPrivate() -> {
@@ -989,16 +985,13 @@ internal class PartiallyLinkedIrTreePatcher(
                     if (checker.isUsableAnnotation) {
                         true // No PL errors have been found.
                     } else {
-                        if (annotation.symbol.isSubclassOptInRequiredAnnotationConstructor()) {
-                            // A workaround for KT-72965: Do not log PL errors for @SubclassOptInRequired annotation sites.
-                        } else {
-                            // Log a warning. Do not throw a linkage error as this would produce broken IR.
-                            supportForLowerings.renderAndLogLinkageError(
-                                partialLinkageCase = UnusableAnnotation(annotation.symbol, holderDeclarationSymbol = symbol),
-                                element = this,
-                                file = currentFile
-                            )
-                        }
+                        // Log linkage issue with minor severity. Do not throw a linkage error as this would produce broken IR.
+                        supportForLowerings.renderAndLogLinkageError(
+                            partialLinkageCase = UnusableAnnotation(annotation.symbol, holderDeclarationSymbol = symbol),
+                            element = this,
+                            file = currentFile,
+                            PartialLinkageIssueSignificance.MINOR
+                        )
 
                         false // Drop the annotation.
                     }
@@ -1022,10 +1015,7 @@ internal class PartiallyLinkedIrTreePatcher(
         override fun visitConst(expression: IrConst): IrExpression = expression // Nothing can be unlinked here.
 
         override fun visitConstructorCall(expression: IrConstructorCall) = expression.maybeThrowLinkageError(
-            doNotLogWhen = { partialLinkageCase ->
-                // A workaround for KT-72965: Do not log PL errors for @SubclassOptInRequired annotation sites.
-                partialLinkageCase is ExpressionWithMissingDeclaration && expression.symbol.isSubclassOptInRequiredAnnotationConstructor()
-            }
+            significance = PartialLinkageIssueSignificance.MINOR
         ) {
             checkReferencedDeclaration(symbol)
                 ?: checkNotAbstractClass()
@@ -1248,23 +1238,20 @@ internal class PartiallyLinkedIrTreePatcher(
         ) { super.visitReturnableBlock(expression) }
 
         override fun visitReturn(expression: IrReturn) = withContext { context ->
-            expression.maybeThrowLinkageError(
-                transformer = this@NonLocalReturnsPatcher,
-                computePartialLinkageCase = {
-                    if (returnTargetSymbol !in context.validReturnTargets)
-                        IllegalNonLocalReturn(expression, context.validReturnTargets)
-                    else
-                        null
-                },
-                doNotLogWhen = { false }
-            )
+            expression.maybeThrowLinkageError(transformer = this@NonLocalReturnsPatcher) {
+                if (returnTargetSymbol !in context.validReturnTargets)
+                    IllegalNonLocalReturn(expression, context.validReturnTargets)
+                else
+                    null
+            }
+
         }
     }
 
     private inline fun <T : IrExpression> T.maybeThrowLinkageError(
         transformer: FileAwareIrElementTransformerVoid,
+        significance: PartialLinkageIssueSignificance = PartialLinkageIssueSignificance.MAJOR,
         computePartialLinkageCase: T.() -> PartialLinkageCase?,
-        doNotLogWhen: (PartialLinkageCase) -> Boolean,
     ): IrExpression {
         // The codegen uses postorder traversal: Children are evaluated/executed before the containing expression.
         // So it's important to patch children and insert the necessary `throw IrLinkageError(...)` calls if necessary
@@ -1283,7 +1270,7 @@ internal class PartiallyLinkedIrTreePatcher(
             partialLinkageCase,
             element = this,
             transformer.currentFile,
-            doNotLog = doNotLogWhen(partialLinkageCase)
+            significance,
         )
 
         return if (directChildren.statements.isNotEmpty())
@@ -1301,6 +1288,9 @@ internal class PartiallyLinkedIrTreePatcher(
             val containingClassSymbol = parentClassOrNull?.symbol ?: return false
             return unusableClassifierSymbol == containingClassSymbol
         }
+
+        private fun IrConstructor.isAnnotationConstructor(): Boolean =
+            parentClassOrNull?.isAnnotationClass ?: false
 
         /**
          * Removes statements after the first IR p.l. error (everything after the IR p.l. error if effectively dead code and do not need
@@ -1323,12 +1313,6 @@ internal class PartiallyLinkedIrTreePatcher(
         private fun IrExpression.hasBranches(): Boolean = when (this) {
             is IrWhen, is IrLoop, is IrTry, is IrSuspensionPoint, is IrSuspendableExpression -> true
             else -> false
-        }
-
-        // A workaround for KT-72965: Do not log PL errors for @SubclassOptInRequired annotation sites.
-        private fun IrConstructorSymbol.isSubclassOptInRequiredAnnotationConstructor(): Boolean {
-            val signature = signature as? IdSignature.CommonSignature ?: return false
-            return signature.packageFqName == "kotlin" && signature.declarationFqName == "SubclassOptInRequired.<init>"
         }
 
         private val REPLACE_WITH_CONSTRUCTOR_EXPRESSION_FIELD_FQN = FqName("kotlin.ReplaceWith.<init>.expression")

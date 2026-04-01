@@ -28,15 +28,46 @@ import org.jetbrains.kotlin.ir.util.fields
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
+import org.jetbrains.kotlin.kapt.base.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt.base.stubs.KotlinPosition
+import org.jetbrains.kotlin.kapt.base.stubs.LineInfoMap
 import org.jetbrains.kotlin.kapt.base.stubs.getJavacSignature
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import java.io.ByteArrayOutputStream
+import java.io.ObjectOutputStream
 
-class KaptLineMappingCollector(private val kaptContext: KaptContextForStubGeneration) : KaptLineMappingCollectorBase() {
+class KaptLineMappingCollector(private val kaptContext: KaptContextForStubGeneration) {
+    private val lineInfo: LineInfoMap = mutableMapOf()
+    private val signatureInfo: MutableMap<String, String> = mutableMapOf()
+
+    fun serialize(): ByteArray {
+        val os = ByteArrayOutputStream()
+        val oos = ObjectOutputStream(os)
+
+        oos.writeInt(KaptStubLineInformation.METADATA_VERSION)
+
+        oos.writeInt(lineInfo.size)
+        for ((fqName, kotlinPosition) in lineInfo) {
+            oos.writeUTF(fqName)
+            oos.writeUTF(kotlinPosition.path)
+            oos.writeBoolean(kotlinPosition.isRelativePath)
+            oos.writeInt(kotlinPosition.pos)
+        }
+
+        oos.writeInt(signatureInfo.size)
+        for ((javacSignature, methodDesc) in signatureInfo) {
+            oos.writeUTF(javacSignature)
+            oos.writeUTF(methodDesc)
+        }
+
+        oos.flush()
+        return os.toByteArray()
+    }
+
     fun registerClass(clazz: ClassNode) {
         register(clazz, clazz.name)
     }

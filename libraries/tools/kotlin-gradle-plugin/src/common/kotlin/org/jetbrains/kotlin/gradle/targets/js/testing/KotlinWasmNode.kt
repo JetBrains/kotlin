@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
 import org.gradle.api.file.Directory
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
-import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
@@ -18,8 +15,6 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJv
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework.Companion.createTestExecutionSpecDeprecated
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework.Companion.CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -28,8 +23,6 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companio
 
 internal class KotlinWasmNode(
     kotlinJsTest: KotlinJsTest,
-    private val objects: ObjectFactory,
-    private val providers: ProviderFactory,
 ) : KotlinJsTestFramework {
     override val settingsState: String = "KotlinWasmNode"
 
@@ -98,24 +91,4 @@ internal class KotlinWasmNode(
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = emptySet()
 
     override fun getPath(): String = "$testPath:kotlinTestFrameworkStub"
-
-    @Deprecated(
-        CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG,
-        ReplaceWith("createTestExecutionSpec(task, launchOpts, nodeJsArgs, debug)"),
-        DeprecationLevel.ERROR
-    )
-    override fun createTestExecutionSpec(
-        task: KotlinJsTest,
-        forkOptions: ProcessForkOptions,
-        nodeJsArgs: MutableList<String>,
-        debug: Boolean,
-    ): TCServiceMessagesTestExecutionSpec =
-        createTestExecutionSpecDeprecated(
-            task = task,
-            forkOptions = forkOptions,
-            nodeJsArgs = nodeJsArgs,
-            debug = debug,
-            objects = objects,
-            providers = providers,
-        )
 }

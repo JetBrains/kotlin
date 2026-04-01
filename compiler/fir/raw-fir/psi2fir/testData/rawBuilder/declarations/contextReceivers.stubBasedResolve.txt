@@ -6,7 +6,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] contextReceivers.kt
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
     context([ResolvedTo(BODY_RESOLVE)] A@<ERROR TYPE REF: Symbol not found for A>, [ResolvedTo(BODY_RESOLVE)] b@<ERROR TYPE REF: Symbol not found for B>)
     public final [ResolvedTo(BODY_RESOLVE)] class C : R|kotlin/Any| {
-        context([ResolvedTo(BODY_RESOLVE)] A@<ERROR TYPE REF: Symbol not found for A>, [ResolvedTo(BODY_RESOLVE)] b@<ERROR TYPE REF: Symbol not found for B>)
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
             super<R|kotlin/Any|>()
         }

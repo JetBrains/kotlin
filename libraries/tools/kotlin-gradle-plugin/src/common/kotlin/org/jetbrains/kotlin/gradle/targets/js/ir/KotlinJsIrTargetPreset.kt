@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinJsBinaryTypeMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinJsIrTargetMetrics
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget.Companion.buildNpmProjectName
 
@@ -34,6 +35,7 @@ internal open class KotlinJsIrTargetPreset(
                 isNodejsConfigured = isNodejsConfigured,
                 project
             )
+            KotlinJsBinaryTypeMetrics.collectMetrics(this, project)
         }
     }
 

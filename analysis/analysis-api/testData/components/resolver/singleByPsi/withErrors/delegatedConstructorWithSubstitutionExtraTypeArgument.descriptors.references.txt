@@ -1,0 +1,8 @@
+KtConstructorDelegationReferenceExpression(103,108): 'super'
+  KtConstructorDelegationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Any() defined in kotlin.Any>
+    symbols:
+      (in kotlin.Any) constructor()

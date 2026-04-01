@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
+package org.jetbrains.kotlin.buildtools.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 
@@ -12,11 +12,11 @@ interface CompilationOutcome {
 
     val uniqueLogLines: Map<LogLevel, Set<String>>
 
-    val actualResult: CompilationResult
+    val actualResult: CompilationResult?
 
     fun requireLogLevel(logLevel: LogLevel)
 
     fun expectFail()
 
-    fun expectCompilationResult(compilationResult: CompilationResult)
+    fun expectCompilationResult(compilationResult: CompilationResult?)
 }

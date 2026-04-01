@@ -2,5 +2,10 @@ KtDestructuringDeclarationEntry(34,35): 'x'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: '<error property>' !in []
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<SYNTAX: Syntax error: Initializer required for destructuring declaration.>
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       val `<error property>`: ERROR(Destructuring declarations are only allowed for local variables/values)

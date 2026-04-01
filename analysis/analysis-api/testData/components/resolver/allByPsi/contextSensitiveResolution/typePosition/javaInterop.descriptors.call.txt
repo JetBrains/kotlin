@@ -38,21 +38,20 @@ KtWhenExpression(93,216): 'when (instance) {'
   null
 
 KtNameReferenceExpression(99,107): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = JClass
-          symbol = instance: JClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = JClass
+        symbol = instance: JClass
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(115,145): 'is JCOption1 -> instance.prop1'
@@ -68,35 +67,34 @@ KtUserType(118,127): 'JCOption1'
   null
 
 KtNameReferenceExpression(118,127): 'JCOption1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: JCOption1>
 
 KtDotQualifiedExpression(131,145): 'instance.prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtNameReferenceExpression(131,139): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = JClass
-          symbol = instance: JClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = JClass
+        symbol = instance: JClass
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(140,145): 'prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
@@ -113,35 +111,34 @@ KtUserType(154,163): 'JCOption2'
   null
 
 KtNameReferenceExpression(154,163): 'JCOption2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: JCOption2>
 
 KtDotQualifiedExpression(167,181): 'instance.prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
 KtNameReferenceExpression(167,175): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = JClass
-          symbol = instance: JClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = JClass
+        symbol = instance: JClass
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(176,181): 'prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
@@ -158,35 +155,34 @@ KtUserType(190,196): 'Nested'
   null
 
 KtNameReferenceExpression(190,196): 'Nested'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Nested>
 
 KtDotQualifiedExpression(200,213): 'instance.prop'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtNameReferenceExpression(200,208): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = JClass
-          symbol = instance: JClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = JClass
+        symbol = instance: JClass
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(209,213): 'prop'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
@@ -230,21 +226,20 @@ KtIsExpression(282,303): 'instance is SCOption1'
   null
 
 KtNameReferenceExpression(282,290): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = SealedJClass
-          symbol = instance: SealedJClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = SealedJClass
+        symbol = instance: SealedJClass
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(291,293): 'is'
@@ -257,7 +252,7 @@ KtUserType(294,303): 'SCOption1'
   null
 
 KtNameReferenceExpression(294,303): 'SCOption1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SCOption1>
 
@@ -271,30 +266,29 @@ KtReturnExpression(315,336): 'return instance.prop1'
   null
 
 KtDotQualifiedExpression(322,336): 'instance.prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtNameReferenceExpression(322,330): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = SealedJClass
-          symbol = instance: SealedJClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = SealedJClass
+        symbol = instance: SealedJClass
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(331,336): 'prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
@@ -308,21 +302,20 @@ KtIsExpression(351,372): 'instance is SCOption2'
   null
 
 KtNameReferenceExpression(351,359): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = SealedJClass
-          symbol = instance: SealedJClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = SealedJClass
+        symbol = instance: SealedJClass
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(360,362): 'is'
@@ -335,7 +328,7 @@ KtUserType(363,372): 'SCOption2'
   null
 
 KtNameReferenceExpression(363,372): 'SCOption2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SCOption2>
 
@@ -349,30 +342,29 @@ KtReturnExpression(384,405): 'return instance.prop2'
   null
 
 KtDotQualifiedExpression(391,405): 'instance.prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
 KtNameReferenceExpression(391,399): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = SealedJClass
-          symbol = instance: SealedJClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = SealedJClass
+        symbol = instance: SealedJClass
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(400,405): 'prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
@@ -413,21 +405,20 @@ KtWhenExpression(497,586): 'when (instance) {'
   null
 
 KtNameReferenceExpression(503,511): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = SealedJClass
-          symbol = instance: SealedJClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = SealedJClass
+        symbol = instance: SealedJClass
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(519,549): 'is SCOption1 -> instance.prop1'
@@ -443,35 +434,34 @@ KtUserType(522,531): 'SCOption1'
   null
 
 KtNameReferenceExpression(522,531): 'SCOption1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SCOption1>
 
 KtDotQualifiedExpression(535,549): 'instance.prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtNameReferenceExpression(535,543): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = SealedJClass
-          symbol = instance: SealedJClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = SealedJClass
+        symbol = instance: SealedJClass
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(544,549): 'prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
@@ -488,35 +478,34 @@ KtUserType(557,566): 'SCOption2'
   null
 
 KtNameReferenceExpression(557,566): 'SCOption2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SCOption2>
 
 KtDotQualifiedExpression(570,584): 'instance.prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
 KtNameReferenceExpression(570,578): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = SealedJClass
-          symbol = instance: SealedJClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = SealedJClass
+        symbol = instance: SealedJClass
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(579,584): 'prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
@@ -560,21 +549,20 @@ KtIsExpression(657,678): 'instance is SCOption1'
   null
 
 KtNameReferenceExpression(657,665): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = SealedJClass
-          symbol = instance: SealedJClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = SealedJClass
+        symbol = instance: SealedJClass
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(666,668): 'is'
@@ -587,35 +575,34 @@ KtUserType(669,678): 'SCOption1'
   null
 
 KtNameReferenceExpression(669,678): 'SCOption1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SCOption1>
 
 KtDotQualifiedExpression(682,696): 'instance.prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtNameReferenceExpression(682,690): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = SealedJClass
-          symbol = instance: SealedJClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = SealedJClass
+        symbol = instance: SealedJClass
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(691,696): 'prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
@@ -629,21 +616,20 @@ KtIsExpression(701,722): 'instance is SCOption2'
   null
 
 KtNameReferenceExpression(701,709): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = SealedJClass
-          symbol = instance: SealedJClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = SealedJClass
+        symbol = instance: SealedJClass
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(710,712): 'is'
@@ -656,35 +642,34 @@ KtUserType(713,722): 'SCOption2'
   null
 
 KtNameReferenceExpression(713,722): 'SCOption2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SCOption2>
 
 KtDotQualifiedExpression(726,740): 'instance.prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
 KtNameReferenceExpression(726,734): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = SealedJClass
-          symbol = instance: SealedJClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = SealedJClass
+        symbol = instance: SealedJClass
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(735,740): 'prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 

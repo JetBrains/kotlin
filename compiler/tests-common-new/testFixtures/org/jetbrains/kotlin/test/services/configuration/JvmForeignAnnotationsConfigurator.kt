@@ -138,9 +138,9 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
             configuration.addJvmClasspathRoot(KtTestUtil.getAnnotationsJar())
         }
 
-        if (JvmEnvironmentConfigurationDirectives.WITH_JAKARTA_ANNOTATIONS in registeredDirectives) {
-            System.getProperty("jakarta.annotations.classpath").let { classPath ->
-                classPath ?: error("'jakarta.annotations.classpath' property is unset")
+        if (JvmEnvironmentConfigurationDirectives.WITH_THIRD_PARTY_ANNOTATIONS in registeredDirectives) {
+            System.getProperty("third.party.annotations.classpath").let { classPath ->
+                classPath ?: error("'third.party.annotations.classpath' property is unset")
                 classPath.split(File.pathSeparator)
             }.forEach { absoluteFilename ->
                 configuration.addJvmClasspathRoot(

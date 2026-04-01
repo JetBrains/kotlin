@@ -35,7 +35,7 @@ abstract class AbstractBuiltInsWithJDKMembersTest : KotlinTestWithEnvironment() 
         createEnvironmentWithJdk(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK)
 
     protected fun doTest(builtinVersionName: String) {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val module = JvmResolveUtil.analyze(environment).moduleDescriptor as ModuleDescriptorImpl
 
         for (packageFqName in listOf(BUILT_INS_PACKAGE_FQ_NAME, COLLECTIONS_PACKAGE_FQ_NAME, RANGES_PACKAGE_FQ_NAME)) {

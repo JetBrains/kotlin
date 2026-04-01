@@ -1,0 +1,5 @@
+ALL:
+  test/Foo.obj.<no name>: T
+DIRECT:
+  test/Foo.obj.<no name>: T
+INTERSECTION:

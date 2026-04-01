@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 1
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <interop_interface_inheritor_with_intersection_library>
+final class interop_interface_inheritor_with_intersection.test/Derived : interop_interface_inheritor_with_intersection/AProtocol, interop_interface_inheritor_with_intersection/BProtocol, interop_interface_inheritor_with_intersection/NSObject { // interop_interface_inheritor_with_intersection.test/Derived|null[0]
+    constructor <init>() // interop_interface_inheritor_with_intersection.test/Derived.<init>|-5645683436151566731[0]
+    final fun overriddenFunction() // interop_interface_inheritor_with_intersection.test/Derived.overriddenFunction|-6472102329825707726[0]
+    final fun overriddenProperty(): kotlin/Int // interop_interface_inheritor_with_intersection.test/Derived.overriddenProperty|-7224960608403565684[0]
+    final fun setOverriddenProperty(kotlin/Int) // interop_interface_inheritor_with_intersection.test/Derived.setOverriddenProperty|-8479216322956180924[0]
+}

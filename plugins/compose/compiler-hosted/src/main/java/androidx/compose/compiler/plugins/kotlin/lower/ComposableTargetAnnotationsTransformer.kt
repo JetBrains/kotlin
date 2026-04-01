@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.interpreter.getLastOverridden
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -420,7 +420,7 @@ class ComposableTargetAnnotationsTransformer(
         symbol.owner.body?.findTransformedLambda()
             ?: error("Could not find the singleton lambda for ${dump()}")
 
-    private fun Item.toAnnotation(): IrConstructorCall? =
+    private fun Item.toAnnotation(): IrAnnotation? =
         if (ComposableTargetClass != null && ComposableOpenTargetClass != null) {
             when (this) {
                 is Token -> annotation(ComposableTargetClass).also {
@@ -435,10 +435,10 @@ class ComposableTargetAnnotationsTransformer(
             }
         } else null
 
-    private fun Item.toAnnotations(): List<IrConstructorCall> =
+    private fun Item.toAnnotations(): List<IrAnnotation> =
         toAnnotation()?.let { listOf(it) } ?: emptyList()
 
-    private fun Scheme.toAnnotations(): List<IrConstructorCall> =
+    private fun Scheme.toAnnotations(): List<IrAnnotation> =
         if (ComposableInferredTargetClass != null) {
             listOf(
                 annotation(ComposableInferredTargetClass).also {
@@ -448,7 +448,7 @@ class ComposableTargetAnnotationsTransformer(
         } else emptyList()
 
     private fun annotation(classSymbol: IrClassSymbol) =
-        IrConstructorCallImpl(
+        IrAnnotationImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             classSymbol.defaultType,
@@ -458,8 +458,8 @@ class ComposableTargetAnnotationsTransformer(
             origin = null
         )
 
-    private fun filteredAnnotations(annotations: List<IrConstructorCall>): List<IrConstructorCall> =
-        annotations.filterNot(::isComposableTargetAnnotation)
+    private fun filteredAnnotations(annotations: List<IrConstructorCall>): List<IrAnnotation> =
+        annotations.filterNot(::isComposableTargetAnnotation).filterIsInstance<IrAnnotation>()
 
     private fun isComposableTargetAnnotation(it: IrConstructorCall): Boolean =
         it.isComposableTarget || it.isComposableOpenTarget || it.isComposableInferredTarget
@@ -476,7 +476,7 @@ class ComposableTargetAnnotationsTransformer(
         addMetadataVisibleAnnotations(declaration, scheme.toAnnotations())
     }
 
-    private fun addMetadataVisibleAnnotations(declaration: IrDeclaration, annotations: List<IrConstructorCall>) {
+    private fun addMetadataVisibleAnnotations(declaration: IrDeclaration, annotations: List<IrAnnotation>) {
         declaration.annotations = filteredAnnotations(declaration.annotations) + annotations
         if (declaration is IrMetadataSourceOwner && declaration.metadata is FirMetadataSource) {
             val metadataVisible = context.metadataDeclarationRegistrar.getMetadataVisibleAnnotationsForElement(declaration)

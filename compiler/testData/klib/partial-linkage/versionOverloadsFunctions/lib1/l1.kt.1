@@ -1,0 +1,14 @@
+@file:OptIn(ExperimentalVersionOverloading::class)
+
+class C {
+    fun Int.foo(
+        @IntroducedAt("1") b: String = "B$this",
+        @IntroducedAt("2") c: Boolean = (b == "B10")
+    ): String = "$this/$b/$c"
+
+    suspend fun bar(
+        a: Int = 1,
+        @IntroducedAt("1") b: String = "B$a",
+        @IntroducedAt("2") c: Boolean = (b.length == 2)
+    ): String = "bar/$a/$b/$c"
+}

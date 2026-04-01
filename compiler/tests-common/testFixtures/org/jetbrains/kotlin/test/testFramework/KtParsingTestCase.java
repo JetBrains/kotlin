@@ -27,6 +27,7 @@ import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.TestDataFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.cli.CompilerConfigurationCreationKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -59,7 +60,8 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        myEnvironment = KotlinCoreEnvironment.createForTests(getTestRootDisposable(), CompilerConfiguration.EMPTY,
+        CompilerConfiguration configuration = CompilerConfigurationCreationKt.create(CompilerConfiguration.Companion);
+        myEnvironment = KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration,
                                                              EnvironmentConfigFiles.JVM_CONFIG_FILES);
         myProject = (MockProject) myEnvironment.getProject();
     }

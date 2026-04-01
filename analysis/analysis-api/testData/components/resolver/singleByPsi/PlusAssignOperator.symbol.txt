@@ -1,0 +1,5 @@
+KtOperationReferenceExpression(159,161): '+='
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/WithOperator.plusAssign(<dispatch receiver>: test.WithOperator, f: test.Foo): kotlin.Unit
+    ]

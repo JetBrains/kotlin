@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,12 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolv
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReferenceService
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
+import org.jetbrains.kotlin.analysis.api.components.resolveToSymbols
+import org.jetbrains.kotlin.analysis.api.components.tryResolveSymbols
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableResult
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.renderFrontendIndependentKClassNameOf
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.TestReferenceResolveResultRenderer.renderResolvedTo
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaRendererAnnotationsFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
@@ -16,21 +22,30 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.KaDecla
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KaModifierListRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaTypeParameterRendererFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.KaPropertyAccessorsRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
+import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionError
+import org.jetbrains.kotlin.analysis.api.resolution.symbols
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.FileMarker
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.toCaretMarker
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.unwrapMultiReferences
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.idea.references.KDocReference
+import org.jetbrains.kotlin.idea.references.KtConstructorDelegationReference
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfTypeInPreorder
+import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -110,27 +125,193 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
         val reference = context.element ?: return "no references found"
 
         return analyzeReferenceElement(reference.element, module) {
-            val symbols = reference.resolveToSymbols()
-            val symbolsAgain = reference.resolveToSymbols()
-            testServices.assertions.assertEquals(symbols, symbolsAgain)
+            val symbolsResult = resolveSymbolsAsResolvable(reference)
+            val symbolsAgainResult = resolveSymbolsAsResolvable(reference)
+
+            val symbolsResultAsReferences = resolveSymbolsAsReferences(reference)
+            val symbolsAgainResultAsReferences = resolveSymbolsAsReferences(reference)
+            val symbolsAsReferences = symbolsResultAsReferences.symbols
+            ignoreStabilityIfNeeded {
+                assertStableResult(
+                    testServices = testServices,
+                    firstAttempt = symbolsResult.attempt,
+                    secondAttempt = symbolsAgainResult.attempt,
+                )
+
+                testServices.assertions.assertEquals(symbolsAsReferences, symbolsAgainResultAsReferences.symbols)
+            }
+
+            val symbols = symbolsResult.symbols
+            val isImplicitReferenceToCompanion = reference.isImplicitReferenceToCompanion()
+
+            val resolvesByNamesViolations = resolvesByNamesViolations(
+                file = file,
+                reference = reference,
+                symbols = symbolsAsReferences,
+                isImplicitReferenceToCompanion = isImplicitReferenceToCompanion,
+            )
 
             val renderPsiClassName = Directives.RENDER_PSI_CLASS_NAME in module.testModule.directives
             val options = createRenderingOptions(renderPsiClassName)
+
+            fun renderSymbols(symbols: Collection<KaSymbol>): String = renderResolvedTo(
+                symbols = symbols,
+                renderer = options,
+                sortRenderedDeclarations = reference !is KDocReference,
+            ) { getAdditionalSymbolInfo(it) }
+
             prettyPrint {
-                appendLine("isImplicitReferenceToCompanion: ${reference.isImplicitReferenceToCompanion()}")
+                appendLine("isImplicitReferenceToCompanion: $isImplicitReferenceToCompanion")
                 appendLine("usesContextSensitiveResolution: ${reference.usesContextSensitiveResolution}")
+                resolvesByNamesViolations?.let(::appendLine)
+                val attempt = symbolsResult.attempt
+
+                // This call mustn't be suppressed as this is the API contracts
+                @OptIn(KtExperimentalApi::class)
+                assertSpecificResolutionApi(testServices, attempt, reference as KtResolvable)
+
+                append("attempt: ")
+                appendLine(attempt?.let(::renderFrontendIndependentKClassNameOf) ?: "null")
+                if (attempt is KaSymbolResolutionError) {
+                    appendLine("diagnostic: ${stringRepresentation(attempt.diagnostic)}")
+                }
+
+                val renderedSymbols = renderSymbols(symbols)
                 appendLine("symbols:")
                 withIndent {
-                    val resolvedSymbolsInfo = renderResolvedTo(
-                        symbols = symbols,
-                        renderer = options,
-                        sortRenderedDeclarations = reference !is KDocReference,
-                    ) { getAdditionalSymbolInfo(it) }
+                    append(renderedSymbols)
+                }
 
-                    append(resolvedSymbolsInfo)
+                val renderedSymbolsAsReferences = renderSymbols(symbolsAsReferences)
+                if (renderedSymbolsAsReferences != renderedSymbols) {
+                    appendLine()
+                    appendLine("resolveToSymbols:")
+                    withIndent {
+                        append(renderedSymbolsAsReferences)
+                    }
                 }
             }
         }
+    }
+
+    private sealed class ResolveResult {
+        abstract val symbols: Collection<KaSymbol>
+
+        class Attempt(val attempt: KaSymbolResolutionAttempt?) : ResolveResult() {
+            override val symbols: Collection<KaSymbol>
+                get() = attempt?.symbols.orEmpty()
+        }
+
+        class Symbols(override val symbols: Collection<KaSymbol>) : ResolveResult()
+    }
+
+    @OptIn(KtExperimentalApi::class)
+    context(_: KaSession)
+    private fun resolveSymbolsAsReferences(reference: KtReference): ResolveResult.Symbols {
+        return ResolveResult.Symbols(reference.resolveToSymbols())
+    }
+
+    @OptIn(KtExperimentalApi::class)
+    context(_: KaSession)
+    private fun resolveSymbolsAsResolvable(reference: KtReference): ResolveResult.Attempt {
+        return ResolveResult.Attempt(reference.tryResolveSymbols())
+    }
+
+    /**
+     * Returns a string representation of the [KtReference.resolvesByNames] violations.
+     *
+     * Consider exdending the [KtReference.resolvesByNames]'s KDoc after modifications inside this method
+     */
+    context(_: KaSession)
+    private fun resolvesByNamesViolations(
+        file: KtFile,
+        reference: KtReference,
+        symbols: Collection<KaSymbol>,
+        isImplicitReferenceToCompanion: Boolean,
+    ): String? {
+        // The stable order is required
+        val providedNames = reference.resolvesByNames.map(Name::asString).toSet()
+        val shouldNotPredictNames = when (reference) {
+            is KtConstructorDelegationReference -> true
+            is KtSimpleNameReference -> when (val element = reference.element) {
+                is KtNameReferenceExpression -> element.parent is KtInstanceExpressionWithLabel
+                is KtLabelReferenceExpression -> true
+                else -> false
+            }
+
+            is KDocReference -> when (reference.element.text) {
+                KtTokens.THIS_KEYWORD.value, KtTokens.SUPER_KEYWORD.value -> true
+                else -> false
+            }
+
+            else -> false
+        }
+
+        val violationMessagePrefix = "resolvesByNamesViolations:"
+        if (shouldNotPredictNames) {
+            return providedNames.takeIf { it.isNotEmpty() }?.let { providedNames ->
+                "$violationMessagePrefix shouldn't predict, but $providedNames provided"
+            }
+        }
+
+        val resolvedToAlias = file.importDirectives
+            .filter { it.aliasName != null && it.importedFqName != null }
+            .groupBy(
+                keySelector = { it.importedFqName!!.shortName().asString() },
+                valueTransform = { it.aliasName!! },
+            )
+            .toMap()
+
+        val resolvedNames: Set<String> = symbols.mapNotNullTo(mutableSetOf()) { resolvedSymbol ->
+            when (resolvedSymbol) {
+                // Skip check for companion object usages since we cannot predict them
+                is KaNamedClassSymbol if (resolvedSymbol.classKind == KaClassKind.COMPANION_OBJECT && isImplicitReferenceToCompanion) -> null
+
+                is KaNamedSymbol -> {
+                    val name = resolvedSymbol.name
+                    when (resolvedSymbol) {
+                        // Special handling for unused local variables. It is the case for destructuring declaration entries
+                        is KaLocalVariableSymbol
+                            // <underscore local var> is a special name for K1
+                            if (name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR || name.asString() == "<underscore local var>") -> "_"
+
+                        else -> name.asString()
+                    }
+                }
+
+                // Constructors themselves don't have names, but we might check the containing class name since it is expected
+                // to be inside the provided list
+                is KaConstructorSymbol -> resolvedSymbol.containingDeclaration!!.name!!.asString()
+
+                // Package symbol is not considered as a named one (at least yet)
+                is KaPackageSymbol -> resolvedSymbol.fqName.shortName().asString()
+
+                // Property accessors don't have names, but we might check the containing property name since it is expected
+                // to be inside the provided list
+                // Currently, only K1 cases are known to be present in the resolution result
+                is KaPropertyAccessorSymbol ->
+                    if (configurator.frontendKind == FrontendKind.Fe10) {
+                        resolvedSymbol.containingDeclaration!!.name!!.asString()
+                    } else {
+                        // Most likely, this branch will need to be dropped once K2 has a use case for it
+                        error("Unexpected symbol $resolvedSymbol. Most likely the KDoc of ${KtReference::resolvesByNames.name} should be updated to cover this case")
+                    }
+
+                else -> error("Unexpected symbol $resolvedSymbol")
+            }
+        }
+
+        val violations = resolvedNames.mapNotNull { resolvedName ->
+            if (resolvedName !in providedNames && resolvedToAlias[resolvedName].orEmpty().none { it in providedNames }) {
+                "'$resolvedName'"
+            } else {
+                null
+            }
+        }.ifEmpty { return null }
+
+        val violationsAsString = violations.singleOrNull() ?: violations.toString()
+        val suffixWithAliases = if (resolvedToAlias.isNotEmpty()) " + $resolvedToAlias" else ""
+        return "$violationMessagePrefix $violationsAsString !in $providedNames$suffixWithAliases"
     }
 
     private fun createRenderingOptions(renderPsiClassName: Boolean): KaDeclarationRenderer {

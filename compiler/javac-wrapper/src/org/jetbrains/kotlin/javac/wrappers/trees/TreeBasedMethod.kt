@@ -60,4 +60,7 @@ class TreeBasedMethod(
         get() = tree.defaultValue?.let { defaultValue ->
             createAnnotationArgument(defaultValue, Name.identifier("value"), compilationUnit, javac, containingClass, this)
         }
+
+    override val isNative: Boolean
+        get() = tree.modifiers.isNative
 }

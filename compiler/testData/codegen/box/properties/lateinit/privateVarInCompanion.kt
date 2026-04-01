@@ -1,5 +1,4 @@
 // KT-44234
-// JVM_ABI_K1_K2_DIFF: KT-63984, KT-76258
 
 class App {
     val context: Context = Context()

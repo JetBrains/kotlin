@@ -1,5 +1,5 @@
 FILE: coercedInvocationKind.kt
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun zero(block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun zero(block: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(block, EXACTLY_ONCE)
@@ -13,7 +13,7 @@ FILE: coercedInvocationKind.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun zero2(block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun zero2(block: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(block, AT_LEAST_ONCE)
@@ -27,7 +27,7 @@ FILE: coercedInvocationKind.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun multiple(block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun multiple(block: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(block, EXACTLY_ONCE)
@@ -43,7 +43,7 @@ FILE: coercedInvocationKind.kt
         R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun multiple2(block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun multiple2(block: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(block, AT_MOST_ONCE)

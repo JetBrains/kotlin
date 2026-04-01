@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 class FirDelegatedPropertyInferenceSession(
     private val resolutionContext: ResolutionContext,
     private val callCompleter: FirCallCompleter,
-    private val delegateExpression: FirExpression,
+    private val delegateExpression: FirExpression?,
 ) : FirInferenceSession() {
 
     private val partiallyResolvedCalls: MutableList<Pair<FirResolvable, Candidate>> = mutableListOf()
@@ -175,7 +175,7 @@ class FirDelegatedPropertyInferenceSession(
                 ConstraintSystemCompletionMode.FULL,
                 notCompletedCalls,
                 unitType, resolutionContext
-            ) { lambdaAtom, withPCLASession ->
+            ) { lambdaAtom, withPCLASession, precalculatedBoundsForCL ->
                 // Reversed here bc we want top-most call to avoid exponential visit
                 val containingCandidateForLambda = notCompletedCalls.asReversed().first {
                     var found = false
@@ -188,7 +188,8 @@ class FirDelegatedPropertyInferenceSession(
                     parentSystem,
                     lambdaAtom,
                     containingCandidateForLambda,
-                    withPCLASession
+                    withPCLASession,
+                    precalculatedBoundsForCL,
                 )
             }
         }

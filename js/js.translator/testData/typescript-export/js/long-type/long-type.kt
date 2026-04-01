@@ -1,10 +1,13 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_ANALYSIS_API_BASED_TYPESCRIPT_EXPORT: JS_IR
 // CHECK_TYPESCRIPT_DECLARATIONS
+// TSC_TARGET: es2020
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
 // LANGUAGE: +ContextParameters
 // MODULE: JS_TESTS
+// WITH_STDLIB
 // FILE: long-type.kt
 package foo
 
@@ -12,10 +15,19 @@ package foo
 val _long: Long = 1L
 
 @JsExport
-val _long_array: LongArray = longArrayOf()
+val _ulong: ULong = ULong.MAX_VALUE
 
 @JsExport
-val _array_long: Array<Long> = emptyArray()
+val _long_array: LongArray = longArrayOf(1L)
+
+@JsExport
+val _ulong_array: ULongArray = ulongArrayOf(ULong.MAX_VALUE)
+
+@JsExport
+val _array_long: Array<Long> = arrayOf(1L)
+
+@JsExport
+val _array_ulong: Array<ULong> = arrayOf(ULong.MAX_VALUE)
 
 @JsExport
 <!MUST_BE_INITIALIZED!>var myVar: Long<!>
@@ -32,6 +44,14 @@ fun funWithLongParameters(a: Long, b: Long) = a + b
 
 @JsExport
 fun funWithLongDefaultParameters(a: Long = 1L, b: Long = a) = a + b
+
+@JsExport
+fun varargLong(vararg x: Long): Int =
+    x.size
+
+@JsExport
+fun varargULong(vararg x: ULong): Int =
+    x.size
 
 @JsExport
 fun <T : Long> funWithTypeParameter(a: T, b: T) = a + b

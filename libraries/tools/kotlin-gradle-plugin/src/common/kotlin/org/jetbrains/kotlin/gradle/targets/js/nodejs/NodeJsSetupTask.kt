@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @DisableCachingByDefault
 abstract class NodeJsSetupTask @Inject constructor(
-    settings: BaseNodeJsEnvSpec
+    settings: BaseNodeJsEnvSpec,
 ) : AbstractSetupTask<NodeJsEnv, BaseNodeJsEnvSpec>(settings) {
 
     @get:Internal
@@ -79,13 +79,6 @@ abstract class NodeJsSetupTask @Inject constructor(
     }
 
     companion object {
-        @Deprecated(
-            "Use nodeJsSetupTaskProvider from corresponding NodeJsEnvSpec or WasmNodeJsEnvSpec instead. " +
-                    "Scheduled for removal in Kotlin 2.4.",
-            level = DeprecationLevel.ERROR
-        )
-        const val NAME: String = "kotlinNodeJsSetup"
-
         @InternalKotlinGradlePluginApi
         const val BASE_NAME: String = "nodeJsSetup"
     }

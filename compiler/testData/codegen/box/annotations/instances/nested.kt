@@ -1,6 +1,6 @@
 // WITH_STDLIB
-// TARGET_BACKEND: JVM_IR, WASM
-// JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// ^ KT-83349 Wrong hashCode values in instantiated annotations
 
 annotation class Inner(val v: String)
 

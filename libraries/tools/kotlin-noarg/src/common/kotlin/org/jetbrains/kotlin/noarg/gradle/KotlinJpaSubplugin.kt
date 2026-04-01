@@ -18,11 +18,17 @@ package org.jetbrains.kotlin.noarg.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.jetbrains.kotlin.allopen.gradle.AllOpenGradleSubplugin
 
 class KotlinJpaSubplugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.plugins.apply(NoArgGradleSubplugin::class.java)
+        project.plugins.apply(AllOpenGradleSubplugin::class.java)
+
         val noArgExtension = NoArgGradleSubplugin.getNoArgExtension(project)
         noArgExtension.myPresets += "jpa"
+
+        val allOpenExtension = AllOpenGradleSubplugin.getAllOpenExtension(project)
+        allOpenExtension.preset("jpa")
     }
 }

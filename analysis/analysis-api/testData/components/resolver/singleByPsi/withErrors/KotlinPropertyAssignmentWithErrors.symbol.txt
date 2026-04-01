@@ -1,0 +1,20 @@
+<caret_1>:
+  KtNameReferenceExpression(64,73): 'something'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        var something: kotlin.Int
+      ]
+
+<caret_2>:
+  KtNameReferenceExpression(82,91): 'something'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        var something: kotlin.Int
+      ]
+
+<caret_3>:
+  KtNameReferenceExpression(104,113): 'something'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        var something: kotlin.Int
+      ]

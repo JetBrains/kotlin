@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // OPT_IN: kotlin.js.ExperimentalJsStatic
 // IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
 // DIAGNOSTICS: -UNUSED_VARIABLE
@@ -66,3 +67,6 @@ interface B {
 
     }
 }
+
+<!JS_STATIC_NOT_IN_CLASS_COMPANION!>@JsStatic
+fun A.Companion.bar()<!> {}

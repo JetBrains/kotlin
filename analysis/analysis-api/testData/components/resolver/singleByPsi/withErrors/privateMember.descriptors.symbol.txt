@@ -1,0 +1,6 @@
+KtDotQualifiedExpression(59,66): 'a.foo()'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /A.foo(<dispatch receiver>: A): kotlin.Unit
+    ]
+    diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'foo': it is private in 'A'>

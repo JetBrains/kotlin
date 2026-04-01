@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -20,11 +21,8 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources
 fun createPartialLinkageSupportForLowerings(
     partialLinkageConfig: PartialLinkageConfig,
     builtIns: IrBuiltIns,
-    messageCollector: MessageCollector
-): PartialLinkageSupportForLowerings = if (partialLinkageConfig.isEnabled)
-    PartialLinkageSupportForLoweringsImpl(builtIns, PartialLinkageLogger(messageCollector, partialLinkageConfig.logLevel))
-else
-    PartialLinkageSupportForLowerings.DISABLED
+    diagnosticReporter: IrDiagnosticReporter,
+): PartialLinkageSupportForLowerings = PartialLinkageSupportForLoweringsImpl(builtIns, PartialLinkageLogger(diagnosticReporter, partialLinkageConfig.logLevel))
 
 internal class PartialLinkageSupportForLoweringsImpl(
     private val builtIns: IrBuiltIns,
@@ -54,9 +52,9 @@ internal class PartialLinkageSupportForLoweringsImpl(
         partialLinkageCase: PartialLinkageCase,
         element: IrElement,
         file: PLFile,
-        doNotLog: Boolean
+        significance: PartialLinkageIssueSignificance,
     ): IrCall {
-        val errorMessage = prepareLinkageError(doNotLog, partialLinkageCase, element, file)
+        val errorMessage = renderAndLogLinkageError(partialLinkageCase, element, file, significance)
 
         throwExpressionsGenerated++ // Track each generated `throw` expression.
 
@@ -72,22 +70,17 @@ internal class PartialLinkageSupportForLoweringsImpl(
         }
     }
 
-    override fun prepareLinkageError(
-        doNotLog: Boolean,
+    override fun renderAndLogLinkageError(
         partialLinkageCase: PartialLinkageCase,
         element: IrElement,
         file: PLFile,
-    ): String = if (doNotLog)
-        renderLinkageError(partialLinkageCase) // Just render a message.
-    else
-        renderAndLogLinkageError(partialLinkageCase, element, file) // Render + log with the appropriate severity.
-
-    fun renderAndLogLinkageError(partialLinkageCase: PartialLinkageCase, element: IrElement, file: PLFile): String {
+        significance: PartialLinkageIssueSignificance,
+    ): String {
         val errorMessage = renderLinkageError(partialLinkageCase)
         val locationInSourceCode = file.computeLocationForOffset(element.startOffsetOfFirstDenotableIrElement())
 
         linkageIssuesLogged++ // Track each logged linkage issue.
-        logger.log(errorMessage, locationInSourceCode)
+        logger.log(errorMessage, locationInSourceCode, significance)
 
         return errorMessage
     }

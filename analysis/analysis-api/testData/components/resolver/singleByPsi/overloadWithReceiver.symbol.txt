@@ -1,0 +1,5 @@
+KtCallExpression(50,57): 'myRun()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/myRun(<extension receiver>: kotlin.Any): kotlin.Unit
+    ]

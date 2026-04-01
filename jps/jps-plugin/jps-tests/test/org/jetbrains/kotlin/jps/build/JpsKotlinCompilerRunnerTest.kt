@@ -44,8 +44,51 @@ class JpsKotlinCompilerRunnerTest {
             ) to listOf("-version", "-P", "plugin:<pluginId>:<optionName>=<value>", "-no-stdlib", "-no-sdk"),
         )
         JpsKotlinCompilerRunner().apply {
-            actualToExpectedArgsMap.forEach {
-                assertEquals(filterDuplicatedCompilerPluginOptionsForTest(it.key), it.value)
+            actualToExpectedArgsMap.forEach { (input, expected) ->
+                assertEquals(expected, input.filterDuplicatedCompilerPluginOptionsForTest())
+            }
+        }
+    }
+
+    @Test
+    fun filterDuplicatedWarningLevelTest() {
+        val actualToExpectedArgsMap = mapOf(
+            listOf("-version", "-language-version", "2.1") to
+                    listOf("-version", "-language-version", "2.1"),
+
+            listOf("-Xwarning-level=INVISIBLE_REFERENCE:error") to
+                    listOf("-Xwarning-level=INVISIBLE_REFERENCE:error"),
+
+            listOf(
+                "-Xwarning-level=INVISIBLE_REFERENCE:error",
+                "-language-version", "2.1",
+                "-Xwarning-level=INVISIBLE_REFERENCE:error"
+            ) to listOf("-Xwarning-level=INVISIBLE_REFERENCE:error", "-language-version", "2.1"),
+
+            listOf(
+                "-Xwarning-level=INVISIBLE_REFERENCE:error",
+                "-Xwarning-level=NOTHING_TO_INLINE:warning"
+            ) to listOf("-Xwarning-level=INVISIBLE_REFERENCE:error", "-Xwarning-level=NOTHING_TO_INLINE:warning"),
+
+            listOf(
+                "-version",
+                "-Xwarning-level=INVISIBLE_REFERENCE:error",
+                "-no-stdlib",
+                "-Xwarning-level=NOTHING_TO_INLINE:warning",
+                "-Xwarning-level=INVISIBLE_REFERENCE:error",
+                "-Xwarning-level=NOTHING_TO_INLINE:warning",
+                "-no-sdk"
+            ) to listOf(
+                "-version",
+                "-Xwarning-level=INVISIBLE_REFERENCE:error",
+                "-no-stdlib",
+                "-Xwarning-level=NOTHING_TO_INLINE:warning",
+                "-no-sdk"
+            ),
+        )
+        JpsKotlinCompilerRunner().apply {
+            actualToExpectedArgsMap.forEach { (input, expected) ->
+                assertEquals(expected, input.filterDuplicatedWarningLevelForTest())
             }
         }
     }

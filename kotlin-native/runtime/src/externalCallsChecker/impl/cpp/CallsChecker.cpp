@@ -184,7 +184,6 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "-[NSObject conformsToProtocol:]",
         "-[NSObject init]",
         "-[NSObject isKindOfClass:]",
-        "-[NSObject retain]",
         "-[NSPlaceholderString initWithBytes:length:encoding:]",
         "-[NSPlaceholderString initWithBytesNoCopy:length:encoding:freeWhenDone:]",
         "-[NSValue init]",
@@ -217,10 +216,6 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "objc_getClass",
         "objc_getProtocol",
         "objc_lookUpClass",
-        "objc_retain",
-        "objc_retainAutoreleaseReturnValue",
-        "objc_retainBlock",
-        "objc_storeWeak",
         "object_getClass",
         "object_isClass",
         "_os_signpost_emit_with_name_impl",
@@ -256,15 +251,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "llvm.memset.*",
         "llvm.objc.autorelease",
         "llvm.objc.autoreleaseReturnValue",
-        "llvm.objc.retain",
         "llvm.vector.*",
-
-        // Not used in Runnable state, but this would be ok.
-        // If we don't include it to the good functions list, the code generator will emit redundant state check at the callsite,
-        // and this would ruin the code: the state check would be inserted between retainAutoreleasedReturnValue and the actual call
-        // producing "autoreleased return value", so the latter won't be able to detect the former, and the autorelease elimination
-        // won't work.
-        "llvm.objc.retainAutoreleasedReturnValue",
         "llvm.objectsize.*",
         "llvm.pow.*",
         "llvm.rint.*",
@@ -276,6 +263,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "llvm.tan.*",
         "llvm.tanh.*",
         "llvm.atan.*",
+        "llvm.atan2.*",
         "llvm.smax.*",
         "llvm.smin.*",
         "llvm.sqrt.*",

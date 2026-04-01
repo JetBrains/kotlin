@@ -64,7 +64,7 @@ class CoroutineTransformer(
                 newStateMachineForLambda(node)
             }
             isSuspendFunctionWithFakeConstructorCall(node) -> newStateMachineForNamedFunction(node)
-            else -> error("no need to generate state maching for ${node.name}")
+            else -> error("no need to generate state machine for ${node.name}")
         }
     }
 
@@ -87,7 +87,6 @@ class CoroutineTransformer(
                 containingClassInternalName = classBuilder.thisName,
                 obtainClassBuilderForCoroutineState = { classBuilder },
                 isForNamedFunction = false,
-                disableTailCallOptimizationForFunctionReturningUnit = false,
                 reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
                 // TODO: this linenumbers might not be correct and since they are used only for step-over, check them.
                 lineNumber = inliningContext.callSiteInfo.lineNumber,
@@ -112,15 +111,12 @@ class CoroutineTransformer(
                 ArrayUtil.toStringArray(node.exceptions)
             )
         ) {
-            // If the node already has state-machine, it is safer to generate state-machine.
-            val disableTailCallOptimization = methods.find { it.name == name && it.desc == node.desc }?.let { isStateMachine(it) } ?: false
             val sourceCompilerForInline = inliningContext.root.sourceCompilerForInline
             val stateMachineBuilder = CoroutineTransformerMethodVisitor(
                 createNewMethodFrom(node, name), node.access, name, node.desc, null, null,
                 containingClassInternalName = classBuilder.thisName,
                 obtainClassBuilderForCoroutineState = { (inliningContext as RegeneratedClassContext).continuationBuilders[continuationClassName]!! },
                 isForNamedFunction = true,
-                disableTailCallOptimizationForFunctionReturningUnit = disableTailCallOptimization,
                 reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
                 lineNumber = inliningContext.callSiteInfo.lineNumber,
                 sourceFile = inliningContext.callSiteInfo.file?.name ?: "",
@@ -214,6 +210,8 @@ fun surroundInvokesWithSuspendMarkersIfNeeded(node: MethodNode) {
         node.instructions.insertBefore(load, withInstructionAdapter {
             addInlineMarker(this, isStartNotEnd = true)
         })
+        // We cannot add INLINE_MARKER_BEFORE_SUSPEND_UNIT_CALL here, as we do not know the type of the non-inlined lambda.
+        // But it seems fine, as it won't happen for inlined lambdas
         node.instructions.insertBefore(invoke, withInstructionAdapter {
             addSuspendMarker(this, isStartNotEnd = true, inlinable = conditional)
         })

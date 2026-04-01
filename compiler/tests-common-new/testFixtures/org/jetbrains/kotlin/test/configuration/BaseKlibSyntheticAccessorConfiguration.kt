@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.test.configuration
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.test.Constructor
-import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.SyntheticAccessorsDumpHandler
@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
-import org.jetbrains.kotlin.test.directives.model.ValueDirective
+import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgConsistencyHandler
@@ -31,16 +32,14 @@ import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSource
 import org.jetbrains.kotlin.utils.bind
 
 fun TestConfigurationBuilder.commonConfigurationForDumpSyntheticAccessorsTest(
-    targetFrontend: FrontendKind<FirOutputArtifact>,
     frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>,
     frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>,
     irInliningFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>,
     serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
-    deserializerFacade: Constructor<org.jetbrains.kotlin.test.model.DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>,
-    customIgnoreDirective: ValueDirective<TargetBackend>? = null,
+    deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>,
 ) {
     globalDefaults {
-        frontend = targetFrontend
+        frontend = FrontendKinds.FIR
         dependencyKind = DependencyKind.Binary
     }
     defaultDirectives {
@@ -52,13 +51,14 @@ fun TestConfigurationBuilder.commonConfigurationForDumpSyntheticAccessorsTest(
         +DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
         +ConfigurationDirectives.WITH_STDLIB
     }
+    configureFirParser(FirParser.LightTree)
     useAdditionalService(::LibraryProvider)
     useAdditionalSourceProviders(
         ::CoroutineHelpersSourceFilesProvider,
         ::AdditionalDiagnosticsSourceFilesProvider,
     )
     useAfterAnalysisCheckers(
-        ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, null),
+        ::BlackBoxCodegenSuppressor.bind(IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS, null),
         ::FirMetaInfoDiffSuppressor,
     )
     facadeStep(frontendFacade)

@@ -95,6 +95,16 @@ class StringTest {
         testStringFromChars("Ц月語Ŭᎍ🀺", chars)
         testStringFromChars("月", chars, 1, 1)
         testStringFromChars("Ŭᎍ🀺", chars, 3, 4)
+
+        // U+1F600 = 0xD83D+0xDE00
+        // With the K/JS implementation, the surrogate pair is split into different chunks 3 times at indexes:
+        // - 16383-16384
+        // - 36863-36864
+        // - 57343-57344
+        val longString = "Kot\uD83D\uDE00".repeat(15_000)
+        val longChars = longString.toCharArray()
+        testStringFromChars(longString, longChars)
+        testStringFromChars("Kot\uD83D\uDE00Kot", longChars, offset = 16_380, length = 8)
     }
 
     @Suppress("DEPRECATION_ERROR")

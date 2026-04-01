@@ -151,8 +151,6 @@ for ((path, projectName, additionalParameters) in testDataPathList) {
             "Full $projectName" to null
         )
 
-        val jpsBuildEnabled = kotlinBuildProperties.isInJpsBuildIdeaSync
-
         for ((name, benchFilter) in configurations) {
             if (generateMT) {
                 generateGradleConfiguration(
@@ -171,26 +169,6 @@ for ((path, projectName, additionalParameters) in testDataPathList) {
                     additionalParameters,
                     benchFilter
                 )
-            }
-            if (jpsBuildEnabled) {
-                if (generateMT) {
-                    generateJpsConfiguration(
-                        "[MT-JPS] $name",
-                        "FirResolveModularizedTotalKotlinTest",
-                        path,
-                        additionalParameters,
-                        benchFilter
-                    )
-                }
-                if (generateFP) {
-                    generateJpsConfiguration(
-                        "[FP-JPS] $name",
-                        "FullPipelineModularizedTest",
-                        path,
-                        additionalParameters,
-                        benchFilter
-                    )
-                }
             }
         }
     }

@@ -1,0 +1,65 @@
+public abstract class cases/protected/AbstractClass {
+	public fun <init> ()V
+	protected abstract fun abstract ()V
+	protected final fun impl ()V
+	protected fun open ()V
+}
+
+public abstract class cases/protected/EnumClass : java/lang/Enum {
+	public static final field A Lcases/protected/EnumClass;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcases/protected/EnumClass;
+	public static fun values ()[Lcases/protected/EnumClass;
+}
+
+public final class cases/protected/FinalClass {
+	public fun <init> ()V
+}
+
+public class cases/protected/OpenProtectedFunUsedByPublicInlineFun {
+	public fun <init> ()V
+	protected final fun protectedFun ()V
+	public final fun publicInline ()V
+}
+
+public final class cases/protected/ProtectedFunUsedByPublicInlineFun {
+	public fun <init> ()V
+	public final fun publicInline ()V
+}
+
+public abstract class cases/protected/PublicAbstractClass {
+	protected fun <init> ()V
+	protected abstract fun getProtectedVal ()I
+	protected abstract fun getProtectedVar ()Ljava/lang/Object;
+	protected abstract fun protectedFun ()V
+	protected abstract fun setProtectedVar (Ljava/lang/Object;)V
+}
+
+public final class cases/protected/PublicFinalClass {
+}
+
+public class cases/protected/PublicOpenClass {
+	protected fun <init> ()V
+	protected final fun getProtectedVal ()I
+	protected final fun getProtectedVar ()I
+	protected final fun protectedFun ()I
+	protected final fun setProtectedVar (I)V
+}
+
+public abstract class cases/protected/PublishedAbstractClass {
+	public fun <init> ()V
+	protected abstract fun abstract ()V
+	protected final fun impl ()V
+	protected fun open ()V
+}
+
+public abstract class cases/protected/PublishedSealedClass {
+	public fun <init> ()V
+	protected abstract fun abstract ()V
+	protected final fun impl ()V
+	protected fun open ()V
+}
+
+public abstract class cases/protected/SealedClass {
+}
+

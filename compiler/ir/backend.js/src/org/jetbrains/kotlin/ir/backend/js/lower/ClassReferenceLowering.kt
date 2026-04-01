@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.ir.createArrayOfExpression
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.*
 
+@PhasePrerequisites(JsClassUsageInReflectionLowering::class)
 class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowering(context) {
     private val getClassData = context.symbols.jsClass
     private val primitiveClassesObject = context.symbols.primitiveClassesObject

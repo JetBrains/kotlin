@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.gradle.plugin.VariantImplementationFactoriesConfigurator
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporter
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.NoOpCompilerDiagnosticsProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
 
 /**
@@ -20,4 +22,6 @@ fun Gradle.registerMinimalVariantImplementationFactoriesForTests() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
     factories[ProblemsReporter.Factory::class] =
         TestsProblemsReporter.Factory()
+    factories[CompilerDiagnosticsProblemsReporter.Factory::class] =
+        NoOpCompilerDiagnosticsProblemsReporter.Factory()
 }

@@ -1,0 +1,138 @@
+KtFile: 'simpleDisabledFeature.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,108): 'enum class MyEnum {'
+  null
+
+KtDeclarationModifierList(78,82): 'enum'
+  null
+
+KtClassBody(96,108): '{'
+  null
+
+KtEnumEntry(102,104): 'X,'
+  null
+
+KtEnumEntry(105,106): 'Y'
+  null
+
+KtNamedFunction(110,131): 'fun foo(a: MyEnum) {}'
+  null
+
+KtParameterList(117,128): '(a: MyEnum)'
+  null
+
+KtParameter(118,127): 'a: MyEnum'
+  null
+
+KtTypeReference(121,127): 'MyEnum'
+  null
+
+KtUserType(121,127): 'MyEnum'
+  null
+
+KtNameReferenceExpression(121,127): 'MyEnum'
+  null
+
+KtBlockExpression(129,131): '{}'
+  null
+
+KtNamedFunction(133,212): 'fun main() {'
+  null
+
+KtParameterList(141,143): '()'
+  null
+
+KtBlockExpression(144,212): '{'
+  null
+
+KtProperty(151,167): 'val L = MyEnum.X'
+  null
+
+KtDotQualifiedExpression(159,167): 'MyEnum.X'
+  null
+
+KtNameReferenceExpression(159,165): 'MyEnum'
+  null
+
+KtNameReferenceExpression(166,167): 'X'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.X
+    ]
+
+KtCallExpression(173,179): 'foo(X)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(173,176): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
+
+KtValueArgumentList(176,179): '(X)'
+  null
+
+KtValueArgument(177,178): 'X'
+  null
+
+KtNameReferenceExpression(177,178): 'X'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
+
+KtCallExpression(184,190): 'foo(L)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(184,187): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
+
+KtValueArgumentList(187,190): '(L)'
+  null
+
+KtValueArgument(188,189): 'L'
+  null
+
+KtNameReferenceExpression(188,189): 'L'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
+
+KtCallExpression(195,210): 'foo(UNRESOLVED)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(195,198): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
+
+KtValueArgumentList(198,210): '(UNRESOLVED)'
+  null
+
+KtValueArgument(199,209): 'UNRESOLVED'
+  null
+
+KtNameReferenceExpression(199,209): 'UNRESOLVED'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: UNRESOLVED>

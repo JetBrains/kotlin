@@ -105,10 +105,10 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
         }
         /*
          * `regularClass.isLocal` indicates that either class itsef is local or it is a nested class in some other class
-         * Check for parentClassId allows to distinguish between those cases
+         * Check for outerClassId allows to distinguish between those cases
          */
         irClass.setParent(parent)
-        if (!(regularClass.isLocal && regularClass.classId.parentClassId == null)) {
+        if (!(regularClass.isLocal && regularClass.classId.outerClassId == null)) {
             addDeclarationToParent(irClass, parent)
         }
         return irClass
@@ -332,7 +332,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
 
     @OptIn(LookupTagInternals::class)
     fun createEarlierSnippetClass(snippet: FirReplSnippet, containingPackageFragment: IrPackageFragment, symbol: IrClassSymbol): IrClass {
-        val name = NameUtils.getScriptTargetClassName(snippet.name)
+        val name = snippet.snippetClass.name
         val firSnippetClassSymbol = FirRegularClassSymbol(ClassId(containingPackageFragment.packageFqName, name))
         val firSnippetClass = buildRegularClass {
             moduleData = snippet.moduleData

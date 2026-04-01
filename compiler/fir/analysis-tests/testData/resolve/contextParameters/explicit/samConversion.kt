@@ -11,9 +11,15 @@ fun interface StringConsumer {
 fun interface Function1<T> {
     fun compute(t: T): T
 }
+fun interface SuspendSam {
+    suspend fun run()
+}
 
 context(func: Runnable)
 fun simple() {}
+
+context(func: SuspendSam)
+fun simpleSuspend() {}
 
 context(func: StringConsumer)
 fun oneParameter() {}
@@ -37,6 +43,18 @@ fun test() {
     simple(func = <!ARGUMENT_TYPE_MISMATCH!>{ it: Int -> }<!>)
     simple(func = <!ARGUMENT_TYPE_MISMATCH!>{ s: String, i: Int -> }<!>)
     simple(func = ::<!INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE!>stringIdentity<!>)
+
+    val x: () -> Unit = {}
+    simpleSuspend(func = {})
+    simpleSuspend(func = SuspendSam {})
+    simpleSuspend(func = ::doNothing)
+    simpleSuspend(func = SuspendSam(::doNothing))
+    simpleSuspend(func = x)
+
+    simpleSuspend(func = <!ARGUMENT_TYPE_MISMATCH!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE, CANNOT_INFER_VALUE_PARAMETER_TYPE!>it<!> -> }<!>)
+    simpleSuspend(func = <!ARGUMENT_TYPE_MISMATCH!>{ it: Int -> }<!>)
+    simpleSuspend(func = <!ARGUMENT_TYPE_MISMATCH!>{ s: String, i: Int -> }<!>)
+    simpleSuspend(func = ::<!INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE!>stringIdentity<!>)
 
     oneParameter(func = { it.length })
     oneParameter(func = StringConsumer { it.length })

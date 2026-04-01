@@ -5,18 +5,13 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.descriptors.isClass
 import org.jetbrains.kotlin.descriptors.isInterface
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
-import org.jetbrains.kotlin.ir.backend.js.constructorFactory
-import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
-import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.lower.*
+import org.jetbrains.kotlin.ir.backend.js.ir.isExported
+import org.jetbrains.kotlin.ir.backend.js.lower.isEs6PrimaryConstructorReplacement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
@@ -28,6 +23,9 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JsStandardClassIds
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
 
 val IrFile.nameWithoutExtension: String get() = name.substringBeforeLast(".kt")
 
@@ -40,6 +38,13 @@ fun IrClass.jsConstructorReference(context: JsIrBackendContext): IrExpression {
 
 fun IrDeclaration.isExportedMember(context: JsIrBackendContext) =
     parentClassOrNull != null && isExported(context)
+
+
+fun IrAnnotationContainer.isJsStaticDeclaration(): Boolean =
+    hasAnnotation(JsStandardClassIds.Annotations.JsStatic) ||
+            (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(JsStandardClassIds.Annotations.JsStatic) == true ||
+            (this as? IrProperty)?.getter?.hasAnnotation(JsStandardClassIds.Annotations.JsStatic) == true
+
 
 fun IrDeclaration?.isExportedClass(context: JsIrBackendContext) =
     this is IrClass && kind.isClass && isExported(context)
@@ -55,11 +60,17 @@ fun IrReturn.isTheLastReturnStatementIn(target: IrReturnableBlockSymbol): Boolea
     return target.owner.statements.lastOrNull() === this
 }
 
-fun IrDeclarationWithName.getFqNameWithJsNameWhenAvailable(shouldIncludePackage: Boolean): FqName {
+fun IrDeclarationWithName.getFqNameWithJsNameWhenAvailable(shouldIncludePackage: Boolean, isEsModules: Boolean): FqName {
     val name = getJsNameOrKotlinName()
     return when (val parent = parent) {
-        is IrDeclarationWithName -> parent.getFqNameWithJsNameWhenAvailable(shouldIncludePackage).child(name)
-        is IrPackageFragment -> getKotlinOrJsQualifier(parent, shouldIncludePackage)?.child(name) ?: FqName(name.identifier)
+        is IrDeclarationWithName -> parent.getFqNameWithJsNameWhenAvailable(shouldIncludePackage, isEsModules).child(name)
+        is IrPackageFragment ->
+            (getKotlinOrJsQualifier(parent, shouldIncludePackage)?.child(name) ?: FqName(name.identifier))
+                .butIf(isEsModules && this is IrClass && isObject && !isExternal) {
+                    // In ES modules, static members of a top-level object actually live in the <object name>.$metadata.type namespace,
+                    // rather than just the <object name> namespace.
+                    it.child(Name.identifier($$"$metadata$")).child(Name.identifier("type"))
+                }
         else -> FqName(name.identifier)
     }
 }

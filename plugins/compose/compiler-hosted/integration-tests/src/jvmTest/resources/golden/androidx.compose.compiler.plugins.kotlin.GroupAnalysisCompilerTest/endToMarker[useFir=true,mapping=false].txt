@@ -18,6 +18,6 @@ fun Test(text: String) {
 TestKt {
     file: Test.kt
     Test(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
+        Root { key: <key>, line: 5 }
         ReplaceGroup { key: <key>, line: 7 }
-        RestartGroup { key: <key>, line: 5 }
 }

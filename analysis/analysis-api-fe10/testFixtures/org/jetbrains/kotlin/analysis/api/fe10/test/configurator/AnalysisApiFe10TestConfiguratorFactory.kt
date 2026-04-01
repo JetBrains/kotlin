@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fe10.test.configurator
 
+import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
 
 object AnalysisApiFe10TestConfiguratorFactory : AnalysisApiTestConfiguratorFactory() {
@@ -23,26 +24,23 @@ object AnalysisApiFe10TestConfiguratorFactory : AnalysisApiTestConfiguratorFacto
         }
     }
 
-    override fun supportMode(data: AnalysisApiTestConfiguratorFactoryData): Boolean {
-        return when {
-            data.frontend != FrontendKind.Fe10 -> false
-            data.analysisSessionMode != AnalysisSessionMode.Normal -> false
-            data.analysisApiMode != AnalysisApiMode.Ide -> false
-            else -> when (data.moduleKind) {
-                TestModuleKind.Source -> {
-                    true
-                }
+    override fun supportMode(data: AnalysisApiTestConfiguratorFactoryData): Boolean = when {
+        data.targetPlatform != TargetPlatformEnum.JVM -> false
+        data.frontend != FrontendKind.Fe10 -> false
+        data.analysisSessionMode != AnalysisSessionMode.Normal -> false
+        data.analysisApiMode != AnalysisApiMode.Ide -> false
+        else -> when (data.moduleKind) {
+            TestModuleKind.Source,
+                -> true
 
-                TestModuleKind.ScriptSource,
-                TestModuleKind.LibraryBinary,
-                TestModuleKind.LibraryBinaryDecompiled,
-                TestModuleKind.LibrarySource,
-                TestModuleKind.CodeFragment,
-                TestModuleKind.NotUnderContentRoot,
-                TestModuleKind.NotUnderContentRootWithDependencies -> {
-                    false
-                }
-            }
+            TestModuleKind.ScriptSource,
+            TestModuleKind.LibraryBinary,
+            TestModuleKind.LibraryBinaryDecompiled,
+            TestModuleKind.LibrarySource,
+            TestModuleKind.CodeFragment,
+            TestModuleKind.NotUnderContentRoot,
+            TestModuleKind.NotUnderContentRootWithDependencies,
+                -> false
         }
     }
 }

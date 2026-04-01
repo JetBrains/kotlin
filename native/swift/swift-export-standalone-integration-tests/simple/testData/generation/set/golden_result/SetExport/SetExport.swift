@@ -2,6 +2,16 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+public protocol Foo: KotlinRuntime.KotlinBase {
+}
+@objc(_Foo)
+package protocol _Foo {
+}
+public var testSetFoo: Swift.Never {
+    get {
+        fatalError()
+    }
+}
 public func testOptSetInt(
     s: Swift.Set<Swift.Int32>?
 ) -> Swift.Set<Swift.Int32>? {
@@ -11,6 +21,11 @@ public func testSetAny(
     s: Swift.Set<Swift.AnyHashable>
 ) -> Swift.Set<Swift.AnyHashable> {
     return __root___testSetAny__TypesOfArguments__Swift_Set_Swift_AnyHashable___(s) as! Swift.Set<Swift.AnyHashable>
+}
+public func testSetFooParam(
+    s: Swift.Never
+) -> Swift.Never {
+    fatalError()
 }
 public func testSetInt(
     s: Swift.Set<Swift.Int32>
@@ -66,4 +81,10 @@ public func testSetString(
     s: Swift.Set<Swift.String>
 ) -> Swift.Set<Swift.String> {
     return __root___testSetString__TypesOfArguments__Swift_Set_Swift_String___(s) as! Swift.Set<Swift.String>
+}
+extension SetExport.Foo where Self : KotlinRuntimeSupport._KotlinBridgeable {
+}
+extension SetExport.Foo {
+}
+extension KotlinRuntimeSupport._KotlinExistential: SetExport.Foo where Wrapped : SetExport._Foo {
 }

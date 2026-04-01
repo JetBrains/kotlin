@@ -1,0 +1,21 @@
+FILE: chainedFunSuspendUnitConversion.fir.kt
+    public abstract fun interface SuspendRunnable : R|kotlin/Any| {
+        public abstract suspend fun run(): R|kotlin/Unit|
+
+    }
+    public final fun foo(r: R|SuspendRunnable|): R|kotlin/Unit| {
+    }
+    public final fun bar(): R|kotlin/String| {
+        ^bar String()
+    }
+    public abstract class SubInt : R|() -> kotlin/Int| {
+        public constructor(): R|SubInt| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun test(f: R|() -> kotlin/String|, s: R|SubInt|): R|kotlin/Unit| {
+        R|/foo<Inapplicable(INAPPLICABLE): /foo>#|(SAM(FConversion(R|<local>/f|)))
+        R|/foo<Inapplicable(INAPPLICABLE): /foo>#|(SAM(FConversion(R|<local>/s|)))
+        R|/foo|(SAM(::R|/bar|))
+    }

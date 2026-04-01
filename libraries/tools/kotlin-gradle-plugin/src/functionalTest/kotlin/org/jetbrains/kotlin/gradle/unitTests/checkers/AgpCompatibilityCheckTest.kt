@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics
 import org.jetbrains.kotlin.gradle.util.registerMinimalVariantImplementationFactoriesForTests
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertFails
 import kotlin.test.assertTrue
 

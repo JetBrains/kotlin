@@ -1,0 +1,5 @@
+KtCallExpression(72,75): 'f()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1.invoke(<extension receiver>: P1<dispatch receiver>: kotlin.Function1<P1, R>): R
+    ]

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-69806
 
 import Outer.AllOpen
@@ -23,3 +24,5 @@ class Outer2 {
     @Some
     annotation class AllOpen2
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, nestedClass */

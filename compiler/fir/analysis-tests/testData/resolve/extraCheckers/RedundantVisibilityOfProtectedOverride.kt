@@ -29,7 +29,8 @@ open class Owner {
 
     private class PrivateDerived : Base() {
         // public is redundant, foo is still usable only in scope "Base & its inheritors"
-        <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> override fun foo() {}
+        // However we don't report it because of KT-82487 corner case
+        public override fun foo() {}
 
         // public is redundant, bar is still usable only in module scope
         <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> override fun bar() {}

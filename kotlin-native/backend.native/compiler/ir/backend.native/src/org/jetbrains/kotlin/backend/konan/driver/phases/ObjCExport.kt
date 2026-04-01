@@ -53,7 +53,7 @@ internal val CreateObjCExportCodeSpecPhase = createSimpleNamedCompilerPhase<Link
 ) { context, input ->
     input.createCodeSpec(context.symbolTable!!).also {
         context.config.dumpObjcSelectorToSignatureMapping?.let { path ->
-            it.dumpSelectorToSignatureMapping(path)
+            it.dumpSelectorToSignatureMapping(path, context.symbolTable!!.signaturer!!, input.mapper)
         }
     }
 }

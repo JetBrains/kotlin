@@ -14,14 +14,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
-import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 
 object FirContextualPropertyWithBackingFieldChecker : FirPropertyChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
-        if (!LanguageFeature.ContextReceivers.isEnabled() &&
-            !LanguageFeature.ContextParameters.isEnabled()
+        if (LanguageFeature.ContextReceivers.isDisabled() &&
+            LanguageFeature.ContextParameters.isDisabled()
         ) {
             return
         }
@@ -29,7 +29,7 @@ object FirContextualPropertyWithBackingFieldChecker : FirPropertyChecker(MppChec
 
         if (declaration.hasBackingField && !declaration.isLateInit && declaration.symbol is FirRegularPropertySymbol) {
             reporter.reportOn(
-                declaration.initializer?.source ?: declaration.source,
+                declaration.source,
                 FirErrors.CONTEXT_PARAMETERS_WITH_BACKING_FIELD
             )
         }

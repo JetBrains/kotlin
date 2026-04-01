@@ -64,6 +64,7 @@ In particular, they provide support for:
    Anti-examples:
    - Code insight for Kotlin code
    - [UAST](https://plugins.jetbrains.com/docs/intellij/uast.html)
+3. **Dangling file modules**: Light classes are not supposed to be used in `KaDanglingFileModule` and have no guaranties. These modules don't participate in Java-Kotlin interop, so light class creation will be explicitly prohibited for them later.
 
 ## Entry Points
 

@@ -1,0 +1,5 @@
+KtNameReferenceExpression(53,61): 'instance'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val instance: KtSubClass
+    ]

@@ -61,8 +61,12 @@ fun <T : SirDeclaration> SirMutableDeclarationContainer.addChild(producer: () ->
 
 val SirType.swiftName
     get(): String = when (this) {
-        is SirExistentialType -> protocols.takeIf { it.isNotEmpty() }?.joinToString(prefix = "any ", separator = " & ") { it.swiftFqName }
-            ?: "Any"
+        is SirExistentialType -> protocols.takeIf {
+            it.isNotEmpty()
+        }?.joinToString(prefix = "any ", separator = " & ") { (protocol, typeArguments) ->
+            val typeArguments = typeArguments.takeIf { it.isNotEmpty() }
+            "${protocol.swiftFqName}${typeArguments?.joinToString(prefix = "<", postfix = ">", separator = ",") { it.swiftName } ?: ""}"
+        } ?: "Any"
         is SirNominalType -> listOfNotNull(
             parent?.swiftName?.let { "$it." },
             typeDeclaration.swiftFqName,
@@ -70,8 +74,25 @@ val SirType.swiftName
         ).joinToString("")
         is SirErrorType -> "ERROR_TYPE"
         is SirUnsupportedType -> "Swift.Never"
-        is SirFunctionalType -> "(${parameterTypes.joinToString { it.swiftName }})${" async".takeIf { isAsync } ?: ""} -> ${returnType.swiftName}"
+        is SirFunctionalType -> {
+            val parameters = parameterTypes.joinToString { it.annotatedSwiftName }
+            val async = " async".takeIf { isAsync } ?: ""
+            val throws = when (errorType) {
+                SirType.never -> ""
+                SirType.any -> " throws"
+                else -> " throws(${errorType.swiftName})"
+            }
+            val returnType = returnType.swiftName
+            "($parameters)$async$throws -> $returnType"
+        }
+        is SirTupleType -> "(${types.joinToString { (name, type) -> "${name?.let { "$it: " } ?: ""}${type.swiftName}" }})"
     }
+
+val SirType.annotatedSwiftName
+    get(): String = (this.attributes.map {
+        assert(it.arguments.isNullOrEmpty()) { "Rendering swift attributes with arguments is not supported" }
+        "@${it.identifier.swiftIdentifier}${it.arguments?.let { "()" } ?: ""}"
+    } + this.swiftName).joinToString(" ")
 
 val SirDeclaration.swiftParentNamePrefix: String?
     get() = this.parent.swiftFqNameOrNull

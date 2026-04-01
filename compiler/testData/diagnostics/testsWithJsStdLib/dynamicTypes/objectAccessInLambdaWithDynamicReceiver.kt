@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_DUMP
 
 fun jso(block: dynamic.() -> Unit): dynamic = js("({})").apply(block)

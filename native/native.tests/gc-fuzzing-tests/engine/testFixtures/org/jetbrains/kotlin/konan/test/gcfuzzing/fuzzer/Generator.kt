@@ -36,8 +36,7 @@ private class Generator(seed: Int = 0, val distributions: Distributions = Distri
             0.1 to 0,
             0.5 to 2,
             0.9 to 10,
-            0.999 to 1000,
-            1.0 to Int.MAX_VALUE
+            1.0 to 256,
         )
         val numParameters = CumulativeFun.uniform(
             0.0 to 0,
@@ -62,6 +61,10 @@ private class Generator(seed: Int = 0, val distributions: Distributions = Distri
             1.0 to 100
         )
         val access = Distribution.uniform<AccessKind>() // FIXME maybe more locals then globals?
+        val refKind = Distribution.weighted(
+            Field.StrongRef to 2,
+            Field.WeakRef to 1,
+        )
     }
 
     enum class DefinitionKind {
@@ -112,13 +115,13 @@ private class Generator(seed: Int = 0, val distributions: Distributions = Distri
 
     fun genGlobal(): Definition.Global {
         val lang = genLanguage()
-        return Definition.Global(lang, Field)
+        return Definition.Global(lang, chooseRefKind())
     }
 
     fun genLanguage(): TargetLanguage = distributions.language.next(random)
 
     fun genFields(): List<Field> =
-        List(distributions.numFields.next(random)) { Field }
+        List(distributions.numFields.next(random)) { chooseRefKind() }
 
     fun genParameters(): List<Parameter> =
         List(distributions.numParameters.next(random)) { Parameter }
@@ -136,6 +139,8 @@ private class Generator(seed: Int = 0, val distributions: Distributions = Distri
         StatementKind.CALL -> genCall()
         StatementKind.SPAWN_THREAD -> genSpawnThread()
     }
+
+    private fun chooseRefKind(): Field = distributions.refKind.next(random)
 
     private fun chooseClass(): Int = random.nextInt(0, numDefinitions[DefinitionKind.CLASS]!!)
     private fun chooseFunction(): Int = random.nextInt(0, numDefinitions[DefinitionKind.FUNCTION]!!)

@@ -31,7 +31,7 @@ class ObjCExportStubOriginTest(
         ) { file ->
             val classSymbols = file.classifierSymbols
             val objectSymbol = classSymbols.single()
-            val objectStub = translateToObjCExportStub(objectSymbol)
+            val objectStub = translateToObjCExportStub(objectSymbol)?.objCClass
             assertIs<ObjCInterface>(objectStub, "Object stub should be an interface")
 
             val sharedProperty = objectStub.members.firstOrNull {
@@ -85,10 +85,10 @@ class ObjCExportStubOriginTest(
             }
             assertNotNull(classSymbol, "Class symbol should be present")
 
-            val companionObjectStub = translateToObjCExportStub(companionObjectSymbol)
+            val companionObjectStub = translateToObjCExportStub(companionObjectSymbol)?.objCClass
             assertIs<ObjCInterface>(companionObjectStub, "Object stub should be an interface")
 
-            val classStub = translateToObjCExportStub(classSymbol)
+            val classStub = translateToObjCExportStub(classSymbol)?.objCClass
             assertIs<ObjCInterface>(classStub, "Class stub should be an interface")
 
             val sharedProperty = companionObjectStub.members.firstOrNull {

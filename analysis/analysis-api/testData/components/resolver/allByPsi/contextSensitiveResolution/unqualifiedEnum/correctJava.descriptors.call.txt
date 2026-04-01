@@ -29,21 +29,20 @@ KtWhenExpression(56,106): 'when (javaEnum) {'
   null
 
 KtNameReferenceExpression(62,70): 'javaEnum'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = javaEnum
-          receiverType = null
-          returnType = JavaEnum
-          symbol = javaEnum: JavaEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = javaEnum
+        receiverType = null
+        returnType = JavaEnum
+        symbol = javaEnum: JavaEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(78,88): 'FIRST -> 1'
@@ -53,7 +52,7 @@ KtWhenConditionWithExpression(78,83): 'FIRST'
   null
 
 KtNameReferenceExpression(78,83): 'FIRST'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: FIRST>
 
@@ -67,7 +66,7 @@ KtWhenConditionWithExpression(93,99): 'SECOND'
   null
 
 KtNameReferenceExpression(93,99): 'SECOND'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SECOND>
 

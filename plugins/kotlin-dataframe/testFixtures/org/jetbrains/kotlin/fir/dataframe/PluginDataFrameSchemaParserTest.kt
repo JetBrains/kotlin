@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.fir.dataframe
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrapUnsafe
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -37,7 +38,7 @@ class PluginDataFrameSchemaParserTest {
         val idColumn = result.schema.columns()[0]
         assertIs<SimpleDataColumn>(idColumn)
         assertEquals("id", idColumn.name)
-        assertEquals(StandardClassIds.Int.constructClassLikeType().wrap(), idColumn.type)
+        assertEquals(StandardClassIds.Int.constructClassLikeType().wrapUnsafe(), idColumn.type)
     }
 
     @Test
@@ -59,7 +60,7 @@ class PluginDataFrameSchemaParserTest {
 
         val nullableInt = result.schema.columns()[0]
         assertIs<SimpleDataColumn>(nullableInt)
-        assertEquals(StandardClassIds.Int.constructClassLikeType(isMarkedNullable = true).wrap(), nullableInt.type)
+        assertEquals(StandardClassIds.Int.constructClassLikeType(isMarkedNullable = true).wrapUnsafe(), nullableInt.type)
     }
 
     @Test

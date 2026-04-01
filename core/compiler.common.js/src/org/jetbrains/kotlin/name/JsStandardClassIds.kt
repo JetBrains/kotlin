@@ -24,6 +24,12 @@ object JsStandardClassIds {
     @JvmField
     val Date = "Date".jsId()
 
+    @JvmField
+    val JsAny = "JsAny".jsId()
+
+    @JvmField
+    val JsReference = "JsReference".jsId()
+
     object Annotations {
         @JvmField
         val JsQualifier = "JsQualifier".jsId()
@@ -86,9 +92,6 @@ object JsStandardClassIds {
         val JsOutlinedFunction = "JsOutlinedFunction".jsId()
 
         @JvmField
-        val JsGenerator = "JsGenerator".jsId()
-
-        @JvmField
         val DoNotIntrinsify = "DoNotIntrinsify".jsId()
 
         @JvmField
@@ -99,6 +102,9 @@ object JsStandardClassIds {
 
         @JvmField
         val JsNoLifting = "JsNoLifting".jsId()
+
+        @JvmField
+        val JsNoRuntime = "JsNoRuntime".jsId()
     }
 
     object Callables {

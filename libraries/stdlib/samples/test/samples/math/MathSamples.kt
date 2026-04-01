@@ -133,7 +133,7 @@ class MathSamples {
             assertPrints(sign(-0.0), "-0.0")
         }
 
-        @Test
+        @Sample
         fun naturalLogarithm() {
             assertPrints(ln(E), "1.0")
             assertPrints(ln(1.0), "0.0")
@@ -146,7 +146,7 @@ class MathSamples {
             assertPrints(ln(Double.POSITIVE_INFINITY), "Infinity")
         }
 
-        @Test
+        @Sample
         fun logBase2() {
             assertPrints(log2(2.0), "1.0")
             assertPrints(log2(1.0), "0.0")
@@ -159,7 +159,7 @@ class MathSamples {
             assertPrints(log2(Double.POSITIVE_INFINITY), "Infinity")
         }
 
-        @Test
+        @Sample
         fun logBase10() {
             assertPrints(log10(10.0), "1.0")
             assertPrints(log10(1.0), "0.0")
@@ -172,7 +172,7 @@ class MathSamples {
             assertPrints(log10(Double.POSITIVE_INFINITY), "Infinity")
         }
 
-        @Test
+        @Sample
         fun logarithm() {
             assertPrints(log(64.0, 4.0), "3.0")
             assertPrints(log(100.0, 10.0), "2.0")
@@ -187,7 +187,7 @@ class MathSamples {
             assertPrints(log(0.0, 0.5), "Infinity")
         }
 
-        @Test
+        @Sample
         fun naturalLogarithmPlusOne() {
             // ln1p has better precision for arguments close to zero
             assertTrue(ln1p(1e-20) > 0.0)
@@ -200,6 +200,408 @@ class MathSamples {
             assertPrints(ln1p(-2.0), "NaN")
             assertPrints(ln1p(-1.0), "-Infinity")
             assertPrints(ln1p(Double.POSITIVE_INFINITY), "Infinity")
+        }
+
+        @Sample
+        fun abs() {
+            assertPrints(abs(3.14), "3.14")
+            assertPrints(abs(-3.14), "3.14")
+            assertPrints(abs(-0.0), "0.0")
+            assertPrints(abs(Double.NEGATIVE_INFINITY), "Infinity")
+            assertPrints(abs(Double.NaN), "NaN")
+        }
+
+        @Sample
+        fun absoluteValue() {
+            assertPrints(3.14.absoluteValue, "3.14")
+            assertPrints((-3.14).absoluteValue, "3.14")
+            assertPrints((-0.0).absoluteValue, "0.0")
+            assertPrints(Double.NEGATIVE_INFINITY.absoluteValue, "Infinity")
+            assertPrints(Double.NaN.absoluteValue, "NaN")
+        }
+
+        @Sample
+        fun withSignDouble() {
+            assertPrints(3.14.withSign(3.14), "3.14")
+            assertPrints(3.14.withSign(-3.14), "-3.14")
+            assertPrints((-3.14).withSign(-3.14), "-3.14")
+            assertPrints((-3.14).withSign(0.0), "3.14")
+            assertPrints(Double.NaN.withSign(-1.0), "NaN")
+        }
+
+        @Sample
+        fun withSignInt() {
+            assertPrints(3.14.withSign(100), "3.14")
+            assertPrints(3.14.withSign(-100), "-3.14")
+            assertPrints((-3.14).withSign(-100), "-3.14")
+            assertPrints((-3.14).withSign(0), "3.14")
+            assertPrints(Double.NaN.withSign(-1), "NaN")
+        }
+
+        @Sample
+        fun cbrt() {
+            assertPrints(cbrt(8.0), "2.0")
+            assertPrints(cbrt(-8.0), "-2.0")
+
+            // special cases
+            assertPrints(cbrt(Double.NaN), "NaN")
+            assertPrints(cbrt(Double.POSITIVE_INFINITY), "Infinity")
+            assertPrints(cbrt(Double.NEGATIVE_INFINITY), "-Infinity")
+            assertPrints(cbrt(-0.0), "-0.0")
+        }
+
+        @Sample
+        fun sqrt() {
+            assertPrints(sqrt(9.0), "3.0")
+            assertPrints(sqrt(5.76), "2.4")
+            // special cases
+            assertPrints(sqrt(-0.0), "-0.0")
+            assertPrints(sqrt(-4.0), "NaN")
+            assertPrints(sqrt(Double.NaN), "NaN")
+            assertPrints(sqrt(Double.POSITIVE_INFINITY), "Infinity")
+        }
+
+        @Sample
+        fun hypot() {
+            // sqrt(6 * 6 + 8 * 8) = sqrt(36 + 64) = sqrt(100) = 10
+            assertPrints(hypot(6.0, 8.0), "10.0")
+
+            // special cases
+            assertPrints(hypot(Double.NaN, 2.0), "NaN")
+            assertPrints(hypot(1.0, Double.NaN), "NaN")
+            assertPrints(hypot(Double.POSITIVE_INFINITY, 2.0), "Infinity")
+            assertPrints(hypot(1.0, Double.NEGATIVE_INFINITY), "Infinity")
+        }
+
+        @Sample
+        fun powDouble() {
+            assertPrints(2.0.pow(2.0), "4.0")
+            assertPrints(3.0.pow(1.0), "3.0")
+            assertPrints(4.0.pow(0.0), "1.0")
+            assertPrints(2.0.pow(-2.0), "0.25")
+            assertPrints(4.0.pow(0.5), "2.0")
+            assertPrints((-2.0).pow(2.0), "4.0")
+
+            // special cases
+            assertPrints(Double.NaN.pow(42.0), "NaN")
+            assertPrints(Double.NaN.pow(0.0), "1.0")
+            assertPrints(3.0.pow(Double.NaN), "NaN")
+            assertPrints((-2.0).pow(0.75), "NaN")
+            assertPrints(1.0.pow(Double.POSITIVE_INFINITY), "NaN")
+            assertPrints(1.0.pow(Double.NEGATIVE_INFINITY), "NaN")
+            assertPrints(2.0.pow(Double.POSITIVE_INFINITY), "Infinity")
+            assertPrints(2.0.pow(Double.NEGATIVE_INFINITY), "0.0")
+        }
+
+        @Sample
+        fun powInt() {
+            assertPrints(2.0.pow(2), "4.0")
+            assertPrints(3.0.pow(1), "3.0")
+            assertPrints(4.0.pow(0), "1.0")
+            assertPrints(2.0.pow(-2), "0.25")
+            assertPrints((-2.0).pow(2), "4.0")
+
+            // special cases
+            assertPrints(Double.NaN.pow(42), "NaN")
+            assertPrints(Double.NaN.pow(0), "1.0")
+        }
+
+        @Sample
+        fun exp() {
+            fun Double.firstFiveDigits(): String = toString().substring(0, 7)
+
+            assertPrints(exp(1.0).firstFiveDigits(), "2.71828")
+            assertPrints(exp(2.0).firstFiveDigits(), "7.38905")
+            assertPrints(exp(-1.0).firstFiveDigits(), "0.36787")
+
+            // special cases
+            assertPrints(exp(Double.NaN), "NaN")
+            assertPrints(exp(Double.POSITIVE_INFINITY), "Infinity")
+            assertPrints(exp(Double.NEGATIVE_INFINITY), "0.0")
+        }
+
+        @Sample
+        fun expm1() {
+            fun Double.firstFiveDigits(): String = toString().substring(0, 7)
+
+            assertPrints(expm1(1.0).firstFiveDigits(), "1.71828")
+            // While it does not really matter for relatively large x values (like 1.0),
+            // the difference is getting more pronounced when x is getting closer to 0.0
+            assertPrints(exp(1e-17) - 1.0, "0.0")
+            assertPrints(expm1(1e-17), 1e-17.toString())
+
+            // special cases
+            assertPrints(expm1(Double.NaN), "NaN")
+            assertPrints(expm1(Double.POSITIVE_INFINITY), "Infinity")
+            assertPrints(expm1(Double.NEGATIVE_INFINITY), "-1.0")
+        }
+
+        @Sample
+        fun sin() {
+            val epsilon = 1e-10
+
+            assertPrints(sin(0.0), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // sin(π/2) = 1.0
+            assertTrue((sin(PI / 2) - 1.0).absoluteValue < epsilon)
+            // sin(-π/2) = -1.0
+            assertTrue((sin(-PI / 2) - -1.0).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(sin(Double.NaN), "NaN")
+            assertPrints(sin(Double.POSITIVE_INFINITY), "NaN")
+            assertPrints(sin(Double.NEGATIVE_INFINITY), "NaN")
+        }
+
+        @Sample
+        fun cos() {
+            val epsilon = 1e-10
+
+            assertPrints(cos(0.0), "1.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // cos(π/2) = 0
+            assertTrue(cos(PI / 2).absoluteValue < epsilon)
+            assertPrints(cos(PI), "-1.0")
+
+            // special cases
+            assertPrints(cos(Double.NaN), "NaN")
+            assertPrints(cos(Double.POSITIVE_INFINITY), "NaN")
+            assertPrints(cos(Double.NEGATIVE_INFINITY), "NaN")
+        }
+
+        @Sample
+        fun tan() {
+            val epsilon = 1e-10
+
+            assertPrints(tan(0.0), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // tan(π/4) = 1.0
+            assertTrue((tan(PI / 4) - 1.0).absoluteValue < epsilon)
+            // tan(-π/4) = -1.0
+            assertTrue((tan(-PI / 4) - -1.0).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(tan(Double.NaN), "NaN")
+            assertPrints(tan(Double.POSITIVE_INFINITY), "NaN")
+            assertPrints(tan(Double.NEGATIVE_INFINITY), "NaN")
+        }
+
+        @Sample
+        fun asin() {
+            val epsilon = 1e-10
+
+            assertPrints(asin(0.0), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // asin(1.0) = π/2
+            assertTrue((asin(1.0) - PI / 2).absoluteValue < epsilon)
+            // asin(-1.0) = -π/2
+            assertTrue((asin(-1.0) - (-PI / 2)).absoluteValue < epsilon)
+            // asin(sin(x)) = x
+            assertTrue((asin(sin(0.123)) - 0.123).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(asin(Double.NaN), "NaN")
+            assertPrints(asin(1.1), "NaN")
+            assertPrints(asin(-2.0), "NaN")
+        }
+
+        @Sample
+        fun acos() {
+            val epsilon = 1e-10
+
+            assertPrints(acos(1.0), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // acos(0.0) = π/2
+            assertTrue((acos(0.0) - PI / 2).absoluteValue < epsilon)
+            // acos(-1.0) = π
+            assertTrue((acos(-1.0) - PI).absoluteValue < epsilon)
+            // acos(cos(x)) = x
+            assertTrue((acos(cos(0.123)) - 0.123).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(acos(Double.NaN), "NaN")
+            assertPrints(acos(1.1), "NaN")
+            assertPrints(acos(-2.0), "NaN")
+        }
+
+        @Sample
+        fun atan() {
+            val epsilon = 1e-10
+
+            assertPrints(atan(0.0), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // atan(1.0) = π/4
+            assertTrue((atan(1.0) - PI / 4).absoluteValue < epsilon)
+            // atan(-1.0) = -π/4
+            assertTrue((atan(-1.0) - (-PI / 4)).absoluteValue < epsilon)
+            // atan(tan(x)) = x
+            assertTrue((atan(tan(0.123)) - 0.123).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(atan(Double.NaN), "NaN")
+        }
+
+        @Sample
+        fun atan2() {
+            val epsilon = 1e-10
+            fun Double.toDegrees(): Double = this * 180.0 / PI
+
+            assertPrints(atan2(y = 0.0, x = 0.0), "0.0")
+
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            assertTrue((atan2(y = 1.0, x = 0.0) - PI / 2).absoluteValue < epsilon)
+            assertPrints(atan2(y = 1.0, x = 0.0).toDegrees(), "90.0")
+
+            assertTrue((atan2(y = 0.0, x = -1.0) - PI).absoluteValue < epsilon)
+            assertPrints(atan2(y = 0.0, x = -1.0).toDegrees(), "180.0")
+
+            assertTrue((atan2(y = -1.0, x = 0.0) - (-PI / 2)).absoluteValue < epsilon)
+            assertPrints(atan2(y = -1.0, x = 0.0).toDegrees(), "-90.0")
+
+            // special cases (some of them)
+            assertPrints(atan2(y = Double.NaN, x = 0.5), "NaN")
+            assertPrints(atan2(y = 0.5, x = Double.NaN), "NaN")
+            assertPrints(atan2(y = -0.0, x = 100500.0), "-0.0")
+            assertPrints(atan2(y = 0.0, x = Double.POSITIVE_INFINITY), "0.0")
+            assertPrints(atan2(y = Double.POSITIVE_INFINITY, x = 100500.0).toDegrees(), "90.0")
+        }
+
+        @Sample
+        fun min() {
+            assertPrints(min(-1.0, 1.0), "-1.0")
+            assertPrints(min(1.0, -1.0), "-1.0")
+            assertPrints(min(-3.0, -1.0), "-3.0")
+            assertPrints(min(-0.0, 0.0), "-0.0")
+
+            // special cases
+            assertPrints(min(Double.NaN, 0.0), "NaN")
+            assertPrints(min(-9000.0, Double.NaN), "NaN")
+            // Note that MIN_VALUE has a different meaning compared to Long.MIN_VALUE or Int.MIN_VALUE
+            assertPrints(min(Double.MIN_VALUE, 0.0), "0.0")
+            assertTrue(min(Double.POSITIVE_INFINITY, Double.MAX_VALUE) == Double.MAX_VALUE)
+        }
+
+        @Sample
+        fun max() {
+            assertPrints(max(-1.0, 1.0), "1.0")
+            assertPrints(max(1.0, -1.0), "1.0")
+            assertPrints(max(-3.0, -1.0), "-1.0")
+            assertPrints(max(-0.0, 0.0), "0.0")
+
+            // special cases
+            assertPrints(max(Double.NaN, 0.0), "NaN")
+            assertPrints(max(-9000.0, Double.NaN), "NaN")
+            // Note that MIN_VALUE has a different meaning compared to Long.MIN_VALUE or Int.MIN_VALUE
+            assertTrue(max(Double.MIN_VALUE, 0.0) == Double.MIN_VALUE)
+            assertPrints(max(Double.POSITIVE_INFINITY, Double.MAX_VALUE), "Infinity")
+        }
+
+        @Sample
+        fun discreteValues() {
+            // Unlike true real numbers, Double can only represent a fixed set of discrete values.
+            // According to IEEE-754, Double uses a single bit for a sign, 11 bits for the exponent, and 52 for the fraction.
+            // The bigger the integer part of the floating point value, the less space remains for "fitting" fractional part.
+            // As a result, starting from 2⁵² and until 2⁵³-1 Double values are incremented by 1.0
+            // (meaning that there are no in-between values), values from 2⁵³ until 2⁵⁴-1 are incremented by 2.0,
+            // but values in between 2⁵¹ and 2⁵²-1 are incremented by 0.5.
+            //
+            // The "distance" between a current value and the next one (the "increment" mentioned above) is dynamic,
+            // it depends on the magnitude of the current value, and it could be checked using Double.ulp.
+            val v2_52_53 = 4503599627370498.0 // value in range [2⁵², 2⁵³-1]
+            assertPrints(v2_52_53.ulp, "1.0")
+
+            val v2_53_54 = 9007199254740998.0 // value in range [2⁵³, 2⁵⁴-1]
+            assertPrints(v2_53_54.ulp, "2.0")
+
+            val v2_51_52 = 4503599627370490.0 // value in range [2⁵¹, 2⁵²-1]
+            assertPrints(v2_51_52.ulp, "0.5")
+
+            // Instead of using ulp, you can also check the next and previous values representable with a Double
+            // using Double.nextUp and Double.nextDown correspondingly.
+            assertPrints(9007199254740998.0.nextUp() - 9007199254740998.0, "2.0")
+            assertPrints(9007199254740998.0 - 9007199254740998.0.nextDown(), "2.0")
+
+            // As a more flexible alternative to nextUp/nextDown, one may use nextTowards, which accepts a value
+            // that works as a direction to increase/decrease a given value towards.
+            assertPrints(4503599627370496.0.nextTowards(Double.POSITIVE_INFINITY) - 4503599627370496.0, "1.0")
+            assertPrints(4503599627370496.0 - 4503599627370496.0.nextTowards(Double.NEGATIVE_INFINITY), "0.5")
+        }
+
+        @Sample
+        fun nextUp() {
+            // Floating point numbers have discrete representation,
+            // so depending on the value's magnitude, the step towards
+            // the next representable value will be different
+            assertPrints(10000.0.nextUp(), "10000.000000000002")
+            assertPrints(100000.0.nextUp(), "100000.00000000001")
+
+            // -Infinity is any value large enough to no longer fit Double,
+            // so the next value after it towards 0.0 is -Double.MAX_VALUE
+            assertTrue(Double.NEGATIVE_INFINITY.nextUp() == -Double.MAX_VALUE)
+
+            // For 0.0, the next value is the Double.MIN_VALUE, the smallest representable Double value
+            assertTrue(0.0.nextUp() == Double.MIN_VALUE)
+
+            // special cases
+            assertPrints(Double.NaN.nextUp(), "NaN")
+            assertPrints(Double.POSITIVE_INFINITY.nextUp(), "Infinity")
+        }
+
+        @Sample
+        fun nextDown() {
+            // Floating point numbers have discrete representation,
+            // so depending on the value's magnitude, the step towards
+            // the previous representable value will be different
+            assertPrints(10000.0.nextDown(), "9999.999999999998")
+            assertPrints(100000.0.nextDown(), "99999.99999999999")
+
+            // Infinity is any value large enough to no longer fit Double,
+            // so the previous value towards 0.0 is Double.MAX_VALUE
+            assertTrue(Double.POSITIVE_INFINITY.nextDown() == Double.MAX_VALUE)
+
+            // For 0.0, the previous value is the -Double.MIN_VALUE, the smallest representable Double value
+            assertTrue(0.0.nextDown() == -Double.MIN_VALUE)
+
+            // special cases
+            assertPrints(Double.NaN.nextDown(), "NaN")
+            assertPrints(Double.NEGATIVE_INFINITY.nextDown(), "-Infinity")
+        }
+
+        @Sample
+        fun nextTowards() {
+            // Floating point numbers have discrete representation,
+            // so depending on the value's magnitude, the step towards
+            // the previous representable value will be different
+            assertPrints(10000.0.nextTowards(Double.POSITIVE_INFINITY), "10000.000000000002")
+            assertPrints(100000.0.nextTowards(Double.POSITIVE_INFINITY), "100000.00000000001")
+            assertPrints(10000.0.nextTowards(0.0), "9999.999999999998")
+            assertPrints(100000.0.nextTowards(0.0), "99999.99999999999")
+
+            // nextTowards is in fact a more flexible alternative to nextUp/nextDown
+            assertTrue(100.0.nextTowards(1000.0) == 100.0.nextUp())
+            assertTrue(100.0.nextTowards(-1000.0) == 100.0.nextDown())
+
+            // special cases
+            assertPrints(1.0.nextTowards(1.0), "1.0")
+            assertPrints(Double.POSITIVE_INFINITY.nextTowards(Double.POSITIVE_INFINITY), "Infinity")
+            assertPrints(Double.NEGATIVE_INFINITY.nextTowards(Double.NEGATIVE_INFINITY), "-Infinity")
+            assertPrints(Double.NaN.nextTowards(0.0), "NaN")
+            assertPrints(0.0.nextTowards(Double.NaN), "NaN")
+        }
+
+        @Sample
+        fun ulp() {
+            // the "distance" between two Double values 2ⁿ and 2ⁿ+1 is 2ⁿ⁻⁵²
+            // 2⁴⁹ = 562949953421312, 2⁴⁹⁻⁵² = 1/8 = 0.125
+            assertPrints(562949953421312.0.ulp, "0.125")
+            // 2⁴⁵ = 35184372088832, 2⁴⁹⁻⁵² = 1/128 = 0.0078125
+            assertPrints(35184372088832.0.ulp, "0.0078125")
+
+            // special cases
+            assertPrints(Double.NaN.ulp, "NaN")
+            assertPrints(Double.POSITIVE_INFINITY.ulp, "Infinity")
+            assertPrints(Double.NEGATIVE_INFINITY.ulp, "Infinity")
+            assertTrue(0.0.ulp == Double.MIN_VALUE)
         }
     }
 
@@ -325,7 +727,7 @@ class MathSamples {
             assertPrints(sign(-0.0f), "-0.0")
         }
 
-        @Test
+        @Sample
         fun naturalLogarithm() {
             assertTrue(abs(ln(E.toFloat()) - 1.0f) < 1e7f)
             assertPrints(ln(1.0f), "0.0")
@@ -338,7 +740,7 @@ class MathSamples {
             assertPrints(ln(Float.POSITIVE_INFINITY), "Infinity")
         }
 
-        @Test
+        @Sample
         fun logBase2() {
             assertPrints(log2(2.0f), "1.0")
             assertPrints(log2(1.0f), "0.0")
@@ -351,7 +753,7 @@ class MathSamples {
             assertPrints(log2(Float.POSITIVE_INFINITY), "Infinity")
         }
 
-        @Test
+        @Sample
         fun logBase10() {
             assertPrints(log10(10.0f), "1.0")
             assertPrints(log10(1.0f), "0.0")
@@ -364,7 +766,7 @@ class MathSamples {
             assertPrints(log10(Float.POSITIVE_INFINITY), "Infinity")
         }
 
-        @Test
+        @Sample
         fun logarithm() {
             assertPrints(log(9.0f, 3.0f), "2.0")
             assertPrints(log(1000.0f, 10.0f), "3.0")
@@ -379,7 +781,7 @@ class MathSamples {
             assertPrints(log(0.0f, 0.5f), "Infinity")
         }
 
-        @Test
+        @Sample
         fun naturalLogarithmPlusOne() {
             // ln1p has better precision for arguments close to zero
             assertTrue(ln1p(1e-20f) > 0.0f)
@@ -392,6 +794,491 @@ class MathSamples {
             assertPrints(ln1p(-2.0f), "NaN")
             assertPrints(ln1p(-1.0f), "-Infinity")
             assertPrints(ln1p(Float.POSITIVE_INFINITY), "Infinity")
+        }
+
+        @Sample
+        fun abs() {
+            assertPrints(abs(3.14f), "3.14")
+            assertPrints(abs(-3.14f), "3.14")
+            assertPrints(abs(-0.0f), "0.0")
+            assertPrints(abs(Float.NEGATIVE_INFINITY), "Infinity")
+            assertPrints(abs(Float.NaN), "NaN")
+        }
+
+        @Sample
+        fun absoluteValue() {
+            assertPrints(3.14f.absoluteValue, "3.14")
+            assertPrints((-3.14f).absoluteValue, "3.14")
+            assertPrints((-0.0f).absoluteValue, "0.0")
+            assertPrints(Float.NEGATIVE_INFINITY.absoluteValue, "Infinity")
+            assertPrints(Float.NaN.absoluteValue, "NaN")
+        }
+
+        @Sample
+        fun withSignFloat() {
+            assertPrints(3.14f.withSign(3.14f), "3.14")
+            assertPrints(3.14f.withSign(-3.14f), "-3.14")
+            assertPrints((-3.14f).withSign(-3.14f), "-3.14")
+            assertPrints((-3.14f).withSign(0.0f), "3.14")
+            assertPrints(Float.NaN.withSign(-1.0f), "NaN")
+        }
+
+        @Sample
+        fun withSignInt() {
+            assertPrints(3.14f.withSign(100), "3.14")
+            assertPrints(3.14f.withSign(-100), "-3.14")
+            assertPrints((-3.14f).withSign(-100), "-3.14")
+            assertPrints((-3.14f).withSign(0), "3.14")
+            assertPrints(Float.NaN.withSign(-1), "NaN")
+        }
+
+        @Sample
+        fun cbrt() {
+            assertPrints(cbrt(8.0f), "2.0")
+            assertPrints(cbrt(-8.0f), "-2.0")
+
+            // special cases
+            assertPrints(cbrt(Float.NaN), "NaN")
+            assertPrints(cbrt(Float.POSITIVE_INFINITY), "Infinity")
+            assertPrints(cbrt(Float.NEGATIVE_INFINITY), "-Infinity")
+            assertPrints(cbrt(-0.0f), "-0.0")
+        }
+
+        @Sample
+        fun sqrt() {
+            assertPrints(sqrt(9.0f), "3.0")
+            assertPrints(sqrt(5.76f), "2.4")
+
+            // special cases
+            assertPrints(sqrt(-0.0f), "-0.0")
+            assertPrints(sqrt(-4.0f), "NaN")
+            assertPrints(sqrt(Float.NaN), "NaN")
+            assertPrints(sqrt(Float.POSITIVE_INFINITY), "Infinity")
+        }
+
+        @Sample
+        fun hypot() {
+            // sqrt(6 * 6 + 8 * 8) = sqrt(36 + 64) = sqrt(100) = 10
+            assertPrints(hypot(6.0f, 8.0f), "10.0")
+
+            // special cases
+            assertPrints(hypot(Float.NaN, 2.0f), "NaN")
+            assertPrints(hypot(1.0f, Float.NaN), "NaN")
+            assertPrints(hypot(Float.POSITIVE_INFINITY, 2.0f), "Infinity")
+            assertPrints(hypot(1.0f, Float.NEGATIVE_INFINITY), "Infinity")
+        }
+
+        @Sample
+        fun powFloat() {
+            assertPrints(2.0f.pow(2.0f), "4.0")
+            assertPrints(3.0f.pow(1.0f), "3.0")
+            assertPrints(4.0f.pow(0.0f), "1.0")
+            assertPrints(2.0f.pow(-2.0f), "0.25")
+            assertPrints(4.0f.pow(0.5f), "2.0")
+            assertPrints((-2.0f).pow(2.0f), "4.0")
+
+            // special cases
+            assertPrints(Float.NaN.pow(42.0f), "NaN")
+            assertPrints(Float.NaN.pow(0.0f), "1.0")
+            assertPrints(3.0f.pow(Float.NaN), "NaN")
+            assertPrints((-2.0f).pow(0.75f), "NaN")
+            assertPrints(1.0f.pow(Float.POSITIVE_INFINITY), "NaN")
+            assertPrints(1.0f.pow(Float.NEGATIVE_INFINITY), "NaN")
+            assertPrints(2.0f.pow(Float.POSITIVE_INFINITY), "Infinity")
+            assertPrints(2.0f.pow(Float.NEGATIVE_INFINITY), "0.0")
+        }
+
+        @Sample
+        fun powInt() {
+            assertPrints(2.0f.pow(2), "4.0")
+            assertPrints(3.0f.pow(1), "3.0")
+            assertPrints(4.0f.pow(0), "1.0")
+            assertPrints(2.0f.pow(-2), "0.25")
+            assertPrints((-2.0f).pow(2), "4.0")
+
+            // special cases
+            assertPrints(Float.NaN.pow(42), "NaN")
+            assertPrints(Float.NaN.pow(0), "1.0")
+        }
+
+        @Sample
+        fun exp() {
+            fun Float.firstFiveDigits(): String = toString().substring(0, 7)
+
+            assertPrints(exp(1.0f).firstFiveDigits(), "2.71828")
+            assertPrints(exp(2.0f).firstFiveDigits(), "7.38905")
+            assertPrints(exp(-1.0f).firstFiveDigits(), "0.36787")
+
+            // special cases
+            assertPrints(exp(Float.NaN), "NaN")
+            assertPrints(exp(Float.POSITIVE_INFINITY), "Infinity")
+            assertPrints(exp(Float.NEGATIVE_INFINITY), "0.0")
+        }
+
+        @Sample
+        fun expm1() {
+            fun Float.firstFiveDigits(): String = toString().substring(0, 7)
+
+            assertPrints(expm1(1.0f).firstFiveDigits(), "1.71828")
+            // While it does not really matter for relatively large x values (like 1.0),
+            // the difference is getting more pronounced when x is getting closer to 0.0
+            assertPrints(exp(1e-17f) - 1.0f, "0.0")
+            assertPrints(expm1(1e-17f), 1e-17f.toString())
+
+            // special cases
+            assertPrints(expm1(Float.NaN), "NaN")
+            assertPrints(expm1(Float.POSITIVE_INFINITY), "Infinity")
+            assertPrints(expm1(Float.NEGATIVE_INFINITY), "-1.0")
+        }
+
+        @Sample
+        fun sin() {
+            val epsilon = 1e-6f
+
+            assertPrints(sin(0.0f), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // sin(π/2) = 1.0
+            assertTrue((sin(PI.toFloat() / 2) - 1.0f).absoluteValue < epsilon)
+            // sin(-π/2) = -1.0
+            assertTrue((sin(-PI.toFloat() / 2) - -1.0f).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(sin(Float.NaN), "NaN")
+            assertPrints(sin(Float.POSITIVE_INFINITY), "NaN")
+            assertPrints(sin(Float.NEGATIVE_INFINITY), "NaN")
+        }
+
+        @Sample
+        fun cos() {
+            val epsilon = 1e-6f
+
+            assertPrints(cos(0.0f), "1.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // cos(π/2) = 0
+            assertTrue(cos(PI.toFloat() / 2).absoluteValue < epsilon)
+            assertPrints(cos(PI.toFloat()), "-1.0")
+
+            // special cases
+            assertPrints(cos(Float.NaN), "NaN")
+            assertPrints(cos(Float.POSITIVE_INFINITY), "NaN")
+            assertPrints(cos(Float.NEGATIVE_INFINITY), "NaN")
+        }
+
+        @Sample
+        fun tan() {
+            val epsilon = 1e-6f
+
+            assertPrints(tan(0.0f), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // tan(π/4) = 1.0
+            assertTrue((tan(PI.toFloat() / 4) - 1.0f).absoluteValue < epsilon)
+            // tan(-π/4) = -1.0
+            assertTrue((tan(-PI.toFloat() / 4) - -1.0f).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(tan(Float.NaN), "NaN")
+            assertPrints(tan(Float.POSITIVE_INFINITY), "NaN")
+            assertPrints(tan(Float.NEGATIVE_INFINITY), "NaN")
+        }
+
+        @Sample
+        fun asin() {
+            val epsilon = 1e-6f
+
+            assertPrints(asin(0.0f), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // asin(1.0) = π/2
+            assertTrue((asin(1.0f) - PI.toFloat() / 2).absoluteValue < epsilon)
+            // asin(-1.0) = -π/2
+            assertTrue((asin(-1.0f) - (-PI.toFloat() / 2)).absoluteValue < epsilon)
+            // asin(sin(x)) = x
+            assertTrue((asin(sin(0.25f)) - 0.25f).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(asin(Float.NaN), "NaN")
+            assertPrints(asin(1.1f), "NaN")
+            assertPrints(asin(-2.0f), "NaN")
+        }
+
+        @Sample
+        fun acos() {
+            val epsilon = 1e-6f
+
+            assertPrints(acos(1.0f), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // acos(0.0) = π/2
+            assertTrue((acos(0.0f) - PI.toFloat() / 2).absoluteValue < epsilon)
+            // acos(-1.0) = π
+            assertTrue((acos(-1.0f) - PI.toFloat()).absoluteValue < epsilon)
+            // acos(cos(x)) = x
+            assertTrue((acos(cos(0.25f)) - 0.25f).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(acos(Float.NaN), "NaN")
+            assertPrints(acos(1.1f), "NaN")
+            assertPrints(acos(-2.0f), "NaN")
+        }
+
+        @Sample
+        fun atan() {
+            val epsilon = 1e-6f
+
+            assertPrints(atan(0.0f), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // atan(1.0) = π/4
+            assertTrue((atan(1.0f) - PI.toFloat() / 4).absoluteValue < epsilon)
+            // atan(-1.0) = -π/4
+            assertTrue((atan(-1.0f) - (-PI.toFloat() / 4)).absoluteValue < epsilon)
+            // atan(tan(x)) = x
+            assertTrue((atan(tan(0.25f)) - 0.25f).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(atan(Float.NaN), "NaN")
+        }
+
+        @Sample
+        fun atan2() {
+            val epsilon = 1e-6f
+            fun Float.toDegrees(): Float = this * 180.0f / PI.toFloat()
+
+            assertPrints(atan2(y = 0.0f, x = 0.0f), "0.0")
+
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            assertTrue((atan2(y = 1.0f, x = 0.0f) - PI.toFloat() / 2).absoluteValue < epsilon)
+            assertPrints(atan2(y = 1.0f, x = 0.0f).toDegrees(), "90.0")
+
+            assertTrue((atan2(y = 0.0f, x = -1.0f) - PI.toFloat()).absoluteValue < epsilon)
+            assertPrints(atan2(y = 0.0f, x = -1.0f).toDegrees(), "180.0")
+
+            assertTrue((atan2(y = -1.0f, x = 0.0f) - (-PI.toFloat() / 2)).absoluteValue < epsilon)
+            assertPrints(atan2(y = -1.0f, x = 0.0f).toDegrees(), "-90.0")
+
+            // special cases (some of them)
+            assertPrints(atan2(y = Float.NaN, x = 0.5f), "NaN")
+            assertPrints(atan2(y = 0.5f, x = Float.NaN), "NaN")
+            assertPrints(atan2(y = -0.0f, x = 100500.0f), "-0.0")
+            assertPrints(atan2(y = 0.0f, x = Float.POSITIVE_INFINITY), "0.0")
+            assertPrints(atan2(y = Float.POSITIVE_INFINITY, x = 100500.0f).toDegrees(), "90.0")
+        }
+
+        @Sample
+        fun min() {
+            assertPrints(min(-1.0f, 1.0f), "-1.0")
+            assertPrints(min(1.0f, -1.0f), "-1.0")
+            assertPrints(min(-3.0f, -1.0f), "-3.0")
+            assertPrints(min(-0.0f, 0.0f), "-0.0")
+
+            // special cases
+            assertPrints(min(Float.NaN, 0.0f), "NaN")
+            assertPrints(min(-9000.0f, Float.NaN), "NaN")
+            // Note that MIN_VALUE has a different meaning compared to Long.MIN_VALUE or Int.MIN_VALUE
+            assertPrints(min(Float.MIN_VALUE, 0.0f), "0.0")
+            assertTrue(min(Float.POSITIVE_INFINITY, Float.MAX_VALUE) == Float.MAX_VALUE)
+        }
+
+        @Sample
+        fun max() {
+            assertPrints(max(-1.0f, 1.0f), "1.0")
+            assertPrints(max(1.0f, -1.0f), "1.0")
+            assertPrints(max(-3.0f, -1.0f), "-1.0")
+            assertPrints(max(-0.0f, 0.0f), "0.0")
+
+            // special cases
+            assertPrints(max(Float.NaN, 0.0f), "NaN")
+            assertPrints(max(-9000.0f, Float.NaN), "NaN")
+            // Note that MIN_VALUE has a different meaning compared to Long.MIN_VALUE or Int.MIN_VALUE
+            assertTrue(max(Float.MIN_VALUE, 0.0f) == Float.MIN_VALUE)
+            assertPrints(max(Float.POSITIVE_INFINITY, Float.MAX_VALUE), "Infinity")
+        }
+
+        @Sample
+        fun discreteValues() {
+            // Unlike true real numbers, Float can only represent a fixed set of discrete values.
+            // According to IEEE-754, Double uses a single bit for a sign, 8 bits for the exponent, and 23 for the fraction.
+            // The bigger the integer part of the floating point value, the less space remains for "fitting" fractional part.
+            // As a result, starting from 2²³ and until 2²⁴-1 Float values are incremented by 1.0
+            // (meaning that there are no in-between values), values from 2²³ until 2²⁵-1 are incremented by 2.0,
+            // but values in between 2²² and 2²³-1 are incremented by 0.5.
+            //
+            // The "distance" between a current value and the next one (the "increment" mentioned above) is dynamic,
+            // it depends on the magnitude of the current value, and it could be checked using Double.ulp.
+            val v2_23_24 = 8388618.0f // value in range [2²³, 2²⁴-1]
+            assertPrints(v2_23_24.ulp, "1.0")
+
+            val v2_24_25 = 16777226.0f // value in range [2²⁴, 2²⁵-1]
+            assertPrints(v2_24_25.ulp, "2.0")
+
+            val v2_22_23 = 4194306.0f // value in range [2²², 2²³-1]
+            assertPrints(v2_22_23.ulp, "0.5")
+
+            // Instead of using ulp, you can also check the next and previous values representable with a Double
+            // using Double.nextUp and Double.nextDown correspondingly.
+            assertPrints(16777226.0f.nextUp() - 16777226.0f, "2.0")
+            assertPrints(16777226.0f - 16777226.0f.nextDown(), "2.0")
+
+            // As a more flexible alternative to nextUp/nextDown, one may use nextTowards, which accepts a value
+            // that works as a direction to increase/decrease a given value towards.
+            assertPrints(8388608.0f.nextTowards(Float.POSITIVE_INFINITY) - 8388608.0f, "1.0")
+            assertPrints(8388608.0f - 8388608.0f.nextTowards(Float.NEGATIVE_INFINITY), "0.5")
+        }
+
+        @Sample
+        fun nextUp() {
+            // Floating point numbers have discrete representation,
+            // so depending on the value's magnitude, the step towards
+            // the next representable value will be different
+            assertPrints(10000.0f.nextUp(), "10000.001")
+            assertPrints(100000.0f.nextUp(), "100000.01")
+
+            // -Infinity is any value large enough to no longer fit Float,
+            // so the next value after it towards 0.0 is -Float.MAX_VALUE
+            assertTrue(Float.NEGATIVE_INFINITY.nextUp() == -Float.MAX_VALUE)
+
+            // For 0.0, the next value is the Float.MIN_VALUE, the smallest representable Float value
+            assertTrue(0.0f.nextUp() == Float.MIN_VALUE)
+
+            // special cases
+            assertPrints(Float.NaN.nextUp(), "NaN")
+            assertPrints(Float.POSITIVE_INFINITY.nextUp(), "Infinity")
+        }
+
+        @Sample
+        fun nextDown() {
+            // Floating point numbers have discrete representation,
+            // so depending on the value's magnitude, the step towards
+            // the previous representable value will be different
+            assertPrints(10000.0f.nextDown(), "9999.999")
+            assertPrints(100000.0f.nextDown(), "99999.99")
+
+            // Infinity is any value large enough to no longer fit Float,
+            // so the previous value towards 0.0 is Float.MAX_VALUE
+            assertTrue(Float.POSITIVE_INFINITY.nextDown() == Float.MAX_VALUE)
+
+            // For 0.0, the previous value is the -Float.MIN_VALUE, the smallest representable Double value
+            assertTrue(0.0f.nextDown() == -Float.MIN_VALUE)
+
+            // special cases
+            assertPrints(Float.NaN.nextDown(), "NaN")
+            assertPrints(Float.NEGATIVE_INFINITY.nextDown(), "-Infinity")
+        }
+
+        @Sample
+        fun nextTowards() {
+            // Floating point numbers have discrete representation,
+            // so depending on the value's magnitude, the step towards
+            // the previous representable value will be different
+            assertPrints(10000.0f.nextTowards(Float.POSITIVE_INFINITY), "10000.001")
+            assertPrints(100000.0f.nextTowards(Float.POSITIVE_INFINITY), "100000.01")
+            assertPrints(10000.0f.nextTowards(0.0f), "9999.999")
+            assertPrints(100000.0f.nextTowards(0.0f), "99999.99")
+
+            // nextTowards is in fact a more flexible alternative to nextUp/nextDown
+            assertTrue(100.0f.nextTowards(1000.0f) == 100.0f.nextUp())
+            assertTrue(100.0f.nextTowards(-1000.0f) == 100.0f.nextDown())
+
+            // special cases
+            assertPrints(1.0f.nextTowards(1.0f), "1.0")
+            assertPrints(Float.POSITIVE_INFINITY.nextTowards(Float.POSITIVE_INFINITY), "Infinity")
+            assertPrints(Float.NEGATIVE_INFINITY.nextTowards(Float.NEGATIVE_INFINITY), "-Infinity")
+            assertPrints(Float.NaN.nextTowards(0.0f), "NaN")
+            assertPrints(0.0f.nextTowards(Float.NaN), "NaN")
+        }
+
+        @Sample
+        fun ulp() {
+            // the "distance" between two Float values 2ⁿ and 2ⁿ+1 is 2ⁿ⁻²⁴
+            // 2²⁰ = 1048576, 2²⁰⁻²⁴ = 1/8 = 0.125
+            assertPrints(1048576.0f.ulp, "0.125")
+            // 2¹⁶ = 65536, 2¹⁶⁻²⁴ = 1/128 = 0.0078125
+            assertPrints(65536.0f.ulp, "0.0078125")
+
+            // special cases
+            assertPrints(Float.NaN.ulp, "NaN")
+            assertPrints(Float.POSITIVE_INFINITY.ulp, "Infinity")
+            assertPrints(Float.NEGATIVE_INFINITY.ulp, "Infinity")
+            assertTrue(0.0f.ulp == Float.MIN_VALUE)
+        }
+    }
+
+    class Longs {
+        @Sample
+        fun abs() {
+            assertPrints(abs(42L), "42")
+            assertPrints(abs(-42L), "42")
+            // Special case: can't get the absolute value due to an overflow
+            assertTrue(abs(Long.MIN_VALUE) == Long.MIN_VALUE)
+        }
+
+        @Sample
+        fun absoluteValue() {
+            assertPrints(42L.absoluteValue, "42")
+            assertPrints((-42L).absoluteValue, "42")
+            // Special case: can't get the absolute value due to an overflow
+            assertTrue(Long.MIN_VALUE.absoluteValue == Long.MIN_VALUE)
+        }
+
+        @Sample
+        fun sign() {
+            assertPrints(0L.sign, "0")
+            assertPrints(9000L.sign, "1")
+            assertPrints((-9000L).sign, "-1")
+            assertPrints(Long.MAX_VALUE.sign, "1")
+            assertPrints(Long.MIN_VALUE.sign, "-1")
+        }
+
+        @Sample
+        fun min() {
+            assertPrints(min(-1L, 1L), "-1")
+            assertPrints(min(1L, -1L), "-1")
+            assertPrints(min(-3L, -1L), "-3")
+        }
+
+        @Sample
+        fun max() {
+            assertPrints(max(-1L, 1L), "1")
+            assertPrints(max(1L, -1L), "1")
+            assertPrints(max(-3L, -1L), "-1")
+        }
+    }
+
+    class Ints {
+        @Sample
+        fun abs() {
+            assertPrints(abs(42), "42")
+            assertPrints(abs(-42), "42")
+            // Special case: can't get the absolute value due to an overflow
+            assertTrue(abs(Int.MIN_VALUE) == Int.MIN_VALUE)
+        }
+
+        @Sample
+        fun absoluteValue() {
+            assertPrints(42.absoluteValue, "42")
+            assertPrints((-42).absoluteValue, "42")
+            // Special case: can't get the absolute value due to an overflow
+            assertTrue(Int.MIN_VALUE.absoluteValue == Int.MIN_VALUE)
+        }
+
+        @Sample
+        fun sign() {
+            assertPrints(0.sign, "0")
+            assertPrints(9000.sign, "1")
+            assertPrints((-9000).sign, "-1")
+            assertPrints(Int.MAX_VALUE.sign, "1")
+            assertPrints(Int.MIN_VALUE.sign, "-1")
+        }
+
+        @Sample
+        fun min() {
+            assertPrints(min(-1, 1), "-1")
+            assertPrints(min(1, -1), "-1")
+            assertPrints(min(-3, -1), "-3")
+        }
+
+        @Sample
+        fun max() {
+            assertPrints(max(-1, 1), "1")
+            assertPrints(max(1, -1), "1")
+            assertPrints(max(-3, -1), "-1")
         }
     }
 }

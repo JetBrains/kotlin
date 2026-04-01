@@ -1,0 +1,80 @@
+FILE: companionBlocks.kt
+    public final? [FirCompanionBlockDataKey=[valid=4 nested=1]] class C : R|kotlin/Any| {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? static [ContainingClassKey=C] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? fun member1(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        init { LAZY_BLOCK }
+
+        public? final? static [ContainingClassKey=C] val bar: <implicit> = LAZY_EXPRESSION
+            public? static [ContainingClassKey=C] get(): <implicit>
+
+        public? final? static [ContainingClassKey=C] val baz: <implicit>
+            public? static [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? val member2: <implicit> = LAZY_EXPRESSION
+            public? [ContainingClassKey=C] get(): <implicit>
+
+        public? final? static [ContainingClassKey=C] fun qux(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final? companion object Companion : R|kotlin/Any| {
+            private [ContainingClassKey=Companion] constructor(): R|C.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final? [FirIllegalCompanionBlockMemberKey=true] class Nested : R|kotlin/Any| {
+            public? [ContainingClassKey=Nested] constructor(): R|C.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final [FirIllegalCompanionBlockMemberKey=true] typealias TA = Int
+
+        public? [ContainingClassKey=C, FirIllegalCompanionBlockMemberKey=true] constructor(): R|C| { LAZY_BLOCK }
+
+        [FirIllegalCompanionBlockMemberKey=true] init { LAZY_BLOCK }
+
+        public? final? static [ContainingClassKey=C] fun doubleNestedFun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? static [ContainingClassKey=C] val doubleNestedProp: <implicit> = LAZY_EXPRESSION
+            public? static [ContainingClassKey=C] get(): <implicit>
+
+        public final? [FirIllegalCompanionBlockMemberKey=true] class DoubleNestedNested : R|kotlin/Any| {
+            public? [ContainingClassKey=DoubleNestedNested] constructor(): R|C.DoubleNestedNested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final [FirIllegalCompanionBlockMemberKey=true] typealias DoubleNestedTA = Int
+
+        public? [ContainingClassKey=C, FirIllegalCompanionBlockMemberKey=true] constructor(x: Int): R|C| { LAZY_BLOCK }
+
+        [FirIllegalCompanionBlockMemberKey=true] init { LAZY_BLOCK }
+
+    }
+    public final? enum class E : R|kotlin/Enum<E>| {
+        private [ContainingClassKey=E] constructor(): R|E| {
+            LAZY_super<R|kotlin/Enum<E>|>
+        }
+
+        public final static [ContainingClassKey=E] enum entry Entry: R|E| = LAZY_EXPRESSION
+        public final static [ContainingClassKey=E] fun values(): R|kotlin/Array<E>| {
+        }
+
+        public final static [ContainingClassKey=E] fun valueOf(value: R|kotlin/String|): R|E| {
+        }
+
+        public final static [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<E>|
+            public static get(): R|kotlin/enums/EnumEntries<E>|
+
+    }
+    public? final? val o: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>

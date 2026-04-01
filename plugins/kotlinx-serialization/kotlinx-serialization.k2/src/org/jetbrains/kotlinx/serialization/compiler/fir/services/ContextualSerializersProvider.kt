@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.associateByNotNull
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
 import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.classSerializer
 import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.currentFile
@@ -48,14 +49,14 @@ class ContextualSerializersProvider(session: FirSession) : FirExtensionSessionCo
 
     private val additionalSerializersInScopeCache: FirCache<FirFileSymbol, Map<Pair<FirClassSymbol<*>, Boolean>, FirClassSymbol<*>>, Nothing?> =
         session.firCachesFactory.createCache { file ->
-            getKClassListFromFileAnnotation(file, SerializationAnnotations.additionalSerializersClassId).associateBy(
+            getKClassListFromFileAnnotation(file, SerializationAnnotations.additionalSerializersClassId).associateByNotNull(
                 keySelector = {
                     val serializerType = it.serializerForType(session)
                     val symbol = serializerType?.toRegularClassSymbol(session)
-                        ?: throw AssertionError("Argument for ${SerializationAnnotations.additionalSerializersFqName} does not implement KSerializer or does not provide serializer for concrete type")
+                        ?: return@associateByNotNull null
                     symbol to serializerType.isMarkedNullable
                 },
-                valueTransform = { it.toRegularClassSymbol(session)!! }
+                valueTransform = { it.toRegularClassSymbol(session) }
             )
         }
 
@@ -82,7 +83,7 @@ class ContextualSerializersProvider(session: FirSession) : FirExtensionSessionCo
                 else -> emptyList()
             }
         }
-        return classes.mapNotNull { it.getTargetType()?.fullyExpandedType(session) }
+        return classes.mapNotNull { cls -> cls.getTargetType()?.fullyExpandedType(session)?.takeUnless { it is ConeErrorType } }
     }
 }
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import org.jetbrains.kotlin.plugin.sandbox.NestedClassAndMaterializeMember
 
 @NestedClassAndMaterializeMember
@@ -17,3 +18,5 @@ fun test_2(bar: Bar) {
     val foo2: Bar = bar.<!UNRESOLVED_REFERENCE!>materialize<!>()
     val nested = Bar.<!UNRESOLVED_REFERENCE!>Nested<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, propertyDeclaration */

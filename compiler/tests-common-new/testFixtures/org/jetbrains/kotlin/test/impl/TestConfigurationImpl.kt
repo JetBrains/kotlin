@@ -7,23 +7,26 @@ package org.jetbrains.kotlin.test.impl
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.test.*
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.NonGroupingPhaseTestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.ResultingArtifact
+import org.jetbrains.kotlin.test.model.ServicesAndDirectivesContainer
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.ModuleStructureExtractorImpl
 import org.jetbrains.kotlin.test.utils.TestDisposable
 
 @OptIn(TestInfrastructureInternals::class)
-class TestConfigurationImpl(
+sealed class TestConfigurationImplBase<Step : TestStep<*, *>>(
     testInfo: KotlinTestInfo,
 
     defaultsProvider: DefaultsProvider,
     assertions: AssertionsService,
 
-    steps: List<TestStepBuilder<*, *>>,
+    steps: List<TestStepBuilder<*, *, Step>>,
 
     sourcePreprocessors: List<Constructor<SourceFilePreprocessor>>,
     additionalMetaInfoProcessors: List<Constructor<AdditionalMetaInfoProcessor>>,
@@ -42,16 +45,13 @@ class TestConfigurationImpl(
 
     directives: List<DirectivesContainer>,
     override val defaultRegisteredDirectives: RegisteredDirectives,
-    override val startingArtifactFactory: (TestModule) -> ResultingArtifact<*>,
     additionalServices: List<ServiceRegistrationData>,
-
-    val originalBuilder: TestConfigurationBuilder.ReadOnlyBuilder
-) : TestConfiguration(), TestService {
-    override val rootDisposable: Disposable = TestDisposable("${TestConfigurationImpl::class.simpleName}.rootDisposable")
+) : TestConfiguration<Step>, TestService {
+    override val rootDisposable: Disposable = TestDisposable("${this::class.simpleName}.rootDisposable")
     override val testServices: TestServices = TestServices()
 
     init {
-        testServices.register(TestConfigurationImpl::class, this)
+        testServices.register(TestConfigurationImplBase::class, this)
         testServices.register(KotlinTestInfo::class, testInfo)
         val runtimeClassPathProviders = runtimeClasspathProviders.map { it.invoke(testServices) }
         testServices.register(RuntimeClasspathProvidersContainer::class, RuntimeClasspathProvidersContainer(runtimeClassPathProviders))
@@ -94,15 +94,15 @@ class TestConfigurationImpl(
         testServices.apply {
             register(
                 EnvironmentConfiguratorsProvider::class,
-                EnvironmentConfiguratorsProvider(this@TestConfigurationImpl.environmentConfigurators)
+                EnvironmentConfiguratorsProvider(this@TestConfigurationImplBase.environmentConfigurators)
             )
             val sourceFilePreprocessors = sourcePreprocessors.map { it.invoke(this@apply) }
             val sourceFileProvider = SourceFileProviderImpl(this, sourceFilePreprocessors)
             register(SourceFileProvider::class, sourceFileProvider)
 
             val environmentProvider =
-                compilerConfigurationProvider?.invoke(this, rootDisposable, this@TestConfigurationImpl.environmentConfigurators)
-                    ?: CompilerConfigurationProviderImpl(this, rootDisposable, this@TestConfigurationImpl.environmentConfigurators)
+                compilerConfigurationProvider?.invoke(this, rootDisposable, this@TestConfigurationImplBase.environmentConfigurators)
+                    ?: CompilerConfigurationProviderImpl(this, rootDisposable, this@TestConfigurationImplBase.environmentConfigurators)
             register(CompilerConfigurationProvider::class, environmentProvider)
 
             register(AssertionsService::class, assertions)
@@ -115,8 +115,8 @@ class TestConfigurationImpl(
         }
     }
 
-    override val steps: List<TestStep<*, *>>
-    override val afterAnalysisCheckers: List<AfterAnalysisChecker>
+    final override val steps: List<Step>
+    final override val afterAnalysisCheckers: List<AfterAnalysisChecker>
 
     init {
         val afterAnalysisCheckerConstructors = mutableSetOf<Constructor<AfterAnalysisChecker>>()
@@ -150,5 +150,65 @@ class TestConfigurationImpl(
     }
 }
 
+@OptIn(TestInfrastructureInternals::class)
+class NonGroupingPhaseTestConfigurationImpl(
+    testInfo: KotlinTestInfo,
+    defaultsProvider: DefaultsProvider,
+    assertions: AssertionsService,
+    steps: List<TestStepBuilder<*, *, TestStep.NonGroupingStep<*, *>>>,
+    sourcePreprocessors: List<Constructor<SourceFilePreprocessor>>,
+    additionalMetaInfoProcessors: List<Constructor<AdditionalMetaInfoProcessor>>,
+    environmentConfigurators: List<Constructor<AbstractEnvironmentConfigurator>>,
+    additionalSourceProviders: List<Constructor<AdditionalSourceProvider>>,
+    preAnalysisHandlers: List<Constructor<PreAnalysisHandler>>,
+    moduleStructureTransformers: List<Constructor<ModuleStructureTransformer>>,
+    metaTestConfigurators: List<Constructor<MetaTestConfigurator>>,
+    afterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>,
+    compilerConfigurationProvider: ((TestServices, Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)?,
+    runtimeClasspathProviders: List<Constructor<RuntimeClasspathProvider>>,
+    metaInfoHandlerEnabled: Boolean,
+    directives: List<DirectivesContainer>,
+    defaultRegisteredDirectives: RegisteredDirectives,
+    override var startingArtifactFactory: (TestModule) -> ResultingArtifact<*>,
+    additionalServices: List<ServiceRegistrationData>,
+    val originalBuilder: NonGroupingPhaseTestConfigurationBuilder.ReadOnlyBuilder,
+) : TestConfigurationImplBase<TestStep.NonGroupingStep<*, *>>(
+    testInfo, defaultsProvider, assertions, steps, sourcePreprocessors, additionalMetaInfoProcessors, environmentConfigurators,
+    additionalSourceProviders, preAnalysisHandlers, moduleStructureTransformers, metaTestConfigurators, afterAnalysisCheckers,
+    compilerConfigurationProvider, runtimeClasspathProviders, metaInfoHandlerEnabled, directives, defaultRegisteredDirectives,
+    additionalServices
+), NonGroupingPhaseTestConfiguration
+
+@OptIn(TestInfrastructureInternals::class)
+class GroupingPhaseTestConfigurationImpl(
+    testInfo: KotlinTestInfo,
+    defaultsProvider: DefaultsProvider,
+    assertions: AssertionsService,
+    steps: List<TestStepBuilder<*, *, TestStep.GroupingPhaseStep<*, *>>>,
+    sourcePreprocessors: List<Constructor<SourceFilePreprocessor>>,
+    additionalMetaInfoProcessors: List<Constructor<AdditionalMetaInfoProcessor>>,
+    environmentConfigurators: List<Constructor<AbstractEnvironmentConfigurator>>,
+    additionalSourceProviders: List<Constructor<AdditionalSourceProvider>>,
+    preAnalysisHandlers: List<Constructor<PreAnalysisHandler>>,
+    moduleStructureTransformers: List<Constructor<ModuleStructureTransformer>>,
+    metaTestConfigurators: List<Constructor<MetaTestConfigurator>>,
+    afterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>,
+    compilerConfigurationProvider: ((TestServices, Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)?,
+    runtimeClasspathProviders: List<Constructor<RuntimeClasspathProvider>>,
+    metaInfoHandlerEnabled: Boolean,
+    directives: List<DirectivesContainer>,
+    defaultRegisteredDirectives: RegisteredDirectives,
+    mergerWorkers: List<Constructor<GroupingPhaseInputsMerger.Worker>>,
+    additionalServices: List<ServiceRegistrationData>,
+) : TestConfigurationImplBase<TestStep.GroupingPhaseStep<*, *>>(
+    testInfo, defaultsProvider, assertions, steps, sourcePreprocessors, additionalMetaInfoProcessors, environmentConfigurators,
+    additionalSourceProviders, preAnalysisHandlers, moduleStructureTransformers, metaTestConfigurators, afterAnalysisCheckers,
+    compilerConfigurationProvider, runtimeClasspathProviders, metaInfoHandlerEnabled, directives, defaultRegisteredDirectives,
+    additionalServices,
+), GroupingPhaseTestConfiguration {
+    override val mergerWorkers: List<GroupingPhaseInputsMerger.Worker> = mergerWorkers.map { it.invoke(testServices) }
+}
+
+
 @TestInfrastructureInternals
-val TestServices.testConfiguration: TestConfigurationImpl by TestServices.testServiceAccessor()
+val TestServices.testConfiguration: TestConfigurationImplBase<*> by TestServices.testServiceAccessor()

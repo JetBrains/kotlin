@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("project-tests-convention")
     id("test-inputs-check")
     id("share-foreign-java-nullability-annotations")
@@ -12,15 +11,16 @@ dependencies {
     testFixturesApi(project(":compiler:fir:fir-serialization"))
     testFixturesApi(project(":compiler:fir:fir2ir:jvm-backend"))
     testFixturesApi(project(":compiler:cli"))
+    testFixturesApi(project(":compiler:ir.backend.native"))
+    testFixturesImplementation(project(":compiler:cli-jvm:javac-integration"))
     testFixturesImplementation(project(":compiler:ir.tree"))
     testFixturesImplementation(project(":compiler:ir.serialization.native"))
     testFixturesImplementation(project(":compiler:backend.jvm.entrypoint"))
     testFixturesImplementation(project(":compiler:backend.jvm.lower"))
     testFixturesImplementation(project(":kotlin-util-klib-abi"))
+    testFixturesImplementation(project(":compiler:ir.backend.native"))
     testFixturesImplementation(intellijCore())
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-
-    testRuntimeOnly(project(":core:descriptors.runtime"))
 
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
@@ -29,6 +29,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testFixturesApi(libs.junit.platform.launcher)
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils.common")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(project(":libraries:tools:abi-comparator"))
@@ -46,10 +47,11 @@ dependencies {
     testFixturesApi(jpsModelImpl()) { isTransitive = false }
     testFixturesApi(libs.junit4)
 
-    testFixturesApi(toolsJarApi())
+    testFixturesCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
 
-    jakartaAnnotationsClasspath(commonDependency("jakarta.annotation", "jakarta.annotation-api"))
+    thirdPartyAnnotationsClasspath(commonDependency("jakarta.annotation", "jakarta.annotation-api"))
+    thirdPartyAnnotationsClasspath(commonDependency("io.vertx", "vertx-codegen"))
 }
 
 optInToExperimentalCompilerApi()
@@ -113,8 +115,7 @@ projectTests {
     withTestJar()
     withAnnotations()
     withScriptingPlugin()
-    withStdlibJsRuntime()
-    withTestJsRuntime()
+    withJsRuntime()
 
     withMockJdkRuntime()
     withMockJDKModifiedRuntime()

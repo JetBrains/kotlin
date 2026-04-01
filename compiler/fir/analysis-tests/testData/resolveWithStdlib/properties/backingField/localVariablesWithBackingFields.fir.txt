@@ -9,6 +9,10 @@ FILE: localVariablesWithBackingFields.kt
             ^ Int(2)
         }
         )
+            local get(): R|kotlin/Number| {
+                ^ D|<local>/b|.R|kotlin/getValue|<R|kotlin/Int|>(Null(null), ::R|<local>/b|)
+            }
+
         <Unresolved name: field># = Int(10)
     }
     public final class A : R|kotlin/Any| {

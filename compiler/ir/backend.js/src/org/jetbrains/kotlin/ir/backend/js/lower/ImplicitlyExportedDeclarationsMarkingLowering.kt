@@ -6,15 +6,16 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.exportedVisibility
+import org.jetbrains.kotlin.ir.backend.js.ir.isExported
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedVisibility
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.couldBeConvertedToExplicitExport
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 /**
  * Adds `@JsImplicitExport` annotation to declarations which are not exported but are used inside other exported declarations as a type.
  */
+@PhasePrerequisites(PrepareSuspendFunctionsForExportLowering::class, PrepareCollectionsToExportLowering::class)
 class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private val strictImplicitExport = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT)
     private val jsExportCtor by lazy(LazyThreadSafetyMode.NONE) { context.symbols.jsExportAnnotationSymbol.constructors.single() }
@@ -58,8 +60,11 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
     private fun IrFunction.collectImplicitlyExportedDeclarations(): Set<IrDeclaration> {
         val types = buildSet {
             add(returnType)
-            addAll(nonDispatchParameters.map { it.type })
-            addAll(typeParameters.flatMap { it.superTypes })
+            if (this@collectImplicitlyExportedDeclarations !is IrConstructor || exportedVisibility != ExportedVisibility.PRIVATE) {
+                // We don't export parameters of private constructors
+                nonDispatchParameters.mapTo(this) { it.type }
+            }
+            typeParameters.flatMapTo(this) { it.superTypes }
         }
 
         return types.flatMap { it.collectImplicitlyExportedDeclarations(includeArguments = true) }.toSet()
@@ -130,11 +135,11 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
         if (couldBeConvertedToExplicitExport() == true) {
             annotations = annotations.memoryOptimizedMap {
                 if (it.isAnnotation(JsAnnotations.jsImplicitExportFqn)) {
-                    JsIrBuilder.buildConstructorCall(jsExportCtor)
+                    JsIrBuilder.buildAnnotation(jsExportCtor)
                 } else it
             }
         } else if (strictImplicitExport) {
-            annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsImplicitExportCtor).apply {
+            annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsImplicitExportCtor).apply {
                 arguments[0] = false.toIrConst(context.irBuiltIns.booleanType)
             }
 

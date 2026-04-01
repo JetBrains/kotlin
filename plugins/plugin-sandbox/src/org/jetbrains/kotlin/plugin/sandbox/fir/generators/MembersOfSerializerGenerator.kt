@@ -8,12 +8,8 @@ package org.jetbrains.kotlin.plugin.sandbox.fir.generators
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
-import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
-import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
+import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
-import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.plugin.createConeType
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -55,7 +51,9 @@ class MembersOfSerializerGenerator(session: FirSession) : FirDeclarationGenerati
         val owner = context?.owner ?: return emptyList()
         val argumentClassId = serializeMethodNames[callableId.callableName] ?: return emptyList()
 
-        val function = createMemberFunction(owner, Key, callableId.callableName, session.builtinTypes.unitType.coneType) {
+        val function = createMemberFunction(
+            owner, MembersOfSerializerGeneratorKey, callableId.callableName, session.builtinTypes.unitType.coneType,
+        ) {
             valueParameter(X_NAME, argumentClassId.createConeType(session))
         }.apply {
             replaceBody(buildBlock {}.apply { replaceConeTypeOrNull(session.builtinTypes.unitType.coneType) })
@@ -88,5 +86,5 @@ class MembersOfSerializerGenerator(session: FirSession) : FirDeclarationGenerati
         return super.getNestedClassifiersNames(classSymbol, context)
     }
 
-    object Key : GeneratedDeclarationKey()
+    private data object MembersOfSerializerGeneratorKey : GeneratedDeclarationKey()
 }

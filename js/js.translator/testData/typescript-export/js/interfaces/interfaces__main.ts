@@ -3,7 +3,13 @@ import ChildTestInterfaceImpl = JS_TESTS.foo.ChildTestInterfaceImpl;
 import processInterface = JS_TESTS.foo.processInterface;
 import processOptionalInterface = JS_TESTS.foo.processOptionalInterface;
 import WithTheCompanion = JS_TESTS.foo.WithTheCompanion;
+import InterfaceWithNamedCompanion = JS_TESTS.foo.InterfaceWithNamedCompanion;
 import ImplementorOfInterfaceWithDefaultArguments = JS_TESTS.foo.ImplementorOfInterfaceWithDefaultArguments;
+import SomeSealedInterface = JS_TESTS.foo.SomeSealedInterface
+import NoRuntimeSimpleInterface = JS_TESTS.foo.NoRuntimeSimpleInterface
+import NRBase = JS_TESTS.foo.NRBase
+import WithDefaultSuspend = JS_TESTS.foo.WithDefaultSuspend;
+import WithDefaultSuspendImpl = JS_TESTS.foo.WithDefaultSuspendImpl;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -11,7 +17,7 @@ function assert(condition: boolean) {
     }
 }
 
-function box(): string {
+async function box(): Promise<string> {
     assert(processInterface(new TestInterfaceImpl("bar")) === "Owner TestInterfaceImpl has value 'bar'")
     assert(processInterface(new ChildTestInterfaceImpl()) === "Owner TestInterfaceImpl has value 'Test'")
 
@@ -24,12 +30,27 @@ function box(): string {
 
     assert(WithTheCompanion.companionStaticFunction() == "STATIC FUNCTION")
     assert(WithTheCompanion.Companion.companionFunction() == "FUNCTION")
+    assert(InterfaceWithNamedCompanion.companionStaticFunction() == "STATIC FUNCTION")
+    assert(InterfaceWithNamedCompanion.Named.companionFunction() == "FUNCTION")
 
     const instance = new ImplementorOfInterfaceWithDefaultArguments()
     assert(instance.foo() === 0);
     assert(instance.foo(2) === 2);
     assert(instance.bar() === 1);
     assert(instance.bar(2) === 3);
+
+    const sealedImpl: SomeSealedInterface = new SomeSealedInterface.SomeNestedImpl("OK")
+    assert(sealedImpl.x === "OK")
+
+    const nrSimple: NoRuntimeSimpleInterface = { x: "ok" }
+    assert(nrSimple.x === "ok")
+
+    const nrBase: NRBase = { b: "base" }
+    assert(nrBase.b === "base")
+
+    const withDefaultSuspend: WithDefaultSuspend = new WithDefaultSuspendImpl()
+    assert(withDefaultSuspend.regularWithDefault() === "OK")
+    assert(await withDefaultSuspend.suspendWithDefault() === "OK")
 
     return "OK";
 }

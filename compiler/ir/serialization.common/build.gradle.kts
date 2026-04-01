@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("gradle-plugin-compiler-dependency-configuration")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -10,13 +10,19 @@ dependencies {
     api(project(":kotlin-util-klib"))
     api(project(":kotlin-util-klib-metadata"))
     api(project(":compiler:util"))
+    implementation(project(":compiler:fir:diagnostic-renderers"))
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:frontend.common-psi"))
+    implementation(project(":compiler:psi:psi-frontend-utils"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     compileOnly(libs.intellij.fastutil)
 
     compileOnly(intellijCore())
-    compileOnly(project(":compiler:cli-common"))
+    compileOnly(project(":compiler:cli-base"))
+    compileOnly(project(":compiler:fir:diagnostic-renderers"))
+
+    testFixturesApi(libs.junit.jupiter.api)
+    testFixturesImplementation(testFixtures(project(":compiler:ir.tree")))
 }
 
 optInToUnsafeDuringIrConstructionAPI()
@@ -25,4 +31,5 @@ optInToObsoleteDescriptorBasedAPI()
 sourceSets {
     "main" { projectDefault() }
     "test" {}
+    "testFixtures" { projectDefault() }
 }

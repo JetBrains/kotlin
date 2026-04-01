@@ -15,7 +15,7 @@ actual open class Foo {
     actual fun foo() {}
 
     context(_: Int)
-    fun foo() {}
+    <!CONTEXTUAL_OVERLOAD_SHADOWED!>fun foo()<!> {}
 }
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, functionDeclarationWithContext */

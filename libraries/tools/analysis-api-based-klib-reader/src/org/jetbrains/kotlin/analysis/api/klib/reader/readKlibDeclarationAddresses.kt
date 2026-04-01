@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.analysis.api.klib.reader
 
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.components.metadata
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
@@ -18,8 +17,6 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.DummyLogger
-import org.jetbrains.kotlin.util.Logger
 import java.nio.file.Path
 import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
@@ -56,8 +53,8 @@ public fun KaLibraryModule.readKlibDeclarationAddresses(): Set<KlibDeclarationAd
     return readKlibDeclarationAddresses(binary)
 }
 
-internal fun readKlibDeclarationAddresses(path: Path, logger: Logger = DummyLogger): Set<KlibDeclarationAddress>? {
-    val library = ToolingSingleFileKlibResolveStrategy.tryResolve(File(path), logger) ?: return null
+internal fun readKlibDeclarationAddresses(path: Path): Set<KlibDeclarationAddress>? {
+    val library = KlibLoader { libraryPaths(path) }.load().librariesStdlibFirst.singleOrNull() ?: return null
     return readKlibDeclarationAddresses(library)
 }
 

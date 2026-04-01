@@ -1,0 +1,17 @@
+FILE: main.kt
+    public final val R|kotlin/String?|.nullableLengthExt: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ this@R|/nullableLengthExt|?.{ $subj$.R|kotlin/String.length| } ?: Int(0)
+        }
+    public final fun nullableExtensionChosen(): R|kotlin/Unit| {
+        Q|J|.R|/J.id*s|<R|kotlin/String?|>(Null(null)).R|/nullableLengthExt|
+    }
+    public final fun nullableToStringStaysSafe(): R|kotlin/Unit| {
+        Q|J|.R|/J.id*s|<R|kotlin/String?|>(Null(null)).R|kotlin/toString|()
+    }
+    public final fun nullableDirectMemberStillUnsafe(): R|kotlin/Unit| {
+        Q|J|.R|/J.id*s|<R|kotlin/String?|>(Null(null)).R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+    }
+    public final fun nonNullBaseline(): R|kotlin/Unit| {
+        Q|J|.R|/J.id*s|<R|kotlin/String!|>(String(abc)).R|kotlin/String.length|
+    }

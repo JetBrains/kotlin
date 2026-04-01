@@ -26,16 +26,6 @@ internal constructor(
     private val execOps: ExecOperations,
 ) : AbstractTestTask() {
 
-    @Deprecated(
-        message = "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
-        level = DeprecationLevel.ERROR,
-    )
-    @Suppress("UNREACHABLE_CODE")
-    // Note to KGP developers: subtypes are still supported for KGP. We just want to prevent users from extending this task.
-    constructor() : this(
-        execOps = throw UnsupportedOperationException(),
-    )
-
     @Input
     @Optional
     var targetName: String? = null

@@ -114,7 +114,7 @@ extern "C" id Kotlin_ObjCExport_convertUnitToRetained(ObjHeader* unitInstance) {
     Class unitClass = getOrCreateClass(unitInstance->type_info());
     instance = [unitClass createRetainedWrapper:unitInstance];
   });
-  return objc_retain(instance);
+  return Kotlin_objc_retain_inNative(instance);
 }
 
 static NSStringEncoding Kotlin_StringEncoding_ToNSStringEncoding(StringEncoding encoding) {
@@ -137,7 +137,9 @@ extern "C" id Kotlin_ObjCExport_CreateRetainedNSStringFromKString(ObjHeader* str
       length:header->size()
       encoding:Kotlin_StringEncoding_ToNSStringEncoding(header->encoding())];
 
-    if (id old = AtomicCompareAndSwapAssociatedObject(str, nullptr, candidate)) {
+    id old = AtomicCompareAndSwapAssociatedObject(str, nullptr, candidate);
+    NativeOrUnregisteredThreadGuard guard(/*reentrant=*/ true);
+    if (old) {
       objc_release(candidate);
       return objc_retain(old);
     }
@@ -283,7 +285,7 @@ extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz) {
 
 extern "C" PERFORMANCE_INLINE OBJ_GETTER(Kotlin_ObjCExport_convertUnmappedObjCObject, id obj) {
   const TypeInfo* typeInfo = getOrCreateTypeInfo(object_getClass(obj));
-  RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, typeInfo, objc_retain(obj));
+  RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, typeInfo, Kotlin_objc_retain_inNative(obj));
 }
 
 // Initialized by [ObjCExportClasses.mm].
@@ -443,7 +445,7 @@ static OBJ_GETTER(blockToKotlinImp, id block, SEL cmd) {
   } else {
     // There is no function class for this arity, so resulting object will not be cast to FunctionN class,
     // and it is enough to convert block to arbitrary object conforming Function.
-    RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, theOpaqueFunctionTypeInfo, objc_retainBlock(block));
+    RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, theOpaqueFunctionTypeInfo, Kotlin_objc_retainBlock_inNative(block));
   }
 }
 
@@ -464,7 +466,7 @@ static PERFORMANCE_INLINE id Kotlin_ObjCExport_refToObjCImpl(ObjHeader* obj) {
 
   id associatedObject = GetAssociatedObject(obj);
   if (associatedObject != nullptr) {
-    return retain ? objc_retain(associatedObject) : associatedObject;
+    return retain ? Kotlin_objc_retain_inNative(associatedObject) : associatedObject;
   }
 
   // TODO: propagate [retainAutorelease] to the code below.
@@ -508,7 +510,7 @@ extern "C" PERFORMANCE_INLINE OBJ_GETTER(Kotlin_Interop_refFromObjC, id obj) noe
 extern "C" OBJ_GETTER(Kotlin_Interop_CreateObjCObjectHolder, id obj) {
   RuntimeAssert(obj != nullptr, "wrapped object must not be null");
   const TypeInfo* typeInfo = theForeignObjCObjectTypeInfo;
-  RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, typeInfo, objc_retain(obj));
+  RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, typeInfo, Kotlin_objc_retain_inNative(obj));
 }
 
 extern "C" OBJ_GETTER(Kotlin_ObjCExport_refFromObjC, id obj) {
@@ -647,12 +649,16 @@ static const TypeInfo* createTypeInfo(
   const InterfaceTableRecord* superItable,
   int superItableSize,
   bool itableEqualsSuper,
+  bool isKotlinObjCClass,
   const TypeInfo* fieldsInfo
 ) {
   TypeInfo* result = (TypeInfo*)std::calloc(1, sizeof(TypeInfo) + vtable.size() * sizeof(void*));
   result->typeInfo_ = result;
 
   result->flags_ = TF_OBJC_DYNAMIC | TF_REFLECTION_SHOW_REL_NAME;
+  if (isKotlinObjCClass) {
+    result->flags_ |= TF_KOTLIN_OBJC_CLASS;
+  }
 
   result->superType_ = superType;
   if (fieldsInfo == nullptr) {
@@ -919,8 +925,10 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
 
   // TODO: consider forbidding the class being abstract.
 
+  bool isKotlinObjCClass = IsKotlinObjCClass(clazz);
+
   const TypeInfo* result = createTypeInfo(class_getName(clazz), superType, addedInterfaces, vtable, interfaceVTables,
-                                          superITable, superITableSize, itableEqualsSuper, fieldsInfo);
+                                          superITable, superITableSize, itableEqualsSuper, isKotlinObjCClass, fieldsInfo);
 
   // TODO: it will probably never be requested, since such a class can't be instantiated in Kotlin.
   objCExport(result).objCClass = clazz;

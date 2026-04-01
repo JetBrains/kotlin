@@ -74,41 +74,39 @@ KtNameReferenceExpression(114,121): 'MyClass'
   NO_CANDIDATES
 
 KtCallExpression(124,133): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = <constructor>(): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = <constructor>(): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(124,131): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = <constructor>(): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = <constructor>(): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(131,133): '()'
@@ -124,41 +122,39 @@ KtParameterList(151,153): '()'
   NO_CANDIDATES
 
 KtCallExpression(156,165): 'MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = <constructor>(): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = <constructor>(): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(156,163): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = <constructor>(): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = <constructor>(): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(163,165): '()'
@@ -174,216 +170,206 @@ KtBlockExpression(180,260): '{'
   NO_CANDIDATES
 
 KtCallExpression(186,191): 'foo()'
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = foo
-          isSafeNavigation = false
-          type = r.MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = r/MyClass.invoke
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = foo
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = r/foo(): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = r/foo
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = r/foo(): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = r/foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(186,189): 'foo'
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = foo
-          isSafeNavigation = false
-          type = r.MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = r/MyClass.invoke
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = foo
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = r/foo(): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = r/foo
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = r/foo(): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = r/foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(189,191): '()'
   NO_CANDIDATES
 
 KtNameReferenceExpression(196,199): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = foo
-          receiverType = null
-          returnType = r.MyClass
-          symbol = val foo: r.MyClass
-          contextParameters = []
-          callableId = r/foo
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = r.MyClass
+        symbol = val foo: r.MyClass
+        contextParameters = []
+        callableId = r/foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtDotQualifiedExpression(204,226): '(((foo)())()).invoke()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = ((foo)())()
-          isSafeNavigation = false
-          type = r.MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = r/MyClass.invoke
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ((foo)())()
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtParenthesizedExpression(204,217): '(((foo)())())'
   NO_CANDIDATES
 
 KtCallExpression(205,216): '((foo)())()'
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = ((foo)())
-          isSafeNavigation = false
-          type = r.MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = r/MyClass.invoke
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ((foo)())
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtParenthesizedExpression(205,214): '((foo)())'
   NO_CANDIDATES
 
 KtCallExpression(206,213): '(foo)()'
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = (foo)
-          isSafeNavigation = false
-          type = r.MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = r/MyClass.invoke
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = (foo)
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = r/foo(): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = r/foo
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = r/foo(): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = r/foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
 KtParenthesizedExpression(206,211): '(foo)'
   NO_CANDIDATES
 
 KtNameReferenceExpression(207,210): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = foo
-          receiverType = null
-          returnType = r.MyClass
-          symbol = val foo: r.MyClass
-          contextParameters = []
-          callableId = r/foo
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = r.MyClass
+        symbol = val foo: r.MyClass
+        contextParameters = []
+        callableId = r/foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -394,178 +380,170 @@ KtValueArgumentList(214,216): '()'
   NO_CANDIDATES
 
 KtCallExpression(218,226): 'invoke()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = ((foo)())()
-          isSafeNavigation = false
-          type = r.MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = r/MyClass.invoke
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ((foo)())()
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(218,224): 'invoke'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = ((foo)())()
-          isSafeNavigation = false
-          type = r.MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = r/MyClass.invoke
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ((foo)())()
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(224,226): '()'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(231,243): 'foo.invoke()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = foo
-          isSafeNavigation = false
-          type = r.MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = r/MyClass.invoke
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = foo
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(231,234): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = foo
-          receiverType = null
-          returnType = r.MyClass
-          symbol = val foo: r.MyClass
-          contextParameters = []
-          callableId = r/foo
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = r.MyClass
+        symbol = val foo: r.MyClass
+        contextParameters = []
+        callableId = r/foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtCallExpression(235,243): 'invoke()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = foo
-          isSafeNavigation = false
-          type = r.MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = r/MyClass.invoke
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = foo
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(235,241): 'invoke'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = foo
-          isSafeNavigation = false
-          type = r.MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = r/MyClass.invoke
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = foo
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(241,243): '()'
   NO_CANDIDATES
 
 KtCallExpression(248,258): 'property()'
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = property
-          isSafeNavigation = false
-          type = r.MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = r/MyClass.invoke
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = property
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(248,256): 'property'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = property
-          receiverType = null
-          returnType = r.MyClass
-          symbol = val property: r.MyClass
-          contextParameters = []
-          callableId = r/property
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = property
+        receiverType = null
+        returnType = r.MyClass
+        symbol = val property: r.MyClass
+        contextParameters = []
+        callableId = r/property
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

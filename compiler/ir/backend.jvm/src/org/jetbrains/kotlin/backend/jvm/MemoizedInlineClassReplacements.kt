@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.ir.*
-import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
+import org.jetbrains.kotlin.resolve.SINCE_KOTLIN_FQ_NAME
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 var IrFunction.originalFunctionOfStaticInlineClassReplacement: IrFunction? by irAttribute(copyByDefault = false)
@@ -163,19 +164,11 @@ class MemoizedInlineClassReplacements(
                 parameter.copyTo(
                     this,
                     defaultValue = null,
-                    name = when (parameter.kind) {
-                        IrParameterKind.ExtensionReceiver -> {
-                            // The function's name will be mangled, so preserve the old receiver name.
-                            function.extensionReceiverName(context.config).let(Name::identifier)
-                        }
-                        else -> parameter.name
-                    },
-                    origin = when (parameter.kind) {
-                        IrParameterKind.Context -> IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
-                        else -> parameter.origin
-                    }
+                    name = if (parameter.kind == IrParameterKind.ExtensionReceiver) {
+                        // The function's name will be mangled, so preserve the old receiver name.
+                        Name.identifier(function.extensionReceiverName(context.config))
+                    } else parameter.name
                 ).also {
-                    it.addOrInheritInlineClassPropertyNameParts(oldParameter = parameter)
                     // Assuming that constructors and non-override functions are always replaced with the unboxed
                     // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
@@ -188,16 +181,15 @@ class MemoizedInlineClassReplacements(
         buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT, noFakeOverride = true) {
             this.originalFunctionOfStaticInlineClassReplacement = function
 
+            var nextContextReceiverIndex = 0
             parameters += function.parameters.map { parameter ->
                 when (parameter.kind) {
                     IrParameterKind.DispatchReceiver -> {
                         // FAKE_OVERRIDEs have broken dispatch receivers
-                        val parent = function.parentAsClass
-                        parent.thisReceiver!!.copyTo(
+                        function.parentAsClass.thisReceiver!!.copyTo(
                             this,
-                            name = Name.identifier(AsmUtil.THIS),
-                            type = parent.defaultType,
-                            origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER,
+                            name = Name.identifier("arg0"),
+                            type = function.parentAsClass.defaultType, origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER,
                             kind = IrParameterKind.Regular,
                         )
                     }
@@ -218,15 +210,12 @@ class MemoizedInlineClassReplacements(
                         )
                     }
                     IrParameterKind.Regular -> {
-                        parameter.copyTo(
-                            this,
-                            defaultValue = null,
-                        ).also {
+                        parameter.copyTo(this, defaultValue = null).also {
                             // See comment next to a similar line above.
                             it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                         }
                     }
-                }.apply { addOrInheritInlineClassPropertyNameParts(oldParameter = parameter) }
+                }
             }
 
             context.remapMultiFieldValueClassStructure(function, this, parametersMappingOrNull = null)
@@ -238,7 +227,7 @@ class MemoizedInlineClassReplacements(
         noFakeOverride: Boolean = false,
         body: IrFunction.() -> Unit
     ): IrSimpleFunction {
-        val useOldManglingScheme = context.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
+        val useOldManglingScheme = context.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures || function.fromStdlib()
         val replacement = buildReplacementInner(function, replacementOrigin, noFakeOverride, useOldManglingScheme, body)
         // When using the new mangling scheme we might run into dependencies using the old scheme
         // for which we will fall back to the old mangling scheme as well.
@@ -276,4 +265,21 @@ class MemoizedInlineClassReplacements(
     }
 
     override fun getReplacementForRegularClassConstructor(constructor: IrConstructor): IrConstructor? = null
+}
+
+// In some scenarios, compiler mangles calls to stdlib using new mangling scheme, however, stdlib is compiled using the old mangling scheme.
+//
+// Actually, it is the only library in the wild, which still uses the old scheme.
+// Unfortunately, we cannot use the new scheme for stdlib as well, otherwise, we will break binary compatibility.
+//
+// See KT-79611
+private fun IrFunction.fromStdlib(): Boolean {
+    if (!getPackageFragment().packageFqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)) return false
+    // Since there can be libraries, which use -Xallow-kotlin-package, check, that the top-level declaration has @SinceKotlin
+    if (hasAnnotation(SINCE_KOTLIN_FQ_NAME)) return true
+    var cursor: IrDeclaration = this
+    while (true) {
+        if (cursor.hasAnnotation(SINCE_KOTLIN_FQ_NAME)) return true
+        cursor = cursor.parentClassOrNull ?: return false
+    }
 }

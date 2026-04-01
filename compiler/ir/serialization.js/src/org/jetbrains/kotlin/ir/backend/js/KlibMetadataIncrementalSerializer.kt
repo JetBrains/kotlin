@@ -9,8 +9,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.backend.common.serialization.metadata.FileVisitor
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
+import org.jetbrains.kotlin.backend.common.serialization.toIoFileOrNull
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -18,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.FqName
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
+import java.io.File
 
 // TODO: need a refactoring between IncrementalSerializer and MonolithicSerializer.
 class KlibMetadataIncrementalSerializer(
@@ -63,25 +65,19 @@ class KlibMetadataIncrementalSerializer(
         exportKDoc = false,
     )
 
-    constructor(modulesStructure: ModulesStructure, moduleFragment: IrModuleFragment) : this(
-        (modulesStructure.mainModule as MainModule.SourceFiles).files,
-        modulesStructure.compilerConfiguration,
-        modulesStructure.project,
-        modulesStructure.jsFrontEndResult.bindingContext,
-        moduleFragment.descriptor,
-    )
-
     override fun serializeSingleFileMetadata(file: KtFile): ProtoBuf.PackageFragment {
         val memberScope = file.declarations.map { getDescriptorForElement(bindingContext, it) }
         return serializePackageFragment(moduleDescriptor, memberScope, file.packageFqName)
     }
 
-    override val numberOfSourceFiles: Int
-        get() = ktFiles.size
+    override val sourceFiles: Set<File> by lazy(LazyThreadSafetyMode.NONE) {
+        ktFiles.mapTo(mutableSetOf()) { KtPsiSourceFile(it).toIoFileOrNull()!! }
+    }
 
-    override fun forEachFile(block: (Int, KtFile, KtSourceFile, FqName) -> Unit) {
+    override fun forEachFile(block: FileVisitor<KtFile>) {
         ktFiles.forEachIndexed { i, ktFile ->
-            block(i, ktFile, KtPsiSourceFile(ktFile), ktFile.packageFqName)
+            val psiSourceFile = KtPsiSourceFile(ktFile)
+            block.visit(i, psiSourceFile.toIoFileOrNull()!!, ktFile, psiSourceFile, ktFile.packageFqName)
         }
     }
 

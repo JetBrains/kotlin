@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.dsl.base.*
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
+import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
+import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultOne
@@ -13,6 +17,8 @@ import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
+import org.jetbrains.kotlin.cli.common.arguments.Enables
+import org.jetbrains.kotlin.config.LanguageFeature
 
 val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.nativeArguments) {
     compilerArgument {
@@ -130,6 +136,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         deprecatedName = "list_targets"
         description = "List available hardware targets.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+        affectsCompilationOutcome = false
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -464,9 +471,15 @@ This library must be one of the ones passed with '-library'.""".asReleaseDepende
 
     compilerArgument {
         name = "Xexternal-dependencies"
-        description = """Path to the file containing external dependencies.
-External dependencies are required for verbose output in the event of IR linker errors,
-but they do not affect compilation at all.""".asReleaseDependent()
+        description = ReleaseDependent(
+            current = "Path to the file containing external dependencies.",
+            valueInVersions = mapOf(
+                KotlinReleaseVersion.v2_0_0..KotlinReleaseVersion.v2_3_20 to """Path to the file containing external dependencies.
+                    |External dependencies are required for verbose output in the event of IR linker errors,
+                    |but they do not affect compilation at all.""".trimMargin("|")
+            )
+
+        )
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
@@ -583,6 +596,7 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
 The default value is 1.""".asReleaseDependent()
         valueType = IntType.defaultOne
         valueDescription = "<N>".asReleaseDependent()
+        affectsCompilationOutcome = false
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
@@ -594,6 +608,7 @@ The default value is 1.""".asReleaseDependent()
         compilerName = "exportKDoc"
         description = "Export KDoc entries in the framework header.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+        additionalAnnotations(Enables(LanguageFeature.ExportKDocDocumentationToKlib))
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -606,6 +621,7 @@ The default value is 1.""".asReleaseDependent()
         deprecatedName = "-print_bitcode"
         description = "Print LLVM bitcode.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+        affectsCompilationOutcome = false
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -628,6 +644,7 @@ The default value is 1.""".asReleaseDependent()
         deprecatedName = "-print_ir"
         description = "Print IR.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+        affectsCompilationOutcome = false
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -638,6 +655,7 @@ The default value is 1.""".asReleaseDependent()
         name = "Xprint-files"
         description = "Print files.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+        affectsCompilationOutcome = false
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -718,6 +736,7 @@ The default value is 1.""".asReleaseDependent()
         description = "Save temporary files to the given directory.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        affectsCompilationOutcome = false
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,

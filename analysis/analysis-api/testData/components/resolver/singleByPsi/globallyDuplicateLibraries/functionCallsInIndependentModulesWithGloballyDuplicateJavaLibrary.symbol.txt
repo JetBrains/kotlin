@@ -1,0 +1,13 @@
+module1 - main1.kt:
+  KtNameReferenceExpression(121,124): 'foo'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        library/Common.foo(<dispatch receiver>: library.Common): kotlin.String!
+      ]
+
+module2 - main2.kt:
+  KtNameReferenceExpression(129,132): 'bar'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        library/Common.bar(<dispatch receiver>: library.Common): kotlin.Int
+      ]

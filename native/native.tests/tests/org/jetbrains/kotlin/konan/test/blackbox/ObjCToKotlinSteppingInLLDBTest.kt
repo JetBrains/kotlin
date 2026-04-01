@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.LLDB
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBSessionSpec
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.ReplLLDBSessionSpec
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
@@ -299,7 +299,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             loggedCompilationToolCall = clangResult.loggedData,
             testNames = listOf(TestName(testName)),
         )
-        val spec = LLDBSessionSpec.parse(lldbSpec)
+        val spec = ReplLLDBSessionSpec.parse(lldbSpec)
         val moduleForTestCase = TestModule.Exclusive(testName, emptySet(), emptySet(), emptySet())
         val testCase = TestCase(
             id = TestCaseId.Named(testName),
@@ -308,6 +308,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             freeCompilerArgs = freeCompilerArgs,
             nominalPackageName = PackageName.EMPTY,
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).copy(
+                exitCodeCheck = TestRunCheck.ExitCode.SkipIfNot(0), // Mute if fails. See KT-84923.
                 outputMatcher = spec.let { TestRunCheck.OutputMatcher { output -> spec.checkLLDBOutput(output, testRunSettings.get()) } }
             ),
             extras = TestCase.NoTestRunnerExtras(

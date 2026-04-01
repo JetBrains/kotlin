@@ -40,6 +40,7 @@ KaConstructorSymbol:
   isActual: false
   isExpect: true
   isExtension: false
+  isExternal: false
   isPrimary: true
   location: CLASS
   modality: FINAL
@@ -63,6 +64,7 @@ KaConstructorSymbol:
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true
@@ -100,6 +102,7 @@ KaConstructorSymbol:
   isActual: false
   isExpect: true
   isExtension: false
+  isExternal: false
   isPrimary: false
   location: CLASS
   modality: FINAL
@@ -123,6 +126,7 @@ KaConstructorSymbol:
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true
@@ -236,6 +240,8 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
+    isNotDefault: false
     isVal: true
     location: PROPERTY
     modality: FINAL
@@ -270,6 +276,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: true
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: false
@@ -327,10 +334,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: sample.B
   getContainingModule: KaSourceModule "Sources of common-main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getN
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -480,6 +485,8 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
+    isNotDefault: false
     isVal: false
     location: PROPERTY
     modality: FINAL
@@ -510,6 +517,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: true
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: false
@@ -561,6 +569,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: true
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: false
@@ -579,6 +588,7 @@ KaKotlinPropertySymbol:
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true
@@ -616,6 +626,7 @@ KaKotlinPropertySymbol:
         isCrossinline: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
         isVal: true
@@ -648,9 +659,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: sample.MainKt
   getContainingModule: KaSourceModule "Sources of common-main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getM
   javaSetterName: setM
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: sample.m

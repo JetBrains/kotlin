@@ -1,0 +1,15 @@
+TARGET_BACKEND: JS_IR, JS_IR_ES6
+MODULES: lib, main
+
+STEP 0:
+    libs: lib, main
+    dirty js modules: lib, main
+    dirty js files:   lib/foo/A, lib/bar/lib, lib/foo/__GENERATED__CALLABLES__, main/usage, main/usage.export, main
+STEP 1:
+    libs: lib, main
+    dirty js modules: lib
+    dirty js files:   lib/foo/__GENERATED__CALLABLES__, lib/foo/A, lib/foo/B,
+STEP 2:
+    libs: lib, main
+    dirty js modules: lib
+    dirty js files:   lib/foo/C, lib/foo/__GENERATED__CALLABLES__

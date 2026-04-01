@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
+import kotlin.collections.plusAssign
 
 /**
  * Replaces suspend functions with regular non-suspend functions with additional
@@ -62,29 +63,6 @@ class AddContinuationToLocalSuspendFunctionsLowering(val context: CommonBackendC
     }
 }
 
-fun addExplicitReturnUnitToSuspendFunctions(
-    context: CommonBackendContext,
-    function: IrSimpleFunction,
-    body: IrBody?,
-    returnType: IrType
-) {
-    // Since we are changing return type to Any, function can no longer return unit implicitly.
-    if (
-        returnType == context.irBuiltIns.unitType &&
-        body is IrBlockBody &&
-        body.statements.lastOrNull() !is IrReturn
-    ) {
-        // Adding explicit return of Unit.
-        // Set both offsets of the IrReturn to body.endOffset.previousOffset (check the description of the `previousOffset` method)
-        // so that a breakpoint set at the closing brace of a lambda expression could be hit.
-        body.statements += context.createIrBuilder(
-            function.symbol,
-            startOffset = body.endOffset.previousOffset,
-            endOffset = body.endOffset.previousOffset
-        ).irReturnUnit()
-    }
-}
-
 private fun transformSuspendFunction(context: CommonBackendContext, function: IrSimpleFunction): IrSimpleFunction {
     val newFunctionWithContinuation = function.getOrCreateFunctionWithContinuationStub(context)
     // Using custom mapping because number of parameters doesn't match
@@ -95,7 +73,21 @@ private fun transformSuspendFunction(context: CommonBackendContext, function: Ir
         new.defaultValue = old.defaultValue?.transform(VariableRemapper(parameterMapping), null)
     }
 
-    addExplicitReturnUnitToSuspendFunctions(context, newFunctionWithContinuation, newBody, function.returnType)
+    // Since we are changing return type to Any, function can no longer return unit implicitly.
+    if (
+        function.returnType == context.irBuiltIns.unitType &&
+        newBody is IrBlockBody &&
+        newBody.statements.lastOrNull() !is IrReturn
+    ) {
+        // Adding explicit return of Unit.
+        // Set both offsets of the IrReturn to body.endOffset.previousOffset (check the description of the `previousOffset` method)
+        // so that a breakpoint set at the closing brace of a lambda expression could be hit.
+        newBody.statements += context.createIrBuilder(
+            newFunctionWithContinuation.symbol,
+            startOffset = newBody.endOffset.previousOffset,
+            endOffset = newBody.endOffset.previousOffset
+        ).irReturnUnit()
+    }
 
     newFunctionWithContinuation.body = newBody
     return newFunctionWithContinuation

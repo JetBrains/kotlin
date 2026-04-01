@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isJsStdlib
 import org.jetbrains.kotlin.library.isWasmStdlib
-import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
@@ -62,7 +61,7 @@ class ModulesStructure(
 
     lateinit var jsFrontEndResult: JsFrontEndResult
 
-    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
+    @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
     fun runAnalysis(
         analyzer: AbstractAnalyzerWithCompilerReport,
         analyzerFacade: AbstractTopDownAnalyzerFacadeForWeb
@@ -71,7 +70,7 @@ class ModulesStructure(
         val files = mainModule.files
 
         analyzer.analyzeAndReport(files) {
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             analyzerFacade.analyzeFiles(
                 files = files,
                 project = project,
@@ -106,7 +105,7 @@ class ModulesStructure(
             throw CompilationErrorException()
         }
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val hasErrors = analyzerFacade.checkForErrors(files, analysisResult.bindingContext)
 
         jsFrontEndResult = JsFrontEndResult(analysisResult, hasErrors)
@@ -117,7 +116,9 @@ class ModulesStructure(
     private val storageManager: LockBasedStorageManager = LockBasedStorageManager("ModulesStructure")
     private var runtimeModule: ModuleDescriptorImpl? = null
 
-    private val _descriptors: MutableMap<KotlinLibrary, ModuleDescriptorImpl> = mutableMapOf()
+    // TODO: these are roughly equivalent to KlibResolvedModuleDescriptorsFactoryImpl. Refactor me.
+    val descriptors: Map<KotlinLibrary, ModuleDescriptor>
+        field = mutableMapOf<KotlinLibrary, ModuleDescriptorImpl>()
 
     init {
         val descriptors = klibs.all.map { getModuleDescriptorImpl(it) }
@@ -127,16 +128,12 @@ class ModulesStructure(
         }
     }
 
-    // TODO: these are roughly equivalent to KlibResolvedModuleDescriptorsFactoryImpl. Refactor me.
-    val descriptors: Map<KotlinLibrary, ModuleDescriptor>
-        get() = _descriptors
-
     private fun getModuleDescriptorImpl(current: KotlinLibrary): ModuleDescriptorImpl {
-        if (current in _descriptors) {
-            return _descriptors.getValue(current)
+        if (current in descriptors) {
+            return descriptors.getValue(current)
         }
 
-        val isBuiltIns = current.unresolvedDependencies.isEmpty()
+        val isBuiltIns = current.isJsStdlib || current.isWasmStdlib
 
         val lookupTracker = compilerConfiguration[CommonConfigurationKeys.LOOKUP_TRACKER] ?: LookupTracker.DO_NOTHING
         val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
@@ -144,12 +141,11 @@ class ModulesStructure(
             languageVersionSettings,
             storageManager,
             runtimeModule?.builtIns,
-            packageAccessHandler = null, // TODO: This is a speed optimization used by Native. Don't bother for now.
             lookupTracker = lookupTracker
         )
         if (isBuiltIns) runtimeModule = md
 
-        _descriptors[current] = md
+        descriptors[current] = md
 
         return md
     }

@@ -1,0 +1,4 @@
+public final class com/example/home/MainKt {
+    // source: 'main.kt'
+    public final static method getOrElse-mmIFp0c(p0: java.lang.Object, p1: kotlin.jvm.functions.Function1): java.lang.Object
+}

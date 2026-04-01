@@ -10,6 +10,7 @@ import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.stubs.*
 import com.intellij.util.io.AbstractStringEnumerator
 import com.intellij.util.io.UnsyncByteArrayOutputStream
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -33,6 +34,7 @@ abstract class StubsTestEngine {
     /**
      * Validates the consistency of the given [KotlinFileStubImpl] for the given [KtFile].
      */
+    context(testContext: AbstractAnalysisApiBasedTest)
     open fun validate(testServices: TestServices, file: KtFile, fileStub: KotlinFileStubImpl) {
         checkPsiElementTypeConsistency(testServices.assertions, fileStub)
         validateSerializers(testServices.assertions, fileStub)

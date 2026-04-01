@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.internal.kapt.classloaders
 
 import com.google.gson.Gson
-import org.junit.Test
+import kotlin.test.Test
 import java.io.File
 import java.net.URLDecoder
 import java.nio.charset.Charset

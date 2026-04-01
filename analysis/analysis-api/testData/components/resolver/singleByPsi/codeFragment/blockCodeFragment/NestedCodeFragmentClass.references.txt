@@ -2,5 +2,6 @@ KtNameReferenceExpression(152,157): 'Local'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: Local) constructor()

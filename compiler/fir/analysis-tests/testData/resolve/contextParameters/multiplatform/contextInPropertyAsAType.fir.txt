@@ -24,63 +24,7 @@ FILE: common.kt
         public get(): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
     public final expect val expectExtensionActualContext: R|A.() -> kotlin/Unit|
         public get(): R|A.() -> kotlin/Unit|
-FILE: jvm.kt
-    public final actual val expectActualMatch: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-        ^ Unit
-    }
-
-        public get(): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
-    public final actual val expectWithoutContext: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-        ^ Unit
-    }
-
-        public get(): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
-    public final actual val actualWithoutContext: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-        ^ Unit
-    }
-
-        public get(): R|() -> kotlin/Unit|
-    public final actual val mismatchedContext: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-        ^ Unit
-    }
-
-        public get(): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
-    public final actual val expectContextActualExtension: R|A.() -> kotlin/Unit| = fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-        ^ Unit
-    }
-
-        public get(): R|A.() -> kotlin/Unit|
-    public final actual val expectExtensionActualContext: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-        ^ Unit
-    }
-
-        public get(): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
 Module: m2-jvm
-FILE: common.kt
-    public final class A : R|kotlin/Any| {
-        public constructor(): R|A| {
-            super<R|kotlin/Any|>()
-        }
-
-    }
-    public final class C : R|kotlin/Any| {
-        public constructor(): R|C| {
-            super<R|kotlin/Any|>()
-        }
-
-    }
-    public final expect val expectActualMatch: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
-        public get(): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
-    public final expect val expectWithoutContext: R|() -> kotlin/Unit|
-        public get(): R|() -> kotlin/Unit|
-    public final expect val actualWithoutContext: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
-        public get(): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
-    public final expect val mismatchedContext: R|@ContextFunctionTypeParams(2) context(A, C) () -> kotlin/Unit|
-        public get(): R|@ContextFunctionTypeParams(2) context(A, C) () -> kotlin/Unit|
-    public final expect val expectContextActualExtension: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
-        public get(): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
-    public final expect val expectExtensionActualContext: R|A.() -> kotlin/Unit|
-        public get(): R|A.() -> kotlin/Unit|
 FILE: jvm.kt
     public final actual val expectActualMatch: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
         ^ Unit

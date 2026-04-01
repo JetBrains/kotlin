@@ -106,7 +106,6 @@ object SerialEntityNames {
     const val ENUMS_FILE = "Enums"
 
     //exceptions
-    const val MISSING_FIELD_EXC = "MissingFieldException"
     const val UNKNOWN_FIELD_EXC = "UnknownFieldException"
 
     // functions

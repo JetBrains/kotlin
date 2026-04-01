@@ -7,30 +7,38 @@ package org.jetbrains.kotlin.gradle.tasks.abi
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Classpath
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.abi.tools.AbiTools
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain
+import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain.Companion.abiValidation
+import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 
 /**
- * A parent class for all tasks that use Application Binary Interace (ABI) tools.
+ * A parent class for all tasks that use Application Binary Interface (ABI) tools.
  */
 @DisableCachingByDefault(because = "Abstract task")
 internal abstract class AbiToolsTask : DefaultTask(), UsesClassLoadersCachingBuildService {
+    @get:Internal
+    abstract val buildSessionService: Property<BuildSessionService>
+
     @get:Classpath
-    abstract val toolsClasspath: ConfigurableFileCollection
+    abstract val buildToolsClasspath: ConfigurableFileCollection
 
     @TaskAction
     fun execute() {
-        val files = toolsClasspath.files.toList()
-        // get class loader with the ABI Tools implementation from cache
-        val classLoader = classLoadersCachingService.get().getClassLoader(files, SharedClassLoaderProvider)
-        // get an instance of the ABI Tools and invoke task logic
-        val abiTools = AbiTools.getInstance(classLoader)
-        runTools(abiTools)
+        val buildSession = buildSessionService.get().getOrCreateBuildSession(
+            classLoadersCachingService.get(),
+            buildToolsClasspath.toList()
+        )
+        runTools(buildSession.kotlinToolchains.abiValidation, buildSession)
     }
 
-    protected abstract fun runTools(tools: AbiTools)
+    protected abstract fun runTools(abiValidationToolchain: AbiValidationToolchain, buildSession: KotlinToolchains.BuildSession)
+
 
 }

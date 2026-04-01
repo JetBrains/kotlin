@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiIndexingConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
@@ -17,7 +18,8 @@ abstract class StandaloneModeConfiguratorBase : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
     override val analysisApiMode: AnalysisApiMode get() = AnalysisApiMode.Standalone
     override val frontendKind: FrontendKind get() = FrontendKind.Fir
-    override val testPrefixes: List<String> get() = listOf("standalone.fir")
+    override val testPrefixes: List<String>
+        get() = super.testPrefixes.withAdditionalVariant("standalone.fir")
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         builder.apply {

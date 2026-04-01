@@ -20,10 +20,8 @@ object KaptTestDirectives : SimpleDirectivesContainer() {
     val INCREMENTAL_APT by directive("Enables INCREMENTAL_APT flag")
     val STRIP_METADATA by directive("Enables STRIP_METADATA flag")
 
-    val NON_EXISTENT_CLASS by directive("TODO")
-    val EXPECTED_ERROR by stringDirective("TODO()", multiLine = true)
-    val EXPECTED_ERROR_K1 by stringDirective("K1-specific error", multiLine = true)
-    val EXPECTED_ERROR_K2 by stringDirective("K2-specific error", multiLine = true)
+    val NON_EXISTENT_CLASS by directive("Generate stub for class error.NonExistentClass")
+    val EXPECTED_ERROR by stringDirective("The following error is expected in this test", multiLine = true)
 
     val flagDirectives = listOf(
         SHOW_PROCESSOR_STATS, VERBOSE, INFO_AS_WARNINGS, USE_LIGHT_ANALYSIS, CORRECT_ERROR_TYPES,

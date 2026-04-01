@@ -142,10 +142,11 @@ scopes:
       kotlin
       org
       sun
-    classifiers: 3
+    classifiers: 4
       class A
       class B
       class C : JavaClass()
+      class JavaClass
     callables: 4
       fun withA(f: A.() -> kotlin.Unit)
       fun withB(f: B.() -> kotlin.Unit)

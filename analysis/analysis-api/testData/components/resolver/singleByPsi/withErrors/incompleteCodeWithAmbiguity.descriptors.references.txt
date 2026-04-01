@@ -2,6 +2,10 @@ KtNameReferenceExpression(89,92): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
+    public constructor Foo<T>(len: Int) defined in Foo
+    public constructor Foo<T>(s: String) defined in Foo>
     symbols:
       0: (in Foo) constructor(len: kotlin.Int)
       1: (in Foo) constructor(s: kotlin.String)
@@ -9,5 +13,6 @@ KtNameReferenceExpression(89,92): 'Foo'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

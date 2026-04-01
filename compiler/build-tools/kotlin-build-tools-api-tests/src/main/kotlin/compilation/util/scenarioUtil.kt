@@ -3,20 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation.util
+package org.jetbrains.kotlin.buildtools.tests.compilation.util
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.USE_FIR_RUNNER
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.Scenario
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.ScenarioModule
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.Scenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
 
 @OptIn(ExperimentalCompilerArgument::class)
 fun Scenario.moduleWithFir(
     moduleName: String,
     dependencies: List<ScenarioModule> = emptyList(),
-    compilationOperationConfig: (JvmCompilationOperation) -> Unit = {},
+    compilationOperationConfig: (JvmCompilationOperation.Builder) -> Unit = {},
 ) = module(
     moduleName = moduleName,
     dependencies = dependencies,

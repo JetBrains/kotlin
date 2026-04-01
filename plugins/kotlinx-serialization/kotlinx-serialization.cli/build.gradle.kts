@@ -2,7 +2,6 @@ description = "Kotlin Serialization Compiler Plugin (CLI)"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {

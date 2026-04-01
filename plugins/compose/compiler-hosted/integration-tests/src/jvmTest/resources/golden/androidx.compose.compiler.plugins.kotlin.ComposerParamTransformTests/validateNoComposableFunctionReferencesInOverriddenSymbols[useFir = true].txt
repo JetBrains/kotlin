@@ -18,5 +18,8 @@ class ContentImpl : Content {
 @StabilityInferred(parameters = 1)
 class ContentImpl : Content {
   override fun setContent(c: Function2<Composer, Int, Unit>) { }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }

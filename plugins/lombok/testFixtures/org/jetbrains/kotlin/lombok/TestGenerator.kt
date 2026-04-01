@@ -6,19 +6,13 @@
 package org.jetbrains.kotlin.lombok
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 fun main(args: Array<String>) {
+    val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("plugins/lombok/tests-gen", "plugins/lombok/testData") {
-            testClass<AbstractIrBlackBoxCodegenTestForLombok> {
-                model("box")
-            }
+        testGroup(testsRoot, "plugins/lombok/testData") {
             testClass<AbstractFirLightTreeBlackBoxCodegenTestForLombok> {
                 model("box")
-            }
-            testClass<AbstractDiagnosticTestForLombok> {
-                model("diagnostics/k1+k2", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractFirPsiDiagnosticTestForLombok> {
                 model("diagnostics")

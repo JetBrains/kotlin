@@ -13,12 +13,14 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.Name
 
 object JsAnnotations {
     val jsModuleFqn = FqName("kotlin.js.JsModule")
     val jsNonModuleFqn = FqName("kotlin.js.JsNonModule")
     val jsNameFqn = FqName("kotlin.js.JsName")
+    val jsStatic = FqName("kotlin.js.JsStatic")
     val jsSymbolFqn = FqName("kotlin.js.JsSymbol")
     val jsFileNameFqn = FqName("kotlin.js.JsFileName")
     val jsQualifierFqn = FqName("kotlin.js.JsQualifier")
@@ -30,7 +32,6 @@ object JsAnnotations {
     val jsNativeSetter = FqName("kotlin.js.nativeSetter")
     val jsNativeInvoke = FqName("kotlin.js.nativeInvoke")
     val JsPolyfillFqn = FqName("kotlin.js.JsPolyfill")
-    val jsGeneratorFqn = FqName("kotlin.js.JsGenerator")
 }
 
 fun IrConstructorCall.getSingleConstStringArgument() =
@@ -71,6 +72,9 @@ fun IrAnnotationContainer.isExplicitlyExported(): Boolean =
 
 fun IrAnnotationContainer.isJsImplicitExport(): Boolean =
     hasAnnotation(JsAnnotations.jsImplicitExportFqn)
+
+fun IrAnnotationContainer.isJsNoRuntime(): Boolean =
+    hasAnnotation(JsStandardClassIds.Annotations.JsNoRuntime)
 
 fun IrAnnotationContainer.couldBeConvertedToExplicitExport(): Boolean? =
     getAnnotation(JsAnnotations.jsImplicitExportFqn)?.getSingleConstBooleanArgument()

@@ -1,0 +1,9 @@
+KT element: KtClass
+Resolve target: nestedClass.kt -> Outer -> Nested
+FIR:
+  public final? class Nested : R|kotlin/Any| {
+      public? constructor(): R|Outer.Nested| {
+          LAZY_super<R|kotlin/Any|>
+      }
+
+  }

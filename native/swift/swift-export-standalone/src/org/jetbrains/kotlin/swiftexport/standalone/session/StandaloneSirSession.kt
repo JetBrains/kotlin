@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.providers.SirBridgeProvider
+import org.jetbrains.kotlin.sir.providers.SirCustomTypeTranslator
 import org.jetbrains.kotlin.sir.providers.SirEnumGenerator
 import org.jetbrains.kotlin.sir.providers.SirModuleProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -16,13 +17,14 @@ import org.jetbrains.kotlin.sir.providers.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.impl.*
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.SirBridgeProviderImpl
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.SirCustomTypeTranslatorImpl
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
 import org.jetbrains.sir.lightclasses.StubbingSirDeclarationProvider
 
 internal class StandaloneSirSession(
     override val useSiteModule: KaModule,
-    moduleToTranslate: KaModule,
+    override val moduleToTranslate: KaModule,
     override val errorTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
     override val unsupportedTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
     moduleForPackageEnums: SirModule,
@@ -64,6 +66,7 @@ internal class StandaloneSirSession(
         errorTypeStrategy = errorTypeStrategy,
         unsupportedTypeStrategy = unsupportedTypeStrategy
     )
+    override val customTypeTranslator: SirCustomTypeTranslator = SirCustomTypeTranslatorImpl(sirSession)
     override val visibilityChecker = SirVisibilityCheckerImpl(
         sirSession,
         unsupportedDeclarationReporter = unsupportedDeclarationReporter,

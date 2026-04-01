@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.abi.internal
 
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformVariantSpec
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -20,15 +19,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 /**
  * Finalizes the configuration of the report variant for the Kotlin Multiplatform Gradle Plugin.
  */
-internal fun AbiValidationMultiplatformVariantSpec.finalizeMultiplatformVariant(
+internal fun finalizeMultiplatformVariant(
     project: Project,
-    abiClasspath: Configuration,
     targets: NamedDomainObjectCollection<KotlinTarget>,
+    keepLocallyUnsupportedTargets: Provider<Boolean>
 ) {
     val taskSet = AbiValidationTaskSet(project)
-    taskSet.setClasspath(abiClasspath)
-    taskSet.keepUnsupportedTargets(klib.keepUnsupportedTargets)
-    taskSet.klibEnabled(klib.enabled)
+    taskSet.keepLocallyUnsupportedTargets(keepLocallyUnsupportedTargets)
 
     project.processJvmKindTargets(targets, taskSet)
     project.processNonJvmTargets(targets, taskSet)
@@ -88,7 +85,7 @@ private fun Project.processNonJvmTargets(
         .forEach { target ->
             val klibTarget = target.toKlibTarget()
             launch {
-                if (target.targetIsSupported() && klibTarget.configurableName !in bannedInTests) {
+                if (target.targetIsSupported() && klibTarget.customizedName !in bannedInTests) {
                     target.compilations.withCompilationIfExists(KotlinCompilation.MAIN_COMPILATION_NAME) {
                         abiValidationTaskSet.addKlibTarget(klibTarget, output.classesDirs)
                     }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Kotlin.STABLE_RELEASE
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
+
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -104,7 +105,7 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
                 dependencies.listFiles()?.filter { it.name != "cache" }?.forEach {
                     val processRunResult =
                         runProcess(listOf("clang", "-Werror", "-c", file.path, "-isysroot", it.absolutePath), workingDir.toFile())
-                    assertProcessRunResult(processRunResult) {
+                    processRunResult.assertProcessRunResult {
                         assertTrue(isSuccessful)
                     }
                 }
@@ -112,7 +113,7 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Test kotlin native prebuilt should not override `kotlin.native.version property`")
+    @DisplayName("Test kotlin native prebuilt should not override `kotlin.native.version` property")
     @GradleTest
     fun kotlinNativePrebuiltShouldNotOverrideNativeVersion(gradleVersion: GradleVersion) {
         nativeProject("native-simple-project", gradleVersion) {

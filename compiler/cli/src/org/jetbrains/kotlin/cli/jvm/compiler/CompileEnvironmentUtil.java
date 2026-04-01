@@ -24,18 +24,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
+import org.jetbrains.kotlin.cli.CliDiagnosticReportingKt;
+import org.jetbrains.kotlin.cli.CliDiagnostics;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.*;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.jar.*;
 
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
@@ -111,7 +111,7 @@ public class CompileEnvironmentUtil {
             boolean resetJarTimestamps,
             FqName mainClass,
             OutputFileCollection outputFiles,
-            MessageCollector messageCollector
+            CompilerConfiguration configuration
     ) {
         BufferedOutputStream outputStream = null;
         try {
@@ -124,7 +124,7 @@ public class CompileEnvironmentUtil {
             outputStream.close();
         }
         catch (FileNotFoundException e) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Invalid jar path: " + jarPath, null);
+            CliDiagnosticReportingKt.report(configuration, CliDiagnostics.INSTANCE.getCOMPILER_ARGUMENTS_ERROR(),"Invalid jar path: " + jarPath, null);
         }
         catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);

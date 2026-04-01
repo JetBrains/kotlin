@@ -29,41 +29,41 @@ KtSuperTypeList(114,122): 'Sealed()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(114,122): 'Sealed()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = <constructor>(): foo.Sealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(114,120): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = <constructor>(): foo.Sealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(114,120): 'Sealed'
@@ -73,22 +73,22 @@ KtUserType(114,120): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(114,120): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = <constructor>(): foo.Sealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(120,122): '()'
@@ -122,41 +122,41 @@ KtSuperTypeList(154,162): 'Sealed()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(154,162): 'Sealed()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = <constructor>(): foo.Sealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(154,160): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = <constructor>(): foo.Sealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(154,160): 'Sealed'
@@ -166,22 +166,22 @@ KtUserType(154,160): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(154,160): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = <constructor>(): foo.Sealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(160,162): '()'
@@ -197,41 +197,41 @@ KtSuperTypeList(183,191): 'Sealed()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(183,191): 'Sealed()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = <constructor>(): foo.Sealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(183,189): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = <constructor>(): foo.Sealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(183,189): 'Sealed'
@@ -241,22 +241,22 @@ KtUserType(183,189): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(183,189): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = <constructor>(): foo.Sealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(189,191): '()'
@@ -290,41 +290,41 @@ KtSuperTypeList(223,231): 'Sealed()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(223,231): 'Sealed()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = <constructor>(): foo.Sealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(223,229): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = <constructor>(): foo.Sealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(223,229): 'Sealed'
@@ -334,22 +334,22 @@ KtUserType(223,229): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(223,229): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = <constructor>(): foo.Sealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(229,231): '()'
@@ -389,41 +389,41 @@ KtSuperTypeList(278,286): 'Sealed()'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(278,286): 'Sealed()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = <constructor>(): foo.Sealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(278,284): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = <constructor>(): foo.Sealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(278,284): 'Sealed'
@@ -433,22 +433,22 @@ KtUserType(278,284): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(278,284): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = <constructor>(): foo.Sealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = <constructor>(): foo.Sealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(284,286): '()'
@@ -560,21 +560,20 @@ KtWhenExpression(483,617): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(489,490): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = s: foo.Sealed
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = s: foo.Sealed
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -651,21 +650,20 @@ KtWhenConditionWithExpression(576,586): 'CompanionB'
   NO_CANDIDATES
 
 KtNameReferenceExpression(576,586): 'CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionB
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val CompanionB: kotlin.Int
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = CompanionB
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val CompanionB: kotlin.Int
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -733,21 +731,20 @@ KtWhenExpression(706,875): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(712,713): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = s: foo.Sealed
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = s: foo.Sealed
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -848,24 +845,23 @@ KtWhenConditionWithExpression(827,844): 'Sealed.CompanionB'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(827,844): 'Sealed.CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Sealed
+        isSafeNavigation = false
+        type = foo.Sealed.Companion
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Sealed
-          isSafeNavigation = false
-          type = foo.Sealed.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionB
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = val CompanionB: foo.Sealed
-          contextParameters = []
-          callableId = foo/Sealed.Companion.CompanionB
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = CompanionB
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = val CompanionB: foo.Sealed
+        contextParameters = []
+        callableId = foo/Sealed.Companion.CompanionB
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -873,24 +869,23 @@ KtNameReferenceExpression(827,833): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(834,844): 'CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Sealed
+        isSafeNavigation = false
+        type = foo.Sealed.Companion
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Sealed
-          isSafeNavigation = false
-          type = foo.Sealed.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionB
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = val CompanionB: foo.Sealed
-          contextParameters = []
-          callableId = foo/Sealed.Companion.CompanionB
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = CompanionB
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = val CompanionB: foo.Sealed
+        contextParameters = []
+        callableId = foo/Sealed.Companion.CompanionB
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -970,21 +965,20 @@ KtWhenExpression(1015,1224): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1021,1022): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = s: foo.Sealed
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = s: foo.Sealed
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1085,23 +1079,22 @@ KtWhenConditionWithExpression(1175,1185): 'CompanionB'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1175,1185): 'CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = foo/Test
+        type = foo.Test
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaImplicitReceiverValue:
-          symbol = foo/Test
-          type = foo.Test
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionB
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val CompanionB: kotlin.Int
-          contextParameters = []
-          callableId = foo/Test.CompanionB
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = CompanionB
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val CompanionB: kotlin.Int
+        contextParameters = []
+        callableId = foo/Test.CompanionB
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1151,21 +1144,20 @@ KtWhenExpression(1283,1533): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1289,1290): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = s: foo.Sealed
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = s: foo.Sealed
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1302,24 +1294,23 @@ KtWhenConditionWithExpression(1479,1494): 'this.CompanionB'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1479,1494): 'this.CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this
+        isSafeNavigation = false
+        type = foo.Test
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = this
-          isSafeNavigation = false
-          type = foo.Test
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionB
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val CompanionB: kotlin.Int
-          contextParameters = []
-          callableId = foo/Test.CompanionB
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = CompanionB
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val CompanionB: kotlin.Int
+        contextParameters = []
+        callableId = foo/Test.CompanionB
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1330,24 +1321,23 @@ KtNameReferenceExpression(1479,1483): 'this'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1484,1494): 'CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this
+        isSafeNavigation = false
+        type = foo.Test
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = this
-          isSafeNavigation = false
-          type = foo.Test
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionB
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val CompanionB: kotlin.Int
-          contextParameters = []
-          callableId = foo/Test.CompanionB
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = CompanionB
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val CompanionB: kotlin.Int
+        contextParameters = []
+        callableId = foo/Test.CompanionB
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1397,21 +1387,20 @@ KtWhenExpression(1593,1851): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1599,1600): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = s: foo.Sealed
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = s: foo.Sealed
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1530,24 +1519,23 @@ KtWhenConditionWithExpression(1760,1777): 'Sealed.CompanionA'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1760,1777): 'Sealed.CompanionA'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Sealed
+        isSafeNavigation = false
+        type = foo.Sealed.Companion
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Sealed
-          isSafeNavigation = false
-          type = foo.Sealed.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionA
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = val CompanionA: foo.Sealed
-          contextParameters = []
-          callableId = foo/Sealed.Companion.CompanionA
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = CompanionA
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = val CompanionA: foo.Sealed
+        contextParameters = []
+        callableId = foo/Sealed.Companion.CompanionA
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1555,24 +1543,23 @@ KtNameReferenceExpression(1760,1766): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1767,1777): 'CompanionA'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Sealed
+        isSafeNavigation = false
+        type = foo.Sealed.Companion
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Sealed
-          isSafeNavigation = false
-          type = foo.Sealed.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionA
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = val CompanionA: foo.Sealed
-          contextParameters = []
-          callableId = foo/Sealed.Companion.CompanionA
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = CompanionA
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = val CompanionA: foo.Sealed
+        contextParameters = []
+        callableId = foo/Sealed.Companion.CompanionA
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1586,24 +1573,23 @@ KtWhenConditionWithExpression(1795,1812): 'Sealed.CompanionB'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1795,1812): 'Sealed.CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Sealed
+        isSafeNavigation = false
+        type = foo.Sealed.Companion
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Sealed
-          isSafeNavigation = false
-          type = foo.Sealed.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionB
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = val CompanionB: foo.Sealed
-          contextParameters = []
-          callableId = foo/Sealed.Companion.CompanionB
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = CompanionB
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = val CompanionB: foo.Sealed
+        contextParameters = []
+        callableId = foo/Sealed.Companion.CompanionB
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1611,24 +1597,23 @@ KtNameReferenceExpression(1795,1801): 'Sealed'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1802,1812): 'CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Sealed
+        isSafeNavigation = false
+        type = foo.Sealed.Companion
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Sealed
-          isSafeNavigation = false
-          type = foo.Sealed.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionB
-          receiverType = null
-          returnType = foo.Sealed
-          symbol = val CompanionB: foo.Sealed
-          contextParameters = []
-          callableId = foo/Sealed.Companion.CompanionB
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = CompanionB
+        receiverType = null
+        returnType = foo.Sealed
+        symbol = val CompanionB: foo.Sealed
+        contextParameters = []
+        callableId = foo/Sealed.Companion.CompanionB
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

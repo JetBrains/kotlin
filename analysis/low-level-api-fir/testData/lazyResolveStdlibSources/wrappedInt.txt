@@ -780,8 +780,8 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
-    @R|kotlin/SinceKotlin|[Types](version = String(1.4)) public final [ResolvedTo(BODY_RESOLVE)] class TypeReference : R|kotlin/reflect/KType| {
-        @R|kotlin/SinceKotlin|[Types](version = String(1.6)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
+    @R|kotlin/SinceKotlin|[Types](version = String(1.4) [evaluated = String(1.4)]) public final [ResolvedTo(BODY_RESOLVE)] class TypeReference : R|kotlin/reflect/KType| {
+        @R|kotlin/SinceKotlin|[Types](version = String(1.6) [evaluated = String(1.6)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
             super<R|kotlin/Any|>()
         }
 
@@ -791,10 +791,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
         public open override [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>| = R|<local>/arguments|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|
 
-        @R|kotlin/SinceKotlin|[Types](version = String(1.6)) internal final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
+        @R|kotlin/SinceKotlin|[Types](version = String(1.6) [evaluated = String(1.6)]) internal final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
             internal [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KType?|
 
-        @R|kotlin/SinceKotlin|[Types](version = String(1.6)) internal final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
+        @R|kotlin/SinceKotlin|[Types](version = String(1.6) [evaluated = String(1.6)]) internal final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
             internal [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] get(): R|kotlin/Int|
 
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(BODY_RESOLVE)] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(BODY_RESOLVE)] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(BODY_RESOLVE)] isMarkedNullable: R|kotlin/Boolean|): R|kotlin/jvm/internal/TypeReference| {

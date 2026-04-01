@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -72,10 +72,14 @@ class JvmMappedScope(
     private val substitutor = createMappingSubstitutor(firJavaClass, firKotlinClass, session)
     private val kotlinDispatchReceiverType = firKotlinClass.defaultType()
 
-    private val declaredScopeOfMutableVersion = JavaToKotlinClassMap.readOnlyToMutable(firKotlinClass.classId)?.let {
-        session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirClassSymbol
-    }?.let {
-        session.declaredMemberScope(it, memberRequiredPhase = null)
+    private val declaredScopeOfMutableVersion: FirScope? by lazy {
+        JavaToKotlinClassMap.readOnlyToMutable(firKotlinClass.classId)?.let {
+            session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirClassSymbol
+        }?.let {
+            // Lazy resolve is required here since stdlib classes might be sources and not resolved yet.
+            // A valid use case is Kotlin repo
+            session.declaredMemberScope(it, memberRequiredPhase = FirResolvePhase.TYPES)
+        }
     }
 
     private val isMutableContainer = JavaToKotlinClassMap.isMutable(firKotlinClass.classId)
@@ -132,7 +136,7 @@ class JvmMappedScope(
             }
         }
 
-        val declaredSignatures: Set<String> by lazy {
+        val declaredSignatures: Set<String> by lazy(LazyThreadSafetyMode.NONE) {
             buildSet {
                 declared.mapTo(this) { it.fir.computeJvmDescriptor() }
                 declaredScopeOfMutableVersion?.processFunctionsByName(name) {
@@ -254,11 +258,11 @@ class JvmMappedScope(
         return declaredMemberScope.getProperties(name).isNotEmpty()
     }
 
-    // Mostly, what this function checks is if the member was serialized to built-ins, but not loaded from JDK.
-    // Currently, we use FirDeclarationOrigin.Library for all deserialized members, including built-in ones.
-    // Another implementation might be `it.origin != FirDeclarationOrigin.Enhancement`, but that shouldn't really matter.
-    private fun isDeclaredInBuiltinClass(it: FirNamedFunctionSymbol) =
-        it.origin == FirDeclarationOrigin.Library
+    // Mostly, what this function checks is if the member was serialized to built-ins but not loaded from JDK.
+    // Currently, in compiler mode we use `FirDeclarationOrigin.Library` for all deserialized members, including built-in ones.
+    // But in AA mode they have `BuiltIns` origin.
+    private fun isDeclaredInBuiltinClass(symbol: FirNamedFunctionSymbol): Boolean =
+        symbol.origin.isBuiltIns || symbol.origin == FirDeclarationOrigin.Library
 
     private fun FirNamedFunctionSymbol.isDeclaredInMappedJavaClass(): Boolean {
         return !fir.isSubstitutionOrIntersectionOverride && firJavaClass.symbol.toLookupTag().isRealOwnerOf(fir.symbol)

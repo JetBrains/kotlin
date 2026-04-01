@@ -1,7 +1,10 @@
+// NO_CHECK_LAMBDA_INLINING
 // KT-66465
 
+// FILE: lib.kt
 inline fun <T> remember(calculation: () -> T): T = calculation()
 
+// FILE: main.kt
 fun box(): String {
     val result = remember {
         object {

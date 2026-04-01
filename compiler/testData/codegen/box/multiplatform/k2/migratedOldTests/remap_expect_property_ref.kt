@@ -1,5 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// TARGET_BACKEND: JVM_IR, JS_IR, WASM, NATIVE
 // WITH_STDLIB
 // OPT_IN: kotlin.ExperimentalMultiplatform
 

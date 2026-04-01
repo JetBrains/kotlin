@@ -6,7 +6,9 @@
 package kotlin.wasm.internal
 
 import kotlin.Function
+import kotlin.internal.UsedFromCompilerGeneratedCode
 
+@UsedFromCompilerGeneratedCode
 internal interface FunctionAdapter {
     fun getFunctionDelegate(): Function<*>
 }

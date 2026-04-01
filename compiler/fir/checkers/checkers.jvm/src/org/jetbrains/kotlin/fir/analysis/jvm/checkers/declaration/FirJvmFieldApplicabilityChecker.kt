@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -36,6 +37,9 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_MULTIFILE_CLASS_ID
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
         val session = context.session
@@ -70,7 +74,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
         val factory = when {
             problem == ANNOTATION -> {
                 when {
-                    !ForbidJvmAnnotationsOnAnnotationParameters.isEnabled() ->
+                    ForbidJvmAnnotationsOnAnnotationParameters.isDisabled() ->
                         FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING
                     ForbidFieldAnnotationsOnAnnotationParameters.isEnabled() ->
                         return

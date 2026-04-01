@@ -159,7 +159,7 @@ class SerializationJvmIrIntrinsicSupport(
     private val typeSystemContext = jvmBackendContext.typeSystem
     private val typeMapper = jvmBackendContext.defaultTypeMapper
 
-    override fun referenceClassId(classId: ClassId): IrClassSymbol? = irPluginContext.referenceClass(classId)
+    override fun referenceClassId(classId: ClassId): IrClassSymbol? = irPluginContext.finderForBuiltins().findClass(classId)
 
     private val currentVersion by lazy {
         VersionReader.getVersionsForCurrentModuleFromTrace(module, jvmBackendContext.state.bindingTrace)
@@ -173,7 +173,8 @@ class SerializationJvmIrIntrinsicSupport(
         get() = currentVersion != null && currentVersion!! >= ApiVersion.parse("1.2.0")!!
 
     private val useModuleOverContextualForInterfaces: Boolean by lazy {
-        irPluginContext.referenceFunctions(CallableId(FqName("kotlinx.serialization"), Name.identifier(moduleOverPolymorphicName)))
+        irPluginContext.finderForBuiltins()
+            .findFunctions(CallableId(FqName("kotlinx.serialization"), Name.identifier(moduleOverPolymorphicName)))
             .isNotEmpty()
     }
 

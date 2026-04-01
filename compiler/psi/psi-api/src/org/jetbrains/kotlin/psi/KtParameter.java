@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,6 +24,53 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Represents a parameter declaration in various contexts.
+ *
+ * <h3>Function parameter (including constructors and property accessors):</h3>
+ * <pre>{@code
+ * fun greet(name: String) {}
+ * //        ^__________^
+ * }</pre>
+ *
+ * <h3>Lambda parameter:</h3>
+ * <pre>{@code
+ * list.map { item -> item.toString() }
+ * //         ^__^
+ * }</pre>
+ *
+ * <h3>For-loop parameter:</h3>
+ * <pre>{@code
+ * for (item in list) {}
+ * //   ^__^
+ * }</pre>
+ *
+ * <h3>Catch clause parameter:</h3>
+ * <pre>{@code
+ * try {} catch (e: Exception) {}
+ * //            ^___________^
+ * }</pre>
+ *
+ * <h3>Function type parameter:</h3>
+ * <pre>{@code
+ * val f: (param: Int) -> Unit = {}
+ * //      ^________^
+ * }</pre>
+ *
+ * <h3>Context parameter:</h3>
+ * <pre>{@code
+ * context(ctx: Context)
+ * //      ^__________^
+ * fun foo() {}
+ * }</pre>
+ *
+ * @see #isLoopParameter()
+ * @see #isCatchParameter()
+ * @see #isLambdaParameter()
+ * @see #isFunctionTypeParameter()
+ * @see #isContextParameter()
+ * @see #hasValOrVar()
+ */
 public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> implements KtCallableDeclaration, KtValVarKeywordOwner {
 
     public KtParameter(@NotNull ASTNode node) {
@@ -160,10 +207,10 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
      *
      * @return true whether this [KtParameter] is a context parameter.
      *
-     * @see KtContextReceiverList
+     * @see KtContextParameterList
      */
     public boolean isContextParameter() {
-        return getParent() instanceof KtContextReceiverList;
+        return getParent() instanceof KtContextParameterList;
     }
 
     /**
@@ -239,7 +286,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
 
     /**
      * @see KtParameterList#getOwnerFunction()
-     * @see KtContextReceiverList#getOwnerDeclaration()
+     * @see KtContextParameterList#getOwnerDeclaration()
      *
      * @return the parameter's owner declaration or null if it is from a functional type
      */
@@ -250,8 +297,8 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
             return ((KtParameterList) parent).getOwnerFunction();
         }
 
-        if (parent instanceof KtContextReceiverList) {
-            return ((KtContextReceiverList) parent).getOwnerDeclaration();
+        if (parent instanceof KtContextParameterList) {
+            return ((KtContextParameterList) parent).getOwnerDeclaration();
         }
 
         return null;

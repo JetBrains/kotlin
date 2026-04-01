@@ -41,6 +41,9 @@ interface KotlinElementTypeProvider {
     val typeAliasType: KtStubElementType<out KotlinTypeAliasStub, KtTypeAlias>
     val classBodyType: KtStubElementType<out KotlinPlaceHolderStub<KtClassBody>, KtClassBody>
 
+    @KtExperimentalApi
+    val companionBlockType: KtStubElementType<out KotlinPlaceHolderStub<KtCompanionBlock>, KtCompanionBlock>
+
     // Initializers
     val classInitializerType: KtStubElementType<out KotlinPlaceHolderStub<KtClassInitializer>, KtClassInitializer>
     val scriptInitializerType: KtStubElementType<out KotlinPlaceHolderStub<KtScriptInitializer>, KtScriptInitializer>
@@ -59,7 +62,7 @@ interface KotlinElementTypeProvider {
     // Value parameters
     val valueParameterListType: KtStubElementType<out KotlinPlaceHolderStub<KtParameterList>, KtParameterList>
     val valueParameterType: KtStubElementType<out KotlinParameterStub, KtParameter>
-    val contextReceiverListType: KtStubElementType<out KotlinPlaceHolderStub<KtContextReceiverList>, KtContextReceiverList>
+    val contextParameterListType: KtStubElementType<out KotlinPlaceHolderStub<KtContextParameterList>, KtContextParameterList>
     val contextReceiverType: KtStubElementType<out KotlinContextReceiverStub, KtContextReceiver>
 
     // Type parameters

@@ -1,17 +1,31 @@
 FILE: optional.kt
-    public final class A : R|kotlin/Any| {
+    public open class A : R|kotlin/Any| {
         public constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    context(a: R|A|)
-    public final fun foo(): R|kotlin/Unit| {
+    public final class SubA : R|A| {
+        public constructor(): R|SubA| {
+            super<R|A|>()
+        }
+
     }
-    public final fun foo(a: R|A| = R|/A.A|(), x: R|kotlin/Int| = Int(1)): R|kotlin/Unit| {
+    context(a: R|A|)
+    public final fun foo0(): R|kotlin/Unit| {
+    }
+    public final fun foo0(a: R|A| = R|/A.A|(), x: R|kotlin/Int| = Int(1)): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final fun foo1(): R|kotlin/Unit| {
+    }
+    public final fun foo1(a: R|SubA| = R|/SubA.SubA|(), x: R|kotlin/Int| = Int(1)): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
-        R|/foo|()
-        context(R|/A.A|()) R|/foo|()
-        R|/foo|(R|/A.A|(), Int(2))
+        R|/foo0|()
+        context(R|/A.A|()) R|/foo0|()
+        R|/foo0|(R|/A.A|(), Int(2))
+        R|/foo1|()
+        context(R|/A.A|()) R|/foo1|()
+        R|/foo1|(R|/SubA.SubA|())
     }

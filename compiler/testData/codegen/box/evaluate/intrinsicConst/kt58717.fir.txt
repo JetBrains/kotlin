@@ -1,0 +1,21 @@
+FILE: kt58717.kt
+    public final var result: R|kotlin/String| = String(Fail)
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
+    public final object O : R|kotlin/Any| {
+        private [ContainingClassKey=O] constructor(): R|O| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+        init {
+            R|/result| = String(OK)
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        Q|O|::R|/O.foo|.R|SubstitutionOverride<kotlin/reflect/KFunction0.name: R|kotlin/String|>|
+        ^box R|/result|
+    }

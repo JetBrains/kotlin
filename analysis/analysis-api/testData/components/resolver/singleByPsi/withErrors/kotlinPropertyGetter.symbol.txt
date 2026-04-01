@@ -1,0 +1,5 @@
+KtNameReferenceExpression(51,54): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val foo: kotlin.Int
+    ]

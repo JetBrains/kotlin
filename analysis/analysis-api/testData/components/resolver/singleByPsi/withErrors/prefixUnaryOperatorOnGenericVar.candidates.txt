@@ -1,9 +1,10 @@
 KtPrefixExpression(47,58): '++foo.value'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = foo.value
@@ -17,14 +18,18 @@ KtPrefixExpression(47,58): '++foo.value'
             valueParameters = []
             contextParameters = []
             callableId = kotlin/Int.inc
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = PREFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = KaExplicitReceiverValue:
           expression = foo
           isSafeNavigation = false
           type = CInt32VarX<kotlin.Int>
+        isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = value
           receiverType = CInt32VarX<kotlin.Int>
@@ -32,4 +37,7 @@ KtPrefixExpression(47,58): '++foo.value'
           symbol = var value: T
           contextParameters = []
           callableId = /value
+        typeArgumentsMapping = {
+          T -> (kotlin.Int)
+        }
     isInBestCandidates = true

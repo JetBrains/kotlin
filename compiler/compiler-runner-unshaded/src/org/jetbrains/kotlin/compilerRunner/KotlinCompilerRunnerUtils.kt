@@ -61,7 +61,8 @@ object KotlinCompilerRunnerUtils {
         messageCollector: MessageCollector,
         isDebugEnabled: Boolean,
         daemonOptions: DaemonOptions = configureDaemonOptions(),
-        daemonJVMOptions: DaemonJVMOptions
+        daemonJVMOptions: DaemonJVMOptions,
+        daemonLogOptions: DaemonLogOptions = DaemonLogOptions(),
     ): CompileServiceSession? {
         val daemonReportMessages = ArrayList<DaemonReportMessage>()
         val daemonReportingTargets = DaemonReportingTargets(messages = daemonReportMessages)
@@ -77,7 +78,8 @@ object KotlinCompilerRunnerUtils {
                 daemonReportingTargets,
                 autostart = true,
                 leaseSession = true,
-                sessionAliveFlagFile = sessionAliveFlagFile
+                sessionAliveFlagFile = sessionAliveFlagFile,
+                daemonLogOptions = daemonLogOptions,
             )
         }
 

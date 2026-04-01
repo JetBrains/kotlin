@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.constant.AnnotationValue
 import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.constant.ErrorValue
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeSymbol
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.ClassId
@@ -24,15 +24,14 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
 class FirAnnotationSerializer(
-    private val session: FirSession,
-    private val scopeSession: ScopeSession,
+    override val session: FirSession,
+    override val scopeSession: ScopeSession,
     internal val stringTable: FirElementAwareStringTable,
-    private val constValueProvider: ConstValueProvider?,
     internal val localClassIdOracle: LocalClassIdOracle,
-) {
+) : SessionAndScopeSessionHolder {
     fun serializeAnnotation(annotation: FirAnnotation): ProtoBuf.Annotation? {
         if (annotation.toAnnotationClassLikeSymbol(session)?.hasAnnotation(StandardClassIds.Annotations.OptionalExpectation, session) == true) return null
-        val annotationValue = annotation.toConstantValue<AnnotationValue>(session, scopeSession, constValueProvider)
+        val annotationValue = annotation.toConstantValue<AnnotationValue>()
             ?: error("Cannot serialize annotation ${annotation.render()}")
         return serializeAnnotation(annotationValue)
     }

@@ -25,28 +25,44 @@ fun main(args: Array<String>) {
     val excludedScriptDirs = listOf("script")
 
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
-        testGroup(testRoot, testDataRoot = "compiler/testData") {
+        testGroup(testRoot, testDataRoot = "compiler/testData/codegen") {
             testClass<AbstractFirLightTreeBlackBoxCodegenTest> {
-                model("codegen/box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
+                model("box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
+                model("boxJvm", excludeDirs = k1BoxTestDir + excludedScriptDirs)
+            }
+
+            testClass<AbstractFirLightTreeHeaderModeCodegenTest> {
+                model("box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
+                model("boxJvm", excludeDirs = k1BoxTestDir + excludedScriptDirs)
             }
 
             testClass<AbstractFirPsiBlackBoxCodegenTest> {
-                model("codegen/box", excludeDirs = k1BoxTestDir)
+                model("box", excludeDirs = k1BoxTestDir)
+                model("boxJvm", excludeDirs = k1BoxTestDir)
             }
             testClass<AbstractJvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTest> {
-                model("codegen/box/${k2BoxTestDir.first()}")
+                model("box/${k2BoxTestDir.first()}")
+                model("boxJvm/${k2BoxTestDir.first()}")
             }
 
+            testClass<AbstractReflectionLegacyImplementationTest> {
+                model("box/reflection")
+                model("boxJvm/reflection")
+            }
+
+            testClass<AbstractNewReflectionFakeOverridesImplementationTest> {
+                model("box/reflection")
+                model("boxJvm/reflection")
+            }
+        }
+
+        testGroup(testRoot, testDataRoot = "compiler/testData") {
             testClass<AbstractFirLightTreeBlackBoxCodegenTest>("FirLightTreeBlackBoxModernJdkCodegenTestGenerated") {
                 model("codegen/boxModernJdk")
             }
 
             testClass<AbstractFirPsiBlackBoxCodegenTest>("FirPsiBlackBoxModernJdkCodegenTestGenerated") {
                 model("codegen/boxModernJdk")
-            }
-
-            testClass<AbstractReflectionLegacyImplementationTest> {
-                model("codegen/box/reflection")
             }
 
             testClass<AbstractFirPsiBlackBoxInlineCodegenTest> {
@@ -90,14 +106,6 @@ fun main(args: Array<String>) {
                 model("debug/localVariables")
             }
 
-            testClass<AbstractFirPsiWithInterpreterDiagnosticsTest> {
-                model("diagnostics/irInterpreter")
-            }
-
-            testClass<AbstractFirLightTreeWithInterpreterDiagnosticsTest> {
-                model("diagnostics/irInterpreter")
-            }
-
             testClass<AbstractFirPsiDiagnosticsTestWithConverter> {
                 model(
                     "diagnostics/testsWithConverter",
@@ -112,16 +120,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirLightTreeDiagnosticsTestWithJvmIrBackend> {
                 model("diagnostics/testsWithJvmBackend", excludedPattern = excludedCustomTestdataPattern)
-            }
-
-            testClass<AbstractFirLightTreeSerializeCompileKotlinAgainstInlineKotlinTest> {
-                model("codegen/box")
-                model("codegen/boxInline")
-            }
-
-            testClass<AbstractFirPsiSerializeCompileKotlinAgainstInlineKotlinTest> {
-                model("codegen/box")
-                model("codegen/boxInline")
             }
 
             testClass<AbstractFirPsiBytecodeListingTest> {

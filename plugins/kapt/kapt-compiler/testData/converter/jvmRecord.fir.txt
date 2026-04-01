@@ -39,10 +39,11 @@ public abstract interface I {
 
 @A()
 /**
+ * @A
  * public final data class R<T#0 (* T *)> : I, java/lang/Record {
  *
  *   // signature: <init>(ILjava/lang/Object;)V
- *   public constructor(x: kotlin/Int, y: T#0)
+ *   public constructor(@A x: kotlin/Int, y: T#0)
  *
  *   // signature: <init>(Ljava/lang/Object;)V
  *   public (* secondary *) constructor(y: T#0)
@@ -54,22 +55,27 @@ public abstract interface I {
  *   public final (* synthesized *) operator fun component2(): T#0
  *
  *   // signature: copy(ILjava/lang/Object;)LR;
- *   public final (* synthesized *) fun copy(x: kotlin/Int (* = ... *), y: T#0 (* = ... *)): R<T#0>
+ *   public final (* synthesized *) fun copy(@A x: kotlin/Int (* = ... *), y: T#0 (* = ... *)): R<T#0>
  *
  *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
  *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
  *
  *   // signature: foo()I
  *   public open fun foo(): kotlin/Int
  *
  *   // signature: hashCode()I
+ *   // must-use return value
  *   public open (* synthesized *) fun hashCode(): kotlin/Int
  *
  *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
  *   public open (* synthesized *) fun toString(): kotlin/String
  *
  *   // field: x:I
  *   // getter: x()I
+ *   // synthetic method for annotations: x$annotations()V
+ *   @A
  *   public final val x: kotlin/Int
  *     public final get
  *
@@ -138,5 +144,10 @@ public final class R<T extends java.lang.Object> extends java.lang.Record implem
     @org.jetbrains.annotations.NotNull()
     public java.lang.String toString() {
         return null;
+    }
+
+    @A()
+    @java.lang.Deprecated()
+    public static void x$annotations() {
     }
 }

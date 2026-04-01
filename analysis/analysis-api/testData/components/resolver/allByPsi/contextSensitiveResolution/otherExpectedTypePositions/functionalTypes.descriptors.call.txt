@@ -140,28 +140,27 @@ KtContainerNode(399,402): 'arg'
   null
 
 KtNameReferenceExpression(399,402): 'arg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = arg: kotlin.Boolean
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = arg: kotlin.Boolean
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(404,412): 'enumProp'
   null
 
 KtNameReferenceExpression(404,412): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -169,7 +168,7 @@ KtContainerNodeForControlStructureBody(418,425): 'Option1'
   null
 
 KtNameReferenceExpression(418,425): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -186,9 +185,32 @@ KtNameReferenceExpression(453,459): 'MyEnum'
   null
 
 KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(true)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = { arg: Boolean -> if (arg) enumProp else Option1 }
+        isSafeNavigation = false
+        type = kotlin.Function1<kotlin.Boolean, MyEnum>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         true -> (KaVariableSignature:
           name = p1
           receiverType = null
@@ -197,30 +219,6 @@ KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(t
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = { arg: Boolean -> if (arg) enumProp else Option1 }
-          isSafeNavigation = false
-          type = kotlin.Function1<kotlin.Boolean, MyEnum>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableSignature:
-              name = p1
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = p1: P1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
 
 KtLambdaExpression(462,512): '{ arg: Boolean -> if (arg) enumProp else Option1 }'
   null
@@ -253,28 +251,27 @@ KtContainerNode(484,487): 'arg'
   null
 
 KtNameReferenceExpression(484,487): 'arg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = arg: kotlin.Boolean
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = arg: kotlin.Boolean
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(489,497): 'enumProp'
   null
 
 KtNameReferenceExpression(489,497): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -282,7 +279,7 @@ KtContainerNodeForControlStructureBody(503,510): 'Option1'
   null
 
 KtNameReferenceExpression(503,510): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -344,7 +341,7 @@ KtBlockExpression(577,620): 'enumProp'
   null
 
 KtNameReferenceExpression(577,585): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -355,28 +352,27 @@ KtContainerNode(594,597): 'arg'
   null
 
 KtNameReferenceExpression(594,597): 'arg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = arg: kotlin.Boolean
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = arg: kotlin.Boolean
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(599,607): 'enumProp'
   null
 
 KtNameReferenceExpression(599,607): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -384,7 +380,7 @@ KtContainerNodeForControlStructureBody(613,620): 'Option1'
   null
 
 KtNameReferenceExpression(613,620): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -443,7 +439,7 @@ KtBlockExpression(685,748): '{'
   null
 
 KtNameReferenceExpression(695,703): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -454,28 +450,27 @@ KtContainerNode(716,719): 'arg'
   null
 
 KtNameReferenceExpression(716,719): 'arg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = arg: kotlin.Boolean
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = arg: kotlin.Boolean
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(721,729): 'enumProp'
   null
 
 KtNameReferenceExpression(721,729): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -483,7 +478,7 @@ KtContainerNodeForControlStructureBody(735,742): 'Option1'
   null
 
 KtNameReferenceExpression(735,742): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -509,7 +504,7 @@ KtBlockExpression(770,793): '{'
   null
 
 KtNameReferenceExpression(780,787): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -586,28 +581,27 @@ KtContainerNode(889,892): 'arg'
   null
 
 KtNameReferenceExpression(889,892): 'arg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = arg: kotlin.Boolean
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = arg: kotlin.Boolean
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(894,902): 'enumProp'
   null
 
 KtNameReferenceExpression(894,902): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -615,7 +609,7 @@ KtContainerNodeForControlStructureBody(908,915): 'Option1'
   null
 
 KtNameReferenceExpression(908,915): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -665,9 +659,32 @@ KtBlockExpression(975,1005): 'contextOf<MyEnum>() == Option1'
   null
 
 KtBinaryExpression(975,1005): 'contextOf<MyEnum>() == Option1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = contextOf<MyEnum>()
+        isSafeNavigation = false
+        type = @R|kotlin.internal.NoInfer|()  MyEnum
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Enum.equals
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         Option1 -> (KaVariableSignature:
           name = other
           receiverType = null
@@ -676,86 +693,60 @@ KtBinaryExpression(975,1005): 'contextOf<MyEnum>() == Option1'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = contextOf<MyEnum>()
-          isSafeNavigation = false
-          type = @R|kotlin.internal.NoInfer|()  MyEnum
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Enum.equals
-      typeArgumentsMapping = {}
 
 KtCallExpression(975,994): 'contextOf<MyEnum>()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = @R|kotlin.internal.NoInfer|()  MyEnum
-          symbol = kotlin/contextOf(): @R|kotlin.internal.NoInfer|()  A
-          valueParameters = []
-          contextParameters = [
-            KaVariableSignature:
-              name = $context_receiver_0
-              receiverType = null
-              returnType = @R|kotlin.internal.NoInfer|()  MyEnum
-              symbol = $context_receiver_0: @R|kotlin.internal.NoInfer|()  A
-              contextParameters = []
-              callableId = null
-          ]
-          callableId = kotlin/contextOf
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = @R|kotlin.internal.NoInfer|()  MyEnum
+        symbol = kotlin/contextOf(): @R|kotlin.internal.NoInfer|()  A
+        valueParameters = []
+        contextParameters = [
+          KaVariableSignature:
+            name = $context_receiver_0
+            receiverType = null
+            returnType = @R|kotlin.internal.NoInfer|()  MyEnum
+            symbol = $context_receiver_0: @R|kotlin.internal.NoInfer|()  A
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = kotlin/contextOf
       typeArgumentsMapping = {
         A -> (MyEnum)
       }
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(975,984): 'contextOf'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = @R|kotlin.internal.NoInfer|()  MyEnum
-          symbol = kotlin/contextOf(): @R|kotlin.internal.NoInfer|()  A
-          valueParameters = []
-          contextParameters = [
-            KaVariableSignature:
-              name = $context_receiver_0
-              receiverType = null
-              returnType = @R|kotlin.internal.NoInfer|()  MyEnum
-              symbol = $context_receiver_0: @R|kotlin.internal.NoInfer|()  A
-              contextParameters = []
-              callableId = null
-          ]
-          callableId = kotlin/contextOf
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = @R|kotlin.internal.NoInfer|()  MyEnum
+        symbol = kotlin/contextOf(): @R|kotlin.internal.NoInfer|()  A
+        valueParameters = []
+        contextParameters = [
+          KaVariableSignature:
+            name = $context_receiver_0
+            receiverType = null
+            returnType = @R|kotlin.internal.NoInfer|()  MyEnum
+            symbol = $context_receiver_0: @R|kotlin.internal.NoInfer|()  A
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = kotlin/contextOf
       typeArgumentsMapping = {
         A -> (MyEnum)
       }
+      valueArgumentMapping = {}
 
 KtTypeArgumentList(984,992): '<MyEnum>'
   null
@@ -778,7 +769,30 @@ KtValueArgumentList(992,994): '()'
 KtOperationReferenceExpression(995,997): '=='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = contextOf<MyEnum>()
+        isSafeNavigation = false
+        type = @R|kotlin.internal.NoInfer|()  MyEnum
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Enum.equals
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         Option1 -> (KaVariableSignature:
           name = other
           receiverType = null
@@ -787,32 +801,8 @@ KtOperationReferenceExpression(995,997): '=='
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = contextOf<MyEnum>()
-          isSafeNavigation = false
-          type = @R|kotlin.internal.NoInfer|()  MyEnum
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Enum.equals
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(998,1005): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>

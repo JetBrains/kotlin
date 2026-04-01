@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
+// DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION
 // LANGUAGE: +ConditionImpliesReturnsContracts
 
 @file:OptIn(ExperimentalContracts::class, ExperimentalExtendedContracts::class)

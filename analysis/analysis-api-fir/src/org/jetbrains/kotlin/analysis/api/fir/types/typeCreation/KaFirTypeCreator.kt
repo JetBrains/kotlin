@@ -119,7 +119,7 @@ internal class KaFirTypeCreator(
                     projection.type?.directSupertypes?.map { it.coneType }?.toList() ?: emptyList(),
                     lowerType = null,
                     CaptureStatus.FROM_EXPRESSION
-                ) as ConeCapturedType
+                )
 
                 return capturedType
                     .withNullability(builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
@@ -208,7 +208,7 @@ internal class KaFirTypeCreator(
                     return null
                 }
 
-                val coneType = typeContext.createFlexibleType(lowerBound, upperBound) as ConeKotlinType
+                val coneType = typeContext.createFlexibleType(lowerBound, upperBound)
                 return coneType.withAnnotationAttributes(builder.annotations).asKaType() as KaFlexibleType
             }
         }

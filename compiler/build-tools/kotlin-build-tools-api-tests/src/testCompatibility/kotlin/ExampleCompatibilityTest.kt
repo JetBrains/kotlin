@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests
+package org.jetbrains.kotlin.buildtools.tests
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
@@ -17,7 +17,7 @@ class ExampleCompatibilityTest {
     @Test
     @DisplayName("Sample compatibility test that is run as part of each test suit")
     fun testDefaultNonIncrementalSettings() {
-        val config = KotlinToolchains.loadImplementation(ExampleCompatibilityTest::class.java.classLoader).createDaemonExecutionPolicy()
+        val config = KotlinToolchains.loadImplementation(ExampleCompatibilityTest::class.java.classLoader).daemonExecutionPolicyBuilder()
         config[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = emptyList()
         assertEquals(emptyList<String>(), config[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS])
     }

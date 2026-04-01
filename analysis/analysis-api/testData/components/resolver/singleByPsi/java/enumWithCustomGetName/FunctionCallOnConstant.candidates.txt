@@ -1,21 +1,20 @@
 KtNameReferenceExpression(54,61): 'getName'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = JavaEnum.A
-          isSafeNavigation = false
-          type = JavaEnum
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String!
-          symbol = /JavaEnum.getName(<dispatch receiver>: JavaEnum): kotlin.String!
-          valueParameters = []
-          contextParameters = []
-          callableId = /JavaEnum.getName
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaEnum.A
+        isSafeNavigation = false
+        type = JavaEnum
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String!
+        symbol = /JavaEnum.getName(<dispatch receiver>: JavaEnum): kotlin.String!
+        valueParameters = []
+        contextParameters = []
+        callableId = /JavaEnum.getName
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

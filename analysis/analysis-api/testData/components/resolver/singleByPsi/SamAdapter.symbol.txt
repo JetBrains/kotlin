@@ -1,0 +1,5 @@
+KtNameReferenceExpression(35,46): 'invokeLater'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      javax/swing/SwingUtilities.invokeLater(doRun: java.lang.Runnable!): kotlin.Unit
+    ]

@@ -1,0 +1,6 @@
+KtOperationReferenceExpression(189,191): '+='
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int,
+      /Foo.set(<extension receiver>: MyMap<K2, V2>, <dispatch receiver>: Foo, k: K2, v: V2): kotlin.Unit
+    ]

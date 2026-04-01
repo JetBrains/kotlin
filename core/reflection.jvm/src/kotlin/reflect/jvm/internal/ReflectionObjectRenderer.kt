@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isNumberedFunctionClassFqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.renderer.render
+import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.renderer.renderFlexibleMutabilityOrArrayElementVarianceType
 import kotlin.reflect.*
 import kotlin.reflect.full.contextParameters
@@ -41,7 +41,6 @@ internal object ReflectionObjectRenderer {
         receivers.getOrNull(1)?.let { append("(").appendReceiverType(it).append(")") }
     }
 
-    @OptIn(ExperimentalContextParameters::class)
     private fun StringBuilder.appendContexts(callable: KCallable<*>) {
         val parameters = callable.contextParameters
         if (parameters.isEmpty()) return
@@ -112,9 +111,7 @@ internal object ReflectionObjectRenderer {
         return buildString {
             when (parameter.kind) {
                 KParameter.Kind.INSTANCE -> append("instance parameter")
-                @OptIn(ExperimentalContextParameters::class)
-                KParameter.Kind.CONTEXT,
-                    -> append("context parameter ${parameter.name}")
+                KParameter.Kind.CONTEXT -> append("context parameter ${parameter.name}")
                 KParameter.Kind.EXTENSION_RECEIVER -> append("extension receiver parameter")
                 KParameter.Kind.VALUE -> append("parameter #${parameter.index} ${parameter.name}")
             }

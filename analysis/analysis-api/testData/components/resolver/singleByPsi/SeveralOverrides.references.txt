@@ -2,5 +2,6 @@ KtNameReferenceExpression(110,113): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in C) override fun foo()

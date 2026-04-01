@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.decompiler.stub.file
 
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
@@ -22,10 +23,8 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.Flags
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
-import org.jetbrains.kotlin.metadata.deserialization.NameResolver
-import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
@@ -34,7 +33,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.psi.stubs.impl.createConstantValue
-import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -129,8 +128,8 @@ object KotlinClsStubBuilder : ClsStubBuilder() {
     ): ClsStubBuilderComponents {
         val classFinder = DirectoryBasedClassFinder(file.parent!!, packageFqName)
         val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG, metadataVersion)
-        val annotationLoader = AnnotationLoaderForClassFileStubBuilder(classFinder, file, fileContent, metadataVersion)
-        return ClsStubBuilderComponents(classDataFinder, annotationLoader, file, BuiltInSerializerProtocol, classFinder, metadataVersion)
+        val annotationLoader = JvmClsAnnotationLoader(classFinder, file, fileContent, metadataVersion)
+        return ClsStubBuilderComponents(classDataFinder, annotationLoader, file)
     }
 
     private val LOG = logger<KotlinClsStubBuilder>()
@@ -141,22 +140,54 @@ object KotlinClsStubBuilder : ClsStubBuilder() {
     fun isVersioned(virtualFile: VirtualFile): Boolean = VERSIONED_PATH_MARKER in virtualFile.path
 }
 
-private class AnnotationLoaderForClassFileStubBuilder(
+private class JvmClsAnnotationLoader(
     kotlinClassFinder: KotlinClassFinder,
     private val cachedFile: VirtualFile,
     private val cachedFileContent: ByteArray,
     override val metadataVersion: MetadataVersion
 ) : AbstractBinaryClassAnnotationLoader<AnnotationWithArgs, AnnotationsContainerWithConstants<AnnotationWithArgs, ConstantValue<*>>>(
     kotlinClassFinder
-) {
+), ClsAnnotationLoader {
+
+    private class CachedData(
+        val container: AnnotationsContainerWithConstants<AnnotationWithArgs, ConstantValue<*>>,
+        val fieldInitializers: Map<Name, ConstantValue<*>>,
+        val annotationDefaults: Map<Name, ConstantValue<*>>,
+    )
 
     private val storage =
-        LockBasedStorageManager.NO_LOCKS.createMemoizedFunction<KotlinJvmBinaryClass, AnnotationsContainerWithConstants<AnnotationWithArgs, ConstantValue<*>>> { kotlinClass ->
+        LockBasedStorageManager.NO_LOCKS.createMemoizedFunction<KotlinJvmBinaryClass, CachedData> { kotlinClass ->
             loadAnnotationsAndInitializers(kotlinClass)
         }
 
     override fun getAnnotationsContainer(binaryClass: KotlinJvmBinaryClass): AnnotationsContainerWithConstants<AnnotationWithArgs, ConstantValue<*>> {
-        return storage(binaryClass)
+        return storage(binaryClass).container
+    }
+
+    override fun loadPropertyInitializer(container: ProtoContainer, proto: ProtoBuf.Property): ConstantValue<*>? {
+        val specialCase = getSpecialCaseContainerClass(
+            container, property = true, field = true,
+            isConst = Flags.IS_CONST.get(proto.flags),
+            isMovedFromInterfaceCompanion = JvmProtoBufUtil.isMovedFromInterfaceCompanion(proto),
+            kotlinClassFinder, metadataVersion
+        )
+        val kotlinClass = findClassWithAnnotationsAndInitializers(container, specialCase) ?: return null
+        val cached = storage(kotlinClass)
+        val callableName = container.nameResolver.getName(proto.name)
+
+        // Field initializer (regular properties) — match by property name
+        cached.fieldInitializers[callableName]?.let { return it }
+
+        // Annotation default — only for annotation class properties
+        if (container is ProtoContainer.Class && container.kind == ProtoBuf.Class.Kind.ANNOTATION_CLASS) {
+            val getterName = proto.getExtensionOrNull(JvmProtoBuf.propertySignature)
+                ?.let { if (it.hasGetter()) container.nameResolver.getName(it.getter.name) else null }
+            if (getterName != null) {
+                cached.annotationDefaults[getterName]?.let { return it }
+            }
+        }
+
+        return null
     }
 
     override fun getCachedFileContent(kotlinClass: KotlinJvmBinaryClass): ByteArray? {
@@ -173,56 +204,69 @@ private class AnnotationLoaderForClassFileStubBuilder(
 
     override fun loadAnnotation(
         annotationClassId: ClassId, source: SourceElement, result: MutableList<AnnotationWithArgs>
-    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
-        return object : AnnotationMemberDefaultValueVisitor() {
-            override fun visitEnd() {
-                when {
-                    isRepeatableWithImplicitContainer(annotationClassId, args) -> {
-                        // do not add `java.lang.annotation.Repeatable` to stub for a repeatable annotation class
-                    }
-                    !isImplicitRepeatableContainer(annotationClassId) -> {
-                        result.add(AnnotationWithArgs(annotationClassId, args))
-                    }
-                    else -> {
-                        extractRepeatableAnnotationsFromRepeatableContainer()
-                    }
+    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor = object : KotlinJvmAnnotationArgumentsCollector() {
+        override fun visitEnd() {
+            when {
+                isRepeatableWithImplicitContainer(annotationClassId, args) -> {
+                    // do not add `java.lang.annotation.Repeatable` to stub for a repeatable annotation class
+                }
+                !isImplicitRepeatableContainer(annotationClassId) -> {
+                    result.add(AnnotationWithArgs(annotationClassId, args))
+                }
+                else -> {
+                    extractRepeatableAnnotationsFromRepeatableContainer()
                 }
             }
+        }
 
-            private fun isRepeatableWithImplicitContainer(annotationClassId: ClassId, arguments: Map<Name, ConstantValue<*>>): Boolean {
-                if (annotationClassId != SpecialJvmAnnotations.JAVA_LANG_ANNOTATION_REPEATABLE) return false
+        private fun isRepeatableWithImplicitContainer(annotationClassId: ClassId, arguments: Map<Name, ConstantValue<*>>): Boolean {
+            if (annotationClassId != SpecialJvmAnnotations.JAVA_LANG_ANNOTATION_REPEATABLE) return false
 
-                val containerKClassValue = arguments[JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME] as? KClassValue ?: return false
-                return isImplicitRepeatableContainer((containerKClassValue.value as KClassValue.Value.NormalClass).classId)
-            }
+            val containerKClassValue = arguments[JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME] as? KClassValue ?: return false
+            return isImplicitRepeatableContainer((containerKClassValue.value as KClassValue.Value.NormalClass).classId)
+        }
 
-            private fun extractRepeatableAnnotationsFromRepeatableContainer() {
-                val arrayValue = args[Name.identifier("value")] as? ArrayValue ?: return
-                for (annotationValue in arrayValue.value) {
-                    if (annotationValue !is AnnotationValue) continue
-                    val value = annotationValue.value
-                    result += AnnotationWithArgs(value.classId, value.argumentsMapping)
-                }
+        private fun extractRepeatableAnnotationsFromRepeatableContainer() {
+            val arrayValue = args[Name.identifier("value")] as? ArrayValue ?: return
+            for (annotationValue in arrayValue.value) {
+                if (annotationValue !is AnnotationValue) continue
+                val value = annotationValue.value
+                result += AnnotationWithArgs(value.classId, value.argumentsMapping)
             }
         }
     }
 
-    private fun loadAnnotationsAndInitializers(kotlinClass: KotlinJvmBinaryClass): AnnotationsContainerWithConstants<AnnotationWithArgs, ConstantValue<*>> {
+    private fun loadAnnotationsAndInitializers(kotlinClass: KotlinJvmBinaryClass): CachedData {
         val memberAnnotations = HashMap<MemberSignature, MutableList<AnnotationWithArgs>>()
-        val propertyConstants = HashMap<MemberSignature, ConstantValue<*>>()
-        val annotationParametersDefaultValues = HashMap<MemberSignature, ConstantValue<*>>()
+        val fieldInitializers = HashMap<Name, ConstantValue<*>>()
+        val annotationDefaults = HashMap<Name, ConstantValue<*>>()
 
+        ProgressManager.checkCanceled()
         kotlinClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
             override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor {
-                return AnnotationVisitorForMethod(MemberSignature.fromMethodNameAndDesc(name.asString(), desc))
+                ProgressManager.checkCanceled()
+
+                return AnnotationVisitorForMethod(
+                    methodName = name,
+                    signature = MemberSignature.fromMethodNameAndDesc(name.asString(), desc),
+                )
             }
 
             override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor {
+                ProgressManager.checkCanceled()
+
+                if (initializer != null) {
+                    fieldInitializers[name] = createConstantValue(initializer)
+                }
+
                 val signature = MemberSignature.fromFieldNameAndDesc(name.asString(), desc)
                 return MemberAnnotationVisitor(signature)
             }
 
-            inner class AnnotationVisitorForMethod(signature: MemberSignature) : MemberAnnotationVisitor(signature),
+            inner class AnnotationVisitorForMethod(
+                private val methodName: Name,
+                signature: MemberSignature,
+            ) : MemberAnnotationVisitor(signature),
                 KotlinJvmBinaryClass.MethodAnnotationVisitor {
 
                 override fun visitParameterAnnotation(
@@ -237,8 +281,15 @@ private class AnnotationLoaderForClassFileStubBuilder(
                     return loadAnnotationIfNotSpecial(classId, source, result)
                 }
 
-                override fun visitAnnotationMemberDefaultValue(): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-                    return null
+                override fun visitAnnotationMemberDefaultValue(): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+                    return object : KotlinJvmAnnotationArgumentsCollector() {
+                        override fun visitEnd() {
+                            val value = args.values.firstOrNull()
+                            if (value != null) {
+                                annotationDefaults[methodName] = value
+                            }
+                        }
+                    }
                 }
             }
 
@@ -257,10 +308,14 @@ private class AnnotationLoaderForClassFileStubBuilder(
             }
         }, getCachedFileContent(kotlinClass))
 
-        return AnnotationsContainerWithConstants(
-            memberAnnotations,
-            propertyConstants,
-            annotationParametersDefaultValues
+        return CachedData(
+            AnnotationsContainerWithConstants(
+                memberAnnotations = memberAnnotations,
+                propertyConstants = emptyMap(),
+                annotationParametersDefaultValues = emptyMap(),
+            ),
+            fieldInitializers,
+            annotationDefaults,
         )
     }
 }

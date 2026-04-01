@@ -88,6 +88,12 @@ fun FirExpression.extractClassesFromArgument(session: FirSession): List<FirRegul
     }
 }
 
+fun FirExpression.extractClassesAndSourcesFromArgument(session: FirSession): List<Pair<FirRegularClassSymbol, KtSourceElement?>> {
+    return unwrapAndFlattenArgument(flattenArrays = true).mapNotNull {
+        it.extractClassFromArgument(session)?.to(it.source)
+    }
+}
+
 fun FirExpression.extractClassFromArgument(session: FirSession): FirRegularClassSymbol? {
     if (this !is FirGetClassCall) return null
     return when (val argument = argument) {
@@ -136,7 +142,7 @@ context(context: CheckerContext)
 fun FirAnnotationContainer.getImplicitUseSiteTargetList(): List<AnnotationUseSiteTarget> {
     return when (this) {
         is FirValueParameter -> {
-            return if (context.findClosest<FirBasedSymbol<*>>().let { it is FirConstructorSymbol && it.isPrimary })
+            if (context.findClosest<FirBasedSymbol<*>>().let { it is FirConstructorSymbol && it.isPrimary })
                 UseSiteTargetsList.T_CONSTRUCTOR_PARAMETER
             else
                 emptyList()
@@ -162,7 +168,10 @@ fun checkRepeatedAnnotation(
     val annotationsMap = hashMapOf<ConeKotlinType, MutableList<AnnotationUseSiteTarget?>>()
 
     for (annotation in annotations) {
-        val useSiteTarget = annotation.useSiteTarget ?: annotationContainer?.getDefaultUseSiteTarget(annotation)
+        // TODO: KT-85288 consider dropping use-site target checks here
+        val useSiteTarget = annotation.useSiteTarget.takeIf {
+            it != AnnotationUseSiteTarget.ALL
+        } ?: annotationContainer?.getDefaultUseSiteTarget(annotation)
         val expandedType = annotation.annotationTypeRef.coneType.fullyExpandedType()
         val existingTargetsForAnnotation = annotationsMap.getOrPut(expandedType) { arrayListOf() }
 

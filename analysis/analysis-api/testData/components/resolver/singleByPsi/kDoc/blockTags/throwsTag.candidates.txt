@@ -1,0 +1,31 @@
+<caret_1>:
+  KDocName(15,21): 'String'
+    NO_CANDIDATES
+
+<caret_2>:
+  KDocName(36,42): 'String'
+    NO_CANDIDATES
+
+<caret_3>:
+  KDocName(54,75): 'IllegalStateException'
+    NO_CANDIDATES
+
+<caret_4>:
+  KDocName(90,111): 'IllegalStateException'
+    NO_CANDIDATES
+
+<caret_5>:
+  KDocName(123,134): 'MyException'
+    NO_CANDIDATES
+
+<caret_6>:
+  KDocName(149,160): 'MyException'
+    NO_CANDIDATES
+
+<caret_7>:
+  KDocName(172,183): 'MyThrowable'
+    NO_CANDIDATES
+
+<caret_8>:
+  KDocName(198,209): 'MyThrowable'
+    NO_CANDIDATES

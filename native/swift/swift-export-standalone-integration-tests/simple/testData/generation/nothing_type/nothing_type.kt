@@ -22,3 +22,15 @@ var nullableNothingVariable: Nothing? = null
 
 fun meaningOfLife(input: Int): Nothing? = null
 fun meaningOfLife(input: Nothing?): String = "hello"
+
+fun nothingClosure(block: () -> Nothing): Nothing = TODO()
+fun nothingOptClosure(block: () -> Nothing?): Nothing = TODO()
+
+fun nothingClosureParam(block: (Nothing) -> String): String = TODO()
+fun nothingOptClosureParam(block: (Nothing?) -> String): String = TODO()
+
+fun nothingFunctional(): () -> Nothing = TODO()
+fun nothingOptFunctional(): () -> Nothing? = TODO()
+
+fun nothingFunctionalParam(): (Nothing) -> String = TODO()
+fun nothingOptFunctionalParam(): (Nothing?) -> String = TODO()

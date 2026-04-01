@@ -2,7 +2,7 @@ FILE: requiredAnnotationWithTypealiasedArgumentAsMetaAnnotation.kt
     package testPack
 
     public final typealias MyTypeAlias = R|kotlin/annotation/AnnotationTarget|
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|testPack/MyTypeAlias|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|testPack/MyTypeAlias|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|testPack/MyTypeAlias|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class MyAnnotation : R|kotlin/Annotation| {
         public constructor(): R|testPack/MyAnnotation| {
             super<R|kotlin/Any|>()
         }

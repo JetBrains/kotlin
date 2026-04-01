@@ -148,15 +148,18 @@ library {
       public final /* synthesized */ fun copy(fVal: kotlin/Int /* = ... */, fVar: kotlin/String /* = ... */): F
 
       // signature: /F.equals|equals(kotlin.Any?){}[0]
+      // must-use return value
       public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
 
       // signature: /F.fFun|fFun(){}[0]
       public final fun fFun(): kotlin/Unit
 
       // signature: /F.hashCode|hashCode(){}[0]
+      // must-use return value
       public open /* synthesized */ fun hashCode(): kotlin/Int
 
       // signature: /F.toString|toString(){}[0]
+      // must-use return value
       public open /* synthesized */ fun toString(): kotlin/String
 
       // signature: /F.fVal|{}fVal[0]

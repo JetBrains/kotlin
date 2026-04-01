@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -56,7 +56,8 @@ object ValueClassDeclarationChecker : DeclarationChecker {
         }
 
         if (declaration.contextReceivers.isNotEmpty()) {
-            val contextReceiverList = declaration.getContextReceiverList()
+            @Suppress("DEPRECATION")
+            val contextReceiverList = declaration.modifierList?.contextReceiverList
             requireNotNull(contextReceiverList) { "Declaration cannot have context receivers with no context receiver list" }
             trace.report(Errors.VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS.on(contextReceiverList))
         }
@@ -73,7 +74,7 @@ object ValueClassDeclarationChecker : DeclarationChecker {
             return
         }
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) {
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.JvmInlineMultiFieldValueClasses)) {
             if (primaryConstructor.valueParameters.isEmpty()) {
                 (primaryConstructor.valueParameterList ?: declaration).let {
                     trace.report(Errors.VALUE_CLASS_EMPTY_CONSTRUCTOR.on(it))

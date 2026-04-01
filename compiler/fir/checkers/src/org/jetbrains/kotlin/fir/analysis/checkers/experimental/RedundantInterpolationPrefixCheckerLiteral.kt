@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirLiteralExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirStringConcatenationCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.text
@@ -21,21 +22,31 @@ object RedundantInterpolationPrefixCheckerConcatenation : FirStringConcatenation
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirStringConcatenationCall) {
         if (expression.interpolationPrefix == "$") {
-            reporter.reportOn(expression.source, FirErrors.REDUNDANT_INTERPOLATION_PREFIX)
+            expression.reportRedundantInterpolationPrefix()
         }
     }
 }
 
 object RedundantInterpolationPrefixCheckerLiteral : FirLiteralExpressionChecker(MppCheckerKind.Common) {
+    // substrings that look like an interpolation
+    private val redundancyRegex = Regex("""(\$+)(\w|\{|`[^`])""")
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirLiteralExpression) {
-        val prefix = expression.prefix
-        if (expression.kind == ConstantValueKind.String && !prefix.isNullOrEmpty()) {
-            val value = expression.source.text?.drop(prefix.length) ?: return
-            // approximation of interpolated values: $ followed either by start of an identifier, or braces
-            if (!Regex("""[^\\]\$(\w|\{|`[^`])""").containsMatchIn(value)) {
-                reporter.reportOn(expression.source, FirErrors.REDUNDANT_INTERPOLATION_PREFIX)
+        val prefixLength = expression.prefix?.length ?: return
+        when {
+            prefixLength == 1 -> expression.reportRedundantInterpolationPrefix()
+            expression.kind == ConstantValueKind.String -> {
+                val value = expression.source.text?.drop(prefixLength) ?: return
+                if (!redundancyRegex.containsMatchIn(value)) {
+                    expression.reportRedundantInterpolationPrefix()
+                }
             }
         }
     }
+}
+
+context(context: CheckerContext, reporter: DiagnosticReporter)
+private fun FirExpression.reportRedundantInterpolationPrefix() {
+    reporter.reportOn(source, FirErrors.REDUNDANT_INTERPOLATION_PREFIX)
 }

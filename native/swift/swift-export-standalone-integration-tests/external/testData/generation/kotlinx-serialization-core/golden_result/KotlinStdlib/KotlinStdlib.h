@@ -7,7 +7,7 @@ void * _Nullable kotlin_Array_get__TypesOfArguments__Swift_Int32__(void * self, 
 
 void * kotlin_Array_iterator(void * self);
 
-void kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, int32_t index, void * _Nullable value);
+_Bool kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, int32_t index, void * _Nullable value);
 
 int32_t kotlin_Array_size_get(void * self);
 
@@ -41,13 +41,59 @@ void * kotlin_Byte_Companion_get();
 
 int32_t kotlin_Byte_compareTo__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
 
+int32_t kotlin_Byte_compareTo__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+int32_t kotlin_Byte_compareTo__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int32_t kotlin_Byte_compareTo__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+int32_t kotlin_Byte_compareTo__TypesOfArguments__Swift_Float__(void * self, float other);
+
+int32_t kotlin_Byte_compareTo__TypesOfArguments__Swift_Double__(void * self, double other);
+
 int8_t kotlin_Byte_dec(void * self);
+
+int32_t kotlin_Byte_div__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int32_t kotlin_Byte_div__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+int32_t kotlin_Byte_div__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int64_t kotlin_Byte_div__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Byte_div__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Byte_div__TypesOfArguments__Swift_Double__(void * self, double other);
 
 _Bool kotlin_Byte_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
 int32_t kotlin_Byte_hashCode(void * self);
 
 int8_t kotlin_Byte_inc(void * self);
+
+int32_t kotlin_Byte_minus__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int32_t kotlin_Byte_minus__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+int32_t kotlin_Byte_minus__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int64_t kotlin_Byte_minus__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Byte_minus__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Byte_minus__TypesOfArguments__Swift_Double__(void * self, double other);
+
+int32_t kotlin_Byte_plus__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int32_t kotlin_Byte_plus__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+int32_t kotlin_Byte_plus__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int64_t kotlin_Byte_plus__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Byte_plus__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Byte_plus__TypesOfArguments__Swift_Double__(void * self, double other);
 
 void * kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
 
@@ -65,6 +111,32 @@ void * kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int32__(void * self, int3
 
 void * kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
 
+int32_t kotlin_Byte_rem__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int32_t kotlin_Byte_rem__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+int32_t kotlin_Byte_rem__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int64_t kotlin_Byte_rem__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Byte_rem__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Byte_rem__TypesOfArguments__Swift_Double__(void * self, double other);
+
+int32_t kotlin_Byte_times__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int32_t kotlin_Byte_times__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+int32_t kotlin_Byte_times__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int64_t kotlin_Byte_times__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Byte_times__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Byte_times__TypesOfArguments__Swift_Double__(void * self, double other);
+
+int8_t kotlin_Byte_toByte(void * self);
+
 uint16_t kotlin_Byte_toChar(void * self);
 
 double kotlin_Byte_toDouble(void * self);
@@ -78,6 +150,10 @@ int64_t kotlin_Byte_toLong(void * self);
 int16_t kotlin_Byte_toShort(void * self);
 
 NSString * kotlin_Byte_toString(void * self);
+
+int32_t kotlin_Byte_unaryMinus(void * self);
+
+int32_t kotlin_Byte_unaryPlus(void * self);
 
 uint16_t kotlin_CharSequence_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 
@@ -127,11 +203,19 @@ int32_t kotlin_Char_hashCode(void * self);
 
 uint16_t kotlin_Char_inc(void * self);
 
+int32_t kotlin_Char_minus__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__(void * self, uint16_t other);
+
+uint16_t kotlin_Char_minus__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+uint16_t kotlin_Char_plus__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
 void * kotlin_Char_rangeTo__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__(void * self, uint16_t other);
 
 void * kotlin_Char_rangeUntil__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__(void * self, uint16_t other);
 
 int8_t kotlin_Char_toByte(void * self);
+
+uint16_t kotlin_Char_toChar(void * self);
 
 double kotlin_Char_toDouble(void * self);
 
@@ -175,6 +259,16 @@ int32_t kotlin_Double_compareTo__TypesOfArguments__Swift_Double__(void * self, d
 
 double kotlin_Double_dec(void * self);
 
+double kotlin_Double_div__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+double kotlin_Double_div__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+double kotlin_Double_div__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+double kotlin_Double_div__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+double kotlin_Double_div__TypesOfArguments__Swift_Float__(void * self, float other);
+
 double kotlin_Double_div__TypesOfArguments__Swift_Double__(void * self, double other);
 
 _Bool kotlin_Double_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
@@ -183,17 +277,59 @@ int32_t kotlin_Double_hashCode(void * self);
 
 double kotlin_Double_inc(void * self);
 
+double kotlin_Double_minus__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+double kotlin_Double_minus__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+double kotlin_Double_minus__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+double kotlin_Double_minus__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+double kotlin_Double_minus__TypesOfArguments__Swift_Float__(void * self, float other);
+
 double kotlin_Double_minus__TypesOfArguments__Swift_Double__(void * self, double other);
+
+double kotlin_Double_plus__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+double kotlin_Double_plus__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+double kotlin_Double_plus__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+double kotlin_Double_plus__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+double kotlin_Double_plus__TypesOfArguments__Swift_Float__(void * self, float other);
 
 double kotlin_Double_plus__TypesOfArguments__Swift_Double__(void * self, double other);
 
+double kotlin_Double_rem__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+double kotlin_Double_rem__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+double kotlin_Double_rem__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+double kotlin_Double_rem__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+double kotlin_Double_rem__TypesOfArguments__Swift_Float__(void * self, float other);
+
 double kotlin_Double_rem__TypesOfArguments__Swift_Double__(void * self, double other);
+
+double kotlin_Double_times__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+double kotlin_Double_times__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+double kotlin_Double_times__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+double kotlin_Double_times__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+double kotlin_Double_times__TypesOfArguments__Swift_Float__(void * self, float other);
 
 double kotlin_Double_times__TypesOfArguments__Swift_Double__(void * self, double other);
 
 int8_t kotlin_Double_toByte(void * self);
 
 uint16_t kotlin_Double_toChar(void * self);
+
+double kotlin_Double_toDouble(void * self);
 
 float kotlin_Double_toFloat(void * self);
 
@@ -211,13 +347,13 @@ double kotlin_Double_unaryPlus(void * self);
 
 void * kotlin_Exception_init_allocate();
 
-void kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
-void kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(void * __kt, NSString * _Nullable message);
+_Bool kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(void * __kt, NSString * _Nullable message);
 
-void kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, NSString * _Nullable message, void * _Nullable cause);
+_Bool kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, NSString * _Nullable message, void * _Nullable cause);
 
-void kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, void * _Nullable cause);
+_Bool kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, void * _Nullable cause);
 
 float kotlin_Float_Companion_MAX_VALUE_get(void * self);
 
@@ -249,7 +385,17 @@ int32_t kotlin_Float_compareTo__TypesOfArguments__Swift_Double__(void * self, do
 
 float kotlin_Float_dec(void * self);
 
+float kotlin_Float_div__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+float kotlin_Float_div__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+float kotlin_Float_div__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+float kotlin_Float_div__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
 float kotlin_Float_div__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Float_div__TypesOfArguments__Swift_Double__(void * self, double other);
 
 _Bool kotlin_Float_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
@@ -257,19 +403,61 @@ int32_t kotlin_Float_hashCode(void * self);
 
 float kotlin_Float_inc(void * self);
 
+float kotlin_Float_minus__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+float kotlin_Float_minus__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+float kotlin_Float_minus__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+float kotlin_Float_minus__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
 float kotlin_Float_minus__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Float_minus__TypesOfArguments__Swift_Double__(void * self, double other);
+
+float kotlin_Float_plus__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+float kotlin_Float_plus__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+float kotlin_Float_plus__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+float kotlin_Float_plus__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
 
 float kotlin_Float_plus__TypesOfArguments__Swift_Float__(void * self, float other);
 
+double kotlin_Float_plus__TypesOfArguments__Swift_Double__(void * self, double other);
+
+float kotlin_Float_rem__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+float kotlin_Float_rem__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+float kotlin_Float_rem__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+float kotlin_Float_rem__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
 float kotlin_Float_rem__TypesOfArguments__Swift_Float__(void * self, float other);
 
+double kotlin_Float_rem__TypesOfArguments__Swift_Double__(void * self, double other);
+
+float kotlin_Float_times__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+float kotlin_Float_times__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+float kotlin_Float_times__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+float kotlin_Float_times__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
 float kotlin_Float_times__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Float_times__TypesOfArguments__Swift_Double__(void * self, double other);
 
 int8_t kotlin_Float_toByte(void * self);
 
 uint16_t kotlin_Float_toChar(void * self);
 
 double kotlin_Float_toDouble(void * self);
+
+float kotlin_Float_toFloat(void * self);
 
 int32_t kotlin_Float_toInt(void * self);
 
@@ -285,19 +473,19 @@ float kotlin_Float_unaryPlus(void * self);
 
 void * kotlin_IllegalArgumentException_init_allocate();
 
-void kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
-void kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(void * __kt, NSString * _Nullable message);
+_Bool kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(void * __kt, NSString * _Nullable message);
 
-void kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, NSString * _Nullable message, void * _Nullable cause);
+_Bool kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, NSString * _Nullable message, void * _Nullable cause);
 
-void kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, void * _Nullable cause);
+_Bool kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, void * _Nullable cause);
 
 int32_t kotlin_IntArray_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 
 void * kotlin_IntArray_iterator(void * self);
 
-void kotlin_IntArray_set__TypesOfArguments__Swift_Int32_Swift_Int32__(void * self, int32_t index, int32_t value);
+_Bool kotlin_IntArray_set__TypesOfArguments__Swift_Int32_Swift_Int32__(void * self, int32_t index, int32_t value);
 
 int32_t kotlin_IntArray_size_get(void * self);
 
@@ -313,11 +501,31 @@ void * kotlin_Int_Companion_get();
 
 int32_t kotlin_Int_and__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
 
+int32_t kotlin_Int_compareTo__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int32_t kotlin_Int_compareTo__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
 int32_t kotlin_Int_compareTo__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int32_t kotlin_Int_compareTo__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+int32_t kotlin_Int_compareTo__TypesOfArguments__Swift_Float__(void * self, float other);
+
+int32_t kotlin_Int_compareTo__TypesOfArguments__Swift_Double__(void * self, double other);
 
 int32_t kotlin_Int_dec(void * self);
 
+int32_t kotlin_Int_div__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int32_t kotlin_Int_div__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
 int32_t kotlin_Int_div__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int64_t kotlin_Int_div__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Int_div__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Int_div__TypesOfArguments__Swift_Double__(void * self, double other);
 
 _Bool kotlin_Int_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
@@ -327,11 +535,31 @@ int32_t kotlin_Int_inc(void * self);
 
 int32_t kotlin_Int_inv(void * self);
 
+int32_t kotlin_Int_minus__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int32_t kotlin_Int_minus__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
 int32_t kotlin_Int_minus__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int64_t kotlin_Int_minus__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Int_minus__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Int_minus__TypesOfArguments__Swift_Double__(void * self, double other);
 
 int32_t kotlin_Int_or__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
 
+int32_t kotlin_Int_plus__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int32_t kotlin_Int_plus__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
 int32_t kotlin_Int_plus__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int64_t kotlin_Int_plus__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Int_plus__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Int_plus__TypesOfArguments__Swift_Double__(void * self, double other);
 
 void * kotlin_Int_rangeTo__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
 
@@ -349,13 +577,33 @@ void * kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int32__(void * self, int32
 
 void * kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
 
+int32_t kotlin_Int_rem__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int32_t kotlin_Int_rem__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
 int32_t kotlin_Int_rem__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int64_t kotlin_Int_rem__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Int_rem__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Int_rem__TypesOfArguments__Swift_Double__(void * self, double other);
 
 int32_t kotlin_Int_shl__TypesOfArguments__Swift_Int32__(void * self, int32_t bitCount);
 
 int32_t kotlin_Int_shr__TypesOfArguments__Swift_Int32__(void * self, int32_t bitCount);
 
+int32_t kotlin_Int_times__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int32_t kotlin_Int_times__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
 int32_t kotlin_Int_times__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int64_t kotlin_Int_times__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Int_times__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Int_times__TypesOfArguments__Swift_Double__(void * self, double other);
 
 int8_t kotlin_Int_toByte(void * self);
 
@@ -364,6 +612,8 @@ uint16_t kotlin_Int_toChar(void * self);
 double kotlin_Int_toDouble(void * self);
 
 float kotlin_Int_toFloat(void * self);
+
+int32_t kotlin_Int_toInt(void * self);
 
 int64_t kotlin_Int_toLong(void * self);
 
@@ -391,11 +641,31 @@ void * kotlin_Long_Companion_get();
 
 int64_t kotlin_Long_and__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
 
+int32_t kotlin_Long_compareTo__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int32_t kotlin_Long_compareTo__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+int32_t kotlin_Long_compareTo__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
 int32_t kotlin_Long_compareTo__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+int32_t kotlin_Long_compareTo__TypesOfArguments__Swift_Float__(void * self, float other);
+
+int32_t kotlin_Long_compareTo__TypesOfArguments__Swift_Double__(void * self, double other);
 
 int64_t kotlin_Long_dec(void * self);
 
+int64_t kotlin_Long_div__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int64_t kotlin_Long_div__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+int64_t kotlin_Long_div__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
 int64_t kotlin_Long_div__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Long_div__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Long_div__TypesOfArguments__Swift_Double__(void * self, double other);
 
 _Bool kotlin_Long_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
@@ -405,11 +675,31 @@ int64_t kotlin_Long_inc(void * self);
 
 int64_t kotlin_Long_inv(void * self);
 
+int64_t kotlin_Long_minus__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int64_t kotlin_Long_minus__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+int64_t kotlin_Long_minus__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
 int64_t kotlin_Long_minus__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Long_minus__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Long_minus__TypesOfArguments__Swift_Double__(void * self, double other);
 
 int64_t kotlin_Long_or__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
 
+int64_t kotlin_Long_plus__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int64_t kotlin_Long_plus__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+int64_t kotlin_Long_plus__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
 int64_t kotlin_Long_plus__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Long_plus__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Long_plus__TypesOfArguments__Swift_Double__(void * self, double other);
 
 void * kotlin_Long_rangeTo__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
 
@@ -427,13 +717,33 @@ void * kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int32__(void * self, int3
 
 void * kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
 
+int64_t kotlin_Long_rem__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int64_t kotlin_Long_rem__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+int64_t kotlin_Long_rem__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
 int64_t kotlin_Long_rem__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Long_rem__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Long_rem__TypesOfArguments__Swift_Double__(void * self, double other);
 
 int64_t kotlin_Long_shl__TypesOfArguments__Swift_Int32__(void * self, int32_t bitCount);
 
 int64_t kotlin_Long_shr__TypesOfArguments__Swift_Int32__(void * self, int32_t bitCount);
 
+int64_t kotlin_Long_times__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int64_t kotlin_Long_times__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+int64_t kotlin_Long_times__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
 int64_t kotlin_Long_times__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Long_times__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Long_times__TypesOfArguments__Swift_Double__(void * self, double other);
 
 int8_t kotlin_Long_toByte(void * self);
 
@@ -445,11 +755,15 @@ float kotlin_Long_toFloat(void * self);
 
 int32_t kotlin_Long_toInt(void * self);
 
+int64_t kotlin_Long_toLong(void * self);
+
 int16_t kotlin_Long_toShort(void * self);
 
 NSString * kotlin_Long_toString(void * self);
 
 int64_t kotlin_Long_unaryMinus(void * self);
+
+int64_t kotlin_Long_unaryPlus(void * self);
 
 int64_t kotlin_Long_ushr__TypesOfArguments__Swift_Int32__(void * self, int32_t bitCount);
 
@@ -471,13 +785,13 @@ int16_t kotlin_Number_toShort(void * self);
 
 void * kotlin_RuntimeException_init_allocate();
 
-void kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
-void kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(void * __kt, NSString * _Nullable message);
+_Bool kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(void * __kt, NSString * _Nullable message);
 
-void kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, NSString * _Nullable message, void * _Nullable cause);
+_Bool kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, NSString * _Nullable message, void * _Nullable cause);
 
-void kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, void * _Nullable cause);
+_Bool kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, void * _Nullable cause);
 
 int16_t kotlin_Short_Companion_MAX_VALUE_get(void * self);
 
@@ -489,15 +803,61 @@ int32_t kotlin_Short_Companion_SIZE_BYTES_get(void * self);
 
 void * kotlin_Short_Companion_get();
 
+int32_t kotlin_Short_compareTo__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
 int32_t kotlin_Short_compareTo__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
 
+int32_t kotlin_Short_compareTo__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int32_t kotlin_Short_compareTo__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+int32_t kotlin_Short_compareTo__TypesOfArguments__Swift_Float__(void * self, float other);
+
+int32_t kotlin_Short_compareTo__TypesOfArguments__Swift_Double__(void * self, double other);
+
 int16_t kotlin_Short_dec(void * self);
+
+int32_t kotlin_Short_div__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int32_t kotlin_Short_div__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+int32_t kotlin_Short_div__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int64_t kotlin_Short_div__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Short_div__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Short_div__TypesOfArguments__Swift_Double__(void * self, double other);
 
 _Bool kotlin_Short_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
 int32_t kotlin_Short_hashCode(void * self);
 
 int16_t kotlin_Short_inc(void * self);
+
+int32_t kotlin_Short_minus__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int32_t kotlin_Short_minus__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+int32_t kotlin_Short_minus__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int64_t kotlin_Short_minus__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Short_minus__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Short_minus__TypesOfArguments__Swift_Double__(void * self, double other);
+
+int32_t kotlin_Short_plus__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int32_t kotlin_Short_plus__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+int32_t kotlin_Short_plus__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int64_t kotlin_Short_plus__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Short_plus__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Short_plus__TypesOfArguments__Swift_Double__(void * self, double other);
 
 void * kotlin_Short_rangeTo__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
 
@@ -515,6 +875,30 @@ void * kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int32__(void * self, int
 
 void * kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
 
+int32_t kotlin_Short_rem__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int32_t kotlin_Short_rem__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+int32_t kotlin_Short_rem__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int64_t kotlin_Short_rem__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Short_rem__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Short_rem__TypesOfArguments__Swift_Double__(void * self, double other);
+
+int32_t kotlin_Short_times__TypesOfArguments__Swift_Int8__(void * self, int8_t other);
+
+int32_t kotlin_Short_times__TypesOfArguments__Swift_Int16__(void * self, int16_t other);
+
+int32_t kotlin_Short_times__TypesOfArguments__Swift_Int32__(void * self, int32_t other);
+
+int64_t kotlin_Short_times__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
+
+float kotlin_Short_times__TypesOfArguments__Swift_Float__(void * self, float other);
+
+double kotlin_Short_times__TypesOfArguments__Swift_Double__(void * self, double other);
+
 int8_t kotlin_Short_toByte(void * self);
 
 uint16_t kotlin_Short_toChar(void * self);
@@ -527,7 +911,13 @@ int32_t kotlin_Short_toInt(void * self);
 
 int64_t kotlin_Short_toLong(void * self);
 
+int16_t kotlin_Short_toShort(void * self);
+
 NSString * kotlin_Short_toString(void * self);
+
+int32_t kotlin_Short_unaryMinus(void * self);
+
+int32_t kotlin_Short_unaryPlus(void * self);
 
 void * kotlin_String_Companion_get();
 
@@ -541,7 +931,7 @@ int32_t kotlin_String_hashCode(void * self);
 
 void * kotlin_String_init_allocate();
 
-void kotlin_String_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool kotlin_String_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 int32_t kotlin_String_length_get(void * self);
 
@@ -557,19 +947,491 @@ void * kotlin_Throwable_getStackTrace(void * self);
 
 void * kotlin_Throwable_init_allocate();
 
-void kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, NSString * _Nullable message, void * _Nullable cause);
+_Bool kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, NSString * _Nullable message, void * _Nullable cause);
 
-void kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(void * __kt, NSString * _Nullable message);
+_Bool kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(void * __kt, NSString * _Nullable message);
 
-void kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, void * _Nullable cause);
+_Bool kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, void * _Nullable cause);
 
-void kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 NSString * _Nullable kotlin_Throwable_message_get(void * self);
 
-void kotlin_Throwable_printStackTrace(void * self);
+_Bool kotlin_Throwable_printStackTrace(void * self);
 
 NSString * kotlin_Throwable_toString(void * self);
+
+uint8_t kotlin_UByte_Companion_MAX_VALUE_get(void * self);
+
+uint8_t kotlin_UByte_Companion_MIN_VALUE_get(void * self);
+
+int32_t kotlin_UByte_Companion_SIZE_BITS_get(void * self);
+
+int32_t kotlin_UByte_Companion_SIZE_BYTES_get(void * self);
+
+void * kotlin_UByte_Companion_get();
+
+uint8_t kotlin_UByte_and__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+int32_t kotlin_UByte_compareTo__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+int32_t kotlin_UByte_compareTo__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+int32_t kotlin_UByte_compareTo__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+int32_t kotlin_UByte_compareTo__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint8_t kotlin_UByte_dec(void * self);
+
+uint32_t kotlin_UByte_div__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UByte_div__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UByte_div__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UByte_div__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+_Bool kotlin_UByte_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+
+uint32_t kotlin_UByte_floorDiv__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UByte_floorDiv__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UByte_floorDiv__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UByte_floorDiv__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+int32_t kotlin_UByte_hashCode(void * self);
+
+uint8_t kotlin_UByte_inc(void * self);
+
+uint8_t kotlin_UByte_inv(void * self);
+
+uint32_t kotlin_UByte_minus__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UByte_minus__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UByte_minus__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UByte_minus__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint8_t kotlin_UByte_mod__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint16_t kotlin_UByte_mod__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UByte_mod__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UByte_mod__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint8_t kotlin_UByte_or__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UByte_plus__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UByte_plus__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UByte_plus__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UByte_plus__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+void * kotlin_UByte_rangeTo__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+void * kotlin_UByte_rangeUntil__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UByte_rem__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UByte_rem__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UByte_rem__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UByte_rem__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint32_t kotlin_UByte_times__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UByte_times__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UByte_times__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UByte_times__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+int8_t kotlin_UByte_toByte(void * self);
+
+double kotlin_UByte_toDouble(void * self);
+
+float kotlin_UByte_toFloat(void * self);
+
+int32_t kotlin_UByte_toInt(void * self);
+
+int64_t kotlin_UByte_toLong(void * self);
+
+int16_t kotlin_UByte_toShort(void * self);
+
+NSString * kotlin_UByte_toString(void * self);
+
+uint8_t kotlin_UByte_toUByte(void * self);
+
+uint32_t kotlin_UByte_toUInt(void * self);
+
+uint64_t kotlin_UByte_toULong(void * self);
+
+uint16_t kotlin_UByte_toUShort(void * self);
+
+uint8_t kotlin_UByte_xor__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UInt_Companion_MAX_VALUE_get(void * self);
+
+uint32_t kotlin_UInt_Companion_MIN_VALUE_get(void * self);
+
+int32_t kotlin_UInt_Companion_SIZE_BITS_get(void * self);
+
+int32_t kotlin_UInt_Companion_SIZE_BYTES_get(void * self);
+
+void * kotlin_UInt_Companion_get();
+
+uint32_t kotlin_UInt_and__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+int32_t kotlin_UInt_compareTo__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+int32_t kotlin_UInt_compareTo__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+int32_t kotlin_UInt_compareTo__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+int32_t kotlin_UInt_compareTo__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint32_t kotlin_UInt_dec(void * self);
+
+uint32_t kotlin_UInt_div__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UInt_div__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UInt_div__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UInt_div__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+_Bool kotlin_UInt_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+
+uint32_t kotlin_UInt_floorDiv__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UInt_floorDiv__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UInt_floorDiv__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UInt_floorDiv__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+int32_t kotlin_UInt_hashCode(void * self);
+
+uint32_t kotlin_UInt_inc(void * self);
+
+uint32_t kotlin_UInt_inv(void * self);
+
+uint32_t kotlin_UInt_minus__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UInt_minus__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UInt_minus__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UInt_minus__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint8_t kotlin_UInt_mod__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint16_t kotlin_UInt_mod__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UInt_mod__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UInt_mod__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint32_t kotlin_UInt_or__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint32_t kotlin_UInt_plus__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UInt_plus__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UInt_plus__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UInt_plus__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+void * kotlin_UInt_rangeTo__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+void * kotlin_UInt_rangeUntil__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint32_t kotlin_UInt_rem__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UInt_rem__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UInt_rem__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UInt_rem__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint32_t kotlin_UInt_shl__TypesOfArguments__Swift_Int32__(void * self, int32_t bitCount);
+
+uint32_t kotlin_UInt_shr__TypesOfArguments__Swift_Int32__(void * self, int32_t bitCount);
+
+uint32_t kotlin_UInt_times__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UInt_times__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UInt_times__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UInt_times__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+int8_t kotlin_UInt_toByte(void * self);
+
+double kotlin_UInt_toDouble(void * self);
+
+float kotlin_UInt_toFloat(void * self);
+
+int32_t kotlin_UInt_toInt(void * self);
+
+int64_t kotlin_UInt_toLong(void * self);
+
+int16_t kotlin_UInt_toShort(void * self);
+
+NSString * kotlin_UInt_toString(void * self);
+
+uint8_t kotlin_UInt_toUByte(void * self);
+
+uint32_t kotlin_UInt_toUInt(void * self);
+
+uint64_t kotlin_UInt_toULong(void * self);
+
+uint16_t kotlin_UInt_toUShort(void * self);
+
+uint32_t kotlin_UInt_xor__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_ULong_Companion_MAX_VALUE_get(void * self);
+
+uint64_t kotlin_ULong_Companion_MIN_VALUE_get(void * self);
+
+int32_t kotlin_ULong_Companion_SIZE_BITS_get(void * self);
+
+int32_t kotlin_ULong_Companion_SIZE_BYTES_get(void * self);
+
+void * kotlin_ULong_Companion_get();
+
+uint64_t kotlin_ULong_and__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+int32_t kotlin_ULong_compareTo__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+int32_t kotlin_ULong_compareTo__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+int32_t kotlin_ULong_compareTo__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+int32_t kotlin_ULong_compareTo__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint64_t kotlin_ULong_dec(void * self);
+
+uint64_t kotlin_ULong_div__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint64_t kotlin_ULong_div__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint64_t kotlin_ULong_div__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_ULong_div__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+_Bool kotlin_ULong_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+
+uint64_t kotlin_ULong_floorDiv__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint64_t kotlin_ULong_floorDiv__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint64_t kotlin_ULong_floorDiv__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_ULong_floorDiv__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+int32_t kotlin_ULong_hashCode(void * self);
+
+uint64_t kotlin_ULong_inc(void * self);
+
+uint64_t kotlin_ULong_inv(void * self);
+
+uint64_t kotlin_ULong_minus__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint64_t kotlin_ULong_minus__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint64_t kotlin_ULong_minus__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_ULong_minus__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint8_t kotlin_ULong_mod__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint16_t kotlin_ULong_mod__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_ULong_mod__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_ULong_mod__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint64_t kotlin_ULong_or__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint64_t kotlin_ULong_plus__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint64_t kotlin_ULong_plus__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint64_t kotlin_ULong_plus__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_ULong_plus__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+void * kotlin_ULong_rangeTo__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+void * kotlin_ULong_rangeUntil__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint64_t kotlin_ULong_rem__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint64_t kotlin_ULong_rem__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint64_t kotlin_ULong_rem__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_ULong_rem__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint64_t kotlin_ULong_shl__TypesOfArguments__Swift_Int32__(void * self, int32_t bitCount);
+
+uint64_t kotlin_ULong_shr__TypesOfArguments__Swift_Int32__(void * self, int32_t bitCount);
+
+uint64_t kotlin_ULong_times__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint64_t kotlin_ULong_times__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint64_t kotlin_ULong_times__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_ULong_times__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+int8_t kotlin_ULong_toByte(void * self);
+
+double kotlin_ULong_toDouble(void * self);
+
+float kotlin_ULong_toFloat(void * self);
+
+int32_t kotlin_ULong_toInt(void * self);
+
+int64_t kotlin_ULong_toLong(void * self);
+
+int16_t kotlin_ULong_toShort(void * self);
+
+NSString * kotlin_ULong_toString(void * self);
+
+uint8_t kotlin_ULong_toUByte(void * self);
+
+uint32_t kotlin_ULong_toUInt(void * self);
+
+uint64_t kotlin_ULong_toULong(void * self);
+
+uint16_t kotlin_ULong_toUShort(void * self);
+
+uint64_t kotlin_ULong_xor__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint16_t kotlin_UShort_Companion_MAX_VALUE_get(void * self);
+
+uint16_t kotlin_UShort_Companion_MIN_VALUE_get(void * self);
+
+int32_t kotlin_UShort_Companion_SIZE_BITS_get(void * self);
+
+int32_t kotlin_UShort_Companion_SIZE_BYTES_get(void * self);
+
+void * kotlin_UShort_Companion_get();
+
+uint16_t kotlin_UShort_and__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+int32_t kotlin_UShort_compareTo__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+int32_t kotlin_UShort_compareTo__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+int32_t kotlin_UShort_compareTo__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+int32_t kotlin_UShort_compareTo__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint16_t kotlin_UShort_dec(void * self);
+
+uint32_t kotlin_UShort_div__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UShort_div__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UShort_div__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UShort_div__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+_Bool kotlin_UShort_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+
+uint32_t kotlin_UShort_floorDiv__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UShort_floorDiv__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UShort_floorDiv__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UShort_floorDiv__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+int32_t kotlin_UShort_hashCode(void * self);
+
+uint16_t kotlin_UShort_inc(void * self);
+
+uint16_t kotlin_UShort_inv(void * self);
+
+uint32_t kotlin_UShort_minus__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UShort_minus__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UShort_minus__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UShort_minus__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint8_t kotlin_UShort_mod__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint16_t kotlin_UShort_mod__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UShort_mod__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UShort_mod__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint16_t kotlin_UShort_or__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UShort_plus__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UShort_plus__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UShort_plus__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UShort_plus__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+void * kotlin_UShort_rangeTo__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+void * kotlin_UShort_rangeUntil__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UShort_rem__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UShort_rem__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UShort_rem__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UShort_rem__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+uint32_t kotlin_UShort_times__TypesOfArguments__Swift_UInt8__(void * self, uint8_t other);
+
+uint32_t kotlin_UShort_times__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
+
+uint32_t kotlin_UShort_times__TypesOfArguments__Swift_UInt32__(void * self, uint32_t other);
+
+uint64_t kotlin_UShort_times__TypesOfArguments__Swift_UInt64__(void * self, uint64_t other);
+
+int8_t kotlin_UShort_toByte(void * self);
+
+double kotlin_UShort_toDouble(void * self);
+
+float kotlin_UShort_toFloat(void * self);
+
+int32_t kotlin_UShort_toInt(void * self);
+
+int64_t kotlin_UShort_toLong(void * self);
+
+int16_t kotlin_UShort_toShort(void * self);
+
+NSString * kotlin_UShort_toString(void * self);
+
+uint8_t kotlin_UShort_toUByte(void * self);
+
+uint32_t kotlin_UShort_toUInt(void * self);
+
+uint64_t kotlin_UShort_toULong(void * self);
+
+uint16_t kotlin_UShort_toUShort(void * self);
+
+uint16_t kotlin_UShort_xor__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
 
 uint16_t kotlin_collections_CharIterator_next(void * self);
 
@@ -584,10 +1446,6 @@ void * kotlin_collections_Iterable_iterator(void * self);
 _Bool kotlin_collections_Iterator_hasNext(void * self);
 
 void * _Nullable kotlin_collections_Iterator_next(void * self);
-
-int64_t kotlin_collections_LongIterator_next(void * self);
-
-int64_t kotlin_collections_LongIterator_nextLong(void * self);
 
 void * kotlin_ranges_CharProgression_Companion_fromClosedRange__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit_Swift_Unicode_UTF16_CodeUnit_Swift_Int32__(void * self, uint16_t rangeStart, uint16_t rangeEnd, int32_t step);
 
@@ -625,7 +1483,7 @@ int32_t kotlin_ranges_CharRange_hashCode(void * self);
 
 void * kotlin_ranges_CharRange_init_allocate();
 
-void kotlin_ranges_CharRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Unicode_UTF16_CodeUnit_Swift_Unicode_UTF16_CodeUnit__(void * __kt, uint16_t start, uint16_t endInclusive);
+_Bool kotlin_ranges_CharRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Unicode_UTF16_CodeUnit_Swift_Unicode_UTF16_CodeUnit__(void * __kt, uint16_t start, uint16_t endInclusive);
 
 _Bool kotlin_ranges_CharRange_isEmpty(void * self);
 
@@ -633,92 +1491,244 @@ uint16_t kotlin_ranges_CharRange_start_get(void * self);
 
 NSString * kotlin_ranges_CharRange_toString(void * self);
 
-void * kotlin_ranges_IntProgression_Companion_fromClosedRange__TypesOfArguments__Swift_Int32_Swift_Int32_Swift_Int32__(void * self, int32_t rangeStart, int32_t rangeEnd, int32_t step);
+void * kotlin_ranges_UIntProgression_Companion_fromClosedRange__TypesOfArguments__Swift_UInt32_Swift_UInt32_Swift_Int32__(void * self, uint32_t rangeStart, uint32_t rangeEnd, int32_t step);
 
-void * kotlin_ranges_IntProgression_Companion_get();
+void * kotlin_ranges_UIntProgression_Companion_get();
 
-_Bool kotlin_ranges_IntProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+_Bool kotlin_ranges_UIntProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
-int32_t kotlin_ranges_IntProgression_first_get(void * self);
+uint32_t kotlin_ranges_UIntProgression_first_get(void * self);
 
-int32_t kotlin_ranges_IntProgression_hashCode(void * self);
+int32_t kotlin_ranges_UIntProgression_hashCode(void * self);
 
-_Bool kotlin_ranges_IntProgression_isEmpty(void * self);
+_Bool kotlin_ranges_UIntProgression_isEmpty(void * self);
 
-void * kotlin_ranges_IntProgression_iterator(void * self);
+void * kotlin_ranges_UIntProgression_iterator(void * self);
 
-int32_t kotlin_ranges_IntProgression_last_get(void * self);
+uint32_t kotlin_ranges_UIntProgression_last_get(void * self);
 
-int32_t kotlin_ranges_IntProgression_step_get(void * self);
+int32_t kotlin_ranges_UIntProgression_step_get(void * self);
 
-NSString * kotlin_ranges_IntProgression_toString(void * self);
+NSString * kotlin_ranges_UIntProgression_toString(void * self);
 
-void * kotlin_ranges_IntRange_Companion_EMPTY_get(void * self);
+void * kotlin_ranges_UIntRange_Companion_EMPTY_get(void * self);
 
-void * kotlin_ranges_IntRange_Companion_get();
+void * kotlin_ranges_UIntRange_Companion_get();
 
-_Bool kotlin_ranges_IntRange_contains__TypesOfArguments__Swift_Int32__(void * self, int32_t value);
+_Bool kotlin_ranges_UIntRange_contains__TypesOfArguments__Swift_UInt32__(void * self, uint32_t value);
 
-int32_t kotlin_ranges_IntRange_endExclusive_get(void * self);
+uint32_t kotlin_ranges_UIntRange_endExclusive_get(void * self);
 
-int32_t kotlin_ranges_IntRange_endInclusive_get(void * self);
+uint32_t kotlin_ranges_UIntRange_endInclusive_get(void * self);
 
-_Bool kotlin_ranges_IntRange_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+_Bool kotlin_ranges_UIntRange_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
-int32_t kotlin_ranges_IntRange_hashCode(void * self);
+int32_t kotlin_ranges_UIntRange_hashCode(void * self);
 
-void * kotlin_ranges_IntRange_init_allocate();
+void * kotlin_ranges_UIntRange_init_allocate();
 
-void kotlin_ranges_IntRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_Int32__(void * __kt, int32_t start, int32_t endInclusive);
+_Bool kotlin_ranges_UIntRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_UInt32_Swift_UInt32__(void * __kt, uint32_t start, uint32_t endInclusive);
 
-_Bool kotlin_ranges_IntRange_isEmpty(void * self);
+_Bool kotlin_ranges_UIntRange_isEmpty(void * self);
 
-int32_t kotlin_ranges_IntRange_start_get(void * self);
+uint32_t kotlin_ranges_UIntRange_start_get(void * self);
 
-NSString * kotlin_ranges_IntRange_toString(void * self);
+NSString * kotlin_ranges_UIntRange_toString(void * self);
 
-void * kotlin_ranges_LongProgression_Companion_fromClosedRange__TypesOfArguments__Swift_Int64_Swift_Int64_Swift_Int64__(void * self, int64_t rangeStart, int64_t rangeEnd, int64_t step);
+void * kotlin_ranges_ULongProgression_Companion_fromClosedRange__TypesOfArguments__Swift_UInt64_Swift_UInt64_Swift_Int64__(void * self, uint64_t rangeStart, uint64_t rangeEnd, int64_t step);
 
-void * kotlin_ranges_LongProgression_Companion_get();
+void * kotlin_ranges_ULongProgression_Companion_get();
 
-_Bool kotlin_ranges_LongProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+_Bool kotlin_ranges_ULongProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
-int64_t kotlin_ranges_LongProgression_first_get(void * self);
+uint64_t kotlin_ranges_ULongProgression_first_get(void * self);
 
-int32_t kotlin_ranges_LongProgression_hashCode(void * self);
+int32_t kotlin_ranges_ULongProgression_hashCode(void * self);
 
-_Bool kotlin_ranges_LongProgression_isEmpty(void * self);
+_Bool kotlin_ranges_ULongProgression_isEmpty(void * self);
 
-void * kotlin_ranges_LongProgression_iterator(void * self);
+void * kotlin_ranges_ULongProgression_iterator(void * self);
 
-int64_t kotlin_ranges_LongProgression_last_get(void * self);
+uint64_t kotlin_ranges_ULongProgression_last_get(void * self);
 
-int64_t kotlin_ranges_LongProgression_step_get(void * self);
+int64_t kotlin_ranges_ULongProgression_step_get(void * self);
 
-NSString * kotlin_ranges_LongProgression_toString(void * self);
+NSString * kotlin_ranges_ULongProgression_toString(void * self);
 
-void * kotlin_ranges_LongRange_Companion_EMPTY_get(void * self);
+void * kotlin_ranges_ULongRange_Companion_EMPTY_get(void * self);
 
-void * kotlin_ranges_LongRange_Companion_get();
+void * kotlin_ranges_ULongRange_Companion_get();
 
-_Bool kotlin_ranges_LongRange_contains__TypesOfArguments__Swift_Int64__(void * self, int64_t value);
+_Bool kotlin_ranges_ULongRange_contains__TypesOfArguments__Swift_UInt64__(void * self, uint64_t value);
 
-int64_t kotlin_ranges_LongRange_endExclusive_get(void * self);
+uint64_t kotlin_ranges_ULongRange_endExclusive_get(void * self);
 
-int64_t kotlin_ranges_LongRange_endInclusive_get(void * self);
+uint64_t kotlin_ranges_ULongRange_endInclusive_get(void * self);
 
-_Bool kotlin_ranges_LongRange_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+_Bool kotlin_ranges_ULongRange_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
-int32_t kotlin_ranges_LongRange_hashCode(void * self);
+int32_t kotlin_ranges_ULongRange_hashCode(void * self);
 
-void * kotlin_ranges_LongRange_init_allocate();
+void * kotlin_ranges_ULongRange_init_allocate();
 
-void kotlin_ranges_LongRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int64__(void * __kt, int64_t start, int64_t endInclusive);
+_Bool kotlin_ranges_ULongRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_UInt64_Swift_UInt64__(void * __kt, uint64_t start, uint64_t endInclusive);
 
-_Bool kotlin_ranges_LongRange_isEmpty(void * self);
+_Bool kotlin_ranges_ULongRange_isEmpty(void * self);
 
-int64_t kotlin_ranges_LongRange_start_get(void * self);
+uint64_t kotlin_ranges_ULongRange_start_get(void * self);
 
-NSString * kotlin_ranges_LongRange_toString(void * self);
+NSString * kotlin_ranges_ULongRange_toString(void * self);
+
+void * kotlin_ranges_intRange_create_int_KotlinStdlib(int32_t start, int32_t end);
+
+int32_t kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(void * nativePtr);
+
+int32_t kotlin_ranges_intRange_getStart_int_KotlinStdlib(void * nativePtr);
+
+void * kotlin_ranges_longRange_create_long_KotlinStdlib(int64_t start, int64_t end);
+
+int64_t kotlin_ranges_longRange_getEndInclusive_long_KotlinStdlib(void * nativePtr);
+
+int64_t kotlin_ranges_longRange_getStart_long_KotlinStdlib(void * nativePtr);
+
+void * kotlin_time_DurationUnit_DAYS();
+
+void * kotlin_time_DurationUnit_HOURS();
+
+void * kotlin_time_DurationUnit_MICROSECONDS();
+
+void * kotlin_time_DurationUnit_MILLISECONDS();
+
+void * kotlin_time_DurationUnit_MINUTES();
+
+void * kotlin_time_DurationUnit_NANOSECONDS();
+
+void * kotlin_time_DurationUnit_SECONDS();
+
+int32_t kotlin_time_DurationUnit_ordinal(void * self);
+
+void * kotlin_time_Duration_Companion_INFINITE_get(void * self);
+
+void * kotlin_time_Duration_Companion_ZERO_get(void * self);
+
+double kotlin_time_Duration_Companion_convert__TypesOfArguments__Swift_Double_ExportedKotlinPackages_kotlin_time_DurationUnit_ExportedKotlinPackages_kotlin_time_DurationUnit__(void * self, double value, void * sourceUnit, void * targetUnit);
+
+void * kotlin_time_Duration_Companion_days_get__TypesOfArguments__Swift_Int32__(void * self, int32_t receiver);
+
+void * kotlin_time_Duration_Companion_days_get__TypesOfArguments__Swift_Int64__(void * self, int64_t receiver);
+
+void * kotlin_time_Duration_Companion_days_get__TypesOfArguments__Swift_Double__(void * self, double receiver);
+
+void * kotlin_time_Duration_Companion_get();
+
+void * kotlin_time_Duration_Companion_hours_get__TypesOfArguments__Swift_Int32__(void * self, int32_t receiver);
+
+void * kotlin_time_Duration_Companion_hours_get__TypesOfArguments__Swift_Int64__(void * self, int64_t receiver);
+
+void * kotlin_time_Duration_Companion_hours_get__TypesOfArguments__Swift_Double__(void * self, double receiver);
+
+void * kotlin_time_Duration_Companion_microseconds_get__TypesOfArguments__Swift_Int32__(void * self, int32_t receiver);
+
+void * kotlin_time_Duration_Companion_microseconds_get__TypesOfArguments__Swift_Int64__(void * self, int64_t receiver);
+
+void * kotlin_time_Duration_Companion_microseconds_get__TypesOfArguments__Swift_Double__(void * self, double receiver);
+
+void * kotlin_time_Duration_Companion_milliseconds_get__TypesOfArguments__Swift_Int32__(void * self, int32_t receiver);
+
+void * kotlin_time_Duration_Companion_milliseconds_get__TypesOfArguments__Swift_Int64__(void * self, int64_t receiver);
+
+void * kotlin_time_Duration_Companion_milliseconds_get__TypesOfArguments__Swift_Double__(void * self, double receiver);
+
+void * kotlin_time_Duration_Companion_minutes_get__TypesOfArguments__Swift_Int32__(void * self, int32_t receiver);
+
+void * kotlin_time_Duration_Companion_minutes_get__TypesOfArguments__Swift_Int64__(void * self, int64_t receiver);
+
+void * kotlin_time_Duration_Companion_minutes_get__TypesOfArguments__Swift_Double__(void * self, double receiver);
+
+void * kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArguments__Swift_Int32__(void * self, int32_t receiver);
+
+void * kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArguments__Swift_Int64__(void * self, int64_t receiver);
+
+void * kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArguments__Swift_Double__(void * self, double receiver);
+
+void * kotlin_time_Duration_Companion_parse__TypesOfArguments__Swift_String__(void * self, NSString * value);
+
+void * kotlin_time_Duration_Companion_parseIsoString__TypesOfArguments__Swift_String__(void * self, NSString * value);
+
+void * _Nullable kotlin_time_Duration_Companion_parseIsoStringOrNull__TypesOfArguments__Swift_String__(void * self, NSString * value);
+
+void * _Nullable kotlin_time_Duration_Companion_parseOrNull__TypesOfArguments__Swift_String__(void * self, NSString * value);
+
+void * kotlin_time_Duration_Companion_seconds_get__TypesOfArguments__Swift_Int32__(void * self, int32_t receiver);
+
+void * kotlin_time_Duration_Companion_seconds_get__TypesOfArguments__Swift_Int64__(void * self, int64_t receiver);
+
+void * kotlin_time_Duration_Companion_seconds_get__TypesOfArguments__Swift_Double__(void * self, double receiver);
+
+void * kotlin_time_Duration_absoluteValue_get(void * self);
+
+int32_t kotlin_time_Duration_compareTo__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(void * self, void * other);
+
+void * kotlin_time_Duration_div__TypesOfArguments__Swift_Int32__(void * self, int32_t scale);
+
+void * kotlin_time_Duration_div__TypesOfArguments__Swift_Double__(void * self, double scale);
+
+double kotlin_time_Duration_div__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(void * self, void * other);
+
+_Bool kotlin_time_Duration_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+
+int32_t kotlin_time_Duration_hashCode(void * self);
+
+int64_t kotlin_time_Duration_inWholeDays_get(void * self);
+
+int64_t kotlin_time_Duration_inWholeHours_get(void * self);
+
+int64_t kotlin_time_Duration_inWholeMicroseconds_get(void * self);
+
+int64_t kotlin_time_Duration_inWholeMilliseconds_get(void * self);
+
+int64_t kotlin_time_Duration_inWholeMinutes_get(void * self);
+
+int64_t kotlin_time_Duration_inWholeNanoseconds_get(void * self);
+
+int64_t kotlin_time_Duration_inWholeSeconds_get(void * self);
+
+_Bool kotlin_time_Duration_isFinite(void * self);
+
+_Bool kotlin_time_Duration_isInfinite(void * self);
+
+_Bool kotlin_time_Duration_isNegative(void * self);
+
+_Bool kotlin_time_Duration_isPositive(void * self);
+
+void * kotlin_time_Duration_minus__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(void * self, void * other);
+
+void * kotlin_time_Duration_plus__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(void * self, void * other);
+
+void * kotlin_time_Duration_times__TypesOfArguments__Swift_Int32__(void * self, int32_t scale);
+
+void * kotlin_time_Duration_times__TypesOfArguments__Swift_Double__(void * self, double scale);
+
+void * _Nullable kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable (^action)(int64_t, int32_t, int32_t, int32_t, int32_t));
+
+void * _Nullable kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable (^action)(int64_t, int32_t, int32_t, int32_t));
+
+void * _Nullable kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable (^action)(int64_t, int32_t, int32_t));
+
+void * _Nullable kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable (^action)(int64_t, int32_t));
+
+double kotlin_time_Duration_toDouble__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit__(void * self, void * unit);
+
+int32_t kotlin_time_Duration_toInt__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit__(void * self, void * unit);
+
+NSString * kotlin_time_Duration_toIsoString(void * self);
+
+int64_t kotlin_time_Duration_toLong__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit__(void * self, void * unit);
+
+NSString * kotlin_time_Duration_toString(void * self);
+
+NSString * kotlin_time_Duration_toString__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit_Swift_Int32__(void * self, void * unit, int32_t decimals);
+
+void * kotlin_time_Duration_unaryMinus(void * self);
 
 NS_ASSUME_NONNULL_END

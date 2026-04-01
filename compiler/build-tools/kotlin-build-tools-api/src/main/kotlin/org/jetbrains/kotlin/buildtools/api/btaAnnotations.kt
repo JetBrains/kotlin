@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.buildtools.api
 @RequiresOptIn("This part of the Build Tools API is experimental and might change in the future releases")
 public annotation class ExperimentalBuildToolsApi
 
+@RequiresOptIn("This part of the Build Tools API should only be used with extra care, as it can introduce undesirable effects if misused.")
+public annotation class DelicateBuildToolsApi
+
 @RequiresOptIn("This compiler argument was deprecated in a previous Kotlin compiler version. Please see the argument KDoc for more information.")
 public annotation class DeprecatedCompilerArgument
 

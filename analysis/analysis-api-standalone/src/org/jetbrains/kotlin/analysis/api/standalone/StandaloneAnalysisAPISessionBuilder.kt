@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone
 
+import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.concurrency.AppExecutorUtil
@@ -123,12 +126,17 @@ public class StandaloneAnalysisAPISessionBuilder(
         }
     }
 
-    public fun <T : Any> registerProjectExtensionPoint(extensionDescriptor: ProjectExtensionDescriptor<T>) {
-        extensionDescriptor.registerExtensionPoint(project)
+    public fun <T : Any> registerProjectExtensionPoint(extensionPointName: ExtensionPointName<T>, extensionClass: Class<T>) {
+        CoreApplicationEnvironment.registerExtensionPoint(
+            project.extensionArea,
+            extensionPointName,
+            extensionClass,
+        )
     }
 
     private fun registerProjectServices(
         sourceKtFiles: List<KtFile>,
+        libraryRoots: List<VirtualFile>,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
     ) {
         val project = kotlinCoreProjectEnvironment.project
@@ -152,7 +160,11 @@ public class StandaloneAnalysisAPISessionBuilder(
             registerService(KotlinDeclarationProviderMerger::class.java, KotlinStandaloneDeclarationProviderMerger(this))
             registerService(
                 KotlinPackageProviderFactory::class.java,
-                KotlinStandalonePackageProviderFactory(project, sourceKtFiles + declarationProviderFactory.getAdditionalCreatedKtFiles())
+                KotlinStandalonePackageProviderFactory(
+                    project,
+                    sourceKtFiles + declarationProviderFactory.getAdditionalCreatedKtFiles(),
+                    libraryRoots
+                )
             )
             registerService(KotlinPackageProviderMerger::class.java, KotlinStandalonePackageProviderMerger(this))
 
@@ -219,7 +231,7 @@ public class StandaloneAnalysisAPISessionBuilder(
         )
 
         val createPackagePartProvider = StandaloneProjectFactory.createPackagePartsProvider(libraryRoots)
-        registerProjectServices(sourceKtFiles, createPackagePartProvider)
+        registerProjectServices(sourceKtFiles, libraryRoots.map { it.file }, createPackagePartProvider)
 
         return StandaloneAnalysisAPISession(kotlinCoreProjectEnvironment) {
             projectStructureProvider.allModules.mapNotNull { ktModule ->

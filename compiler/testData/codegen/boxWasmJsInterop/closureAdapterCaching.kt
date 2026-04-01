@@ -1,4 +1,5 @@
 // TARGET_BACKEND: WASM
+// ^^ KT-15101 for JS target
 
 fun checkLambdaEquality(a: () -> Int, b: () -> Int): Boolean = js("a === b")
 

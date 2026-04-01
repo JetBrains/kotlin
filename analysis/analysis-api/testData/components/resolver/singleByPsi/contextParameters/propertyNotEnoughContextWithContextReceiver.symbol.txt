@@ -1,0 +1,6 @@
+KtNameReferenceExpression(97,100): 'foo'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      val foo: kotlin.Boolean
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'int: Int' found.>

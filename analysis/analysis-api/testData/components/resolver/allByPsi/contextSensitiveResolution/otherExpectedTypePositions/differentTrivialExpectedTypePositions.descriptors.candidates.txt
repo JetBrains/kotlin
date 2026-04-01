@@ -62,21 +62,20 @@ KtNameReferenceExpression(153,159): 'MyEnum'
   NO_CANDIDATES
 
 KtNameReferenceExpression(162,163): 'L'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = L
-          receiverType = null
-          returnType = MyEnum
-          symbol = val L: MyEnum
-          contextParameters = []
-          callableId = /L
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = L
+        receiverType = null
+        returnType = MyEnum
+        symbol = val L: MyEnum
+        contextParameters = []
+        callableId = /L
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -114,21 +113,20 @@ KtNameReferenceExpression(198,204): 'MyEnum'
   NO_CANDIDATES
 
 KtNameReferenceExpression(207,208): 'L'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = L
-          receiverType = null
-          returnType = MyEnum
-          symbol = val L: MyEnum
-          contextParameters = []
-          callableId = /L
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = L
+        receiverType = null
+        returnType = MyEnum
+        symbol = val L: MyEnum
+        contextParameters = []
+        callableId = /L
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -223,62 +221,59 @@ KtNameReferenceExpression(344,345): 'X'
   NO_CANDIDATES
 
 KtBinaryExpression(350,355): 'm = Y'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyEnum
-          symbol = var m: MyEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Write:
+      kind = Write:
         value = Y
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyEnum
+        symbol = var m: MyEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(350,351): 'm'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyEnum
-          symbol = var m: MyEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Write:
+      kind = Write:
         value = Y
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyEnum
+        symbol = var m: MyEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtOperationReferenceExpression(352,353): '='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyEnum
-          symbol = var m: MyEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Write:
+      kind = Write:
         value = Y
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyEnum
+        symbol = var m: MyEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -286,81 +281,77 @@ KtNameReferenceExpression(354,355): 'Y'
   NO_CANDIDATES
 
 KtBinaryExpression(360,365): 'm = L'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyEnum
-          symbol = var m: MyEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Write:
+      kind = Write:
         value = L
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyEnum
+        symbol = var m: MyEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(360,361): 'm'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyEnum
-          symbol = var m: MyEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Write:
+      kind = Write:
         value = L
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyEnum
+        symbol = var m: MyEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtOperationReferenceExpression(362,363): '='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyEnum
-          symbol = var m: MyEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Write:
+      kind = Write:
         value = L
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyEnum
+        symbol = var m: MyEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(364,365): 'L'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = L
-          receiverType = null
-          returnType = MyEnum
-          symbol = val L: MyEnum
-          contextParameters = []
-          callableId = /L
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = L
+        receiverType = null
+        returnType = MyEnum
+        symbol = val L: MyEnum
+        contextParameters = []
+        callableId = /L
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -401,21 +392,20 @@ KtContainerNode(407,408): 'b'
   NO_CANDIDATES
 
 KtNameReferenceExpression(407,408): 'b'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = b: kotlin.Boolean
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = b: kotlin.Boolean
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -432,20 +422,19 @@ KtReturnExpression(423,431): 'return L'
   NO_CANDIDATES
 
 KtNameReferenceExpression(430,431): 'L'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = L
-          receiverType = null
-          returnType = MyEnum
-          symbol = val L: MyEnum
-          contextParameters = []
-          callableId = /L
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = L
+        receiverType = null
+        returnType = MyEnum
+        symbol = val L: MyEnum
+        contextParameters = []
+        callableId = /L
       typeArgumentsMapping = {}
     isInBestCandidates = true

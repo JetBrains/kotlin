@@ -2,9 +2,9 @@ description = "Kotlin AllOpen Compiler Plugin"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -18,11 +18,8 @@ dependencies {
     testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.k1"))
     testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.k2"))
     testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.cli"))
-    testFixturesImplementation(project(":compiler:backend"))
-    testFixturesImplementation(project(":compiler:cli"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
-    testFixturesImplementation(intellijCore())
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 
@@ -30,25 +27,13 @@ dependencies {
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testFixturesImplementation(project(":compiler:fir:checkers"))
-    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
-
-    testRuntimeOnly(project(":core:descriptors.runtime"))
 }
 
 optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
-    "testFixtures" {
-        projectDefault()
-    }
+    "testFixtures" { projectDefault() }
 }
 
 publish()
@@ -59,12 +44,15 @@ javadocJar()
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        dependsOn(":dist")
-        workingDir = rootDir
-    }
+    testTask(jUnitMode = JUnitMode.JUnit5)
 
-    testGenerator("org.jetbrains.kotlin.allopen.TestGeneratorKt")
+    testGenerator("org.jetbrains.kotlin.allopen.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withTestJar()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
+
+    testData(project(":kotlin-allopen-compiler-plugin").isolated, "testData")
 }

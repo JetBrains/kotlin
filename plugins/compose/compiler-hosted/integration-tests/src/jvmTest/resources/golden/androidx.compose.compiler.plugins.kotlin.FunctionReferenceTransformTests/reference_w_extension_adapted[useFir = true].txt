@@ -26,7 +26,7 @@ fun Ref(content: @[ExtensionFunctionType] Function3<Cls, Composer, Int, Unit>, %
       val tmp0_group = %composer.cache(false) {
         @Composable
         fun Fn(p0: Cls, %composer: Composer?, %changed: Int) {
-          p0.Fn(0, %composer, 0b1110 and %changed, 0b0001)
+          p0.Fn(0, %composer, Cls.%stable or 0b1110 and %changed, 0b0001)
         }
         ::Fn
       }

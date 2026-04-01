@@ -15,11 +15,20 @@
  */
 
 #include <cassert>
+#include <cstdlib>
+#include <cstring>
+
+#include <llvm/ADT/StringRef.h>
+#include <clang/Basic/LLVM.h>
+#include "clang-c/ext.h"
+
+#if LIBCLANGEXT_ENABLE
 
 #include <clang/AST/Attr.h>
 #include <clang/AST/DeclObjC.h>
 #include <clang/Frontend/ASTUnit.h>
-#include "clang-c/ext.h"
+
+#endif // LIBCLANGEXT_ENABLE
 
 using namespace clang;
 
@@ -71,7 +80,18 @@ static CXTypeAttributes makeCXTypeAttributes() {
 
 #endif // LIBCLANGEXT_ENABLE
 
+static CString createCString(llvm::StringRef str) {
+  return CString { strdup(str.str().c_str()) };
+}
+
+static CString nullCString() {
+  return CString { nullptr };
+}
+
 extern "C" {
+  void clang_disposeCString(CString str) {
+    free(str.data);
+  }
 
   const char* clang_Cursor_getAttributeSpelling(CXCursor cursor) {
 #if LIBCLANGEXT_ENABLE
@@ -155,6 +175,17 @@ extern "C" {
 #endif
   }
 
+  CString clang_Cursor_getObjCProtocolRuntimeName(CXCursor cursor) {
+#if LIBCLANGEXT_ENABLE
+    if (cursor.kind == CXCursor_ObjCProtocolDecl) {
+      if (const ObjCProtocolDecl *decl = dyn_cast_or_null<ObjCProtocolDecl>(getCursorDecl(cursor))) {
+        return createCString(decl->getObjCRuntimeNameAsString());
+      }
+    }
+#endif
+    return nullCString();
+  }
+
   unsigned clang_Cursor_isObjCInitMethod(CXCursor cursor) {
 #if LIBCLANGEXT_ENABLE
     if (cursor.kind == CXCursor_ObjCInstanceMethodDecl) {
@@ -189,6 +220,20 @@ extern "C" {
     }
 #endif
     return 0;
+  }
+
+  CString clang_Cursor_getSwiftName(CXCursor cursor) {
+#if LIBCLANGEXT_ENABLE
+    if (clang_isDeclaration(cursor.kind)) {
+      const Decl *decl = getCursorDecl(cursor);
+      if (decl) {
+        if (const auto *attr = decl->getAttr<SwiftNameAttr>()) {
+          return createCString(attr->getName());
+        }
+      }
+    }
+#endif
+    return nullCString();
   }
 
 }

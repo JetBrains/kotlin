@@ -16,23 +16,20 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.hasValOrVar
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.isEnabled
-import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.forEachExpandedType
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
@@ -131,6 +128,8 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         fun FirPropertyAccessor.hasNoReceivers() = contextParameters.isEmpty() && receiverParameter?.typeRef == null &&
                 !propertySymbol.isExtension && !propertySymbol.hasContextParameters
 
+        // TODO: KT-85291 consider analyzing here the type of declaration instead of use-site target
+        // (as at this stage all annotations should be on a declaration bound to its use-site target)
         val (hint, type) = when (annotation.useSiteTarget) {
             FIELD -> "fields" to ((declaration as? FirBackingField)?.returnTypeRef?.coneType ?: return)
             PROPERTY_DELEGATE_FIELD -> "delegate fields" to ((declaration as? FirBackingField)?.propertySymbol?.delegate?.resolvedType
@@ -152,7 +151,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                 is FirPropertyAccessor if declaration.isGetter && declaration.hasNoReceivers() -> "getters" to declaration.returnTypeRef.coneType
                 else -> return
             }
-            ALL -> TODO() // How @all: interoperates with ValueClasses feature?
+            ALL -> return // TODO: how @all: interoperates with ValueClasses feature?
         }
         reportIfMfvc(annotation, hint, type)
     }
@@ -179,7 +178,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         }
 
         if (check(actualTargets.defaultTargets) || check(actualTargets.canBeSubstituted) || checkWithUseSiteTargets()) {
-            if (LanguageFeature.ValueClasses.isEnabled()) {
+            if (LanguageFeature.JvmInlineMultiFieldValueClasses.isEnabled()) {
                 checkMultiFieldValueClassAnnotationRestrictions(declaration, annotation)
             }
             return
@@ -187,7 +186,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
 
         val targetDescription = actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target"
         if (declaration is FirBackingField && actualTargets === AnnotationTargetLists.T_MEMBER_PROPERTY_IN_ANNOTATION &&
-            !LanguageFeature.ForbidFieldAnnotationsOnAnnotationParameters.isEnabled()
+            LanguageFeature.ForbidFieldAnnotationsOnAnnotationParameters.isDisabled()
         ) {
             reporter.reportOn(
                 annotation.source,
@@ -296,6 +295,11 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                                 reporter.reportOn(
                                     annotation.source,
                                     FirErrors.INAPPLICABLE_ALL_TARGET,
+                                    if (annotated.containingDeclarationSymbol is FirConstructorSymbol) {
+                                        "constructor parameters without corresponding property (consider adding val/var)"
+                                    } else {
+                                        "value parameters, only properties are allowed"
+                                    },
                                 )
                             }
                         }
@@ -304,11 +308,13 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                                 reporter.reportOn(
                                     annotation.source,
                                     FirErrors.INAPPLICABLE_ALL_TARGET,
+                                    "local properties, only member or top-level properties are allowed",
                                 )
                             } else if (annotated.delegate != null) {
                                 reporter.reportOn(
                                     annotation.source,
                                     FirErrors.INAPPLICABLE_ALL_TARGET,
+                                    "delegated properties",
                                 )
                             } else if (KotlinTarget.PROPERTY !in applicableTargets) {
                                 reporter.reportOn(
@@ -324,6 +330,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                             reporter.reportOn(
                                 annotation.source,
                                 FirErrors.INAPPLICABLE_ALL_TARGET,
+                                "elements other than properties",
                             )
                         }
                     }
@@ -427,7 +434,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkPossibleMigrationToPropertyOrField(parameter: FirValueParameter) {
         val session = context.session
-        if (!LanguageFeature.AnnotationDefaultTargetMigrationWarning.isEnabled() ||
+        if (LanguageFeature.AnnotationDefaultTargetMigrationWarning.isDisabled() ||
             // With this feature ON, the migration warning isn't needed
             LanguageFeature.PropertyParamAnnotationDefaultTargetMode.isEnabled()
         ) return

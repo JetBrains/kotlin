@@ -1,0 +1,4 @@
+KT element: KtTypeAlias
+Resolve target: typeAliasRepl.repl.kts -> <snippet-typeAliasRepl.repl.kts> -> TypeAliasRepl_repl -> MyAlias
+FIR:
+  public final typealias MyAlias = String

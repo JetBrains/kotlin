@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.plugin.sandbox.fir.fqn
-import org.jetbrains.kotlin.plugin.sandbox.fir.generators.NestedClassGeneratorWithSupertypesDependantOnAnnotationArgument.Key
+import org.jetbrains.kotlin.plugin.sandbox.fir.generators.NestedClassGeneratorWithSupertypesDependantOnAnnotationArgument.NestedClassGeneratorWithSupertypesDependantOnAnnotationArgumentGeneratorKey
 import org.jetbrains.kotlin.plugin.sandbox.fir.generators.SupertypesDependantOnAnnotationArgumentComponent.Companion.ANNOTATION_ID
 
 /**
@@ -58,7 +58,9 @@ class NestedClassGeneratorWithSupertypesDependantOnAnnotationArgument(session: F
         return when (name) {
             GENERATED -> {
                 if (owner !in session.myComponent.matchedClasses) return null
-                createNestedClass(owner, GENERATED, Key, classKind = ClassKind.INTERFACE) {
+                createNestedClass(
+                    owner, GENERATED, NestedClassGeneratorWithSupertypesDependantOnAnnotationArgumentGeneratorKey, ClassKind.INTERFACE,
+                ) {
                     modality = Modality.ABSTRACT
                 }.symbol
             }
@@ -70,7 +72,7 @@ class NestedClassGeneratorWithSupertypesDependantOnAnnotationArgument(session: F
         register(SupertypesDependantOnAnnotationArgumentComponent.PREDICATE)
     }
 
-    object Key : GeneratedDeclarationKey()
+    data object NestedClassGeneratorWithSupertypesDependantOnAnnotationArgumentGeneratorKey : GeneratedDeclarationKey()
 }
 
 class NestedClassSupertypesDependantOnAnnotationArgumentAdder(session: FirSession) : FirSupertypeGenerationExtension(session) {
@@ -79,7 +81,7 @@ class NestedClassSupertypesDependantOnAnnotationArgumentAdder(session: FirSessio
     }
 
     override fun needTransformSupertypes(declaration: FirClassLikeDeclaration): Boolean {
-        return declaration.origin.key == Key
+        return declaration.origin.key == NestedClassGeneratorWithSupertypesDependantOnAnnotationArgumentGeneratorKey
     }
 
     override fun computeAdditionalSupertypes(
@@ -93,7 +95,7 @@ class NestedClassSupertypesDependantOnAnnotationArgumentAdder(session: FirSessio
         klass: FirRegularClass,
         typeResolver: TypeResolveService,
     ): List<ConeKotlinType> {
-        require(klass.origin.key == Key)
+        require(klass.origin.key == NestedClassGeneratorWithSupertypesDependantOnAnnotationArgumentGeneratorKey)
         val container = klass.getContainingDeclaration(session) ?: return emptyList()
         val annotation = container.annotations.getAnnotationByClassId(ANNOTATION_ID, session) as? FirAnnotationCall ?: return emptyList()
         val getClassCall = annotation.arguments.singleOrNull() as? FirGetClassCall ?: return emptyList()

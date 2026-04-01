@@ -7,57 +7,66 @@ package org.jetbrains.kotlin.buildtools.options.generator
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
-import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
-import org.jetbrains.kotlin.generators.kotlinpoet.annotation
-import org.jetbrains.kotlin.generators.kotlinpoet.function
-import org.jetbrains.kotlin.generators.kotlinpoet.listTypeNameOf
-import org.jetbrains.kotlin.generators.kotlinpoet.property
+import org.jetbrains.kotlin.arguments.dsl.types.WithStringRepresentation
+import org.jetbrains.kotlin.generators.kotlinpoet.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
-import kotlin.reflect.full.isSubclassOf
+import kotlin.reflect.full.allSuperclasses
 
 internal class BtaApiGenerator(
     private val targetPackage: String,
     private val skipXX: Boolean,
-    private val kotlinVersion: KotlinReleaseVersion
+    private val kotlinVersion: KotlinReleaseVersion,
 ) : BtaGenerator {
     private val outputs = mutableListOf<Pair<Path, String>>()
 
-    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?): GeneratorOutputs {
+    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: ClassName?): GeneratorOutputs {
         val className = level.name.capitalizeAsciiOnly()
         val mainFileAppendable = createGeneratedFileAppendable()
         val mainFile = FileSpec.builder(targetPackage, className).apply {
-            addType(
-                TypeSpec.interfaceBuilder(className).apply {
-                    addKdoc(KDOC_SINCE_2_3_0)
-                    if (level.name in experimentalLevelNames) {
-                        addAnnotation(ANNOTATION_EXPERIMENTAL)
-                    }
-                    parentClass?.let { addSuperinterface(it) }
-                    val argument =
-                        generateArgumentType(
-                            className,
-                            includeSinceVersion = true,
-                            registerAsKnownArgument = false,
-                            CodeBlock.of(KDOC_BASE_OPTIONS_CLASS, ClassName(targetPackage, className))
-                        )
-                    val argumentTypeName = ClassName(targetPackage, className, argument)
-                    if (parentClass == null) {
-                        addToArgumentStringsFun()
-                        maybeAddApplyArgumentStringsFun()
-                    }
+            interfaceType(className) {
+                addKdoc(KDOC_SINCE_2_3_0)
+                if (level.name in experimentalLevelNames) {
+                    addAnnotation(ANNOTATION_EXPERIMENTAL)
+                }
+                parentClass?.let { addSuperinterface(it) }
+                val argument =
+                    generateArgumentType(
+                        className,
+                        includeSinceVersion = true,
+                        registerAsKnownArgument = false,
+                        CodeBlock.of(KDOC_BASE_OPTIONS_CLASS, ClassName(targetPackage, className))
+                    )
+                val argumentTypeName = ClassName(targetPackage, className, argument)
+                if (parentClass == null) {
+                    addToArgumentStringsFun()
+                    maybeAddApplyArgumentStringsFun(deprecated = true)
+                }
+                interfaceType("Builder") {
+                    addKdoc("A builder for [$className].\n\n@since 2.3.20")
                     generateGetPutFunctions(argumentTypeName)
-                    addType(TypeSpec.companionObjectBuilder().apply {
-                        generateOptions(level.filterOutDroppedArguments(), argumentTypeName)
-                    }.build())
-                }.build()
-            )
+                    if (level.isLeaf()) {
+                        function("build") {
+                            addKdoc("Constructs a new immutable [$className] instance with the options set in this builder.")
+                            addModifiers(KModifier.ABSTRACT)
+                            returns(ClassName(targetPackage, className))
+                        }
+                    }
+                    if (parentClass == null) {
+                        maybeAddApplyArgumentStringsFun()
+                    } else {
+                        addSuperinterface(parentClass.nestedClass("Builder"))
+                    }
+                }
+                generateGetPutFunctions(argumentTypeName, deprecateSet = true)
+                addType(TypeSpec.companionObjectBuilder().apply {
+                    generateOptions(level.transformApiArguments(), argumentTypeName)
+                }.build())
+            }
         }.build()
         mainFile.writeTo(mainFileAppendable)
         outputs += Path(mainFile.relativePath) to mainFileAppendable.toString()
@@ -65,7 +74,7 @@ internal class BtaApiGenerator(
     }
 
     private fun TypeSpec.Builder.generateOptions(
-        arguments: Collection<KotlinCompilerArgument>,
+        arguments: Collection<BtaCompilerArgument<*>>,
         argumentTypeName: ClassName,
     ) {
         val enumsToGenerate = mutableMapOf<KClass<*>, TypeSpec.Builder>()
@@ -76,51 +85,68 @@ internal class BtaApiGenerator(
             if (skipXX && name.startsWith("XX_")) return@forEach
             val experimental = name.startsWith("XX_") || name.startsWith("X_")
 
+            /**
+             * Marks enum to be generated and returns its name
+             */
+            fun generatedEnumType(type: KClass<*>): ClassName {
+                require(WithStringRepresentation::class in type.allSuperclasses) {
+                    "Compiler enum ${type.qualifiedName} must implement ${WithStringRepresentation::class.qualifiedName} to be used with BTA."
+                }
+                val enumConstants = type.java.enumConstants.filterIsInstance<Enum<*>>()
+                @Suppress("UNCHECKED_CAST")
+                enumConstants as List<WithStringRepresentation>
+                enumsToGenerate[type] = generateEnumTypeBuilder(enumConstants)
+                if (type !in enumsExperimental && experimental) {
+                    enumsExperimental[type] = true
+                } else if (type in enumsExperimental && !experimental) {
+                    // if at least one option that is NOT experimental uses the enum
+                    // then the enum is not experimental itself
+                    enumsExperimental[type] = false
+                }
+                return type.toBtaEnumClassName()
+            }
 
             // argument is newer than current version
-            if (argument.releaseVersionsMetadata.introducedVersion > kotlinVersion) {
+            if (argument.introducedSinceVersion > kotlinVersion) {
                 return@forEach
             }
 
             // argument was removed in or before current version - 3
-            argument.releaseVersionsMetadata.removedVersion?.let { removedVersion ->
+            argument.removedSinceVersion?.let { removedVersion ->
                 if (removedVersion <= getOldestSupportedVersion(kotlinVersion)) {
                     return@forEach
                 }
             }
 
             val wasDeprecatedInVersion =
-                argument.releaseVersionsMetadata.deprecatedVersion?.takeIf { it <= kotlinVersion }
+                argument.deprecatedSinceVersion?.takeIf { it <= kotlinVersion }
 
-            val argumentTypeParameter =
-                argument.valueType::class.supertypes.single { it.classifier == KotlinArgumentValueType::class }.arguments.first().type!!.let {
-                    when (val type = it.classifier) {
-                        is KClass<*> if type.isSubclassOf(Enum::class) && type in enumNameAccessors -> {
-                            val enumConstants = type.java.enumConstants.filterIsInstance<Enum<*>>()
-                            enumsToGenerate[type] = generateEnumTypeBuilder(enumConstants, type.accessor())
-                            if (type !in enumsExperimental && experimental) {
-                                enumsExperimental[type] = true
-                            } else if (type in enumsExperimental && !experimental) {
-                                // if at least one option that is NOT experimental uses the enum
-                                // then the enum is not experimental itself
-                                enumsExperimental[type] = false
-                            }
-                            ClassName("$targetPackage.enums", type.simpleName!!)
+            // There's no need to generate any classes for custom representations as they're expected to already be there
+            val argumentTypeParameter = when (argument.valueType) {
+                is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> {
+                    val argumentType = argument.valueType.kType
+                    val type = argumentType.classifier as? KClass<*> ?: error("Type is not a KClass: $argumentType")
+                    when {
+                        type.java.isEnum -> {
+                            generatedEnumType(type)
                         }
                         else -> {
-                            it.asTypeName()
+                            argumentType.asTypeName()
                         }
                     }
-                }.copy(nullable = argument.valueType.isNullable.current)
+                }
+                is BtaCompilerArgumentValueType.CustomArgumentValueType -> argument.valueType.type
+            }.copy(nullable = argument.valueType.isNullable)
+
             property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
                 annotation<JvmField>()
                 // KT-28979 Need a way to escape /* in kdoc comments
                 // inserting a zero-width space is not ideal, but we do actually have one compiler argument that breaks the KDoc without it
-                addKdoc(argument.description.current.replace("/*", "/\u200B*").replace("*/", "*\u200B/"))
+                addKdoc(argument.description.replace("/*", "/\u200B*").replace("*/", "*\u200B/"))
                 maybeAddExperimentalAnnotation(experimental)
-                maybeAddDeprecatedAnnotation(argument.releaseVersionsMetadata.removedVersion, wasDeprecatedInVersion)
+                maybeAddDeprecatedAnnotation(argument.removedSinceVersion, wasDeprecatedInVersion)
 
-                val introducedVersion = argument.releaseVersionsMetadata.introducedVersion
+                val introducedVersion = argument.introducedSinceVersion
                 initializer(
                     "%T(%S, %T(%L, %L, %L))",
                     argumentTypeName,
@@ -164,17 +190,17 @@ internal class BtaApiGenerator(
         }
     }
 
-    fun generateEnumTypeBuilder(
-        sourceEnum: Collection<Enum<*>>,
-        nameAccessor: KProperty1<Any, String>,
-    ): TypeSpec.Builder {
-        val className = ClassName("$targetPackage.enums", sourceEnum.first()::class.simpleName!!)
+    fun <T> generateEnumTypeBuilder(
+        sourceEnum: Collection<T>,
+    ): TypeSpec.Builder where T : Enum<*>, T : WithStringRepresentation {
+        val className = sourceEnum.first()::class.toBtaEnumClassName()
         return TypeSpec.enumBuilder(className).apply {
             property<String>("stringValue") {
                 initializer("stringValue")
             }
-            addKdoc(KDOC_SINCE_2_3_0)
+            addKdoc("$KDOC_SINCE ${btaEnumVersionMap.getValue(className).releaseName}")
             primaryConstructor(FunSpec.constructorBuilder().addParameter("stringValue", String::class).build())
+            val nameAccessor = WithStringRepresentation::stringRepresentation
             sourceEnum.forEach {
                 addEnumConstant(
                     it.name.uppercase(),
@@ -185,7 +211,7 @@ internal class BtaApiGenerator(
     }
 
     fun writeEnumFile(typeSpec: TypeSpec, sourceEnum: KClass<*>) {
-        val className = ClassName("$targetPackage.enums", sourceEnum.simpleName!!)
+        val className = sourceEnum.toBtaEnumClassName()
         val enumFileAppendable = createGeneratedFileAppendable()
         val enumFile = FileSpec.builder(className).apply {
             addType(typeSpec)
@@ -194,7 +220,7 @@ internal class BtaApiGenerator(
         outputs += Path(enumFile.relativePath) to enumFileAppendable.toString()
     }
 
-    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName) {
+    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, deprecateSet: Boolean = false) {
         function("get") {
             addKdoc(KDOC_OPTIONS_GET)
             addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
@@ -204,6 +230,7 @@ internal class BtaApiGenerator(
             addParameter("key", parameter.parameterizedBy(typeParameter))
         }
         function("set") {
+            maybeAddMutabilityDeprecationAnnotation(deprecateSet)
             addKdoc(KDOC_OPTIONS_SET)
             addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
             val typeParameter = TypeVariableName("V")
@@ -261,8 +288,9 @@ private fun FunSpec.Builder.addParameterIf(name: String, type: ClassName, condit
     return this
 }
 
-private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun() {
+private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(deprecated: Boolean = false) {
     function("applyArgumentStrings") {
+        maybeAddMutabilityDeprecationAnnotation(deprecated)
         addKdoc("Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.")
         addParameter(
             ParameterSpec.builder("arguments", listTypeNameOf<String>())
@@ -277,5 +305,16 @@ private fun TypeSpec.Builder.addToArgumentStringsFun() {
         addKdoc("Converts the options to a list of string arguments recognized by the Kotlin CLI compiler.")
         returns(listTypeNameOf<String>())
         this.addModifiers(KModifier.ABSTRACT)
+    }
+}
+
+private fun FunSpec.Builder.maybeAddMutabilityDeprecationAnnotation(deprecated: Boolean) {
+    if (deprecated) {
+        annotation<Deprecated> {
+            addMember(
+                "message = %S", "Compiler argument classes will become immutable in an upcoming release. " +
+                        "Use a Builder instance to create and modify compiler arguments."
+            )
+        }
     }
 }

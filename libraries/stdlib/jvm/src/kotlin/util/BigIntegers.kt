@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -96,6 +96,8 @@ public inline infix fun BigInteger.shr(n: Int): BigInteger = this.shiftRight(n)
 
 /**
  * Returns the value of this [Int] number as a [BigInteger].
+ *
+ * @sample samples.misc.BigIntegers.intToBigInteger
  */
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
@@ -103,10 +105,34 @@ public inline fun Int.toBigInteger(): BigInteger = BigInteger.valueOf(this.toLon
 
 /**
  * Returns the value of this [Long] number as a [BigInteger].
+ *
+ * @sample samples.misc.BigIntegers.longToBigInteger
  */
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public inline fun Long.toBigInteger(): BigInteger = BigInteger.valueOf(this)
+
+/**
+ * Returns the value of this [UInt] number as a [BigInteger].
+ *
+ * @sample samples.misc.BigIntegers.uintToBigInteger
+ */
+@SinceKotlin("2.4")
+@kotlin.internal.InlineOnly
+public inline fun UInt.toBigInteger(): BigInteger = toLong().toBigInteger()
+
+/**
+ * Returns the value of this [ULong] number as a [BigInteger].
+ *
+ * @sample samples.misc.BigIntegers.ulongToBigInteger
+ */
+@SinceKotlin("2.4")
+public fun ULong.toBigInteger(): BigInteger {
+    val signedLong = toLong()
+    if (signedLong >= 0) return signedLong.toBigInteger()
+    val evenPart = (this / 2uL).toLong().toBigInteger().shiftLeft(1)
+    return if (this % 2uL == 1uL) evenPart + BigInteger.ONE else evenPart
+}
 
 /**
  * Returns the value of this [BigInteger] number as a [BigDecimal].

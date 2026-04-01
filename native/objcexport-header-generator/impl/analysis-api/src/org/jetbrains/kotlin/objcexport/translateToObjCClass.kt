@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.analysis.api.export.utilities.isThrowable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 
-fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? = withClassifierContext(symbol) {
+
+fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCExportTranslatedClass? = withClassifierContext(symbol) {
     require(
         symbol.classKind == KaClassKind.CLASS ||
                 symbol.classKind == KaClassKind.ENUM_CLASS ||
@@ -37,6 +38,7 @@ fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? = 
 
     val superClass = translateSuperClass(symbol)
     val superProtocols: List<String> = superProtocols(symbol)
+    val auxiliaryDeclarations = mutableListOf<ObjCTopLevel>()
 
     val members = buildList<ObjCExportStub> {
         /* The order of members tries to replicate the K1 implementation explicitly */
@@ -51,6 +53,9 @@ fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? = 
             .flatMap { translateToObjCExportStub(it) }
 
         if (symbol.classKind == KaClassKind.ENUM_CLASS) {
+            getNSEnumTypeName(symbol)?.let {
+                this += translateNSEnum(symbol, origin,it, auxiliaryDeclarations)
+            }
             this += translateEnumMembers(symbol)
         }
 
@@ -69,17 +74,20 @@ fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? = 
         )
     }
 
-    ObjCInterfaceImpl(
-        name = name.objCName,
-        comment = comment,
-        origin = origin,
-        attributes = attributes,
-        superProtocols = superProtocols,
-        members = members,
-        categoryName = categoryName,
-        generics = generics,
-        superClass = superClass.superClassName.objCName,
-        superClassGenerics = superClass.superClassGenerics
+    ObjCExportTranslatedClass(
+        auxiliaryDeclarations.toList(),
+        ObjCInterfaceImpl(
+            name = name.objCName,
+            comment = comment,
+            origin = origin,
+            attributes = attributes,
+            superProtocols = superProtocols,
+            members = members,
+            categoryName = categoryName,
+            generics = generics,
+            superClass = superClass.superClassName.objCName,
+            superClassGenerics = superClass.superClassGenerics
+        )
     )
 }
 

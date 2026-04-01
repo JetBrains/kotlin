@@ -48,7 +48,7 @@ interface IrDeclarationOrigin {
         val SCRIPT_IMPLICIT_RECEIVER by IrDeclarationOriginImpl.Regular
         val SCRIPT_PROVIDED_PROPERTY by IrDeclarationOriginImpl.Regular
         val SCRIPT_RESULT_PROPERTY by IrDeclarationOriginImpl.Regular
-        val REPL_SNIPPET_CLASS by IrDeclarationOriginImpl.Regular
+        val REPL_EVAL_FUNCTION by IrDeclarationOriginImpl.Regular
         val REPL_FROM_OTHER_SNIPPET by IrDeclarationOriginImpl.Regular
         val GENERATED_DATA_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
         val GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl.Regular

@@ -22,10 +22,12 @@ internal inline fun internal() {
 
 private class Private2 {
     object Obj
+    fun foo() {}
 }
 
 internal inline fun internal2() {
     ignore<Private2.Obj>() // should be an error
+    <!PRIVATE_CLASS_MEMBER_FROM_INLINE!>Private2<!>().<!PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>()
 }
 
 private fun <T : Private> private1(arg: () -> T) {}
@@ -107,6 +109,12 @@ private object O {
 internal inline fun internal5() {
     O.C()
 }
+
+private fun interface I {
+    fun foo(): Int
+}
+
+internal inline fun internal6(): Int = (I { 1 }).<!PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>()
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, checkNotNullCall, classDeclaration, classReference,
 companionObject, functionDeclaration, functionalType, inline, inner, integerLiteral, interfaceDeclaration, isExpression,

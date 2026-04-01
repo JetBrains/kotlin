@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 configureJvmToolchain(JdkMajorVersion.JDK_1_8)

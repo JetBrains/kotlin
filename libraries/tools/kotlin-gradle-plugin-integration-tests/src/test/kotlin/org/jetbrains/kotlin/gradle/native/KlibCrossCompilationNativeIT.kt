@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -79,16 +80,14 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
                     sourceSets.commonTest.get().compileStubSourceWithSourceSetName()
                 }
             }
-            embedDirectoryFromTestData("klibCrossCompilationDefaultSettings", "data")
-            val expectedDiagnostics = projectPath.resolve("data/diagnostics.txt")
 
             build(":compileKotlinIosArm64") {
-                assertEqualsToFile(expectedDiagnostics.toFile(), extractProjectsAndTheirDiagnostics())
+                assertNoDiagnostic(KotlinToolingDiagnostics.DisabledKotlinNativeTargets)
                 assertTasksExecuted(":compileKotlinIosArm64")
             }
 
             build(":linkIosArm64") {
-                assertEqualsToFile(expectedDiagnostics.toFile(), extractProjectsAndTheirDiagnostics())
+                assertNoDiagnostic(KotlinToolingDiagnostics.DisabledKotlinNativeTargets)
                 // Do not assert :linkIosArm64, because it's a plain umbrella-like `org.gradle.DefaultTask` instance,
                 // and it doesn't get disabled even on linuxes (see [KotlinNativeConfigureBinariesSideEffect])
                 assertTasksSkipped(":linkDebugTestIosArm64")

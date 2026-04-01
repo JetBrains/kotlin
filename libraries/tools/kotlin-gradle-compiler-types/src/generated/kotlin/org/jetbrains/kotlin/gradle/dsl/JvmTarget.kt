@@ -45,6 +45,8 @@ enum class JvmTarget(val target: String) {
     JVM_24("24"),
     /***/
     JVM_25("25"),
+    /***/
+    JVM_26("26"),
     ;
 
     /***/

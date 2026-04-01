@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo(dn: dynamic?, d: dynamic, dnn: dynamic??) {

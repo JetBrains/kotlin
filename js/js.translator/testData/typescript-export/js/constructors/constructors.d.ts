@@ -67,6 +67,17 @@ declare namespace JS_TESTS {
             const constructor: abstract new () => DerivedClassWithSecondaryCtor;
         }
     }
+    class GenericClassWithSecondaryCtor<Self extends GenericClassWithSecondaryCtor<Self>> {
+        private constructor();
+        get x(): string;
+        static createFromString<Self extends GenericClassWithSecondaryCtor<Self>>(y: string): GenericClassWithSecondaryCtor<Self>;
+    }
+    namespace GenericClassWithSecondaryCtor {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new <Self extends GenericClassWithSecondaryCtor<Self>>() => GenericClassWithSecondaryCtor<Self>;
+        }
+    }
     class KotlinGreeter {
         constructor(greeting?: string);
         get greeting(): string;

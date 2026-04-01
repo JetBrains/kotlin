@@ -13,7 +13,11 @@ internal abstract class BaseOptionWithDefault<V> private constructor(
     private val default: V? = null,
 ) : BaseOption<V>(id) {
     constructor(id: String) : this(id, false, null)
-    constructor(id: String, default: V) : this(id, true, default)
+    constructor(id: String, default: V) : this(
+        id,
+        true,
+        default,
+    )
 
     @Suppress("UNCHECKED_CAST")
     val defaultValue: V

@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.cli.common.fir
 
+import org.jetbrains.kotlin.KtInMemoryTextSourceFile
+import org.jetbrains.kotlin.KtIoFileSourceFile
+import org.jetbrains.kotlin.KtPsiSourceFile
+import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import java.io.Closeable
-import java.io.File
 import java.io.InputStreamReader
 import java.util.*
 
@@ -44,14 +47,24 @@ object FirDiagnosticsCompilerResultsReporter {
         diagnosticsCollector: BaseDiagnosticsCollector, report: (KtDiagnostic, CompilerMessageSourceLocation?) -> Unit
     ): Boolean {
         var hasErrors = false
-        for (filePath in diagnosticsCollector.diagnosticsByFilePath.keys) {
+        for (sourceFile in diagnosticsCollector.diagnosticsByFile.keys) {
             val positionFinder = lazy {
-                val file = filePath?.let(::File)
-                if (file != null && file.isFile) SequentialFilePositionFinder(file) else null
+                when (sourceFile) {
+                    is KtVirtualFileSourceFile,
+                    is KtInMemoryTextSourceFile,
+                        -> SequentialCloseablePositionFinder(sourceFile.getContentsAsStream().reader())
+                    is KtIoFileSourceFile ->
+                        if (sourceFile.file.isFile) // Additional check is needed for the IR case; see DiagnosticContextWithSuppressionImpl and KT-85141
+                            SequentialCloseablePositionFinder(sourceFile.getContentsAsStream().reader())
+                        else null
+                    is KtPsiSourceFile -> null // for PSI files KtPsiDiagnostic contains all location info, we don't need to use the position finder
+                    null -> null
+                    else -> error("Unexpected source file type: $sourceFile")
+                }
             }
 
             try {
-                val diagnosticList = diagnosticsCollector.diagnosticsByFilePath[filePath].orEmpty()
+                val diagnosticList = diagnosticsCollector.diagnosticsByFile[sourceFile].orEmpty()
 
                 // Precomputing positions of the offsets in the ascending order of the offsets
                 val offsetsToPositions = positionFinder.value?.let { finder ->
@@ -69,7 +82,7 @@ object FirDiagnosticsCompilerResultsReporter {
 
                 for (diagnostic in diagnosticList.sortedWith(InFileDiagnosticsComparator)) {
                     val location = when (diagnostic) {
-                        is KtDiagnosticWithoutSource -> null
+                        is KtDiagnosticWithoutSource -> diagnostic.location
                         is KtDiagnosticWithSource -> when (diagnostic) {
                             is KtPsiDiagnostic -> {
                                 val file = diagnostic.element.psi.containingFile
@@ -88,7 +101,7 @@ object FirDiagnosticsCompilerResultsReporter {
                                     val start = offsetsToPositions[range.startOffset]!!
                                     val end = offsetsToPositions[range.endOffset]!!
                                     MessageUtil.createMessageLocation(
-                                        filePath, start.lineContent, start.line, start.column, end.line, end.column
+                                        sourceFile?.path, start.lineContent, start.line, start.column, end.line, end.column
                                     )
                                 }
                             }
@@ -112,7 +125,7 @@ object FirDiagnosticsCompilerResultsReporter {
         reporter: MessageCollector,
         renderDiagnosticName: Boolean
     ) {
-        val severity = AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity)
+        val severity = diagnostic.severity.toCompilerMessageSeverity()
         val message = diagnostic.renderMessage()
         val textToRender = when (renderDiagnosticName) {
             true -> "[${diagnostic.factoryName}] $message"
@@ -128,7 +141,7 @@ object FirDiagnosticsCompilerResultsReporter {
         messageRenderer: MessageRenderer
     ) {
         if (diagnostic.severity == Severity.ERROR) {
-            val severity = AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity)
+            val severity = diagnostic.severity.toCompilerMessageSeverity()
             val message = diagnostic.renderMessage()
             val diagnosticText = messageRenderer.render(severity, message, location)
             throw IllegalStateException("${diagnostic.factory.name}: $diagnosticText")
@@ -162,11 +175,7 @@ class KtSourceFileDiagnosticPos(val line: Int, val column: Int, val lineContent:
     }
 }
 
-private class SequentialFilePositionFinder private constructor(private val reader: InputStreamReader)
-    : Closeable, SequentialPositionFinder(reader)
-{
-    constructor(file: File) : this(file.reader(/* TODO: select proper charset */))
-
+private class SequentialCloseablePositionFinder(private val reader: InputStreamReader) : Closeable, SequentialPositionFinder(reader) {
     override fun close() {
         reader.close()
     }

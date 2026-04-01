@@ -189,6 +189,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
 
 inline fun <T : ConeKotlinType> T.withArguments(replacement: (ConeTypeProjection) -> ConeTypeProjection): T {
     val typeArguments = typeArguments
+    if (typeArguments.isEmpty()) return this
     return withArguments(Array(typeArguments.size) { replacement(typeArguments[it]) })
 }
 
@@ -319,36 +320,50 @@ inline fun ConeFlexibleType.mapTypesOrNull(
     dropIdentity: Boolean = false,
     f: (ConeRigidType) -> ConeKotlinType?,
 ): ConeKotlinType? {
+    val mappedLowerBound = f(lowerBound).takeIf { !dropIdentity || it !== lowerBound }
+    if (isTrivial) {
+        when (mappedLowerBound) {
+            null -> return null
+            is ConeRigidType -> return coneFlexibleOrSimpleType(
+                typeContext,
+                mappedLowerBound,
+                mappedLowerBound.withNullability(true, typeContext, preserveAttributes = true),
+                isTrivial = true
+            )
+            is ConeFlexibleType -> {
+                // In cases when the mapped lower bound is flexible and has type attributes,
+                // the upper bound should be mapped independently and recombined
+                // with the mapped lower bound. This is the same as the non-trivial
+                // case, so the code can fall-through.
+                //
+                // This must happen because some type attributes behave differently
+                // based on the nullness of the type being substituted:
+                //     For: T! with {T -> String![forWarning=String]}
+                //     Lower: T  => String![forWarning=String]
+                //     Upper: T? => String?[forWarning=String?]
+                // When recombined, the unique attributes from the lower and upper bounds
+                // must be preserved in the resulting flexible type.
+                // TODO(KT-84193): are there type attributes which do not need to be individually mapped?
+                if (mappedLowerBound.attributes.isEmpty()) {
+                    return mappedLowerBound
+                }
+            }
+        }
+    }
+
+    val mappedUpperBound = f(upperBound).takeIf { !dropIdentity || it !== upperBound }
     return when {
-        isTrivial -> {
-            when (val mappedLowerBound = f(lowerBound).takeIf { !dropIdentity || it !== lowerBound }) {
-                null -> null
-                is ConeRigidType -> coneFlexibleOrSimpleType(
-                    typeContext,
-                    mappedLowerBound,
-                    mappedLowerBound.withNullability(true, typeContext, preserveAttributes = true),
-                    isTrivial = true
-                )
-                is ConeFlexibleType -> mappedLowerBound
-            }
-        }
-        else -> {
-            val mappedLowerBound = f(lowerBound).takeIf { !dropIdentity || it !== lowerBound }
-            val mappedUpperBound = f(upperBound).takeIf { !dropIdentity || it !== upperBound }
-            when {
-                mappedLowerBound == null && mappedUpperBound == null -> null
-                this !is ConeRawType -> coneFlexibleOrSimpleType(
-                    typeContext,
-                    mappedLowerBound ?: lowerBound,
-                    mappedUpperBound ?: upperBound,
-                    isTrivial = false
-                )
-                else -> ConeRawType.create(
-                    mappedLowerBound?.lowerBoundIfFlexible() ?: this.lowerBound,
-                    mappedUpperBound?.upperBoundIfFlexible() ?: this.upperBound
-                )
-            }
-        }
+        mappedLowerBound == null && mappedUpperBound == null -> null
+        this !is ConeRawType -> coneFlexibleOrSimpleType(
+            typeContext,
+            mappedLowerBound ?: lowerBound,
+            mappedUpperBound ?: upperBound,
+            isTrivial = false
+        )
+        else -> ConeRawType.create(
+            mappedLowerBound?.lowerBoundIfFlexible() ?: this.lowerBound,
+            mappedUpperBound?.upperBoundIfFlexible() ?: this.upperBound
+        )
     }
 }
 
@@ -493,7 +508,7 @@ fun FirResolvedTypeRef.withReplacedSourceAndType(newSource: KtSourceElement?, ne
     }
 }
 
-fun shouldApproximateAnonymousTypesOfNonLocalDeclaration(containingCallableVisibility: Visibility?, isInlineFunction: Boolean): Boolean {
+fun shouldApproximateLocalTypesOfNonLocalDeclaration(containingCallableVisibility: Visibility?, isInlineFunction: Boolean): Boolean {
     // Approximate types for non-private (all but package private or private) members.
     // Also private inline functions, as per KT-33917.
     return when (containingCallableVisibility) {
@@ -551,7 +566,7 @@ fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus
     }
 
     val substitution = (0 until argumentsCount).associate { index ->
-        typeConstructor.getParameter(index).asCone().symbol to (newArguments[index])
+        typeConstructor.getParameter(index).symbol to (newArguments[index])
     }
     val substitutor = substitutorByMap(substitution, session)
 
@@ -562,7 +577,7 @@ fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus
         if (oldArgument.kind == ProjectionKind.INVARIANT) continue
 
         val parameter = typeConstructor.getParameter(index)
-        (parameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
+        parameter.typeParameterSymbol.lazyResolveToPhase(FirResolvePhase.TYPES)
         val upperBounds = (0 until parameter.upperBoundCount()).mapTo(mutableSetOf()) { paramIndex ->
             substitutor.safeSubstitute(
                 this as TypeSystemInferenceExtensionContext, parameter.getUpperBound(paramIndex)

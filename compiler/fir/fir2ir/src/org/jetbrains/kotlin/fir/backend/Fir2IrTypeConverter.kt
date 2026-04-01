@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
@@ -110,7 +110,7 @@ class Fir2IrTypeConverter(
                 }
             }
             is ConeLookupTagBasedType -> {
-                val typeAnnotations = mutableListOf<IrConstructorCall>()
+                val typeAnnotations = mutableListOf<IrAnnotation>()
                 typeAnnotations += with(annotationGenerator) { annotations.toIrAnnotations() }
 
                 val irSymbol =
@@ -127,30 +127,30 @@ class Fir2IrTypeConverter(
                 val specialAnnotationsProvider = specialAnnotationsProvider
                 if (specialAnnotationsProvider != null) {
                     if (type.hasEnhancedNullability) {
-                        typeAnnotations += specialAnnotationsProvider.generateEnhancedNullabilityAnnotationCall()
+                        typeAnnotations += specialAnnotationsProvider.generateEnhancedNullabilityAnnotation()
                     }
                     if (hasFlexibleNullability) {
-                        typeAnnotations += specialAnnotationsProvider.generateFlexibleNullabilityAnnotationCall()
+                        typeAnnotations += specialAnnotationsProvider.generateFlexibleNullabilityAnnotation()
                     }
                     if (hasFlexibleMutability) {
-                        typeAnnotations += specialAnnotationsProvider.generateFlexibleMutabilityAnnotationCall()
+                        typeAnnotations += specialAnnotationsProvider.generateFlexibleMutabilityAnnotation()
                     }
                     if (hasFlexibleArrayElementVariance) {
-                        typeAnnotations += specialAnnotationsProvider.generateFlexibleArrayElementVarianceAnnotationCall()
+                        typeAnnotations += specialAnnotationsProvider.generateFlexibleArrayElementVarianceAnnotation()
                     }
                     if (addRawTypeAnnotation) {
-                        typeAnnotations += specialAnnotationsProvider.generateRawTypeAnnotationCall()
+                        typeAnnotations += specialAnnotationsProvider.generateRawTypeAnnotation()
                     }
                 }
 
                 if (type.isExtensionFunctionType && annotations.getAnnotationsByClassId(ExtensionFunctionType, session).isEmpty()) {
-                    builtins.extensionFunctionTypeAnnotationCall?.let {
+                    builtins.extensionFunctionTypeAnnotation?.let {
                         typeAnnotations += it
                     }
                 }
 
                 if (type.hasNoInfer && annotations.getAnnotationsByClassId(NoInfer, session).isEmpty()) {
-                    builtins.noInferAnnotationCall?.let {
+                    builtins.noInferAnnotation?.let {
                         typeAnnotations += it
                     }
                 }
@@ -160,7 +160,7 @@ class Fir2IrTypeConverter(
                         it.unexpandedConeClassLikeType == attributeAnnotation.unexpandedConeClassLikeType
                     }
                     if (isAlreadyPresentInAnnotations) continue
-                    typeAnnotations += callGenerator.convertToIrConstructorCall(attributeAnnotation) as? IrConstructorCall ?: continue
+                    typeAnnotations += callGenerator.convertToIrAnnotation(attributeAnnotation) as? IrAnnotation ?: continue
                 }
                 val approximatedType = type.approximateForIrOrSelf()
 
@@ -192,7 +192,7 @@ class Fir2IrTypeConverter(
             }
             is ConeDynamicType -> {
                 val typeAnnotations = with(annotationGenerator) { annotations.toIrAnnotations() }
-                return IrDynamicTypeImpl(typeAnnotations, Variance.INVARIANT)
+                IrDynamicTypeImpl(typeAnnotations, Variance.INVARIANT)
             }
             is ConeFlexibleType -> with(session.typeContext) {
                 val upper = type.upperBound
@@ -202,7 +202,7 @@ class Fir2IrTypeConverter(
                     val intermediate = if (lower is ConeClassLikeType && lower.lookupTag == upper.lookupTag && !isRaw) {
                         lower.replaceArguments(upper.getArguments())
                     } else lower
-                    intermediate.withNullability(upper.isMarkedNullable).asCone()
+                    intermediate.withNullability(upper.isMarkedNullable)
                         .withAttributes(type.attributes)
                         .toIrType(
                             typeOrigin,

@@ -19,14 +19,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourc
 import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator.Companion.configureJsDefaultOptions
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmResolverPlugin
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -46,7 +46,7 @@ abstract class KotlinJsIrTarget
 constructor(
     project: Project,
     platformType: KotlinPlatformType,
-    internal val isMpp: Boolean
+    internal val isMpp: Boolean,
 ) :
     KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
@@ -56,35 +56,19 @@ constructor(
     KotlinJsSubTargetContainerDsl,
     KotlinWasmSubTargetContainerDsl {
 
-    @Deprecated(
-        message = "Internal Kotlin Gradle Plugin API. Scheduled for removal in Kotlin 2.4.",
-        level = DeprecationLevel.ERROR
-    )
-    constructor(
-        project: Project,
-        platformType: KotlinPlatformType,
-    ) : this(project, platformType, true)
-
     private val propertiesProvider = PropertiesProvider(project)
     internal val shouldGenerateTypeScriptDefinitions: Property<Boolean> = project.objects.property<Boolean>(false)
 
-    override val subTargets: NamedDomainObjectContainer<KotlinJsIrSubTargetWithBinary> = project.container(
+    override val subTargets: NamedDomainObjectContainer<KotlinJsIrSubTargetWithBinary> = project.objects.domainObjectContainer(
         KotlinJsIrSubTargetWithBinary::class.java
     )
 
     override val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun> by lazy {
-        project.container(KotlinJsReportAggregatingTestRun::class.java, KotlinJsTestRunFactory(this))
+        project.objects.domainObjectContainer(KotlinJsReportAggregatingTestRun::class.java, KotlinJsTestRunFactory(this))
     }
 
     override var wasmTargetType: KotlinWasmTargetType? = null
         internal set
-
-    @Deprecated("Use outputModuleName with Provider API instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
-    override var moduleName: String?
-        get() = outputModuleName.get()
-        set(value) {
-            outputModuleName.set(value)
-        }
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         val mainCompilation = compilations.getByName(MAIN_COMPILATION_NAME)
@@ -183,6 +167,7 @@ constructor(
         compilations.all { compilation ->
             compilation.binaries
                 .withType(JsIrBinary::class.java)
+                .matching { it.target.wasmTargetType == null }
                 .all { binary ->
                     val syncTask = binary.linkSyncTask
 
@@ -227,6 +212,7 @@ constructor(
         commonLazy
         addSubTarget(KotlinBrowserJsIr::class.java) {
             configureSubTarget()
+            subTargetConfigurators.add(SwcConfigurator(this))
             subTargetConfigurators.add(LibraryConfigurator(this))
             subTargetConfigurators.add(WebpackConfigurator(this))
         }
@@ -249,6 +235,7 @@ constructor(
 
         addSubTarget(KotlinNodeJsIr::class.java) {
             configureSubTarget()
+            subTargetConfigurators.add(SwcConfigurator(this))
             subTargetConfigurators.add(LibraryConfigurator(this))
             subTargetConfigurators.add(NodeJsEnvironmentConfigurator(this))
         }

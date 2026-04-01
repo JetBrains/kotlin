@@ -1,11 +1,6 @@
-/*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
- */
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 @Suppress("NOTHING_TO_INLINE")
 inline fun foo3(i3: Int): Int {
     return i3 + 3
@@ -20,6 +15,9 @@ inline fun foo2(i2: Int): Int {
 inline fun foo1(i1: Int): Int {
     return foo2(i1)
 }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun bar(i0: Int): Int {
     return foo1(i0)  + foo3(i0)

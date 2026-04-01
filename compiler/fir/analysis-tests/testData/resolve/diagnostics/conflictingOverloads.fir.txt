@@ -57,7 +57,7 @@ FILE: conflictingOverloads.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<B>|
-            public get(): R|kotlin/enums/EnumEntries<B>|
+            public static get(): R|kotlin/enums/EnumEntries<B>|
 
     }
     public final val u: R|kotlin/Int| = Int(10)

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.libraries.configure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
@@ -59,10 +60,12 @@ abstract class AnalysisApiFirBinaryTestConfigurator : AnalysisApiTestConfigurato
         )
 }
 
-object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiFirBinaryTestConfigurator() {
+class AnalysisApiFirLibraryBinaryTestConfigurator(override val defaultTargetPlatform: TargetPlatform = defaultTargetPlatformValue) :
+    AnalysisApiFirBinaryTestConfigurator() {
     override val testModuleFactory: KtTestModuleFactory get() = KtLibraryBinaryTestModuleFactory
 }
 
-object AnalysisApiFirLibraryBinaryDecompiledTestConfigurator : AnalysisApiFirBinaryTestConfigurator() {
+open class AnalysisApiFirLibraryBinaryDecompiledTestConfigurator(override val defaultTargetPlatform: TargetPlatform = defaultTargetPlatformValue) :
+    AnalysisApiFirBinaryTestConfigurator() {
     override val testModuleFactory: KtTestModuleFactory get() = KtLibraryBinaryDecompiledTestModuleFactory
 }

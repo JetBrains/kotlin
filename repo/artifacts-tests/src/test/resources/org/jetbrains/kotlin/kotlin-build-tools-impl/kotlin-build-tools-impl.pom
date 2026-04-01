@@ -40,6 +40,12 @@
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-build-tools-cri-impl</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-compiler-embeddable</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>

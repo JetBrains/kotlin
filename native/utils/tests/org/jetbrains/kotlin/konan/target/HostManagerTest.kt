@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.target
 
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -24,7 +25,13 @@ class HostManagerTest {
             assertFalse(HostManager.hostIsMac)
             assertFalse(HostManager.hostIsMingw)
             assertFalse(HostManager.hostIsLinux)
+            assertFalse(HostManager.hostIsSupported)
         }
+    }
+
+    @Test
+    fun hostIsSupportedOnKnownOs() {
+        assertTrue(HostManager.hostIsSupported)
     }
 
     @Synchronized

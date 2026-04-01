@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.common.output.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.javac.JavacWrapperRegistrarKt;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
-import org.jetbrains.kotlin.jvm.compiler.javac.JavacRegistrarForTests;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -143,7 +143,7 @@ public class LoadDescriptorUtil {
                 KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         configureEnvironment.accept(environment);
         if (useJavacWrapper) {
-            JavacRegistrarForTests.INSTANCE.registerJavac(environment);
+            JavacWrapperRegistrarKt.registerJavac(environment);
         }
         @SuppressWarnings("deprecation")
         AnalysisResult analysisResult = JvmResolveUtil.analyze(environment);

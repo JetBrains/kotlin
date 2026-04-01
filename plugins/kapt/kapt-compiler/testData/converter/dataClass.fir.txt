@@ -17,15 +17,18 @@
  *   public final (* synthesized *) fun copy(firstName: kotlin/String (* = ... *), secondName: kotlin/String (* = ... *), age: kotlin/Int (* = ... *)): User
  *
  *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
  *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
  *
  *   // signature: hashCode()I
+ *   // must-use return value
  *   public open (* synthesized *) fun hashCode(): kotlin/Int
  *
  *   // signature: procedure()V
  *   public final fun procedure(): kotlin/Unit
  *
  *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
  *   public open (* synthesized *) fun toString(): kotlin/String
  *
  *   // field: age:I

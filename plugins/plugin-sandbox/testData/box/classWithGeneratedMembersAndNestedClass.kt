@@ -1,4 +1,3 @@
-
 import org.jetbrains.kotlin.plugin.sandbox.NestedClassAndMaterializeMember
 
 @NestedClassAndMaterializeMember

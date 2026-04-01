@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.util.resolveRepoPath
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
@@ -23,7 +24,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
             "kotlinxSerializationMppK2",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build(":compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
@@ -34,7 +35,20 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
     @DisplayName("Compile code with kotlinx.serialization with K2 against K1. KT-57941")
     @GradleTest
     fun `test kotlinx serialization K2 against K1`(gradleVersion: GradleVersion) {
-        project("kotlinxSerializationK2AgainstK1", gradleVersion) {
+        project(
+            "kotlinxSerializationK2AgainstK1",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.suppressDeprecationWarningsSinceGradleVersion(
+                TestVersions.Gradle.G_9_0,
+                gradleVersion,
+                "KGP 1.9.25 produces deprecation warning in Gradle 9.x releases"
+            ).run {
+                if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_9_0)) {
+                    copy(configurationCache = ConfigurationCacheValue.DISABLED)
+                } else this
+            }
+        ) {
+            projectPath.resolve("lib").addDefaultSettingsToSettingsGradle(gradleVersion)
             subprojects("app", "lib").buildScriptInjection {
                 project.plugins.apply("org.jetbrains.kotlin.plugin.serialization")
                 dependencies.add("implementation", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
@@ -59,7 +73,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
                 "KGP 1.7.20 produces deprecation warning in Gradle 8.7"
             )
                 // KGP 1.7.20 is not compatible with configuration cache in Gradle 8
-                .copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
+                .copy(configurationCache = ConfigurationCacheValue.DISABLED)
         ) {
             build(":publish") {
                 assertTasksExecuted(":publish")
@@ -83,7 +97,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
             "kotlinxSerializationK2WithJs",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build(":compileProductionExecutableKotlinJs")
         }
@@ -96,7 +110,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
             "kotlinxSerializationK2WithJs",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build(":compileTestKotlinJs")
         }
@@ -109,7 +123,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
             "kotlinxSerializationMppK2",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build(":compileKotlinJs")
         }

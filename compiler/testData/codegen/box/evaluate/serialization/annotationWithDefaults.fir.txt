@@ -1,0 +1,57 @@
+Module: lib
+FILE: lib.kt
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.RUNTIME| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.RUNTIME|]) public final annotation class IntegerNumberValid : R|kotlin/Annotation| {
+        public [ContainingClassKey=IntegerNumberValid] constructor([CorrespondingProperty=/IntegerNumberValid.message, EvaluatedValue=String(Has illegal integer number value)] message: R|kotlin/String| = String(Has illegal integer number value), [CorrespondingProperty=/IntegerNumberValid.groups, EvaluatedValue=<collectionLiteralCall>()] groups: R|kotlin/Array<kotlin/reflect/KClass<*>>| = <collectionLiteralCall>(), [CorrespondingProperty=/IntegerNumberValid.minimum, EvaluatedValue=Long(-9223372036854775808)] minimum: R|kotlin/Long| = Q|kotlin/Long|.R|kotlin/Long.Companion.MIN_VALUE|, [CorrespondingProperty=/IntegerNumberValid.maximum, EvaluatedValue=Long(9223372036854775807)] maximum: R|kotlin/Long| = Q|kotlin/Long|.R|kotlin/Long.Companion.MAX_VALUE|, [CorrespondingProperty=/IntegerNumberValid.minMaxArray, EvaluatedValue=<collectionLiteralCall>(Long(-9223372036854775808), Long(9223372036854775807))] minMaxArray: R|kotlin/LongArray| = <collectionLiteralCall>(Q|kotlin/Long|.R|kotlin/Long.Companion.MIN_VALUE|, Q|kotlin/Long|.R|kotlin/Long.Companion.MAX_VALUE|), [CorrespondingProperty=/IntegerNumberValid.minMaxArrayCollection, EvaluatedValue=<collectionLiteralCall>(Long(-9223372036854775808), Long(9223372036854775807))] minMaxArrayCollection: R|kotlin/LongArray| = <collectionLiteralCall>(Q|kotlin/Long|.R|kotlin/Long.Companion.MIN_VALUE|, Q|kotlin/Long|.R|kotlin/Long.Companion.MAX_VALUE|), [CorrespondingProperty=/IntegerNumberValid.laterConstant, EvaluatedValue=String(hello)] laterConstant: R|kotlin/String| = R|/VALUE|): R|IntegerNumberValid| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val message: R|kotlin/String| = R|<local>/message|
+            public [ContainingClassKey=IntegerNumberValid] get(): R|kotlin/String|
+
+        public final [IsFromPrimaryConstructor=true] val groups: R|kotlin/Array<kotlin/reflect/KClass<*>>| = R|<local>/groups|
+            public [ContainingClassKey=IntegerNumberValid] get(): R|kotlin/Array<kotlin/reflect/KClass<*>>|
+
+        public final [IsFromPrimaryConstructor=true] val minimum: R|kotlin/Long| = R|<local>/minimum|
+            public [ContainingClassKey=IntegerNumberValid] get(): R|kotlin/Long|
+
+        public final [IsFromPrimaryConstructor=true] val maximum: R|kotlin/Long| = R|<local>/maximum|
+            public [ContainingClassKey=IntegerNumberValid] get(): R|kotlin/Long|
+
+        public final [IsFromPrimaryConstructor=true] val minMaxArray: R|kotlin/LongArray| = R|<local>/minMaxArray|
+            public [ContainingClassKey=IntegerNumberValid] get(): R|kotlin/LongArray|
+
+        public final [IsFromPrimaryConstructor=true] val minMaxArrayCollection: R|kotlin/LongArray| = R|<local>/minMaxArrayCollection|
+            public [ContainingClassKey=IntegerNumberValid] get(): R|kotlin/LongArray|
+
+        public final [IsFromPrimaryConstructor=true] val laterConstant: R|kotlin/String| = R|<local>/laterConstant|
+            public [ContainingClassKey=IntegerNumberValid] get(): R|kotlin/String|
+
+    }
+    public final const [EvaluatedValue=String(hello)] val VALUE: R|kotlin/String| = String(hello)
+        public get(): R|kotlin/String|
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)]) @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.BINARY| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.BINARY|]) public final annotation class AnnotationWithDefault : R|kotlin/Annotation| {
+        public [ContainingClassKey=AnnotationWithDefault] constructor([CorrespondingProperty=/AnnotationWithDefault.str, EvaluatedValue=String(String)] str: R|kotlin/String| = <strcat>(String(Str), String(ing))): R|AnnotationWithDefault| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+            public [ContainingClassKey=AnnotationWithDefault] get(): R|kotlin/String|
+
+    }
+    @R|AnnotationWithDefault|() public final class A : R|kotlin/Any| {
+        public [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|AnnotationWithDefault|(str = String(Other) [evaluated = String(Other)]) public final class B : R|kotlin/Any| {
+        public [ContainingClassKey=B] constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+Module: main
+FILE: main.kt
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

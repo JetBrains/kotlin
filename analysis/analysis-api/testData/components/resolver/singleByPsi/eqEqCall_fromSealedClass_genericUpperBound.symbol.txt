@@ -1,0 +1,5 @@
+KtBinaryExpression(357,375): 'oldItem == newItem'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+    ]

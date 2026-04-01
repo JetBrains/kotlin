@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.name.ClassId
 
 public sealed class ExportedDeclaration {
     public val attributes: MutableSet<ExportedAttribute> = mutableSetOf()
+    public open val isProtected: Boolean
+        get() = false
 }
 
 public sealed class ExportedAttribute {
@@ -29,48 +31,88 @@ public class ExportedNamespace(
     public val isPrivate: Boolean = false
 ) : ExportedDeclaration()
 
-public sealed interface ExportedFunctionName {
-    public class Identifier(public val value: String) : ExportedFunctionName
-    public class WellKnownSymbol(public val value: String) : ExportedFunctionName
+public sealed interface ExportedMember {
+    public val name: ExportedMemberName
+    public val isMember: Boolean
+    public val isStatic: Boolean
+}
+
+public sealed interface ExportedMemberName {
+    public class Identifier(override val value: String) : ExportedMemberName
+    public class SymbolReference(override val value: String) : ExportedMemberName
+
+    public val value: String
+
+    public companion object {
+        public fun WellKnownSymbol(value: String): SymbolReference = SymbolReference("Symbol.$value")
+    }
 }
 
 public data class ExportedFunction(
-    val name: ExportedFunctionName,
+    override val name: ExportedMemberName,
     val returnType: ExportedType,
     val parameters: List<ExportedParameter>,
-    val typeParameters: List<ExportedType.TypeParameter> = emptyList(),
-    val isMember: Boolean = false,
-    val isStatic: Boolean = false,
+    val typeParameters: List<ExportedTypeParameter> = emptyList(),
+    override val isMember: Boolean = false,
+    override val isStatic: Boolean = false,
     val isAbstract: Boolean = false,
-    val isProtected: Boolean,
-) : ExportedDeclaration()
+    override val isProtected: Boolean,
+) : ExportedDeclaration(), ExportedMember
 
 public data class ExportedConstructor(
     val parameters: List<ExportedParameter>,
     val visibility: ExportedVisibility
 ) : ExportedDeclaration() {
-    val isProtected: Boolean
+    override val isProtected: Boolean
         get() = visibility == ExportedVisibility.PROTECTED
 }
 
 public data class ExportedConstructSignature(
     val parameters: List<ExportedParameter>,
     val returnType: ExportedType,
+    val typeParameters: List<ExportedTypeParameter> = emptyList(),
+    override val isProtected: Boolean,
 ) : ExportedDeclaration()
 
-public data class ExportedProperty(
-    val name: String,
+public data class ExportedField(
+    override val name: ExportedMemberName,
     val type: ExportedType,
     val mutable: Boolean = true,
-    val isMember: Boolean = false,
-    val isStatic: Boolean = false,
+    override val isMember: Boolean = false,
+    override val isStatic: Boolean = false,
     val isAbstract: Boolean = false,
-    val isProtected: Boolean = false,
-    val isField: Boolean = false,
+    override val isProtected: Boolean = false,
     val isObjectGetter: Boolean = false,
     val isOptional: Boolean = false,
     val isQualified: Boolean = false,
-) : ExportedDeclaration()
+) : ExportedDeclaration(), ExportedMember
+
+public sealed interface ExportedPropertyAccessor : ExportedMember {
+    public val type: ExportedType
+    public val isAbstract: Boolean
+}
+
+public data class ExportedPropertyGetter(
+    override val name: ExportedMemberName,
+    override val type: ExportedType,
+    override val isStatic: Boolean = false,
+    override val isAbstract: Boolean = false,
+    override val isProtected: Boolean = false,
+) : ExportedDeclaration(), ExportedPropertyAccessor {
+    override val isMember: Boolean
+        get() = true
+}
+
+public data class ExportedPropertySetter(
+    override val name: ExportedMemberName,
+    override val type: ExportedType,
+    override val isStatic: Boolean = false,
+    override val isAbstract: Boolean = false,
+    override val isProtected: Boolean = false,
+) : ExportedDeclaration(), ExportedPropertyAccessor {
+    override val isMember: Boolean
+        get() = true
+}
 
 // TODO: Cover all cases with frontend and disable error declarations
 public class ErrorDeclaration(public val message: String) : ExportedDeclaration()
@@ -94,11 +136,10 @@ public data class ExportedRegularClass(
     val requireMetadata: Boolean = !isInterface,
     override val superClasses: List<ExportedType> = emptyList(),
     override val superInterfaces: List<ExportedType> = emptyList(),
-    val typeParameters: List<ExportedType.TypeParameter>,
+    val typeParameters: List<ExportedTypeParameter>,
     override val members: List<ExportedDeclaration>,
     override val nestedClasses: List<ExportedClass>,
     override val originalClassId: ClassId?,
-    val innerClassReference: String? = null,
     override val isExternal: Boolean,
 ) : ExportedClass() {
     override val isCompanion: Boolean
@@ -111,7 +152,7 @@ public data class ExportedObject(
     override val superInterfaces: List<ExportedType> = emptyList(),
     override val members: List<ExportedDeclaration>,
     override val nestedClasses: List<ExportedClass>,
-    val typeParameters: List<ExportedType.TypeParameter> = emptyList(),
+    val typeParameters: List<ExportedTypeParameter> = emptyList(),
     override val originalClassId: ClassId?,
     override val isExternal: Boolean,
     override val isCompanion: Boolean,
@@ -119,7 +160,7 @@ public data class ExportedObject(
 ) : ExportedClass()
 
 public class ExportedParameter(
-    public val name: String,
+    public val name: String?,
     public val type: ExportedType,
     public val hasDefaultValue: Boolean = false
 )
@@ -154,6 +195,7 @@ public sealed class ExportedType {
     public sealed class LiteralType<T : Any>(public val value: T) : ExportedType() {
         public class StringLiteralType(value: String) : LiteralType<String>(value)
         public class NumberLiteralType(value: Number) : LiteralType<Number>(value)
+        public class BooleanLiteralType(value: Boolean) : LiteralType<Boolean>(value)
     }
 
     public data class Array(val elementType: ExportedType) : ExportedType() {
@@ -162,20 +204,18 @@ public sealed class ExportedType {
     }
 
     public class Function(
-        public val parameterTypes: List<ExportedType>,
+        public val parameters: List<ExportedParameter>,
         public val returnType: ExportedType
     ) : ExportedType()
 
     public class ConstructorType(
-        public val typeParameters: List<TypeParameter>,
+        public val typeParameters: List<ExportedTypeParameter>,
         public val returnType: ExportedType
     ) : ExportedType()
 
     public data class ClassType(
         val name: String,
         val arguments: List<ExportedType>,
-        val isObject: Boolean = false,
-        val isExternal: Boolean = false,
         val classId: ClassId? = null,
     ) : ExportedType() {
         override fun equals(other: Any?): Boolean = this === other || other is ClassType && classId == other.classId
@@ -185,7 +225,7 @@ public sealed class ExportedType {
             substitution[this] ?: copy(arguments = arguments.map { it.replaceTypes(substitution) })
     }
 
-    public data class TypeParameter(val name: String, val constraint: ExportedType? = null) : ExportedType()
+    public data class TypeParameterRef(val typeParameter: ExportedTypeParameter) : ExportedType()
     public class Nullable(public val baseType: ExportedType) : ExportedType()
     public class NonNullable(public val baseType: ExportedType) : ExportedType()
     public class ErrorType(public val comment: String) : ExportedType()
@@ -195,6 +235,8 @@ public sealed class ExportedType {
     public class InlineInterfaceType(
         public val members: List<ExportedDeclaration>
     ) : ExportedType()
+
+    public class InlineArrayType(public val elements: List<ExportedType>) : ExportedType()
 
     public class UnionType(public val lhs: ExportedType, public val rhs: ExportedType) : ExportedType()
 
@@ -212,6 +254,14 @@ public sealed class ExportedType {
 
     public fun withImplicitlyExported(implicitlyExportedType: Boolean, exportedSupertype: ExportedType): ExportedType =
         if (implicitlyExportedType) ImplicitlyExportedType(this, exportedSupertype) else this
+}
+
+public data class ExportedTypeParameter(val name: String, val variance: ExportedVariance, var constraint: ExportedType? = null)
+
+public enum class ExportedVariance(public val keyword: String) {
+    INVARIANT(""),
+    COVARIANT("out "),
+    CONTRAVARIANT("in "),
 }
 
 public enum class ExportedVisibility(public val keyword: String) {

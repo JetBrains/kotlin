@@ -100,6 +100,7 @@ class ClassicTypeSystemContextForCS(
     }
 
     override fun newTypeCheckerState(
+        typeSystemContext: TypeSystemContext,
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean,
         dnnTypesEqualToFlexible: Boolean,
@@ -107,7 +108,7 @@ class ClassicTypeSystemContextForCS(
         return createClassicTypeCheckerState(
             errorTypesEqualToAnything,
             stubTypesEqualToAnything,
-            typeSystemContext = this,
+            typeSystemContext,
             kotlinTypeRefiner = kotlinTypeRefiner
         )
     }

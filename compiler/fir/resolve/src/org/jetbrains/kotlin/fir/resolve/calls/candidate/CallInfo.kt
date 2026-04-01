@@ -53,7 +53,12 @@ open class CallInfo(
     val resolutionMode: ResolutionMode,
     val origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
     val implicitInvokeMode: ImplicitInvokeMode,
+
+    val containingCandidateForCollectionLiteral: Candidate? = null,
 ) : AbstractCallInfo() {
+    val isCollectionLiteralCall: Boolean
+        get() = containingCandidateForCollectionLiteral != null
+
     override val isImplicitInvoke: Boolean
         get() = implicitInvokeMode != ImplicitInvokeMode.None
 
@@ -66,7 +71,7 @@ open class CallInfo(
      * This is important for Analysis API because it will trigger resolution on already resolved expressions,
      * and we wouldn't otherwise have access to named arguments.
      *
-     * @see FirCallResolver.collectAllCandidates
+     * @see org.jetbrains.kotlin.fir.resolve.calls.FirCallResolver.collectAllCandidates
      */
     val arguments: List<FirExpression>
         get() = (argumentList as? FirResolvedArgumentList)?.originalArgumentList?.arguments ?: argumentList.arguments
@@ -95,11 +100,13 @@ open class CallInfo(
         name: Name = this.name,
         implicitInvokeMode: ImplicitInvokeMode = this.implicitInvokeMode,
         candidateForCommonInvokeReceiver: Candidate? = this.candidateForCommonInvokeReceiver,
+        containingCandidateForCollectionLiteral: Candidate? = this.containingCandidateForCollectionLiteral,
     ): CallInfo = CallInfo(
         callSite, callKind, name, explicitReceiver, argumentList,
         isUsedAsGetClassReceiver, typeArguments,
         session, containingFile, containingDeclarations,
-        candidateForCommonInvokeReceiver, resolutionMode, origin, implicitInvokeMode
+        candidateForCommonInvokeReceiver, resolutionMode, origin, implicitInvokeMode,
+        containingCandidateForCollectionLiteral,
     )
 }
 
@@ -116,12 +123,14 @@ class CallableReferenceInfo(
     val hasSyntheticOuterCall: Boolean,
 
     origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
+    callKind: CallKind = CallKind.CallableReference
 ) : CallInfo(
-    callSite, CallKind.CallableReference, name, explicitReceiver, FirEmptyArgumentList,
+    callSite, callKind, name, explicitReceiver, FirEmptyArgumentList,
     isUsedAsGetClassReceiver = false, typeArguments = emptyList(),
     session, containingFile, containingDeclarations,
     candidateForCommonInvokeReceiver = null, resolutionMode = ResolutionMode.ContextIndependent, origin,
     implicitInvokeMode = ImplicitInvokeMode.None,
+    containingCandidateForCollectionLiteral = null,
 ) {
     override fun copy(
         callKind: CallKind,
@@ -131,9 +140,10 @@ class CallableReferenceInfo(
         name: Name,
         implicitInvokeMode: ImplicitInvokeMode,
         candidateForCommonInvokeReceiver: Candidate?,
+        containingCandidateForCollectionLiteral: Candidate?,
     ): CallableReferenceInfo = CallableReferenceInfo(
         callSite, name, explicitReceiver,
         session, containingFile, containingDeclarations,
-        expectedType, lhs, hasSyntheticOuterCall, origin
+        expectedType, lhs, hasSyntheticOuterCall, origin, callKind
     )
 }

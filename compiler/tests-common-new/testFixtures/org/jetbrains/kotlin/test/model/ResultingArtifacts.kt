@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
+import org.jetbrains.kotlin.wasm.ir.WasmModule
+import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 
 class SourceFileInfo(
@@ -24,11 +26,6 @@ object BinaryArtifacts {
             get() = ArtifactKinds.Jvm
     }
 
-    class JvmFromK1AndK2(val fromK1: Jvm, val fromK2: Jvm) : ResultingArtifact.Binary<JvmFromK1AndK2>() {
-        override val kind: ArtifactKind<JvmFromK1AndK2>
-            get() = ArtifactKinds.JvmFromK1AndK2
-    }
-
     sealed class Js : ResultingArtifact.Binary<Js>() {
         abstract val outputFile: File
         override val kind: ArtifactKind<Js>
@@ -36,7 +33,16 @@ object BinaryArtifacts {
 
         open fun unwrap(): Js = this
 
+        open val dtsFile: File?
+            get() = outputFile.withReplacedExtensionOrNull("_v5.js", ".d.ts")
+                ?: outputFile.withReplacedExtensionOrNull("_v5.mjs", ".d.ts")
+
         class JsIrArtifact(override val outputFile: File, val compilerResult: CompilerResult, val icCache: Map<String, ByteArray>? = null) : Js()
+
+        class TypeScriptArtifact(override val outputFile: File) : Js() {
+            override val dtsFile: File
+                get() = outputFile
+        }
 
         data class IncrementalJsArtifact(val originalArtifact: Js, val recompiledArtifact: Js) : Js() {
             override val outputFile: File
@@ -48,18 +54,28 @@ object BinaryArtifacts {
         }
     }
 
-    class Native : ResultingArtifact.Binary<Native>() {
+    class Native(val executable: File) : ResultingArtifact.Binary<Native>() {
         override val kind: ArtifactKind<Native>
             get() = ArtifactKinds.Native
     }
 
-    class Wasm(
+    class WasmCompilationSet(
+        val compiledModule: WasmModule,
         val compilerResult: WasmCompilerResult,
-        val compilerResultWithDCE: WasmCompilerResult,
-        val compilerResultWithOptimizer: WasmCompilerResult?,
-    ) : ResultingArtifact.Binary<Wasm>() {
+        val compilationDependencies: List<WasmCompilationSet> = emptyList(),
+    )
+
+    sealed class Wasm: ResultingArtifact.Binary<Wasm>() {
         override val kind: ArtifactKind<Wasm>
             get() = ArtifactKinds.Wasm
+
+        class CompilationSets(
+            val compilation: WasmCompilationSet,
+            val dceCompilation: WasmCompilationSet? = null,
+            val optimisedCompilation: WasmCompilationSet? = null,
+        ) : Wasm()
+
+        class Folder(val folder: File) : Wasm()
     }
 
     class KLib(val outputFile: File, val reporter: BaseDiagnosticsCollector) : ResultingArtifact.Binary<KLib>() {

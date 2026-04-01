@@ -18,6 +18,9 @@ fun main(args: Array<String>) {
             testClass<AbstractJsLibraryAbiReaderWithInlinedFunInKlibTest> {
                 model("content")
             }
+            testClass<AbstractKlibDumpParserTest> {
+                model("content")
+            }
         }
     }
 }

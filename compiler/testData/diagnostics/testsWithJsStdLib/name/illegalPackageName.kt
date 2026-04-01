@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -JsAllowInvalidCharsIdentifiersEscaping
 // FILE: slashes.kt
 package a.<!INVALID_CHARACTERS!>`//`<!>.b.<!INVALID_CHARACTERS!>`/`<!>.c

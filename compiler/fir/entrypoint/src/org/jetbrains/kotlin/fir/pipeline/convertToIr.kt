@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallValueArgumen
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUsageChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrValueAccessScopeChecker
 import org.jetbrains.kotlin.ir.validation.validateIr
-import org.jetbrains.kotlin.ir.validation.withBasicChecks
+import org.jetbrains.kotlin.ir.validation.withBasicFirstStageChecks
 import org.jetbrains.kotlin.ir.validation.withVarargChecks
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -60,9 +60,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
-data class FirResult(val outputs: List<ModuleCompilerAnalyzedOutput>)
+@JvmInline
+value class AllModulesFrontendOutput(val outputs: List<SingleModuleFrontendOutput>)
 
-data class ModuleCompilerAnalyzedOutput(
+data class SingleModuleFrontendOutput(
     val session: FirSession,
     val scopeSession: ScopeSession,
     val fir: List<FirFile>
@@ -77,7 +78,7 @@ data class Fir2IrActualizedResult(
     val symbolTable: SymbolTable,
 )
 
-fun List<ModuleCompilerAnalyzedOutput>.runPlatformCheckers(reporter: BaseDiagnosticsCollector) {
+fun List<SingleModuleFrontendOutput>.runPlatformCheckers(reporter: BaseDiagnosticsCollector) {
     val platformModule = this.last()
     val session = platformModule.session
     // Skip checkers in header mode.
@@ -88,7 +89,7 @@ fun List<ModuleCompilerAnalyzedOutput>.runPlatformCheckers(reporter: BaseDiagnos
     session.runCheckers(scopeSession, allFiles, reporter, MppCheckerKind.Platform)
 }
 
-fun FirResult.convertToIrAndActualize(
+fun AllModulesFrontendOutput.convertToIrAndActualize(
     fir2IrExtensions: Fir2IrExtensions,
     fir2IrConfiguration: Fir2IrConfiguration,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
@@ -119,7 +120,7 @@ fun FirResult.convertToIrAndActualize(
 }
 
 private class Fir2IrPipeline(
-    val outputs: List<ModuleCompilerAnalyzedOutput>,
+    val outputs: List<SingleModuleFrontendOutput>,
     val fir2IrExtensions: Fir2IrExtensions,
     val fir2IrConfiguration: Fir2IrConfiguration,
     val irGeneratorExtensions: Collection<IrGenerationExtension>,
@@ -226,8 +227,6 @@ private class Fir2IrPipeline(
         val irBuiltIns = IrBuiltInsOverFir(componentsStorage, syntheticIrBuiltinsSymbolsContainer)
         val symbolTable = SymbolTable(signaturer = null, IrFactoryImpl, lock = componentsStorage.lock)
 
-        fir2IrExtensions.initializeIrBuiltInsAndSymbolTable(irBuiltIns, symbolTable)
-
         return irBuiltIns to symbolTable
     }
 
@@ -269,7 +268,7 @@ private class Fir2IrPipeline(
 
         checkUnboundSymbols()
 
-        evaluateConstants()
+        inlineConstants()
 
         val actualizationResult = irActualizer?.runChecksAndFinalize(expectActualMap)
 
@@ -369,8 +368,12 @@ private class Fir2IrPipeline(
         )
     }
 
-    private fun Fir2IrConversionResult.evaluateConstants() {
-        Fir2IrConverter.evaluateConstants(mainIrFragment, componentsStorage, irBuiltIns)
+    private fun Fir2IrConversionResult.inlineConstants() {
+        val inlineConstTracker = componentsStorage.configuration.inlineConstTracker
+
+        mainIrFragment.files.forEach { irFile ->
+            irFile.transform(ConstInliner(irFile, inlineConstTracker), null)
+        }
     }
 
     // ------------------------------------------------------ f/o building helpers ------------------------------------------------------
@@ -501,7 +504,7 @@ private class Fir2IrPipeline(
             module,
             irBuiltIns,
             IrValidatorConfig(checkTreeConsistency = true, checkUnboundSymbols = true)
-                .withBasicChecks()
+                .withBasicFirstStageChecks()
                 //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
                 .withCheckers(
                     IrCallValueArgumentCountChecker,
@@ -527,10 +530,7 @@ private class Fir2IrPipeline(
                 }
                 .applyIf(
                     // On JVM we may sometimes generate non-private fields (KT-71243), and we allow plugins to do so too.
-                    validateForKlibSerialization &&
-                            // FIXME(KT-71243): Currently the ExplicitBackingFields feature de-facto allows specifying
-                            //  non-private visibilities for fields.
-                            !fir2IrConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields)
+                    validateForKlibSerialization
                 ) {
                     withCheckers(IrFieldVisibilityChecker)
                 }
@@ -568,7 +568,7 @@ private class Fir2IrPipeline(
         )
     }
 
-    fun IrPluginContext.applyIrGenerationExtensions(
+    fun Fir2IrPluginContext.applyIrGenerationExtensions(
         irModuleFragment: IrModuleFragment,
         irGenerationExtensions: Collection<IrGenerationExtension>,
     ) {
@@ -583,6 +583,7 @@ private class Fir2IrPipeline(
                 throw IrGenerationExtensionException(e, extension::class.java)
             }
         }
+        recordLookupsWithoutSpecificFile(irModuleFragment)
     }
 }
 

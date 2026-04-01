@@ -20,7 +20,7 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertFailsWith
 
 @Tag("klib")
-@UsePartialLinkage(UsePartialLinkage.Mode.ENABLED_WITH_ERROR)
+@UsePartialLinkage(UsePartialLinkage.Mode.ERROR)
 abstract class AbstractNativeHeaderKlibComparisonTest : AbstractNativeSimpleTest() {
 
     protected fun runTest(@TestDataFile testPath: String) {
@@ -58,7 +58,7 @@ abstract class AbstractNativeHeaderKlibComparisonTest : AbstractNativeSimpleTest
 }
 
 @Tag("klib")
-@UsePartialLinkage(UsePartialLinkage.Mode.ENABLED_WITH_ERROR)
+@UsePartialLinkage(UsePartialLinkage.Mode.ERROR)
 abstract class AbstractNativeHeaderKlibCompilationTest : AbstractNativeSimpleTest() {
 
     protected fun runTest(@TestDataFile testPath: String) {

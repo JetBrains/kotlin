@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AnalysisHandler<A : ResultingArtifact<A>>(
+abstract class AnalysisHandlerBase<A : ResultingArtifact<A>>(
     val testServices: TestServices,
     val failureDisablesNextSteps: Boolean,
     val doNotRunIfThereWerePreviousFailures: Boolean
@@ -38,9 +38,16 @@ abstract class AnalysisHandler<A : ResultingArtifact<A>>(
         }
         compilationStage = stage
     }
+}
 
+// ----------------------------- non-grouping handlers -----------------------------
+
+abstract class AnalysisHandler<A : ResultingArtifact<A>>(
+    testServices: TestServices,
+    failureDisablesNextSteps: Boolean,
+    doNotRunIfThereWerePreviousFailures: Boolean
+) : AnalysisHandlerBase<A>(testServices, failureDisablesNextSteps, doNotRunIfThereWerePreviousFailures) {
     abstract fun processModule(module: TestModule, info: A)
-
     abstract fun processAfterAllModules(someAssertionWasFailed: Boolean)
 }
 
@@ -64,3 +71,13 @@ abstract class BinaryArtifactHandler<A : ResultingArtifact.Binary<A>>(
     failureDisablesNextSteps: Boolean,
     doNotRunIfThereWerePreviousFailures: Boolean
 ) : AnalysisHandler<A>(testServices, failureDisablesNextSteps, doNotRunIfThereWerePreviousFailures)
+
+// ----------------------------- grouping handlers -----------------------------
+
+abstract class GroupingPhaseHandler<A : ResultingArtifact<A>>(
+    testServices: TestServices,
+    failureDisablesNextSteps: Boolean,
+    doNotRunIfThereWerePreviousFailures: Boolean
+) : AnalysisHandlerBase<A>(testServices, failureDisablesNextSteps, doNotRunIfThereWerePreviousFailures) {
+    abstract fun processArtifact(artifact: A)
+}

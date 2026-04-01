@@ -30,7 +30,7 @@ fun FirTowerDataElement.getAvailableScopesForPosition(
     return availableScopes.map { scope ->
         val implicitReceiver = implicitReceiver?.boundSymbol
         if ((implicitReceiver as? FirClassSymbol<*>)?.isCompanion == true &&
-            implicitReceiver.classId.parentClassId != position.containingClass()?.getClassId() &&
+            implicitReceiver.classId.outerClassId != position.containingClass()?.getClassId() &&
             scope is FirContainingNamesAwareScope
         ) {
             FirNoClassifiersScope(scope)

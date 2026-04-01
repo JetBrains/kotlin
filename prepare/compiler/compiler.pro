@@ -240,8 +240,6 @@
     ** getBasePath();
 }
 
-# for kotlin-android-extensions in maven
--keep class com.intellij.openapi.module.ModuleServiceManager { public *; }
 
 # for building kotlin-build-common-test
 -keep class org.jetbrains.kotlin.build.SerializationUtilsKt { *; }
@@ -404,3 +402,5 @@
 }
 
 -dontwarn kotlinx.coroutines.internal.intellij.IntellijCoroutines
+
+-dontwarn org.jetbrains.kotlin.buildtools.internal.cri.**

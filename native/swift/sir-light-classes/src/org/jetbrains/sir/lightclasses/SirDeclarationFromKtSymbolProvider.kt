@@ -27,16 +27,23 @@ public class SirDeclarationFromKtSymbolProvider(
             is KaNamedClassSymbol -> {
                 when (ktSymbol.classKind) {
                     KaClassKind.INTERFACE -> {
-                        val protocol = SirProtocolFromKtSymbol(
-                            ktSymbol = ktSymbol,
-                            sirSession = sirSession,
-                        )
+                        val protocol = when {
+                            ktSymbol.classId in SirFlowFromKtSymbol.CLASS_IDS -> SirFlowFromKtSymbol(
+                                ktSymbol = ktSymbol,
+                                sirSession = sirSession,
+                            )
+                            else -> SirProtocolFromKtSymbol(
+                                ktSymbol = ktSymbol,
+                                sirSession = sirSession,
+                            )
+                        }
                         SirTranslationResult.RegularInterface(
                             declaration = protocol,
                             bridgedImplementation = SirBridgedProtocolImplementationFromKtSymbol(protocol),
                             markerDeclaration = protocol.existentialMarker,
-                            existentialExtension = SirExistentialProtocolImplementationFromKtSymbol(protocol),
-                            auxExtension = protocol.auxExtension,samConverter = protocol.samConverter,
+                            existentialExtension = protocol.existentialExtension,
+                            auxExtension = protocol.auxExtension,
+                            samConverter = protocol.samConverter,
                         )
                     }
                     KaClassKind.ENUM_CLASS -> {
@@ -71,7 +78,7 @@ public class SirDeclarationFromKtSymbolProvider(
                 SirTranslationResult.EnumCase(createSirEnumCaseFromKtSymbol(ktSymbol, sirSession))
             }
             is KaVariableSymbol -> {
-                if (ktSymbol is KaPropertySymbol && ktSymbol.isExtension) {
+                if (ktSymbol is KaPropertySymbol && (ktSymbol.isExtension || ktSymbol.contextParameters.isNotEmpty())) {
                     ktSymbol.getter?.toSirFunction(ktSymbol)?.let {
                         SirTranslationResult.ExtensionProperty(it, ktSymbol.setter?.toSirFunction(ktSymbol))
                     } ?: SirTranslationResult.Untranslatable(KotlinSource(ktSymbol))

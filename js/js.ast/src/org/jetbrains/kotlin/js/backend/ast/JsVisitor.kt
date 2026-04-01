@@ -63,6 +63,9 @@ abstract class JsVisitor {
     open fun visitYield(x: JsYield): Unit =
         visitElement(x)
 
+    open fun visitYieldStar(x: JsYieldStar): Unit =
+        visitElement(x)
+
     open fun visitDebugger(x: JsDebugger): Unit =
             visitElement(x)
 
@@ -82,7 +85,10 @@ abstract class JsVisitor {
             visitLoop(x)
 
     open fun visitForIn(x: JsForIn): Unit =
-            visitLoop(x)
+            visitIterableLoop(x)
+
+    open fun visitForOf(x: JsForOf): Unit =
+            visitIterableLoop(x)
 
     open fun visitFunction(x: JsFunction): Unit =
             visitElement(x)
@@ -98,6 +104,9 @@ abstract class JsVisitor {
 
     open fun visitLoop(x: JsLoop): Unit =
         visitElement(x)
+
+    open fun visitIterableLoop(x: JsIterableLoop): Unit =
+            visitLoop(x)
 
     open fun visitNameRef(nameRef: JsNameRef): Unit =
             visitElement(nameRef)
@@ -135,6 +144,12 @@ abstract class JsVisitor {
     open fun visitPropertyInitializer(x: JsPropertyInitializer): Unit =
             visitElement(x)
 
+    open fun visitKeyValuePropertyInitializer(x: JsPropertyInitializer.KeyValue): Unit =
+            visitPropertyInitializer(x)
+
+    open fun visitSpreadPropertyInitializer(x: JsPropertyInitializer.Spread): Unit =
+            visitPropertyInitializer(x)
+
     open fun visitRegExp(x: JsRegExp): Unit =
             visitElement(x)
 
@@ -142,6 +157,15 @@ abstract class JsVisitor {
             visitElement(x)
 
     open fun visitString(x: JsStringLiteral): Unit =
+            visitElement(x)
+
+    open fun visitTemplateString(x: JsTemplateStringLiteral): Unit =
+            visitElement(x)
+
+    open fun visitTemplateSegmentString(x: JsTemplateStringLiteral.Segment.StringLiteral): Unit =
+            visitElement(x)
+
+    open fun visitTemplateSegmentInterpolation(x: JsTemplateStringLiteral.Segment.Interpolation): Unit =
             visitElement(x)
 
     open fun visit(x: JsSwitch): Unit =
@@ -182,6 +206,36 @@ abstract class JsVisitor {
 
     open fun visitImport(import: JsImport): Unit =
         visitElement(import)
+
+    open fun visitSpread(spread: JsSpread): Unit =
+        visitElement(spread)
+
+    open fun visitAssignable(assignable: JsAssignable): Unit =
+        visitElement(assignable)
+
+    open fun visitNamedAssignable(assignable: JsAssignable.Named): Unit =
+        visitAssignable(assignable)
+
+    open fun visitArrayPatternAssignable(pattern: JsAssignable.ArrayPattern): Unit =
+        visitAssignable(pattern)
+
+    open fun visitObjectPatternAssignable(pattern: JsAssignable.ObjectPattern): Unit =
+        visitAssignable(pattern)
+
+    open fun visitBindingProperty(property: JsBindingProperty): Unit =
+        visitElement(property)
+
+    open fun visitBindingElement(element: JsBindingElement): Unit =
+        visitElement(element)
+
+    open fun visitBindingArrayItem(item: JsBindingArrayItem): Unit =
+        visitElement(item)
+
+    open fun visitBindingArrayItemElement(element: JsBindingArrayItem.Element): Unit =
+        visitBindingArrayItem(element)
+
+    open fun visitBindingArrayItemHole(hole: JsBindingArrayItem.Hole): Unit =
+        visitBindingArrayItem(hole)
 
     protected open fun visitElement(node: JsNode) {
     }

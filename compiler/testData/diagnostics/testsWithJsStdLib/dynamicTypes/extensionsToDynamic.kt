@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // MARK_DYNAMIC_CALLS
 
 fun test(d: dynamic) {

@@ -1,9 +1,10 @@
 // LANGUAGE: +KotlinFunInterfaceConstructorReference
 
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
-//  ^ TypeError: tmp is not a function
 // IGNORE_BACKEND_K2_MULTI_MODULE: ANY
 // ^^^ Cannot split to two modules due to cyclic import
+
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS:2.3
+// ^^^ KT-15101 js: Same callable references are not equal
 
 // FILE: funInterfaceConstructedObjectsEquality.kt
 

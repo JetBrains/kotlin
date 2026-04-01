@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousFunctionExpression
@@ -45,6 +44,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.FirFunctionCallRefinementExtension
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
@@ -91,6 +91,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBy
+import org.jetbrains.kotlinx.dataframe.plugin.utils.hashToTwoCharString
+import org.jetbrains.kotlinx.dataframe.plugin.utils.twoDigitHash
 import kotlin.math.abs
 
 @OptIn(FirExtensionApiInternals::class)
@@ -136,39 +138,12 @@ class FunctionCallTransformer(
         // See org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineBodyRegularClassChecker
         if (callInfo.containingDeclarations.lastOrNull() is FirPropertyAccessor) return null
         if (callInfo.containingDeclarations.any { it is FirFunction && it.isInline }) return null
-        if (callSiteAnnotations.any { it.fqName(session)?.shortName()?.equals(Name.identifier("DisableInterpretation")) == true }) {
-            return null
-        }
-        val noRefineAnnotation =
-            symbol.resolvedAnnotationClassIds.none { it.shortClassName == Name.identifier("Refine") }
-        if (noRefineAnnotation) {
-            return null
-        }
 
-        val hash = run {
-            val hash = callInfo.name.hashCode() + callInfo.arguments.sumOf {
-                when (it) {
-                    is FirLiteralExpression -> it.value.hashCode()
-                    else -> it.source?.text?.hashCode() ?: 42
-                }
-            }
-            hashToTwoCharString(abs(hash))
-        }
-
-        return transformers.firstNotNullOfOrNull { it.interceptOrNull(callInfo, symbol, hash) }
-    }
-
-    private fun hashToTwoCharString(hash: Int): String {
-        val baseChars = "0123456789"
-        val base = baseChars.length
-        val positiveHash = abs(hash)
-        val char1 = baseChars[positiveHash % base]
-        val char2 = baseChars[(positiveHash / base) % base]
-
-        return "$char1$char2"
+        return transformers.firstNotNullOfOrNull { it.interceptOrNull(callInfo, symbol, callInfo.twoDigitHash()) }
     }
 
     override fun transform(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall {
+        if (call.calleeReference is FirResolvedErrorReference) return call
         val allReturnTypesAreValid = call.arguments.filterIsInstance<FirAnonymousFunctionExpression>()
             .all { expression ->
                 val expectedReturnType = expression.resolvedType
@@ -196,7 +171,7 @@ class FunctionCallTransformer(
     }
 
     override fun restoreSymbol(call: FirFunctionCall, name: Name): FirRegularClassSymbol? {
-        val newType = (call.resolvedType.typeArguments.getOrNull(0) as? ConeClassLikeType)?.toRegularClassSymbol(session)
+        val newType = (call.resolvedType.typeArguments.getOrNull(0) as? ConeClassLikeType)?.toRegularClassSymbol()
         return newType?.generatedClasses?.get(name)
     }
 
@@ -222,13 +197,14 @@ class FunctionCallTransformer(
 
         @OptIn(SymbolInternals::class)
         override fun transformOrNull(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall? {
-            val callResult = analyzeRefinedCallShape<PluginDataFrameSchema>(call, dataSchemaLikeClassId, InterpretationErrorReporter.DEFAULT)
+            val callResult =
+                analyzeRefinedCallShape<PluginDataFrameSchema>(call, dataSchemaLikeClassId, InterpretationErrorReporter.DEFAULT)
             val (tokens, dataFrameSchema) = callResult ?: return null
             val token = tokens[0]
-            val firstSchema = token.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
+            val firstSchema = token.toClassSymbol()?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol()?.fir!!
             val dataSchemaApis = materialize(dataFrameSchema ?: PluginDataFrameSchema.EMPTY, call, firstSchema)
 
-            val tokenFir = token.toRegularClassSymbol(session)!!.fir
+            val tokenFir = token.toRegularClassSymbol()!!.fir
             tokenFir.callShapeData = CallShapeData.RefinedType(dataSchemaApis.map { it.scope.symbol })
 
             return buildScopeFunctionCall(call, originalSymbol, dataSchemaApis, listOf(tokenFir)) { tokenFir.generatedClasses = it }
@@ -277,16 +253,16 @@ class FunctionCallTransformer(
                 PluginDataFrameSchema.EMPTY to PluginDataFrameSchema.EMPTY
             }
 
-            val firstSchema = keyMarker.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
-            val firstSchema1 = groupMarker.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
+            val firstSchema = keyMarker.toClassSymbol()?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol()?.fir!!
+            val firstSchema1 = groupMarker.toClassSymbol()?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol()?.fir!!
 
             val keyApis = materialize(keySchema, call, firstSchema, "Key")
             val groupApis = materialize(groupSchema, call, firstSchema1, "Group", i = keyApis.size)
 
-            val groupToken = keyMarker.toRegularClassSymbol(session)!!.fir
+            val groupToken = keyMarker.toRegularClassSymbol()!!.fir
             groupToken.callShapeData = CallShapeData.RefinedType(keyApis.map { it.scope.symbol })
 
-            val keyToken = groupMarker.toRegularClassSymbol(session)!!.fir
+            val keyToken = groupMarker.toRegularClassSymbol()!!.fir
             keyToken.callShapeData = CallShapeData.RefinedType(groupApis.map { it.scope.symbol })
 
             return buildScopeFunctionCall(
@@ -582,8 +558,8 @@ class FunctionCallTransformer(
                     is SimpleDataColumn -> SchemaProperty(
                         marker = schema.defaultType(),
                         propertyName = PropertyName.of(it.name),
-                        dataRowReturnType = it.type.type(),
-                        columnContainerReturnType = it.type.type().projectOverDataColumnType()
+                        dataRowReturnType = it.type.coneType,
+                        columnContainerReturnType = it.type.coneType.projectOverDataColumnType()
                     )
                 }
             }

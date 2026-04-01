@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // OPT_IN: kotlin.js.ExperimentalJsExport
 // OPT_IN: kotlin.js.ExperimentalWasmJsInterop
 

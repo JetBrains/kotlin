@@ -1,0 +1,63 @@
+FILE: kt55108.kt
+    public final annotation class A : R|kotlin/Annotation| {
+        public [ContainingClassKey=A] constructor([CorrespondingProperty=/A.strings] vararg strings: R|kotlin/Array<out kotlin/String>|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val strings: R|kotlin/Array<out kotlin/String>| = R|<local>/strings|
+            public [ContainingClassKey=A] get(): R|kotlin/Array<out kotlin/String>|
+
+    }
+    @R|A|(strings = vararg(*<collectionLiteralCall>(String(foo), String(bar)), String(baz)) [evaluated = vararg(*<collectionLiteralCall>(String(foo), String(bar)), String(baz))]) public final class B : R|kotlin/Any| {
+        public [ContainingClassKey=B] constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|A|(strings = vararg(String(baz), *<collectionLiteralCall>(String(foo), String(bar)), String(xyz)) [evaluated = vararg(String(baz), *<collectionLiteralCall>(String(foo), String(bar)), String(xyz))]) public final class C : R|kotlin/Any| {
+        public [ContainingClassKey=C] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|A|(strings = vararg(*<collectionLiteralCall>(String(foo), String(bar), String(xyz))) [evaluated = vararg(*<collectionLiteralCall>(String(foo), String(bar), String(xyz)))]) public final class D : R|kotlin/Any| {
+        public [ContainingClassKey=D] constructor(): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|A|(strings = vararg(String(foo), String(baz), String(bar)) [evaluated = vararg(String(foo), String(baz), String(bar))]) public final class E : R|kotlin/Any| {
+        public [ContainingClassKey=E] constructor(): R|E| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|A|(strings = vararg(*<collectionLiteralCall>(String(foo), String(bar)), *<collectionLiteralCall>(String(baz), String(xyz))) [evaluated = vararg(*<collectionLiteralCall>(String(foo), String(bar)), *<collectionLiteralCall>(String(baz), String(xyz)))]) public final class F : R|kotlin/Any| {
+        public [ContainingClassKey=F] constructor(): R|F| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        R|kotlin/assert|((<getClass>(Q|B|).R|kotlin/reflect/KAnnotatedElement.annotations|.R|kotlin/collections/single|<R|kotlin/Annotation|>() as R|A|).R|/A.strings|.R|kotlin/collections/contentEquals|<R|kotlin/String|>(R|kotlin/arrayOf|<R|kotlin/String|>(vararg(String(foo), String(bar), String(baz)))), <L> = [MatchingParameterFunctionTypeKey=() -> kotlin/Any] assert@fun <anonymous>(): R|kotlin/Any| <inline=Inline, kind=UNKNOWN>  {
+            ^ String(Fail1)
+        }
+        )
+        R|kotlin/assert|((<getClass>(Q|C|).R|kotlin/reflect/KAnnotatedElement.annotations|.R|kotlin/collections/single|<R|kotlin/Annotation|>() as R|A|).R|/A.strings|.R|kotlin/collections/contentEquals|<R|kotlin/String|>(R|kotlin/arrayOf|<R|kotlin/String|>(vararg(String(baz), String(foo), String(bar), String(xyz)))), <L> = [MatchingParameterFunctionTypeKey=() -> kotlin/Any] assert@fun <anonymous>(): R|kotlin/Any| <inline=Inline, kind=UNKNOWN>  {
+            ^ String(Fail 2)
+        }
+        )
+        R|kotlin/assert|((<getClass>(Q|D|).R|kotlin/reflect/KAnnotatedElement.annotations|.R|kotlin/collections/single|<R|kotlin/Annotation|>() as R|A|).R|/A.strings|.R|kotlin/collections/contentEquals|<R|kotlin/String|>(R|kotlin/arrayOf|<R|kotlin/String|>(vararg(String(foo), String(bar), String(xyz)))), <L> = [MatchingParameterFunctionTypeKey=() -> kotlin/Any] assert@fun <anonymous>(): R|kotlin/Any| <inline=Inline, kind=UNKNOWN>  {
+            ^ String(Fail 3)
+        }
+        )
+        R|kotlin/assert|((<getClass>(Q|E|).R|kotlin/reflect/KAnnotatedElement.annotations|.R|kotlin/collections/single|<R|kotlin/Annotation|>() as R|A|).R|/A.strings|.R|kotlin/collections/contentEquals|<R|kotlin/String|>(R|kotlin/arrayOf|<R|kotlin/String|>(vararg(String(foo), String(baz), String(bar)))), <L> = [MatchingParameterFunctionTypeKey=() -> kotlin/Any] assert@fun <anonymous>(): R|kotlin/Any| <inline=Inline, kind=UNKNOWN>  {
+            ^ String(Fail 4)
+        }
+        )
+        R|kotlin/assert|((<getClass>(Q|F|).R|kotlin/reflect/KAnnotatedElement.annotations|.R|kotlin/collections/single|<R|kotlin/Annotation|>() as R|A|).R|/A.strings|.R|kotlin/collections/contentEquals|<R|kotlin/String|>(R|kotlin/arrayOf|<R|kotlin/String|>(vararg(String(foo), String(bar), String(baz), String(xyz)))), <L> = [MatchingParameterFunctionTypeKey=() -> kotlin/Any] assert@fun <anonymous>(): R|kotlin/Any| <inline=Inline, kind=UNKNOWN>  {
+            ^ String(Fail 5)
+        }
+        )
+        ^box String(OK)
+    }

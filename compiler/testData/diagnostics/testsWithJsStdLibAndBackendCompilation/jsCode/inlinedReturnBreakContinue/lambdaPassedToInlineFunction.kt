@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +BreakContinueInInlineLambdas +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 // ISSUE: KT-68975
@@ -9,7 +10,7 @@ import kotlin.test.assertEquals
 @Retention(AnnotationRetention.SOURCE)
 public annotation class SomeAnnotation
 
-inline fun foo(block: () -> Unit) = js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>"block()"<!>)
+inline fun foo(block: () -> Unit) = js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_ERROR!>"block()"<!>)
 
 fun box(): String {
     val visited = mutableListOf<Pair<Int, Int>>()

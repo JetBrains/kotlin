@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirJsDynamicDeclarationChecker : FirClassChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
         val delegatedFields = declaration.delegateFieldsMap ?: return

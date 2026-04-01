@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -33,14 +34,13 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  */
 fun loadAnnotationsFromMetadataGuarded(
     session: FirSession,
-    flags: Int?,
     annotations: List<ProtoBuf.Annotation>,
     nameResolver: NameResolver,
     languageFeature: LanguageFeature,
     useSiteTarget: AnnotationUseSiteTarget? = null,
 ): List<FirAnnotation>? =
     runIf(session.languageVersionSettings.supportsFeature(languageFeature)) {
-        loadAnnotationsFromMetadataIfNotEmpty(session, flags, annotations, nameResolver, useSiteTarget)
+        loadAnnotationsFromMetadataIfNotEmpty(session, annotations, nameResolver, useSiteTarget)
     }
 
 /**
@@ -51,41 +51,32 @@ fun loadAnnotationsFromMetadataGuarded(
  */
 fun loadAnnotationsFromMetadataIfNotEmpty(
     session: FirSession,
-    flags: Int?,
     annotations: List<ProtoBuf.Annotation>,
     nameResolver: NameResolver,
     useSiteTarget: AnnotationUseSiteTarget? = null,
 ): List<FirAnnotation>? =
     annotations.ifNotEmpty {
-        loadAnnotationsFromMetadata(session, flags, annotations, nameResolver, useSiteTarget)
+        loadAnnotationsFromMetadata(session, annotations, nameResolver, useSiteTarget)
     }
 
 fun loadAnnotationsFromMetadata(
     session: FirSession,
-    flags: Int?,
     annotations: List<ProtoBuf.Annotation>,
     nameResolver: NameResolver,
     useSiteTarget: AnnotationUseSiteTarget? = null,
 ): List<FirAnnotation> =
-    if (isAnnotationsFlagNotSet(flags))
-        emptyList()
-    else
-        annotations.map { deserializeAnnotation(session, it, nameResolver, useSiteTarget) }
+    annotations.map { deserializeAnnotation(session, it, nameResolver, useSiteTarget) }
 
 fun <T : ExtendableMessage<T>> T.loadAnnotationsFromProtocol(
     session: FirSession,
     extension: GeneratedMessageLite.GeneratedExtension<T, List<ProtoBuf.Annotation>>?,
-    flags: Int?,
     nameResolver: NameResolver,
     useSiteTarget: AnnotationUseSiteTarget? = null
 ): List<FirAnnotation> {
-    if (extension == null || isAnnotationsFlagNotSet(flags)) return emptyList()
+    if (extension == null) return emptyList()
     val annotations = getExtension(extension)
     return annotations.map { deserializeAnnotation(session, it, nameResolver, useSiteTarget) }
 }
-
-private fun isAnnotationsFlagNotSet(flags: Int?): Boolean =
-    flags != null && !Flags.HAS_ANNOTATIONS.get(flags)
 
 private fun deserializeAnnotation(
     session: FirSession,
@@ -114,44 +105,44 @@ private fun createArgumentMapping(
         if (proto.argumentCount == 0) return@build
         proto.argumentList.mapNotNull {
             val name = nameResolver.getName(it.nameId)
-            val value = resolveValue(session, it.value, nameResolver)
+            val value = it.value.toFirExpression(session, nameResolver)
             name to value
         }.toMap(mapping)
     }
 }
 
-private fun resolveValue(session: FirSession, value: ProtoBuf.Annotation.Argument.Value, nameResolver: NameResolver): FirExpression {
-    val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
+internal fun ProtoBuf.Annotation.Argument.Value.toFirExpression(session: FirSession, nameResolver: NameResolver): FirExpression {
+    val isUnsigned = Flags.IS_UNSIGNED.get(this.flags)
 
-    return when (value.type) {
+    return when (this.type) {
         BYTE -> {
             val kind = if (isUnsigned) ConstantValueKind.UnsignedByte else ConstantValueKind.Byte
-            const(kind, value.intValue.toByte(), session.builtinTypes.byteType)
+            const(kind, this.intValue.toByte(), session.builtinTypes.byteType)
         }
 
         SHORT -> {
             val kind = if (isUnsigned) ConstantValueKind.UnsignedShort else ConstantValueKind.Short
-            const(kind, value.intValue.toShort(), session.builtinTypes.shortType)
+            const(kind, this.intValue.toShort(), session.builtinTypes.shortType)
         }
 
         INT -> {
             val kind = if (isUnsigned) ConstantValueKind.UnsignedInt else ConstantValueKind.Int
-            const(kind, value.intValue.toInt(), session.builtinTypes.intType)
+            const(kind, this.intValue.toInt(), session.builtinTypes.intType)
         }
 
         LONG -> {
             val kind = if (isUnsigned) ConstantValueKind.UnsignedLong else ConstantValueKind.Long
-            const(kind, value.intValue, session.builtinTypes.longType)
+            const(kind, this.intValue, session.builtinTypes.longType)
         }
 
-        CHAR -> const(ConstantValueKind.Char, value.intValue.toInt().toChar(), session.builtinTypes.charType)
-        FLOAT -> const(ConstantValueKind.Float, value.floatValue, session.builtinTypes.floatType)
-        DOUBLE -> const(ConstantValueKind.Double, value.doubleValue, session.builtinTypes.doubleType)
-        BOOLEAN -> const(ConstantValueKind.Boolean, (value.intValue != 0L), session.builtinTypes.booleanType)
-        STRING -> const(ConstantValueKind.String, nameResolver.getString(value.stringValue), session.builtinTypes.stringType)
-        ANNOTATION -> deserializeAnnotation(session, value.annotation, nameResolver)
+        CHAR -> const(ConstantValueKind.Char, this.intValue.toInt().toChar(), session.builtinTypes.charType)
+        FLOAT -> const(ConstantValueKind.Float, this.floatValue, session.builtinTypes.floatType)
+        DOUBLE -> const(ConstantValueKind.Double, this.doubleValue, session.builtinTypes.doubleType)
+        BOOLEAN -> const(ConstantValueKind.Boolean, (this.intValue != 0L), session.builtinTypes.booleanType)
+        STRING -> const(ConstantValueKind.String, nameResolver.getString(this.stringValue), session.builtinTypes.stringType)
+        ANNOTATION -> deserializeAnnotation(session, this.annotation, nameResolver)
         CLASS -> buildGetClassCall {
-            val classId = nameResolver.getClassId(value.classId)
+            val classId = nameResolver.getClassId(this@toFirExpression.classId)
             val lookupTag = classId.toLookupTag()
             val referencedType = lookupTag.constructType()
             val resolvedType = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
@@ -164,20 +155,20 @@ private fun resolveValue(session: FirSession, value: ProtoBuf.Annotation.Argumen
             coneTypeOrNull = resolvedType
         }
         ENUM -> buildEnumEntryDeserializedAccessExpression {
-            enumClassId = nameResolver.getClassId(value.classId)
-            enumEntryName = nameResolver.getName(value.enumValueId)
+            enumClassId = nameResolver.getClassId(this@toFirExpression.classId)
+            enumEntryName = nameResolver.getName(this@toFirExpression.enumValueId)
         }
         ARRAY -> buildCollectionLiteral {
             // For the array literal type, we use `Array<Any>` as an approximation. Later FIR2IR will calculate a more precise
             // type. See KT-62598.
             // FIR provides no guarantees on having the exact type of deserialized array literals in annotations, including
             // non-empty ones.
-            coneTypeOrNull = StandardClassIds.Any.constructClassLikeType().createOutArrayType()
+            coneTypeOrNull = StandardTypes.Any.createOutArrayType()
             argumentList = buildArgumentList {
-                value.arrayElementList.mapTo(arguments) { resolveValue(session, it, nameResolver) }
+                this@toFirExpression.arrayElementList.mapTo(arguments) { it.toFirExpression(session, nameResolver) }
             }
         }
-        else -> error("Unsupported annotation argument type: ${value.type}")
+        else -> error("Unsupported annotation argument type: ${this.type}")
     }
 }
 

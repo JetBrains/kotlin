@@ -27,9 +27,9 @@ class KaptStubLineInformation {
 
             val sourceFile = try {
                 Paths.get(uri).toFile()
-            } catch (e: FileSystemNotFoundException) {
+            } catch (_: FileSystemNotFoundException) {
                 return FileInfo.EMPTY
-            } catch (e: UnsupportedOperationException) {
+            } catch (_: UnsupportedOperationException) {
                 return FileInfo.EMPTY
             }
 
@@ -98,11 +98,11 @@ class KaptStubLineInformation {
                         definition as? JCTree.JCClassDecl ?: continue
                         getFqName(declaration, definition, "")?.let { return it }
                     }
-                    return null
+                    null
                 }
                 is JCTree.JCClassDecl -> {
                     val className = parent.simpleName.toString()
-                    val newName = if (currentName.isEmpty()) className else currentName + "$" + className
+                    val newName = if (currentName.isEmpty()) className else "$currentName$$className"
                     if (declaration === parent) {
                         return newName
                     }
@@ -111,23 +111,23 @@ class KaptStubLineInformation {
                         getFqName(declaration, definition, newName)?.let { return it }
                     }
 
-                    return null
+                    null
                 }
                 is JCTree.JCVariableDecl -> {
                     if (declaration === parent) {
                         return currentName + "#" + parent.name.toString()
                     }
 
-                    return null
+                    null
                 }
                 is JCTree.JCMethodDecl -> {
                     // We don't need to process local declarations here as kapt does not support locals entirely.
                     if (declaration === parent) {
                         val nameAndSignature = fileInfo.getMethodDescriptor(parent) ?: return null
-                        return currentName + "#" + nameAndSignature
+                        return "$currentName#$nameAndSignature"
                     }
 
-                    return null
+                    null
                 }
                 else -> null
             }

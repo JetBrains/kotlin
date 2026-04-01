@@ -5,6 +5,8 @@
 
 package kotlin.collections
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 @Suppress("UNUSED_PARAMETER")
 @SinceKotlin("1.4")
 @library("arrayEquals")
@@ -25,4 +27,33 @@ public fun LongArray?.contentToString(): String {
 @SinceKotlin("1.4")
 public fun <T> Array<out T>?.contentToString(): String {
     TODO("Not implemented in reduced runtime")
+}
+
+internal fun <T> T.contentEqualsInternal(other: T): Boolean {
+    val a = this.asDynamic()
+    val b = other.asDynamic()
+
+    if (a === b) return true
+
+    if (a == null || b == null || !isArrayish(b) || a.length != b.length) return false
+
+    for (i in 0 until a.length) {
+        if (!equals(a[i], b[i])) {
+            return false
+        }
+    }
+    return true
+}
+
+internal fun <T> T.contentHashCodeInternal(): Int {
+    val a = this.asDynamic()
+    if (a == null) return 0
+
+    var result = 1
+
+    for (i in 0 until a.length) {
+        result = result * 31 + hashCode(a[i])
+    }
+
+    return result
 }

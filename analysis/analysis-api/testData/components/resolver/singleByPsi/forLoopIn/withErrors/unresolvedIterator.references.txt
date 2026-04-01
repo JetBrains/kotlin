@@ -2,5 +2,7 @@ KtForExpression(15,32): 'for (x in Y()) {}'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'.>
     symbols:
       Nothing (Unresolved reference)

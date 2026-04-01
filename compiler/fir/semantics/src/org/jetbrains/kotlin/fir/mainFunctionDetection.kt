@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -44,7 +45,7 @@ fun FirNamedFunction.isMaybeMainFunction(
     val valueParametersTypes = buildList {
         valueParameters.mapTo(this) { it.returnTypeRef }
         // Support for "extension main", which in fact compiles to a correct (from JVM point of view) main method. See #KTIJ-7949
-        receiverParameter?.typeRef?.let { add(it) }
+        receiverParameter?.takeUnless { isCompanionExtension }?.typeRef?.let { add(it) }
         contextParameters.mapTo(this) { it.returnTypeRef }
     }
 

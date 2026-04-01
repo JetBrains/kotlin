@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.test.configurators
 
+import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum
+
 abstract class AnalysisApiTestConfiguratorFactory {
     abstract fun createConfigurator(data: AnalysisApiTestConfiguratorFactoryData): AnalysisApiTestConfigurator
 
@@ -22,10 +24,11 @@ abstract class AnalysisApiTestConfiguratorFactory {
 }
 
 data class AnalysisApiTestConfiguratorFactoryData(
-    val frontend: FrontendKind,
-    val moduleKind: TestModuleKind,
-    val analysisSessionMode: AnalysisSessionMode,
-    val analysisApiMode: AnalysisApiMode,
+    val frontend: FrontendKind = FrontendKind.Fir,
+    val moduleKind: TestModuleKind = TestModuleKind.Source,
+    val analysisSessionMode: AnalysisSessionMode = AnalysisSessionMode.Normal,
+    val analysisApiMode: AnalysisApiMode = AnalysisApiMode.Ide,
+    val targetPlatform: TargetPlatformEnum = TargetPlatformEnum.JVM
 )
 
 fun AnalysisApiTestConfiguratorFactoryData.defaultExtension(): String = when (this.moduleKind) {

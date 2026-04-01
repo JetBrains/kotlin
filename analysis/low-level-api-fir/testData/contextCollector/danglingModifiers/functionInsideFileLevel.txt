@@ -22,4 +22,4 @@ FILE: [ResolvedTo(IMPORTS)] functionInsideFileLevel.kt
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
     }
-    [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](value = ERROR_EXPR(Argument is absent)) <DANGLING MODIFIER: Top level declaration expected>
+    [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](value = ERROR_EXPR(Argument is absent) [evaluated = ERROR_EXPR(Argument is absent)]) <DANGLING MODIFIER: Top level declaration expected>

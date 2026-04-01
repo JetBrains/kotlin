@@ -11,7 +11,7 @@ fun less4(a: Char?, b: Char?) = if (a is Char && b is Char) a < b else true
 fun less5(a: Any?, b: Any?) = if (a is Char && b is Char) a < b else true
 
 // 3 Intrinsics\.areEqual
-// 3 Intrinsics\.compare
+// 0 Intrinsics\.compare
 // for compare:
-// 3 IFGE
-// 0 IF_ICMPGE
+// 0 IFGE
+// 3 IF_ICMPGE

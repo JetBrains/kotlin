@@ -45,24 +45,24 @@ fun test() {
     val smart = returnNullableString()
     if (smart != null) takeMyList([smart])
 
-    takeMyList(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
-    takeMyList(<!ARGUMENT_TYPE_MISMATCH!>[returnNullableString()]<!>)
-    takeMyList(<!ARGUMENT_TYPE_MISMATCH!>[returnNullableString()?.toString()]<!>)
-    takeMyList(<!ARGUMENT_TYPE_MISMATCH!>[returnNullableString()?.twice()]<!>)
-    takeMyList(<!ARGUMENT_TYPE_MISMATCH!>[
-        when (val str = returnNullableString()) {
+    takeMyList([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
+    takeMyList([<!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>])
+    takeMyList([<!ARGUMENT_TYPE_MISMATCH!>returnNullableString()?.toString()<!>])
+    takeMyList([<!ARGUMENT_TYPE_MISMATCH!>returnNullableString()?.twice()<!>])
+    takeMyList([
+        <!ARGUMENT_TYPE_MISMATCH!>when (val str = returnNullableString()) {
             null -> returnString()
             else -> returnNullableString()
-        }
-    ]<!>)
-    takeMyList(<!ARGUMENT_TYPE_MISMATCH!>["" as Any?]<!>)
-    takeMyList(<!ARGUMENT_TYPE_MISMATCH!>[runLike { 42 }]<!>)
-    takeMyList(<!ARGUMENT_TYPE_MISMATCH!>[runLike { returnNullableString()?.twice() }]<!>)
-    takeMyList(<!ARGUMENT_TYPE_MISMATCH!>[id(42)]<!>)
+        }<!>
+    ])
+    takeMyList([<!ARGUMENT_TYPE_MISMATCH!>"" as Any?<!>])
+    takeMyList([<!ARGUMENT_TYPE_MISMATCH!>runLike { 42 }<!>])
+    takeMyList([<!ARGUMENT_TYPE_MISMATCH!>runLike { returnNullableString()?.twice() }<!>])
+    takeMyList([<!ARGUMENT_TYPE_MISMATCH!>id(42)<!>])
 
-    takeMyList([<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_IT_PARAMETER_TYPE!>{ str: String -> str }<!>])
-    takeMyList(<!ARGUMENT_TYPE_MISMATCH!>[""::twice]<!>)
-    takeMyList(<!ARGUMENT_TYPE_MISMATCH!>[String::twice]<!>)
+    takeMyList([<!ARGUMENT_TYPE_MISMATCH!>{ str: String -> str }<!>])
+    takeMyList([""::<!INAPPLICABLE_CANDIDATE!>twice<!>])
+    takeMyList([String::<!INAPPLICABLE_CANDIDATE!>twice<!>])
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, asExpression, callableReference, checkNotNullCall, classDeclaration,

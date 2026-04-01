@@ -21,59 +21,59 @@ class NativeAtomicSymbols(
     context: IrPluginContext,
     moduleFragment: IrModuleFragment
 ) : AbstractAtomicSymbols(context, moduleFragment) {
-
+    private val finder = context.finderForBuiltins()
     private val kotlinConcurrentPackageFqName = FqName("kotlin.concurrent")
 
     override val volatileAnnotationClass: IrClass
-        get() = context.referenceClass(ClassId(kotlinConcurrentPackageFqName, Name.identifier("Volatile")))?.owner
+        get() = finder.findClass(ClassId(kotlinConcurrentPackageFqName, Name.identifier("Volatile")))?.owner
             ?: error("kotlin.concurrent.Volatile class is not found")
 
     // kotlin.concurrent.AtomicIntArray
     override val atomicIntArrayClassSymbol: IrClassSymbol by lazy {
-        context.referenceClass(ClassId(kotlinConcurrentPackageFqName, Name.identifier("AtomicIntArray")))
+        finder.findClass(ClassId(kotlinConcurrentPackageFqName, Name.identifier("AtomicIntArray")))
             ?: error("kotlin.concurrent.AtomicIntArray is not found")
     }
 
     // kotlin.concurrent.AtomicLongArray
     override val atomicLongArrayClassSymbol: IrClassSymbol by lazy {
-        context.referenceClass(ClassId(kotlinConcurrentPackageFqName, Name.identifier("AtomicLongArray")))
+        finder.findClass(ClassId(kotlinConcurrentPackageFqName, Name.identifier("AtomicLongArray")))
             ?: error("kotlin.concurrent.AtomicLongArray is not found")
     }
 
     // kotlin.concurrent.AtomicArray
     override val atomicRefArrayClassSymbol: IrClassSymbol by lazy {
-        context.referenceClass(ClassId(kotlinConcurrentPackageFqName, Name.identifier("AtomicArray")))
+        finder.findClass(ClassId(kotlinConcurrentPackageFqName, Name.identifier("AtomicArray")))
             ?: error("kotlin.concurrent.AtomicArray is not found")
     }
 
     // Intrinsics for atomic update of volatile properties
 
     val nativeAtomicGetFieldIntrinsic by lazy {
-        context.referenceFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("atomicGetField"))).single()
+        finder.findFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("atomicGetField"))).single()
     }
     val nativeAtomicSetFieldIntrinsic by lazy {
-        context.referenceFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("atomicSetField"))).single()
+        finder.findFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("atomicSetField"))).single()
     }
     val nativeCompareAndSetFieldIntrinsic by lazy {
-        context.referenceFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("compareAndSetField"))).single()
+        finder.findFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("compareAndSetField"))).single()
     }
     val nativeGetAndSetFieldIntrinsic by lazy {
-        context.referenceFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("getAndSetField"))).single()
+        finder.findFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("getAndSetField"))).single()
     }
     val nativeGetAndAddIntFieldIntrinsic by lazy {
-        context.referenceFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("getAndAddField")))
+        finder.findFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("getAndAddField")))
             .single { it.owner.returnType.isInt() }
     }
     val nativeGetAndAddLongFieldIntrinsic by lazy {
-        context.referenceFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("getAndAddField")))
+        finder.findFunctions(CallableId(kotlinConcurrentPackageFqName, Name.identifier("getAndAddField")))
             .single { it.owner.returnType.isLong() }
     }
     val intPlusOperator by lazy {
-        context.referenceFunctions(CallableId(StandardClassIds.Int, Name.identifier("plus")))
+        finder.findFunctions(CallableId(StandardClassIds.Int, Name.identifier("plus")))
             .single { it.owner.parameters.size == 2 && it.owner.parameters.last().type.isInt() }
     }
     val longPlusOperator by lazy {
-        context.referenceFunctions(CallableId(StandardClassIds.Long, Name.identifier("plus")))
+        finder.findFunctions(CallableId(StandardClassIds.Long, Name.identifier("plus")))
             .single { it.owner.parameters.size == 2 && it.owner.parameters.last().type.isLong() }
     }
 

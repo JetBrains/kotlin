@@ -1,10 +1,84 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections
 
+/**
+ * A hash table implementation of [MutableMap].
+ *
+ * This class stores key-value pairs using a hash table data structure that provides fast lookups
+ * based on keys. It fully implements the [MutableMap] contract, providing all standard map operations
+ * including insertion, removal, and lookup of values by key.
+ *
+ * ## Null keys and values
+ *
+ * [HashMap] accepts `null` as a key. Since keys are unique, at most one entry with a `null` key
+ * can exist in the map. [HashMap] also accepts `null` as a value, and multiple entries can have
+ * `null` values.
+ *
+ * ## Key's hash code and equality contracts
+ *
+ * [HashMap] relies on the [Any.hashCode] and [Any.equals] functions of keys to organize and locate entries.
+ * Keys are considered equal if their [Any.equals] function returns `true`, and keys that are equal must
+ * have the same [Any.hashCode] value. Violating this contract can lead to incorrect behavior.
+ *
+ * The [Any.hashCode] and [Any.equals] functions should be consistent and immutable during the lifetime
+ * of the key objects. Modifying a key object in a way that changes its hash code or equality
+ * after it has been used as a key in a [HashMap] may lead to the entry becoming unreachable.
+ *
+ * ## Performance characteristics
+ *
+ * The performance characteristics below assume that the [Any.hashCode] function of keys distributes
+ * them uniformly across the hash table, minimizing collisions. A poor hash function that causes
+ * many collisions can degrade performance.
+ *
+ * [HashMap] provides efficient implementation for common operations:
+ *
+ * - **Lookup** ([get], [containsKey]): O(1) time
+ * - **Insertion and removal** ([put], [remove]): O(1) time
+ * - **Value search** ([containsValue]): O(n) time, requires scanning all entries
+ * - **Iteration** ([entries], [keys], [values]): O(n) time
+ *
+ * ## Iteration order
+ *
+ * [HashMap] does not guarantee any particular order for iteration over its keys, values, or entries.
+ * The iteration order is unpredictable and may change when the map is rehashed (when entries are
+ * added or removed and the internal capacity is adjusted). Do not rely on any specific iteration order.
+ *
+ * If a predictable iteration order is required, consider using [LinkedHashMap], which maintains
+ * insertion order.
+ *
+ * ## Usage guidelines
+ *
+ * [HashMap] uses an internal data structure with a finite *capacity* - the maximum number of entries
+ * it can store before needing to grow. As entries are added, the map tracks its *load factor*, which is
+ * the ratio of the number of entries to the current capacity. When this ratio exceeds a certain threshold,
+ * the map automatically increases its capacity and performs *rehashing* - rebuilding the internal data
+ * structure to redistribute entries. Rehashing is a relatively expensive operation that temporarily impacts
+ * performance. When creating a [HashMap], you can optionally provide values for the initial capacity and
+ * load factor threshold. Note that these parameters are just hints for the implementation and can be ignored.
+ *
+ * To optimize performance and memory usage:
+ *
+ * - If the number of entries is known in advance, use the constructor with initial capacity
+ *   to avoid multiple rehashing operations as the map grows.
+ * - Choose an appropriate load factor when creating the map. A lower load factor reduces collision
+ *   probability but uses more memory, while a higher load factor saves memory but may increase
+ *   lookup time. The default load factor typically provides a good balance.
+ * - Ensure key objects have well-distributed [Any.hashCode] implementations to minimize collisions
+ *   and maintain good performance.
+ * - Prefer [putAll] over multiple individual [put] calls when adding multiple entries.
+ *
+ * ## Thread safety
+ *
+ * [HashMap] is not thread-safe. If multiple threads access an instance concurrently and at least
+ * one thread modifies it, external synchronization is required.
+ *
+ * @param K the type of map keys. The map is invariant in its key type.
+ * @param V the type of map values. The mutable map is invariant in its value type.
+ */
 public expect class HashMap<K, V> : MutableMap<K, V> {
     /**
      * Creates a new empty [HashMap].
@@ -14,7 +88,7 @@ public expect class HashMap<K, V> : MutableMap<K, V> {
     /**
      * Creates a new empty [HashMap] with the specified initial capacity.
      *
-     * Capacity is the maximum number of entries the map is able to store in current internal data structure.
+     * Capacity is the maximum number of entries the map is able to store in the current internal data structure.
      * When the map gets full by a certain default load factor, its capacity is expanded,
      * which usually leads to rebuild of the internal data structure.
      *
@@ -28,7 +102,7 @@ public expect class HashMap<K, V> : MutableMap<K, V> {
     /**
      * Creates a new empty [HashMap] with the specified initial capacity and load factor.
      *
-     * Capacity is the maximum number of entries the map is able to store in current internal data structure.
+     * Capacity is the maximum number of entries the map is able to store in the current internal data structure.
      * Load factor is the measure of how full the map is allowed to get in relation to
      * its capacity before the capacity is expanded, which usually leads to rebuild of the internal data structure.
      *
@@ -55,8 +129,10 @@ public expect class HashMap<K, V> : MutableMap<K, V> {
     override operator fun get(key: K): V?
 
     // From MutableMap
+
     @IgnorableReturnValue
     override fun put(key: K, value: V): V?
+
     @IgnorableReturnValue
     override fun remove(key: K): V?
     override fun putAll(from: Map<out K, V>)

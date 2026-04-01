@@ -1,171 +1,73 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageLogLevel
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageMode
+import org.jetbrains.kotlin.config.PartialLinkageConfig
+import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
-import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
-import org.jetbrains.kotlin.backend.wasm.WasmPreSerializationLoweringContext
-import org.jetbrains.kotlin.backend.wasm.wasmLoweringsOfTheFirstPhase
-import org.jetbrains.kotlin.cli.common.collectSources
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
-import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
-import org.jetbrains.kotlin.cli.pipeline.web.WebFir2IrPipelinePhase.transformFirToIr
-import org.jetbrains.kotlin.cli.pipeline.web.WebFrontendPipelinePhase.compileModulesToAnalyzedFirWithLightTree
-import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase.serializeFirKlib
+import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.config.phaseConfig
-import org.jetbrains.kotlin.config.phaser.PhaseConfig
-import org.jetbrains.kotlin.config.phaser.PhaserState
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.backend.js.MainModule
-import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
-import org.jetbrains.kotlin.js.config.ModuleKind
-import org.jetbrains.kotlin.js.config.friendLibraries
-import org.jetbrains.kotlin.js.config.libraries
-import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
-import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.wasm.config.wasmTarget
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.PrintStream
-import java.nio.charset.Charset
+import org.jetbrains.kotlin.wasm.config.wasmGenerateClosedWorldMultimodule
+import org.jetbrains.kotlin.wasm.config.wasmIncludedModuleOnly
 
 abstract class AbstractFirWasmInvalidationTest :
-    FirWasmAbstractInvalidationTest(TargetBackend.WASM, "incrementalOut/invalidationFir")
+    WasmAbstractInvalidationTest(TargetBackend.WASM, "incrementalOut/invalidationFir") {
+}
 
-abstract class AbstractFirWasmInvalidationWithPLTest :
-    FirWasmAbstractInvalidationWithPLTest("incrementalOut/invalidationFirWithPL")
+abstract class AbstractFirWasmInvalidationMultiModuleTestBase(workingDirPath: String) :
+    WasmAbstractInvalidationTest(TargetBackend.WASM, workingDirPath)  {
 
-abstract class FirWasmAbstractInvalidationWithPLTest(workingDirPath: String) :
-    FirWasmAbstractInvalidationTest(
-        TargetBackend.WASM,
-        workingDirPath
-    ) {
-    override fun createConfiguration(
-        moduleName: String,
-        moduleKind: ModuleKind,
-        languageFeatures: List<String>,
-        allLibraries: List<String>,
-        friendLibraries: List<String>,
-        includedLibrary: String?,
-    ): CompilerConfiguration {
-        val config = super.createConfiguration(
-            moduleName = moduleName,
-            moduleKind = moduleKind,
-            languageFeatures = languageFeatures,
-            allLibraries = allLibraries,
-            friendLibraries = friendLibraries,
-            includedLibrary = includedLibrary,
-        )
-        config.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING))
-        return config
+    private val ignoredTests = setOf(
+        "classFunctionsAndFields", //Invalid signature //KT-84599
+        "kotlinTest", //Eager initializer KT-83579
+        "multiModuleEagerInitialization", //Eager initializer KT-83579
+    )
+
+    override fun isIgnoredTest(projectInfo: ProjectInfo): Boolean =
+        super.isIgnoredTest(projectInfo) || projectInfo.name in ignoredTests
+}
+
+abstract class AbstractFirWasmInvalidationMultiModuleTest :
+    AbstractFirWasmInvalidationMultiModuleTestBase("incrementalOut/invalidationFirMultimodule") {
+    override fun modifyConfig(configuration: CompilerConfiguration) {
+        configuration.wasmGenerateClosedWorldMultimodule = true
     }
 }
 
-abstract class FirWasmAbstractInvalidationTest(
-    targetBackend: TargetBackend,
-    workingDirPath: String
-) : WasmAbstractInvalidationTest(targetBackend, workingDirPath) {
-    private fun getFirInfoFile(defaultInfoFile: File): File {
-        val firInfoFileName = "${defaultInfoFile.nameWithoutExtension}.fir.${defaultInfoFile.extension}"
-        val firInfoFile = defaultInfoFile.parentFile.resolve(firInfoFileName)
-        return firInfoFile.takeIf { it.exists() } ?: defaultInfoFile
+abstract class AbstractFirWasmInvalidationSingleModuleTest :
+    AbstractFirWasmInvalidationMultiModuleTestBase("incrementalOut/invalidationFirSinglemodule") {
+    override fun modifyConfig(configuration: CompilerConfiguration) {
+        configuration.wasmIncludedModuleOnly = true
     }
+}
 
-    override fun getModuleInfoFile(directory: File): File {
-        return getFirInfoFile(super.getModuleInfoFile(directory))
+abstract class AbstractFirWasmInvalidationWithPLTest :
+    AbstractWasmInvalidationWithPLTest("incrementalOut/invalidationFirWithPL")
+
+abstract class AbstractFirWasmInvalidationWithPLMultiModuleTest :
+    AbstractWasmInvalidationWithPLTest("incrementalOut/invalidationFirWithPLMultimodule") {
+    override fun modifyConfig(configuration: CompilerConfiguration) {
+        super.modifyConfig(configuration)
+        configuration.wasmGenerateClosedWorldMultimodule = true
     }
+}
 
-    override fun getProjectInfoFile(directory: File): File {
-        return getFirInfoFile(super.getProjectInfoFile(directory))
+abstract class AbstractFirWasmInvalidationWithPLSingleModuleTest :
+    AbstractWasmInvalidationWithPLTest("incrementalOut/invalidationFirWithPLSinglemodule") {
+    override fun modifyConfig(configuration: CompilerConfiguration) {
+        super.modifyConfig(configuration)
+        configuration.wasmIncludedModuleOnly = true
     }
+}
 
-    override fun buildKlib(
-        configuration: CompilerConfiguration,
-        moduleName: String,
-        sourceDir: File,
-        outputKlibFile: File
-    ) {
-        val outputStream = ByteArrayOutputStream()
-        val messageCollector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.PLAIN_FULL_PATHS, true)
-        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
 
-        val libraries = configuration.libraries
-        val friendLibraries = configuration.friendLibraries
-        val sourceFiles = configuration.addSourcesFromDir(sourceDir)
-
-        val klibs = loadWebKlibsInTestPipeline(
-            configuration,
-            libraryPaths = libraries,
-            friendPaths = friendLibraries,
-            platformChecker = KlibPlatformChecker.Wasm(configuration.wasmTarget.alias)
-        )
-
-        val moduleStructure = ModulesStructure(
-            project = environment.project,
-            mainModule = MainModule.SourceFiles(sourceFiles),
-            compilerConfiguration = configuration,
-            klibs = klibs,
-        )
-
-        val groupedSources = collectSources(configuration, environment.project, messageCollector)
-        val analyzedOutput = compileModulesToAnalyzedFirWithLightTree(
-            moduleStructure = moduleStructure,
-            groupedSources = groupedSources,
-            ktSourceFiles = groupedSources.commonSources + groupedSources.platformSources,
-            libraries = libraries,
-            friendLibraries = friendLibraries,
-            diagnosticsReporter = diagnosticsReporter,
-            performanceManager = configuration.perfManager,
-            incrementalDataProvider = null,
-            lookupTracker = null,
-            useWasmPlatform = true,
-        )
-
-        val fir2IrActualizedResult = transformFirToIr(moduleStructure, analyzedOutput.output, diagnosticsReporter)
-
-        if (analyzedOutput.reportCompilationErrors(moduleStructure, diagnosticsReporter, messageCollector)) {
-            val messages = outputStream.toByteArray().toString(Charset.forName("UTF-8"))
-            throw AssertionError("The following errors occurred compiling test:\n$messages")
-        }
-
-        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
-            diagnosticsReporter,
-            configuration.languageVersionSettings
-        )
-        val transformedResult = PhaseEngine(
-            configuration.phaseConfig ?: PhaseConfig(),
-            PhaserState(),
-            WasmPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration, irDiagnosticReporter),
-        ).runPreSerializationLoweringPhases(fir2IrActualizedResult, wasmLoweringsOfTheFirstPhase(configuration.languageVersionSettings))
-
-        serializeFirKlib(
-            moduleStructure = moduleStructure,
-            firOutputs = analyzedOutput.output,
-            fir2IrActualizedResult = transformedResult,
-            outputKlibPath = outputKlibFile.absolutePath,
-            nopack = false,
-            diagnosticsReporter = irDiagnosticReporter,
-            jsOutputName = moduleName,
-            useWasmPlatform = true,
-            wasmTarget = WasmTarget.JS,
-        )
-
-        if (messageCollector.hasErrors()) {
-            val messages = outputStream.toByteArray().toString(Charset.forName("UTF-8"))
-            throw AssertionError("The following errors occurred serializing test klib:\n$messages")
-        }
+abstract class AbstractWasmInvalidationWithPLTest(workingDirPath: String) :
+    WasmAbstractInvalidationTest(TargetBackend.WASM, workingDirPath) {
+    override fun modifyConfig(configuration: CompilerConfiguration) {
+        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageLogLevel.WARNING))
     }
 }

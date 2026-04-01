@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
@@ -16,12 +17,14 @@ import org.jetbrains.kotlin.analysis.test.framework.hasFallbackDependencies
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory.addLibraryDependencies
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory.getScopeForLibraryByRoots
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
-import org.jetbrains.kotlin.analysis.test.framework.utils.stripOutSnapshotVersion
+import org.jetbrains.kotlin.analysis.test.framework.utils.stripOutKotlinVersionFromFileName
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
+import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -172,9 +175,13 @@ object TestModuleStructureFactory {
             val (jdkRoots, libraryRoots) = classpathRoots.partition { jdkHome != null && it.startsWith(jdkHome) }
 
             val targetPlatform = testModule.targetPlatform(testServices)
-            if (targetPlatform.isJvm() && jdkRoots.isNotEmpty()) {
+            if (targetPlatform.isJvm() && (jdkRoots.isNotEmpty() || jdkHome != null)) {
+                val roots = jdkRoots.ifEmpty {
+                    LibraryUtils.findClassesFromJdkHome(jdkHome, false)
+                }
+
                 ktModule.directRegularDependencies.add(
-                    libraryCache.getOrCreateJdkModule(jdkRoots)
+                    libraryCache.getOrCreateJdkModule(roots)
                 )
             }
 
@@ -203,10 +210,21 @@ object TestModuleStructureFactory {
 
         for (libraryRootPath in jsLibraryRootPaths) {
             val libraryRoot = Paths.get(libraryRootPath)
-            check(libraryRoot.extension == KLIB_FILE_EXTENSION)
+            if (compilerConfiguration.targetPlatform.isJs()) {
+                /**
+                 * WASM infrastructure uses the same [JSConfigurationKeys.LIBRARIES] key to provide library roots.
+                 * However, WASM roots are just regular directories, so we should only perform this check for JS targets.
+                 */
+                check(libraryRoot.extension == KLIB_FILE_EXTENSION)
+            }
 
             val libraryModule = libraryCache.getOrCreateLibraryModule(libraryRoot) {
-                createLibraryModule(project, libraryRoot, JsPlatforms.defaultJsPlatform, testServices)
+                createLibraryModule(
+                    project,
+                    libraryRoot,
+                    compilerConfiguration.targetPlatform ?: JsPlatforms.defaultJsPlatform,
+                    testServices
+                )
             }
 
             ktModule.directRegularDependencies.add(libraryModule)
@@ -221,7 +239,7 @@ object TestModuleStructureFactory {
     ): KaLibraryModuleImpl {
         check(libraryFile.exists()) { "Library $libraryFile does not exist" }
 
-        val libraryName = libraryFile.nameWithoutExtension.stripOutSnapshotVersion()
+        val libraryName = stripOutKotlinVersionFromFileName(libraryFile.nameWithoutExtension)
         val libraryScope = getScopeForLibraryByRoots(project, listOf(libraryFile), testServices)
         return KaLibraryModuleImpl(libraryName, platform, libraryScope, project, listOf(libraryFile), librarySources = null, isSdk = false)
     }

@@ -94,7 +94,7 @@ class JsPlainObjectsPropertiesProvider(session: FirSession) : FirExtensionSessio
                             ClassProperty(
                                 it.name, it.resolvedReturnTypeRef, it.source, it.annotations.getAnnotationByClassId(
                                     JsStandardClassIds.Annotations.JsName, session
-                                )?.getStringArgument(StandardNames.NAME, session)
+                                )?.getStringArgument(StandardNames.NAME)
                             )
                         )
                     }

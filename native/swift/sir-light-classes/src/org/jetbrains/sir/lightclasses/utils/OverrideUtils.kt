@@ -29,7 +29,9 @@ internal fun SirType.isSubtypeOf(other: SirType): Boolean = when (this) {
         } else {
             this.typeDeclaration.isSubclassOf(other.typeDeclaration)
         }
-        is SirExistentialType -> this.typeArguments.isEmpty() && this.typeDeclaration == other.protocols.singleOrNull()
+        is SirExistentialType -> other.protocols.singleOrNull()?.let {
+            this.typeDeclaration == it.first && this.typeArguments == it.second
+        } ?: false
         else -> false
     }
     is SirExistentialType -> when (other) {

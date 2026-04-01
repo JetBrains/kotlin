@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -143,14 +144,10 @@ class FirTypeIntersectionScopeContext(
             return members.map { ResultOfIntersection.SingleMember(it, MemberWithBaseScope(it, scope)) }
         }
 
-        val uniqueSymbols = mutableSetOf<D>()
-        val allMembersWithScope = membersByScope.flatMapTo(linkedSetOf()) { (scope, members) ->
-            members.mapNotNull {
-                runIf(uniqueSymbols.add(it)) {
-                    MemberWithBaseScope(it, scope)
-                }
-            }
-        }
+        val allMembersWithScope = membersByScope
+            .flatMap { (scope, members) -> members.map { MemberWithBaseScope(it, scope) } }
+            .distinctBy { it.member }
+            .toMutableList()
 
         val result = mutableListOf<ResultOfIntersection<D>>()
 
@@ -382,7 +379,7 @@ class FirTypeIntersectionScopeContext(
             overrides,
             containsMultipleNonSubsumed,
             ::FirIntersectionOverridePropertySymbol,
-        ) { symbol, fir, deferredReturnTypeCalculation, returnType ->
+        ) { symbol, fir, deferredReturnTypeCalculation, returnType, backingField ->
             // Only setters's visibilities are calculated properly, because
             // getters' visibilities must be the same as the ones of their
             // properties and those we've already calculated.
@@ -404,7 +401,11 @@ class FirTypeIntersectionScopeContext(
                 newReturnType = returnType,
                 newSource = dispatchReceiverType.toSymbol(session)?.source,
                 newSetterVisibility = setterVisibility,
-            )
+                baseBackingField = backingField,
+                explicitBackingFieldNewReturnType = backingField?.returnTypeRef?.coneTypeSafe(),
+            ).apply {
+                this.backingField?.originalForIntersectionOverrideAttr = backingField
+            }
         }
     }
 
@@ -420,7 +421,7 @@ class FirTypeIntersectionScopeContext(
             overrides,
             containsMultipleNonSubsumed,
             ::FirIntersectionOverrideFieldSymbol
-        ) { symbol, fir, deferredReturnTypeCalculation, returnType ->
+        ) { symbol, fir, deferredReturnTypeCalculation, returnType, _ ->
             FirFakeOverrideGenerator.createCopyForFirField(
                 symbol, fir, derivedClassLookupTag = null, session,
                 FirDeclarationOrigin.IntersectionOverride,
@@ -441,13 +442,17 @@ class FirTypeIntersectionScopeContext(
         overrides: Collection<FirCallableSymbol<*>>,
         containsMultipleNonSubsumed: Boolean,
         createIntersectionOverrideSymbol: (CallableId, Collection<FirCallableSymbol<*>>, Boolean) -> S,
-        createCopy: (S, F, deferredReturnTypeCalculation: DeferredCallableCopyReturnType?, returnType: ConeKotlinType?) -> F
+        createCopy: (S, F, deferredReturnTypeCalculation: DeferredCallableCopyReturnType?, returnType: ConeKotlinType?, backingField: FirBackingField?) -> F
     ): S {
         // Picking a `var` avoids `VAR_OVERRIDDEN_BY_VAL` reported for intersection overrides.
         // It's fine because in cases where the code becomes green due to not reporting this diagnostic,
         // the user is required to provide an explicit override of such a property in a non-abstract subclass.
         // See: compiler/testData/diagnostics/tests/varOverriddenByValThroughIntersection.kt.
-        val key = mostSpecific.find { it is FirPropertySymbol && it.isVar } as? S ?: mostSpecific.first() as S
+        // Picking a property with an explicit backing field preserves the field-related smartcasts,
+        // which is also fine for pretty much the same reason.
+        // See: compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldAndMultipleIntersectionWithVar.kt
+        val key = mostSpecific.find { it is FirPropertySymbol && it.isVar } as? S
+            ?: mostSpecific.first() as S
         val keyFir = key.fir
         val callableId = CallableId(dispatchReceiverType.classId ?: keyFir.dispatchReceiverClassLookupTagOrNull()?.classId!!, keyFir.name)
         val newSymbol = createIntersectionOverrideSymbol(callableId, overrides, containsMultipleNonSubsumed)
@@ -456,10 +461,18 @@ class FirTypeIntersectionScopeContext(
             runIf(!forClassUseSiteScope && mostSpecific.none { (it as FirVariableSymbol<*>).fir.isVar } && deferredReturnTypeCalculation == null) {
                 intersectReturnTypes(mostSpecific)
             }
-        createCopy(newSymbol, keyFir, deferredReturnTypeCalculation, newReturnType).apply {
+        val backingField = (mostSpecific.find { it is FirPropertySymbol && it.hasExplicitBackingField } as? FirPropertySymbol)
+            ?.fir?.backingField
+        createCopy(
+            newSymbol, keyFir,
+            deferredReturnTypeCalculation,
+            newReturnType,
+            backingField,
+        ).apply {
             originalForIntersectionOverrideAttr = keyFir
             getter?.originalForIntersectionOverrideAttr = keyFir.getter
             setter?.originalForIntersectionOverrideAttr = keyFir.setter
+            backingField?.originalForIntersectionOverrideAttr = backingField
         }
         return newSymbol
     }

@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
@@ -129,7 +129,8 @@ class ClassStabilityTransformer(
             return cls
         }
 
-        val stability = stabilityInferencer.stabilityOf(declaration.defaultType).normalize()
+        val stability =
+            stabilityInferencer.stabilityOf(declaration.defaultType, fileContainingDependent = declaration.fileOrNull).normalize()
 
         // remove type parameters
 
@@ -179,7 +180,7 @@ class ClassStabilityTransformer(
             marked = false,
             stability = stability
         )
-        val annotation = IrConstructorCallImpl(
+        val annotation = IrAnnotationImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             StabilityInferredClass.defaultType,

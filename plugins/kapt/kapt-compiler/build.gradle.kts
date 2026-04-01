@@ -3,7 +3,6 @@ description = "Annotation Processor for Kotlin"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
 }
@@ -42,7 +41,7 @@ dependencies {
     testFixturesApi(project(":kotlin-annotation-processing-runtime"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
-    testCompileOnly(toolsJarApi())
+    testFixturesCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
 
     embedded(project(":kotlin-annotation-processing-runtime")) { isTransitive = false }

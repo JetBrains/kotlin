@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,11 +10,26 @@ package kotlin.collections
 import kotlin.js.collections.JsArray
 
 /**
- * Provides a [MutableList] implementation, which uses a resizable array as its backing storage.
+ * A dynamic array implementation of [MutableList].
  *
- * This implementation doesn't provide a way to manage capacity, as backing JS array is resizeable itself.
- * There is no speed advantage to pre-allocating array sizes in JavaScript, so this implementation does not include any of the
- * capacity and "growth increment" concepts.
+ * This class stores elements using a native JavaScript array as its backing storage.
+ * It fully implements the [MutableList] contract, providing all standard list
+ * operations including indexed access, iteration, and modification. As an implementation of
+ * [RandomAccess], it provides fast indexed access to elements.
+ *
+ * ## JS-specific implementation notes
+ *
+ * On the JS target, this implementation uses a native JavaScript array as its backing storage.
+ * JavaScript arrays are inherently dynamic and manage their own capacity automatically.
+ * Therefore, capacity management methods like [ensureCapacity] and [trimToSize] have no effect.
+ * There is no performance advantage to pre-allocating array sizes in JavaScript.
+ *
+ * ## Thread safety
+ *
+ * [ArrayList] is not thread-safe. If multiple threads access an instance concurrently and at least
+ * one thread modifies it, external synchronization is required.
+ *
+ * @param E the type of elements contained in the list.
  */
 public actual open class ArrayList<E> internal constructor(private var array: Array<Any?>) : AbstractMutableList<E>(), MutableList<E>, RandomAccess {
     private companion object {

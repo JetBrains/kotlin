@@ -122,6 +122,7 @@ class NonLinkingIrInlineFunctionDeserializer(
             }
         )
 
+        private val fileEntryDeserializer = FileEntryDeserializer(irInterner)
         private val declarationDeserializer = IrDeclarationDeserializer(
             builtIns = irBuiltIns,
             symbolTable = detachedSymbolTable,
@@ -137,6 +138,7 @@ class NonLinkingIrInlineFunctionDeserializer(
             needToDeserializeFakeOverrides = { false },
             specialProcessingForMismatchedSymbolKind = null,
             irInterner = irInterner,
+            fileEntryDeserializer = fileEntryDeserializer,
         )
 
         /**
@@ -145,7 +147,7 @@ class NonLinkingIrInlineFunctionDeserializer(
          */
         val reversedSignatureIndex: Map<IdSignature, Int> = run {
             val fileStream = inlinableFunctionsIr.irFile(0).codedInputStream
-            val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
+            val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.getEmptyRegistry())
             fileProto.declarationIdList.associateBy { symbolDeserializer.deserializeIdSignature(it) }
         }
 
@@ -156,20 +158,14 @@ class NonLinkingIrInlineFunctionDeserializer(
                 val idSigIndex = reversedSignatureIndex[signature] ?: return@getOrPut null
                 val functionProto = fileReader.declaration(idSigIndex)
 
-                // Drop after KT-81470 fix
-                val (s, _) = symbolDeserializer.deserializeSymbolToDeclareInCurrentFile(functionProto.irFunction.base.base.symbol)
-                if (s.signature !is IdSignature.CompositeSignature) return@getOrPut null
-
-                val function = declarationDeserializer.deserializeDeclaration(functionProto) as IrSimpleFunction
-
-                val fileEntryProto = fileReader.fileEntry(functionProto.irFunction.preparedInlineFunctionFileEntryId)!!
-                val fileEntry = fileReader.deserializeFileEntry(fileEntryProto, irInterner)
+                val fileEntry = fileEntryDeserializer.fileEntry(fileReader, functionProto.irFunction.preparedInlineFunctionFileEntryId)
                 val file = IrFileImpl(
                     symbol = IrFileSymbolImpl(with(originalFunctionPackage.symbol) { runIf(hasDescriptor) { descriptor } }),
                     packageFqName = originalFunctionPackage.packageFqName,
                     fileEntry = fileEntry,
                 )
 
+                val function = declarationDeserializer.deserializeDeclaration(functionProto, file.startOffset) as IrSimpleFunction
                 function.parent = file
                 file.declarations += function
 

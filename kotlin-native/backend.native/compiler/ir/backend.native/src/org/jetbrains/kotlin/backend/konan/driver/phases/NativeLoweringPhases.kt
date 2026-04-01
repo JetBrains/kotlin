@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
@@ -33,7 +34,9 @@ import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.backend.konan.lower.NativeAssertionWrapperLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.CastsOptimization
+import org.jetbrains.kotlin.backend.konan.optimizations.ComputeTypesPass
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
+import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasureDynamicPhaseTime
@@ -75,6 +78,12 @@ internal val validateIrBeforeLowering = createSimpleNamedCompilerPhase<NativeGen
         name = "ValidateIrBeforeLowering",
         op = { context, module -> KlibIrValidationBeforeLoweringPhase(context.context).lower(module) }
 )
+
+internal val checkInlineCallCyclesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
+        name = "InlineCallCycleChecker",
+        op = { context, module -> InlineCallCycleCheckerLowering(context.context).lower(module) }
+)
+
 
 internal val validateIrAfterInliningOnlyPrivateFunctions = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "ValidateIrAfterInliningOnlyPrivateFunctions",
@@ -121,7 +130,7 @@ private val removeExpectDeclarationsPhase = createFileLoweringPhase(
 )
 
 private val stripTypeAliasDeclarationsPhase = createFileLoweringPhase(
-        { _: Context -> StripTypeAliasDeclarationsLowering() },
+        ::StripTypeAliasDeclarationsLowering,
         name = "StripTypeAliasDeclarations",
 )
 
@@ -267,8 +276,13 @@ private val finallyBlocksPhase = createFileLoweringPhase(
 )
 
 private val testProcessorPhase = createFileLoweringPhase(
-        lowering = ::TestProcessor,
+        lowering = { context: Context -> TestProcessor(context, context.sourcesModules) },
         name = "TestProcessor",
+)
+
+private val initTestsPhase = createFileLoweringPhase(
+        lowering = ::TestsInitializer,
+        name = "TestsInitializer",
 )
 
 private val dumpTestsPhase = createFileLoweringPhase(
@@ -323,6 +337,11 @@ private val singleAbstractMethodPhase = createFileLoweringPhase(
         ::NativeSingleAbstractMethodLowering,
         name = "SingleAbstractMethod",
         prerequisite = setOf(functionReferencePhase)
+)
+
+private val removeCastsFromNothing = createFileLoweringPhase(
+        ::RemoveCastsFromNothingLowering,
+        name = "RemoveCastsFromNothing",
 )
 
 private val builtinOperatorPhase = createFileLoweringPhase(
@@ -470,6 +489,16 @@ private val constructorsLoweringPhase = createFileLoweringPhase(
     lowering = ::ConstructorsLowering,
 )
 
+private val lowerCastsPhase = createFileLoweringPhase(
+        name = "CastsLowering",
+        lowering = ::CastsLowering,
+)
+
+private val computeTypesPhase = createFileLoweringPhase(
+        name = "ComputeTypes",
+        lowering = { context: Context -> ComputeTypesPass(context) },
+)
+
 private val optimizeCastsPhase = createFileLoweringPhase(
         name = "OptimizeCasts",
         lowering = { context: Context -> CastsOptimization(context) },
@@ -557,6 +586,12 @@ private val assertionRemoverPhase = createFileLoweringPhase(
         prerequisite = setOf(assertionWrapperPhase),
 )
 
+internal val redundantCastsRemoverPhase = createFileLoweringPhase(
+        lowering = ::RedundantCastsRemoverLowering,
+        name = "RedundantCastsRemoverLowering",
+        prerequisite = setOf(inlineAllFunctionsPhase),
+)
+
 internal val constEvaluationPhase = createFileLoweringPhase(
         lowering = { context: Context ->
             val configuration = IrInterpreterConfiguration(printOnlyExceptionMessage = true)
@@ -579,12 +614,13 @@ internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = li
         syntheticAccessorGenerationPhase,
 )
 
-internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
+internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
         typeOfProcessingLowering,
         specializeSharedVariableBoxes,
         interopPhase,
         specialInteropIntrinsicsPhase,
-        dumpTestsPhase.takeIf { this.configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
+        initTestsPhase,
+        dumpTestsPhase.takeIf { this.configuration.getNotNull(NativeConfigurationKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
         removeExpectDeclarationsPhase,
         stripTypeAliasDeclarationsPhase,
         assertionRemoverPhase,
@@ -626,6 +662,8 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         expressionBodyTransformPhase,
         objectClassesPhase,
         staticInitializersPhase,
+        computeTypesPhase,
+        removeCastsFromNothing,
         optimizeCastsPhase.takeIf { this.genericSafeCasts },
         typeOperatorPhase,
         builtinOperatorPhase,
@@ -635,6 +673,7 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         eraseGenericCallsReturnTypesPhase,
         autoboxPhase,
         constructorsLoweringPhase,
+        lowerCastsPhase.takeUnless { this.optimizationsEnabled },
 )
 
 private fun createFileLoweringPhase(

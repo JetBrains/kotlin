@@ -5,6 +5,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.apply
+import org.gradle.kotlin.dsl.get
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import org.jetbrains.kotlin.ideaExt.idea
 
@@ -40,6 +41,9 @@ val SourceSet.projectDefault: Project.() -> Unit
                 java.srcDirs("testFixtures")
                 this@projectDefault.resources.srcDir("testFixturesResources")
             }
+            "codebaseTest" -> {
+                codebaseTestDir(project, "codebaseTest")
+            }
             else -> error("Unknown source set $name")
         }
     }
@@ -56,6 +60,9 @@ val Project.testFixturesSourceSet: SourceSet
 val Project.testSourceSet: SourceSet
     get() = javaPluginExtension().testSourceSet
 
+val Project.codebaseTestSourceSet: SourceSet
+    get() = javaPluginExtension().codebaseTestSourceSet
+
 val JavaPluginExtension.mainSourceSet: SourceSet
     get() = sourceSets.getByName("main")
 
@@ -64,6 +71,9 @@ val JavaPluginExtension.testFixturesSourceSet: SourceSet
 
 val JavaPluginExtension.testSourceSet: SourceSet
     get() = sourceSets.getByName("test")
+
+val JavaPluginExtension.codebaseTestSourceSet: SourceSet
+    get() = sourceSets.getByName("codebaseTest")
 
 fun Project.mainJavaPluginSourceSet() = findJavaPluginExtension()?.sourceSets?.findByName("main")
 fun Project.mainKotlinSourceSet() =
@@ -77,5 +87,18 @@ fun SourceSet.generatedDir(project: Project, generationRoot: Provider<Directory>
     project.apply(plugin = "idea")
     project.idea {
         this.module.generatedSourceDirs.add(generationRoot.get().asFile)
+    }
+}
+
+fun SourceSet.codebaseTestDir(project: Project, srcPath: Any) {
+    java.srcDirs(srcPath)
+
+    val mainSourceSet = project.sourceSets["main"]
+    compileClasspath += mainSourceSet.output + project.configurations["testCompileClasspath"]
+    runtimeClasspath += mainSourceSet.output + project.configurations["testRuntimeClasspath"]
+
+    project.apply(plugin = "idea")
+    project.idea {
+        module.testSources.from(allJava.sourceDirectories)
     }
 }

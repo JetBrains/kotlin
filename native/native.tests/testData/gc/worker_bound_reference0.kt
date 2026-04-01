@@ -175,6 +175,7 @@ class C1 {
 data class C2(val c1: AtomicReference<WorkerBoundReference<C1>>)
 
 @Suppress("DEPRECATION_ERROR") // Freezing API
+@NoInline
 fun createCyclicGarbageWithAtomicsFrozen(): Triple<AtomicReference<WorkerBoundReference<C1>?>, WeakReference<C1>, WeakReference<C2>> {
     val ref1 = WorkerBoundReference(C1()).freeze()
     val ref1Weak = WeakReference(ref1.value)
@@ -188,7 +189,7 @@ fun createCyclicGarbageWithAtomicsFrozen(): Triple<AtomicReference<WorkerBoundRe
 }
 
 @Suppress("DEPRECATION_ERROR") // Freezing API
-fun dispose(refOwner: AtomicReference<WorkerBoundReference<C1>?>) {
+@NoInline fun dispose(refOwner: AtomicReference<WorkerBoundReference<C1>?>) {
     refOwner.value!!.value.dispose()
     refOwner.value = null
 }

@@ -17,7 +17,7 @@ public final class A : R|kotlin/Any| {
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<test/A.E>|
-            public get(): R|kotlin/enums/EnumEntries<test/A.E>|
+            public static get(): R|kotlin/enums/EnumEntries<test/A.E>|
 
     }
 

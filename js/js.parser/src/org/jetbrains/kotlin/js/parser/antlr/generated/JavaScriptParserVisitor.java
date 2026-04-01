@@ -477,12 +477,69 @@ public interface JavaScriptParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPropertySetter(JavaScriptParser.PropertySetterContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code SpreadProperty}
+	 * labeled alternative in {@link JavaScriptParser#propertyAssignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSpreadProperty(JavaScriptParser.SpreadPropertyContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code PropertyShorthand}
 	 * labeled alternative in {@link JavaScriptParser#propertyAssignment}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitPropertyShorthand(JavaScriptParser.PropertyShorthandContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link JavaScriptParser#objectBindingPattern}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitObjectBindingPattern(JavaScriptParser.ObjectBindingPatternContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code RegularPropertyBindingPattern}
+	 * labeled alternative in {@link JavaScriptParser#propertyBindingPattern}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRegularPropertyBindingPattern(JavaScriptParser.RegularPropertyBindingPatternContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code NamedPropertyBindingPattern}
+	 * labeled alternative in {@link JavaScriptParser#propertyBindingPattern}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNamedPropertyBindingPattern(JavaScriptParser.NamedPropertyBindingPatternContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link JavaScriptParser#arrayBindingPattern}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayBindingPattern(JavaScriptParser.ArrayBindingPatternContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link JavaScriptParser#arrayItemList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayItemList(JavaScriptParser.ArrayItemListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link JavaScriptParser#arrayItemBinding}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayItemBinding(JavaScriptParser.ArrayItemBindingContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link JavaScriptParser#bindingElement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBindingElement(JavaScriptParser.BindingElementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link JavaScriptParser#restBindingElement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRestBindingElement(JavaScriptParser.RestBindingElementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link JavaScriptParser#propertyName}.
 	 * @param ctx the parse tree
@@ -584,19 +641,19 @@ public interface JavaScriptParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOptionalChainExpression(JavaScriptParser.OptionalChainExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code NotExpression}
-	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNotExpression(JavaScriptParser.NotExpressionContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code ImportMetaExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitImportMetaExpression(JavaScriptParser.ImportMetaExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code NotExpression}
+	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNotExpression(JavaScriptParser.NotExpressionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code PreDecreaseExpression}
 	 * labeled alternative in {@link JavaScriptParser#singleExpressionImpl}.

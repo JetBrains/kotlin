@@ -31,7 +31,7 @@ FILE: exposedFunctionReturnType.kt
             }
 
             public open override fun foo(): R|Some| {
-                ^foo R|/Some.FIRST|
+                ^foo Q|Some|.R|/Some.FIRST|
             }
 
         }
@@ -45,6 +45,6 @@ FILE: exposedFunctionReturnType.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<Some>|
-            public get(): R|kotlin/enums/EnumEntries<Some>|
+            public static get(): R|kotlin/enums/EnumEntries<Some>|
 
     }

@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.analysis.api.platform.packages
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.utils.forEachNonKotlinPsiElementFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 
+@KaPlatformInterface
 public abstract class KotlinPackageProviderBase(
     protected val project: Project,
     public val searchScope: GlobalSearchScope,
@@ -35,7 +37,6 @@ public abstract class KotlinPackageProviderBase(
                 return false
             }
             else -> {
-                // non-JVM platforms are not supported yet
                 return false
             }
         }
@@ -64,7 +65,6 @@ public abstract class KotlinPackageProviderBase(
             }
         }
         else -> {
-            // non-JVM platforms are not supported yet
             emptySet()
         }
     }

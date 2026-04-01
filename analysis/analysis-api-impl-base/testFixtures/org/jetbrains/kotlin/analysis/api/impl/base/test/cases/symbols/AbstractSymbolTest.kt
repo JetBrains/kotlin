@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,12 +12,10 @@ import org.jetbrains.kotlin.analysis.api.components.containingFile
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseIllegalPsiException
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer.Companion.isCacheable
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K2
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K1
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K2
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_SYMBOL_RESTORATION
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_SYMBOL_RESTORATION_K2
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.PRETTY_RENDERER_OPTION
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.RENDER_IS_PUBLIC_API
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
@@ -27,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.KaExpandedTypeRenderingM
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaFunctionalTypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
@@ -46,21 +45,15 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
-import org.opentest4j.AssertionFailedError
 import java.util.concurrent.ExecutionException
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.javaField
 import kotlin.test.fail
 
 abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
-    /**
-     * Currently [KaFileSymbol] cannot be restored without a backed PSI element,
-     * so it is better to suppress it to not hide other problems.
-     */
-    open val suppressPsiBasedFilePointerCheck: Boolean get() = true
-
     open val defaultRenderer = KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
 
     open val defaultRendererOption: PrettyRendererOption? = null
@@ -76,7 +69,9 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             filter = Throwable::isIllegalPsiException,
         ) {
             doTestByMainFile(mainFile, mainModule, testServices, disablePsiBasedLogic = false)
-            doTestByMainFile(mainFile, mainModule, testServices, disablePsiBasedLogic = true)
+            if (configurator.frontendKind == FrontendKind.Fir && configurator.analysisApiMode == AnalysisApiMode.Ide) {
+                doTestByMainFile(mainFile, mainModule, testServices, disablePsiBasedLogic = true)
+            }
         }
     }
 
@@ -92,9 +87,6 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         }
 
         val directives = mainModule.testModule.directives
-        val directiveToIgnore = directives.doNotCheckNonPsiSymbolRestoreDirective()?.takeIf { disablePsiBasedLogic }
-            ?: directives.doNotCheckSymbolRestoreDirective()
-
         val prettyRenderer = buildList {
             addIfNotNull(defaultRendererOption)
             addAll(directives[PRETTY_RENDERER_OPTION])
@@ -102,20 +94,12 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             prettyRenderingMode.transformation(acc)
         }
 
-        fun KaSession.safePointer(ktSymbol: KaSymbol): KaSymbolPointer<*>? {
-            if (disablePsiBasedLogic && ktSymbol is KaFileSymbol && suppressPsiBasedFilePointerCheck) return null
-
-            val result = ktSymbol.runCatching {
+        fun safePointer(ktSymbol: KaSymbol): KaSymbolPointer<*>? = when {
+            else -> ktSymbol.runCatching {
                 createPointerForTest(disablePsiBasedLogic = disablePsiBasedLogic)
+            }.getOrNull()?.also {
+                assertSymbolPointer(it, testServices)
             }
-
-            val pointer = when {
-                directiveToIgnore != null -> result.getOrNull()
-                else -> result.getOrThrow()
-            } ?: return null
-
-            assertSymbolPointer(pointer, testServices)
-            return pointer
         }
 
         val pointersWithRendered = executeOnPooledThreadInReadAction {
@@ -145,15 +129,16 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                             pointer = safePointer(symbol),
                             rendered = renderSymbolForComparison(symbol, directives),
                             shouldBeRendered = shouldBeRendered,
+                            psiOnly = symbol.supportsOnlyPsiBasedPointersByDesign,
                         )
                     }
                     .toList()
 
                 val pointerWithPrettyRenderedSymbol = symbolForPrettyRendering.map { symbol ->
                     PointerWithRenderedSymbol(
-                        safePointer(symbol),
-                        when (symbol) {
-                            is KaReceiverParameterSymbol -> DebugSymbolRenderer().render(useSiteSession, symbol)
+                        pointer = safePointer(symbol),
+                        rendered = when (symbol) {
+                            is KaReceiverParameterSymbol -> KaDebugRenderer().render(useSiteSession, symbol)
                             is KaDeclarationSymbol -> symbol.render(prettyRenderer)
                             is KaFileSymbol -> prettyPrint {
                                 printCollection(symbol.fileScope.declarations.asIterable(), separator = "\n\n") {
@@ -162,6 +147,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                             }
                             else -> error(symbol::class.toString())
                         },
+                        psiOnly = symbol.supportsOnlyPsiBasedPointersByDesign,
                     )
                 }
 
@@ -169,12 +155,11 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             }
         }
 
-        compareResults(pointersWithRendered, testServices, disablePsiBasedLogic)
+        compareResults(pointersWithRendered, disablePsiBasedLogic)
 
         configurator.doGlobalModuleStateModification(mainFile.project)
 
         restoreSymbolsInOtherReadActionAndCompareResults(
-            directiveToIgnore = directiveToIgnore,
             ktFile = mainFile,
             pointersWithRendered = pointersWithRendered.pointers,
             testServices = testServices,
@@ -226,64 +211,34 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     open fun getAllowedContainingFiles(mainFile: KtFile, testServices: TestServices): Set<KtFile> = setOf(mainFile)
 
     private fun RegisteredDirectives.doNotCheckSymbolRestoreDirective(): Directive? = findSpecificDirective(
-        commonDirective = DO_NOT_CHECK_SYMBOL_RESTORE,
-        k1Directive = DO_NOT_CHECK_SYMBOL_RESTORE_K1,
-        k2Directive = DO_NOT_CHECK_SYMBOL_RESTORE_K2,
+        commonDirective = DO_NOT_REQUIRE_SYMBOL_RESTORATION,
+        k1Directive = DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1,
+        k2Directive = DO_NOT_REQUIRE_SYMBOL_RESTORATION_K2,
     )
 
-    private fun RegisteredDirectives.doNotCheckNonPsiSymbolRestoreDirective(): Directive? = findSpecificDirective(
-        commonDirective = DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE,
-        k1Directive = DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1,
-        k2Directive = DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K2,
-    )
+    private fun RegisteredDirectives.doNotCheckNonPsiSymbolRestoreDirective(): Directive? =
+        DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION.takeIf { it in this }
 
-    private fun compareResults(
-        data: SymbolPointersData,
-        testServices: TestServices,
-        disablePsiBasedLogic: Boolean,
-    ) {
+    private fun compareResults(data: SymbolPointersData, disablePsiBasedLogic: Boolean) {
         val actual = data.pointers.renderDeclarations()
-        compareResults(actual, testServices, disablePsiBasedLogic, extension = "txt")
+        compareResults(actual, disablePsiBasedLogic, extension = "txt")
 
         val actualPretty = data.pointersForPrettyRendering.renderDeclarations()
-        compareResults(actualPretty, testServices, disablePsiBasedLogic, extension = "pretty.txt")
+        compareResults(actualPretty, disablePsiBasedLogic, extension = "pretty.txt")
     }
 
-    private fun compareResults(actual: String, testServices: TestServices, disablePsiBasedLogic: Boolean, extension: String) {
-        val assertions = testServices.assertions
-        if (!disablePsiBasedLogic) {
-            assertions.assertEqualsToTestOutputFile(actual = actual, extension = extension)
+    private fun compareResults(actual: String, disablePsiBasedLogic: Boolean, extension: String) {
+        val variantChain = if (disablePsiBasedLogic) {
+            configurator.testPrefixes.withAdditionalVariant("nonPsi")
         } else {
-            val expectedFile = getTestOutputFile(extension).toFile()
-            val nonPsiExpectedFile = getTestOutputFile("nonPsi.$extension").toFile()
-            when {
-                assertions.doesEqualToFile(expectedFile, actual) -> {
-                    if (nonPsiExpectedFile.exists() &&
-                        configurator.frontendKind == FrontendKind.Fir &&
-                        configurator.analysisApiMode == AnalysisApiMode.Ide
-                    ) {
-                        throw AssertionError("'${nonPsiExpectedFile.path}' should be removed as the actual output is the same as '${expectedFile.path}'")
-                    }
-                }
-
-                else -> {
-                    if (nonPsiExpectedFile.exists() && configurator.frontendKind == FrontendKind.Fir) {
-                        assertions.assertEqualsToFile(nonPsiExpectedFile, actual)
-                        return
-                    }
-
-                    val message = """
-                        Non-PSI version doesn't equal to the PSI-based variation.
-                        If you want to commit both results, please add a separate file "${expectedFile.nameWithoutExtension}.nonPsi.txt".
-                        """.trimIndent()
-                    throw AssertionFailedError(
-                        /* message = */ message,
-                        /* expected = */ expectedFile.readText(),
-                        /* actual = */ actual,
-                    )
-                }
-            }
+            configurator.testPrefixes
         }
+
+        assertEqualsToTestOutputFile(
+            actual = actual,
+            extension = extension,
+            variantChain = variantChain,
+        )
     }
 
     private fun List<PointerWithRenderedSymbol>.renderDeclarations(): String =
@@ -296,7 +251,6 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         else joinToString(separator = "\n\n")
 
     private fun restoreSymbolsInOtherReadActionAndCompareResults(
-        directiveToIgnore: Directive?,
         ktFile: KtFile,
         pointersWithRendered: List<PointerWithRenderedSymbol>,
         testServices: TestServices,
@@ -304,44 +258,88 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         disablePsiBasedLogic: Boolean,
         analyzeContext: KtElement?,
     ) {
-        var failed = false
-        val restoredPointers = mutableListOf<KaSymbolPointer<*>>()
-        try {
-            val restored = analyzeForTest(analyzeContext ?: ktFile) {
-                pointersWithRendered.mapNotNull { (pointer, expectedRender, shouldBeRendered) ->
-                    val pointer = pointer ?: error("Symbol pointer was not created for symbol:\n$expectedRender")
-                    val restored = restoreSymbol(pointer, disablePsiBasedLogic) ?: error("Symbol was not restored:\n$expectedRender")
-                    restoredPointers += pointer
+        val directiveToIgnore = if (disablePsiBasedLogic) {
+            directives.doNotCheckNonPsiSymbolRestoreDirective()
+        } else {
+            directives.doNotCheckSymbolRestoreDirective()
+        }
 
-                    val actualRender = renderSymbolForComparison(restored, directives)
-                    if (shouldBeRendered) {
-                        actualRender
-                    } else {
-                        testServices.assertions.assertEquals(expectedRender, actualRender) { "${restored::class}" }
-                        null
+        val restoredPointers = mutableListOf<KaSymbolPointer<*>>()
+        val nonRestoredSymbols = mutableListOf<String>()
+
+        val restored = analyzeForTest(analyzeContext ?: ktFile) {
+            pointersWithRendered.mapNotNull { (pointer, expectedRender, shouldBeRendered, psiOnly) ->
+                fun addNonRestoredSymbol() {
+                    if (!psiOnly || !disablePsiBasedLogic) {
+                        nonRestoredSymbols += expectedRender
                     }
                 }
-            }
 
-            val actual = restored.renderAsDeclarations()
-            val expectedFile = getTestOutputFile().toFile()
-            if (!testServices.assertions.doesEqualToFile(expectedFile, actual)) {
-                error("Restored content is not the same. Actual:\n$actual")
+                val restored = pointer?.let { restoreSymbol(it, disablePsiBasedLogic) }
+                if (restored != null) {
+                    if (psiOnly && disablePsiBasedLogic) {
+                        fail("The symbol is unexpectedly restored from '${pointer::class.simpleName}', so 'supportsOnlyPsiBasedPointersByDesign' must be updated.")
+                    }
+
+                    restoredPointers += pointer
+                } else {
+                    addNonRestoredSymbol()
+                }
+
+                val actualRender = restored?.let { renderSymbolForComparison(it, directives) }
+
+                when {
+                    shouldBeRendered -> actualRender ?: expectedRender
+                    actualRender != null && actualRender != expectedRender -> {
+                        addNonRestoredSymbol()
+                        null
+                    }
+
+                    else -> null
+                }
             }
-        } catch (e: Throwable) {
-            if (directiveToIgnore == null) throw e
-            failed = true
         }
 
-        if (!failed) {
-            compareCachedSymbols(restoredPointers, testServices, ktFile, disablePsiBasedLogic, analyzeContext)
-            compareRestoredSymbols(restoredPointers, testServices, ktFile, disablePsiBasedLogic, analyzeContext)
+        val variantChain = if (disablePsiBasedLogic) {
+            configurator.testPrefixes.withAdditionalVariant("nonPsi")
+        } else {
+            configurator.testPrefixes
         }
 
-        // Do not fail for standalone as the IDE mode may have different behavior and it is primary
-        if (failed || directiveToIgnore == null || configurator.analysisApiMode == AnalysisApiMode.Standalone) return
+        val actual = restored.renderAsDeclarations()
+        val hasNonRestorable = nonRestoredSymbols.isNotEmpty()
+        if (configurator.frontendKind == FrontendKind.Fir) {
+            val nonRestorableActual = nonRestoredSymbols.ifNotEmpty { joinToString(separator = "\n\n").trimEnd() }
+            assertEqualsToTestOutputFile(
+                actual = nonRestorableActual,
+                extension = "nonRestorable.txt",
+                variantChain = variantChain,
+            )
 
-        fail("'// ${directiveToIgnore.name}' directive has no effect on the test")
+            assertEqualsToTestOutputFile(
+                actual = actual,
+                variantChain = variantChain.withAdditionalVariant("restored"),
+            )
+
+            if (restoredPointers.isNotEmpty()) {
+                compareCachedSymbols(restoredPointers, testServices, ktFile, disablePsiBasedLogic, analyzeContext)
+                compareRestoredSymbols(restoredPointers, testServices, ktFile, disablePsiBasedLogic, analyzeContext)
+            }
+        }
+
+        if (hasNonRestorable && directiveToIgnore == null) {
+            val directive = if (disablePsiBasedLogic) {
+                DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION
+            } else {
+                DO_NOT_REQUIRE_SYMBOL_RESTORATION
+            }
+
+            fail("Some symbols are non-restorable. Add // $directive directive.")
+        }
+
+        if (directiveToIgnore != null && !hasNonRestorable) {
+            fail("'// ${directiveToIgnore.name}' directive has no effect on the test")
+        }
     }
 
     private fun compareCachedSymbols(
@@ -405,7 +403,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     }
 
     protected open fun KaSession.renderSymbolForComparison(symbol: KaSymbol, directives: RegisteredDirectives): String {
-        val renderer = DebugSymbolRenderer(
+        val renderer = KaDebugRenderer(
             renderExtra = true,
             renderExpandedTypes = directives[PRETTY_RENDERER_OPTION].any { it == PrettyRendererOption.FULLY_EXPANDED_TYPES },
             renderIsPublicApi = RENDER_IS_PUBLIC_API in directives
@@ -415,28 +413,20 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 }
 
 object SymbolTestDirectives : SimpleDirectivesContainer() {
-    val DO_NOT_CHECK_SYMBOL_RESTORE by directive(
+    val DO_NOT_REQUIRE_SYMBOL_RESTORATION by directive(
         description = "Symbol restoring for some symbols in current test is not supported yet",
     )
 
-    val DO_NOT_CHECK_SYMBOL_RESTORE_K1 by directive(
+    val DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1 by directive(
         description = "Symbol restoring for some symbols in current test is not supported yet in K1",
     )
 
-    val DO_NOT_CHECK_SYMBOL_RESTORE_K2 by directive(
+    val DO_NOT_REQUIRE_SYMBOL_RESTORATION_K2 by directive(
         description = "Symbol restoring for some symbols in current test is not supported yet in K2",
     )
 
-    val DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE by directive(
+    val DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION by directive(
         description = "Symbol restoring w/o psi for some symbols in current test is not supported yet",
-    )
-
-    val DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1 by directive(
-        description = "Symbol restoring w/o psi for some symbols in current test is not supported yet in K1",
-    )
-
-    val DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K2 by directive(
-        description = "Symbol restoring w/o psi for some symbols in current test is not supported yet in K2",
     )
 
     val PRETTY_RENDERER_OPTION by enumDirective(description = "Explicit rendering mode") { PrettyRendererOption.valueOf(it) }
@@ -492,7 +482,34 @@ private data class PointerWithRenderedSymbol(
     val pointer: KaSymbolPointer<*>?,
     val rendered: String,
     val shouldBeRendered: Boolean = true,
+    val psiOnly: Boolean,
 )
+
+/**
+ * Whether the symbol is expected to be non-restorable without the underlying PSI element.
+ *
+ * This property is supposed to be used only for cases where symbols are not
+ * expected to be restorable without the underlying PSI element by design.
+ * Such a filter helps to reduce the number of false positives in the test data
+ * and the change of missing the real problem.
+ *
+ * The property must not be used to hide some errors.
+ */
+private val KaSymbol.supportsOnlyPsiBasedPointersByDesign: Boolean
+    get() = when (this) {
+        is KaFileSymbol,
+        is KaClassInitializerSymbol,
+        is KaAnonymousObjectSymbol,
+        is KaAnonymousFunctionSymbol,
+        is KaLocalVariableSymbol,
+            -> true
+
+        is KaNamedFunctionSymbol,
+        is KaPropertySymbol,
+            -> location == KaSymbolLocation.LOCAL
+
+        else -> false
+    }
 
 private fun KaSymbol?.withImplicitSymbols(): Sequence<KaSymbol> {
     val ktSymbol = this ?: return emptySequence()

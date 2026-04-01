@@ -151,7 +151,7 @@ private fun JavaType?.toConeTypeProjection(
 
         is JavaPrimitiveType ->
             StandardClassIds.byName(type?.typeName?.identifier ?: "Unit")
-                .constructClassLikeType(emptyArray(), isMarkedNullable = false, attributes)
+                .constructClassLikeType(attributes = attributes)
 
         is JavaWildcardType -> {
             // TODO: this discards annotations on wildcards, allowed since Java 8 - what do they mean?
@@ -247,7 +247,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
 
         null -> {
             val classId = ClassId.topLevel(FqName(this.classifierQualifiedName))
-            classId.constructClassLikeType(emptyArray(), isMarkedNullable = lowerBound != null, attributes)
+            classId.constructClassLikeType(isMarkedNullable = lowerBound != null, attributes = attributes)
         }
 
         else -> ConeErrorType(ConeSimpleDiagnostic("Unexpected classifier: $classifier", DiagnosticKind.Java))

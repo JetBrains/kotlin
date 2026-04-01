@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.ir.interpreter.transformer
 
-import org.jetbrains.kotlin.constant.ErrorValue
-import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.evaluatedConstTrackerKey
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
@@ -19,7 +16,6 @@ import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterChecker
 import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterCheckerData
 import org.jetbrains.kotlin.ir.interpreter.property
-import org.jetbrains.kotlin.ir.interpreter.toConstantValue
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -31,14 +27,11 @@ internal class IrConstEvaluationContext(
     private val irFile: IrFile,
     private val mode: EvaluationMode,
     private val checker: IrInterpreterChecker,
-    private val evaluatedConstTracker: EvaluatedConstTracker?,
     private val inlineConstTracker: InlineConstTracker?,
     private val onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit,
     private val onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     private val suppressExceptions: Boolean,
 ) {
-    private var shouldSaveEvaluatedConstants = true
-
     private fun IrExpression.warningIfError(original: IrExpression): IrExpression {
         if (this is IrErrorExpression) {
             onWarning(irFile, original, this)
@@ -82,31 +75,11 @@ internal class IrConstEvaluationContext(
             throw AssertionError("Error occurred while optimizing an expression:\n${expression.dump()}", e)
         }
 
-        saveInConstTracker(result)
-
         if (result is IrConst) {
             reportInlinedJavaConst(expression, result)
         }
 
         return if (failAsError) result.reportIfError(expression) else result.warningIfError(expression)
-    }
-
-    fun saveInConstTracker(expression: IrExpression) {
-        if (!shouldSaveEvaluatedConstants) return
-        evaluatedConstTracker?.save(
-            expression.startOffset, expression.endOffset, irFile.evaluatedConstTrackerKey,
-            constant = if (expression is IrErrorExpression) ErrorValue.Companion.create(expression.description) else expression.toConstantValue()
-        )
-    }
-
-    inline fun saveConstantsOnCondition(saveConstants: Boolean, block: () -> Unit) {
-        val oldValue = shouldSaveEvaluatedConstants
-        shouldSaveEvaluatedConstants = saveConstants
-        try {
-            block()
-        } finally {
-            shouldSaveEvaluatedConstants = oldValue
-        }
     }
 
     private fun reportInlinedJavaConst(expression: IrExpression, result: IrConst) {

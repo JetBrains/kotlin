@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -32,6 +34,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -41,8 +45,7 @@ object FirMemberPropertiesChecker : FirClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
         val info = declaration.collectInitializationInfo()
-        var reachedDeadEnd =
-            (declaration as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph?.enterNode?.isDead == true
+        var reachedDeadEnd = declaration.controlFlowGraphReference?.controlFlowGraph?.enterNode?.isDead == true
         // Order is important here, so we have to use declarations directly
         @OptIn(DirectDeclarationsAccess::class)
         for (innerDeclaration in declaration.declarations) {
@@ -52,9 +55,16 @@ object FirMemberPropertiesChecker : FirClassChecker(MppCheckerKind.Common) {
                     .let { it?.range?.isDefinitelyVisited() == true && (!symbol.isLateInit || !it.mustBeLateinit) }
                 checkProperty(declaration, symbol, isDefinitelyAssignedInConstructor, !reachedDeadEnd)
             }
-            // Can't just look at each property's graph's enterNode because they may have no graph if there is no initializer.
-            reachedDeadEnd = reachedDeadEnd ||
-                    (innerDeclaration as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph?.exitNode?.isDead == true
+
+            when (innerDeclaration) {
+                is FirProperty,
+                is FirAnonymousInitializer,
+                is FirConstructor -> {
+                    // Can't just look at each property's graph's enterNode because they may have no graph if there is no initializer.
+                    reachedDeadEnd = reachedDeadEnd || innerDeclaration.controlFlowGraphReference?.controlFlowGraph?.exitNode?.isDead == true
+                }
+                else -> {}
+            }
         }
     }
 
@@ -137,13 +147,21 @@ internal fun checkProperty(
         val hasOpenModifier = KtTokens.OPEN_KEYWORD in modifierList
         if (hasOpenModifier &&
             containingDeclaration.isInterface &&
-            !hasAbstractModifier &&
-            propertySymbol.isAbstract &&
-            !isInsideExpectClass(containingDeclaration.symbol)
+            shouldReportOpenInInterface(propertySymbol, containingDeclaration.symbol)
         ) {
             propertySymbol.source?.let {
                 reporter.reportOn(it, FirErrors.REDUNDANT_OPEN_IN_INTERFACE)
             }
         }
     }
+}
+
+context(context: CheckerContext)
+fun shouldReportOpenInInterface(symbol: FirCallableSymbol<*>, containingClassSymbol: FirClassSymbol<*>): Boolean {
+    val modifierList = symbol.source.getModifierList()
+    val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
+
+    return !hasAbstractModifier &&
+            symbol.isAbstract &&
+            !isInsideExpectClass(containingClassSymbol)
 }

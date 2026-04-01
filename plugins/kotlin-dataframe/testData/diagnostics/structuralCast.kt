@@ -24,6 +24,5 @@ fun checkAny(df: DataFrame<*>) {
 }
 
 fun checkEmptySchema() {
-    val pair = ("a" + "b") to columnOf(123)
-    dataFrameOf(pair).cast<A>()
+    dataFrameOf(("a" + "b") to columnOf(123)).cast<A>()
 }

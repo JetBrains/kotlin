@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,12 +34,10 @@ object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
 
     override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
         AnalysisHandlerExtension.registerExtensionPoint(project)
-        PluginStructureProvider.registerProjectExtensionPoints(project, PLUGIN_RELATIVE_PATH)
     }
 
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         PluginStructureProvider.registerProjectServices(project, PLUGIN_RELATIVE_PATH)
-        PluginStructureProvider.registerProjectListeners(project, PLUGIN_RELATIVE_PATH)
     }
 
     @OptIn(TestInfrastructureInternals::class)

@@ -125,9 +125,31 @@ KtProperty(139,190): 'val prop = take {'
   NO_CANDIDATES
 
 KtCallExpression(150,190): 'take {'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+            symbol = action: kotlin.Function1<T, kotlin.Unit>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /take
+      typeArgumentsMapping = {
+        T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
         {
             lambdaParam: Foo.Bar.Baz ->
         } -> (KaVariableSignature:
@@ -137,37 +159,36 @@ KtCallExpression(150,190): 'take {'
           symbol = action: kotlin.Function1<T, kotlin.Unit>
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = action
-              receiverType = null
-              returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
-              symbol = action: kotlin.Function1<T, kotlin.Unit>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /take
-      typeArgumentsMapping = {
-        T -> (ERROR_TYPE)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>
     isInBestCandidates = true
 
 KtNameReferenceExpression(150,154): 'take'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+            symbol = action: kotlin.Function1<T, kotlin.Unit>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /take
+      typeArgumentsMapping = {
+        T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
         {
             lambdaParam: Foo.Bar.Baz ->
         } -> (KaVariableSignature:
@@ -177,29 +198,6 @@ KtNameReferenceExpression(150,154): 'take'
           symbol = action: kotlin.Function1<T, kotlin.Unit>
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = action
-              receiverType = null
-              returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
-              symbol = action: kotlin.Function1<T, kotlin.Unit>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /take
-      typeArgumentsMapping = {
-        T -> (ERROR_TYPE)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>
     isInBestCandidates = true

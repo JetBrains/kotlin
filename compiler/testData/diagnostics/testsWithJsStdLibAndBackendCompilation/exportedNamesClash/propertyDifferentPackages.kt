@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: A.kt
 @file:Suppress("OPT_IN_USAGE")
 package foo

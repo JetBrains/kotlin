@@ -2,6 +2,7 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 
+// FILE: lib.kt
 import helpers.*
 import kotlin.coroutines.*
 
@@ -15,6 +16,10 @@ inline fun <T1, T2, R> zip(source1: MyDeferred<T1>, source2: MyDeferred<T2>, cro
     async {
         zipper(source1.await(), source2.await())
     }
+
+// FILE: main.kt
+import helpers.*
+import kotlin.coroutines.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)

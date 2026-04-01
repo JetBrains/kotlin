@@ -281,7 +281,10 @@ abstract class Test {
       tmp0_rcvr.ProtectedExample(data, %composer, updateChangedFlags(%changed or 0b0001), %default)
     }
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
   @Composable
   @JvmSynthetic
   @Deprecated(message = "Binary compatibility stub for default parameters", level = DeprecationLevel.HIDDEN)

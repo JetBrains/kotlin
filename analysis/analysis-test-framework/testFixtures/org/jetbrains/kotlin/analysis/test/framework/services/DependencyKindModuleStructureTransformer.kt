@@ -50,14 +50,12 @@ object DependencyKindModuleStructureTransformer : ModuleStructureTransformer() {
             TestModuleKind.Source,
             TestModuleKind.LibrarySource,
             TestModuleKind.ScriptSource,
-            TestModuleKind.CodeFragment -> {
-                DependencyKind.Source
-            }
+            TestModuleKind.CodeFragment,
+                -> DependencyKind.Source
 
             TestModuleKind.LibraryBinary,
-            TestModuleKind.LibraryBinaryDecompiled -> {
-                DependencyKind.Binary
-            }
+            TestModuleKind.LibraryBinaryDecompiled,
+                -> DependencyKind.Binary
 
             TestModuleKind.NotUnderContentRoot,
             TestModuleKind.NotUnderContentRootWithDependencies,

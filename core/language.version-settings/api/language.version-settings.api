@@ -1,0 +1,730 @@
+public final class org/jetbrains/kotlin/config/AnalysisFlag {
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDefaultValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/config/AnalysisFlag$Delegate : kotlin/properties/ReadOnlyProperty {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Object;)V
+	public synthetic fun getValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
+	public fun getValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Lorg/jetbrains/kotlin/config/AnalysisFlag;
+}
+
+public final class org/jetbrains/kotlin/config/AnalysisFlag$Delegates {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/config/AnalysisFlag$Delegates;
+}
+
+public final class org/jetbrains/kotlin/config/AnalysisFlag$Delegates$ApiModeDisabledByDefault {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/config/AnalysisFlag$Delegates$ApiModeDisabledByDefault;
+	public final fun provideDelegate (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Lorg/jetbrains/kotlin/config/AnalysisFlag$Delegate;
+}
+
+public class org/jetbrains/kotlin/config/AnalysisFlag$Delegates$Boolean {
+	public static final field Companion Lorg/jetbrains/kotlin/config/AnalysisFlag$Delegates$Boolean$Companion;
+	public fun <init> (Z)V
+	public final fun getDefaultValue ()Z
+	public final fun provideDelegate (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Lorg/jetbrains/kotlin/config/AnalysisFlag$Delegate;
+}
+
+public final class org/jetbrains/kotlin/config/AnalysisFlag$Delegates$Boolean$Companion : org/jetbrains/kotlin/config/AnalysisFlag$Delegates$Boolean {
+}
+
+public final class org/jetbrains/kotlin/config/AnalysisFlag$Delegates$HeaderModeTypeAnyByDefault {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/config/AnalysisFlag$Delegates$HeaderModeTypeAnyByDefault;
+	public final fun provideDelegate (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Lorg/jetbrains/kotlin/config/AnalysisFlag$Delegate;
+}
+
+public final class org/jetbrains/kotlin/config/AnalysisFlag$Delegates$ListOfStrings {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/config/AnalysisFlag$Delegates$ListOfStrings;
+	public final fun provideDelegate (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Lorg/jetbrains/kotlin/config/AnalysisFlag$Delegate;
+}
+
+public final class org/jetbrains/kotlin/config/AnalysisFlag$Delegates$ReturnValueCheckerDisabledByDefault {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/config/AnalysisFlag$Delegates$ReturnValueCheckerDisabledByDefault;
+	public final fun provideDelegate (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Lorg/jetbrains/kotlin/config/AnalysisFlag$Delegate;
+}
+
+public final class org/jetbrains/kotlin/config/AnalysisFlag$Delegates$WarningLevelMap {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/config/AnalysisFlag$Delegates$WarningLevelMap;
+	public final fun provideDelegate (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Lorg/jetbrains/kotlin/config/AnalysisFlag$Delegate;
+}
+
+public final class org/jetbrains/kotlin/config/ApiVersion : java/lang/Comparable, org/jetbrains/kotlin/config/LanguageOrApiVersion, org/jetbrains/kotlin/utils/DescriptionAware {
+	public static final field Companion Lorg/jetbrains/kotlin/config/ApiVersion$Companion;
+	public static final field FIRST_NON_DEPRECATED Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field FIRST_SUPPORTED Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field KOTLIN_1_0 Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field KOTLIN_1_1 Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field KOTLIN_1_2 Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field KOTLIN_1_3 Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field KOTLIN_1_4 Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field KOTLIN_1_5 Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field KOTLIN_1_6 Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field KOTLIN_1_7 Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field KOTLIN_1_8 Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field KOTLIN_1_9 Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field KOTLIN_2_0 Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field KOTLIN_2_1 Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field KOTLIN_2_2 Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field KOTLIN_2_3 Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field KOTLIN_2_4 Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field KOTLIN_2_5 Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field LATEST Lorg/jetbrains/kotlin/config/ApiVersion;
+	public static final field LATEST_STABLE Lorg/jetbrains/kotlin/config/ApiVersion;
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo (Lorg/jetbrains/kotlin/config/ApiVersion;)I
+	public static final fun createByLanguageVersion (Lorg/jetbrains/kotlin/config/LanguageVersion;)Lorg/jetbrains/kotlin/config/ApiVersion;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getVersion ()Lorg/jetbrains/kotlin/config/MavenComparableVersion;
+	public fun getVersionString ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun isDeprecated ()Z
+	public fun isStable ()Z
+	public fun isUnsupported ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/config/ApiVersion$Companion {
+	public final fun createByLanguageVersion (Lorg/jetbrains/kotlin/config/LanguageVersion;)Lorg/jetbrains/kotlin/config/ApiVersion;
+	public final fun parse (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/ApiVersion;
+}
+
+public final class org/jetbrains/kotlin/config/ExplicitApiMode : java/lang/Enum {
+	public static final field Companion Lorg/jetbrains/kotlin/config/ExplicitApiMode$Companion;
+	public static final field DISABLED Lorg/jetbrains/kotlin/config/ExplicitApiMode;
+	public static final field STRICT Lorg/jetbrains/kotlin/config/ExplicitApiMode;
+	public static final field WARNING Lorg/jetbrains/kotlin/config/ExplicitApiMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getState ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/ExplicitApiMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/config/ExplicitApiMode;
+}
+
+public final class org/jetbrains/kotlin/config/ExplicitApiMode$Companion {
+	public final fun availableValues ()Ljava/lang/String;
+	public final fun fromString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/ExplicitApiMode;
+}
+
+public final class org/jetbrains/kotlin/config/HeaderMode : java/lang/Enum {
+	public static final field ANY Lorg/jetbrains/kotlin/config/HeaderMode;
+	public static final field COMPILATION Lorg/jetbrains/kotlin/config/HeaderMode;
+	public static final field Companion Lorg/jetbrains/kotlin/config/HeaderMode$Companion;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getState ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/HeaderMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/config/HeaderMode;
+}
+
+public final class org/jetbrains/kotlin/config/HeaderMode$Companion {
+	public final fun availableValues ()Ljava/lang/String;
+	public final fun fromString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/HeaderMode;
+}
+
+public final class org/jetbrains/kotlin/config/LanguageFeature : java/lang/Enum {
+	public static final field AbstractClassMemberNotImplementedWithIntermediateAbstractClass Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AdditionalBuiltInsMembers Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowAccessToProtectedFieldFromSuperCompanion Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowAnyAsAnActualTypeForExpectInterface Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowAssigningArrayElementsToVarargsInNamedFormForFunctions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowBreakAndContinueInsideWhen Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowCallingJavaOpenSealedClassConstructor Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowCheckForErasedTypesInContracts Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowContractsForCustomFunctions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowContractsForNonOverridableMembers Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowContractsOnPropertyAccessors Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowContractsOnSomeOperators Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowDnnTypeOverridingFlexibleType Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowEagerSupertypeAccessibilityChecks Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowEmptyIntersectionsInResultTypeResolver Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowExpectDeclarationsInJsExport Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowInterfaceNestedClassesInJsExport Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowNamedCompanionForJsExport Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowNullOperatorsForResult Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowNullOperatorsForResultAndResultReturnTypeByDefault Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowReifiedGenericsInContracts Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowReifiedTypeInCatchClause Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowReturnInExpressionBodyWithExplicitType Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowSealedInheritorsInDifferentFilesOfSamePackage Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowSuperCallToJavaInterface Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AnnotationAllUseSiteTarget Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AnnotationDefaultTargetMigrationWarning Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AnnotationsInMetadata Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ApproximateAnonymousReturnTypesInPrivateInlineFunctions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ApproximateLocalTypesInPublicDeclarations Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AssigningArraysToVarargsInNamedFormInAnnotations Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AvoidApproximationOfRecursiveCapturedTypesWithNoReason Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AvoidWrongOptimizationOfTypeOperatorsOnValueClasses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field BareArrayClassLiteral Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field BoundCallableReferences Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field BreakContinueInInlineLambdas Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field CacheLocalVariableScopes Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field CallableReferenceOverloadResolutionInLambda Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field CallableReferencesToClassMembersWithEmptyLHS Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field CapturedInClosureSmartCasts Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field CapturedTypeApproximationReworked Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ChangedIntersectionWithRecursiveCapturedType Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field CheckLambdaAgainstTypeVariableContradictionInResolution Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field CheckOptInOnPureEnumEntries Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field CheckPackageInfoNullnessAnnotations Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ClassTypeParameterAnnotations Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field CollectionLiterals Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field Companion Lorg/jetbrains/kotlin/config/LanguageFeature$Companion;
+	public static final field CompanionBlocksAndExtensions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ConditionImpliesReturnsContracts Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ConsiderForkPointsWhenCheckingContradictions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ContextParameters Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ContextReceivers Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ContextSensitiveResolutionUsingExpectedType Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ContractSyntaxV2 Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ContractsOnCallsWithImplicitReceiver Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field Coroutines Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field CorrectSourceMappingSyntax Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field CorrectSpecificityCheckForSignedAndUnsigned Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field CustomEqualsInValueClasses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DataClassCopyRespectsConstructorVisibility Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DataClassInheritance Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DataFlowBasedExhaustiveness Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DataObjects Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DefinitelyNonNullableTypes Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DeprecateNameMismatchInShortDestructuringWithParentheses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DestructuringLambdaParameters Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DfaBooleanVariables Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DirectJavaActualization Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DisableCheckingChangedProgressionsResolve Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DisableCompatibilityModeForNewInference Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DisableMaxTypeDepthFromInitialConstraints Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DisableSimplificationOfFlexibleUpperConstraintWithDnnLowerBound Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DisableWarningsForValueBasedJavaClasses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DiscriminateNothingAsNullabilityConstraintInInference Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DiscriminateSuspendInOverloadResolution Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DivisionByZeroInConstantExpressions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DoNotGenerateThrowsForDelegatedKotlinMembers Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DoNotRunSuspendConversionForLambdaReturnStatements Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DontCreateSyntheticPropertiesWithoutBaseJavaGetter Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DontIgnoreUpperBoundViolatedOnImplicitArguments Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DontLoseDiagnosticsDuringOverloadResolutionByReturnType Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DontMakeExplicitNullableJavaTypeArgumentsFlexible Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DslMarkerOnFunctionTypeReceiver Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DslMarkersSupport Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field EagerLambdaAnalysis Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field EliminateAmbiguitiesOnInheritedSamInterfaces Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field EliminateAmbiguitiesWithExternalTypeParameters Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ElvisInferenceImprovementsIn21 Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field EnableDfaWarningsInK2 Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field EnableNameBasedDestructuringShortForm Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field EnhanceNullabilityOfPrimitiveArrays Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field EnumEntries Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field EqualityConstraintForOperatorsUnderAssignments Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ErrorAboutDataClassCopyVisibilityChange Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ExpectActualClasses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ExpectRefinement Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ExpectedTypeFromCast Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ExperimentalBuilderInference Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ExplicitBackingFields Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ExplicitContextArguments Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ExportKDocDocumentationToKlib Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ExportKlibToOlderAbiVersion Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ExtendedMainConvention Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field FixationEnhancementsIn22 Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field FixedUninitializedEnumCompanionCheck Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidAnnotationsWithUseSiteTargetOnExpressions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidArrayLiteralsInNonAnnotationContexts Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidCaptureInlinableLambdasInJsCode Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidClassLiteralWithPotentiallyNullableReifiedLhs Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidCompanionInLocalInnerClass Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidCrossFileIrFieldAccessInKlibs Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidEnumEntryNamedEntries Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidExposingLessVisibleTypesInInline Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidExposingPackagePrivateInInternal Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidExposingTypesInPrimaryConstructorProperties Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidExtensionCallsOnInlineFunctionalParameters Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidExtensionFunctionTypeOnNonFunctionTypes Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidExternalEnumEntriesAndPrimaryConstructorProperties Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidFieldAnnotationsOnAnnotationParameters Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidGetSetValueWithTooManyParameters Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidImplementationByDelegationWithDifferentGenericSignature Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidImplicitTypeAnnotationWithMissingDependency Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidInferringTypeVariablesIntoEmptyIntersection Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidInitializationBeforeDeclarationInAnonymous Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidInlineEnumEntries Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidJvmAnnotationsOnAnnotationParameters Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidJvmSerializableLambdaOnInlinedFunctionLiterals Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidLambdaParameterWithMissingDependencyType Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidObjectDelegationToItself Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidOverriddenDefaultParametersInInline Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidParenthesizedLhsInAssignments Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidPrivateToThisUnboundCallableReferences Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidProjectionsInAnnotationProperties Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidRecursiveDelegateExpressions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidReferencingToUnderscoreNamedParameterOfCatchBlock Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidReifiedTypeParametersOnTypeAliases Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidRootIdePackageInCli Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidSuperDelegationToAbstractAnyMethod Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidSuperDelegationToAbstractFakeOverride Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidSyntheticPropertiesWithoutBaseJavaGetter Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidTypeAliasToCompilerRequiredAnnotation Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidTypeAliasWithMissingDependencyType Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidUselessTypeArgumentsIn25 Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidUsingExpressionTypesWithInaccessibleContent Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidUsingExtensionPropertyTypeParameterInDelegate Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidUsingSupertypesWithInaccessibleContentInTypeArguments Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForkIsNotSuccessfulWhenNoBranchIsSuccessful Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field FunctionReferenceWithDefaultValueAsOtherType Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field FunctionTypesWithBigArity Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field FunctionalInterfaceConversion Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field FunctionalTypeWithExtensionAsSupertype Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field GenerateJvmOverloadsAsFinal Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field GenericInlineClassParameter Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field HoldsInContracts Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field IgnoreNullabilityForErasedValueParameters Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ImplicitJvmExposeBoxed Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ImplicitSignedToUnsignedIntegerConversion Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ImprovedCapturedTypeApproximationInInference Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ImprovedExhaustivenessCheckForSubjectVariable24 Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ImprovedExhaustivenessChecksIn21 Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ImprovedExhaustivenessChecksIn23 Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ImprovedResolutionInSecondaryConstructors Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ImprovedVarianceInCst Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field InferMoreImplicationsFromBooleanExpressions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field InferenceEnhancementsIn21 Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field InferenceEnhancementsIn23 Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field InlineClassImplementationByDelegation Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field InlineClasses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field InlineConstVals Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field InlineDefaultFunctionalParameters Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field InlineProperties Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field InnerClassInEnumEntryClass Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field InstantiationOfAnnotationClasses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field IntrinsicConstEvaluation Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field IrCrossModuleInlinerBeforeKlibSerialization Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field IrIntraModuleInlinerBeforeKlibSerialization Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field IrRichCallableReferencesInKlibs Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JavaSamConversionEqualsHashCode Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JsAllowExportingSuspendFunctions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JsAllowExportingValueClasses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JsAllowImplementingFunctionInterface Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JsAllowInvalidCharsIdentifiersEscaping Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JsAllowLongInExportedDeclarations Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JsAllowValueClassesInExternals Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JsEnableExtensionFunctionInExternals Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JsExportInterfacesInImplementableWay Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JsExposedNotExportedSuperInterfaceApiByExportedOne Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JsExternalPropertyParameters Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JsStaticInInterface Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JvmDefaultEnableByDefault Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JvmEnhancedBridges Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JvmFieldInInterface Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JvmIndyAllowLambdasWithAnnotations Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JvmInlineMultiFieldValueClasses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JvmInlineValueClasses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JvmLoadAnnotationsOnAnnotationProperties Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JvmNullOutSpilledCoroutineLocals Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JvmPackageName Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JvmPermittedSubclassesAttributeForSealed Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JvmRecordSupport Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field JvmStaticInInterface Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field KeepNullabilityWhenApproximatingLocalType Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field KlibAnnotationsInMetadata Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field KotlinFunInterfaceConstructorReference Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field LateinitLocalVariables Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field LateinitTopLevelProperties Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field LexicographicVariableReadinessCalculation Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field LightweightLambdas Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field LocalDelegatedProperties Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field LocalTypeAliases Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field LocalVariableTargetedAnnotationOnDestructuring Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field MangleCallsToJavaMethodsWithValueClasses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field MangleClassMembersReturningInlineClasses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field MixedNamedArgumentsInTheirOwnPosition Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ModifierNonBuiltinSuspendFunError Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field MultiDollarInterpolation Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field MultiPlatformProjects Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field MultiplatformRestrictions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field NameBasedDestructuring Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field NativeTestProcessorBeforeSerialization Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field NestedClassesInAnnotations Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field NestedClassesInEnumEntryShouldBeInner Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field NestedTypeAliases Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field NewCapturedReceiverFieldNamingConvention Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field NewInference Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field NoAdditionalErrorsInK1DiagnosticReporter Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field NoBuilderInferenceWithoutAnnotationRestriction Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field NoDelegationToJavaDefaultInterfaceMembers Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field NoDeprecationOnDeprecatedEnumEntries Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field NoDeprecationOnImportStatements Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field NoSourceCodeInNotNullAssertionExceptions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field NonParenthesizedAnnotationsOnFunctionalTypes Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field NullabilityAssertionOnExtensionReceiver Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field NullableNothingInReifiedPosition Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ObjCSignatureOverrideAnnotation Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field OperatorProvideDelegate Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field OptInContagiousSignatures Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field OptInRelease Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field OverloadResolutionByLambdaReturnType Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field OverloadResolutionSpecificityForEnhancedJvmPrimitiveWrappers Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field PCLAEnhancementsIn21 Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field PackagePrivateFileClassesWithAllPrivateMembers Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ParseLambdaWithSuspendModifier Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field PartiallySpecifiedTypeArguments Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field PolymorphicSignature Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field PreciseSimplificationToFlexibleLowerConstraint Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field PreferJavaFieldOverload Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field PrioritizedEnumEntries Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field PrivateInFileEffectiveVisibility Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProgressionsChangingResolve Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitAccessToEnumCompanionMembersInEnumConstructorCall Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitAccessToInvisibleSetterFromDerivedClass Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitAllMultipleDefaultsInheritedFromSupertypes Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitArrayLiteralsInCompanionOfAnnotation Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitAssigningSingleElementsToVarargsInNamedForm Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitComparisonOfIncompatibleClasses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitComparisonOfIncompatibleEnums Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitConcurrentHashMapContains Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitConfusingSyntaxInWhenBranches Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitConstructorAndSupertypeOnTypealiasWithTypeProjection Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitConstructorCallOnFunctionalSupertype Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitCyclesInAnnotations Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitDataClassesOverridingCopy Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitDefaultArgumentsInExpectActualizedByFakeOverride Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitEnumDeclaringClass Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitErroneousExpressionsInAnnotationsWithUseSiteTargets Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitExtendingAnnotationClasses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitFunctionCallsInDefaultParametersOfInline Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitGenericArrayClassLiteral Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitGenericQualifiersOnConstructorCalls Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitIllegalValueParameterUsageInDefaultArguments Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitImplementingVarByInheritedVal Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitInlineModifierOnPrimaryConstructorParameters Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitInnerClassesOfGenericClassExtendingThrowable Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitIntersectionReifiedTypeParameter Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitInvalidCharsInNativeIdentifiers Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitInvisibleAbstractMethodsInSuperclasses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitJavaClassInheritingPrivateKotlinClass Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitLocalAnnotations Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitNonConstValuesAsVarargsInAnnotations Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitNonExhaustiveIfInRhsOfElvis Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitNonExhaustiveWhenOnAlgebraicTypes Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitNonReifiedArraysAsReifiedTypeArguments Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitNothingAsCatchParameter Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitNullableTypeThroughTypealias Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitOpenValDeferredInitialization Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitPrivateOperatorCallInInline Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitProtectedCallFromInline Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitProtectedConstructorCallFromPublicInline Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitQualifiedAccessToUninitializedEnumEntry Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitRepeatedUseSiteTargetAnnotations Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitScriptTopLevelInnerClasses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitSelfCallsInNestedObjects Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitSimplificationOfNonTrivialConstBooleanExpressions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitSingleNamedFunctionAsExpression Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitSmartcastsOnLocalDelegatedProperty Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitSmartcastsOnPropertyFromAlienBaseClass Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitSmartcastsOnPropertyFromAlienBaseClassInheritedInInvisibleClass Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitSpreadOnSignaturePolymorphicCall Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitSuperCallsFromPublicInline Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitSynchronizationByValueClassesAndPrimitives Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitTailrecOnVirtualMember Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitTypeParametersForLocalVariables Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitTypeParametersInAnonymousObjects Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitTypeParametersInClassLiteralsInAnnotationArguments Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitTypealiasAsCallableQualifierInImport Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitUseSiteGetTargetAnnotations Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitUseSiteTargetAnnotationsOnSuperTypes Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitVarargAsArrayAfterSamArgument Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProperCheckAnnotationsTargetInTypeUsePositions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProperComputationOrderOfTailrecDefaultParameters Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProperEqualityChecksInBuilderInferenceCalls Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProperExhaustivenessCheckForJavaOpenSealedClass Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProperFinally Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProperForInArrayLoopRangeVariableAssignmentSemantic Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProperIeee754Comparisons Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProperInternalVisibilityCheckInImportingScope Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProperSupportOfInnerClassesInCallableReferenceLHS Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProperTypeInferenceConstraintsProcessing Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProperUninitializedEnumEntryAccessAnalysis Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProperVisibilityForCompanionObjectInstanceField Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ProperlyCheckUpperBoundsViolationsWhenCreatingFreshVariables Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field PropertyParamAnnotationDefaultTargetMode Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field QualifiedSupertypeMayBeExtendedByOtherSupertype Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field RangeUntilOperator Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ReadDeserializedContracts Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ReferencesToSyntheticJavaProperties Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field RefineTypeCheckingOnAssignmentsToJavaFields Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field RefinedSamAdaptersPriority Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field RefinedVarargConversionRulesForCallableReferences Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ReleaseCoroutines Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field RepeatableAnnotationContainerConstraints Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field RepeatableAnnotations Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ReportErrorsForComparisonOperators Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ReportErrorsOnRecursiveTypeInsidePlusAssignment Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ReportExposedTypeForInternalTypeParameterBounds Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ReportExposedTypeForMoreCasesOfTypeParameterBounds Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ReportMissingUpperBoundsViolatedErrorOnAbbreviationAtSupertypes Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ReportNonVarargSpreadOnGenericCalls Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ReportOptInUsageOnCompanionObjectAccesses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ReportTypeVarianceConflictOnQualifierArguments Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ReportTypeVarianceConflictsInDnnAndFlexible Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ReportUpperBoundViolatedInCallArgumentInteractions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field RequiredPrimaryConstructorDelegationCallInEnums Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ResolveEqualsRhsInDependentContextWithCompletion Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ResolveTopLevelLambdasAsSyntheticCallArgument Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field RestrictRetentionForExpressionAnnotations Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field RestrictReturnStatementTarget Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field RestrictionOfValReassignmentViaBackingField Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SafeCallBoundSmartCasts Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SafeCallsAreAlwaysNullable Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SafeCastCheckBoundSmartCasts Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SamConversionForKotlinFunctions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SamConversionPerArgument Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SamWrapperClassesAreSynthetic Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SealedInterfaces Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ShortSyntaxForPropertyGetters Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SingleUnderscoreForParameterName Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SkipHiddenObjectsInResolution Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SkipStandaloneScriptsInSourceRoots Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SoundSmartCastsAfterTry Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SoundSmartcastForEnumEntries Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field StopPropagatingDeprecationThroughOverrides Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field StrictJavaNullabilityAssertions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field StrictOnlyInputTypesChecks Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field StricterConstraintIncorporationRecursionDetector Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SupportEffectivelyFinalInExpectActualVisibilityCheck Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SuspendConversion Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SuspendFunctionAsSupertype Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SuspendFunctionsInFunInterfaces Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SuspendOnlySamConversions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field SynchronizedSuspendError Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field TopLevelSealedInheritance Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field TrailingCommas Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field TreatProvideDelegateAsConventionName Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field TurnTypeCheckWarningsIntoErrors Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field TypeAliases Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field TypeEnhancementImprovementsInStrictMode Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field TypeInferenceOnGenericsForCallableReferences Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field UnderscoresInNumericLiterals Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field UnitConversionsOnArbitraryExpressions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field UnnamedLocalVariables Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field UnrestrictedBuilderInference Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field UnstableSmartcastOnDelegatedProperties Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field UseBuilderInferenceOnlyIfNeeded Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field UseBuilderInferenceWithoutAnnotation Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field UseCallsInPlaceEffect Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field UseConsistentRulesForPrivateConstructorsOfSealedClasses Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field UseCorrectExecutionOrderForVarargArguments Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field UseGetterNameForPropertyAnnotationsMethodOnJvm Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field UseReturnsEffect Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ValueClassesSecondaryConstructorWithBody Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field VariableDeclarationInWhenSubject Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field WarnAboutNonExhaustiveWhenOnAlgebraicTypes Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field WarningOnMainUnusedParameter Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field WhenGuards Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field WrapContinuationForTailCallFunctions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field YieldIsNoMoreReserved Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final fun fromString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public final fun getActuallyEnabledInProgressiveMode ()Z
+	public final fun getBehaviorAfterSinceVersion ()Lorg/jetbrains/kotlin/config/LanguageFeatureBehaviorAfterSinceVersion;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getForcesPreReleaseBinaries ()Z
+	public final fun getHintUrl ()Ljava/lang/String;
+	public final fun getIssue ()Ljava/lang/String;
+	public final fun getPresentableName ()Ljava/lang/String;
+	public final fun getPresentableText ()Ljava/lang/String;
+	public final fun getSinceApiVersion ()Lorg/jetbrains/kotlin/config/ApiVersion;
+	public final fun getSinceVersion ()Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public final fun getTestOnly ()Z
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static fun values ()[Lorg/jetbrains/kotlin/config/LanguageFeature;
+}
+
+public final class org/jetbrains/kotlin/config/LanguageFeature$Companion {
+	public final fun fromString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/LanguageFeature;
+}
+
+public final class org/jetbrains/kotlin/config/LanguageFeature$State : java/lang/Enum, org/jetbrains/kotlin/utils/DescriptionAware {
+	public static final field DISABLED Lorg/jetbrains/kotlin/config/LanguageFeature$State;
+	public static final field ENABLED Lorg/jetbrains/kotlin/config/LanguageFeature$State;
+	public fun getDescription ()Ljava/lang/String;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/LanguageFeature$State;
+	public static fun values ()[Lorg/jetbrains/kotlin/config/LanguageFeature$State;
+}
+
+public abstract class org/jetbrains/kotlin/config/LanguageFeatureBehaviorAfterSinceVersion {
+}
+
+public final class org/jetbrains/kotlin/config/LanguageFeatureBehaviorAfterSinceVersion$CanStillBeDisabledForNow : org/jetbrains/kotlin/config/LanguageFeatureBehaviorAfterSinceVersion {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/LanguageFeatureBehaviorAfterSinceVersion$CanStillBeDisabledForNow;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/config/LanguageFeatureBehaviorAfterSinceVersion$CanStillBeDisabledForNow;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/config/LanguageFeatureBehaviorAfterSinceVersion$CanStillBeDisabledForNow;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getRelevantTicketId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/config/LanguageFeatureBehaviorAfterSinceVersion$CannotBeDisabled : org/jetbrains/kotlin/config/LanguageFeatureBehaviorAfterSinceVersion {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/config/LanguageFeatureBehaviorAfterSinceVersion$CannotBeDisabled;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/config/LanguageOrApiVersion : org/jetbrains/kotlin/utils/DescriptionAware {
+	public fun getDescription ()Ljava/lang/String;
+	public abstract fun getVersionString ()Ljava/lang/String;
+	public abstract fun isDeprecated ()Z
+	public abstract fun isStable ()Z
+	public abstract fun isUnsupported ()Z
+}
+
+public final class org/jetbrains/kotlin/config/LanguageVersion : java/lang/Enum, org/jetbrains/kotlin/config/LanguageOrApiVersion, org/jetbrains/kotlin/utils/DescriptionAware {
+	public static final field Companion Lorg/jetbrains/kotlin/config/LanguageVersion$Companion;
+	public static final field FIRST_API_SUPPORTED Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field FIRST_NON_DEPRECATED Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field FIRST_SUPPORTED Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field KOTLIN_1_0 Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field KOTLIN_1_1 Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field KOTLIN_1_2 Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field KOTLIN_1_3 Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field KOTLIN_1_4 Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field KOTLIN_1_5 Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field KOTLIN_1_6 Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field KOTLIN_1_7 Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field KOTLIN_1_8 Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field KOTLIN_1_9 Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field KOTLIN_2_0 Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field KOTLIN_2_1 Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field KOTLIN_2_2 Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field KOTLIN_2_3 Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field KOTLIN_2_4 Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field KOTLIN_2_5 Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final field LATEST_STABLE Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final fun fromFullVersionString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static final fun fromVersionString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getMajor ()I
+	public final fun getMinor ()I
+	public final fun getUsesK2 ()Z
+	public fun getVersionString ()Ljava/lang/String;
+	public fun isDeprecated ()Z
+	public fun isStable ()Z
+	public fun isUnsupported ()Z
+	public fun toString ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public static fun values ()[Lorg/jetbrains/kotlin/config/LanguageVersion;
+}
+
+public final class org/jetbrains/kotlin/config/LanguageVersion$Companion {
+	public final fun fromFullVersionString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public final fun fromVersionString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/LanguageVersion;
+}
+
+public abstract interface class org/jetbrains/kotlin/config/LanguageVersionSettings {
+	public static final field Companion Lorg/jetbrains/kotlin/config/LanguageVersionSettings$Companion;
+	public static final field RESOURCE_NAME_TO_ALLOW_READING_FROM_ENVIRONMENT Ljava/lang/String;
+	public abstract fun getApiVersion ()Lorg/jetbrains/kotlin/config/ApiVersion;
+	public abstract fun getCustomizedLanguageFeatures ()Ljava/util/Map;
+	public abstract fun getFeatureSupport (Lorg/jetbrains/kotlin/config/LanguageFeature;)Lorg/jetbrains/kotlin/config/LanguageFeature$State;
+	public abstract fun getFlag (Lorg/jetbrains/kotlin/config/AnalysisFlag;)Ljava/lang/Object;
+	public abstract fun getLanguageVersion ()Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public abstract fun isPreRelease ()Z
+	public fun supportsFeature (Lorg/jetbrains/kotlin/config/LanguageFeature;)Z
+}
+
+public final class org/jetbrains/kotlin/config/LanguageVersionSettings$Companion {
+	public static final field RESOURCE_NAME_TO_ALLOW_READING_FROM_ENVIRONMENT Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/config/LanguageVersionSettingsImpl : org/jetbrains/kotlin/config/LanguageVersionSettings {
+	public static final field Companion Lorg/jetbrains/kotlin/config/LanguageVersionSettingsImpl$Companion;
+	public static final field DEFAULT Lorg/jetbrains/kotlin/config/LanguageVersionSettingsImpl;
+	public fun <init> (Lorg/jetbrains/kotlin/config/LanguageVersion;Lorg/jetbrains/kotlin/config/ApiVersion;)V
+	public fun <init> (Lorg/jetbrains/kotlin/config/LanguageVersion;Lorg/jetbrains/kotlin/config/ApiVersion;Ljava/util/Map;)V
+	public fun <init> (Lorg/jetbrains/kotlin/config/LanguageVersion;Lorg/jetbrains/kotlin/config/ApiVersion;Ljava/util/Map;Ljava/util/Map;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/config/LanguageVersion;Lorg/jetbrains/kotlin/config/ApiVersion;Ljava/util/Map;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getApiVersion ()Lorg/jetbrains/kotlin/config/ApiVersion;
+	public fun getCustomizedLanguageFeatures ()Ljava/util/Map;
+	public fun getFeatureSupport (Lorg/jetbrains/kotlin/config/LanguageFeature;)Lorg/jetbrains/kotlin/config/LanguageFeature$State;
+	public fun getFlag (Lorg/jetbrains/kotlin/config/AnalysisFlag;)Ljava/lang/Object;
+	public fun getLanguageVersion ()Lorg/jetbrains/kotlin/config/LanguageVersion;
+	public fun isPreRelease ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/config/LanguageVersionSettingsImpl$Companion {
+}
+
+public final class org/jetbrains/kotlin/config/LanguageVersionSettingsKt {
+	public static final field NO_ISSUE_SPECIFIED Ljava/lang/String;
+	public static final fun forcesPreReleaseBinariesIfEnabled (Lorg/jetbrains/kotlin/config/LanguageFeature;)Z
+	public static final fun getCustomizedEffectivelyDisabledLanguageFeatures (Lorg/jetbrains/kotlin/config/LanguageVersionSettings;)Ljava/util/Set;
+	public static final fun getCustomizedEffectivelyEnabledLanguageFeatures (Lorg/jetbrains/kotlin/config/LanguageVersionSettings;)Ljava/util/Set;
+	public static final fun isEnabledByDefault (Lorg/jetbrains/kotlin/config/LanguageVersionSettings;Lorg/jetbrains/kotlin/config/LanguageFeature;)Z
+	public static final fun isPreRelease (Lorg/jetbrains/kotlin/config/LanguageVersion;)Z
+	public static final fun toKotlinVersion (Lorg/jetbrains/kotlin/config/LanguageVersion;)Lkotlin/KotlinVersion;
+	public static final fun toKotlinVersion (Lorg/jetbrains/kotlin/config/LanguageVersionSettings;)Lkotlin/KotlinVersion;
+}
+
+public class org/jetbrains/kotlin/config/MavenComparableVersion : java/lang/Comparable {
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo (Lorg/jetbrains/kotlin/config/MavenComparableVersion;)I
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getCanonical ()Ljava/lang/String;
+	public fun hashCode ()I
+	public static fun main ([Ljava/lang/String;)V
+	public final fun parseVersion (Ljava/lang/String;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/config/ReturnValueCheckerMode : java/lang/Enum {
+	public static final field CHECKER Lorg/jetbrains/kotlin/config/ReturnValueCheckerMode;
+	public static final field Companion Lorg/jetbrains/kotlin/config/ReturnValueCheckerMode$Companion;
+	public static final field DISABLED Lorg/jetbrains/kotlin/config/ReturnValueCheckerMode;
+	public static final field FULL Lorg/jetbrains/kotlin/config/ReturnValueCheckerMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getState ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/ReturnValueCheckerMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/config/ReturnValueCheckerMode;
+}
+
+public final class org/jetbrains/kotlin/config/ReturnValueCheckerMode$Companion {
+	public final fun availableValues ()Ljava/lang/String;
+	public final fun fromString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/ReturnValueCheckerMode;
+}
+
+public final class org/jetbrains/kotlin/config/WarningLevel : java/lang/Enum {
+	public static final field Companion Lorg/jetbrains/kotlin/config/WarningLevel$Companion;
+	public static final field Disabled Lorg/jetbrains/kotlin/config/WarningLevel;
+	public static final field Error Lorg/jetbrains/kotlin/config/WarningLevel;
+	public static final field Warning Lorg/jetbrains/kotlin/config/WarningLevel;
+	public final fun getCliOption ()Ljava/lang/String;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/WarningLevel;
+	public static fun values ()[Lorg/jetbrains/kotlin/config/WarningLevel;
+}
+
+public final class org/jetbrains/kotlin/config/WarningLevel$Companion {
+	public final fun fromString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/WarningLevel;
+}
+

@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.analysis.stubs
 import com.intellij.psi.stubs.StubTreeLoader
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
-import org.jetbrains.kotlin.analysis.stubs.CompiledStubsTestEngine.compute
-import org.jetbrains.kotlin.analysis.stubs.CompiledStubsTestEngine.validate
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
@@ -27,7 +26,7 @@ object CompiledStubsTestEngine : StubsTestEngine() {
     private object Directives : SimpleDirectivesContainer() {
         /** @see validate */
         val INCONSISTENT_TREE by stringDirective(
-            "Temporary disables '${CompiledStubsTestEngine::validate.name}' until the issue is fixed. YT ticket must be provided"
+            "Temporary disables 'validate' until the issue is fixed. YT ticket must be provided"
         )
     }
 
@@ -56,6 +55,7 @@ object CompiledStubsTestEngine : StubsTestEngine() {
      *
      * @see Directives.INCONSISTENT_TREE
      */
+    context(testContext: AbstractAnalysisApiBasedTest)
     override fun validate(testServices: TestServices, file: KtFile, fileStub: KotlinFileStubImpl) {
         super.validate(testServices, file, fileStub)
 

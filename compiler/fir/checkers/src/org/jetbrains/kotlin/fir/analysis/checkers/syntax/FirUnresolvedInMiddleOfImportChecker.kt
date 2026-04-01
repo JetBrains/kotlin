@@ -66,9 +66,9 @@ object FirUnresolvedInMiddleOfImportChecker : FirDeclarationSyntaxChecker<FirFil
                 // For star import, the PSI structure has one less level of qualified references. Hence we start from 0. Otherwise, we start
                 // from 1 to skip the last imported name.
                 var errorSegmentIndexFromLast = if (import.isAllUnder) 0 else 1
-                var currentClassId = parentClassId.parentClassId
+                var currentClassId = parentClassId.outerClassId
                 while (currentClassId != null && context.session.symbolProvider.getClassLikeSymbolByClassId(currentClassId) == null) {
-                    currentClassId = currentClassId.parentClassId
+                    currentClassId = currentClassId.outerClassId
                     errorSegmentIndexFromLast++
                 }
 
@@ -94,7 +94,7 @@ object FirUnresolvedInMiddleOfImportChecker : FirDeclarationSyntaxChecker<FirFil
     private fun ClassId.getOutermostClassName() = relativeClassName.pathSegments().first().asString()
 
     private fun isClassIdPointingToEnumEntry(session: FirSession, classId: ClassId): Boolean {
-        val enumClassId = classId.parentClassId ?: return false
+        val enumClassId = classId.outerClassId ?: return false
         val enumClass =
             (session.symbolProvider.getClassLikeSymbolByClassId(enumClassId) as? FirRegularClassSymbol)?.takeIf { it.isEnumClass } ?: return false
         return enumClass.collectEnumEntries(session).any { it.callableId.callableName == classId.shortClassName }

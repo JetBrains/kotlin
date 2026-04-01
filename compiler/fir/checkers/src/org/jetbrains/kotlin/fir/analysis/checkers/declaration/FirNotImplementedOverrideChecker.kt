@@ -118,7 +118,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                 }
                 return
             }
-            when (symbol.getImplementationStatus(context.sessionHolder, classSymbol)) {
+            when (symbol.getImplementationStatus(classSymbol)) {
                 ImplementationStatus.AMBIGUOUSLY_INHERITED -> notImplementedIntersectionSymbols.add(symbol)
                 ImplementationStatus.NOT_IMPLEMENTED -> when {
                     symbol.isVisibleInClass(classSymbol) -> notImplementedSymbols.add(symbol)

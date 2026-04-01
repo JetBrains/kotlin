@@ -25,8 +25,8 @@ internal object OverriddenKotlinNativeHomeChecker : KotlinGradleProjectChecker {
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         if (allKonanMainSubdirectoriesExist().get()) return
 
-        collector.report(
-            project, KotlinToolingDiagnostics.BrokenKotlinNativeBundleError(
+        collector.report(diagnosticsContext,
+            KotlinToolingDiagnostics.BrokenKotlinNativeBundleError(
                 project.nativeProperties.userProvidedNativeHome.orNull,
                 NativeProperties.NATIVE_HOME.name
             )

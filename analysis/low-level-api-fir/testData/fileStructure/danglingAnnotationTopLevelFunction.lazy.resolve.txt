@@ -1,2 +1,2 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationTopLevelFunction.kt
-    [ResolvedTo(BODY_RESOLVE)] @R|kotlin/Suppress|[Types](names = vararg(String(), ERROR_EXPR(Argument is absent))) <DANGLING MODIFIER: Top level declaration expected>
+    [ResolvedTo(BODY_RESOLVE)] @R|kotlin/Suppress|[Types](names = vararg(String(), ERROR_EXPR(Argument is absent)) [evaluated = vararg(String(), ERROR_EXPR(Argument is absent))]) <DANGLING MODIFIER: Top level declaration expected>

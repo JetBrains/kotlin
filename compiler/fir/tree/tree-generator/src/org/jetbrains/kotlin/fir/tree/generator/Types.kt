@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.tree.generator.util.generatedType
 import org.jetbrains.kotlin.fir.tree.generator.util.type
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
@@ -56,9 +55,9 @@ val operationKindType = type("contracts.description", "LogicOperationKind")
 val coneKotlinTypeType = type<ConeKotlinType>()
 val coneErrorTypeType = type<ConeErrorType>()
 val coneSimpleKotlinTypeType = type<ConeSimpleKotlinType>()
-val coneClassLikeTypeType = type<ConeClassLikeType>()
 val coneClassLikeTypeImplType = type<ConeClassLikeTypeImpl>()
 val standardClassIdsType = type<StandardClassIds>()
+val standardTypes = type("fir", "StandardTypes")
 
 val referenceToSimpleExpressionType = generatedType("", "FirExpressionRef")
     .withArgs(FirTree.expression)
@@ -157,8 +156,10 @@ val directDeclarationsAccessAnnotation = type("fir.declarations", "DirectDeclara
 val unresolvedExpressionTypeAccessAnnotation = type("fir.expressions", "UnresolvedExpressionTypeAccess", kind = TypeKind.Class)
 val rawFirApi = type("fir.expressions", "RawFirApi", kind = TypeKind.Class)
 val firBuilderDslAnnotation = type("fir.builder", "FirBuilderDsl", kind = TypeKind.Class)
+val firIdeOnlyAnnotation = type("fir", "FirIdeOnly", kind = TypeKind.Class)
 val firResolvedArgumentListType = type("fir.expressions.impl", "FirResolvedArgumentList", kind = TypeKind.Class)
 
 val toSymbolUtilityFunction = type("fir.types", "toLookupTag")
 
 val inaccessibleReceiverKindType = type("fir.expressions", "InaccessibleReceiverKind")
+val functionConversionKindType = generatedType("expressions", "FirFunctionConversionKind")

@@ -18,9 +18,9 @@ import bar.*
         /*p:foo.A*/foo()
         /*p:foo.A(a)*/this.a
         /*p:foo.A(foo)*/this.foo()
-        /*p:bar p:foo p:foo.A p:foo.A.Companion*/baz()
-        /*p:bar p:foo p:foo.A p:foo.A(a) p:foo.A.Companion p:foo.A.Companion(a)*/Companion.a
-        /*p:bar p:foo p:foo.A p:foo.A.Companion p:foo.A.O(v)*/O.v = "OK"
+        /*p:bar p:foo p:foo(A) p:foo.A p:foo.A(Companion) p:foo.A.Companion*/baz()
+        /*p:bar p:foo p:foo(A) p:foo.A p:foo.A(a) p:foo.A.Companion p:foo.A.Companion(a)*/Companion.a
+        /*p:bar p:foo p:foo(A) p:foo.A p:foo.A(Companion) p:foo.A.Companion p:foo.A.O(v)*/O.v = "OK"
     }
 
     class B {

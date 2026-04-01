@@ -1,0 +1,5 @@
+KtDotQualifiedExpression(162,171): 'b.clear()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList.clear(<dispatch receiver>: kotlin.collections.MutableList<E>): kotlin.Unit
+    ]

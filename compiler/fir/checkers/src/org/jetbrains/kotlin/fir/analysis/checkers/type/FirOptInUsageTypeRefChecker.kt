@@ -71,10 +71,7 @@ object FirOptInUsageTypeRefChecker : FirResolvedTypeRefChecker(MppCheckerKind.Co
 
     context(context: CheckerContext)
     private fun FirClassLikeSymbol<*>.loadClassifierExperimentalities(isSupertypeRef: Boolean) =
-        if (isSupertypeRef) loadExperimentalitiesFromSupertype() else loadExperimentalities(
-            fromSetter = false,
-            dispatchReceiverType = null
-        )
+        if (isSupertypeRef) loadExperimentalitiesFromSupertype() else loadExperimentalities(fromSetter = false)
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private tailrec fun FirClassLikeSymbol<*>.checkContainingClasses(

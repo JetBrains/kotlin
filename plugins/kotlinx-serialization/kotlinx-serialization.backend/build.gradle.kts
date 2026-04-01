@@ -2,7 +2,6 @@ description = "Kotlin Serialization Compiler Plugin (Backend)"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
@@ -15,8 +14,9 @@ dependencies {
     compileOnly(project(":compiler:fir:fir2ir"))
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:fir-deserialization"))
+    compileOnly(project(":native:native.config"))
     compileOnly(project(":kotlin-util-klib-metadata"))
-    compileOnly(project(":compiler:cli-common"))
+    compileOnly(project(":compiler:cli-base"))
 
     implementation(project(":kotlinx-serialization-compiler-plugin.common"))
     implementation(project(":kotlinx-serialization-compiler-plugin.k1"))

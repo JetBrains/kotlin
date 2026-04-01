@@ -6,28 +6,37 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.config
 
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.report
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.diagnosticRendererFactory
+import org.jetbrains.kotlin.fir.analysis.diagnostics.CliFrontendDiagnostics.ERROR_SEVERITY_CHANGED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.CliFrontendDiagnostics.MISSING_DIAGNOSTIC_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.registeredDiagnosticFactoriesStorage
 import org.jetbrains.kotlin.fir.languageVersionSettings
 
 object FirSuppressedDiagnosticsCheckers : FirLanguageVersionSettingsChecker() {
     context(context: CheckerContext)
-    override fun check(reporter: BaseDiagnosticsCollector.RawReporter) {
+    override fun check(reporter: DiagnosticReporter) {
         val warningLevelMap = context.session.languageVersionSettings.getFlag(AnalysisFlags.warningLevels)
         if (warningLevelMap.isEmpty()) return
 
-        val allDiagnosticFactories = context.session.diagnosticRendererFactory.allDiagnosticFactories.associateBy { it.name }
+        val allDiagnosticFactories = context.session.registeredDiagnosticFactoriesStorage.allDiagnosticFactories.associateBy { it.name }
 
         for (diagnosticName in warningLevelMap.keys) {
             val diagnosticFactory = allDiagnosticFactories[diagnosticName]
             if (diagnosticFactory == null) {
-                reporter.reportError("Warning with name \"$diagnosticName\" does not exist")
+                reporter.report(
+                    MISSING_DIAGNOSTIC_NAME,
+                    """Warning with name "$diagnosticName" does not exist"""
+                )
                 continue
             }
             if (diagnosticFactory.severity == Severity.ERROR) {
-                reporter.reportError("Diagnostic \"$diagnosticName\" is an error. Changing the severity of errors is prohibited")
+                reporter.report(
+                    ERROR_SEVERITY_CHANGED,
+                    """Diagnostic "$diagnosticName" is an error. Changing the severity of errors is prohibited"""
+                )
             }
         }
     }

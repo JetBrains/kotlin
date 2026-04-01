@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
+import org.jetbrains.kotlin.konan.test.syntheticAccessors.AbstractNativeKlibSyntheticAccessorTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlinx.atomicfu.incremental.AbstractIncrementalK2JVMWithAtomicfuRunnerTest
 import org.jetbrains.kotlinx.atomicfu.runners.*
@@ -42,6 +43,11 @@ fun main(args: Array<String>) {
             ) {
                 model()
             }
+            testClass<AbstractAtomicfuNativeKlibSyntheticAccessorTest>(
+                annotations = listOf(klibIrInliner(), *klibSyntheticAccessors(), *atomicfuNative())
+            ) {
+                model()
+            }
         }
 
         testGroup(
@@ -64,10 +70,6 @@ fun main(args: Array<String>) {
         ) {
             testClass<AbstractAtomicfuFirCheckerTest> {
                 model("diagnostics/")
-            }
-
-            testClass<AbstractAtomicfuJvmIrTest> {
-                model("box/", excludeDirs = listOf("context_parameters"))
             }
 
             testClass<AbstractAtomicfuJvmFirLightTreeTest> {

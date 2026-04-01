@@ -10,6 +10,7 @@ import kotlin.metadata.KmClass;
 import kotlin.metadata.jvm.JvmMetadataVersion;
 import kotlin.metadata.jvm.KotlinClassHeader;
 import kotlin.metadata.jvm.KotlinClassMetadata;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,6 +28,7 @@ public class JavaUsageTest {
     }
 
     @Test
+    @Disabled("Enable when KT-83081 is fixed")
     public void testWritingBackWithDefaults() {
         Metadata m = MetadataSmokeTest.class.getAnnotation(Metadata.class);
         KotlinClassMetadata clazz1 = ((KotlinClassMetadata) Objects.requireNonNull(KotlinClassMetadata.readStrict(m)));

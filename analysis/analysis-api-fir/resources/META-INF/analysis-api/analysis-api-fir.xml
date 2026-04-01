@@ -14,10 +14,6 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.modification.KaFirSourceModificationService"
     />
 
-    <projectService
-        serviceInterface="org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.references.KotlinFirReferenceContributor"
-    />
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker"
@@ -49,6 +45,18 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.decompiler.psi.K2KotlinBuiltInStubVersionOffsetProvider"
     />
 
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.references.KotlinFirKDocResolutionStrategyProviderService"
+    />
+
+    <registryKey
+        defaultValue="true"
+        description="Enable experimental KDoc resolution strategy"
+        key="kotlin.analysis.experimentalKDocResolution"
+        restartRequired="false"
+    />
+
     <registryKey
         defaultValue="true"
         description="Perform cache clean-up when running out of RAM"
@@ -73,6 +81,19 @@
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
     <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.fir.projectStructure.KaFirLibraryTargetPlatformContentScopeRefiner"/>
+
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirForLoopInReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirInvokeFunctionReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirPropertyDelegationMethodsReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirDestructuringDeclarationReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirArrayAccessReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirConstructorDelegationReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirCollectionLiteralReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirKDocReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirSimpleNameReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirDefaultAnnotationArgumentReference$Provider"/>
+
+    <kaAdditionalKDocResolutionProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaAdditionalKDocResolutionProviderAdapter"/>
   </extensions>
 
   <projectListeners>
@@ -81,4 +102,10 @@
         topic="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationListener"
     />
   </projectListeners>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.fir.extensions.firExtensionRegistrar"
+                    interface="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter"
+                    area="IDEA_PROJECT"/>
+  </extensionPoints>
 </idea-plugin>

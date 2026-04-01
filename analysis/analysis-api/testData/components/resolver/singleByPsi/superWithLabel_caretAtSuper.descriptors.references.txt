@@ -1,0 +1,10 @@
+KtNameReferenceExpression(71,76): 'super'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
+    symbols:
+      extension receiver with type Foo
+    resolveToSymbols:
+      (in ROOT) interface A

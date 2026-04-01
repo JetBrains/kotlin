@@ -15,7 +15,7 @@ class FirBuiltinAnnotationDeserializer(
     private val session: FirSession
 ) : AnnotationDeserializerWithProtocol(session, BuiltInSerializerProtocol) {
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> =
-        typeProto.loadAnnotationsFromProtocol(session, protocol.typeAnnotation, typeProto.flags, nameResolver)
+        typeProto.loadAnnotationsFromProtocol(session, protocol.typeAnnotation, nameResolver)
 
     override fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> =
         emptyList()

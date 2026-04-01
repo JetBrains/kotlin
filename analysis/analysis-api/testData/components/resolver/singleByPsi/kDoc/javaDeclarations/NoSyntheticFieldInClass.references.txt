@@ -3,6 +3,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: null
       symbols:
         Nothing (Unresolved reference)
 
@@ -11,6 +12,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in Storage) open fun setValue(value: kotlin.String!)
 
@@ -19,5 +21,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in Storage) open fun prop()

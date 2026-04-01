@@ -115,7 +115,7 @@ private fun Project.setupNativeTargetsWithCInterops(): List<KotlinNativeTarget> 
 }
 
 private fun Project.getWarningMessage(): String? {
-    val diagnostics = project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).filter {
+    val diagnostics = project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(path).filter {
         it.id == KotlinToolingDiagnostics.DisabledCinteropsCommonizationInHmppProject.id
     }
 

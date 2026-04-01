@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.backend.common.extensions
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 interface IrGenerationExtension {
-    companion object :
-        ProjectExtensionDescriptor<IrGenerationExtension>(
-            "org.jetbrains.kotlin.irGenerationExtension", IrGenerationExtension::class.java
-        )
+    companion object : ExtensionPointDescriptor<IrGenerationExtension>(
+        name = "org.jetbrains.kotlin.irGenerationExtension",
+        extensionClass = IrGenerationExtension::class.java,
+    )
 
     fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext)
 

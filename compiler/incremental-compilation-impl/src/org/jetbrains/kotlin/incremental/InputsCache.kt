@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.incremental
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.report.debug
+import org.jetbrains.kotlin.incremental.snapshots.ConfigurationInputsMap
 import org.jetbrains.kotlin.incremental.snapshots.FileSnapshotMap
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.incremental.storage.SourceToOutputFilesMap
@@ -31,9 +32,11 @@ class InputsCache(
     companion object {
         private const val SOURCE_SNAPSHOTS = "source-snapshot"
         private const val SOURCE_TO_OUTPUT_FILES = "source-to-output"
+        private const val CONFIGURATION_INPUTS = "configuration-inputs"
     }
 
     internal val sourceSnapshotMap = registerMap(FileSnapshotMap(SOURCE_SNAPSHOTS.storageFile, icContext))
+    internal val configurationInputsMap = registerMap(ConfigurationInputsMap(CONFIGURATION_INPUTS.storageFile, icContext))
     private val sourceToOutputMap = registerMap(SourceToOutputFilesMap(SOURCE_TO_OUTPUT_FILES.storageFile, icContext))
 
     fun removeOutputForSourceFiles(sources: Iterable<File>) {

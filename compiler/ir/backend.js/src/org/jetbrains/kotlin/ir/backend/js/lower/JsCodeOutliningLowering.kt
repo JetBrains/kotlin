@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.translateJsCodeInt
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.irAnnotation
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irCallConstructor
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -263,7 +263,7 @@ private class JsCodeOutlineTransformer(
 
     private fun addSpecialAnnotation(outlinedFunction: IrSimpleFunction): IrConstructorCall {
         val builder = loweringContext.createIrBuilder(outlinedFunction.symbol)
-        val annotation = builder.irCallConstructor(
+        val annotation = builder.irAnnotation(
             symbols.jsOutlinedFunctionAnnotationSymbol.constructors.first(),
             typeArguments = emptyList(),
         )
@@ -351,15 +351,19 @@ class JsScopesCollector : RecursiveJsVisitor() {
     override fun visitVars(x: JsVars) {
         super.visitVars(x)
         val currentScope = functionsStack.last()
-        x.vars.forEach { currentScope.add(it.name.ident) }
+        x.vars.flatMap { it.assignable.names }.forEach { name ->
+            currentScope.add(name.ident)
+        }
     }
 
     override fun visitFunction(x: JsFunction) {
         val parentScope = functionsStack.last()
         val newScope = Scope(parentScope).apply {
-            val name = x.name?.ident
-            if (name != null) add(name)
-            x.parameters.forEach { add(it.name.ident) }
+            val funcName = x.name?.ident
+            if (funcName != null) add(funcName)
+            x.parameters.flatMap { it.assignable.names }.forEach { name ->
+                add(name.ident)
+            }
         }
         functionsStack.push(newScope)
         functionalScopes[x] = newScope
@@ -378,10 +382,9 @@ private class KotlinLocalsUsageCollector(
 ) : RecursiveJsVisitor() {
     private val functionStack = mutableListOf<JsFunction?>(null)
     private val processedNames = mutableSetOf<String>()
-    private val kotlinLocalsUsedInJs = linkedMapOf<JsName, IrValueDeclaration>()
 
     val usedLocals: Map<JsName, IrValueDeclaration>
-        get() = kotlinLocalsUsedInJs
+        field = linkedMapOf<JsName, IrValueDeclaration>()
 
     override fun visitFunction(x: JsFunction) {
         functionStack.push(x)
@@ -397,7 +400,7 @@ private class KotlinLocalsUsageCollector(
         // Keeping track of processed names to avoid registering them multiple times
         if (processedNames.add(name.ident) && !name.isDeclaredInsideJsCode()) {
             findValueDeclarationWithName(name.ident)?.let {
-                kotlinLocalsUsedInJs[name] = it
+                usedLocals[name] = it
             }
         }
     }

@@ -134,7 +134,7 @@ KtNameReferenceExpression(197,201): 'Left'
   null
 
 KtNameReferenceExpression(205,206): 'x'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: x>
 
@@ -151,12 +151,12 @@ KtUserType(214,219): 'Right'
   null
 
 KtNameReferenceExpression(214,219): 'Right'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Right>
 
 KtNameReferenceExpression(223,224): 'y'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: y>
 
@@ -200,7 +200,7 @@ KtNameReferenceExpression(272,276): 'Left'
   null
 
 KtNameReferenceExpression(280,281): 'x'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: x>
 
@@ -217,11 +217,11 @@ KtUserType(289,294): 'Right'
   null
 
 KtNameReferenceExpression(289,294): 'Right'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Right>
 
 KtNameReferenceExpression(298,299): 'y'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: y>

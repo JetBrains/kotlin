@@ -9,7 +9,7 @@ package foo
 
 @JsExport
 @Deprecated("message 1")
-fun foo() {}
+fun funktion() {}
 
 @JsExport
 @Deprecated("message 2")
@@ -32,8 +32,28 @@ class AnotherClass @Deprecated("message 4") constructor(val value: String) {
 
     fun baz() {}
 
-    @Deprecated("message 7")
-    val bar: String = "Test"
+    @Deprecated("deprecated read-only property")
+    val readOnlyProperty: String = "Test"
+
+    @Deprecated("deprecated read-write property")
+    var readWriteProperty: String = "Test"
+
+    @get:Deprecated("this getter is deprecated")
+    var deprecatedGetter: String = "deprecatedGetter"
+
+    @set:Deprecated("this setter is deprecated")
+    var deprecatedSetter: String = "deprecatedSetter"
+
+    @property:Deprecated("deprecated property")
+    @get:Deprecated("deprecated getter")
+    @set:Deprecated("deprecated setter")
+    var mixedDeprecated: String = "mixedDeprecated"
+
+    inner class Inner @Deprecated("deprecated inner class primary constructor") constructor(value: String) {
+        @Deprecated("deprecated inner class secondary constructor")
+        @JsName("fromNothing")
+        constructor(): this("Test")
+    }
 }
 
 @JsExport
@@ -52,4 +72,12 @@ object TestObject {
     fun bar() {}
     @Deprecated("message 11")
     val baz: String = "Test"
+}
+
+@JsExport
+@Deprecated("Whole enum")
+enum class TestEnum {
+    @Deprecated("Only first entry")
+    A,
+    B,
 }

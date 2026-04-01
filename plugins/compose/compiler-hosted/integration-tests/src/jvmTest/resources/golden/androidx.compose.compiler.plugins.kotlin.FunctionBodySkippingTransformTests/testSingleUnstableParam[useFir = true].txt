@@ -7,19 +7,28 @@ import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
 
 
+class Foo(var value: Int = 0)
+
 @Composable
 fun Test(x: Foo) {
-    A(x)
+    used(x)
 }
 
 //
 // Transformed IR
 // ------------------------------------------
 
+@StabilityInferred(parameters = 0)
+class Foo(var value: Int = 0) {
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
 @Composable
 fun Test(x: Foo, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)N(x)<A(x)>:Test.kt")
+  sourceInformation(%composer, "C(Test)N(x):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(x)) 0b0100 else 0b0010
@@ -28,7 +37,7 @@ fun Test(x: Foo, %composer: Composer?, %changed: Int) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    A(x, %composer, 0b1110 and %dirty)
+    used(x)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

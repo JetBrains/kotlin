@@ -839,6 +839,18 @@ class CXTypeAttributes(rawPtr: NativePtr) : CStructVar(rawPtr) {
         set(value) { memberAt<COpaquePointerVar>(0).value = value }
 }
 
+@CNaturalStruct("data")
+@ExperimentalForeignApi
+class CString(rawPtr: NativePtr) : CStructVar(rawPtr) {
+    
+    @Deprecated("Use sizeOf\u003CT\u003E() or alignOf\u003CT\u003E() instead.", ReplaceWith(""), DeprecationLevel.WARNING)
+    companion object : CStructVar.Type(8, 8)
+    
+    var data: CPointer<ByteVar>?
+        get() = memberAt<CPointerVar<ByteVar>>(0).value
+        set(value) { memberAt<CPointerVar<ByteVar>>(0).value = value }
+}
+
 @ExperimentalForeignApi
 enum class CXErrorCode(value: Int) : CEnum {
     CXError_Success(0),
@@ -1153,6 +1165,8 @@ enum class CXCursorKind(value: Int) : CEnum {
     CXCursor_RequiresExpr(154),
     CXCursor_CXXParenListInitExpr(155),
     CXCursor_PackIndexingExpr(156),
+    CXCursor_ForgePtrExpr(198),
+    CXCursor_GetBoundExpr(199),
     CXCursor_UnexposedStmt(200),
     CXCursor_LabelStmt(201),
     CXCursor_CompoundStmt(202),
@@ -1262,8 +1276,22 @@ enum class CXCursorKind(value: Int) : CEnum {
     CXCursor_OMPScopeDirective(306),
     CXCursor_OMPReverseDirective(307),
     CXCursor_OMPInterchangeDirective(308),
+    CXCursor_OMPAssumeDirective(309),
+    CXCursor_OMPStripeDirective(310),
     CXCursor_OpenACCComputeConstruct(320),
     CXCursor_OpenACCLoopConstruct(321),
+    CXCursor_OpenACCCombinedConstruct(322),
+    CXCursor_OpenACCDataConstruct(323),
+    CXCursor_OpenACCEnterDataConstruct(324),
+    CXCursor_OpenACCExitDataConstruct(325),
+    CXCursor_OpenACCHostDataConstruct(326),
+    CXCursor_OpenACCWaitConstruct(327),
+    CXCursor_OpenACCInitConstruct(328),
+    CXCursor_OpenACCShutdownConstruct(329),
+    CXCursor_OpenACCSetConstruct(330),
+    CXCursor_OpenACCUpdateConstruct(331),
+    CXCursor_OpenACCAtomicConstruct(332),
+    CXCursor_OpenACCCacheConstruct(333),
     CXCursor_TranslationUnit(350),
     CXCursor_UnexposedAttr(400),
     CXCursor_IBActionAttr(401),
@@ -1343,7 +1371,7 @@ enum class CXCursorKind(value: Int) : CEnum {
             get() = CXCursor_UnexposedExpr
         
         val CXCursor_LastExpr: CXCursorKind
-            get() = CXCursor_PackIndexingExpr
+            get() = CXCursor_GetBoundExpr
         
         val CXCursor_FirstStmt: CXCursorKind
             get() = CXCursor_UnexposedStmt
@@ -1352,7 +1380,7 @@ enum class CXCursorKind(value: Int) : CEnum {
             get() = CXCursor_GCCAsmStmt
         
         val CXCursor_LastStmt: CXCursorKind
-            get() = CXCursor_OpenACCLoopConstruct
+            get() = CXCursor_OpenACCCacheConstruct
         
         val CXCursor_FirstAttr: CXCursorKind
             get() = CXCursor_UnexposedAttr
@@ -1584,6 +1612,9 @@ enum class CXTypeKind(value: Int) : CEnum {
     CXType_ExtVector(176),
     CXType_Atomic(177),
     CXType_BTFTagAttributed(178),
+    CXType_HLSLResource(179),
+    CXType_HLSLAttributedResource(180),
+    CXType_HLSLInlineSpirv(181),
     ;
     
     companion object {
@@ -1644,6 +1675,18 @@ enum class CXCallingConv(value: Int) : CEnum {
     CXCallingConv_M68kRTD(19),
     CXCallingConv_PreserveNone(20),
     CXCallingConv_RISCVVectorCall(21),
+    CXCallingConv_RISCVVLSCall_32(22),
+    CXCallingConv_RISCVVLSCall_64(23),
+    CXCallingConv_RISCVVLSCall_128(24),
+    CXCallingConv_RISCVVLSCall_256(25),
+    CXCallingConv_RISCVVLSCall_512(26),
+    CXCallingConv_RISCVVLSCall_1024(27),
+    CXCallingConv_RISCVVLSCall_2048(28),
+    CXCallingConv_RISCVVLSCall_4096(29),
+    CXCallingConv_RISCVVLSCall_8192(30),
+    CXCallingConv_RISCVVLSCall_16384(31),
+    CXCallingConv_RISCVVLSCall_32768(32),
+    CXCallingConv_RISCVVLSCall_65536(33),
     CXCallingConv_Invalid(100),
     CXCallingConv_Unexposed(200),
     ;
@@ -1959,60 +2002,6 @@ enum class CXIdxEntityKind(value: Int) : CEnum {
 }
 
 @ExperimentalForeignApi
-enum class CXBinaryOperatorKind(value: Int) : CEnum {
-    CXBinaryOperator_Invalid(0),
-    CXBinaryOperator_PtrMemD(1),
-    CXBinaryOperator_PtrMemI(2),
-    CXBinaryOperator_Mul(3),
-    CXBinaryOperator_Div(4),
-    CXBinaryOperator_Rem(5),
-    CXBinaryOperator_Add(6),
-    CXBinaryOperator_Sub(7),
-    CXBinaryOperator_Shl(8),
-    CXBinaryOperator_Shr(9),
-    CXBinaryOperator_Cmp(10),
-    CXBinaryOperator_LT(11),
-    CXBinaryOperator_GT(12),
-    CXBinaryOperator_LE(13),
-    CXBinaryOperator_GE(14),
-    CXBinaryOperator_EQ(15),
-    CXBinaryOperator_NE(16),
-    CXBinaryOperator_And(17),
-    CXBinaryOperator_Xor(18),
-    CXBinaryOperator_Or(19),
-    CXBinaryOperator_LAnd(20),
-    CXBinaryOperator_LOr(21),
-    CXBinaryOperator_Assign(22),
-    CXBinaryOperator_MulAssign(23),
-    CXBinaryOperator_DivAssign(24),
-    CXBinaryOperator_RemAssign(25),
-    CXBinaryOperator_AddAssign(26),
-    CXBinaryOperator_SubAssign(27),
-    CXBinaryOperator_ShlAssign(28),
-    CXBinaryOperator_ShrAssign(29),
-    CXBinaryOperator_AndAssign(30),
-    CXBinaryOperator_XorAssign(31),
-    CXBinaryOperator_OrAssign(32),
-    CXBinaryOperator_Comma(33),
-    ;
-    
-    companion object {
-        
-        @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
-        fun byValue(value: Int): CXBinaryOperatorKind = values().find { it.value == value }!!
-    }
-    
-    override open val value: Int = value
-    class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
-        @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-        companion object : Type(sizeOf<IntVar>().toInt())
-        var value: CXBinaryOperatorKind
-            get() = byValue(this.reinterpret<IntVar>().value)
-            set(value) { this.reinterpret<IntVar>().value = value.value }
-    }
-}
-
-@ExperimentalForeignApi
 enum class CXUnaryOperatorKind(value: Int) : CEnum {
     CXUnaryOperator_Invalid(0),
     CXUnaryOperator_PostInc(1),
@@ -2215,16 +2204,23 @@ fun clang_equalLocations(loc1: CValue<CXSourceLocation>, loc2: CValue<CXSourceLo
 }
 
 @ExperimentalForeignApi
+fun clang_isBeforeInTranslationUnit(loc1: CValue<CXSourceLocation>, loc2: CValue<CXSourceLocation>): Int {
+    memScoped {
+        return kniBridge22(loc1.getPointer(memScope).rawValue, loc2.getPointer(memScope).rawValue)
+    }
+}
+
+@ExperimentalForeignApi
 fun clang_Location_isInSystemHeader(location: CValue<CXSourceLocation>): Int {
     memScoped {
-        return kniBridge22(location.getPointer(memScope).rawValue)
+        return kniBridge23(location.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Location_isFromMainFile(location: CValue<CXSourceLocation>): Int {
     memScoped {
-        return kniBridge23(location.getPointer(memScope).rawValue)
+        return kniBridge24(location.getPointer(memScope).rawValue)
     }
 }
 
@@ -2232,7 +2228,7 @@ fun clang_Location_isFromMainFile(location: CValue<CXSourceLocation>): Int {
 fun clang_getNullRange(): CValue<CXSourceRange> {
     val kniRetVal = nativeHeap.alloc<CXSourceRange>()
     try {
-        kniBridge24(kniRetVal.rawPtr)
+        kniBridge25(kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
@@ -2242,7 +2238,7 @@ fun clang_getRange(begin: CValue<CXSourceLocation>, end: CValue<CXSourceLocation
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXSourceRange>()
         try {
-            kniBridge25(begin.getPointer(memScope).rawValue, end.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge26(begin.getPointer(memScope).rawValue, end.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -2251,65 +2247,54 @@ fun clang_getRange(begin: CValue<CXSourceLocation>, end: CValue<CXSourceLocation
 @ExperimentalForeignApi
 fun clang_equalRanges(range1: CValue<CXSourceRange>, range2: CValue<CXSourceRange>): Int {
     memScoped {
-        return kniBridge26(range1.getPointer(memScope).rawValue, range2.getPointer(memScope).rawValue)
+        return kniBridge27(range1.getPointer(memScope).rawValue, range2.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Range_isNull(range: CValue<CXSourceRange>): Int {
     memScoped {
-        return kniBridge27(range.getPointer(memScope).rawValue)
+        return kniBridge28(range.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getExpansionLocation(location: CValue<CXSourceLocation>, file: CValuesRef<CXFileVar>?, line: CValuesRef<IntVar>?, column: CValuesRef<IntVar>?, offset: CValuesRef<IntVar>?): Unit {
     memScoped {
-        return kniBridge28(location.getPointer(memScope).rawValue, file?.getPointer(memScope).rawValue, line?.getPointer(memScope).rawValue, column?.getPointer(memScope).rawValue, offset?.getPointer(memScope).rawValue)
+        return kniBridge29(location.getPointer(memScope).rawValue, file?.getPointer(memScope).rawValue, line?.getPointer(memScope).rawValue, column?.getPointer(memScope).rawValue, offset?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getPresumedLocation(location: CValue<CXSourceLocation>, filename: CValuesRef<CXString>?, line: CValuesRef<IntVar>?, column: CValuesRef<IntVar>?): Unit {
     memScoped {
-        return kniBridge29(location.getPointer(memScope).rawValue, filename?.getPointer(memScope).rawValue, line?.getPointer(memScope).rawValue, column?.getPointer(memScope).rawValue)
+        return kniBridge30(location.getPointer(memScope).rawValue, filename?.getPointer(memScope).rawValue, line?.getPointer(memScope).rawValue, column?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getInstantiationLocation(location: CValue<CXSourceLocation>, file: CValuesRef<CXFileVar>?, line: CValuesRef<IntVar>?, column: CValuesRef<IntVar>?, offset: CValuesRef<IntVar>?): Unit {
     memScoped {
-        return kniBridge30(location.getPointer(memScope).rawValue, file?.getPointer(memScope).rawValue, line?.getPointer(memScope).rawValue, column?.getPointer(memScope).rawValue, offset?.getPointer(memScope).rawValue)
+        return kniBridge31(location.getPointer(memScope).rawValue, file?.getPointer(memScope).rawValue, line?.getPointer(memScope).rawValue, column?.getPointer(memScope).rawValue, offset?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getSpellingLocation(location: CValue<CXSourceLocation>, file: CValuesRef<CXFileVar>?, line: CValuesRef<IntVar>?, column: CValuesRef<IntVar>?, offset: CValuesRef<IntVar>?): Unit {
     memScoped {
-        return kniBridge31(location.getPointer(memScope).rawValue, file?.getPointer(memScope).rawValue, line?.getPointer(memScope).rawValue, column?.getPointer(memScope).rawValue, offset?.getPointer(memScope).rawValue)
+        return kniBridge32(location.getPointer(memScope).rawValue, file?.getPointer(memScope).rawValue, line?.getPointer(memScope).rawValue, column?.getPointer(memScope).rawValue, offset?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getFileLocation(location: CValue<CXSourceLocation>, file: CValuesRef<CXFileVar>?, line: CValuesRef<IntVar>?, column: CValuesRef<IntVar>?, offset: CValuesRef<IntVar>?): Unit {
     memScoped {
-        return kniBridge32(location.getPointer(memScope).rawValue, file?.getPointer(memScope).rawValue, line?.getPointer(memScope).rawValue, column?.getPointer(memScope).rawValue, offset?.getPointer(memScope).rawValue)
+        return kniBridge33(location.getPointer(memScope).rawValue, file?.getPointer(memScope).rawValue, line?.getPointer(memScope).rawValue, column?.getPointer(memScope).rawValue, offset?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getRangeStart(range: CValue<CXSourceRange>): CValue<CXSourceLocation> {
-    memScoped {
-        val kniRetVal = nativeHeap.alloc<CXSourceLocation>()
-        try {
-            kniBridge33(range.getPointer(memScope).rawValue, kniRetVal.rawPtr)
-            return kniRetVal.readValue()
-        } finally { nativeHeap.free(kniRetVal) }
-    }
-}
-
-@ExperimentalForeignApi
-fun clang_getRangeEnd(range: CValue<CXSourceRange>): CValue<CXSourceLocation> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXSourceLocation>()
         try {
@@ -2320,68 +2305,79 @@ fun clang_getRangeEnd(range: CValue<CXSourceRange>): CValue<CXSourceLocation> {
 }
 
 @ExperimentalForeignApi
+fun clang_getRangeEnd(range: CValue<CXSourceRange>): CValue<CXSourceLocation> {
+    memScoped {
+        val kniRetVal = nativeHeap.alloc<CXSourceLocation>()
+        try {
+            kniBridge35(range.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            return kniRetVal.readValue()
+        } finally { nativeHeap.free(kniRetVal) }
+    }
+}
+
+@ExperimentalForeignApi
 fun clang_disposeSourceRangeList(ranges: CValuesRef<CXSourceRangeList>?): Unit {
     memScoped {
-        return kniBridge35(ranges?.getPointer(memScope).rawValue)
+        return kniBridge36(ranges?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getNumDiagnosticsInSet(Diags: CXDiagnosticSet?): Int {
-    return kniBridge36(Diags.rawValue)
+    return kniBridge37(Diags.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_getDiagnosticInSet(Diags: CXDiagnosticSet?, Index: Int): CXDiagnostic? {
-    return interpretCPointer<COpaque>(kniBridge37(Diags.rawValue, Index))
+    return interpretCPointer<COpaque>(kniBridge38(Diags.rawValue, Index))
 }
 
 @ExperimentalForeignApi
 fun clang_loadDiagnostics(file: String?, error: CValuesRef<CXLoadDiag_Error.Var>?, errorString: CValuesRef<CXString>?): CXDiagnosticSet? {
     memScoped {
-        return interpretCPointer<COpaque>(kniBridge38(file?.cstr?.getPointer(memScope).rawValue, error?.getPointer(memScope).rawValue, errorString?.getPointer(memScope).rawValue))
+        return interpretCPointer<COpaque>(kniBridge39(file?.cstr?.getPointer(memScope).rawValue, error?.getPointer(memScope).rawValue, errorString?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_disposeDiagnosticSet(Diags: CXDiagnosticSet?): Unit {
-    return kniBridge39(Diags.rawValue)
+    return kniBridge40(Diags.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_getChildDiagnostics(D: CXDiagnostic?): CXDiagnosticSet? {
-    return interpretCPointer<COpaque>(kniBridge40(D.rawValue))
+    return interpretCPointer<COpaque>(kniBridge41(D.rawValue))
 }
 
 @ExperimentalForeignApi
 fun clang_disposeDiagnostic(Diagnostic: CXDiagnostic?): Unit {
-    return kniBridge41(Diagnostic.rawValue)
+    return kniBridge42(Diagnostic.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_formatDiagnostic(Diagnostic: CXDiagnostic?, Options: Int): CValue<CXString> {
     val kniRetVal = nativeHeap.alloc<CXString>()
     try {
-        kniBridge42(Diagnostic.rawValue, Options, kniRetVal.rawPtr)
+        kniBridge43(Diagnostic.rawValue, Options, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
 
 @ExperimentalForeignApi
 fun clang_defaultDiagnosticDisplayOptions(): Int {
-    return kniBridge43()
+    return kniBridge44()
 }
 
 @ExperimentalForeignApi
 fun clang_getDiagnosticSeverity(arg0: CXDiagnostic?): CXDiagnosticSeverity {
-    return CXDiagnosticSeverity.byValue(kniBridge44(arg0.rawValue))
+    return CXDiagnosticSeverity.byValue(kniBridge45(arg0.rawValue))
 }
 
 @ExperimentalForeignApi
 fun clang_getDiagnosticLocation(arg0: CXDiagnostic?): CValue<CXSourceLocation> {
     val kniRetVal = nativeHeap.alloc<CXSourceLocation>()
     try {
-        kniBridge45(arg0.rawValue, kniRetVal.rawPtr)
+        kniBridge46(arg0.rawValue, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
@@ -2390,7 +2386,7 @@ fun clang_getDiagnosticLocation(arg0: CXDiagnostic?): CValue<CXSourceLocation> {
 fun clang_getDiagnosticSpelling(arg0: CXDiagnostic?): CValue<CXString> {
     val kniRetVal = nativeHeap.alloc<CXString>()
     try {
-        kniBridge46(arg0.rawValue, kniRetVal.rawPtr)
+        kniBridge47(arg0.rawValue, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
@@ -2400,7 +2396,7 @@ fun clang_getDiagnosticOption(Diag: CXDiagnostic?, Disable: CValuesRef<CXString>
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge47(Diag.rawValue, Disable?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge48(Diag.rawValue, Disable?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -2408,14 +2404,14 @@ fun clang_getDiagnosticOption(Diag: CXDiagnostic?, Disable: CValuesRef<CXString>
 
 @ExperimentalForeignApi
 fun clang_getDiagnosticCategory(arg0: CXDiagnostic?): Int {
-    return kniBridge48(arg0.rawValue)
+    return kniBridge49(arg0.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_getDiagnosticCategoryName(Category: Int): CValue<CXString> {
     val kniRetVal = nativeHeap.alloc<CXString>()
     try {
-        kniBridge49(Category, kniRetVal.rawPtr)
+        kniBridge50(Category, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
@@ -2424,28 +2420,37 @@ fun clang_getDiagnosticCategoryName(Category: Int): CValue<CXString> {
 fun clang_getDiagnosticCategoryText(arg0: CXDiagnostic?): CValue<CXString> {
     val kniRetVal = nativeHeap.alloc<CXString>()
     try {
-        kniBridge50(arg0.rawValue, kniRetVal.rawPtr)
+        kniBridge51(arg0.rawValue, kniRetVal.rawPtr)
+        return kniRetVal.readValue()
+    } finally { nativeHeap.free(kniRetVal) }
+}
+
+@ExperimentalForeignApi
+fun clang_getDiagnosticCategoryURL(arg0: CXDiagnostic?): CValue<CXString> {
+    val kniRetVal = nativeHeap.alloc<CXString>()
+    try {
+        kniBridge52(arg0.rawValue, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
 
 @ExperimentalForeignApi
 fun clang_getDiagnosticNumRanges(arg0: CXDiagnostic?): Int {
-    return kniBridge51(arg0.rawValue)
+    return kniBridge53(arg0.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_getDiagnosticRange(Diagnostic: CXDiagnostic?, Range: Int): CValue<CXSourceRange> {
     val kniRetVal = nativeHeap.alloc<CXSourceRange>()
     try {
-        kniBridge52(Diagnostic.rawValue, Range, kniRetVal.rawPtr)
+        kniBridge54(Diagnostic.rawValue, Range, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
 
 @ExperimentalForeignApi
 fun clang_getDiagnosticNumFixIts(Diagnostic: CXDiagnostic?): Int {
-    return kniBridge53(Diagnostic.rawValue)
+    return kniBridge55(Diagnostic.rawValue)
 }
 
 @ExperimentalForeignApi
@@ -2453,7 +2458,7 @@ fun clang_getDiagnosticFixIt(Diagnostic: CXDiagnostic?, FixIt: Int, ReplacementR
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge54(Diagnostic.rawValue, FixIt, ReplacementRange?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge56(Diagnostic.rawValue, FixIt, ReplacementRange?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -2461,54 +2466,54 @@ fun clang_getDiagnosticFixIt(Diagnostic: CXDiagnostic?, FixIt: Int, ReplacementR
 
 @ExperimentalForeignApi
 fun clang_createIndex(excludeDeclarationsFromPCH: Int, displayDiagnostics: Int): CXIndex? {
-    return interpretCPointer<COpaque>(kniBridge55(excludeDeclarationsFromPCH, displayDiagnostics))
+    return interpretCPointer<COpaque>(kniBridge57(excludeDeclarationsFromPCH, displayDiagnostics))
 }
 
 @ExperimentalForeignApi
 fun clang_disposeIndex(index: CXIndex?): Unit {
-    return kniBridge56(index.rawValue)
+    return kniBridge58(index.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_createIndexWithOptions(options: CValuesRef<CXIndexOptions>?): CXIndex? {
     memScoped {
-        return interpretCPointer<COpaque>(kniBridge57(options?.getPointer(memScope).rawValue))
+        return interpretCPointer<COpaque>(kniBridge59(options?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_CXIndex_setGlobalOptions(arg0: CXIndex?, options: Int): Unit {
-    return kniBridge58(arg0.rawValue, options)
+    return kniBridge60(arg0.rawValue, options)
 }
 
 @ExperimentalForeignApi
 fun clang_CXIndex_getGlobalOptions(arg0: CXIndex?): Int {
-    return kniBridge59(arg0.rawValue)
+    return kniBridge61(arg0.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_CXIndex_setInvocationEmissionPathOption(arg0: CXIndex?, Path: String?): Unit {
     memScoped {
-        return kniBridge60(arg0.rawValue, Path?.cstr?.getPointer(memScope).rawValue)
+        return kniBridge62(arg0.rawValue, Path?.cstr?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_isFileMultipleIncludeGuarded(tu: CXTranslationUnit?, file: CXFile?): Int {
-    return kniBridge61(tu.rawValue, file.rawValue)
+    return kniBridge63(tu.rawValue, file.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_getFile(tu: CXTranslationUnit?, file_name: String?): CXFile? {
     memScoped {
-        return interpretCPointer<COpaque>(kniBridge62(tu.rawValue, file_name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<COpaque>(kniBridge64(tu.rawValue, file_name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getFileContents(tu: CXTranslationUnit?, file: CXFile?, size: CValuesRef<size_tVar>?): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge63(tu.rawValue, file.rawValue, size?.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge65(tu.rawValue, file.rawValue, size?.getPointer(memScope).rawValue))
     }
 }
 
@@ -2516,7 +2521,7 @@ fun clang_getFileContents(tu: CXTranslationUnit?, file: CXFile?, size: CValuesRe
 fun clang_getLocation(tu: CXTranslationUnit?, file: CXFile?, line: Int, column: Int): CValue<CXSourceLocation> {
     val kniRetVal = nativeHeap.alloc<CXSourceLocation>()
     try {
-        kniBridge64(tu.rawValue, file.rawValue, line, column, kniRetVal.rawPtr)
+        kniBridge66(tu.rawValue, file.rawValue, line, column, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
@@ -2525,41 +2530,41 @@ fun clang_getLocation(tu: CXTranslationUnit?, file: CXFile?, line: Int, column: 
 fun clang_getLocationForOffset(tu: CXTranslationUnit?, file: CXFile?, offset: Int): CValue<CXSourceLocation> {
     val kniRetVal = nativeHeap.alloc<CXSourceLocation>()
     try {
-        kniBridge65(tu.rawValue, file.rawValue, offset, kniRetVal.rawPtr)
+        kniBridge67(tu.rawValue, file.rawValue, offset, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
 
 @ExperimentalForeignApi
 fun clang_getSkippedRanges(tu: CXTranslationUnit?, file: CXFile?): CPointer<CXSourceRangeList>? {
-    return interpretCPointer<CXSourceRangeList>(kniBridge66(tu.rawValue, file.rawValue))
+    return interpretCPointer<CXSourceRangeList>(kniBridge68(tu.rawValue, file.rawValue))
 }
 
 @ExperimentalForeignApi
 fun clang_getAllSkippedRanges(tu: CXTranslationUnit?): CPointer<CXSourceRangeList>? {
-    return interpretCPointer<CXSourceRangeList>(kniBridge67(tu.rawValue))
+    return interpretCPointer<CXSourceRangeList>(kniBridge69(tu.rawValue))
 }
 
 @ExperimentalForeignApi
 fun clang_getNumDiagnostics(Unit: CXTranslationUnit?): Int {
-    return kniBridge68(Unit.rawValue)
+    return kniBridge70(Unit.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_getDiagnostic(Unit: CXTranslationUnit?, Index: Int): CXDiagnostic? {
-    return interpretCPointer<COpaque>(kniBridge69(Unit.rawValue, Index))
+    return interpretCPointer<COpaque>(kniBridge71(Unit.rawValue, Index))
 }
 
 @ExperimentalForeignApi
 fun clang_getDiagnosticSetFromTU(Unit: CXTranslationUnit?): CXDiagnosticSet? {
-    return interpretCPointer<COpaque>(kniBridge70(Unit.rawValue))
+    return interpretCPointer<COpaque>(kniBridge72(Unit.rawValue))
 }
 
 @ExperimentalForeignApi
 fun clang_getTranslationUnitSpelling(CTUnit: CXTranslationUnit?): CValue<CXString> {
     val kniRetVal = nativeHeap.alloc<CXString>()
     try {
-        kniBridge71(CTUnit.rawValue, kniRetVal.rawPtr)
+        kniBridge73(CTUnit.rawValue, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
@@ -2567,94 +2572,94 @@ fun clang_getTranslationUnitSpelling(CTUnit: CXTranslationUnit?): CValue<CXStrin
 @ExperimentalForeignApi
 fun clang_createTranslationUnitFromSourceFile(CIdx: CXIndex?, source_filename: String?, num_clang_command_line_args: Int, clang_command_line_args: CValuesRef<CPointerVar<ByteVar>>?, num_unsaved_files: Int, unsaved_files: CValuesRef<CXUnsavedFile>?): CXTranslationUnit? {
     memScoped {
-        return interpretCPointer<CXTranslationUnitImpl>(kniBridge72(CIdx.rawValue, source_filename?.cstr?.getPointer(memScope).rawValue, num_clang_command_line_args, clang_command_line_args?.getPointer(memScope).rawValue, num_unsaved_files, unsaved_files?.getPointer(memScope).rawValue))
+        return interpretCPointer<CXTranslationUnitImpl>(kniBridge74(CIdx.rawValue, source_filename?.cstr?.getPointer(memScope).rawValue, num_clang_command_line_args, clang_command_line_args?.getPointer(memScope).rawValue, num_unsaved_files, unsaved_files?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_createTranslationUnit(CIdx: CXIndex?, ast_filename: String?): CXTranslationUnit? {
     memScoped {
-        return interpretCPointer<CXTranslationUnitImpl>(kniBridge73(CIdx.rawValue, ast_filename?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<CXTranslationUnitImpl>(kniBridge75(CIdx.rawValue, ast_filename?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_createTranslationUnit2(CIdx: CXIndex?, ast_filename: String?, out_TU: CValuesRef<CXTranslationUnitVar>?): CXErrorCode {
     memScoped {
-        return CXErrorCode.byValue(kniBridge74(CIdx.rawValue, ast_filename?.cstr?.getPointer(memScope).rawValue, out_TU?.getPointer(memScope).rawValue))
+        return CXErrorCode.byValue(kniBridge76(CIdx.rawValue, ast_filename?.cstr?.getPointer(memScope).rawValue, out_TU?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_defaultEditingTranslationUnitOptions(): Int {
-    return kniBridge75()
+    return kniBridge77()
 }
 
 @ExperimentalForeignApi
 fun clang_parseTranslationUnit(CIdx: CXIndex?, source_filename: String?, command_line_args: CValuesRef<CPointerVar<ByteVar>>?, num_command_line_args: Int, unsaved_files: CValuesRef<CXUnsavedFile>?, num_unsaved_files: Int, options: Int): CXTranslationUnit? {
     memScoped {
-        return interpretCPointer<CXTranslationUnitImpl>(kniBridge76(CIdx.rawValue, source_filename?.cstr?.getPointer(memScope).rawValue, command_line_args?.getPointer(memScope).rawValue, num_command_line_args, unsaved_files?.getPointer(memScope).rawValue, num_unsaved_files, options))
+        return interpretCPointer<CXTranslationUnitImpl>(kniBridge78(CIdx.rawValue, source_filename?.cstr?.getPointer(memScope).rawValue, command_line_args?.getPointer(memScope).rawValue, num_command_line_args, unsaved_files?.getPointer(memScope).rawValue, num_unsaved_files, options))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_parseTranslationUnit2(CIdx: CXIndex?, source_filename: String?, command_line_args: CValuesRef<CPointerVar<ByteVar>>?, num_command_line_args: Int, unsaved_files: CValuesRef<CXUnsavedFile>?, num_unsaved_files: Int, options: Int, out_TU: CValuesRef<CXTranslationUnitVar>?): CXErrorCode {
     memScoped {
-        return CXErrorCode.byValue(kniBridge77(CIdx.rawValue, source_filename?.cstr?.getPointer(memScope).rawValue, command_line_args?.getPointer(memScope).rawValue, num_command_line_args, unsaved_files?.getPointer(memScope).rawValue, num_unsaved_files, options, out_TU?.getPointer(memScope).rawValue))
+        return CXErrorCode.byValue(kniBridge79(CIdx.rawValue, source_filename?.cstr?.getPointer(memScope).rawValue, command_line_args?.getPointer(memScope).rawValue, num_command_line_args, unsaved_files?.getPointer(memScope).rawValue, num_unsaved_files, options, out_TU?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_parseTranslationUnit2FullArgv(CIdx: CXIndex?, source_filename: String?, command_line_args: CValuesRef<CPointerVar<ByteVar>>?, num_command_line_args: Int, unsaved_files: CValuesRef<CXUnsavedFile>?, num_unsaved_files: Int, options: Int, out_TU: CValuesRef<CXTranslationUnitVar>?): CXErrorCode {
     memScoped {
-        return CXErrorCode.byValue(kniBridge78(CIdx.rawValue, source_filename?.cstr?.getPointer(memScope).rawValue, command_line_args?.getPointer(memScope).rawValue, num_command_line_args, unsaved_files?.getPointer(memScope).rawValue, num_unsaved_files, options, out_TU?.getPointer(memScope).rawValue))
+        return CXErrorCode.byValue(kniBridge80(CIdx.rawValue, source_filename?.cstr?.getPointer(memScope).rawValue, command_line_args?.getPointer(memScope).rawValue, num_command_line_args, unsaved_files?.getPointer(memScope).rawValue, num_unsaved_files, options, out_TU?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_defaultSaveOptions(TU: CXTranslationUnit?): Int {
-    return kniBridge79(TU.rawValue)
+    return kniBridge81(TU.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_saveTranslationUnit(TU: CXTranslationUnit?, FileName: String?, options: Int): Int {
     memScoped {
-        return kniBridge80(TU.rawValue, FileName?.cstr?.getPointer(memScope).rawValue, options)
+        return kniBridge82(TU.rawValue, FileName?.cstr?.getPointer(memScope).rawValue, options)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_suspendTranslationUnit(arg0: CXTranslationUnit?): Int {
-    return kniBridge81(arg0.rawValue)
+    return kniBridge83(arg0.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_disposeTranslationUnit(arg0: CXTranslationUnit?): Unit {
-    return kniBridge82(arg0.rawValue)
+    return kniBridge84(arg0.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_defaultReparseOptions(TU: CXTranslationUnit?): Int {
-    return kniBridge83(TU.rawValue)
+    return kniBridge85(TU.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_reparseTranslationUnit(TU: CXTranslationUnit?, num_unsaved_files: Int, unsaved_files: CValuesRef<CXUnsavedFile>?, options: Int): Int {
     memScoped {
-        return kniBridge84(TU.rawValue, num_unsaved_files, unsaved_files?.getPointer(memScope).rawValue, options)
+        return kniBridge86(TU.rawValue, num_unsaved_files, unsaved_files?.getPointer(memScope).rawValue, options)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getTUResourceUsageName(kind: CXTUResourceUsageKind): CPointer<ByteVar>? {
-    return interpretCPointer<ByteVar>(kniBridge85(kind.value))
+    return interpretCPointer<ByteVar>(kniBridge87(kind.value))
 }
 
 @ExperimentalForeignApi
 fun clang_getCXTUResourceUsage(TU: CXTranslationUnit?): CValue<CXTUResourceUsage> {
     val kniRetVal = nativeHeap.alloc<CXTUResourceUsage>()
     try {
-        kniBridge86(TU.rawValue, kniRetVal.rawPtr)
+        kniBridge88(TU.rawValue, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
@@ -2662,39 +2667,39 @@ fun clang_getCXTUResourceUsage(TU: CXTranslationUnit?): CValue<CXTUResourceUsage
 @ExperimentalForeignApi
 fun clang_disposeCXTUResourceUsage(usage: CValue<CXTUResourceUsage>): Unit {
     memScoped {
-        return kniBridge87(usage.getPointer(memScope).rawValue)
+        return kniBridge89(usage.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getTranslationUnitTargetInfo(CTUnit: CXTranslationUnit?): CXTargetInfo? {
-    return interpretCPointer<CXTargetInfoImpl>(kniBridge88(CTUnit.rawValue))
+    return interpretCPointer<CXTargetInfoImpl>(kniBridge90(CTUnit.rawValue))
 }
 
 @ExperimentalForeignApi
 fun clang_TargetInfo_dispose(Info: CXTargetInfo?): Unit {
-    return kniBridge89(Info.rawValue)
+    return kniBridge91(Info.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_TargetInfo_getTriple(Info: CXTargetInfo?): CValue<CXString> {
     val kniRetVal = nativeHeap.alloc<CXString>()
     try {
-        kniBridge90(Info.rawValue, kniRetVal.rawPtr)
+        kniBridge92(Info.rawValue, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
 
 @ExperimentalForeignApi
 fun clang_TargetInfo_getPointerWidth(Info: CXTargetInfo?): Int {
-    return kniBridge91(Info.rawValue)
+    return kniBridge93(Info.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_getNullCursor(): CValue<CXCursor> {
     val kniRetVal = nativeHeap.alloc<CXCursor>()
     try {
-        kniBridge92(kniRetVal.rawPtr)
+        kniBridge94(kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
@@ -2703,7 +2708,7 @@ fun clang_getNullCursor(): CValue<CXCursor> {
 fun clang_getTranslationUnitCursor(arg0: CXTranslationUnit?): CValue<CXCursor> {
     val kniRetVal = nativeHeap.alloc<CXCursor>()
     try {
-        kniBridge93(arg0.rawValue, kniRetVal.rawPtr)
+        kniBridge95(arg0.rawValue, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
@@ -2711,122 +2716,122 @@ fun clang_getTranslationUnitCursor(arg0: CXTranslationUnit?): CValue<CXCursor> {
 @ExperimentalForeignApi
 fun clang_equalCursors(arg0: CValue<CXCursor>, arg1: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge94(arg0.getPointer(memScope).rawValue, arg1.getPointer(memScope).rawValue)
+        return kniBridge96(arg0.getPointer(memScope).rawValue, arg1.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_isNull(cursor: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge95(cursor.getPointer(memScope).rawValue)
+        return kniBridge97(cursor.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_hashCursor(arg0: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge96(arg0.getPointer(memScope).rawValue)
+        return kniBridge98(arg0.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getCursorKind(arg0: CValue<CXCursor>): CXCursorKind {
     memScoped {
-        return CXCursorKind.byValue(kniBridge97(arg0.getPointer(memScope).rawValue))
+        return CXCursorKind.byValue(kniBridge99(arg0.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_isDeclaration(arg0: CXCursorKind): Int {
-    return kniBridge98(arg0.value)
+    return kniBridge100(arg0.value)
 }
 
 @ExperimentalForeignApi
 fun clang_isInvalidDeclaration(arg0: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge99(arg0.getPointer(memScope).rawValue)
+        return kniBridge101(arg0.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_isReference(arg0: CXCursorKind): Int {
-    return kniBridge100(arg0.value)
-}
-
-@ExperimentalForeignApi
-fun clang_isExpression(arg0: CXCursorKind): Int {
-    return kniBridge101(arg0.value)
-}
-
-@ExperimentalForeignApi
-fun clang_isStatement(arg0: CXCursorKind): Int {
     return kniBridge102(arg0.value)
 }
 
 @ExperimentalForeignApi
-fun clang_isAttribute(arg0: CXCursorKind): Int {
+fun clang_isExpression(arg0: CXCursorKind): Int {
     return kniBridge103(arg0.value)
+}
+
+@ExperimentalForeignApi
+fun clang_isStatement(arg0: CXCursorKind): Int {
+    return kniBridge104(arg0.value)
+}
+
+@ExperimentalForeignApi
+fun clang_isAttribute(arg0: CXCursorKind): Int {
+    return kniBridge105(arg0.value)
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_hasAttrs(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge104(C.getPointer(memScope).rawValue)
+        return kniBridge106(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_isInvalid(arg0: CXCursorKind): Int {
-    return kniBridge105(arg0.value)
-}
-
-@ExperimentalForeignApi
-fun clang_isTranslationUnit(arg0: CXCursorKind): Int {
-    return kniBridge106(arg0.value)
-}
-
-@ExperimentalForeignApi
-fun clang_isPreprocessing(arg0: CXCursorKind): Int {
     return kniBridge107(arg0.value)
 }
 
 @ExperimentalForeignApi
-fun clang_isUnexposed(arg0: CXCursorKind): Int {
+fun clang_isTranslationUnit(arg0: CXCursorKind): Int {
     return kniBridge108(arg0.value)
+}
+
+@ExperimentalForeignApi
+fun clang_isPreprocessing(arg0: CXCursorKind): Int {
+    return kniBridge109(arg0.value)
+}
+
+@ExperimentalForeignApi
+fun clang_isUnexposed(arg0: CXCursorKind): Int {
+    return kniBridge110(arg0.value)
 }
 
 @ExperimentalForeignApi
 fun clang_getCursorLinkage(cursor: CValue<CXCursor>): CXLinkageKind {
     memScoped {
-        return CXLinkageKind.byValue(kniBridge109(cursor.getPointer(memScope).rawValue))
+        return CXLinkageKind.byValue(kniBridge111(cursor.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getCursorVisibility(cursor: CValue<CXCursor>): CXVisibilityKind {
     memScoped {
-        return CXVisibilityKind.byValue(kniBridge110(cursor.getPointer(memScope).rawValue))
+        return CXVisibilityKind.byValue(kniBridge112(cursor.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getCursorAvailability(cursor: CValue<CXCursor>): CXAvailabilityKind {
     memScoped {
-        return CXAvailabilityKind.byValue(kniBridge111(cursor.getPointer(memScope).rawValue))
+        return CXAvailabilityKind.byValue(kniBridge113(cursor.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getCursorPlatformAvailability(cursor: CValue<CXCursor>, always_deprecated: CValuesRef<IntVar>?, deprecated_message: CValuesRef<CXString>?, always_unavailable: CValuesRef<IntVar>?, unavailable_message: CValuesRef<CXString>?, availability: CValuesRef<CXPlatformAvailability>?, availability_size: Int): Int {
     memScoped {
-        return kniBridge112(cursor.getPointer(memScope).rawValue, always_deprecated?.getPointer(memScope).rawValue, deprecated_message?.getPointer(memScope).rawValue, always_unavailable?.getPointer(memScope).rawValue, unavailable_message?.getPointer(memScope).rawValue, availability?.getPointer(memScope).rawValue, availability_size)
+        return kniBridge114(cursor.getPointer(memScope).rawValue, always_deprecated?.getPointer(memScope).rawValue, deprecated_message?.getPointer(memScope).rawValue, always_unavailable?.getPointer(memScope).rawValue, unavailable_message?.getPointer(memScope).rawValue, availability?.getPointer(memScope).rawValue, availability_size)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_disposeCXPlatformAvailability(availability: CValuesRef<CXPlatformAvailability>?): Unit {
     memScoped {
-        return kniBridge113(availability?.getPointer(memScope).rawValue)
+        return kniBridge115(availability?.getPointer(memScope).rawValue)
     }
 }
 
@@ -2835,7 +2840,7 @@ fun clang_Cursor_getVarDeclInitializer(cursor: CValue<CXCursor>): CValue<CXCurso
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXCursor>()
         try {
-            kniBridge114(cursor.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge116(cursor.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -2844,59 +2849,59 @@ fun clang_Cursor_getVarDeclInitializer(cursor: CValue<CXCursor>): CValue<CXCurso
 @ExperimentalForeignApi
 fun clang_Cursor_hasVarDeclGlobalStorage(cursor: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge115(cursor.getPointer(memScope).rawValue)
+        return kniBridge117(cursor.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_hasVarDeclExternalStorage(cursor: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge116(cursor.getPointer(memScope).rawValue)
+        return kniBridge118(cursor.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getCursorLanguage(cursor: CValue<CXCursor>): CXLanguageKind {
     memScoped {
-        return CXLanguageKind.byValue(kniBridge117(cursor.getPointer(memScope).rawValue))
+        return CXLanguageKind.byValue(kniBridge119(cursor.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getCursorTLSKind(cursor: CValue<CXCursor>): CXTLSKind {
     memScoped {
-        return kniBridge118(cursor.getPointer(memScope).rawValue)
+        return kniBridge120(cursor.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_getTranslationUnit(arg0: CValue<CXCursor>): CXTranslationUnit? {
     memScoped {
-        return interpretCPointer<CXTranslationUnitImpl>(kniBridge119(arg0.getPointer(memScope).rawValue))
+        return interpretCPointer<CXTranslationUnitImpl>(kniBridge121(arg0.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_createCXCursorSet(): CXCursorSet? {
-    return interpretCPointer<CXCursorSetImpl>(kniBridge120())
+    return interpretCPointer<CXCursorSetImpl>(kniBridge122())
 }
 
 @ExperimentalForeignApi
 fun clang_disposeCXCursorSet(cset: CXCursorSet?): Unit {
-    return kniBridge121(cset.rawValue)
+    return kniBridge123(cset.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_CXCursorSet_contains(cset: CXCursorSet?, cursor: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge122(cset.rawValue, cursor.getPointer(memScope).rawValue)
+        return kniBridge124(cset.rawValue, cursor.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_CXCursorSet_insert(cset: CXCursorSet?, cursor: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge123(cset.rawValue, cursor.getPointer(memScope).rawValue)
+        return kniBridge125(cset.rawValue, cursor.getPointer(memScope).rawValue)
     }
 }
 
@@ -2905,7 +2910,7 @@ fun clang_getCursorSemanticParent(cursor: CValue<CXCursor>): CValue<CXCursor> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXCursor>()
         try {
-            kniBridge124(cursor.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge126(cursor.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -2916,7 +2921,7 @@ fun clang_getCursorLexicalParent(cursor: CValue<CXCursor>): CValue<CXCursor> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXCursor>()
         try {
-            kniBridge125(cursor.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge127(cursor.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -2925,21 +2930,21 @@ fun clang_getCursorLexicalParent(cursor: CValue<CXCursor>): CValue<CXCursor> {
 @ExperimentalForeignApi
 fun clang_getOverriddenCursors(cursor: CValue<CXCursor>, overridden: CValuesRef<CPointerVar<CXCursor>>?, num_overridden: CValuesRef<IntVar>?): Unit {
     memScoped {
-        return kniBridge126(cursor.getPointer(memScope).rawValue, overridden?.getPointer(memScope).rawValue, num_overridden?.getPointer(memScope).rawValue)
+        return kniBridge128(cursor.getPointer(memScope).rawValue, overridden?.getPointer(memScope).rawValue, num_overridden?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_disposeOverriddenCursors(overridden: CValuesRef<CXCursor>?): Unit {
     memScoped {
-        return kniBridge127(overridden?.getPointer(memScope).rawValue)
+        return kniBridge129(overridden?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getIncludedFile(cursor: CValue<CXCursor>): CXFile? {
     memScoped {
-        return interpretCPointer<COpaque>(kniBridge128(cursor.getPointer(memScope).rawValue))
+        return interpretCPointer<COpaque>(kniBridge130(cursor.getPointer(memScope).rawValue))
     }
 }
 
@@ -2948,7 +2953,7 @@ fun clang_getCursor(arg0: CXTranslationUnit?, arg1: CValue<CXSourceLocation>): C
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXCursor>()
         try {
-            kniBridge129(arg0.rawValue, arg1.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge131(arg0.rawValue, arg1.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -2959,7 +2964,7 @@ fun clang_getCursorLocation(arg0: CValue<CXCursor>): CValue<CXSourceLocation> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXSourceLocation>()
         try {
-            kniBridge130(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge132(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -2970,7 +2975,7 @@ fun clang_getCursorExtent(arg0: CValue<CXCursor>): CValue<CXSourceRange> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXSourceRange>()
         try {
-            kniBridge131(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge133(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -2981,7 +2986,7 @@ fun clang_getCursorType(C: CValue<CXCursor>): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge132(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge134(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -2992,7 +2997,7 @@ fun clang_getTypeSpelling(CT: CValue<CXType>): CValue<CXString> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge133(CT.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge135(CT.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3003,7 +3008,7 @@ fun clang_getTypedefDeclUnderlyingType(C: CValue<CXCursor>): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge134(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge136(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3014,7 +3019,7 @@ fun clang_getEnumDeclIntegerType(C: CValue<CXCursor>): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge135(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge137(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3023,35 +3028,35 @@ fun clang_getEnumDeclIntegerType(C: CValue<CXCursor>): CValue<CXType> {
 @ExperimentalForeignApi
 fun clang_getEnumConstantDeclValue(C: CValue<CXCursor>): Long {
     memScoped {
-        return kniBridge136(C.getPointer(memScope).rawValue)
+        return kniBridge138(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getEnumConstantDeclUnsignedValue(C: CValue<CXCursor>): Long {
     memScoped {
-        return kniBridge137(C.getPointer(memScope).rawValue)
+        return kniBridge139(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_isBitField(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge138(C.getPointer(memScope).rawValue)
+        return kniBridge140(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getFieldDeclBitWidth(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge139(C.getPointer(memScope).rawValue)
+        return kniBridge141(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_getNumArguments(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge140(C.getPointer(memScope).rawValue)
+        return kniBridge142(C.getPointer(memScope).rawValue)
     }
 }
 
@@ -3060,7 +3065,7 @@ fun clang_Cursor_getArgument(C: CValue<CXCursor>, i: Int): CValue<CXCursor> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXCursor>()
         try {
-            kniBridge141(C.getPointer(memScope).rawValue, i, kniRetVal.rawPtr)
+            kniBridge143(C.getPointer(memScope).rawValue, i, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3069,14 +3074,14 @@ fun clang_Cursor_getArgument(C: CValue<CXCursor>, i: Int): CValue<CXCursor> {
 @ExperimentalForeignApi
 fun clang_Cursor_getNumTemplateArguments(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge142(C.getPointer(memScope).rawValue)
+        return kniBridge144(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_getTemplateArgumentKind(C: CValue<CXCursor>, I: Int): CXTemplateArgumentKind {
     memScoped {
-        return CXTemplateArgumentKind.byValue(kniBridge143(C.getPointer(memScope).rawValue, I))
+        return CXTemplateArgumentKind.byValue(kniBridge145(C.getPointer(memScope).rawValue, I))
     }
 }
 
@@ -3085,7 +3090,7 @@ fun clang_Cursor_getTemplateArgumentType(C: CValue<CXCursor>, I: Int): CValue<CX
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge144(C.getPointer(memScope).rawValue, I, kniRetVal.rawPtr)
+            kniBridge146(C.getPointer(memScope).rawValue, I, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3094,21 +3099,21 @@ fun clang_Cursor_getTemplateArgumentType(C: CValue<CXCursor>, I: Int): CValue<CX
 @ExperimentalForeignApi
 fun clang_Cursor_getTemplateArgumentValue(C: CValue<CXCursor>, I: Int): Long {
     memScoped {
-        return kniBridge145(C.getPointer(memScope).rawValue, I)
+        return kniBridge147(C.getPointer(memScope).rawValue, I)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_getTemplateArgumentUnsignedValue(C: CValue<CXCursor>, I: Int): Long {
     memScoped {
-        return kniBridge146(C.getPointer(memScope).rawValue, I)
+        return kniBridge148(C.getPointer(memScope).rawValue, I)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_equalTypes(A: CValue<CXType>, B: CValue<CXType>): Int {
     memScoped {
-        return kniBridge147(A.getPointer(memScope).rawValue, B.getPointer(memScope).rawValue)
+        return kniBridge149(A.getPointer(memScope).rawValue, B.getPointer(memScope).rawValue)
     }
 }
 
@@ -3117,7 +3122,7 @@ fun clang_getCanonicalType(T: CValue<CXType>): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge148(T.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge150(T.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3126,49 +3131,49 @@ fun clang_getCanonicalType(T: CValue<CXType>): CValue<CXType> {
 @ExperimentalForeignApi
 fun clang_isConstQualifiedType(T: CValue<CXType>): Int {
     memScoped {
-        return kniBridge149(T.getPointer(memScope).rawValue)
+        return kniBridge151(T.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_isMacroFunctionLike(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge150(C.getPointer(memScope).rawValue)
+        return kniBridge152(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_isMacroBuiltin(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge151(C.getPointer(memScope).rawValue)
+        return kniBridge153(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_isFunctionInlined(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge152(C.getPointer(memScope).rawValue)
+        return kniBridge154(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_isVolatileQualifiedType(T: CValue<CXType>): Int {
     memScoped {
-        return kniBridge153(T.getPointer(memScope).rawValue)
+        return kniBridge155(T.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_isRestrictQualifiedType(T: CValue<CXType>): Int {
     memScoped {
-        return kniBridge154(T.getPointer(memScope).rawValue)
+        return kniBridge156(T.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getAddressSpace(T: CValue<CXType>): Int {
     memScoped {
-        return kniBridge155(T.getPointer(memScope).rawValue)
+        return kniBridge157(T.getPointer(memScope).rawValue)
     }
 }
 
@@ -3177,7 +3182,7 @@ fun clang_getTypedefName(CT: CValue<CXType>): CValue<CXString> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge156(CT.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge158(CT.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3188,7 +3193,7 @@ fun clang_getPointeeType(T: CValue<CXType>): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge157(T.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge159(T.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3199,7 +3204,7 @@ fun clang_getUnqualifiedType(CT: CValue<CXType>): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge158(CT.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge160(CT.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3210,7 +3215,7 @@ fun clang_getNonReferenceType(CT: CValue<CXType>): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge159(CT.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge161(CT.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3221,7 +3226,7 @@ fun clang_getTypeDeclaration(T: CValue<CXType>): CValue<CXCursor> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXCursor>()
         try {
-            kniBridge160(T.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge162(T.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3232,7 +3237,7 @@ fun clang_getDeclObjCTypeEncoding(C: CValue<CXCursor>): CValue<CXString> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge161(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge163(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3243,7 +3248,7 @@ fun clang_Type_getObjCEncoding(type: CValue<CXType>): CValue<CXString> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge162(type.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge164(type.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3253,7 +3258,7 @@ fun clang_Type_getObjCEncoding(type: CValue<CXType>): CValue<CXString> {
 fun clang_getTypeKindSpelling(K: CXTypeKind): CValue<CXString> {
     val kniRetVal = nativeHeap.alloc<CXString>()
     try {
-        kniBridge163(K.value, kniRetVal.rawPtr)
+        kniBridge165(K.value, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
@@ -3261,7 +3266,7 @@ fun clang_getTypeKindSpelling(K: CXTypeKind): CValue<CXString> {
 @ExperimentalForeignApi
 fun clang_getFunctionTypeCallingConv(T: CValue<CXType>): CXCallingConv {
     memScoped {
-        return CXCallingConv.byValue(kniBridge164(T.getPointer(memScope).rawValue))
+        return CXCallingConv.byValue(kniBridge166(T.getPointer(memScope).rawValue))
     }
 }
 
@@ -3270,7 +3275,7 @@ fun clang_getResultType(T: CValue<CXType>): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge165(T.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge167(T.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3279,14 +3284,14 @@ fun clang_getResultType(T: CValue<CXType>): CValue<CXType> {
 @ExperimentalForeignApi
 fun clang_getExceptionSpecificationType(T: CValue<CXType>): Int {
     memScoped {
-        return kniBridge166(T.getPointer(memScope).rawValue)
+        return kniBridge168(T.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getNumArgTypes(T: CValue<CXType>): Int {
     memScoped {
-        return kniBridge167(T.getPointer(memScope).rawValue)
+        return kniBridge169(T.getPointer(memScope).rawValue)
     }
 }
 
@@ -3295,7 +3300,7 @@ fun clang_getArgType(T: CValue<CXType>, i: Int): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge168(T.getPointer(memScope).rawValue, i, kniRetVal.rawPtr)
+            kniBridge170(T.getPointer(memScope).rawValue, i, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3306,7 +3311,7 @@ fun clang_Type_getObjCObjectBaseType(T: CValue<CXType>): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge169(T.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge171(T.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3315,7 +3320,7 @@ fun clang_Type_getObjCObjectBaseType(T: CValue<CXType>): CValue<CXType> {
 @ExperimentalForeignApi
 fun clang_Type_getNumObjCProtocolRefs(T: CValue<CXType>): Int {
     memScoped {
-        return kniBridge170(T.getPointer(memScope).rawValue)
+        return kniBridge172(T.getPointer(memScope).rawValue)
     }
 }
 
@@ -3324,7 +3329,7 @@ fun clang_Type_getObjCProtocolDecl(T: CValue<CXType>, i: Int): CValue<CXCursor> 
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXCursor>()
         try {
-            kniBridge171(T.getPointer(memScope).rawValue, i, kniRetVal.rawPtr)
+            kniBridge173(T.getPointer(memScope).rawValue, i, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3333,7 +3338,7 @@ fun clang_Type_getObjCProtocolDecl(T: CValue<CXType>, i: Int): CValue<CXCursor> 
 @ExperimentalForeignApi
 fun clang_Type_getNumObjCTypeArgs(T: CValue<CXType>): Int {
     memScoped {
-        return kniBridge172(T.getPointer(memScope).rawValue)
+        return kniBridge174(T.getPointer(memScope).rawValue)
     }
 }
 
@@ -3342,7 +3347,7 @@ fun clang_Type_getObjCTypeArg(T: CValue<CXType>, i: Int): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge173(T.getPointer(memScope).rawValue, i, kniRetVal.rawPtr)
+            kniBridge175(T.getPointer(memScope).rawValue, i, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3351,7 +3356,7 @@ fun clang_Type_getObjCTypeArg(T: CValue<CXType>, i: Int): CValue<CXType> {
 @ExperimentalForeignApi
 fun clang_isFunctionTypeVariadic(T: CValue<CXType>): Int {
     memScoped {
-        return kniBridge174(T.getPointer(memScope).rawValue)
+        return kniBridge176(T.getPointer(memScope).rawValue)
     }
 }
 
@@ -3360,7 +3365,7 @@ fun clang_getCursorResultType(C: CValue<CXCursor>): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge175(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge177(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3369,37 +3374,19 @@ fun clang_getCursorResultType(C: CValue<CXCursor>): CValue<CXType> {
 @ExperimentalForeignApi
 fun clang_getCursorExceptionSpecificationType(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge176(C.getPointer(memScope).rawValue)
+        return kniBridge178(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_isPODType(T: CValue<CXType>): Int {
     memScoped {
-        return kniBridge177(T.getPointer(memScope).rawValue)
-    }
-}
-
-@ExperimentalForeignApi
-fun clang_getElementType(T: CValue<CXType>): CValue<CXType> {
-    memScoped {
-        val kniRetVal = nativeHeap.alloc<CXType>()
-        try {
-            kniBridge178(T.getPointer(memScope).rawValue, kniRetVal.rawPtr)
-            return kniRetVal.readValue()
-        } finally { nativeHeap.free(kniRetVal) }
-    }
-}
-
-@ExperimentalForeignApi
-fun clang_getNumElements(T: CValue<CXType>): Long {
-    memScoped {
         return kniBridge179(T.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
-fun clang_getArrayElementType(T: CValue<CXType>): CValue<CXType> {
+fun clang_getElementType(T: CValue<CXType>): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
@@ -3410,14 +3397,14 @@ fun clang_getArrayElementType(T: CValue<CXType>): CValue<CXType> {
 }
 
 @ExperimentalForeignApi
-fun clang_getArraySize(T: CValue<CXType>): Long {
+fun clang_getNumElements(T: CValue<CXType>): Long {
     memScoped {
         return kniBridge181(T.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
-fun clang_Type_getNamedType(T: CValue<CXType>): CValue<CXType> {
+fun clang_getArrayElementType(T: CValue<CXType>): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
@@ -3428,23 +3415,41 @@ fun clang_Type_getNamedType(T: CValue<CXType>): CValue<CXType> {
 }
 
 @ExperimentalForeignApi
-fun clang_Type_isTransparentTagTypedef(T: CValue<CXType>): Int {
+fun clang_getArraySize(T: CValue<CXType>): Long {
     memScoped {
         return kniBridge183(T.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
+fun clang_Type_getNamedType(T: CValue<CXType>): CValue<CXType> {
+    memScoped {
+        val kniRetVal = nativeHeap.alloc<CXType>()
+        try {
+            kniBridge184(T.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            return kniRetVal.readValue()
+        } finally { nativeHeap.free(kniRetVal) }
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_Type_isTransparentTagTypedef(T: CValue<CXType>): Int {
+    memScoped {
+        return kniBridge185(T.getPointer(memScope).rawValue)
+    }
+}
+
+@ExperimentalForeignApi
 fun clang_Type_getNullability(T: CValue<CXType>): CXTypeNullabilityKind {
     memScoped {
-        return kniBridge184(T.getPointer(memScope).rawValue)
+        return kniBridge186(T.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Type_getAlignOf(T: CValue<CXType>): Long {
     memScoped {
-        return kniBridge185(T.getPointer(memScope).rawValue)
+        return kniBridge187(T.getPointer(memScope).rawValue)
     }
 }
 
@@ -3453,7 +3458,7 @@ fun clang_Type_getClassType(T: CValue<CXType>): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge186(T.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge188(T.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3462,14 +3467,14 @@ fun clang_Type_getClassType(T: CValue<CXType>): CValue<CXType> {
 @ExperimentalForeignApi
 fun clang_Type_getSizeOf(T: CValue<CXType>): Long {
     memScoped {
-        return kniBridge187(T.getPointer(memScope).rawValue)
+        return kniBridge189(T.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Type_getOffsetOf(T: CValue<CXType>, S: String?): Long {
     memScoped {
-        return kniBridge188(T.getPointer(memScope).rawValue, S?.cstr?.getPointer(memScope).rawValue)
+        return kniBridge190(T.getPointer(memScope).rawValue, S?.cstr?.getPointer(memScope).rawValue)
     }
 }
 
@@ -3478,7 +3483,7 @@ fun clang_Type_getModifiedType(T: CValue<CXType>): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge189(T.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge191(T.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3489,7 +3494,7 @@ fun clang_Type_getValueType(CT: CValue<CXType>): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge190(CT.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge192(CT.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3498,35 +3503,35 @@ fun clang_Type_getValueType(CT: CValue<CXType>): CValue<CXType> {
 @ExperimentalForeignApi
 fun clang_Cursor_getOffsetOfField(C: CValue<CXCursor>): Long {
     memScoped {
-        return kniBridge191(C.getPointer(memScope).rawValue)
+        return kniBridge193(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_isAnonymous(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge192(C.getPointer(memScope).rawValue)
+        return kniBridge194(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_isAnonymousRecordDecl(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge193(C.getPointer(memScope).rawValue)
+        return kniBridge195(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_isInlineNamespace(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge194(C.getPointer(memScope).rawValue)
+        return kniBridge196(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Type_getNumTemplateArguments(T: CValue<CXType>): Int {
     memScoped {
-        return kniBridge195(T.getPointer(memScope).rawValue)
+        return kniBridge197(T.getPointer(memScope).rawValue)
     }
 }
 
@@ -3535,7 +3540,7 @@ fun clang_Type_getTemplateArgumentAsType(T: CValue<CXType>, i: Int): CValue<CXTy
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge196(T.getPointer(memScope).rawValue, i, kniRetVal.rawPtr)
+            kniBridge198(T.getPointer(memScope).rawValue, i, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3544,28 +3549,35 @@ fun clang_Type_getTemplateArgumentAsType(T: CValue<CXType>, i: Int): CValue<CXTy
 @ExperimentalForeignApi
 fun clang_Type_getCXXRefQualifier(T: CValue<CXType>): CXRefQualifierKind {
     memScoped {
-        return kniBridge197(T.getPointer(memScope).rawValue)
+        return kniBridge199(T.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_isVirtualBase(arg0: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge198(arg0.getPointer(memScope).rawValue)
+        return kniBridge200(arg0.getPointer(memScope).rawValue)
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_getOffsetOfBase(Parent: CValue<CXCursor>, Base: CValue<CXCursor>): Long {
+    memScoped {
+        return kniBridge201(Parent.getPointer(memScope).rawValue, Base.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getCXXAccessSpecifier(arg0: CValue<CXCursor>): CX_CXXAccessSpecifier {
     memScoped {
-        return CX_CXXAccessSpecifier.byValue(kniBridge199(arg0.getPointer(memScope).rawValue))
+        return CX_CXXAccessSpecifier.byValue(kniBridge202(arg0.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_getBinaryOpcode(C: CValue<CXCursor>): CX_BinaryOperatorKind {
     memScoped {
-        return kniBridge200(C.getPointer(memScope).rawValue)
+        return kniBridge203(C.getPointer(memScope).rawValue)
     }
 }
 
@@ -3573,7 +3585,7 @@ fun clang_Cursor_getBinaryOpcode(C: CValue<CXCursor>): CX_BinaryOperatorKind {
 fun clang_Cursor_getBinaryOpcodeStr(Op: CX_BinaryOperatorKind): CValue<CXString> {
     val kniRetVal = nativeHeap.alloc<CXString>()
     try {
-        kniBridge201(Op, kniRetVal.rawPtr)
+        kniBridge204(Op, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
@@ -3581,14 +3593,14 @@ fun clang_Cursor_getBinaryOpcodeStr(Op: CX_BinaryOperatorKind): CValue<CXString>
 @ExperimentalForeignApi
 fun clang_Cursor_getStorageClass(arg0: CValue<CXCursor>): CX_StorageClass {
     memScoped {
-        return CX_StorageClass.byValue(kniBridge202(arg0.getPointer(memScope).rawValue))
+        return CX_StorageClass.byValue(kniBridge205(arg0.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getNumOverloadedDecls(cursor: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge203(cursor.getPointer(memScope).rawValue)
+        return kniBridge206(cursor.getPointer(memScope).rawValue)
     }
 }
 
@@ -3597,7 +3609,7 @@ fun clang_getOverloadedDecl(cursor: CValue<CXCursor>, index: Int): CValue<CXCurs
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXCursor>()
         try {
-            kniBridge204(cursor.getPointer(memScope).rawValue, index, kniRetVal.rawPtr)
+            kniBridge207(cursor.getPointer(memScope).rawValue, index, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3608,7 +3620,7 @@ fun clang_getIBOutletCollectionType(arg0: CValue<CXCursor>): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge205(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge208(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3617,14 +3629,14 @@ fun clang_getIBOutletCollectionType(arg0: CValue<CXCursor>): CValue<CXType> {
 @ExperimentalForeignApi
 fun clang_visitChildren(parent: CValue<CXCursor>, visitor: CXCursorVisitor?, client_data: CXClientData?): Int {
     memScoped {
-        return kniBridge206(parent.getPointer(memScope).rawValue, visitor.rawValue, client_data.rawValue)
+        return kniBridge209(parent.getPointer(memScope).rawValue, visitor.rawValue, client_data.rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_visitChildrenWithBlock(parent: CValue<CXCursor>, block: CXCursorVisitorBlock?): Int {
     memScoped {
-        return kniBridge207(parent.getPointer(memScope).rawValue, block.rawValue)
+        return kniBridge210(parent.getPointer(memScope).rawValue, block.rawValue)
     }
 }
 
@@ -3633,7 +3645,7 @@ fun clang_getCursorUSR(arg0: CValue<CXCursor>): CValue<CXString> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge208(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge211(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3644,7 +3656,7 @@ fun clang_constructUSR_ObjCClass(class_name: String?): CValue<CXString> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge209(class_name?.cstr?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge212(class_name?.cstr?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3655,7 +3667,7 @@ fun clang_constructUSR_ObjCCategory(class_name: String?, category_name: String?)
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge210(class_name?.cstr?.getPointer(memScope).rawValue, category_name?.cstr?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge213(class_name?.cstr?.getPointer(memScope).rawValue, category_name?.cstr?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3666,7 +3678,7 @@ fun clang_constructUSR_ObjCProtocol(protocol_name: String?): CValue<CXString> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge211(protocol_name?.cstr?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge214(protocol_name?.cstr?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3677,7 +3689,7 @@ fun clang_constructUSR_ObjCIvar(name: String?, classUSR: CValue<CXString>): CVal
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge212(name?.cstr?.getPointer(memScope).rawValue, classUSR.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge215(name?.cstr?.getPointer(memScope).rawValue, classUSR.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3688,7 +3700,7 @@ fun clang_constructUSR_ObjCMethod(name: String?, isInstanceMethod: Int, classUSR
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge213(name?.cstr?.getPointer(memScope).rawValue, isInstanceMethod, classUSR.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge216(name?.cstr?.getPointer(memScope).rawValue, isInstanceMethod, classUSR.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3699,7 +3711,7 @@ fun clang_constructUSR_ObjCProperty(property: String?, classUSR: CValue<CXString
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge214(property?.cstr?.getPointer(memScope).rawValue, classUSR.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge217(property?.cstr?.getPointer(memScope).rawValue, classUSR.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3710,7 +3722,7 @@ fun clang_getCursorSpelling(arg0: CValue<CXCursor>): CValue<CXString> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge215(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge218(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3721,7 +3733,7 @@ fun clang_Cursor_getSpellingNameRange(arg0: CValue<CXCursor>, pieceIndex: Int, o
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXSourceRange>()
         try {
-            kniBridge216(arg0.getPointer(memScope).rawValue, pieceIndex, options, kniRetVal.rawPtr)
+            kniBridge219(arg0.getPointer(memScope).rawValue, pieceIndex, options, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3729,24 +3741,24 @@ fun clang_Cursor_getSpellingNameRange(arg0: CValue<CXCursor>, pieceIndex: Int, o
 
 @ExperimentalForeignApi
 fun clang_PrintingPolicy_getProperty(Policy: CXPrintingPolicy?, Property: CXPrintingPolicyProperty): Int {
-    return kniBridge217(Policy.rawValue, Property)
+    return kniBridge220(Policy.rawValue, Property)
 }
 
 @ExperimentalForeignApi
 fun clang_PrintingPolicy_setProperty(Policy: CXPrintingPolicy?, Property: CXPrintingPolicyProperty, Value: Int): Unit {
-    return kniBridge218(Policy.rawValue, Property, Value)
+    return kniBridge221(Policy.rawValue, Property, Value)
 }
 
 @ExperimentalForeignApi
 fun clang_getCursorPrintingPolicy(arg0: CValue<CXCursor>): CXPrintingPolicy? {
     memScoped {
-        return interpretCPointer<COpaque>(kniBridge219(arg0.getPointer(memScope).rawValue))
+        return interpretCPointer<COpaque>(kniBridge222(arg0.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_PrintingPolicy_dispose(Policy: CXPrintingPolicy?): Unit {
-    return kniBridge220(Policy.rawValue)
+    return kniBridge223(Policy.rawValue)
 }
 
 @ExperimentalForeignApi
@@ -3754,7 +3766,29 @@ fun clang_getCursorPrettyPrinted(Cursor: CValue<CXCursor>, Policy: CXPrintingPol
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge221(Cursor.getPointer(memScope).rawValue, Policy.rawValue, kniRetVal.rawPtr)
+            kniBridge224(Cursor.getPointer(memScope).rawValue, Policy.rawValue, kniRetVal.rawPtr)
+            return kniRetVal.readValue()
+        } finally { nativeHeap.free(kniRetVal) }
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_getTypePrettyPrinted(CT: CValue<CXType>, cxPolicy: CXPrintingPolicy?): CValue<CXString> {
+    memScoped {
+        val kniRetVal = nativeHeap.alloc<CXString>()
+        try {
+            kniBridge225(CT.getPointer(memScope).rawValue, cxPolicy.rawValue, kniRetVal.rawPtr)
+            return kniRetVal.readValue()
+        } finally { nativeHeap.free(kniRetVal) }
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_getFullyQualifiedName(CT: CValue<CXType>, Policy: CXPrintingPolicy?, WithGlobalNsPrefix: Int): CValue<CXString> {
+    memScoped {
+        val kniRetVal = nativeHeap.alloc<CXString>()
+        try {
+            kniBridge226(CT.getPointer(memScope).rawValue, Policy.rawValue, WithGlobalNsPrefix, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3765,7 +3799,7 @@ fun clang_getCursorDisplayName(arg0: CValue<CXCursor>): CValue<CXString> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge222(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge227(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3776,7 +3810,7 @@ fun clang_getCursorReferenced(arg0: CValue<CXCursor>): CValue<CXCursor> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXCursor>()
         try {
-            kniBridge223(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge228(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3787,7 +3821,7 @@ fun clang_getCursorDefinition(arg0: CValue<CXCursor>): CValue<CXCursor> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXCursor>()
         try {
-            kniBridge224(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge229(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3796,7 +3830,7 @@ fun clang_getCursorDefinition(arg0: CValue<CXCursor>): CValue<CXCursor> {
 @ExperimentalForeignApi
 fun clang_isCursorDefinition(arg0: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge225(arg0.getPointer(memScope).rawValue)
+        return kniBridge230(arg0.getPointer(memScope).rawValue)
     }
 }
 
@@ -3805,7 +3839,7 @@ fun clang_getCanonicalCursor(arg0: CValue<CXCursor>): CValue<CXCursor> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXCursor>()
         try {
-            kniBridge226(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge231(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3814,14 +3848,14 @@ fun clang_getCanonicalCursor(arg0: CValue<CXCursor>): CValue<CXCursor> {
 @ExperimentalForeignApi
 fun clang_Cursor_getObjCSelectorIndex(arg0: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge227(arg0.getPointer(memScope).rawValue)
+        return kniBridge232(arg0.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_isDynamicCall(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge228(C.getPointer(memScope).rawValue)
+        return kniBridge233(C.getPointer(memScope).rawValue)
     }
 }
 
@@ -3830,7 +3864,7 @@ fun clang_Cursor_getReceiverType(C: CValue<CXCursor>): CValue<CXType> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXType>()
         try {
-            kniBridge229(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge234(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3839,7 +3873,7 @@ fun clang_Cursor_getReceiverType(C: CValue<CXCursor>): CValue<CXType> {
 @ExperimentalForeignApi
 fun clang_Cursor_getObjCPropertyAttributes(C: CValue<CXCursor>, reserved: Int): Int {
     memScoped {
-        return kniBridge230(C.getPointer(memScope).rawValue, reserved)
+        return kniBridge235(C.getPointer(memScope).rawValue, reserved)
     }
 }
 
@@ -3848,7 +3882,7 @@ fun clang_Cursor_getObjCPropertyGetterName(C: CValue<CXCursor>): CValue<CXString
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge231(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge236(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3859,7 +3893,7 @@ fun clang_Cursor_getObjCPropertySetterName(C: CValue<CXCursor>): CValue<CXString
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge232(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge237(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3868,28 +3902,28 @@ fun clang_Cursor_getObjCPropertySetterName(C: CValue<CXCursor>): CValue<CXString
 @ExperimentalForeignApi
 fun clang_Cursor_getObjCDeclQualifiers(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge233(C.getPointer(memScope).rawValue)
+        return kniBridge238(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_isObjCOptional(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge234(C.getPointer(memScope).rawValue)
+        return kniBridge239(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_isVariadic(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge235(C.getPointer(memScope).rawValue)
+        return kniBridge240(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_isExternalSymbol(C: CValue<CXCursor>, language: CValuesRef<CXString>?, definedIn: CValuesRef<CXString>?, isGenerated: CValuesRef<IntVar>?): Int {
     memScoped {
-        return kniBridge236(C.getPointer(memScope).rawValue, language?.getPointer(memScope).rawValue, definedIn?.getPointer(memScope).rawValue, isGenerated?.getPointer(memScope).rawValue)
+        return kniBridge241(C.getPointer(memScope).rawValue, language?.getPointer(memScope).rawValue, definedIn?.getPointer(memScope).rawValue, isGenerated?.getPointer(memScope).rawValue)
     }
 }
 
@@ -3898,7 +3932,7 @@ fun clang_Cursor_getCommentRange(C: CValue<CXCursor>): CValue<CXSourceRange> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXSourceRange>()
         try {
-            kniBridge237(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge242(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3909,7 +3943,7 @@ fun clang_Cursor_getRawCommentText(C: CValue<CXCursor>): CValue<CXString> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge238(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge243(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3920,7 +3954,7 @@ fun clang_Cursor_getBriefCommentText(C: CValue<CXCursor>): CValue<CXString> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge239(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge244(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3931,7 +3965,7 @@ fun clang_Cursor_getMangling(arg0: CValue<CXCursor>): CValue<CXString> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge240(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge245(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -3940,44 +3974,115 @@ fun clang_Cursor_getMangling(arg0: CValue<CXCursor>): CValue<CXString> {
 @ExperimentalForeignApi
 fun clang_Cursor_getCXXManglings(arg0: CValue<CXCursor>): CPointer<CXStringSet>? {
     memScoped {
-        return interpretCPointer<CXStringSet>(kniBridge241(arg0.getPointer(memScope).rawValue))
+        return interpretCPointer<CXStringSet>(kniBridge246(arg0.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_getObjCManglings(arg0: CValue<CXCursor>): CPointer<CXStringSet>? {
     memScoped {
-        return interpretCPointer<CXStringSet>(kniBridge242(arg0.getPointer(memScope).rawValue))
+        return interpretCPointer<CXStringSet>(kniBridge247(arg0.getPointer(memScope).rawValue))
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_Cursor_getGCCAssemblyTemplate(arg0: CValue<CXCursor>): CValue<CXString> {
+    memScoped {
+        val kniRetVal = nativeHeap.alloc<CXString>()
+        try {
+            kniBridge248(arg0.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            return kniRetVal.readValue()
+        } finally { nativeHeap.free(kniRetVal) }
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_Cursor_isGCCAssemblyHasGoto(arg0: CValue<CXCursor>): Int {
+    memScoped {
+        return kniBridge249(arg0.getPointer(memScope).rawValue)
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_Cursor_getGCCAssemblyNumOutputs(arg0: CValue<CXCursor>): Int {
+    memScoped {
+        return kniBridge250(arg0.getPointer(memScope).rawValue)
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_Cursor_getGCCAssemblyNumInputs(arg0: CValue<CXCursor>): Int {
+    memScoped {
+        return kniBridge251(arg0.getPointer(memScope).rawValue)
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_Cursor_getGCCAssemblyInput(Cursor: CValue<CXCursor>, Index: Int, Constraint: CValuesRef<CXString>?, Expr: CValuesRef<CXCursor>?): Int {
+    memScoped {
+        return kniBridge252(Cursor.getPointer(memScope).rawValue, Index, Constraint?.getPointer(memScope).rawValue, Expr?.getPointer(memScope).rawValue)
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_Cursor_getGCCAssemblyOutput(Cursor: CValue<CXCursor>, Index: Int, Constraint: CValuesRef<CXString>?, Expr: CValuesRef<CXCursor>?): Int {
+    memScoped {
+        return kniBridge253(Cursor.getPointer(memScope).rawValue, Index, Constraint?.getPointer(memScope).rawValue, Expr?.getPointer(memScope).rawValue)
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_Cursor_getGCCAssemblyNumClobbers(Cursor: CValue<CXCursor>): Int {
+    memScoped {
+        return kniBridge254(Cursor.getPointer(memScope).rawValue)
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_Cursor_getGCCAssemblyClobber(Cursor: CValue<CXCursor>, Index: Int): CValue<CXString> {
+    memScoped {
+        val kniRetVal = nativeHeap.alloc<CXString>()
+        try {
+            kniBridge255(Cursor.getPointer(memScope).rawValue, Index, kniRetVal.rawPtr)
+            return kniRetVal.readValue()
+        } finally { nativeHeap.free(kniRetVal) }
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_Cursor_isGCCAssemblyVolatile(Cursor: CValue<CXCursor>): Int {
+    memScoped {
+        return kniBridge256(Cursor.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_getModule(C: CValue<CXCursor>): CXModule? {
     memScoped {
-        return interpretCPointer<COpaque>(kniBridge243(C.getPointer(memScope).rawValue))
+        return interpretCPointer<COpaque>(kniBridge257(C.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getModuleForFile(arg0: CXTranslationUnit?, arg1: CXFile?): CXModule? {
-    return interpretCPointer<COpaque>(kniBridge244(arg0.rawValue, arg1.rawValue))
+    return interpretCPointer<COpaque>(kniBridge258(arg0.rawValue, arg1.rawValue))
 }
 
 @ExperimentalForeignApi
 fun clang_Module_getASTFile(Module: CXModule?): CXFile? {
-    return interpretCPointer<COpaque>(kniBridge245(Module.rawValue))
+    return interpretCPointer<COpaque>(kniBridge259(Module.rawValue))
 }
 
 @ExperimentalForeignApi
 fun clang_Module_getParent(Module: CXModule?): CXModule? {
-    return interpretCPointer<COpaque>(kniBridge246(Module.rawValue))
+    return interpretCPointer<COpaque>(kniBridge260(Module.rawValue))
 }
 
 @ExperimentalForeignApi
 fun clang_Module_getName(Module: CXModule?): CValue<CXString> {
     val kniRetVal = nativeHeap.alloc<CXString>()
     try {
-        kniBridge247(Module.rawValue, kniRetVal.rawPtr)
+        kniBridge261(Module.rawValue, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
@@ -3986,128 +4091,128 @@ fun clang_Module_getName(Module: CXModule?): CValue<CXString> {
 fun clang_Module_getFullName(Module: CXModule?): CValue<CXString> {
     val kniRetVal = nativeHeap.alloc<CXString>()
     try {
-        kniBridge248(Module.rawValue, kniRetVal.rawPtr)
+        kniBridge262(Module.rawValue, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
 
 @ExperimentalForeignApi
 fun clang_Module_isSystem(Module: CXModule?): Int {
-    return kniBridge249(Module.rawValue)
+    return kniBridge263(Module.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_Module_getNumTopLevelHeaders(arg0: CXTranslationUnit?, Module: CXModule?): Int {
-    return kniBridge250(arg0.rawValue, Module.rawValue)
+    return kniBridge264(arg0.rawValue, Module.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_Module_getTopLevelHeader(arg0: CXTranslationUnit?, Module: CXModule?, Index: Int): CXFile? {
-    return interpretCPointer<COpaque>(kniBridge251(arg0.rawValue, Module.rawValue, Index))
+    return interpretCPointer<COpaque>(kniBridge265(arg0.rawValue, Module.rawValue, Index))
 }
 
 @ExperimentalForeignApi
 fun clang_CXXConstructor_isConvertingConstructor(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge252(C.getPointer(memScope).rawValue)
+        return kniBridge266(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_CXXConstructor_isCopyConstructor(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge253(C.getPointer(memScope).rawValue)
+        return kniBridge267(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_CXXConstructor_isDefaultConstructor(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge254(C.getPointer(memScope).rawValue)
+        return kniBridge268(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_CXXConstructor_isMoveConstructor(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge255(C.getPointer(memScope).rawValue)
+        return kniBridge269(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_CXXField_isMutable(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge256(C.getPointer(memScope).rawValue)
+        return kniBridge270(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_CXXMethod_isDefaulted(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge257(C.getPointer(memScope).rawValue)
+        return kniBridge271(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_CXXMethod_isDeleted(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge258(C.getPointer(memScope).rawValue)
+        return kniBridge272(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_CXXMethod_isPureVirtual(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge259(C.getPointer(memScope).rawValue)
+        return kniBridge273(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_CXXMethod_isStatic(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge260(C.getPointer(memScope).rawValue)
+        return kniBridge274(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_CXXMethod_isVirtual(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge261(C.getPointer(memScope).rawValue)
+        return kniBridge275(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_CXXMethod_isExplicit(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge262(C.getPointer(memScope).rawValue)
+        return kniBridge276(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_CXXRecord_isAbstract(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge263(C.getPointer(memScope).rawValue)
+        return kniBridge277(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_EnumDecl_isScoped(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge264(C.getPointer(memScope).rawValue)
+        return kniBridge278(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_CXXMethod_isConst(C: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge265(C.getPointer(memScope).rawValue)
+        return kniBridge279(C.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getTemplateCursorKind(C: CValue<CXCursor>): CXCursorKind {
     memScoped {
-        return CXCursorKind.byValue(kniBridge266(C.getPointer(memScope).rawValue))
+        return CXCursorKind.byValue(kniBridge280(C.getPointer(memScope).rawValue))
     }
 }
 
@@ -4116,7 +4221,7 @@ fun clang_getSpecializedCursorTemplate(C: CValue<CXCursor>): CValue<CXCursor> {
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXCursor>()
         try {
-            kniBridge267(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge281(C.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -4127,7 +4232,7 @@ fun clang_getCursorReferenceNameRange(C: CValue<CXCursor>, NameFlags: Int, Piece
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXSourceRange>()
         try {
-            kniBridge268(C.getPointer(memScope).rawValue, NameFlags, PieceIndex, kniRetVal.rawPtr)
+            kniBridge282(C.getPointer(memScope).rawValue, NameFlags, PieceIndex, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -4136,14 +4241,14 @@ fun clang_getCursorReferenceNameRange(C: CValue<CXCursor>, NameFlags: Int, Piece
 @ExperimentalForeignApi
 fun clang_getToken(TU: CXTranslationUnit?, Location: CValue<CXSourceLocation>): CPointer<CXToken>? {
     memScoped {
-        return interpretCPointer<CXToken>(kniBridge269(TU.rawValue, Location.getPointer(memScope).rawValue))
+        return interpretCPointer<CXToken>(kniBridge283(TU.rawValue, Location.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getTokenKind(arg0: CValue<CXToken>): CXTokenKind {
     memScoped {
-        return CXTokenKind.byValue(kniBridge270(arg0.getPointer(memScope).rawValue))
+        return CXTokenKind.byValue(kniBridge284(arg0.getPointer(memScope).rawValue))
     }
 }
 
@@ -4152,7 +4257,7 @@ fun clang_getTokenSpelling(arg0: CXTranslationUnit?, arg1: CValue<CXToken>): CVa
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge271(arg0.rawValue, arg1.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge285(arg0.rawValue, arg1.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -4163,7 +4268,7 @@ fun clang_getTokenLocation(arg0: CXTranslationUnit?, arg1: CValue<CXToken>): CVa
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXSourceLocation>()
         try {
-            kniBridge272(arg0.rawValue, arg1.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge286(arg0.rawValue, arg1.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -4174,7 +4279,7 @@ fun clang_getTokenExtent(arg0: CXTranslationUnit?, arg1: CValue<CXToken>): CValu
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXSourceRange>()
         try {
-            kniBridge273(arg0.rawValue, arg1.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge287(arg0.rawValue, arg1.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -4183,21 +4288,21 @@ fun clang_getTokenExtent(arg0: CXTranslationUnit?, arg1: CValue<CXToken>): CValu
 @ExperimentalForeignApi
 fun clang_tokenize(TU: CXTranslationUnit?, Range: CValue<CXSourceRange>, Tokens: CValuesRef<CPointerVar<CXToken>>?, NumTokens: CValuesRef<IntVar>?): Unit {
     memScoped {
-        return kniBridge274(TU.rawValue, Range.getPointer(memScope).rawValue, Tokens?.getPointer(memScope).rawValue, NumTokens?.getPointer(memScope).rawValue)
+        return kniBridge288(TU.rawValue, Range.getPointer(memScope).rawValue, Tokens?.getPointer(memScope).rawValue, NumTokens?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_annotateTokens(TU: CXTranslationUnit?, Tokens: CValuesRef<CXToken>?, NumTokens: Int, Cursors: CValuesRef<CXCursor>?): Unit {
     memScoped {
-        return kniBridge275(TU.rawValue, Tokens?.getPointer(memScope).rawValue, NumTokens, Cursors?.getPointer(memScope).rawValue)
+        return kniBridge289(TU.rawValue, Tokens?.getPointer(memScope).rawValue, NumTokens, Cursors?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_disposeTokens(TU: CXTranslationUnit?, Tokens: CValuesRef<CXToken>?, NumTokens: Int): Unit {
     memScoped {
-        return kniBridge276(TU.rawValue, Tokens?.getPointer(memScope).rawValue, NumTokens)
+        return kniBridge290(TU.rawValue, Tokens?.getPointer(memScope).rawValue, NumTokens)
     }
 }
 
@@ -4205,7 +4310,7 @@ fun clang_disposeTokens(TU: CXTranslationUnit?, Tokens: CValuesRef<CXToken>?, Nu
 fun clang_getCursorKindSpelling(Kind: CXCursorKind): CValue<CXString> {
     val kniRetVal = nativeHeap.alloc<CXString>()
     try {
-        kniBridge277(Kind.value, kniRetVal.rawPtr)
+        kniBridge291(Kind.value, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
@@ -4213,66 +4318,66 @@ fun clang_getCursorKindSpelling(Kind: CXCursorKind): CValue<CXString> {
 @ExperimentalForeignApi
 fun clang_getDefinitionSpellingAndExtent(arg0: CValue<CXCursor>, startBuf: CValuesRef<CPointerVar<ByteVar>>?, endBuf: CValuesRef<CPointerVar<ByteVar>>?, startLine: CValuesRef<IntVar>?, startColumn: CValuesRef<IntVar>?, endLine: CValuesRef<IntVar>?, endColumn: CValuesRef<IntVar>?): Unit {
     memScoped {
-        return kniBridge278(arg0.getPointer(memScope).rawValue, startBuf?.getPointer(memScope).rawValue, endBuf?.getPointer(memScope).rawValue, startLine?.getPointer(memScope).rawValue, startColumn?.getPointer(memScope).rawValue, endLine?.getPointer(memScope).rawValue, endColumn?.getPointer(memScope).rawValue)
+        return kniBridge292(arg0.getPointer(memScope).rawValue, startBuf?.getPointer(memScope).rawValue, endBuf?.getPointer(memScope).rawValue, startLine?.getPointer(memScope).rawValue, startColumn?.getPointer(memScope).rawValue, endLine?.getPointer(memScope).rawValue, endColumn?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_enableStackTraces(): Unit {
-    return kniBridge279()
+    return kniBridge293()
 }
 
 @ExperimentalForeignApi
 fun clang_executeOnThread(fn: CPointer<CFunction<(COpaquePointer?) -> Unit>>?, user_data: CValuesRef<*>?, stack_size: Int): Unit {
     memScoped {
-        return kniBridge280(fn.rawValue, user_data?.getPointer(memScope).rawValue, stack_size)
+        return kniBridge294(fn.rawValue, user_data?.getPointer(memScope).rawValue, stack_size)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getCompletionChunkKind(completion_string: CXCompletionString?, chunk_number: Int): CXCompletionChunkKind {
-    return CXCompletionChunkKind.byValue(kniBridge281(completion_string.rawValue, chunk_number))
+    return CXCompletionChunkKind.byValue(kniBridge295(completion_string.rawValue, chunk_number))
 }
 
 @ExperimentalForeignApi
 fun clang_getCompletionChunkText(completion_string: CXCompletionString?, chunk_number: Int): CValue<CXString> {
     val kniRetVal = nativeHeap.alloc<CXString>()
     try {
-        kniBridge282(completion_string.rawValue, chunk_number, kniRetVal.rawPtr)
+        kniBridge296(completion_string.rawValue, chunk_number, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
 
 @ExperimentalForeignApi
 fun clang_getCompletionChunkCompletionString(completion_string: CXCompletionString?, chunk_number: Int): CXCompletionString? {
-    return interpretCPointer<COpaque>(kniBridge283(completion_string.rawValue, chunk_number))
+    return interpretCPointer<COpaque>(kniBridge297(completion_string.rawValue, chunk_number))
 }
 
 @ExperimentalForeignApi
 fun clang_getNumCompletionChunks(completion_string: CXCompletionString?): Int {
-    return kniBridge284(completion_string.rawValue)
+    return kniBridge298(completion_string.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_getCompletionPriority(completion_string: CXCompletionString?): Int {
-    return kniBridge285(completion_string.rawValue)
+    return kniBridge299(completion_string.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_getCompletionAvailability(completion_string: CXCompletionString?): CXAvailabilityKind {
-    return CXAvailabilityKind.byValue(kniBridge286(completion_string.rawValue))
+    return CXAvailabilityKind.byValue(kniBridge300(completion_string.rawValue))
 }
 
 @ExperimentalForeignApi
 fun clang_getCompletionNumAnnotations(completion_string: CXCompletionString?): Int {
-    return kniBridge287(completion_string.rawValue)
+    return kniBridge301(completion_string.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_getCompletionAnnotation(completion_string: CXCompletionString?, annotation_number: Int): CValue<CXString> {
     val kniRetVal = nativeHeap.alloc<CXString>()
     try {
-        kniBridge288(completion_string.rawValue, annotation_number, kniRetVal.rawPtr)
+        kniBridge302(completion_string.rawValue, annotation_number, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
@@ -4282,7 +4387,7 @@ fun clang_getCompletionParent(completion_string: CXCompletionString?, kind: CVal
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge289(completion_string.rawValue, kind?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge303(completion_string.rawValue, kind?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -4292,7 +4397,7 @@ fun clang_getCompletionParent(completion_string: CXCompletionString?, kind: CVal
 fun clang_getCompletionBriefComment(completion_string: CXCompletionString?): CValue<CXString> {
     val kniRetVal = nativeHeap.alloc<CXString>()
     try {
-        kniBridge290(completion_string.rawValue, kniRetVal.rawPtr)
+        kniBridge304(completion_string.rawValue, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
@@ -4300,14 +4405,14 @@ fun clang_getCompletionBriefComment(completion_string: CXCompletionString?): CVa
 @ExperimentalForeignApi
 fun clang_getCursorCompletionString(cursor: CValue<CXCursor>): CXCompletionString? {
     memScoped {
-        return interpretCPointer<COpaque>(kniBridge291(cursor.getPointer(memScope).rawValue))
+        return interpretCPointer<COpaque>(kniBridge305(cursor.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_getCompletionNumFixIts(results: CValuesRef<CXCodeCompleteResults>?, completion_index: Int): Int {
     memScoped {
-        return kniBridge292(results?.getPointer(memScope).rawValue, completion_index)
+        return kniBridge306(results?.getPointer(memScope).rawValue, completion_index)
     }
 }
 
@@ -4316,7 +4421,7 @@ fun clang_getCompletionFixIt(results: CValuesRef<CXCodeCompleteResults>?, comple
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge293(results?.getPointer(memScope).rawValue, completion_index, fixit_index, replacement_range?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge307(results?.getPointer(memScope).rawValue, completion_index, fixit_index, replacement_range?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -4324,55 +4429,55 @@ fun clang_getCompletionFixIt(results: CValuesRef<CXCodeCompleteResults>?, comple
 
 @ExperimentalForeignApi
 fun clang_defaultCodeCompleteOptions(): Int {
-    return kniBridge294()
+    return kniBridge308()
 }
 
 @ExperimentalForeignApi
 fun clang_codeCompleteAt(TU: CXTranslationUnit?, complete_filename: String?, complete_line: Int, complete_column: Int, unsaved_files: CValuesRef<CXUnsavedFile>?, num_unsaved_files: Int, options: Int): CPointer<CXCodeCompleteResults>? {
     memScoped {
-        return interpretCPointer<CXCodeCompleteResults>(kniBridge295(TU.rawValue, complete_filename?.cstr?.getPointer(memScope).rawValue, complete_line, complete_column, unsaved_files?.getPointer(memScope).rawValue, num_unsaved_files, options))
+        return interpretCPointer<CXCodeCompleteResults>(kniBridge309(TU.rawValue, complete_filename?.cstr?.getPointer(memScope).rawValue, complete_line, complete_column, unsaved_files?.getPointer(memScope).rawValue, num_unsaved_files, options))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_sortCodeCompletionResults(Results: CValuesRef<CXCompletionResult>?, NumResults: Int): Unit {
     memScoped {
-        return kniBridge296(Results?.getPointer(memScope).rawValue, NumResults)
+        return kniBridge310(Results?.getPointer(memScope).rawValue, NumResults)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_disposeCodeCompleteResults(Results: CValuesRef<CXCodeCompleteResults>?): Unit {
     memScoped {
-        return kniBridge297(Results?.getPointer(memScope).rawValue)
+        return kniBridge311(Results?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_codeCompleteGetNumDiagnostics(Results: CValuesRef<CXCodeCompleteResults>?): Int {
     memScoped {
-        return kniBridge298(Results?.getPointer(memScope).rawValue)
+        return kniBridge312(Results?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_codeCompleteGetDiagnostic(Results: CValuesRef<CXCodeCompleteResults>?, Index: Int): CXDiagnostic? {
     memScoped {
-        return interpretCPointer<COpaque>(kniBridge299(Results?.getPointer(memScope).rawValue, Index))
+        return interpretCPointer<COpaque>(kniBridge313(Results?.getPointer(memScope).rawValue, Index))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_codeCompleteGetContexts(Results: CValuesRef<CXCodeCompleteResults>?): Long {
     memScoped {
-        return kniBridge300(Results?.getPointer(memScope).rawValue)
+        return kniBridge314(Results?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_codeCompleteGetContainerKind(Results: CValuesRef<CXCodeCompleteResults>?, IsIncomplete: CValuesRef<IntVar>?): CXCursorKind {
     memScoped {
-        return CXCursorKind.byValue(kniBridge301(Results?.getPointer(memScope).rawValue, IsIncomplete?.getPointer(memScope).rawValue))
+        return CXCursorKind.byValue(kniBridge315(Results?.getPointer(memScope).rawValue, IsIncomplete?.getPointer(memScope).rawValue))
     }
 }
 
@@ -4381,7 +4486,7 @@ fun clang_codeCompleteGetContainerUSR(Results: CValuesRef<CXCodeCompleteResults>
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge302(Results?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge316(Results?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -4392,7 +4497,7 @@ fun clang_codeCompleteGetObjCSelector(Results: CValuesRef<CXCodeCompleteResults>
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXString>()
         try {
-            kniBridge303(Results?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge317(Results?.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -4402,242 +4507,211 @@ fun clang_codeCompleteGetObjCSelector(Results: CValuesRef<CXCodeCompleteResults>
 fun clang_getClangVersion(): CValue<CXString> {
     val kniRetVal = nativeHeap.alloc<CXString>()
     try {
-        kniBridge304(kniRetVal.rawPtr)
+        kniBridge318(kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
 
 @ExperimentalForeignApi
 fun clang_toggleCrashRecovery(isEnabled: Int): Unit {
-    return kniBridge305(isEnabled)
+    return kniBridge319(isEnabled)
 }
 
 @ExperimentalForeignApi
 fun clang_getInclusions(tu: CXTranslationUnit?, visitor: CXInclusionVisitor?, client_data: CXClientData?): Unit {
-    return kniBridge306(tu.rawValue, visitor.rawValue, client_data.rawValue)
+    return kniBridge320(tu.rawValue, visitor.rawValue, client_data.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_Evaluate(C: CValue<CXCursor>): CXEvalResult? {
     memScoped {
-        return interpretCPointer<COpaque>(kniBridge307(C.getPointer(memScope).rawValue))
+        return interpretCPointer<COpaque>(kniBridge321(C.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_EvalResult_getKind(E: CXEvalResult?): CXEvalResultKind {
-    return CXEvalResultKind.byValue(kniBridge308(E.rawValue))
+    return CXEvalResultKind.byValue(kniBridge322(E.rawValue))
 }
 
 @ExperimentalForeignApi
 fun clang_EvalResult_getAsInt(E: CXEvalResult?): Int {
-    return kniBridge309(E.rawValue)
+    return kniBridge323(E.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_EvalResult_getAsLongLong(E: CXEvalResult?): Long {
-    return kniBridge310(E.rawValue)
+    return kniBridge324(E.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_EvalResult_isUnsignedInt(E: CXEvalResult?): Int {
-    return kniBridge311(E.rawValue)
+    return kniBridge325(E.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_EvalResult_getAsUnsigned(E: CXEvalResult?): Long {
-    return kniBridge312(E.rawValue)
+    return kniBridge326(E.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_EvalResult_getAsDouble(E: CXEvalResult?): Double {
-    return kniBridge313(E.rawValue)
+    return kniBridge327(E.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_EvalResult_getAsStr(E: CXEvalResult?): CPointer<ByteVar>? {
-    return interpretCPointer<ByteVar>(kniBridge314(E.rawValue))
+    return interpretCPointer<ByteVar>(kniBridge328(E.rawValue))
 }
 
 @ExperimentalForeignApi
 fun clang_EvalResult_dispose(E: CXEvalResult?): Unit {
-    return kniBridge315(E.rawValue)
-}
-
-@ExperimentalForeignApi
-fun clang_getRemappings(path: String?): CXRemapping? {
-    memScoped {
-        return interpretCPointer<COpaque>(kniBridge316(path?.cstr?.getPointer(memScope).rawValue))
-    }
-}
-
-@ExperimentalForeignApi
-fun clang_getRemappingsFromFileList(filePaths: CValuesRef<CPointerVar<ByteVar>>?, numFiles: Int): CXRemapping? {
-    memScoped {
-        return interpretCPointer<COpaque>(kniBridge317(filePaths?.getPointer(memScope).rawValue, numFiles))
-    }
-}
-
-@ExperimentalForeignApi
-fun clang_remap_getNumFiles(arg0: CXRemapping?): Int {
-    return kniBridge318(arg0.rawValue)
-}
-
-@ExperimentalForeignApi
-fun clang_remap_getFilenames(arg0: CXRemapping?, index: Int, original: CValuesRef<CXString>?, transformed: CValuesRef<CXString>?): Unit {
-    memScoped {
-        return kniBridge319(arg0.rawValue, index, original?.getPointer(memScope).rawValue, transformed?.getPointer(memScope).rawValue)
-    }
-}
-
-@ExperimentalForeignApi
-fun clang_remap_dispose(arg0: CXRemapping?): Unit {
-    return kniBridge320(arg0.rawValue)
+    return kniBridge329(E.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_findReferencesInFile(cursor: CValue<CXCursor>, file: CXFile?, visitor: CValue<CXCursorAndRangeVisitor>): CXResult {
     memScoped {
-        return CXResult.byValue(kniBridge321(cursor.getPointer(memScope).rawValue, file.rawValue, visitor.getPointer(memScope).rawValue))
+        return CXResult.byValue(kniBridge330(cursor.getPointer(memScope).rawValue, file.rawValue, visitor.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_findIncludesInFile(TU: CXTranslationUnit?, file: CXFile?, visitor: CValue<CXCursorAndRangeVisitor>): CXResult {
     memScoped {
-        return CXResult.byValue(kniBridge322(TU.rawValue, file.rawValue, visitor.getPointer(memScope).rawValue))
+        return CXResult.byValue(kniBridge331(TU.rawValue, file.rawValue, visitor.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_findReferencesInFileWithBlock(arg0: CValue<CXCursor>, arg1: CXFile?, arg2: CXCursorAndRangeVisitorBlock?): CXResult {
     memScoped {
-        return CXResult.byValue(kniBridge323(arg0.getPointer(memScope).rawValue, arg1.rawValue, arg2.rawValue))
+        return CXResult.byValue(kniBridge332(arg0.getPointer(memScope).rawValue, arg1.rawValue, arg2.rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_findIncludesInFileWithBlock(arg0: CXTranslationUnit?, arg1: CXFile?, arg2: CXCursorAndRangeVisitorBlock?): CXResult {
-    return CXResult.byValue(kniBridge324(arg0.rawValue, arg1.rawValue, arg2.rawValue))
+    return CXResult.byValue(kniBridge333(arg0.rawValue, arg1.rawValue, arg2.rawValue))
 }
 
 @ExperimentalForeignApi
 fun clang_index_isEntityObjCContainerKind(arg0: CXIdxEntityKind): Int {
-    return kniBridge325(arg0.value)
+    return kniBridge334(arg0.value)
 }
 
 @ExperimentalForeignApi
 fun clang_index_getObjCContainerDeclInfo(arg0: CValuesRef<CXIdxDeclInfo>?): CPointer<CXIdxObjCContainerDeclInfo>? {
     memScoped {
-        return interpretCPointer<CXIdxObjCContainerDeclInfo>(kniBridge326(arg0?.getPointer(memScope).rawValue))
+        return interpretCPointer<CXIdxObjCContainerDeclInfo>(kniBridge335(arg0?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_index_getObjCInterfaceDeclInfo(arg0: CValuesRef<CXIdxDeclInfo>?): CPointer<CXIdxObjCInterfaceDeclInfo>? {
     memScoped {
-        return interpretCPointer<CXIdxObjCInterfaceDeclInfo>(kniBridge327(arg0?.getPointer(memScope).rawValue))
+        return interpretCPointer<CXIdxObjCInterfaceDeclInfo>(kniBridge336(arg0?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_index_getObjCCategoryDeclInfo(arg0: CValuesRef<CXIdxDeclInfo>?): CPointer<CXIdxObjCCategoryDeclInfo>? {
     memScoped {
-        return interpretCPointer<CXIdxObjCCategoryDeclInfo>(kniBridge328(arg0?.getPointer(memScope).rawValue))
+        return interpretCPointer<CXIdxObjCCategoryDeclInfo>(kniBridge337(arg0?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_index_getObjCProtocolRefListInfo(arg0: CValuesRef<CXIdxDeclInfo>?): CPointer<CXIdxObjCProtocolRefListInfo>? {
     memScoped {
-        return interpretCPointer<CXIdxObjCProtocolRefListInfo>(kniBridge329(arg0?.getPointer(memScope).rawValue))
+        return interpretCPointer<CXIdxObjCProtocolRefListInfo>(kniBridge338(arg0?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_index_getObjCPropertyDeclInfo(arg0: CValuesRef<CXIdxDeclInfo>?): CPointer<CXIdxObjCPropertyDeclInfo>? {
     memScoped {
-        return interpretCPointer<CXIdxObjCPropertyDeclInfo>(kniBridge330(arg0?.getPointer(memScope).rawValue))
+        return interpretCPointer<CXIdxObjCPropertyDeclInfo>(kniBridge339(arg0?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_index_getIBOutletCollectionAttrInfo(arg0: CValuesRef<CXIdxAttrInfo>?): CPointer<CXIdxIBOutletCollectionAttrInfo>? {
     memScoped {
-        return interpretCPointer<CXIdxIBOutletCollectionAttrInfo>(kniBridge331(arg0?.getPointer(memScope).rawValue))
+        return interpretCPointer<CXIdxIBOutletCollectionAttrInfo>(kniBridge340(arg0?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_index_getCXXClassDeclInfo(arg0: CValuesRef<CXIdxDeclInfo>?): CPointer<CXIdxCXXClassDeclInfo>? {
     memScoped {
-        return interpretCPointer<CXIdxCXXClassDeclInfo>(kniBridge332(arg0?.getPointer(memScope).rawValue))
+        return interpretCPointer<CXIdxCXXClassDeclInfo>(kniBridge341(arg0?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_index_getClientContainer(arg0: CValuesRef<CXIdxContainerInfo>?): CXIdxClientContainer? {
     memScoped {
-        return interpretCPointer<COpaque>(kniBridge333(arg0?.getPointer(memScope).rawValue))
+        return interpretCPointer<COpaque>(kniBridge342(arg0?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_index_setClientContainer(arg0: CValuesRef<CXIdxContainerInfo>?, arg1: CXIdxClientContainer?): Unit {
     memScoped {
-        return kniBridge334(arg0?.getPointer(memScope).rawValue, arg1.rawValue)
+        return kniBridge343(arg0?.getPointer(memScope).rawValue, arg1.rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_index_getClientEntity(arg0: CValuesRef<CXIdxEntityInfo>?): CXIdxClientEntity? {
     memScoped {
-        return interpretCPointer<COpaque>(kniBridge335(arg0?.getPointer(memScope).rawValue))
+        return interpretCPointer<COpaque>(kniBridge344(arg0?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_index_setClientEntity(arg0: CValuesRef<CXIdxEntityInfo>?, arg1: CXIdxClientEntity?): Unit {
     memScoped {
-        return kniBridge336(arg0?.getPointer(memScope).rawValue, arg1.rawValue)
+        return kniBridge345(arg0?.getPointer(memScope).rawValue, arg1.rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_IndexAction_create(CIdx: CXIndex?): CXIndexAction? {
-    return interpretCPointer<COpaque>(kniBridge337(CIdx.rawValue))
+    return interpretCPointer<COpaque>(kniBridge346(CIdx.rawValue))
 }
 
 @ExperimentalForeignApi
 fun clang_IndexAction_dispose(arg0: CXIndexAction?): Unit {
-    return kniBridge338(arg0.rawValue)
+    return kniBridge347(arg0.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_indexSourceFile(arg0: CXIndexAction?, client_data: CXClientData?, index_callbacks: CValuesRef<IndexerCallbacks>?, index_callbacks_size: Int, index_options: Int, source_filename: String?, command_line_args: CValuesRef<CPointerVar<ByteVar>>?, num_command_line_args: Int, unsaved_files: CValuesRef<CXUnsavedFile>?, num_unsaved_files: Int, out_TU: CValuesRef<CXTranslationUnitVar>?, TU_options: Int): Int {
     memScoped {
-        return kniBridge339(arg0.rawValue, client_data.rawValue, index_callbacks?.getPointer(memScope).rawValue, index_callbacks_size, index_options, source_filename?.cstr?.getPointer(memScope).rawValue, command_line_args?.getPointer(memScope).rawValue, num_command_line_args, unsaved_files?.getPointer(memScope).rawValue, num_unsaved_files, out_TU?.getPointer(memScope).rawValue, TU_options)
+        return kniBridge348(arg0.rawValue, client_data.rawValue, index_callbacks?.getPointer(memScope).rawValue, index_callbacks_size, index_options, source_filename?.cstr?.getPointer(memScope).rawValue, command_line_args?.getPointer(memScope).rawValue, num_command_line_args, unsaved_files?.getPointer(memScope).rawValue, num_unsaved_files, out_TU?.getPointer(memScope).rawValue, TU_options)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_indexSourceFileFullArgv(arg0: CXIndexAction?, client_data: CXClientData?, index_callbacks: CValuesRef<IndexerCallbacks>?, index_callbacks_size: Int, index_options: Int, source_filename: String?, command_line_args: CValuesRef<CPointerVar<ByteVar>>?, num_command_line_args: Int, unsaved_files: CValuesRef<CXUnsavedFile>?, num_unsaved_files: Int, out_TU: CValuesRef<CXTranslationUnitVar>?, TU_options: Int): Int {
     memScoped {
-        return kniBridge340(arg0.rawValue, client_data.rawValue, index_callbacks?.getPointer(memScope).rawValue, index_callbacks_size, index_options, source_filename?.cstr?.getPointer(memScope).rawValue, command_line_args?.getPointer(memScope).rawValue, num_command_line_args, unsaved_files?.getPointer(memScope).rawValue, num_unsaved_files, out_TU?.getPointer(memScope).rawValue, TU_options)
+        return kniBridge349(arg0.rawValue, client_data.rawValue, index_callbacks?.getPointer(memScope).rawValue, index_callbacks_size, index_options, source_filename?.cstr?.getPointer(memScope).rawValue, command_line_args?.getPointer(memScope).rawValue, num_command_line_args, unsaved_files?.getPointer(memScope).rawValue, num_unsaved_files, out_TU?.getPointer(memScope).rawValue, TU_options)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_indexTranslationUnit(arg0: CXIndexAction?, client_data: CXClientData?, index_callbacks: CValuesRef<IndexerCallbacks>?, index_callbacks_size: Int, index_options: Int, arg5: CXTranslationUnit?): Int {
     memScoped {
-        return kniBridge341(arg0.rawValue, client_data.rawValue, index_callbacks?.getPointer(memScope).rawValue, index_callbacks_size, index_options, arg5.rawValue)
+        return kniBridge350(arg0.rawValue, client_data.rawValue, index_callbacks?.getPointer(memScope).rawValue, index_callbacks_size, index_options, arg5.rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_indexLoc_getFileLocation(loc: CValue<CXIdxLoc>, indexFile: CValuesRef<CXIdxClientFileVar>?, file: CValuesRef<CXFileVar>?, line: CValuesRef<IntVar>?, column: CValuesRef<IntVar>?, offset: CValuesRef<IntVar>?): Unit {
     memScoped {
-        return kniBridge342(loc.getPointer(memScope).rawValue, indexFile?.getPointer(memScope).rawValue, file?.getPointer(memScope).rawValue, line?.getPointer(memScope).rawValue, column?.getPointer(memScope).rawValue, offset?.getPointer(memScope).rawValue)
+        return kniBridge351(loc.getPointer(memScope).rawValue, indexFile?.getPointer(memScope).rawValue, file?.getPointer(memScope).rawValue, line?.getPointer(memScope).rawValue, column?.getPointer(memScope).rawValue, offset?.getPointer(memScope).rawValue)
     }
 }
 
@@ -4646,7 +4720,7 @@ fun clang_indexLoc_getCXSourceLocation(loc: CValue<CXIdxLoc>): CValue<CXSourceLo
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXSourceLocation>()
         try {
-            kniBridge343(loc.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge352(loc.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -4655,7 +4729,21 @@ fun clang_indexLoc_getCXSourceLocation(loc: CValue<CXIdxLoc>): CValue<CXSourceLo
 @ExperimentalForeignApi
 fun clang_Type_visitFields(T: CValue<CXType>, visitor: CXFieldVisitor?, client_data: CXClientData?): Int {
     memScoped {
-        return kniBridge344(T.getPointer(memScope).rawValue, visitor.rawValue, client_data.rawValue)
+        return kniBridge353(T.getPointer(memScope).rawValue, visitor.rawValue, client_data.rawValue)
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_visitCXXBaseClasses(T: CValue<CXType>, visitor: CXFieldVisitor?, client_data: CXClientData?): Int {
+    memScoped {
+        return kniBridge354(T.getPointer(memScope).rawValue, visitor.rawValue, client_data.rawValue)
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_visitCXXMethods(T: CValue<CXType>, visitor: CXFieldVisitor?, client_data: CXClientData?): Int {
+    memScoped {
+        return kniBridge355(T.getPointer(memScope).rawValue, visitor.rawValue, client_data.rawValue)
     }
 }
 
@@ -4663,7 +4751,7 @@ fun clang_Type_visitFields(T: CValue<CXType>, visitor: CXFieldVisitor?, client_d
 fun clang_getBinaryOperatorKindSpelling(kind: CXBinaryOperatorKind): CValue<CXString> {
     val kniRetVal = nativeHeap.alloc<CXString>()
     try {
-        kniBridge345(kind.value, kniRetVal.rawPtr)
+        kniBridge356(kind, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
@@ -4671,7 +4759,7 @@ fun clang_getBinaryOperatorKindSpelling(kind: CXBinaryOperatorKind): CValue<CXSt
 @ExperimentalForeignApi
 fun clang_getCursorBinaryOperatorKind(cursor: CValue<CXCursor>): CXBinaryOperatorKind {
     memScoped {
-        return CXBinaryOperatorKind.byValue(kniBridge346(cursor.getPointer(memScope).rawValue))
+        return kniBridge357(cursor.getPointer(memScope).rawValue)
     }
 }
 
@@ -4679,7 +4767,7 @@ fun clang_getCursorBinaryOperatorKind(cursor: CValue<CXCursor>): CXBinaryOperato
 fun clang_getUnaryOperatorKindSpelling(kind: CXUnaryOperatorKind): CValue<CXString> {
     val kniRetVal = nativeHeap.alloc<CXString>()
     try {
-        kniBridge347(kind.value, kniRetVal.rawPtr)
+        kniBridge358(kind.value, kniRetVal.rawPtr)
         return kniRetVal.readValue()
     } finally { nativeHeap.free(kniRetVal) }
 }
@@ -4687,14 +4775,45 @@ fun clang_getUnaryOperatorKindSpelling(kind: CXUnaryOperatorKind): CValue<CXStri
 @ExperimentalForeignApi
 fun clang_getCursorUnaryOperatorKind(cursor: CValue<CXCursor>): CXUnaryOperatorKind {
     memScoped {
-        return CXUnaryOperatorKind.byValue(kniBridge348(cursor.getPointer(memScope).rawValue))
+        return CXUnaryOperatorKind.byValue(kniBridge359(cursor.getPointer(memScope).rawValue))
     }
+}
+
+@ExperimentalForeignApi
+fun clang_getRemappings(arg0: String?): CXRemapping? {
+    memScoped {
+        return interpretCPointer<COpaque>(kniBridge360(arg0?.cstr?.getPointer(memScope).rawValue))
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_getRemappingsFromFileList(arg0: CValuesRef<CPointerVar<ByteVar>>?, arg1: Int): CXRemapping? {
+    memScoped {
+        return interpretCPointer<COpaque>(kniBridge361(arg0?.getPointer(memScope).rawValue, arg1))
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_remap_getNumFiles(arg0: CXRemapping?): Int {
+    return kniBridge362(arg0.rawValue)
+}
+
+@ExperimentalForeignApi
+fun clang_remap_getFilenames(arg0: CXRemapping?, arg1: Int, arg2: CValuesRef<CXString>?, arg3: CValuesRef<CXString>?): Unit {
+    memScoped {
+        return kniBridge363(arg0.rawValue, arg1, arg2?.getPointer(memScope).rawValue, arg3?.getPointer(memScope).rawValue)
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_remap_dispose(arg0: CXRemapping?): Unit {
+    return kniBridge364(arg0.rawValue)
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_getAttributeSpelling(cursor: CValue<CXCursor>): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge349(cursor.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge365(cursor.getPointer(memScope).rawValue))
     }
 }
 
@@ -4703,7 +4822,7 @@ fun clang_getDeclTypeAttributes(cursor: CValue<CXCursor>): CValue<CXTypeAttribut
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXTypeAttributes>()
         try {
-            kniBridge350(cursor.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge366(cursor.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -4714,7 +4833,7 @@ fun clang_getResultTypeAttributes(typeAttributes: CValue<CXTypeAttributes>): CVa
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXTypeAttributes>()
         try {
-            kniBridge351(typeAttributes.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge367(typeAttributes.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -4725,7 +4844,7 @@ fun clang_getCursorResultTypeAttributes(cursor: CValue<CXCursor>): CValue<CXType
     memScoped {
         val kniRetVal = nativeHeap.alloc<CXTypeAttributes>()
         try {
-            kniBridge352(cursor.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            kniBridge368(cursor.getPointer(memScope).rawValue, kniRetVal.rawPtr)
             return kniRetVal.readValue()
         } finally { nativeHeap.free(kniRetVal) }
     }
@@ -4734,28 +4853,57 @@ fun clang_getCursorResultTypeAttributes(cursor: CValue<CXCursor>): CValue<CXType
 @ExperimentalForeignApi
 fun clang_Type_getNullabilityKind(type: CValue<CXType>, attributes: CValue<CXTypeAttributes>): CXNullabilityKind {
     memScoped {
-        return CXNullabilityKind.byValue(kniBridge353(type.getPointer(memScope).rawValue, attributes.getPointer(memScope).rawValue))
+        return CXNullabilityKind.byValue(kniBridge369(type.getPointer(memScope).rawValue, attributes.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_isObjCInitMethod(cursor: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge354(cursor.getPointer(memScope).rawValue)
+        return kniBridge370(cursor.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_isObjCReturningRetainedMethod(cursor: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge355(cursor.getPointer(memScope).rawValue)
+        return kniBridge371(cursor.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun clang_Cursor_isObjCConsumingSelfMethod(cursor: CValue<CXCursor>): Int {
     memScoped {
-        return kniBridge356(cursor.getPointer(memScope).rawValue)
+        return kniBridge372(cursor.getPointer(memScope).rawValue)
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_Cursor_getSwiftName(cursor: CValue<CXCursor>): CValue<CString> {
+    memScoped {
+        val kniRetVal = nativeHeap.alloc<CString>()
+        try {
+            kniBridge373(cursor.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            return kniRetVal.readValue()
+        } finally { nativeHeap.free(kniRetVal) }
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_disposeCString(str: CValue<CString>): Unit {
+    memScoped {
+        return kniBridge374(str.getPointer(memScope).rawValue)
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_Cursor_getObjCProtocolRuntimeName(cursor: CValue<CXCursor>): CValue<CString> {
+    memScoped {
+        val kniRetVal = nativeHeap.alloc<CString>()
+        try {
+            kniBridge375(cursor.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            return kniRetVal.readValue()
+        } finally { nativeHeap.free(kniRetVal) }
     }
 }
 
@@ -4898,12 +5046,6 @@ typealias CXEvalResultVar = CPointerVarOf<CXEvalResult>
 typealias CXEvalResult = COpaquePointer
 
 @ExperimentalForeignApi
-typealias CXRemappingVar = CPointerVarOf<CXRemapping>
-
-@ExperimentalForeignApi
-typealias CXRemapping = COpaquePointer
-
-@ExperimentalForeignApi
 typealias CXCursorAndRangeVisitorBlockVar = CPointerVarOf<CXCursorAndRangeVisitorBlock>
 
 @ExperimentalForeignApi
@@ -4944,6 +5086,12 @@ typealias CXFieldVisitorVar = CPointerVarOf<CXFieldVisitor>
 
 @ExperimentalForeignApi
 typealias CXFieldVisitor = CPointer<CFunction<(CValue<CXCursor>, CXClientData?) -> CXVisitorResult>>
+
+@ExperimentalForeignApi
+typealias CXRemappingVar = CPointerVarOf<CXRemapping>
+
+@ExperimentalForeignApi
+typealias CXRemapping = COpaquePointer
 
 
 @ExperimentalForeignApi
@@ -5715,10 +5863,125 @@ val CXIndexOpt_SuppressWarnings: CXIndexOptFlags get() = 8
 val CXIndexOpt_SkipParsedBodiesInSession: CXIndexOptFlags get() = 16
 
 @ExperimentalForeignApi
+val CXIndexOpt_IndexGeneratedDeclarations: CXIndexOptFlags get() = -2147483648
+
+@ExperimentalForeignApi
 typealias CXIndexOptFlagsVar = IntVarOf<CXIndexOptFlags>
 
 @ExperimentalForeignApi
 typealias CXIndexOptFlags = Int
+
+
+@ExperimentalForeignApi
+val CXBinaryOperator_Invalid: CXBinaryOperatorKind get() = 0
+
+@ExperimentalForeignApi
+val CXBinaryOperator_PtrMemD: CXBinaryOperatorKind get() = 1
+
+@ExperimentalForeignApi
+val CXBinaryOperator_PtrMemI: CXBinaryOperatorKind get() = 2
+
+@ExperimentalForeignApi
+val CXBinaryOperator_Mul: CXBinaryOperatorKind get() = 3
+
+@ExperimentalForeignApi
+val CXBinaryOperator_Div: CXBinaryOperatorKind get() = 4
+
+@ExperimentalForeignApi
+val CXBinaryOperator_Rem: CXBinaryOperatorKind get() = 5
+
+@ExperimentalForeignApi
+val CXBinaryOperator_Add: CXBinaryOperatorKind get() = 6
+
+@ExperimentalForeignApi
+val CXBinaryOperator_Sub: CXBinaryOperatorKind get() = 7
+
+@ExperimentalForeignApi
+val CXBinaryOperator_Shl: CXBinaryOperatorKind get() = 8
+
+@ExperimentalForeignApi
+val CXBinaryOperator_Shr: CXBinaryOperatorKind get() = 9
+
+@ExperimentalForeignApi
+val CXBinaryOperator_Cmp: CXBinaryOperatorKind get() = 10
+
+@ExperimentalForeignApi
+val CXBinaryOperator_LT: CXBinaryOperatorKind get() = 11
+
+@ExperimentalForeignApi
+val CXBinaryOperator_GT: CXBinaryOperatorKind get() = 12
+
+@ExperimentalForeignApi
+val CXBinaryOperator_LE: CXBinaryOperatorKind get() = 13
+
+@ExperimentalForeignApi
+val CXBinaryOperator_GE: CXBinaryOperatorKind get() = 14
+
+@ExperimentalForeignApi
+val CXBinaryOperator_EQ: CXBinaryOperatorKind get() = 15
+
+@ExperimentalForeignApi
+val CXBinaryOperator_NE: CXBinaryOperatorKind get() = 16
+
+@ExperimentalForeignApi
+val CXBinaryOperator_And: CXBinaryOperatorKind get() = 17
+
+@ExperimentalForeignApi
+val CXBinaryOperator_Xor: CXBinaryOperatorKind get() = 18
+
+@ExperimentalForeignApi
+val CXBinaryOperator_Or: CXBinaryOperatorKind get() = 19
+
+@ExperimentalForeignApi
+val CXBinaryOperator_LAnd: CXBinaryOperatorKind get() = 20
+
+@ExperimentalForeignApi
+val CXBinaryOperator_LOr: CXBinaryOperatorKind get() = 21
+
+@ExperimentalForeignApi
+val CXBinaryOperator_Assign: CXBinaryOperatorKind get() = 22
+
+@ExperimentalForeignApi
+val CXBinaryOperator_MulAssign: CXBinaryOperatorKind get() = 23
+
+@ExperimentalForeignApi
+val CXBinaryOperator_DivAssign: CXBinaryOperatorKind get() = 24
+
+@ExperimentalForeignApi
+val CXBinaryOperator_RemAssign: CXBinaryOperatorKind get() = 25
+
+@ExperimentalForeignApi
+val CXBinaryOperator_AddAssign: CXBinaryOperatorKind get() = 26
+
+@ExperimentalForeignApi
+val CXBinaryOperator_SubAssign: CXBinaryOperatorKind get() = 27
+
+@ExperimentalForeignApi
+val CXBinaryOperator_ShlAssign: CXBinaryOperatorKind get() = 28
+
+@ExperimentalForeignApi
+val CXBinaryOperator_ShrAssign: CXBinaryOperatorKind get() = 29
+
+@ExperimentalForeignApi
+val CXBinaryOperator_AndAssign: CXBinaryOperatorKind get() = 30
+
+@ExperimentalForeignApi
+val CXBinaryOperator_XorAssign: CXBinaryOperatorKind get() = 31
+
+@ExperimentalForeignApi
+val CXBinaryOperator_OrAssign: CXBinaryOperatorKind get() = 32
+
+@ExperimentalForeignApi
+val CXBinaryOperator_Comma: CXBinaryOperatorKind get() = 33
+
+@ExperimentalForeignApi
+val CXBinaryOperator_Last: CXBinaryOperatorKind get() = 33
+
+@ExperimentalForeignApi
+typealias CXBinaryOperatorKindVar = IntVarOf<CXBinaryOperatorKind>
+
+@ExperimentalForeignApi
+typealias CXBinaryOperatorKind = Int
 private external fun kniBridge0(p0: NativePtr): NativePtr
 private external fun kniBridge1(p0: NativePtr): Unit
 private external fun kniBridge2(p0: NativePtr): Unit
@@ -5741,339 +6004,358 @@ private external fun kniBridge18(p0: NativePtr, p1: NativePtr): Int
 private external fun kniBridge19(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge20(p0: NativePtr): Unit
 private external fun kniBridge21(p0: NativePtr, p1: NativePtr): Int
-private external fun kniBridge22(p0: NativePtr): Int
+private external fun kniBridge22(p0: NativePtr, p1: NativePtr): Int
 private external fun kniBridge23(p0: NativePtr): Int
-private external fun kniBridge24(p0: NativePtr): Unit
-private external fun kniBridge25(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge26(p0: NativePtr, p1: NativePtr): Int
-private external fun kniBridge27(p0: NativePtr): Int
-private external fun kniBridge28(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr): Unit
-private external fun kniBridge29(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): Unit
-private external fun kniBridge30(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr): Unit
+private external fun kniBridge24(p0: NativePtr): Int
+private external fun kniBridge25(p0: NativePtr): Unit
+private external fun kniBridge26(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge27(p0: NativePtr, p1: NativePtr): Int
+private external fun kniBridge28(p0: NativePtr): Int
+private external fun kniBridge29(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr): Unit
+private external fun kniBridge30(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): Unit
 private external fun kniBridge31(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr): Unit
 private external fun kniBridge32(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr): Unit
-private external fun kniBridge33(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge33(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr): Unit
 private external fun kniBridge34(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge35(p0: NativePtr): Unit
-private external fun kniBridge36(p0: NativePtr): Int
-private external fun kniBridge37(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge38(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge39(p0: NativePtr): Unit
-private external fun kniBridge40(p0: NativePtr): NativePtr
-private external fun kniBridge41(p0: NativePtr): Unit
-private external fun kniBridge42(p0: NativePtr, p1: Int, p2: NativePtr): Unit
-private external fun kniBridge43(): Int
-private external fun kniBridge44(p0: NativePtr): Int
-private external fun kniBridge45(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge35(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge36(p0: NativePtr): Unit
+private external fun kniBridge37(p0: NativePtr): Int
+private external fun kniBridge38(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge39(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge40(p0: NativePtr): Unit
+private external fun kniBridge41(p0: NativePtr): NativePtr
+private external fun kniBridge42(p0: NativePtr): Unit
+private external fun kniBridge43(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge44(): Int
+private external fun kniBridge45(p0: NativePtr): Int
 private external fun kniBridge46(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge47(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge48(p0: NativePtr): Int
-private external fun kniBridge49(p0: Int, p1: NativePtr): Unit
-private external fun kniBridge50(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge51(p0: NativePtr): Int
-private external fun kniBridge52(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge47(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge48(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge49(p0: NativePtr): Int
+private external fun kniBridge50(p0: Int, p1: NativePtr): Unit
+private external fun kniBridge51(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge52(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge53(p0: NativePtr): Int
-private external fun kniBridge54(p0: NativePtr, p1: Int, p2: NativePtr, p3: NativePtr): Unit
-private external fun kniBridge55(p0: Int, p1: Int): NativePtr
-private external fun kniBridge56(p0: NativePtr): Unit
-private external fun kniBridge57(p0: NativePtr): NativePtr
-private external fun kniBridge58(p0: NativePtr, p1: Int): Unit
-private external fun kniBridge59(p0: NativePtr): Int
-private external fun kniBridge60(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge61(p0: NativePtr, p1: NativePtr): Int
-private external fun kniBridge62(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge63(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge64(p0: NativePtr, p1: NativePtr, p2: Int, p3: Int, p4: NativePtr): Unit
-private external fun kniBridge65(p0: NativePtr, p1: NativePtr, p2: Int, p3: NativePtr): Unit
-private external fun kniBridge66(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge67(p0: NativePtr): NativePtr
-private external fun kniBridge68(p0: NativePtr): Int
-private external fun kniBridge69(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge70(p0: NativePtr): NativePtr
-private external fun kniBridge71(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge72(p0: NativePtr, p1: NativePtr, p2: Int, p3: NativePtr, p4: Int, p5: NativePtr): NativePtr
-private external fun kniBridge73(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge74(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
-private external fun kniBridge75(): Int
-private external fun kniBridge76(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr, p5: Int, p6: Int): NativePtr
-private external fun kniBridge77(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr, p5: Int, p6: Int, p7: NativePtr): Int
-private external fun kniBridge78(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr, p5: Int, p6: Int, p7: NativePtr): Int
-private external fun kniBridge79(p0: NativePtr): Int
-private external fun kniBridge80(p0: NativePtr, p1: NativePtr, p2: Int): Int
+private external fun kniBridge54(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge55(p0: NativePtr): Int
+private external fun kniBridge56(p0: NativePtr, p1: Int, p2: NativePtr, p3: NativePtr): Unit
+private external fun kniBridge57(p0: Int, p1: Int): NativePtr
+private external fun kniBridge58(p0: NativePtr): Unit
+private external fun kniBridge59(p0: NativePtr): NativePtr
+private external fun kniBridge60(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge61(p0: NativePtr): Int
+private external fun kniBridge62(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge63(p0: NativePtr, p1: NativePtr): Int
+private external fun kniBridge64(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge65(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge66(p0: NativePtr, p1: NativePtr, p2: Int, p3: Int, p4: NativePtr): Unit
+private external fun kniBridge67(p0: NativePtr, p1: NativePtr, p2: Int, p3: NativePtr): Unit
+private external fun kniBridge68(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge69(p0: NativePtr): NativePtr
+private external fun kniBridge70(p0: NativePtr): Int
+private external fun kniBridge71(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge72(p0: NativePtr): NativePtr
+private external fun kniBridge73(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge74(p0: NativePtr, p1: NativePtr, p2: Int, p3: NativePtr, p4: Int, p5: NativePtr): NativePtr
+private external fun kniBridge75(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge76(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
+private external fun kniBridge77(): Int
+private external fun kniBridge78(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr, p5: Int, p6: Int): NativePtr
+private external fun kniBridge79(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr, p5: Int, p6: Int, p7: NativePtr): Int
+private external fun kniBridge80(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr, p5: Int, p6: Int, p7: NativePtr): Int
 private external fun kniBridge81(p0: NativePtr): Int
-private external fun kniBridge82(p0: NativePtr): Unit
+private external fun kniBridge82(p0: NativePtr, p1: NativePtr, p2: Int): Int
 private external fun kniBridge83(p0: NativePtr): Int
-private external fun kniBridge84(p0: NativePtr, p1: Int, p2: NativePtr, p3: Int): Int
-private external fun kniBridge85(p0: Int): NativePtr
-private external fun kniBridge86(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge87(p0: NativePtr): Unit
-private external fun kniBridge88(p0: NativePtr): NativePtr
+private external fun kniBridge84(p0: NativePtr): Unit
+private external fun kniBridge85(p0: NativePtr): Int
+private external fun kniBridge86(p0: NativePtr, p1: Int, p2: NativePtr, p3: Int): Int
+private external fun kniBridge87(p0: Int): NativePtr
+private external fun kniBridge88(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge89(p0: NativePtr): Unit
-private external fun kniBridge90(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge91(p0: NativePtr): Int
-private external fun kniBridge92(p0: NativePtr): Unit
-private external fun kniBridge93(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge94(p0: NativePtr, p1: NativePtr): Int
-private external fun kniBridge95(p0: NativePtr): Int
-private external fun kniBridge96(p0: NativePtr): Int
+private external fun kniBridge90(p0: NativePtr): NativePtr
+private external fun kniBridge91(p0: NativePtr): Unit
+private external fun kniBridge92(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge93(p0: NativePtr): Int
+private external fun kniBridge94(p0: NativePtr): Unit
+private external fun kniBridge95(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge96(p0: NativePtr, p1: NativePtr): Int
 private external fun kniBridge97(p0: NativePtr): Int
-private external fun kniBridge98(p0: Int): Int
+private external fun kniBridge98(p0: NativePtr): Int
 private external fun kniBridge99(p0: NativePtr): Int
 private external fun kniBridge100(p0: Int): Int
-private external fun kniBridge101(p0: Int): Int
+private external fun kniBridge101(p0: NativePtr): Int
 private external fun kniBridge102(p0: Int): Int
 private external fun kniBridge103(p0: Int): Int
-private external fun kniBridge104(p0: NativePtr): Int
+private external fun kniBridge104(p0: Int): Int
 private external fun kniBridge105(p0: Int): Int
-private external fun kniBridge106(p0: Int): Int
+private external fun kniBridge106(p0: NativePtr): Int
 private external fun kniBridge107(p0: Int): Int
 private external fun kniBridge108(p0: Int): Int
-private external fun kniBridge109(p0: NativePtr): Int
-private external fun kniBridge110(p0: NativePtr): Int
+private external fun kniBridge109(p0: Int): Int
+private external fun kniBridge110(p0: Int): Int
 private external fun kniBridge111(p0: NativePtr): Int
-private external fun kniBridge112(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr, p5: NativePtr, p6: Int): Int
-private external fun kniBridge113(p0: NativePtr): Unit
-private external fun kniBridge114(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge115(p0: NativePtr): Int
-private external fun kniBridge116(p0: NativePtr): Int
+private external fun kniBridge112(p0: NativePtr): Int
+private external fun kniBridge113(p0: NativePtr): Int
+private external fun kniBridge114(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr, p5: NativePtr, p6: Int): Int
+private external fun kniBridge115(p0: NativePtr): Unit
+private external fun kniBridge116(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge117(p0: NativePtr): Int
 private external fun kniBridge118(p0: NativePtr): Int
-private external fun kniBridge119(p0: NativePtr): NativePtr
-private external fun kniBridge120(): NativePtr
-private external fun kniBridge121(p0: NativePtr): Unit
-private external fun kniBridge122(p0: NativePtr, p1: NativePtr): Int
-private external fun kniBridge123(p0: NativePtr, p1: NativePtr): Int
-private external fun kniBridge124(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge125(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge126(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge127(p0: NativePtr): Unit
-private external fun kniBridge128(p0: NativePtr): NativePtr
-private external fun kniBridge129(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge130(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge131(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge119(p0: NativePtr): Int
+private external fun kniBridge120(p0: NativePtr): Int
+private external fun kniBridge121(p0: NativePtr): NativePtr
+private external fun kniBridge122(): NativePtr
+private external fun kniBridge123(p0: NativePtr): Unit
+private external fun kniBridge124(p0: NativePtr, p1: NativePtr): Int
+private external fun kniBridge125(p0: NativePtr, p1: NativePtr): Int
+private external fun kniBridge126(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge127(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge128(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge129(p0: NativePtr): Unit
+private external fun kniBridge130(p0: NativePtr): NativePtr
+private external fun kniBridge131(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
 private external fun kniBridge132(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge133(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge134(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge135(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge136(p0: NativePtr): Long
-private external fun kniBridge137(p0: NativePtr): Long
-private external fun kniBridge138(p0: NativePtr): Int
-private external fun kniBridge139(p0: NativePtr): Int
+private external fun kniBridge136(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge137(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge138(p0: NativePtr): Long
+private external fun kniBridge139(p0: NativePtr): Long
 private external fun kniBridge140(p0: NativePtr): Int
-private external fun kniBridge141(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge141(p0: NativePtr): Int
 private external fun kniBridge142(p0: NativePtr): Int
-private external fun kniBridge143(p0: NativePtr, p1: Int): Int
-private external fun kniBridge144(p0: NativePtr, p1: Int, p2: NativePtr): Unit
-private external fun kniBridge145(p0: NativePtr, p1: Int): Long
-private external fun kniBridge146(p0: NativePtr, p1: Int): Long
-private external fun kniBridge147(p0: NativePtr, p1: NativePtr): Int
-private external fun kniBridge148(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge149(p0: NativePtr): Int
-private external fun kniBridge150(p0: NativePtr): Int
+private external fun kniBridge143(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge144(p0: NativePtr): Int
+private external fun kniBridge145(p0: NativePtr, p1: Int): Int
+private external fun kniBridge146(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge147(p0: NativePtr, p1: Int): Long
+private external fun kniBridge148(p0: NativePtr, p1: Int): Long
+private external fun kniBridge149(p0: NativePtr, p1: NativePtr): Int
+private external fun kniBridge150(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge151(p0: NativePtr): Int
 private external fun kniBridge152(p0: NativePtr): Int
 private external fun kniBridge153(p0: NativePtr): Int
 private external fun kniBridge154(p0: NativePtr): Int
 private external fun kniBridge155(p0: NativePtr): Int
-private external fun kniBridge156(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge157(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge156(p0: NativePtr): Int
+private external fun kniBridge157(p0: NativePtr): Int
 private external fun kniBridge158(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge159(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge160(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge161(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge162(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge163(p0: Int, p1: NativePtr): Unit
-private external fun kniBridge164(p0: NativePtr): Int
-private external fun kniBridge165(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge163(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge164(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge165(p0: Int, p1: NativePtr): Unit
 private external fun kniBridge166(p0: NativePtr): Int
-private external fun kniBridge167(p0: NativePtr): Int
-private external fun kniBridge168(p0: NativePtr, p1: Int, p2: NativePtr): Unit
-private external fun kniBridge169(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge170(p0: NativePtr): Int
-private external fun kniBridge171(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge167(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge168(p0: NativePtr): Int
+private external fun kniBridge169(p0: NativePtr): Int
+private external fun kniBridge170(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge171(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge172(p0: NativePtr): Int
 private external fun kniBridge173(p0: NativePtr, p1: Int, p2: NativePtr): Unit
 private external fun kniBridge174(p0: NativePtr): Int
-private external fun kniBridge175(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge175(p0: NativePtr, p1: Int, p2: NativePtr): Unit
 private external fun kniBridge176(p0: NativePtr): Int
-private external fun kniBridge177(p0: NativePtr): Int
-private external fun kniBridge178(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge179(p0: NativePtr): Long
+private external fun kniBridge177(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge178(p0: NativePtr): Int
+private external fun kniBridge179(p0: NativePtr): Int
 private external fun kniBridge180(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge181(p0: NativePtr): Long
 private external fun kniBridge182(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge183(p0: NativePtr): Int
-private external fun kniBridge184(p0: NativePtr): Int
-private external fun kniBridge185(p0: NativePtr): Long
-private external fun kniBridge186(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge183(p0: NativePtr): Long
+private external fun kniBridge184(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge185(p0: NativePtr): Int
+private external fun kniBridge186(p0: NativePtr): Int
 private external fun kniBridge187(p0: NativePtr): Long
-private external fun kniBridge188(p0: NativePtr, p1: NativePtr): Long
-private external fun kniBridge189(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge190(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge191(p0: NativePtr): Long
-private external fun kniBridge192(p0: NativePtr): Int
-private external fun kniBridge193(p0: NativePtr): Int
+private external fun kniBridge188(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge189(p0: NativePtr): Long
+private external fun kniBridge190(p0: NativePtr, p1: NativePtr): Long
+private external fun kniBridge191(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge192(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge193(p0: NativePtr): Long
 private external fun kniBridge194(p0: NativePtr): Int
 private external fun kniBridge195(p0: NativePtr): Int
-private external fun kniBridge196(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge196(p0: NativePtr): Int
 private external fun kniBridge197(p0: NativePtr): Int
-private external fun kniBridge198(p0: NativePtr): Int
+private external fun kniBridge198(p0: NativePtr, p1: Int, p2: NativePtr): Unit
 private external fun kniBridge199(p0: NativePtr): Int
 private external fun kniBridge200(p0: NativePtr): Int
-private external fun kniBridge201(p0: Int, p1: NativePtr): Unit
+private external fun kniBridge201(p0: NativePtr, p1: NativePtr): Long
 private external fun kniBridge202(p0: NativePtr): Int
 private external fun kniBridge203(p0: NativePtr): Int
-private external fun kniBridge204(p0: NativePtr, p1: Int, p2: NativePtr): Unit
-private external fun kniBridge205(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge206(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
-private external fun kniBridge207(p0: NativePtr, p1: NativePtr): Int
+private external fun kniBridge204(p0: Int, p1: NativePtr): Unit
+private external fun kniBridge205(p0: NativePtr): Int
+private external fun kniBridge206(p0: NativePtr): Int
+private external fun kniBridge207(p0: NativePtr, p1: Int, p2: NativePtr): Unit
 private external fun kniBridge208(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge209(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge210(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge209(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
+private external fun kniBridge210(p0: NativePtr, p1: NativePtr): Int
 private external fun kniBridge211(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge212(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge213(p0: NativePtr, p1: Int, p2: NativePtr, p3: NativePtr): Unit
-private external fun kniBridge214(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge215(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge216(p0: NativePtr, p1: Int, p2: Int, p3: NativePtr): Unit
-private external fun kniBridge217(p0: NativePtr, p1: Int): Int
-private external fun kniBridge218(p0: NativePtr, p1: Int, p2: Int): Unit
-private external fun kniBridge219(p0: NativePtr): NativePtr
-private external fun kniBridge220(p0: NativePtr): Unit
-private external fun kniBridge221(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge222(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge223(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge224(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge225(p0: NativePtr): Int
-private external fun kniBridge226(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge227(p0: NativePtr): Int
-private external fun kniBridge228(p0: NativePtr): Int
+private external fun kniBridge212(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge213(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge214(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge215(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge216(p0: NativePtr, p1: Int, p2: NativePtr, p3: NativePtr): Unit
+private external fun kniBridge217(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge218(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge219(p0: NativePtr, p1: Int, p2: Int, p3: NativePtr): Unit
+private external fun kniBridge220(p0: NativePtr, p1: Int): Int
+private external fun kniBridge221(p0: NativePtr, p1: Int, p2: Int): Unit
+private external fun kniBridge222(p0: NativePtr): NativePtr
+private external fun kniBridge223(p0: NativePtr): Unit
+private external fun kniBridge224(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge225(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge226(p0: NativePtr, p1: NativePtr, p2: Int, p3: NativePtr): Unit
+private external fun kniBridge227(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge228(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge229(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge230(p0: NativePtr, p1: Int): Int
+private external fun kniBridge230(p0: NativePtr): Int
 private external fun kniBridge231(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge232(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge232(p0: NativePtr): Int
 private external fun kniBridge233(p0: NativePtr): Int
-private external fun kniBridge234(p0: NativePtr): Int
-private external fun kniBridge235(p0: NativePtr): Int
-private external fun kniBridge236(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): Int
+private external fun kniBridge234(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge235(p0: NativePtr, p1: Int): Int
+private external fun kniBridge236(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge237(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge238(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge239(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge240(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge241(p0: NativePtr): NativePtr
-private external fun kniBridge242(p0: NativePtr): NativePtr
-private external fun kniBridge243(p0: NativePtr): NativePtr
-private external fun kniBridge244(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge245(p0: NativePtr): NativePtr
+private external fun kniBridge238(p0: NativePtr): Int
+private external fun kniBridge239(p0: NativePtr): Int
+private external fun kniBridge240(p0: NativePtr): Int
+private external fun kniBridge241(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): Int
+private external fun kniBridge242(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge243(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge244(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge245(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge246(p0: NativePtr): NativePtr
-private external fun kniBridge247(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge247(p0: NativePtr): NativePtr
 private external fun kniBridge248(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge249(p0: NativePtr): Int
-private external fun kniBridge250(p0: NativePtr, p1: NativePtr): Int
-private external fun kniBridge251(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
-private external fun kniBridge252(p0: NativePtr): Int
-private external fun kniBridge253(p0: NativePtr): Int
+private external fun kniBridge250(p0: NativePtr): Int
+private external fun kniBridge251(p0: NativePtr): Int
+private external fun kniBridge252(p0: NativePtr, p1: Int, p2: NativePtr, p3: NativePtr): Int
+private external fun kniBridge253(p0: NativePtr, p1: Int, p2: NativePtr, p3: NativePtr): Int
 private external fun kniBridge254(p0: NativePtr): Int
-private external fun kniBridge255(p0: NativePtr): Int
+private external fun kniBridge255(p0: NativePtr, p1: Int, p2: NativePtr): Unit
 private external fun kniBridge256(p0: NativePtr): Int
-private external fun kniBridge257(p0: NativePtr): Int
-private external fun kniBridge258(p0: NativePtr): Int
-private external fun kniBridge259(p0: NativePtr): Int
-private external fun kniBridge260(p0: NativePtr): Int
-private external fun kniBridge261(p0: NativePtr): Int
-private external fun kniBridge262(p0: NativePtr): Int
+private external fun kniBridge257(p0: NativePtr): NativePtr
+private external fun kniBridge258(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge259(p0: NativePtr): NativePtr
+private external fun kniBridge260(p0: NativePtr): NativePtr
+private external fun kniBridge261(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge262(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge263(p0: NativePtr): Int
-private external fun kniBridge264(p0: NativePtr): Int
-private external fun kniBridge265(p0: NativePtr): Int
+private external fun kniBridge264(p0: NativePtr, p1: NativePtr): Int
+private external fun kniBridge265(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
 private external fun kniBridge266(p0: NativePtr): Int
-private external fun kniBridge267(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge268(p0: NativePtr, p1: Int, p2: Int, p3: NativePtr): Unit
-private external fun kniBridge269(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge267(p0: NativePtr): Int
+private external fun kniBridge268(p0: NativePtr): Int
+private external fun kniBridge269(p0: NativePtr): Int
 private external fun kniBridge270(p0: NativePtr): Int
-private external fun kniBridge271(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge272(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge273(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge274(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): Unit
-private external fun kniBridge275(p0: NativePtr, p1: NativePtr, p2: Int, p3: NativePtr): Unit
-private external fun kniBridge276(p0: NativePtr, p1: NativePtr, p2: Int): Unit
-private external fun kniBridge277(p0: Int, p1: NativePtr): Unit
-private external fun kniBridge278(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr, p5: NativePtr, p6: NativePtr): Unit
-private external fun kniBridge279(): Unit
-private external fun kniBridge280(p0: NativePtr, p1: NativePtr, p2: Int): Unit
-private external fun kniBridge281(p0: NativePtr, p1: Int): Int
-private external fun kniBridge282(p0: NativePtr, p1: Int, p2: NativePtr): Unit
-private external fun kniBridge283(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge271(p0: NativePtr): Int
+private external fun kniBridge272(p0: NativePtr): Int
+private external fun kniBridge273(p0: NativePtr): Int
+private external fun kniBridge274(p0: NativePtr): Int
+private external fun kniBridge275(p0: NativePtr): Int
+private external fun kniBridge276(p0: NativePtr): Int
+private external fun kniBridge277(p0: NativePtr): Int
+private external fun kniBridge278(p0: NativePtr): Int
+private external fun kniBridge279(p0: NativePtr): Int
+private external fun kniBridge280(p0: NativePtr): Int
+private external fun kniBridge281(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge282(p0: NativePtr, p1: Int, p2: Int, p3: NativePtr): Unit
+private external fun kniBridge283(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge284(p0: NativePtr): Int
-private external fun kniBridge285(p0: NativePtr): Int
-private external fun kniBridge286(p0: NativePtr): Int
-private external fun kniBridge287(p0: NativePtr): Int
-private external fun kniBridge288(p0: NativePtr, p1: Int, p2: NativePtr): Unit
-private external fun kniBridge289(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge290(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge291(p0: NativePtr): NativePtr
-private external fun kniBridge292(p0: NativePtr, p1: Int): Int
-private external fun kniBridge293(p0: NativePtr, p1: Int, p2: Int, p3: NativePtr, p4: NativePtr): Unit
-private external fun kniBridge294(): Int
-private external fun kniBridge295(p0: NativePtr, p1: NativePtr, p2: Int, p3: Int, p4: NativePtr, p5: Int, p6: Int): NativePtr
-private external fun kniBridge296(p0: NativePtr, p1: Int): Unit
-private external fun kniBridge297(p0: NativePtr): Unit
+private external fun kniBridge285(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge286(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge287(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge288(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): Unit
+private external fun kniBridge289(p0: NativePtr, p1: NativePtr, p2: Int, p3: NativePtr): Unit
+private external fun kniBridge290(p0: NativePtr, p1: NativePtr, p2: Int): Unit
+private external fun kniBridge291(p0: Int, p1: NativePtr): Unit
+private external fun kniBridge292(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr, p5: NativePtr, p6: NativePtr): Unit
+private external fun kniBridge293(): Unit
+private external fun kniBridge294(p0: NativePtr, p1: NativePtr, p2: Int): Unit
+private external fun kniBridge295(p0: NativePtr, p1: Int): Int
+private external fun kniBridge296(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge297(p0: NativePtr, p1: Int): NativePtr
 private external fun kniBridge298(p0: NativePtr): Int
-private external fun kniBridge299(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge300(p0: NativePtr): Long
-private external fun kniBridge301(p0: NativePtr, p1: NativePtr): Int
-private external fun kniBridge302(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge303(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge304(p0: NativePtr): Unit
-private external fun kniBridge305(p0: Int): Unit
-private external fun kniBridge306(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge307(p0: NativePtr): NativePtr
-private external fun kniBridge308(p0: NativePtr): Int
-private external fun kniBridge309(p0: NativePtr): Int
-private external fun kniBridge310(p0: NativePtr): Long
-private external fun kniBridge311(p0: NativePtr): Int
-private external fun kniBridge312(p0: NativePtr): Long
-private external fun kniBridge313(p0: NativePtr): Double
-private external fun kniBridge314(p0: NativePtr): NativePtr
-private external fun kniBridge315(p0: NativePtr): Unit
-private external fun kniBridge316(p0: NativePtr): NativePtr
-private external fun kniBridge317(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge318(p0: NativePtr): Int
-private external fun kniBridge319(p0: NativePtr, p1: Int, p2: NativePtr, p3: NativePtr): Unit
-private external fun kniBridge320(p0: NativePtr): Unit
-private external fun kniBridge321(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
-private external fun kniBridge322(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
-private external fun kniBridge323(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
-private external fun kniBridge324(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
-private external fun kniBridge325(p0: Int): Int
-private external fun kniBridge326(p0: NativePtr): NativePtr
-private external fun kniBridge327(p0: NativePtr): NativePtr
+private external fun kniBridge299(p0: NativePtr): Int
+private external fun kniBridge300(p0: NativePtr): Int
+private external fun kniBridge301(p0: NativePtr): Int
+private external fun kniBridge302(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge303(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge304(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge305(p0: NativePtr): NativePtr
+private external fun kniBridge306(p0: NativePtr, p1: Int): Int
+private external fun kniBridge307(p0: NativePtr, p1: Int, p2: Int, p3: NativePtr, p4: NativePtr): Unit
+private external fun kniBridge308(): Int
+private external fun kniBridge309(p0: NativePtr, p1: NativePtr, p2: Int, p3: Int, p4: NativePtr, p5: Int, p6: Int): NativePtr
+private external fun kniBridge310(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge311(p0: NativePtr): Unit
+private external fun kniBridge312(p0: NativePtr): Int
+private external fun kniBridge313(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge314(p0: NativePtr): Long
+private external fun kniBridge315(p0: NativePtr, p1: NativePtr): Int
+private external fun kniBridge316(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge317(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge318(p0: NativePtr): Unit
+private external fun kniBridge319(p0: Int): Unit
+private external fun kniBridge320(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge321(p0: NativePtr): NativePtr
+private external fun kniBridge322(p0: NativePtr): Int
+private external fun kniBridge323(p0: NativePtr): Int
+private external fun kniBridge324(p0: NativePtr): Long
+private external fun kniBridge325(p0: NativePtr): Int
+private external fun kniBridge326(p0: NativePtr): Long
+private external fun kniBridge327(p0: NativePtr): Double
 private external fun kniBridge328(p0: NativePtr): NativePtr
-private external fun kniBridge329(p0: NativePtr): NativePtr
-private external fun kniBridge330(p0: NativePtr): NativePtr
-private external fun kniBridge331(p0: NativePtr): NativePtr
-private external fun kniBridge332(p0: NativePtr): NativePtr
-private external fun kniBridge333(p0: NativePtr): NativePtr
-private external fun kniBridge334(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge329(p0: NativePtr): Unit
+private external fun kniBridge330(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
+private external fun kniBridge331(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
+private external fun kniBridge332(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
+private external fun kniBridge333(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
+private external fun kniBridge334(p0: Int): Int
 private external fun kniBridge335(p0: NativePtr): NativePtr
-private external fun kniBridge336(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge336(p0: NativePtr): NativePtr
 private external fun kniBridge337(p0: NativePtr): NativePtr
-private external fun kniBridge338(p0: NativePtr): Unit
-private external fun kniBridge339(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: Int, p5: NativePtr, p6: NativePtr, p7: Int, p8: NativePtr, p9: Int, p10: NativePtr, p11: Int): Int
-private external fun kniBridge340(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: Int, p5: NativePtr, p6: NativePtr, p7: Int, p8: NativePtr, p9: Int, p10: NativePtr, p11: Int): Int
-private external fun kniBridge341(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: Int, p5: NativePtr): Int
-private external fun kniBridge342(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr, p5: NativePtr): Unit
+private external fun kniBridge338(p0: NativePtr): NativePtr
+private external fun kniBridge339(p0: NativePtr): NativePtr
+private external fun kniBridge340(p0: NativePtr): NativePtr
+private external fun kniBridge341(p0: NativePtr): NativePtr
+private external fun kniBridge342(p0: NativePtr): NativePtr
 private external fun kniBridge343(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge344(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
-private external fun kniBridge345(p0: Int, p1: NativePtr): Unit
-private external fun kniBridge346(p0: NativePtr): Int
-private external fun kniBridge347(p0: Int, p1: NativePtr): Unit
-private external fun kniBridge348(p0: NativePtr): Int
-private external fun kniBridge349(p0: NativePtr): NativePtr
-private external fun kniBridge350(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge351(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge344(p0: NativePtr): NativePtr
+private external fun kniBridge345(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge346(p0: NativePtr): NativePtr
+private external fun kniBridge347(p0: NativePtr): Unit
+private external fun kniBridge348(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: Int, p5: NativePtr, p6: NativePtr, p7: Int, p8: NativePtr, p9: Int, p10: NativePtr, p11: Int): Int
+private external fun kniBridge349(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: Int, p5: NativePtr, p6: NativePtr, p7: Int, p8: NativePtr, p9: Int, p10: NativePtr, p11: Int): Int
+private external fun kniBridge350(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: Int, p5: NativePtr): Int
+private external fun kniBridge351(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr, p5: NativePtr): Unit
 private external fun kniBridge352(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge353(p0: NativePtr, p1: NativePtr): Int
-private external fun kniBridge354(p0: NativePtr): Int
-private external fun kniBridge355(p0: NativePtr): Int
-private external fun kniBridge356(p0: NativePtr): Int
+private external fun kniBridge353(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
+private external fun kniBridge354(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
+private external fun kniBridge355(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
+private external fun kniBridge356(p0: Int, p1: NativePtr): Unit
+private external fun kniBridge357(p0: NativePtr): Int
+private external fun kniBridge358(p0: Int, p1: NativePtr): Unit
+private external fun kniBridge359(p0: NativePtr): Int
+private external fun kniBridge360(p0: NativePtr): NativePtr
+private external fun kniBridge361(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge362(p0: NativePtr): Int
+private external fun kniBridge363(p0: NativePtr, p1: Int, p2: NativePtr, p3: NativePtr): Unit
+private external fun kniBridge364(p0: NativePtr): Unit
+private external fun kniBridge365(p0: NativePtr): NativePtr
+private external fun kniBridge366(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge367(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge368(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge369(p0: NativePtr, p1: NativePtr): Int
+private external fun kniBridge370(p0: NativePtr): Int
+private external fun kniBridge371(p0: NativePtr): Int
+private external fun kniBridge372(p0: NativePtr): Int
+private external fun kniBridge373(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge374(p0: NativePtr): Unit
+private external fun kniBridge375(p0: NativePtr, p1: NativePtr): Unit
 private val loadLibrary = loadKonanLibrary("clangstubs")

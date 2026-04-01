@@ -64,6 +64,12 @@ sealed interface TestSymbolTarget {
 
     data class ValueParameterTarget(val name: Name, override val ownerTarget: TestSymbolTarget) : TargetWithOwner
 
+    data class GetterTarget(override val ownerTarget: TestSymbolTarget) : TargetWithOwner
+
+    data class SetterTarget(override val ownerTarget: TestSymbolTarget) : TargetWithOwner
+
+    data class FieldTarget(val callableId: CallableId) : TestSymbolTarget
+
     companion object {
         private val identifiers = arrayOf(
             "package:",
@@ -76,6 +82,9 @@ sealed interface TestSymbolTarget {
             "sam_constructor:",
             "type_parameter:",
             "value_parameter:",
+            "getter:",
+            "setter:",
+            "field:"
         )
 
         /**
@@ -115,6 +124,9 @@ sealed interface TestSymbolTarget {
                 "sam_constructor" -> SamConstructorTarget(ClassId.fromString(value))
                 "type_parameter" -> createTypeParameterTarget(value, contextFile)
                 "value_parameter" -> createValueParameterTarget(value, contextFile)
+                "getter" -> GetterTarget(create(value, contextFile))
+                "setter" -> SetterTarget(create(value, contextFile))
+                "field" -> FieldTarget(extractCallableId(value))
                 else -> error("Invalid target symbol kind `$key`. Expected one of: ${identifiers.joinToString(", ")}")
             }
         }

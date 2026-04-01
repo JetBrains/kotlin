@@ -100,4 +100,9 @@ internal class DotQuantifierSet(
 
     override val name: String
             get() = ".*"
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        innerSet.collectProperties(properties)
+        properties.nonTrivialBacktracking = true
+    }
 }

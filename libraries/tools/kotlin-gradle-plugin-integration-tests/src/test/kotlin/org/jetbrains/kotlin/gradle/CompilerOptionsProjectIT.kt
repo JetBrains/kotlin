@@ -133,8 +133,8 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                 |
                 |kotlin {
                 |    compilerOptions {
-                |         languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0
-                |         apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0
+                |         languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_3
+                |         apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_3
                 |         progressiveMode = true
                 |         optIn.add("my.custom.OptInAnnotation")
                 |         freeCompilerArgs.add("-Xdebug")
@@ -142,8 +142,8 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                 |    
                 |    sourceSets.all {
                 |        languageSettings {
-                |            languageVersion = '1.9'
-                |            apiVersion = '1.9'
+                |            languageVersion = '2.2'
+                |            apiVersion = '2.2'
                 |            progressiveMode = false
                 |            optIn("another.CustomOptInAnnotation")
                 |            enableLanguageFeature("UnitConversionsOnArbitraryExpressions")
@@ -158,8 +158,8 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
 
                 assertCompilerArguments(
                     ":compileKotlin",
-                    "-language-version 1.9",
-                    "-api-version 1.9",
+                    "-language-version 2.2",
+                    "-api-version 2.2",
                     "-Xdebug",
                     "-opt-in my.custom.OptInAnnotation,another.CustomOptInAnnotation",
                     "-XXLanguage:+UnitConversionsOnArbitraryExpressions",
@@ -421,7 +421,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
             projectName = "mpp-default-hierarchy",
             gradleVersion = gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             buildGradle.modify {
                 it.substringBefore("kotlin {") +

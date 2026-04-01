@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalModu
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.services.MultiplatformTestOutputPrefixProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -21,9 +22,13 @@ import java.nio.file.Path
 
 abstract class AnalysisApiTestConfigurator {
     /**
+     * Chain of test variant identifiers that determines output file naming and execution priority.
+     *
      * @see org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest.assertEqualsToTestOutputFile
+     * @see org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest.variantChain
      */
-    open val testPrefixes: List<String> get() = emptyList()
+    open val testPrefixes: List<String>
+        get() = MultiplatformTestOutputPrefixProvider.getPrefixes(defaultTargetPlatform)
 
     abstract val analysisApiMode: AnalysisApiMode
 
@@ -35,7 +40,7 @@ abstract class AnalysisApiTestConfigurator {
      * The platform used by default, in case if no platform is specified in the test data file.
      */
     open val defaultTargetPlatform: TargetPlatform
-        get() = JvmPlatforms.defaultJvmPlatform
+        get() = defaultTargetPlatformValue
 
     abstract fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable)
 
@@ -56,4 +61,9 @@ abstract class AnalysisApiTestConfigurator {
         testServices: TestServices,
         project: Project,
     ): KtTestModuleStructure
+
+    companion object {
+        val defaultTargetPlatformValue: TargetPlatform
+            get() = JvmPlatforms.defaultJvmPlatform
+    }
 }

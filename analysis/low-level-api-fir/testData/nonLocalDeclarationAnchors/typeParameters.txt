@@ -1,17 +1,17 @@
-/* anchor --> */class Foo</* anchor --> */T/* <-- */> {
-    /* anchor --> */fun </* anchor --> */F/* <-- */> bar() {
+/* anchor (KtClass) --> */class Foo</* anchor (KtTypeParameter) --> */T/* <-- */> {
+    /* anchor (KtNamedFunction) --> */fun </* anchor (KtTypeParameter) --> */F/* <-- */> bar() {
         fun <D> baz() {
 
         }
     }/* <-- */
 
-    /* anchor --> */val </* anchor --> */D/* <-- */> D.doo: Int /* anchor --> */get() = 0/* <-- *//* <-- */
+    /* anchor (KtProperty) --> */val </* anchor (KtTypeParameter) --> */D/* <-- */> D.doo: Int /* anchor (KtPropertyAccessor) --> */get() = 0/* <-- *//* <-- */
 }/* <-- */
 
-/* anchor --> */fun </* anchor --> */F/* <-- */> bar() {
+/* anchor (KtNamedFunction) --> */fun </* anchor (KtTypeParameter) --> */F/* <-- */> bar() {
     fun <D> baz() {
 
     }
 }/* <-- */
 
-/* anchor --> */val </* anchor --> */D/* <-- */> D.doo: Int /* anchor --> */get() = 0/* <-- *//* <-- */
+/* anchor (KtProperty) --> */val </* anchor (KtTypeParameter) --> */D/* <-- */> D.doo: Int /* anchor (KtPropertyAccessor) --> */get() = 0/* <-- *//* <-- */

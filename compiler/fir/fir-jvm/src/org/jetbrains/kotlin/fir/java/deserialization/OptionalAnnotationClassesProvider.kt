@@ -39,7 +39,7 @@ class OptionalAnnotationClassesProvider(
             // Before 2.2, they were written to the `BuiltInsProtoBuf.classAnnotation` extension. So we're looking into both places.
             val annotations = classProto.annotationList
             if (annotations.isNotEmpty()) {
-                return loadAnnotationsFromMetadata(session, null, annotations, nameResolver)
+                return loadAnnotationsFromMetadata(session, annotations, nameResolver)
             }
 
             return super.loadClassAnnotations(classProto, nameResolver)

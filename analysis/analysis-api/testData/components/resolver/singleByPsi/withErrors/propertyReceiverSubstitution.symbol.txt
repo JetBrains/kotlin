@@ -1,0 +1,5 @@
+KtDotQualifiedExpression(77,82): 'f.foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val foo: kotlin.Int
+    ]

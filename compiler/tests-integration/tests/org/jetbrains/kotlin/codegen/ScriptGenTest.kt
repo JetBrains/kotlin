@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
+import org.jetbrains.kotlin.scripting.definitions.ScriptEvaluationConfigurationFromHostConfiguration
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -36,15 +36,30 @@ import kotlin.script.templates.ScriptTemplateDefinition
 
 class ScriptGenTest : CodegenTestCase() {
     companion object {
+        @Suppress("DEPRECATION")
         private val FIB_SCRIPT_DEFINITION =
-            ScriptDefinition.FromLegacy(
+            ScriptDefinition.FromConfigurations(
                 defaultJvmScriptingHostConfiguration,
-                KotlinScriptDefinitionFromAnnotatedTemplate(ScriptWithIntParam::class)
+                org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromLegacyTemplate(
+                    defaultJvmScriptingHostConfiguration,
+                    ScriptWithIntParam::class
+                ),
+                ScriptEvaluationConfigurationFromHostConfiguration(
+                    defaultJvmScriptingHostConfiguration
+                )
             )
+
+        @Suppress("DEPRECATION")
         private val NO_PARAM_SCRIPT_DEFINITION =
-            ScriptDefinition.FromLegacy(
+            ScriptDefinition.FromConfigurations(
                 defaultJvmScriptingHostConfiguration,
-                KotlinScriptDefinitionFromAnnotatedTemplate(Any::class)
+                org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromLegacyTemplate(
+                    defaultJvmScriptingHostConfiguration,
+                    Any::class
+                ),
+                ScriptEvaluationConfigurationFromHostConfiguration(
+                    defaultJvmScriptingHostConfiguration
+                )
             )
     }
 

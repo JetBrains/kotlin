@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR_ES6
 // KT-41227
 
 var result = ""
@@ -26,6 +25,6 @@ fun box(): String {
     return "OK"
 }
 
-// PROPERTY_WRITE_COUNT: name=foo count=1
-// PROPERTY_WRITE_COUNT: name=boo count=2
-// PROPERTY_WRITE_COUNT: name=bar count=1
+// PROPERTY_WRITE_COUNT: name=foo count=1 TARGET_BACKENDS=JS_IR
+// PROPERTY_WRITE_COUNT: name=boo count=2 TARGET_BACKENDS=JS_IR
+// PROPERTY_WRITE_COUNT: name=bar count=1 TARGET_BACKENDS=JS_IR

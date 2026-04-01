@@ -56,10 +56,10 @@ fun referenceStableClassInnerConstructorWithDispatchReceiver(stableClass: Stable
 fun referenceStableClassInnerMemberFunctionWithoutDispatchReceiver(): String = StableClass.Inner::bar.name
 fun referenceStableClassInnerMemberFunctionWithDispatchReceiver(stableClassInner: StableClass.Inner): String = stableClassInner::bar.name
 
-fun referenceRemovedFunFromClass(): String = ClassWithChangedMembers::removedFun.name
-fun referenceChangedFunFromClass(): String = ClassWithChangedMembers::changedFun.name
-fun referenceRemovedFunFromInterface(): String = InterfaceWithChangedMembers::removedFun.name
-fun referenceChangedFunFromInterface(): String = InterfaceWithChangedMembers::changedFun.name
+fun referenceRemovedFunFromClass(): String = ClassWithChangedMembers::removedFun.toString()
+fun referenceChangedFunFromClass(): String = ClassWithChangedMembers::changedFun.toString()
+fun referenceRemovedFunFromInterface(): String = InterfaceWithChangedMembers::removedFun.toString()
+fun referenceChangedFunFromInterface(): String = InterfaceWithChangedMembers::changedFun.toString()
 
 fun referenceNestedToInnerConstructorWithoutDispatchReceiver(): String = ClassWithChangedMembers::NestedToInner.name
 fun referenceInnerToNestedConstructorWithoutDispatchReceiver(): String = ClassWithChangedMembers::InnerToNested.name

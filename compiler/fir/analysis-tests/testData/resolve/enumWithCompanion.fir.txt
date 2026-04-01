@@ -13,10 +13,10 @@ FILE: enumWithCompanion.kt
 
             public final fun u(ec: R|EC|): R|kotlin/Boolean| {
                 ^u when (lval <when-subject>: R|EC| = R|<local>/ec|) {
-                    ==($subj$, R|/EC.A|) ->  {
+                    ==($subj$, Q|EC|.R|/EC.A|) ->  {
                         Boolean(true)
                     }
-                    ==($subj$, R|/EC.B|) ->  {
+                    ==($subj$, Q|EC|.R|/EC.B|) ->  {
                         Boolean(false)
                     }
                 }
@@ -32,6 +32,6 @@ FILE: enumWithCompanion.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<EC>|
-            public get(): R|kotlin/enums/EnumEntries<EC>|
+            public static get(): R|kotlin/enums/EnumEntries<EC>|
 
     }

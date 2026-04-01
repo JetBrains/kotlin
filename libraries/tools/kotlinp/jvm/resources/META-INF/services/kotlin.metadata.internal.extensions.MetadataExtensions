@@ -1,1 +1,3 @@
 kotlin.metadata.internal.common.BuiltInsMetadataExtensions
+kotlin.metadata.jvm.internal.JvmMetadataExtensions
+

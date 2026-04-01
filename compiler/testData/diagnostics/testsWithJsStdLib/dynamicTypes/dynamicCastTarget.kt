@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -REDUNDANT_NULLABLE
 
 fun test(d: Any, dl: Collection<dynamic>) {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test(d: dynamic) {
     d.foo(name = "name")
 

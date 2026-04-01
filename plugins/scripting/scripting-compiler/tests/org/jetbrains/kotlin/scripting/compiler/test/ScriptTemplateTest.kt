@@ -16,16 +16,13 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.script.loadScriptingPlugin
-import org.jetbrains.kotlin.scripting.compiler.plugin.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
-import org.jetbrains.kotlin.scripting.compiler.plugin.assertHasMessage
-import org.jetbrains.kotlin.scripting.compiler.plugin.expectTestToFailOnK2
+import org.jetbrains.kotlin.scripting.compiler.plugin.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
-import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromLegacyTemplate
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptEvaluationConfigurationFromHostConfiguration
 import org.jetbrains.kotlin.scripting.resolve.InvalidScriptResolverAnnotation
-import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -33,7 +30,6 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import java.io.File
 import java.io.OutputStream
-import java.io.PrintStream
 import java.lang.reflect.InvocationTargetException
 import java.net.URL
 import java.net.URLClassLoader
@@ -49,7 +45,6 @@ import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 import kotlin.test.Test
 import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 // TODO: the contetnts of this file should go into ScriptTest.kt and replace appropriate xml-based functionality,
@@ -74,7 +69,8 @@ class ScriptTemplateTest {
             compileScript("fib_cp.kts", ScriptWithClassParam::class, null, runIsolated = false, messageCollector = messageCollector)
         assertNotNull(aClass, "Compilation failed:\n$messageCollector")
         val out = captureOut {
-            aClass.getConstructor(TestParamClass::class.java).newInstance(TestParamClass(4))
+            val testParamClass = aClass.classLoader.loadClass("org.jetbrains.kotlin.scripting.compiler.test.TestParamClass")
+            aClass.getConstructor(testParamClass).newInstance(testParamClass.constructors.first().newInstance(4))
         }
         assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
@@ -93,8 +89,6 @@ class ScriptTemplateTest {
 
     @Test
     fun testScriptWithDependsAnn() {
-        assertNull(compileScript("fib_ext_ann.kts", ScriptWithIntParamAndDummyResolver::class, null, includeKotlinRuntime = false))
-
         val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("fib_ext_ann.kts", ScriptWithIntParam::class, null, messageCollector = messageCollector)
         assertNotNull(aClass, "Compilation failed:\n$messageCollector")
@@ -106,21 +100,6 @@ class ScriptTemplateTest {
 
     @Test
     fun testScriptWithDependsAnn2() {
-        val savedErr = System.err
-        try {
-            System.setErr(PrintStream(NullOutputStream()))
-            assertNull(
-                compileScript(
-                    "fib_ext_ann2.kts",
-                    ScriptWithIntParamAndDummyResolver::class,
-                    null,
-                    includeKotlinRuntime = false
-                )
-            )
-        } finally {
-            System.setErr(savedErr)
-        }
-
         val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("fib_ext_ann2.kts", ScriptWithIntParam::class, null, messageCollector = messageCollector)
         assertNotNull(aClass, "Compilation failed:\n$messageCollector")
@@ -345,7 +324,10 @@ class ScriptTemplateTest {
         val messageCollector = MessageCollectorImpl()
         compileScript("fib.kts", ScriptWithThrowingResolver::class, null, messageCollector = messageCollector)
 
-        messageCollector.assertHasMessage("Exception from resolver", desiredSeverity = CompilerMessageSeverity.ERROR)
+        messageCollector.assertHasMessage(
+            "Failed to resolve dependencies. resolver=ThrowingResolver() of type=ThrowingResolver",
+            desiredSeverity = CompilerMessageSeverity.ERROR
+        )
     }
 
     @Test
@@ -377,21 +359,7 @@ class ScriptTemplateTest {
         environment: Map<String, Any?>? = null,
         runIsolated: Boolean = true,
         messageCollector: MessageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false),
-        includeKotlinRuntime: Boolean = true
-    ): Class<*>? =
-        compileScriptImpl(
-            "plugins/scripting/scripting-compiler/testData/compiler/$scriptPath",
-            KotlinScriptDefinitionFromAnnotatedTemplate(
-                scriptTemplate, environment
-            ), runIsolated, messageCollector, includeKotlinRuntime
-        )
-
-    private fun compileScriptImpl(
-        scriptPath: String,
-        scriptDefinition: KotlinScriptDefinition,
-        runIsolated: Boolean,
-        messageCollector: MessageCollector,
-        includeKotlinRuntime: Boolean
+        includeKotlinRuntime: Boolean = true,
     ): Class<*>? {
         val rootDisposable = Disposer.newDisposable("Disposable for ${ScriptTemplateTest::class.simpleName}")
         try {
@@ -406,9 +374,15 @@ class ScriptTemplateTest {
             configuration.messageCollector = messageCollector
             configuration.add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-                ScriptDefinition.FromLegacy(
+                ScriptDefinition.FromConfigurations(
                     defaultJvmScriptingHostConfiguration,
-                    scriptDefinition
+                    ScriptCompilationConfigurationFromLegacyTemplate(
+                        defaultJvmScriptingHostConfiguration,
+                        scriptTemplate
+                    ),
+                    ScriptEvaluationConfigurationFromHostConfiguration(
+                        defaultJvmScriptingHostConfiguration
+                    )
                 )
             )
             configuration.put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, true)
@@ -426,7 +400,7 @@ class ScriptTemplateTest {
 
             return try {
                 val res = compileScript(
-                    File(scriptPath).toScriptSource(),
+                    File("plugins/scripting/scripting-compiler/testData/compiler/$scriptPath").toScriptSource(),
                     environment,
                     this::class.java.classLoader.takeUnless { runIsolated }
                 )
@@ -455,7 +429,7 @@ open class TestKotlinScriptDummyDependenciesResolver : DependenciesResolver {
     @AcceptedAnnotations(DependsOn::class, DependsOnTwo::class)
     override fun resolve(
         scriptContents: ScriptContents,
-        environment: Environment
+        environment: Environment,
     ): ResolveResult {
         return ScriptDependencies(
             classpath = classpathFromClassloader(),
@@ -511,16 +485,14 @@ class TestParamClass(@Suppress("unused") val memberNum: Int)
 class ErrorReportingResolver : TestKotlinScriptDependenciesResolver() {
     override fun resolve(
         scriptContents: ScriptContents,
-        environment: Environment
+        environment: Environment,
     ): ResolveResult {
-        return ResolveResult.Success(
-            super.resolve(scriptContents, environment).dependencies!!,
+        return ResolveResult.Failure(
             listOf(
                 ScriptReport("error", ScriptReport.Severity.ERROR, null),
                 ScriptReport("warning", ScriptReport.Severity.WARNING, ScriptReport.Position(1, 0)),
                 ScriptReport("info", ScriptReport.Severity.INFO, ScriptReport.Position(2, 0)),
                 ScriptReport("debug", ScriptReport.Severity.DEBUG, ScriptReport.Position(3, 0))
-
             )
         )
     }
@@ -529,7 +501,7 @@ class ErrorReportingResolver : TestKotlinScriptDependenciesResolver() {
 class TestAsyncResolver : TestKotlinScriptDependenciesResolver(), AsyncDependenciesResolver {
     override suspend fun resolveAsync(
         scriptContents: ScriptContents,
-        environment: Environment
+        environment: Environment,
     ): ResolveResult = super<TestKotlinScriptDependenciesResolver>.resolve(scriptContents, environment)
 
     override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult =
@@ -582,7 +554,7 @@ class TestAcceptedAnnotationsLegacyResolver : ScriptDependenciesResolver, Accept
         script: ScriptContents,
         environment: Environment?,
         report: (ScriptDependenciesResolver.ReportSeverity, String, ScriptContents.Position?) -> Unit,
-        previousDependencies: KotlinScriptExternalDependencies?
+        previousDependencies: KotlinScriptExternalDependencies?,
     ): Future<KotlinScriptExternalDependencies?> {
         checkHasAnno1Annotation(script)
         return object : KotlinScriptExternalDependencies {
@@ -605,6 +577,10 @@ class DefaultArgsConstructorResolver(val c: Int = 0) : TestKotlinScriptDependenc
 class ThrowingResolver : DependenciesResolver {
     override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult {
         throw IllegalStateException("Exception from resolver")
+    }
+
+    override fun toString(): String {
+        return "ThrowingResolver()"
     }
 }
 

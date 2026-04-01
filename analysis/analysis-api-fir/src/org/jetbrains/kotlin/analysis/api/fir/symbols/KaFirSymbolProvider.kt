@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirSymbolProvider(
@@ -93,6 +94,19 @@ internal class KaFirSymbolProvider(
             } else {
                 KaFirKotlinPropertySymbol.create(this, analysisSession)
             }
+        }
+
+    override val KtBackingField.symbol: KaBackingFieldSymbol
+        get() = withPsiValidityAssertion {
+            val owningProperty = parent as? KtProperty ?: errorWithAttachment("Orphaned backing field") {
+                withPsiEntry("psi", this@symbol)
+            }
+
+            KaFirBackingFieldSymbol(
+                this,
+                analysisSession,
+                owningProperty.symbol as KaFirKotlinPropertySymbol<*> // Backing fields for local properties don't parse
+            )
         }
 
     override val KtObjectLiteralExpression.symbol: KaAnonymousObjectSymbol

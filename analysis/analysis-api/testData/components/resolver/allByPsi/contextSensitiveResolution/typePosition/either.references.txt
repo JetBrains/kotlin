@@ -2,90 +2,127 @@ KtNameReferenceExpression(157,158): 'E'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: Either.Left) out E
 
 KtNameReferenceExpression(161,167): 'Either'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) interface Either<out E, out A>
 
 KtNameReferenceExpression(168,169): 'E'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: Either.Left) out E
 
 KtNameReferenceExpression(171,178): 'Nothing'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
-      (in kotlin) class Nothingprivate constructor
+      Nothing (Unresolved reference)
+    resolveToSymbols:
+      (in kotlin) class Nothing private constructor
 
 KtNameReferenceExpression(219,220): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: Either.Right) out A
 
 KtNameReferenceExpression(223,229): 'Either'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) interface Either<out E, out A>
 
 KtNameReferenceExpression(230,237): 'Nothing'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
-      (in kotlin) class Nothingprivate constructor
+      Nothing (Unresolved reference)
+    resolveToSymbols:
+      (in kotlin) class Nothing private constructor
 
 KtNameReferenceExpression(239,240): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: Either.Right) out A
 
 KtNameReferenceExpression(256,262): 'Either'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) interface Either<out E, out A>
 
 KtNameReferenceExpression(263,264): 'E'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: getOrElse) E
 
 KtNameReferenceExpression(266,267): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: getOrElse) A
 
 KtNameReferenceExpression(288,289): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: getOrElse) A
 
 KtNameReferenceExpression(299,303): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       extension receiver with type Either<E, A>
 
@@ -93,13 +130,17 @@ KtNameReferenceExpression(314,318): 'Left'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in Either) data class Left<out E>(error: E) : Either<E, kotlin.Nothing>
 
 KtNameReferenceExpression(322,329): 'default'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       default: A
 
@@ -107,12 +148,16 @@ KtNameReferenceExpression(337,342): 'Right'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in Either) data class Right<out A>(value: A) : Either<kotlin.Nothing, A>
 
 KtNameReferenceExpression(346,351): 'value'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Either.Right) val value: A

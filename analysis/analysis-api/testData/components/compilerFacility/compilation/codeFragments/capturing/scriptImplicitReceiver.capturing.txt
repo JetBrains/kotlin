@@ -1,0 +1,5 @@
+Captured values:
+Local[name: $script_receiver_1; isMutated: false; displayText: $script_receiver_1]
+    <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/gradleLike/Project|
+    R|org/jetbrains/kotlin/scripting/test/definition/gradleLike/Project|
+No captured files

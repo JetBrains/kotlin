@@ -1,11 +1,11 @@
 FILE: noPrimaryConstructor.kt
     public final? class NoPrimary : R|kotlin/Any| {
         public? final? val x: String
-            public? get(): String
+            public? [ContainingClassKey=NoPrimary] get(): String
 
-        public? constructor(x: String): R|NoPrimary| { LAZY_BLOCK }
+        public? [ContainingClassKey=NoPrimary] constructor(x: String): R|NoPrimary| { LAZY_BLOCK }
 
-        public? constructor(): R|NoPrimary| {
+        public? [ContainingClassKey=NoPrimary] constructor(): R|NoPrimary| {
             LAZY_this<R|NoPrimary|>
         }
 

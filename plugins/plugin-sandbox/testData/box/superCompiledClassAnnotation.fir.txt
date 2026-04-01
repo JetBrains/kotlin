@@ -6,7 +6,7 @@ FILE: lib.kt
 
     }
 Module: main
-FILE: module_main_superCompiledClassAnnotation.kt
+FILE: main.kt
     public open class BaseImpl : R|Base_ShouldBeOpen| {
         public constructor(): R|BaseImpl| {
             super<R|Base_ShouldBeOpen|>()

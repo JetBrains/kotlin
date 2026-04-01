@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName
 
 @JsGradlePluginTests
@@ -18,9 +19,7 @@ class KotlinJsDomApiDependencyIT : KGPBaseTest() {
     override val defaultBuildOptions =
         super.defaultBuildOptions.copy(
             jsOptions = defaultJsOptions,
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-        )
+        ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @DisplayName("Kotlin/JS DOM API automatically added as dependency")
     @GradleTest
@@ -29,50 +28,6 @@ class KotlinJsDomApiDependencyIT : KGPBaseTest() {
             build("assemble") {
                 assertTasksExecuted(":compileKotlinJs")
             }
-
-            var added: String? = null
-
-            buildGradleKts.modify {
-                it + "\n" +
-                        """
-                        dependencies {
-                            implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
-                        }
-                        """.trimIndent().also { added = it }
-            }
-
-            build("assemble") {
-                assertTasksUpToDate(":compileKotlinJs")
-            }
-
-            buildGradleKts.modify {
-                val replaced = it.replace(added!!, "")
-                replaced + "\n" +
-                        """
-                        dependencies {
-                            implementation("org.jetbrains.kotlin:kotlin-dom-api-compat")
-                        }
-                        """.trimIndent().also { added = it }
-            }
-
-            build("assemble") {
-                assertTasksUpToDate(":compileKotlinJs")
-            }
-
-            buildGradleKts.modify {
-                val replaced = it.replace(added!!, "")
-                replaced + "\n" +
-                        """
-                        dependencies {
-                            implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
-                            implementation("org.jetbrains.kotlin:kotlin-dom-api-compat")
-                        }
-                        """.trimIndent().also { added = it }
-            }
-
-            build("assemble") {
-                assertTasksUpToDate(":compileKotlinJs")
-            }
         }
     }
 
@@ -80,8 +35,6 @@ class KotlinJsDomApiDependencyIT : KGPBaseTest() {
     @GradleTest
     fun testJsDomApiCompatWithDisabledAddingStdlib(gradleVersion: GradleVersion) {
         project("kotlin-js-dom-api-compat", gradleVersion) {
-            var added: String? = null
-
             gradleProperties.modify {
                 it + "\n" +
                         """
@@ -89,49 +42,35 @@ class KotlinJsDomApiDependencyIT : KGPBaseTest() {
                         """.trimIndent()
             }
 
+            val addStdlibProperty = "addStdlib"
+            val addDomApiCompatProperty = "addDomApiCompat"
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    sourceSets.jsMain.dependencies {
+                        if (project.hasProperty(addStdlibProperty)) {
+                            implementation("org.jetbrains.kotlin:kotlin-stdlib")
+                        }
+                        if (project.hasProperty(addDomApiCompatProperty)) {
+                            implementation("org.jetbrains.kotlin:kotlin-dom-api-compat")
+                        }
+                    }
+                }
+            }
+
             build("assemble") {
                 assertTasksExecuted(":compileKotlinJs")
             }
 
-            buildGradleKts.modify {
-                it + "\n" +
-                        """
-                        dependencies {
-                            implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
-                        }
-                        """.trimIndent().also { added = it }
-            }
-
-            build("assemble") {
+            build("assemble", "-P${addStdlibProperty}") {
                 assertTasksUpToDate(":compileKotlinJs")
             }
 
-            buildGradleKts.modify {
-                val replaced = it.replace(added!!, "")
-                replaced + "\n" +
-                        """
-                        dependencies {
-                            implementation("org.jetbrains.kotlin:kotlin-dom-api-compat")
-                        }
-                        """.trimIndent().also { added = it }
-            }
-
-            build("assemble") {
+            build("assemble", "-P${addDomApiCompatProperty}") {
                 assertTasksUpToDate(":compileKotlinJs")
             }
 
-            buildGradleKts.modify {
-                val replaced = it.replace(added!!, "")
-                replaced + "\n" +
-                        """
-                        dependencies {
-                            implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
-                            implementation("org.jetbrains.kotlin:kotlin-dom-api-compat")
-                        }
-                        """.trimIndent().also { added = it }
-            }
-
-            build("assemble") {
+            build("assemble", "-P${addStdlibProperty}", "-P${addDomApiCompatProperty}") {
                 assertTasksUpToDate(":compileKotlinJs")
             }
         }
@@ -141,8 +80,6 @@ class KotlinJsDomApiDependencyIT : KGPBaseTest() {
     @GradleTest
     fun testJsDomApiCompatWithDisabledAddingDomApi(gradleVersion: GradleVersion) {
         project("kotlin-js-dom-api-compat", gradleVersion) {
-            var added: String? = null
-
             gradleProperties.modify {
                 it + "\n" +
                         """
@@ -150,49 +87,35 @@ class KotlinJsDomApiDependencyIT : KGPBaseTest() {
                         """.trimIndent()
             }
 
-            buildAndFail("assemble") {
-                assertTasksFailed(":compileKotlinJs")
-            }
+            val addStdlibProperty = "addStdlib"
+            val addDomApiCompatProperty = "addDomApiCompat"
 
-            buildGradleKts.modify {
-                it + "\n" +
-                        """
-                        dependencies {
-                            implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    sourceSets.jsMain.dependencies {
+                        if (project.hasProperty(addStdlibProperty)) {
+                            implementation("org.jetbrains.kotlin:kotlin-stdlib")
                         }
-                        """.trimIndent().also { added = it }
-            }
-
-            buildAndFail("assemble") {
-                assertTasksFailed(":compileKotlinJs")
-            }
-
-            buildGradleKts.modify {
-                val replaced = it.replace(added!!, "")
-                replaced + "\n" +
-                        """
-                        dependencies {
+                        if (project.hasProperty(addDomApiCompatProperty)) {
                             implementation("org.jetbrains.kotlin:kotlin-dom-api-compat")
                         }
-                        """.trimIndent().also { added = it }
+                    }
+                }
             }
 
-            build("assemble") {
+            buildAndFail("assemble") {
+                assertTasksFailed(":compileKotlinJs")
+            }
+
+            buildAndFail("assemble", "-P${addStdlibProperty}") {
+                assertTasksFailed(":compileKotlinJs")
+            }
+
+            build("assemble", "-P${addDomApiCompatProperty}") {
                 assertTasksExecuted(":compileKotlinJs")
             }
 
-            buildGradleKts.modify {
-                val replaced = it.replace(added!!, "")
-                replaced + "\n" +
-                        """
-                        dependencies {
-                            implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
-                            implementation("org.jetbrains.kotlin:kotlin-dom-api-compat")
-                        }
-                        """.trimIndent().also { added = it }
-            }
-
-            build("assemble") {
+            build("assemble", "-P${addStdlibProperty}", "-P${addDomApiCompatProperty}") {
                 assertTasksUpToDate(":compileKotlinJs")
             }
         }

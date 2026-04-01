@@ -109,7 +109,7 @@ fun configureScriptFileLocationPathVariablesForEvaluation(context: ScriptEvaluat
 }
 
 fun configureScriptFileLocationPathVariablesForCompilation(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
-    val scriptFile = (context.script as? FileBasedScriptSource)?.file ?: return context.compilationConfiguration.asSuccess()
+    val scriptFile = context.script.locationId?.let(::File) ?: return context.compilationConfiguration.asSuccess()
     val scriptFileLocationVariableName = context.compilationConfiguration[ScriptCompilationConfiguration.scriptFileLocationVariable]
         ?: SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME
 
@@ -202,7 +202,18 @@ class MainKtsConfigurator(
         val resolveResult = try {
             @Suppress("DEPRECATION_ERROR")
             internalScriptingRunSuspend {
-                resolver.resolveFromScriptSourceAnnotations(annotations.filter { it.annotation is DependsOn || it.annotation is Repository })
+                resolver.resolveFromScriptSourceAnnotations(
+                    annotations.filter {
+                        when (it.annotation) {
+                            is DependsOn,
+                            is Repository -> true
+                            else ->
+                                if ((it.annotation::class.simpleName?.let { it == "DependsOn" || it == "Repository" }) == true )
+                                    error("Annotation ${it.annotation::class.simpleName} loaded in another classloader")
+                                else false
+                        }
+                    }
+                )
             }
         } catch (e: Throwable) {
             diagnostics.add(e.asDiagnostics(path = context.script.locationId))

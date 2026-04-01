@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irSetField
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -129,6 +131,7 @@ private fun InnerClassesSupport.primaryConstructorParameterMap(originalConstruct
 /**
  * Replaces `this` with 'outer this' field references.
  */
+@PhasePrerequisites(InnerClassesLowering::class)
 open class InnerClassesMemberBodyLowering(val context: CommonBackendContext) : BodyLoweringPass {
     private val innerClassesSupport = context.innerClassesSupport
 
@@ -187,8 +190,10 @@ open class InnerClassesMemberBodyLowering(val context: CommonBackendContext) : B
                 val startOffset = expression.startOffset
                 val endOffset = expression.endOffset
                 val origin = expression.origin
-                val function = (currentFunction?.irElement ?: enclosingFunction) as? IrFunction
-                val enclosingThisReceiver = function?.dispatchReceiverParameter ?: irClass.thisReceiver!!
+                val enclosingFunction = enclosingFunction as? IrFunction
+                val function = currentFunction?.irElement as? IrFunction ?: enclosingFunction
+                val enclosingThisReceiver =
+                    function?.dispatchReceiverParameter ?: enclosingFunction?.dispatchReceiverParameter ?: irClass.thisReceiver!!
 
                 var irThis: IrExpression = IrGetValueImpl(startOffset, endOffset, enclosingThisReceiver.symbol, origin)
                 var innerClass = irClass

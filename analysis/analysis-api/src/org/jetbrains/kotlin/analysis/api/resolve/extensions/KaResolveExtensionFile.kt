@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.resolve.extensions
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
+import org.jetbrains.kotlin.analysis.api.KaSpi
+import org.jetbrains.kotlin.analysis.api.KaSpiExtensionPoint
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.name.Name
  *
  * @see KaResolveExtension
  */
-@KaExtensibleApi
+@KaSpi
 @KaExperimentalApi
 public abstract class KaResolveExtensionFile {
     /**
@@ -34,6 +35,7 @@ public abstract class KaResolveExtensionFile {
      * If the file contains top-level properties or functions, the name will be used as a Java facade name. For example, given the file name
      * `myFile.kt`, a `MyFileKt` facade would be generated.
      */
+    @KaSpiExtensionPoint
     public abstract fun getFileName(): String
 
     /**
@@ -41,6 +43,7 @@ public abstract class KaResolveExtensionFile {
      *
      * The function might be called regularly, so it should be fast and avoid building the whole file text.
      */
+    @KaSpiExtensionPoint
     public abstract fun getFilePackageName(): FqName
 
     /**
@@ -49,6 +52,7 @@ public abstract class KaResolveExtensionFile {
      *
      * The function might be called regularly, so it should be fast and avoid building the whole file text.
      */
+    @KaSpiExtensionPoint
     public abstract fun getTopLevelClassifierNames(): Set<Name>
 
     /**
@@ -57,6 +61,7 @@ public abstract class KaResolveExtensionFile {
      *
      * The function might be called regularly, so it should be fast and avoid building the whole file text.
      */
+    @KaSpiExtensionPoint
     public abstract fun getTopLevelCallableNames(): Set<Name>
 
     /**
@@ -73,10 +78,12 @@ public abstract class KaResolveExtensionFile {
      * - The file should not contain the [JvmMultifileClass] and [JvmName] annotations on the file level.
      * - All declaration types should be specified explicitly.
      */
+    @KaSpiExtensionPoint
     public abstract fun buildFileText(): String
 
     /**
      * Creates a [KaResolveExtensionNavigationTargetsProvider] for this [KaResolveExtensionFile].
      */
+    @KaSpiExtensionPoint
     public abstract fun createNavigationTargetsProvider(): KaResolveExtensionNavigationTargetsProvider
 }

@@ -7,12 +7,14 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
+import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.FATAL
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.ID
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
@@ -20,7 +22,9 @@ import org.jetbrains.kotlin.gradle.util.applyKotlinJvmPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics
 import org.jetbrains.kotlin.gradle.util.set
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 class DiagnosticsReportingFunctionalTest {
 
@@ -155,10 +159,47 @@ class DiagnosticsReportingFunctionalTest {
             listOf("Solution 1", "Solution 2")
         )
 
-        project.kotlinToolingDiagnosticsCollector.report(project, diagnostic)
-        project.kotlinToolingDiagnosticsCollector.report(project, diagnostic, reportOnce = true)
+        project.kotlinToolingDiagnosticsCollector.report(project.toolingDiagnosticsContext, diagnostic)
+        project.kotlinToolingDiagnosticsCollector.report(project.toolingDiagnosticsContext, diagnostic, reportOnce = true)
 
         project.checkDiagnostics("testSequentialReportAndReportOnceInvocations")
+    }
+
+    @Test
+    fun testExecutionPhaseReportingIsNotCollectedForDeferredRendering() {
+        val project = buildProject()
+
+        project.applyKotlinJvmPlugin()
+        val parameters = project.createExecutionPhaseDiagnosticsParameters()
+        val diagnostic = ToolingDiagnostic(
+            ID("EXECUTION_PHASE_DIAGNOSTIC", "Execution", DiagnosticGroup.KotlinDiagnosticGroup),
+            "Execution phase diagnostic",
+            WARNING,
+            listOf("Solution 1"),
+        )
+
+        project.kotlinToolingDiagnosticsCollector.report(parameters, diagnostic)
+
+        val collectedDiagnostics = project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project.path)
+        assertTrue(collectedDiagnostics.none { it.id == diagnostic.id })
+    }
+
+    @Test
+    fun testExecutionPhaseFatalDiagnosticThrows() {
+        val project = buildProject()
+
+        project.applyKotlinJvmPlugin()
+        val parameters = project.createExecutionPhaseDiagnosticsParameters()
+        val diagnostic = ToolingDiagnostic(
+            ID("EXECUTION_PHASE_FATAL_DIAGNOSTIC", "Execution fatal", DiagnosticGroup.KotlinDiagnosticGroup),
+            "Execution phase fatal diagnostic",
+            FATAL,
+            emptyList(),
+        )
+
+        assertFailsWith<InvalidUserCodeException> {
+            project.kotlinToolingDiagnosticsCollector.report(parameters, diagnostic)
+        }
     }
 
     @Test
@@ -249,9 +290,19 @@ private fun buildProjectWithMockedCheckers(
 }
 
 
+private fun Project.createExecutionPhaseDiagnosticsParameters(): UsesKotlinToolingDiagnosticsParameters {
+    return object : UsesKotlinToolingDiagnosticsParameters {
+        override val toolingDiagnosticsCollector = objects.property(KotlinToolingDiagnosticsCollector::class.java)
+            .value(kotlinToolingDiagnosticsCollectorProvider)
+
+        override val toolingDiagnosticsContext = objects.property(ToolingDiagnosticsContext::class.java)
+            .value(this@createExecutionPhaseDiagnosticsParameters.toolingDiagnosticsContext)
+    }
+}
+
 private fun Project.reportTestDiagnostic(severity: Severity = WARNING) {
     kotlinToolingDiagnosticsCollector.report(
-        project,
+        toolingDiagnosticsContext,
         ToolingDiagnostic(
             ID("TEST_DIAGNOSTIC", "Test", DiagnosticGroup.KotlinDiagnosticGroup),
             "This is a test diagnostic\n\nIt has multiple lines of text",
@@ -263,7 +314,7 @@ private fun Project.reportTestDiagnostic(severity: Severity = WARNING) {
 
 private fun Project.reportOnePerProjectTestDiagnostic(severity: Severity = WARNING) {
     kotlinToolingDiagnosticsCollector.reportOncePerGradleProject(
-        project,
+        toolingDiagnosticsContext,
         ToolingDiagnostic(
             ID("TEST_DIAGNOSTIC_ONE_PER_PROJECT", "Test Diagnostic", DiagnosticGroup.KotlinDiagnosticGroup),
             "This is a test diagnostics that should be reported once per project\n\nIt has multiple lines of text",
@@ -275,7 +326,7 @@ private fun Project.reportOnePerProjectTestDiagnostic(severity: Severity = WARNI
 
 private fun Project.reportOnePerBuildTestDiagnostic(severity: Severity = WARNING) {
     kotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(
-        project,
+        toolingDiagnosticsContext,
         ToolingDiagnostic(
             ID("TEST_DIAGNOSTIC_ONE_PER_BUILD", "Test Diagnostic", DiagnosticGroup.KotlinDiagnosticGroup),
             "This is a test diagnostics that should be reported once per build\n\nIt has multiple lines of text",

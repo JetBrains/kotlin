@@ -49,11 +49,9 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun getAndroidUnitTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getAppleMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getAppleTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
-	public synthetic fun getBOTH ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public fun getCommonMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getCommonTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions;
-	public fun getCompilerTypeFromProperties ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public fun getDefaultJsCompilerType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public fun getIR ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public fun getIosArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
@@ -68,7 +66,6 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun getJsTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getJvmMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getJvmTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
-	public synthetic fun getLEGACY ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public fun getLinuxArm32HfpMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getLinuxArm32HfpTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getLinuxArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
@@ -251,8 +248,11 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinProjectExtension : org/gradle/api/plugins/ExtensionAware, org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension, org/jetbrains/kotlin/gradle/plugin/HasProject, org/jetbrains/kotlin/tooling/core/HasMutableExtras {
 	public field coreLibrariesVersion Ljava/lang/String;
 	public fun <init> (Lorg/gradle/api/Project;)V
+	public fun abiValidation ()V
+	public fun abiValidation (Lorg/gradle/api/Action;)V
 	public fun explicitApi ()V
 	public fun explicitApiWarning ()V
+	public fun getAbiValidation ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;
 	public fun getCompilerVersion ()Lorg/gradle/api/provider/Property;
 	public fun getCoreLibrariesVersion ()Ljava/lang/String;
 	public fun getExplicitApi ()Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
@@ -304,10 +304,8 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPr
 	public static fun androidTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public static fun androidTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public static fun androidTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
-	public static synthetic fun getBOTH (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public static fun getDefaultJsCompilerType (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public static fun getIR (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
-	public static synthetic fun getLEGACY (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public static fun iosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun iosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun iosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -1024,7 +1022,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/Executable : org/jetbr
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/Framework : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractNativeLibrary, org/gradle/api/attributes/HasAttributes {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/Framework$Companion;
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
 	public synthetic fun getAttributes ()Lorg/gradle/api/attributes/AttributeContainer;
 	public fun getAttributes ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/HierarchyAttributeContainer;
@@ -1037,8 +1034,8 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/Framework : org/jetbra
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary : org/gradle/api/Named {
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun binaryOption (Ljava/lang/String;Ljava/lang/String;)V
-	public final fun disableNativeCache (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;Ljava/lang/String;Ljava/net/URI;)V
-	public static synthetic fun disableNativeCache$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary;Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;Ljava/lang/String;Ljava/net/URI;ILjava/lang/Object;)V
+	public final fun disableNativeCache (Lorg/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion;Ljava/lang/String;Ljava/net/URI;)V
+	public static synthetic fun disableNativeCache$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary;Lorg/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion;Ljava/lang/String;Ljava/net/URI;ILjava/lang/Object;)V
 	public fun getBaseName ()Ljava/lang/String;
 	public final fun getBinaryOptions ()Ljava/util/Map;
 	public final fun getBuildType ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;

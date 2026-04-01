@@ -19,11 +19,14 @@ package org.jetbrains.kotlin.cli.common.messages
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiFormatUtil
+import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
@@ -36,21 +39,12 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.checkers.OptInUsageChecker
 import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices
 
-class AnalyzerWithCompilerReport(
-    private val messageCollector: MessageCollector,
-    private val languageVersionSettings: LanguageVersionSettings,
-    private val renderDiagnosticName: Boolean
-) : AbstractAnalyzerWithCompilerReport {
+class AnalyzerWithCompilerReport(private val configuration: CompilerConfiguration) : AbstractAnalyzerWithCompilerReport {
     override val targetEnvironment: TargetEnvironment
         get() = CompilerEnvironment
 
     override lateinit var analysisResult: AnalysisResult
-
-    constructor(configuration: CompilerConfiguration) : this(
-        configuration.messageCollector,
-        configuration.languageVersionSettings,
-        configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-    )
+    private val messageCollector = configuration.messageCollector
 
     private fun reportIncompleteHierarchies() {
         val bindingContext = analysisResult.bindingContext
@@ -105,20 +99,19 @@ class AnalyzerWithCompilerReport(
 
     class SyntaxErrorReport(val isHasErrors: Boolean, val isAllErrorsAtEof: Boolean)
 
-    override fun hasErrors(): Boolean =
-        messageCollector.hasErrors()
+    override fun hasErrors(): Boolean = CheckDiagnosticCollector.checkHasErrors(configuration)
 
     override fun analyzeAndReport(files: Collection<KtFile>, analyze: () -> AnalysisResult) {
         analysisResult = analyze()
         if (!analysisResult.isError()) {
             OptInUsageChecker.checkCompilerArguments(
-                analysisResult.moduleDescriptor, languageVersionSettings,
+                analysisResult.moduleDescriptor, configuration.languageVersionSettings,
                 reportError = { message -> messageCollector.report(ERROR, message) },
                 reportWarning = { message -> messageCollector.report(WARNING, message) }
             )
         }
         reportSyntaxErrors(files)
-        reportDiagnostics(analysisResult.bindingContext.diagnostics, messageCollector, renderDiagnosticName)
+        reportDiagnostics(analysisResult.bindingContext.diagnostics, messageCollector, configuration.renderDiagnosticInternalName)
         reportIncompleteHierarchies()
         reportAlternativeSignatureErrors()
     }
@@ -131,14 +124,6 @@ class AnalyzerWithCompilerReport(
     }
 
     companion object {
-
-        fun convertSeverity(severity: Severity): CompilerMessageSeverity = when (severity) {
-            Severity.INFO -> INFO
-            Severity.ERROR -> ERROR
-            Severity.WARNING -> WARNING
-            Severity.FIXED_WARNING -> FIXED_WARNING
-        }
-
         private val SYNTAX_ERROR_FACTORY = DiagnosticFactory0.create<PsiErrorElement>(Severity.ERROR)
 
         private fun reportDiagnostic(diagnostic: Diagnostic, reporter: DiagnosticMessageReporter, renderDiagnosticName: Boolean): Boolean {
@@ -235,11 +220,11 @@ class AnalyzerWithCompilerReport(
                     KtRealPsiSourceElement(element),
                     message,
                     positioningStrategy = null,
-                    LanguageVersionSettingsImpl.DEFAULT, // syntax errors couldn't be suppressed anyway
+                    DiagnosticContext.Default, // syntax errors couldn't be suppressed anyway
                 )
                 val context = object : DiagnosticContext {
-                    override val containingFilePath: String?
-                        get() = file.containingFile.virtualFile?.path
+                    override val containingFile: KtSourceFile
+                        get() = KtPsiSourceFile(file.containingFile)
 
                     override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {
                         return false

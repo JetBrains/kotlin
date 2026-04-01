@@ -1,0 +1,17 @@
+<caret_1>:
+  KDocName(25,40): 'Storage.getProp'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in Storage) open fun getProp(p0: kotlin.String!): kotlin.String!
+
+<caret_2>:
+  KDocName(46,58): 'Storage.prop'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: null
+      symbols:
+        Nothing (Unresolved reference)

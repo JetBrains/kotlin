@@ -16,14 +16,14 @@ extension ExportedKotlinPackages.oh.my.state.inner {
         ) {
             if Self.self != ExportedKotlinPackages.oh.my.state.inner.InnerState.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.oh.my.state.inner.InnerState ") }
             let __kt = oh_my_state_inner_InnerState_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            oh_my_state_inner_InnerState_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_ByteArray___(__kt, bytes.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { oh_my_state_inner_InnerState_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_ByteArray___(__kt, bytes.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
 }
@@ -33,14 +33,14 @@ extension ExportedKotlinPackages.oh.my.state {
         public init() {
             if Self.self != ExportedKotlinPackages.oh.my.state.ExtractedByTypealias.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.oh.my.state.ExtractedByTypealias ") }
             let __kt = oh_my_state_ExtractedByTypealias_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            oh_my_state_ExtractedByTypealias_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { oh_my_state_ExtractedByTypealias_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class State: KotlinRuntime.KotlinBase {
@@ -54,14 +54,14 @@ extension ExportedKotlinPackages.oh.my.state {
         ) {
             if Self.self != ExportedKotlinPackages.oh.my.state.State.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.oh.my.state.State ") }
             let __kt = oh_my_state_State_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            oh_my_state_State_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_oh_my_state_inner_InnerState___(__kt, innerState.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { oh_my_state_State_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_oh_my_state_inner_InnerState___(__kt, innerState.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
 }

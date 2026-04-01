@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.generators.util
 
+import com.intellij.openapi.util.io.FileUtil
 import org.intellij.lang.annotations.Language
 import java.io.File
 import java.lang.StringBuilder
@@ -12,6 +13,7 @@ object TestGeneratorUtil {
     @Language("RegExp") const val KT_OR_KTS = """^(.+)\.(kt|kts)$"""
     @Language("RegExp") const val KT = """^(.+)\.(kt)$"""
     @Language("RegExp") const val KTS = """^(.+)\.(kts)$"""
+    @Language("RegExp") const val REPL_KTS = """^(.+)\.repl\.kts$"""
 
     @Language("RegExp") const val KT_OR_KTS_WITHOUT_DOTS_IN_NAME = """^([^.]+)\.(kt|kts)$"""
     @Language("RegExp") const val KT_WITHOUT_DOTS_IN_NAME = """^([^.]+)\.kt$"""
@@ -60,4 +62,8 @@ private val defaultPackages = listOf(
 fun Class<*>.isDefaultImportedClass(): Boolean {
     val outerName = canonicalName.removeSuffix(".$simpleName")
     return outerName in defaultPackages
+}
+
+internal fun File.getFilePath(): String {
+    return FileUtil.toSystemIndependentName(path)
 }

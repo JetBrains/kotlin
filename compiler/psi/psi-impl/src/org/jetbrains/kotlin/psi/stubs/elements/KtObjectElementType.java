@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
@@ -29,16 +30,31 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStubImpl,
         super(debugName, KtObjectDeclaration.class, KotlinObjectStub.class);
     }
 
+    /**
+     * All objects should have stubs since we want to index even local ones
+     */
+    @Override
+    public boolean shouldCreateStub(ASTNode node) {
+        return true;
+    }
+
     @NotNull
     @Override
     public KotlinObjectStubImpl createStub(@NotNull KtObjectDeclaration psi, StubElement parentStub) {
         String name = psi.getName();
         FqName fqName = KtPsiUtilKt.safeFqNameForLazyResolve(psi);
         List<String> superNames = KtPsiUtilKt.getSuperNames(psi);
-        ClassId classId = StubUtils.createNestedClassId(parentStub, psi);
+        ClassId classId = StubUtils.createClassId(parentStub, psi);
         return new KotlinObjectStubImpl(
-                (StubElement<?>) parentStub, StringRef.fromString(name), fqName, classId, Utils.INSTANCE.wrapStrings(superNames),
-                psi.isTopLevel(), psi.isLocal(), psi.isObjectLiteral()
+                (StubElement<?>) parentStub,
+                StringRef.fromString(name),
+                fqName,
+                classId,
+                Utils.INSTANCE.wrapStrings(superNames),
+                psi.isTopLevel(),
+                psi.isLocal(),
+                psi.isObjectLiteral(),
+                /* kdocText = */ null
         );
     }
 
@@ -54,6 +70,7 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStubImpl,
         dataStream.writeBoolean(stub.isTopLevel());
         dataStream.writeBoolean(stub.isLocal());
         dataStream.writeBoolean(stub.isObjectLiteral());
+        StubUtils.serializeKdocText(dataStream, stub.getKdocText());
 
         List<String> superNames = stub.getSuperNames();
         dataStream.writeVarInt(superNames.size());
@@ -75,6 +92,7 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStubImpl,
         boolean isTopLevel = dataStream.readBoolean();
         boolean isLocal = dataStream.readBoolean();
         boolean isObjectLiteral = dataStream.readBoolean();
+        String kdocText = StubUtils.deserializeKdocText(dataStream);
 
         int superCount = dataStream.readVarInt();
         StringRef[] superNames = StringRef.createArray(superCount);
@@ -83,7 +101,15 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStubImpl,
         }
 
         return new KotlinObjectStubImpl(
-                (StubElement<?>) parentStub, name, fqName, classId, superNames, isTopLevel, isLocal, isObjectLiteral
+                (StubElement<?>) parentStub,
+                name,
+                fqName,
+                classId,
+                superNames,
+                isTopLevel,
+                isLocal,
+                isObjectLiteral,
+                kdocText
         );
     }
 

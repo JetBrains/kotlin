@@ -1,21 +1,20 @@
 KtNameReferenceExpression(140,151): 'materialize'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = myClass
-          isSafeNavigation = false
-          type = test.MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = test.MyClass
-          symbol = test/MyClass.materialize(<dispatch receiver>: test.MyClass): test.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = test/MyClass.materialize
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = myClass
+        isSafeNavigation = false
+        type = test.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.MyClass
+        symbol = test/MyClass.materialize(<dispatch receiver>: test.MyClass): test.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = test/MyClass.materialize
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

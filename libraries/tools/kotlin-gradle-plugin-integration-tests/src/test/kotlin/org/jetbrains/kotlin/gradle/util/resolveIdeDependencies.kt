@@ -6,18 +6,20 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.testkit.runner.BuildResult
-import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.idea.proto.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationLogger
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinExtrasSerialization
+import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.build
+import org.jetbrains.kotlin.gradle.testbase.buildModel
 import java.io.File
+import java.io.Serializable
 import kotlin.test.fail
 
 
@@ -25,6 +27,9 @@ import kotlin.test.fail
 private fun BuildOptions.disableConfigurationCache_KT70416() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
 
 /* Test Utils / Test Infrastructure Implementation */
+
+// Using local constant to avoid relying on internal PropertiesProvider API from production code
+private const val KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES: String = "kotlin.internal.kmp.strictResolveIdeDependencies"
 
 internal fun TestProject.resolveIdeDependencies(
     subproject: String? = null,
@@ -58,6 +63,36 @@ internal fun TestProject.readIdeDependencies(subproject: String? = null): IdeaKo
 
 
     return IdeaKotlinDependenciesContainer(dependenciesBySourceSetName)
+}
+
+
+private interface ResolveIdeDependenciesModel {
+    val dependencies: Map<String, List<ByteArray>>
+}
+private class ResolveIdeDependenciesModelImpl(
+    override val dependencies: Map<String, List<ByteArray>>
+) : ResolveIdeDependenciesModel, Serializable
+
+internal fun TestProject.resolveIdeDependenciesAsModel(
+    sourceSets: Set<String>,
+    buildOptions: BuildOptions = this.buildOptions,
+): IdeaKotlinDependenciesContainer {
+    val model = buildModel<ResolveIdeDependenciesModel>("prepareKotlinIdeaImport", buildOptions = buildOptions) { project ->
+        val deps = sourceSets.associateWith {
+            @OptIn(ExternalKotlinTargetApi::class)
+            project.kotlinIdeMultiplatformImport.resolveDependenciesSerialized(it)
+        }
+        ResolveIdeDependenciesModelImpl(deps)
+    }
+
+    val deserializedDependencies = model.dependencies.mapValues { (sourceSet, serializedDependencies) ->
+        serializedDependencies.map { bytes ->
+            GradleIntegrationTestIdeaKotlinSerializationContext.IdeaKotlinDependency(bytes)
+                ?: fail("Failed to deserialize dependency on source set $sourceSet:")
+        }.toSet()
+    }
+
+    return IdeaKotlinDependenciesContainer(deserializedDependencies)
 }
 
 private fun deserializeIdeaKotlinDependencyOrFail(file: File): IdeaKotlinDependency {

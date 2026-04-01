@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedClassConstructorDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -141,7 +141,7 @@ private fun IrFunction.decodeObjCMethodAnnotation(): ObjCMethodInfo? {
     return methodInfo
 }
 
-private fun objCMethodInfo(annotation: IrConstructorCall) = ObjCMethodInfo(
+private fun objCMethodInfo(annotation: IrAnnotation) = ObjCMethodInfo(
         selector = annotation.getAnnotationStringValue("selector"),
         encoding = annotation.getAnnotationStringValue("encoding"),
         isStret = annotation.getAnnotationValueOrNull<Boolean>("isStret") ?: false,
@@ -268,6 +268,9 @@ fun IrClass.getExternalObjCClassBinaryName(): String =
 fun IrClass.getExternalObjCMetaClassBinaryName(): String =
         this.getExplicitExternalObjCClassBinaryName()
                 ?: this.name.asString().removeSuffix("Meta")
+
+fun IrClass.getExternalObjCProtocolBinaryName(): String? =
+    this.getExplicitExternalObjCClassBinaryName()
 
 private fun IrClass.getExplicitExternalObjCClassBinaryName() =
         this.annotations.findAnnotation(externalObjCClassFqName)!!.getAnnotationValueOrNull<String>("binaryName")

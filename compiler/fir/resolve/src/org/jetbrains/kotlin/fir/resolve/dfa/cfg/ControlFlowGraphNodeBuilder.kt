@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -158,8 +158,11 @@ fun ControlFlowGraphBuilder.createWhenSubjectExpressionExitNode(fir: FirWhenSubj
 fun ControlFlowGraphBuilder.createElvisExitNode(fir: FirElvisExpression): ElvisExitNode =
     ElvisExitNode(currentGraph, fir, levelCounter)
 
-fun ControlFlowGraphBuilder.createVariableDeclarationNode(fir: FirProperty): VariableDeclarationNode =
-    VariableDeclarationNode(currentGraph, fir, levelCounter)
+fun ControlFlowGraphBuilder.createVariableDeclarationEnterNode(fir: FirProperty): VariableDeclarationEnterNode =
+    VariableDeclarationEnterNode(currentGraph, fir, levelCounter)
+
+fun ControlFlowGraphBuilder.createVariableDeclarationExitNode(fir: FirProperty): VariableDeclarationExitNode =
+    VariableDeclarationExitNode(currentGraph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createLiteralExpressionNode(fir: FirLiteralExpression): LiteralExpressionNode =
     LiteralExpressionNode(currentGraph, fir, levelCounter)
@@ -238,12 +241,6 @@ fun ControlFlowGraphBuilder.createCodeFragmentEnterNode(fir: FirCodeFragment): C
 
 fun ControlFlowGraphBuilder.createCodeFragmentExitNode(fir: FirCodeFragment): CodeFragmentExitNode =
     CodeFragmentExitNode(currentGraph, fir, levelCounter)
-
-fun ControlFlowGraphBuilder.createReplSnippetEnterNode(fir: FirReplSnippet): ReplSnippetEnterNode =
-    ReplSnippetEnterNode(currentGraph, fir, levelCounter)
-
-fun ControlFlowGraphBuilder.createReplSnippetExitNode(fir: FirReplSnippet): ReplSnippetExitNode =
-    ReplSnippetExitNode(currentGraph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createFileEnterNode(fir: FirFile): FileEnterNode =
     FileEnterNode(currentGraph, fir, levelCounter)

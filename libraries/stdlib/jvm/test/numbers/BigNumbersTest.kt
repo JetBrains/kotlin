@@ -62,6 +62,26 @@ class BigNumbersTest {
         assertEquals(BigInteger("2"), c)
     }
 
+    @Test
+    fun testUIntToBigInteger() {
+        assertEquals(BigInteger.ZERO, 0u.toBigInteger())
+        assertEquals(BigInteger.ONE, 1u.toBigInteger())
+        assertEquals(BigInteger("42"), 42u.toBigInteger())
+        assertEquals(BigInteger("2147483647"), Int.MAX_VALUE.toUInt().toBigInteger())
+        assertEquals(BigInteger("2147483648"), (Int.MAX_VALUE.toUInt() + 1u).toBigInteger())
+        assertEquals(BigInteger("4294967295"), UInt.MAX_VALUE.toBigInteger())
+    }
+
+    @Test
+    fun testULongToBigInteger() {
+        assertEquals(BigInteger.ZERO, 0uL.toBigInteger())
+        assertEquals(BigInteger.ONE, 1uL.toBigInteger())
+        assertEquals(BigInteger("42"), 42uL.toBigInteger())
+        assertEquals(BigInteger("9223372036854775807"), Long.MAX_VALUE.toULong().toBigInteger())
+        assertEquals(BigInteger("9223372036854775808"), (Long.MAX_VALUE.toULong() + 1uL).toBigInteger())
+        assertEquals(BigInteger("18446744073709551615"), ULong.MAX_VALUE.toBigInteger())
+    }
+
     @Test fun sumOfBigInteger() {
         val numbers = (1..10).map { it.toBigInteger() }
         val i55 = 55.toBigInteger()

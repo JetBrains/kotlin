@@ -1,0 +1,5 @@
+KtNameReferenceExpression(331,351): 'serializeFirstTarget'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Serializer.serializeFirstTarget(<dispatch receiver>: test.Serializer, x: test.FirstTarget): kotlin.Unit
+    ]

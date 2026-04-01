@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -35,7 +35,7 @@ internal class TypeOfProcessingLowering(val generationState: NativeGenerationSta
 
 private class Transformer(
         private val irBuiltIns: IrBuiltIns,
-        private val symbols: KonanSymbols,
+        private val symbols: BackendNativeSymbols,
         private val errorContext: ErrorReportingContext
 ) : IrTransformer<IrDeclaration?>() {
     override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclaration?): IrStatement {

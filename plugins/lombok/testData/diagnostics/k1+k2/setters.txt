@@ -12,7 +12,7 @@ public final class OverridenGetterTest : SetterTest {
     public open override /*1*/ /*fake_override*/ fun getAge(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun setAge(/*0*/ age: kotlin.Int): kotlin.Unit
-    protected open override /*1*/ /*fake_override*/ fun setName(/*0*/ name: kotlin.String!): kotlin.Unit
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun setName(/*0*/ name: kotlin.String!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun setPrimitiveBoolean(/*0*/ primitiveBoolean: kotlin.Boolean): kotlin.Unit
     public/*package*/ open override /*1*/ /*fake_override*/ fun test(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -28,7 +28,7 @@ public open class SetterTest {
     public open /*synthesized*/ fun getAge(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open /*synthesized*/ fun setAge(/*0*/ age: kotlin.Int): kotlin.Unit
-    protected open /*synthesized*/ fun setName(/*0*/ name: kotlin.String!): kotlin.Unit
+    protected/*protected and package*/ open /*synthesized*/ fun setName(/*0*/ name: kotlin.String!): kotlin.Unit
     public open /*synthesized*/ fun setPrimitiveBoolean(/*0*/ primitiveBoolean: kotlin.Boolean): kotlin.Unit
     public/*package*/ open fun test(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

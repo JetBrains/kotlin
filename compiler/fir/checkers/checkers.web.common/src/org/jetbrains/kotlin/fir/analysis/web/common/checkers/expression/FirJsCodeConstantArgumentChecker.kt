@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 object FirJsCodeConstantArgumentChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     private val jsCodeCallableId = WebCommonStandardClassIds.Callables.Js
 
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         if (expression.calleeReference.toResolvedCallableSymbol()?.callableId != jsCodeCallableId) {

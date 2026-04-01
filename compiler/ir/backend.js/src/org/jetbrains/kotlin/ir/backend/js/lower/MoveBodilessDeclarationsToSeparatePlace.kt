@@ -66,6 +66,11 @@ fun moveBodilessDeclarationsToSeparatePlace(context: JsIrBackendContext, moduleF
             moveBodiless.lower(it)
         }
     }
+
+    // Lower @JsStatic inside external declarations
+    JsStaticLowering(context).let { jsStaticMembers ->
+        context.externalPackageFragment.values.forEach(jsStaticMembers::lower)
+    }
 }
 
 class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrBackendContext) : DeclarationTransformer {

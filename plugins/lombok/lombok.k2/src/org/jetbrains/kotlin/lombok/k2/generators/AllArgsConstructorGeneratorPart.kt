@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.lombok.k2.generators
 
 import com.intellij.psi.PsiField
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -14,25 +15,32 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.AllArgsConstructor
 import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class AllArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructorGeneratorPart<AllArgsConstructor>(session) {
     override fun getConstructorInfo(classSymbol: FirClassSymbol<*>): AllArgsConstructor? {
         return lombokService.getAllArgsConstructor(classSymbol)
-            ?: lombokService.getValue(classSymbol)?.asAllArgsConstructor()
+            ?: runIf(!containsExplicitConstructor(classSymbol)) {
+                lombokService.getBuilder(classSymbol)?.let { AllArgsConstructor(JavaVisibilities.PackageVisibility) }
+                    ?: lombokService.getValue(classSymbol)?.asAllArgsConstructor()
+            }
     }
 
     @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
     override fun getFieldsForParameters(classSymbol: FirClassSymbol<*>): List<FirJavaField> {
-        return classSymbol.fir.declarations
-            .filterIsInstance<FirJavaField>()
-            .filter { it.isFieldAllowed() }
-    }
+        val isAllArgsConstructor = lombokService.getAllArgsConstructor(classSymbol) != null
 
-    private fun FirJavaField.isFieldAllowed(): Boolean {
-        if (isStatic) return false
+        return buildList {
+            for (declaration in classSymbol.fir.declarations) {
+                if (declaration !is FirJavaField || declaration.isStatic) continue
 
-        // TODO: consider adding `hasInitializer` property directly to java model
-        val hasInitializer = (source?.psi as? PsiField)?.hasInitializer() ?: false
-        return isVar || !hasInitializer
+                // TODO: consider adding `hasInitializer` property directly to java model
+                val hasInitializer = (declaration.source?.psi as? PsiField)?.hasInitializer() ?: false
+
+                if (hasInitializer && (!isAllArgsConstructor || !declaration.isVar)) continue
+
+                add(declaration)
+            }
+        }
     }
 }

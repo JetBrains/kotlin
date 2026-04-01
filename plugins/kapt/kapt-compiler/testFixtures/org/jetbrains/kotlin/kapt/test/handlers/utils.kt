@@ -32,7 +32,8 @@ internal fun renderMetadata(pretty: Pretty, tree: JCAnnotation): String {
     val args = tree.args.filterIsInstance<JCAssign>().associate { (it.lhs as JCIdent).name.toString() to it.rhs }
     val metadata = Metadata(
         kind = args[JvmAnnotationNames.KIND_FIELD_NAME].intValue() ?: 1,
-        metadataVersion = args[JvmAnnotationNames.METADATA_VERSION_FIELD_NAME].arrayValue()?.map { it.intValue()!! }?.toIntArray() ?: intArrayOf(),
+        metadataVersion =
+            args[JvmAnnotationNames.METADATA_VERSION_FIELD_NAME].arrayValue()?.map { it.intValue()!! }?.toIntArray() ?: intArrayOf(),
         data1 = args[JvmAnnotationNames.METADATA_DATA_FIELD_NAME].arrayValue()?.map { it.stringValue()!! }?.toTypedArray() ?: arrayOf(),
         data2 = args[JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME].arrayValue()?.map { it.stringValue()!! }?.toTypedArray() ?: arrayOf(),
         extraInt = args[JvmAnnotationNames.METADATA_EXTRA_INT_FIELD_NAME].intValue() ?: 0,

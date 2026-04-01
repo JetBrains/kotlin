@@ -1,9 +1,0 @@
-MODULE main
-	CLASS MyRequiresOptIn.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(Ljava/lang/String;LMyRequiresOptIn$MyLevel;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(a: kotlin/String /* = ... */, b: MyRequiresOptIn.MyLevel /* = ... */)
-					K2
-						(a: kotlin/String = "", b: MyRequiresOptIn.MyLevel = MyRequiresOptIn.MyLevel.ERROR)

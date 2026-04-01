@@ -2,5 +2,6 @@ KtNameReferenceExpression(156,163): 'handler'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       handler: test.pkg.MyHandler

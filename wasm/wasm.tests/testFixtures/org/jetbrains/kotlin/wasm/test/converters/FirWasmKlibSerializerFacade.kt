@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.wasm.test.converters
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.diagnostics.impl.deduplicating
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
+import org.jetbrains.kotlin.js.config.friendLibraries
+import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -31,8 +31,10 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.getFriendDependencies
+import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
+import org.jetbrains.kotlin.wasm.test.handlers.WASM_BASE_FILE_NAME
 
 class FirWasmKlibSerializerFacade(
     testServices: TestServices,
@@ -54,36 +56,43 @@ class FirWasmKlibSerializerFacade(
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
+        val diagnosticReporter = DiagnosticsCollectorImpl()
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
-            diagnosticReporter.deduplicating(),
+            diagnosticReporter,
             configuration.languageVersionSettings
         )
-        val outputFile = WasmEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
+        val outputFile = testServices.klibEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
 
         val target = configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
 
         if (firstTimeCompilation) {
+            val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
             serializeModuleIntoKlib(
-                moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!,
+                moduleName = moduleName,
                 configuration = configuration,
                 diagnosticReporter = irDiagnosticReporter,
                 metadataSerializer = inputArtifact.metadataSerializer,
                 klibPath = outputFile.path,
-                dependencies = emptyList(), // Does not matter.
                 moduleFragment = inputArtifact.irModuleFragment,
                 irBuiltIns = inputArtifact.irBuiltIns,
                 cleanFiles = inputArtifact.icData,
                 nopack = true,
-                jsOutputName = null,
+                jsOutputName = if (WasmEnvironmentConfigurator.isMainModule(module, testServices)) {
+                    WASM_BASE_FILE_NAME
+                } else moduleName,
                 builtInsPlatform = BuiltInsPlatform.WASM,
                 wasmTarget = target,
             )
         }
 
-        val lib = loadWebKlibsInTestPipeline(
-            configuration = configuration,
-            libraryPaths = listOf(outputFile.path),
+        // We're loading KLIBs here only for the purposes of the downstream test handlers.
+        // It's not a part of the compilation process.
+        // This is why we're copying the compiler configuration.
+        val lib = loadWebKlibs(
+            configuration = configuration.copy().apply {
+                libraries = listOf(outputFile.path)
+                friendLibraries = emptyList()
+            },
             platformChecker = KlibPlatformChecker.Wasm(configuration.wasmTarget.alias)
         ).all.single()
 
@@ -92,7 +101,6 @@ class FirWasmKlibSerializerFacade(
             configuration.languageVersionSettings,
             LockBasedStorageManager("ModulesStructure"),
             inputArtifact.irModuleFragment.descriptor.builtIns,
-            packageAccessHandler = null,
             lookupTracker = LookupTracker.DO_NOTHING
         )
 

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
+import org.jetbrains.kotlin.gradle.utils.moduleName
 
 @Suppress("DEPRECATION_ERROR")
 internal class KotlinJvmWithJavaTargetPreset(
@@ -42,7 +43,9 @@ internal class KotlinJvmWithJavaTargetPreset(
         target.compilations.configureEach {
             @Suppress("DEPRECATION")
             it.compilerOptions.options.moduleName.convention(
-                it.moduleNameForCompilation()
+                project.moduleName(
+                    it.moduleNameForCompilation(it.project.baseModuleName())
+                )
             )
         }
 

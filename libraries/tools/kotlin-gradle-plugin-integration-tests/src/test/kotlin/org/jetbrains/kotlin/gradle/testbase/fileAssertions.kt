@@ -55,6 +55,13 @@ fun assertFileExists(
     }
 }
 
+fun assertFilesExist(
+    vararg files: Path,
+    message: String? = null,
+) {
+    files.forEach { assertFileExists(it, message) }
+}
+
 /**
  * Asserts file under [pathToFile] relative to the test project exists and is a regular file.
  */

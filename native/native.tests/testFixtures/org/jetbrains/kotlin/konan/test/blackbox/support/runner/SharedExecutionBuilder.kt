@@ -106,7 +106,7 @@ internal object SharedExecutionBuilder {
 
     private val cachedRunResult = ConcurrentHashMap<TestRun, RunResult>()
 
-    private class CachedRunResultRunner(executor: Executor, private val testRun: TestRun, private val sharedTestRun: TestRun) :
+    private class CachedRunResultRunner(executor: Executor, private val ownTestRun: TestRun, private val sharedTestRun: TestRun) :
         RunnerWithExecutor(executor, sharedTestRun) {
 
         override fun buildRun() = AbstractRun {
@@ -116,7 +116,7 @@ internal object SharedExecutionBuilder {
         override fun buildResultHandler(runResult: RunResult): ResultHandler = ResultHandler(
             runResult = runResult,
             checks = sharedTestRun.checks,
-            testRun = testRun.copy(
+            testRun = ownTestRun.copy(
                 runParameters = sharedTestRun.runParameters
             ),
             loggedParameters = getLoggedParameters()

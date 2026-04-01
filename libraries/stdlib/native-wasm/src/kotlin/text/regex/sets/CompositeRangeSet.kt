@@ -125,4 +125,12 @@ internal class CompositeRangeSet(/* range without surrogates */ val withoutSurro
     override fun first(set: AbstractSet): Boolean {
         return true
     }
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        // does nothing specific on its own
+        withoutSurrogates.reportOwnProperties(properties)
+        surrogates.reportOwnProperties(properties)
+    }
+
+
 }

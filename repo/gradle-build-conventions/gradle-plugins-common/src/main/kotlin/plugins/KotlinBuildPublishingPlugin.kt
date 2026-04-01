@@ -30,7 +30,7 @@ class KotlinBuildPublishingPlugin @Inject constructor(
         apply<MavenPublishPlugin>()
 
         val publishedRuntime = configurations.maybeCreate(RUNTIME_CONFIGURATION).apply {
-            isCanBeConsumed = false
+            isCanBeConsumed = true
             isCanBeResolved = false
             attributes {
                 attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
@@ -38,7 +38,7 @@ class KotlinBuildPublishingPlugin @Inject constructor(
         }
 
         val publishedCompile = configurations.maybeCreate(COMPILE_CONFIGURATION).apply {
-            isCanBeConsumed = false
+            isCanBeConsumed = true
             isCanBeResolved = false
             attributes {
                 attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_API))
@@ -158,23 +158,23 @@ fun Project.configureDefaultPublishing(
             maven {
                 name = KotlinBuildPublishingPlugin.REPOSITORY_NAME
 
-                val repo: String? = project.properties["kotlin.build.deploy-repo"]?.toString()
-                    ?: project.properties["deploy-repo"]?.toString()
+                val repo: String? = project.findProperty("kotlin.build.deploy-repo")?.toString()
+                    ?: project.findProperty("deploy-repo")?.toString()
 
-                val deployRepoUrl = (project.properties["kotlin.build.deploy-url"]
-                    ?: project.properties["deploy-url"])?.toString()?.takeIf { it.isNotBlank() }
-                    ?: project.properties["kotlin.build.deploy-path"]?.toString()?.takeIf { it.isNotBlank() }
-                        ?.let { "file://${project.rootProject.layout.projectDirectory.dir(it).asFile}" }
+                val deployRepoUrl: String? = (project.findProperty("kotlin.build.deploy-url")
+                    ?: project.findProperty("deploy-url"))?.toString()?.takeIf { it.isNotBlank() }
+                    ?: project.findProperty("kotlin.build.deploy-path")?.toString()?.takeIf { it.isNotBlank() }
+                        ?.let { "${project.rootProject.layout.projectDirectory.dir(it).asFile.toURI()}" }
 
                 val repoUrl: String by extra(
-                    (deployRepoUrl ?: "file://${project.rootProject.layout.buildDirectory.dir("repo").get().asFile}")
+                    (deployRepoUrl ?: "${project.rootProject.layout.buildDirectory.dir("repo").get().asFile.toURI()}")
                 )
 
                 val username: String? by extra(
-                    project.properties["kotlin.build.deploy-username"]?.toString() ?: project.properties["kotlin.${repo}.user"]?.toString()
+                    project.findProperty("kotlin.build.deploy-username")?.toString() ?: project.findProperty("kotlin.${repo}.user")?.toString()
                 )
                 val password: String? by extra(
-                    project.properties["kotlin.build.deploy-password"]?.toString() ?: project.properties["kotlin.${repo}.password"]?.toString()
+                    project.findProperty("kotlin.build.deploy-password")?.toString() ?: project.findProperty("kotlin.${repo}.password")?.toString()
                 )
 
                 setUrl(repoUrl)

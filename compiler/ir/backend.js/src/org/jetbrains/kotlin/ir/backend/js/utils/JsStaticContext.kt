@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.js.backend.ast.JsCompositeBlock
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
-
+import org.jetbrains.kotlin.js.util.NameTable
 
 class JsStaticContext(
     val backendContext: JsIrBackendContext,

@@ -43,7 +43,7 @@ data class XcodeVersion(val major: Int, val minor: Int) : Comparable<XcodeVersio
             )
         }
 
-        val maxTested = XcodeVersion(16, 0)
+        val maxTested = XcodeVersion(26, 0)
     }
 }
 

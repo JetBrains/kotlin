@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JKLIB
 class TestInitValInLambdaCalledOnce {
     val x: Int
     init {

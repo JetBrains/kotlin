@@ -53,6 +53,7 @@ public abstract class KaAnonymousFunctionSymbol : KaFunctionSymbol(), KaContextP
     final override val callableId: CallableId? get() = withValidityAssertion { null }
     final override val isActual: Boolean get() = withValidityAssertion { false }
     final override val isExpect: Boolean get() = withValidityAssertion { false }
+    final override val isExternal: Boolean get() = withValidityAssertion { false }
     final override val hasStableParameterNames: Boolean get() = withValidityAssertion { true }
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
 
@@ -86,6 +87,7 @@ public abstract class KaAnonymousFunctionSymbol : KaFunctionSymbol(), KaContextP
 public abstract class KaSamConstructorSymbol : KaFunctionSymbol(), KaNamedSymbol, KaTypeParameterOwnerSymbol {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
+    final override val isExternal: Boolean get() = withValidityAssertion { false }
 
     abstract override fun createPointer(): KaSymbolPointer<KaSamConstructorSymbol>
 }
@@ -106,12 +108,6 @@ public abstract class KaNamedFunctionSymbol : KaFunctionSymbol(), KaNamedSymbol,
      * Whether the function is an [operator function](https://kotlinlang.org/docs/operator-overloading.html).
      */
     public abstract val isOperator: Boolean
-
-    /**
-     * Whether the function is implemented outside of Kotlin (accessible through [JNI](https://kotlinlang.org/docs/java-interop.html#using-jni-with-kotlin)
-     * or [JavaScript](https://kotlinlang.org/docs/js-interop.html#external-modifier)).
-     */
-    public abstract val isExternal: Boolean
 
     /**
      * Whether the function is an [inline function](https://kotlinlang.org/docs/inline-functions.html).

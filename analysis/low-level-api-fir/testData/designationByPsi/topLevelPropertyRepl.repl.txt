@@ -1,0 +1,5 @@
+KT element: KtProperty
+Resolve target: topLevelPropertyRepl.repl.kts -> <snippet-topLevelPropertyRepl.repl.kts> -> TopLevelPropertyRepl_repl -> topLevelProp
+FIR:
+  public? final? val topLevelProp: Int = REPL_EXPRESSION_REF
+      public? get(): Int

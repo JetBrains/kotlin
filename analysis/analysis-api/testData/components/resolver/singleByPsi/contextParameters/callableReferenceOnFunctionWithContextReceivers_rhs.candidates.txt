@@ -1,2 +1,0 @@
-KtNameReferenceExpression(67,70): 'foo'
-  NO_CANDIDATES

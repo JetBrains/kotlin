@@ -1,0 +1,40 @@
+FILE: main.kt
+    @R|ComponentScans|(value = vararg(*<collectionLiteralCall>(R|/ComponentScan.ComponentScan|(<collectionLiteralCall>(<strcat>(String(String), String(A))), <collectionLiteralCall>(<strcat>(String(String), String(C))), <collectionLiteralCall>(<strcat>(String(String), String(B)))))) [evaluated = vararg(*<collectionLiteralCall>(R|/ComponentScan.ComponentScan|(<collectionLiteralCall>(String(StringA)), <collectionLiteralCall>(String(StringC)), <collectionLiteralCall>(String(StringB)))))]) public final class JavaTest : R|kotlin/Any| {
+        public [ContainingClassKey=JavaTest] constructor(): R|JavaTest| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final annotation class KtComponentScans : R|kotlin/Annotation| {
+        public [ContainingClassKey=KtComponentScans] constructor([CorrespondingProperty=/KtComponentScans.value, EvaluatedValue=<collectionLiteralCall>()] value: R|kotlin/Array<KtComponentScan>| = <collectionLiteralCall>()): R|KtComponentScans| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val value: R|kotlin/Array<KtComponentScan>| = R|<local>/value|
+            public [ContainingClassKey=KtComponentScans] get(): R|kotlin/Array<KtComponentScan>|
+
+    }
+    public final annotation class KtComponentScan : R|kotlin/Annotation| {
+        public [ContainingClassKey=KtComponentScan] constructor([CorrespondingProperty=/KtComponentScan.a, EvaluatedValue=<collectionLiteralCall>()] a: R|kotlin/Array<kotlin/String>| = <collectionLiteralCall>(), [CorrespondingProperty=/KtComponentScan.b, EvaluatedValue=<collectionLiteralCall>()] b: R|kotlin/Array<kotlin/String>| = <collectionLiteralCall>(), [CorrespondingProperty=/KtComponentScan.c, EvaluatedValue=<collectionLiteralCall>()] c: R|kotlin/Array<kotlin/String>| = <collectionLiteralCall>()): R|KtComponentScan| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val a: R|kotlin/Array<kotlin/String>| = R|<local>/a|
+            public [ContainingClassKey=KtComponentScan] get(): R|kotlin/Array<kotlin/String>|
+
+        public final [IsFromPrimaryConstructor=true] val b: R|kotlin/Array<kotlin/String>| = R|<local>/b|
+            public [ContainingClassKey=KtComponentScan] get(): R|kotlin/Array<kotlin/String>|
+
+        public final [IsFromPrimaryConstructor=true] val c: R|kotlin/Array<kotlin/String>| = R|<local>/c|
+            public [ContainingClassKey=KtComponentScan] get(): R|kotlin/Array<kotlin/String>|
+
+    }
+    @R|ComponentScans|(value = vararg(*<collectionLiteralCall>(R|/ComponentScan.ComponentScan|(<collectionLiteralCall>(<strcat>(String(String), String(A))), <collectionLiteralCall>(<strcat>(String(String), String(C))), <collectionLiteralCall>(<strcat>(String(String), String(B)))))) [evaluated = vararg(*<collectionLiteralCall>(R|/ComponentScan.ComponentScan|(<collectionLiteralCall>(String(StringA)), <collectionLiteralCall>(String(StringC)), <collectionLiteralCall>(String(StringB)))))]) public final class KtTest : R|kotlin/Any| {
+        public [ContainingClassKey=KtTest] constructor(): R|KtTest| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

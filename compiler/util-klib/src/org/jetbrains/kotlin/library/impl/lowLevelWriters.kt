@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.library.SerializedDeclaration
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
+import org.jetbrains.kotlin.utils.writeUnsignedLeb128
 import java.io.ByteArrayOutputStream
 import java.io.DataOutput
 import java.io.DataOutputStream
@@ -28,22 +29,44 @@ sealed class IrDataWriter {
     }
 }
 
-class IrArrayWriter(private val data: List<ByteArray>) : IrDataWriter() {
+class IrArrayWriter(private val data: List<ByteArray>, private val useVarInt: Boolean) : IrDataWriter() {
     override fun writeData(dataOutput: DataOutput) {
-        dataOutput.writeInt(data.size)
+        if (useVarInt) {
+            // Designate that var-int encoding is used for sizes of elements by writing the number of elements as negative number.
+            dataOutput.writeInt(-data.size)
+        } else {
+            dataOutput.writeInt(data.size)
+        }
 
-        data.forEach { dataOutput.writeInt(it.size) }
+        data.forEach {
+            if (useVarInt) {
+                writeUnsignedLeb128(it.size.toUInt()) { dataOutput.write(it.toInt()) }
+            } else {
+                dataOutput.writeInt(it.size)
+            }
+        }
         data.forEach { dataOutput.write(it) }
     }
 }
 
-class IrStringWriter(private val data: List<String>) : IrDataWriter() {
+class IrStringWriter(private val data: List<String>, private val useVarInt: Boolean) : IrDataWriter() {
     override fun writeData(dataOutput: DataOutput) {
-        dataOutput.writeInt(data.size)
+        if (useVarInt) {
+            // Designate that var-int encoding is used for sizes of elements by writing the number of elements as negative number.
+            dataOutput.writeInt(-data.size)
+        } else {
+            dataOutput.writeInt(data.size)
+        }
 
         val transformedData = data.map(WobblyTF8::encode)
 
-        transformedData.forEach { dataOutput.writeInt(it.size) }
+        transformedData.forEach {
+            if (useVarInt) {
+                writeUnsignedLeb128(it.size.toUInt()) { dataOutput.write(it.toInt()) }
+            } else {
+                dataOutput.writeInt(it.size)
+            }
+        }
         transformedData.forEach { dataOutput.write(it) }
     }
 }

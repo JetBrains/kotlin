@@ -1,8 +1,7 @@
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 // WITH_STDLIB
 
-// JVM_ABI_K1_K2_DIFF: KT-62464
-
+// FILE: lib.kt
 import kotlin.contracts.*
 
 class Smth {
@@ -21,6 +20,7 @@ class Smth {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     val smth = Smth()
     return if (smth.whatever == 42) "OK" else "FAIL ${smth.whatever}"

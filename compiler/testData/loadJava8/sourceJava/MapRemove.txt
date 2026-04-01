@@ -79,7 +79,7 @@ public open class MapRemove {
         public open override /*1*/ /*fake_override*/ fun putIfAbsent(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!): kotlin.Int?
         @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String!): kotlin.Int?
         public open fun remove(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Boolean
-        @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.PlatformDependent public open override /*1*/ /*fake_override*/ /*isHiddenToOvercomeSignatureClash*/ fun remove(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Boolean
+        @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.PlatformDependent @kotlin.IgnorableReturnValue public open override /*1*/ /*fake_override*/ /*isHiddenToOvercomeSignatureClash*/ fun remove(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!): kotlin.Int?
         public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!, /*2*/ p2: kotlin.Int!): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun replaceAll(/*0*/ p0: java.util.function.BiFunction<in kotlin.String!, in kotlin.Int!, out kotlin.Int!>): kotlin.Unit

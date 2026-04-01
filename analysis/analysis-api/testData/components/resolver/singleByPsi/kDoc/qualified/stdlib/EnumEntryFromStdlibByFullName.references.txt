@@ -2,5 +2,6 @@ KDocName(8,47): 'kotlin.LazyThreadSafetyMode.PUBLICATION'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.LazyThreadSafetyMode) PUBLICATION

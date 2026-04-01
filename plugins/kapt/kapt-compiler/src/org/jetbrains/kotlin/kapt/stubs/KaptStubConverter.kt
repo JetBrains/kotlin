@@ -76,24 +76,13 @@ import org.jetbrains.kotlin.kapt.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt.stubs.ErrorTypeCorrector.TypeKind.*
 import org.jetbrains.kotlin.kapt.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.ArrayFqNames
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.util.getType
 import org.jetbrains.kotlin.resolve.constants.*
-import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -143,23 +132,17 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         private val JAVA_KEYWORD_FILTER_REGEX = "[a-z]+".toRegex()
 
         @Suppress("UselessCallOnNotNull") // nullable toString(), KT-27724
-        private val JAVA_KEYWORDS = Tokens.TokenKind.values()
+        private val JAVA_KEYWORDS = Tokens.TokenKind.entries
             .filter { JAVA_KEYWORD_FILTER_REGEX.matches(it.toString().orEmpty()) }
             .mapTo(hashSetOf(), Any::toString)
-
-        private val KOTLIN_PACKAGE = FqName("kotlin")
-
-        private val ARRAY_OF_FUNCTIONS = (ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY.values + ArrayFqNames.ARRAY_OF_FUNCTION).toSet()
     }
 
     private val correctErrorTypes = kaptContext.options[KaptFlag.CORRECT_ERROR_TYPES]
     private val strictMode = kaptContext.options[KaptFlag.STRICT]
     private val stripMetadata = kaptContext.options[KaptFlag.STRIP_METADATA]
 
-    private val mutableBindings = mutableMapOf<String, KaptJavaFileObject>()
-
     val bindings: Map<String, KaptJavaFileObject>
-        get() = mutableBindings
+        field = mutableMapOf<String, KaptJavaFileObject>()
 
     private val typeMapper = KaptTypeMapper
 
@@ -280,9 +263,8 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         classDeclaration.mods.annotations = classDeclaration.mods.annotations
 
-        val ktFile = origin.element?.containingFile as? KtFile
         val firFile = findFirFile(origin)
-        val imports = convertImports(ktFile, firFile, classDeclaration)
+        val imports = convertImports(firFile, classDeclaration)
 
         val classes = JavacList.of<JCTree>(classDeclaration)
 
@@ -291,7 +273,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         KaptJavaFileObject(topLevel, classDeclaration).apply {
             topLevel.sourcefile = this
-            mutableBindings[clazz.name] = this
+            bindings[clazz.name] = this
         }
 
         postProcess(topLevel)
@@ -339,7 +321,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         })
     }
 
-    private fun convertImports(file: KtFile?, firFile: FirFile?, classDeclaration: JCClassDecl): JavacList<JCTree> {
+    private fun convertImports(firFile: FirFile?, classDeclaration: JCClassDecl): JavacList<JCTree> {
         if (!correctErrorTypes) return JavacList.nil()
 
         val imports = mutableListOf<JCImport>()
@@ -360,51 +342,9 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         if (firFile != null) {
             convertImportsFir(firFile, classDeclaration, addImport)
-        } else if (file != null) {
-            convertImportsPsi(file, classDeclaration, addImport)
         }
 
         return JavacList.from(imports)
-    }
-
-    private fun convertImportsPsi(
-        file: KtFile,
-        classDeclaration: JCClassDecl,
-        addImport: (fqName: FqName, isAllUnder: Boolean) -> Unit,
-    ): Unit {
-        // We prefer ordinary imports over aliased ones.
-        val sortedImportDirectives = file.importDirectives.partition { it.aliasName == null }.run { first + second }
-
-        for (importDirective in sortedImportDirectives) {
-            // Qualified name should be valid Java fq-name
-            val importedFqName = importDirective.importedFqName?.takeIf { it.pathSegments().size > 1 } ?: continue
-            if (!isValidQualifiedName(importedFqName)) continue
-
-            val shortName = importedFqName.shortName()
-            if (shortName.asString() == classDeclaration.simpleName.toString()) continue
-
-            val importedReference = /* resolveImportReference */ run {
-                val referenceExpression = getReferenceExpression(importDirective.importedReference) ?: return@run null
-
-                val bindingContext = kaptContext.bindingContext
-                bindingContext[BindingContext.REFERENCE_TARGET, referenceExpression]?.let { return@run it }
-
-                val allTargets = bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression] ?: return@run null
-                allTargets.find { it is CallableDescriptor }?.let { return@run it }
-
-                allTargets.firstOrNull()
-            }
-
-            val isCallableImport = importedReference is CallableDescriptor
-            val isEnumEntry = (importedReference as? ClassDescriptor)?.kind == ClassKind.ENUM_ENTRY
-            val isAllUnderClassifierImport = importDirective.isAllUnder && importedReference is ClassifierDescriptor
-
-            if (isCallableImport || isEnumEntry || isAllUnderClassifierImport) {
-                continue
-            }
-
-            addImport(importedFqName, importDirective.isAllUnder)
-        }
     }
 
     private fun convertImportsFir(
@@ -534,6 +474,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
             val def = data.correspondingClass?.let { convertClass(it, lineMappings, packageFqName, false) }
 
+            @Suppress("InconsistentCommentForJavaParameter")
             convertField(
                 data.field, clazz, lineMappings, packageFqName, treeMaker.NewClass(
                     /* enclosing = */ null,
@@ -635,7 +576,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
             return getNonErrorType<JCExpression>(
                 ErrorUtils.createErrorType(ErrorTypeKind.ERROR_SUPER_TYPE),
-                ErrorTypeCorrector.TypeKind.SUPER_TYPE,
+                SUPER_TYPE,
                 ref
             ) { throw SuperTypeCalculationFailure() }
         }
@@ -645,7 +586,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 superClass?.let { nonErrorType { it } },
                 mapJList(superInterfaces) { nonErrorType { it } }
             )
-        } catch (e: SuperTypeCalculationFailure) {
+        } catch (_: SuperTypeCalculationFailure) {
             defaultSuperTypes
         }
     }
@@ -689,13 +630,6 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     }
 
     private fun isSuperTypeDefinitelyInterface(entry: KtSuperTypeListEntry, firClass: FirClass?): Boolean? {
-        val type = kaptContext.bindingContext[BindingContext.TYPE, entry.typeReference]
-        if (type != null && !type.isError) {
-            val classDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor
-            if (classDescriptor != null) {
-                return classDescriptor.kind == ClassKind.INTERFACE
-            }
-        }
         if (firClass != null) {
             val firSuperTypeRef = firClass.superTypeRefs.firstOrNull { (it.source as? KtPsiSourceElement)?.psi == entry.typeReference }
             val symbolProvider = kaptContext.firSession?.symbolProvider
@@ -821,7 +755,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val name = field.name
         if (!isValidIdentifier(name)) return null
 
-        val type = getFieldType(field, origin)
+        val type = Type.getType(field.desc)
 
         if (!checkIfValidTypeName(containingClass, type)) {
             return null
@@ -832,13 +766,6 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         // Enum type must be an identifier (Javac requirement)
         val typeExpression = if (isEnum(field.access)) {
             treeMaker.SimpleName(treeMaker.getQualifiedName(type).substringAfterLast('.'))
-        } else if (descriptor is PropertyDescriptor && descriptor.isDelegated) {
-            getNonErrorType(
-                (origin.element as? KtProperty)?.delegateExpression?.getType(kaptContext.bindingContext),
-                RETURN_TYPE,
-                ktTypeProvider = { null },
-                ifNonError = ::typeFromAsm
-            )
         } else {
             getNonErrorType(
                 (descriptor as? CallableDescriptor)?.returnType,
@@ -869,23 +796,8 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             is FirMetadataSource.Property -> metadata.fir.initializer
             else -> null
         }
-
-        val propertyInitializer = when (val declaration = origin?.element) {
-            is KtProperty -> declaration.initializer
-            is KtParameter -> if (kaptContext.options[KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES]) declaration.defaultValue else null
-            else -> null
-        }
-
-        if (value != null) {
-            return when {
-                firInitializer != null ->
-                    convertConstantValueArgumentsFir(containingClass, value, listOf(firInitializer))
-                propertyInitializer != null ->
-                    convertConstantValueArguments(containingClass, value, listOf(propertyInitializer))
-                else ->
-                    convertValueOfPrimitiveTypeOrString(value)
-            }
-        }
+        if (value != null && firInitializer != null)
+            return convertConstantValueArgumentsFir(containingClass, value, listOf(firInitializer))
 
         val propertyType = (origin?.descriptor as? PropertyDescriptor)?.returnType
 
@@ -903,16 +815,6 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val firProperty = (irField?.metadata as? FirMetadataSource.Property)?.fir
         if (firProperty != null) {
             convertNonConstPropertyInitializerFir(firProperty, containingClass)?.let { return it }
-        }
-
-        if (propertyInitializer != null && propertyType != null) {
-            val constValue = getConstantValue(propertyInitializer, propertyType)
-            if (constValue != null) {
-                val asmValue = mapConstantValueToAsmRepresentation(constValue)
-                if (asmValue !== UnknownConstantValue) {
-                    return convertConstantValueArguments(containingClass, asmValue, listOf(propertyInitializer))
-                }
-            }
         }
 
         if (isFinal(field.access)) {
@@ -946,7 +848,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         // KT-70839 K2 kapt: consider using IR evaluator instead of FIR for non-const property initializers
         @OptIn(PrivateConstantEvaluatorAPI::class, PrivateForInline::class)
         val result = try {
-            FirExpressionEvaluator.evaluateExpression(expression, session)?.result
+            expression.evaluateAs<FirElement>(session)
         } catch (_: Exception) {
             null
         } ?: return null
@@ -955,11 +857,11 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             is FirLiteralExpression -> result.value?.let { constValue ->
                 when (result.kind) {
                     ConstantValueKind.Int -> convertTo<Int>(constValue)
-                    ConstantValueKind.UnsignedInt ->  convertTo<Int>(constValue)
-                    ConstantValueKind.Byte ->  convertTo<Byte>(constValue)
+                    ConstantValueKind.UnsignedInt -> convertTo<Int>(constValue)
+                    ConstantValueKind.Byte -> convertTo<Byte>(constValue)
                     ConstantValueKind.UnsignedByte -> convertTo<Byte>(constValue)
-                    ConstantValueKind.Short ->  convertTo<Short>(constValue)
-                    ConstantValueKind.UnsignedShort ->  convertTo<Short>(constValue)
+                    ConstantValueKind.Short -> convertTo<Short>(constValue)
+                    ConstantValueKind.UnsignedShort -> convertTo<Short>(constValue)
                     else -> constValue
                 }
             }
@@ -981,79 +883,6 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         }
 
         return parent.isInsideCompanionObject()
-    }
-
-    private object UnknownConstantValue
-
-    private fun getConstantValue(expression: KtExpression, expectedType: KotlinType): ConstantValue<*>? {
-        val moduleDescriptor = kaptContext.generationState.module
-        val languageVersionSettings = kaptContext.generationState.config.languageVersionSettings
-        val evaluator = ConstantExpressionEvaluator(moduleDescriptor, languageVersionSettings)
-        val trace = DelegatingBindingTrace(kaptContext.bindingContext, "Kapt")
-        val const = evaluator.evaluateExpression(expression, trace, expectedType)
-        if (const == null || const.isError || !const.canBeUsedInAnnotations || const.usesNonConstValAsConstant) {
-            return null
-        }
-        return const.toConstantValue(expectedType)
-    }
-
-    private fun mapConstantValueToAsmRepresentation(value: ConstantValue<*>): Any? {
-        return when (value) {
-            is ByteValue -> value.value
-            is CharValue -> value.value
-            is IntValue -> value.value
-            is LongValue -> value.value
-            is ShortValue -> value.value
-            is UByteValue -> value.value
-            is UShortValue -> value.value
-            is UIntValue -> value.value
-            is ULongValue -> value.value
-            is AnnotationValue -> {
-                val annotationDescriptor = value.value
-                val annotationNode = AnnotationNode(typeMapper.mapType(annotationDescriptor.type).descriptor)
-                val values = ArrayList<Any?>(annotationDescriptor.allValueArguments.size * 2)
-                for ((name, arg) in annotationDescriptor.allValueArguments) {
-                    val mapped = mapConstantValueToAsmRepresentation(arg)
-                    if (mapped === UnknownConstantValue) {
-                        return UnknownConstantValue
-                    }
-
-                    values += name.asString()
-                    values += mapped
-                }
-                annotationNode.values = values
-                return annotationNode
-            }
-
-            is ArrayValue -> {
-                val children = value.value
-                val result = ArrayList<Any?>(children.size)
-                for (child in children) {
-                    val mapped = mapConstantValueToAsmRepresentation(child)
-                    if (mapped === UnknownConstantValue) {
-                        return UnknownConstantValue
-                    }
-                    result += mapped
-                }
-                return result
-            }
-
-            is BooleanValue -> value.value
-            is DoubleValue -> value.value
-            is EnumValue -> {
-                val (classId, name) = value.value
-                val enumType = AsmUtil.asmTypeByClassId(classId)
-                return arrayOf(enumType.descriptor, name.asString())
-            }
-
-            is FloatValue -> value.value
-            is StringValue -> value.value
-            is NullValue -> null
-            else -> {
-                // KClassValue is intentionally omitted as incompatible with Java
-                UnknownConstantValue
-            }
-        }
     }
 
     private fun convertMethod(
@@ -1161,7 +990,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 val call = treeMaker.Apply(JavacList.nil(), treeMaker.SimpleName("super"), args)
                 JavacList.of<JCStatement>(treeMaker.Exec(call))
             } else {
-                JavacList.nil<JCStatement>()
+                JavacList.nil()
             }
 
             treeMaker.Block(0, superClassConstructorCall)
@@ -1413,7 +1242,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             return list.append(annotationTree)
         }
 
-        var annotations = visibleAnnotations?.fold(JavacList.nil<JCAnnotation>(), ::convertAndAdd) ?: JavacList.nil()
+        var annotations = visibleAnnotations?.fold(JavacList.nil(), ::convertAndAdd) ?: JavacList.nil()
         annotations = invisibleAnnotations?.fold(annotations, ::convertAndAdd) ?: annotations
 
         if (isDeprecated(access)) {
@@ -1466,32 +1295,22 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         )
 
         val firArgMapping = firAnnotation?.argumentMapping?.mapping ?: emptyMap()
-
-        val argMapping: Map<String, ResolvedValueArgument> = ktAnnotation?.calleeExpression
-            ?.getResolvedCall(kaptContext.bindingContext)?.valueArguments
-            ?.mapKeys { it.key.name.asString() }
-            ?: emptyMap()
+        val firOriginalArgMapping =
+            (firAnnotation as? FirAnnotationCall)?.resolvedArgumentMapping?.map { it.value.name to it.key }?.toMap().orEmpty()
 
         val constantValues = pairedListToMap(annotation.values)
 
         val values = when {
             firArgMapping.isNotEmpty() -> {
                 val allParameterNames = firArgMapping.keys.mapTo(mutableSetOf()) { it.asString() } + constantValues.keys
-                allParameterNames.mapNotNull { name ->
-                    val firArg = firArgMapping[Name.identifier(name)]
-                    convertAnnotationArgumentWithNameFir(containingClass, constantValues[name], firArg, name)
+                allParameterNames.mapNotNull { strName ->
+                    val name = Name.identifier(strName)
+                    val firArg = firOriginalArgMapping[name] ?: firArgMapping[name]
+                    convertAnnotationArgumentWithNameFir(containingClass, constantValues[strName], firArg, strName)
                 }
             }
-            argMapping.isNotEmpty() -> {
-                argMapping.mapNotNull { (parameterName, arg) ->
-                    if (arg is DefaultValueArgument) return@mapNotNull null
-                    convertAnnotationArgumentWithName(containingClass, constantValues[parameterName], arg, parameterName)
-                }
-            }
-            else -> {
-                constantValues.mapNotNull { (parameterName, arg) ->
-                    convertAnnotationArgumentWithName(containingClass, arg, null, parameterName)
-                }
+            else -> constantValues.mapNotNull { (parameterName, arg) ->
+                convertAnnotationArgumentWithName(containingClass, arg, parameterName)
             }
         }
 
@@ -1515,6 +1334,10 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             is FirGetClassCall -> {
                 convertFirGetClassCall(value)
             }
+            is FirPropertyAccessExpression if (value.resolvedType is ConeErrorType) -> {
+                // Unresolved enum value
+                convertFirType(value.resolvedType)
+            }
             else -> {
                 convertConstantValueArgumentsFir(containingClass, constantValue, listOfNotNull(value))
             }
@@ -1529,6 +1352,9 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     ): JCExpression? {
         if (constantValue is List<*>) {
             if (args.size > constantValue.size) {
+                if (args.size == 1 && args[0] is FirSpreadArgumentExpression)
+                    return treeMaker.NewArray(null, null, convertFirSpreadArgumentExpression(args[0] as FirSpreadArgumentExpression))
+
                 val literalExpression = mapJList(args, ::convertFirGetClassCall)
                 if (literalExpression.size == args.size) {
                     return treeMaker.NewArray(null, null, literalExpression)
@@ -1560,6 +1386,11 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val containingClass = field.containingClassLookupTag() ?: return null
         val fqName = containingClass.classId.asSingleFqName().child(field.name)
         return treeMaker.FqName(fqName)
+    }
+
+    private fun convertFirSpreadArgumentExpression(argumentExpression: FirSpreadArgumentExpression): JavacList<JCExpression> {
+        val literal = argumentExpression.expression as? FirCollectionLiteral ?: return JavacList.nil()
+        return mapJList(literal.arguments, ::convertFirGetClassCall)
     }
 
     private fun convertFirGetClassCall(expression: FirExpression): JCExpression? {
@@ -1600,124 +1431,10 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         )
     }
 
-    private fun convertAnnotationArgumentWithName(
-        containingClass: ClassNode,
-        constantValue: Any?,
-        value: ResolvedValueArgument?,
-        name: String
-    ): JCExpression? {
+    private fun convertAnnotationArgumentWithName(containingClass: ClassNode, constantValue: Any?, name: String): JCExpression? {
         if (!isValidIdentifier(name)) return null
-        val args = value?.arguments?.mapNotNull { it.getArgumentExpression() } ?: emptyList()
-        val expr = convertConstantValueArguments(containingClass, constantValue, args) ?: return null
+        val expr = convertLiteralExpression(containingClass, constantValue)
         return treeMaker.Assign(treeMaker.SimpleName(name), expr)
-    }
-
-    private fun convertConstantValueArguments(containingClass: ClassNode, constantValue: Any?, args: List<KtExpression>): JCExpression? {
-        val singleArg = args.singleOrNull()
-
-        fun tryParseTypeExpression(expression: KtExpression?): JCExpression? {
-            if (expression is KtReferenceExpression) {
-                val descriptor = kaptContext.bindingContext[BindingContext.REFERENCE_TARGET, expression]
-                if (descriptor is ClassDescriptor) {
-                    return treeMaker.FqName(descriptor.fqNameSafe)
-                } else if (descriptor is TypeAliasDescriptor) {
-                    descriptor.classDescriptor?.fqNameSafe?.let { return treeMaker.FqName(it) }
-                }
-            }
-
-            return when (expression) {
-                is KtSimpleNameExpression -> treeMaker.SimpleName(expression.getReferencedName())
-                is KtDotQualifiedExpression -> {
-                    val selector = expression.selectorExpression as? KtSimpleNameExpression ?: return null
-                    val receiver = tryParseTypeExpression(expression.receiverExpression) ?: return null
-                    return treeMaker.Select(receiver, treeMaker.name(selector.getReferencedName()))
-                }
-
-                else -> null
-            }
-        }
-
-        fun tryParseTypeLiteralExpression(expression: KtExpression?): JCExpression? {
-            val literalExpression = expression as? KtClassLiteralExpression ?: return null
-            val typeExpression = tryParseTypeExpression(literalExpression.receiverExpression) ?: return null
-            return treeMaker.Select(typeExpression, treeMaker.name("class"))
-        }
-
-        fun unwrapArgumentExpression(): List<KtExpression?>? =
-            when (singleArg) {
-                is KtCallExpression -> {
-                    val resultingDescriptor = singleArg.getResolvedCall(kaptContext.bindingContext)?.resultingDescriptor
-
-                    if (resultingDescriptor is FunctionDescriptor && isArrayOfFunction(resultingDescriptor))
-                        singleArg.valueArguments.map { it.getArgumentExpression() }
-                    else
-                        null
-                }
-
-                is KtCollectionLiteralExpression -> singleArg.getInnerExpressions()
-                is KtDotQualifiedExpression -> listOf(singleArg)
-                null -> args
-                else -> null
-            }
-
-
-        if (constantValue.isOfPrimitiveType()) {
-            // Do not inline primitive constants
-            tryParseReferenceToIntConstant(singleArg)?.let { return it }
-        } else if (constantValue is List<*> &&
-            constantValue.isNotEmpty() &&
-            args.isNotEmpty() &&
-            constantValue.all { it.isOfPrimitiveType() }
-        ) {
-            unwrapArgumentExpression()?.let { argumentExpressions ->
-                val parsed = argumentExpressions.mapNotNull(::tryParseReferenceToIntConstant).toJavacList()
-                if (parsed.size == argumentExpressions.size) {
-                    return treeMaker.NewArray(null, null, parsed)
-                }
-            }
-        }
-
-        // Unresolved class literal
-        if (constantValue == null && singleArg is KtClassLiteralExpression) {
-            tryParseTypeLiteralExpression(singleArg)?.let { return it }
-        }
-
-        // Some of class literals in vararg list are unresolved
-        if (args.isNotEmpty() && args[0] is KtClassLiteralExpression && constantValue is List<*> && args.size != constantValue.size) {
-            val literalExpressions = mapJList(args, ::tryParseTypeLiteralExpression)
-            if (literalExpressions.size == args.size) {
-                return treeMaker.NewArray(null, null, literalExpressions)
-            }
-        }
-
-        // Probably arrayOf(SomeUnresolvedType::class, ...)
-        if (constantValue is List<*>) {
-            val callArgs = unwrapArgumentExpression()
-            // So we make sure something is absent in the constant value
-            if (callArgs != null && callArgs.size > constantValue.size) {
-                val literalExpressions = mapJList(callArgs, ::tryParseTypeLiteralExpression)
-                if (literalExpressions.size == callArgs.size) {
-                    return treeMaker.NewArray(null, null, literalExpressions)
-                }
-            }
-        }
-
-        return convertLiteralExpression(containingClass, constantValue)
-    }
-
-    private fun tryParseReferenceToIntConstant(expression: KtExpression?): JCExpression? {
-        val bindingContext = kaptContext.bindingContext
-
-        val expressionToResolve = when (expression) {
-            is KtDotQualifiedExpression -> expression.selectorExpression
-            else -> expression
-        }
-
-        val resolvedCall = expressionToResolve.getResolvedCall(bindingContext) ?: return null
-        // Disable inlining only for Java statics
-        val resultingDescriptor = resolvedCall.resultingDescriptor.takeIf { it.source is JavaSourceElement } ?: return null
-        val fqName = resultingDescriptor.fqNameOrNull()?.takeIf { isValidQualifiedName(it) } ?: return null
-        return treeMaker.FqName(fqName)
     }
 
     private fun convertValueOfPrimitiveTypeOrString(value: Any?): JCExpression? {
@@ -1861,25 +1578,6 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         return this
     }
 
-    private fun getFieldType(field: FieldNode, origin: JvmDeclarationOrigin?): Type {
-        val fieldType = Type.getType(field.desc)
-        return when (val declaration = origin?.element) {
-            is KtProperty -> {
-                //replace anonymous type in delegate (if any)
-                val delegateType = kaptContext.bindingContext[BindingContext.EXPRESSION_TYPE_INFO, declaration.delegateExpression]?.type
-                delegateType?.let {
-                    val replaced = replaceAnonymousTypeWithSuperType(it)
-                    //not changed => not anonymous type => use type from field
-                    if (replaced != it) replaced else null
-                }?.let(::convertKotlinType) ?: fieldType
-            }
-
-            else -> fieldType
-        }
-    }
-
-    private fun convertKotlinType(type: KotlinType): Type = typeMapper.mapType(type, TypeMappingMode.GENERIC_ARGUMENT)
-
     private fun getFileForClass(c: ClassNode): KtFile? = kaptContext.origins[c]?.element?.containingFile as? KtFile
 
     private fun reportIfIllegalTypeUsage(containingClass: ClassNode, type: Type) {
@@ -1895,19 +1593,13 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     }
 
     private fun collectImportsFromRootPackage(): Map<KtFile, Set<String>> =
-        kaptContext.compiledClasses.mapNotNull(::getFileForClass).distinct().map { file ->
+        kaptContext.compiledClasses.mapNotNull(::getFileForClass).distinct().associateWith { file ->
             val importsFromRoot =
                 file.importDirectives
                     .filter { !it.isAllUnder }
                     .mapNotNull { im -> im.importPath?.fqName?.takeIf { it.isOneSegmentFQN() } }
-            file to importsFromRoot.mapTo(mutableSetOf()) { it.asString() }
-        }.toMap()
-
-    private fun isArrayOfFunction(d: FunctionDescriptor): Boolean {
-        val name = d.fqNameSafe
-        return name.parent() == KOTLIN_PACKAGE && ARRAY_OF_FUNCTIONS.contains(name.shortName())
-    }
-
+            importsFromRoot.mapTo(mutableSetOf()) { it.asString() }
+        }
 }
 
 private fun Any?.isOfPrimitiveType(): Boolean = when (this) {
@@ -1917,9 +1609,3 @@ private fun Any?.isOfPrimitiveType(): Boolean = when (this) {
 
 private val ClassDescriptor.isNested: Boolean
     get() = containingDeclaration is ClassDescriptor
-
-internal tailrec fun getReferenceExpression(expression: KtExpression?): KtReferenceExpression? = when (expression) {
-    is KtReferenceExpression -> expression
-    is KtQualifiedExpression -> getReferenceExpression(expression.selectorExpression)
-    else -> null
-}

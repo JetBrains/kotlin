@@ -4,23 +4,24 @@
  */
 
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.tasks.TaskContainer
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.kotlin.dsl.RegisteringDomainObjectDelegateProviderWithAction
-import org.gradle.kotlin.dsl.registering
+import org.gradle.kotlin.dsl.newInstance
 
 fun Project.parallel(
     tasksToRun: List<TaskProvider<*>>,
     beforeAll: TaskProvider<*>? = null,
-): RegisteringDomainObjectDelegateProviderWithAction<out TaskContainer, Task> {
-    return tasks.registering {
-        tasksToRun.forEach { dependsOn(it) }
-    }.apply {
-        if (beforeAll != null) {
-            tasksToRun.forEach {
-                it.configure {
-                    dependsOn(beforeAll)
+): ConfigurableFileCollection {
+    return objects.fileCollection().apply {
+        from(tasksToRun)
+        beforeAll?.let { initialTaskProvider ->
+            tasksToRun.forEach { task ->
+                task.configure {
+                    inputs
+                        .files(initialTaskProvider)
+                        .withPathSensitivity(PathSensitivity.RELATIVE)
+                        .withPropertyName("beforeAll")
                 }
             }
         }

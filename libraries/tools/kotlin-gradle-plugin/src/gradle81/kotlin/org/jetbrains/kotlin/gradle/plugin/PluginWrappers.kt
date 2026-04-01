@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporter
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporterG81
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporterG81
 import org.jetbrains.kotlin.gradle.plugin.internal.*
@@ -71,6 +73,8 @@ private fun Project.registerVariantImplementations() {
         MavenPublicationComponentAccessorG81.Factory()
     factories[ProblemsReporter.Factory::class] =
         ProblemsReporterG81.Factory()
+    factories[CompilerDiagnosticsProblemsReporter.Factory::class] =
+        CompilerDiagnosticsProblemsReporterG81.Factory()
     factories[CopySpecAccessor.Factory::class] = CopySpecAccessorG85.Factory()
     factories[BuildIdentifierAccessor.Factory::class] = BuildIdentifierAccessorG81.Factory()
     factories[ProjectDependencyAccessor.Factory::class] = ProjectDependencyAccessorG88.Factory()

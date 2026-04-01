@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.daemon.common
 
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.incremental.ClasspathChanges
+import org.jetbrains.kotlin.incremental.ConfigurationInputs
 import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import java.io.File
@@ -81,6 +82,7 @@ class IncrementalCompilationOptions(
     kotlinScriptExtensions: Array<String>? = null,
     val icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
     generateCompilerRefIndex: Boolean = false,
+    val configurationInputs: ConfigurationInputs? = null
 ) : CompilationOptions(
     compilerMode,
     targetPlatform,

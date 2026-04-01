@@ -80,6 +80,7 @@ abstract class AbstractNativeCInteropKT39120Test : AbstractNativeCInteropBaseTes
         return contents.lineSequence()
             .filter { it.contains(regex) }
             .filterNot { it.trim() == "@kotlinx/cinterop/ExperimentalForeignApi" }
+            .map(::normalizeCSymbolNames)
             .joinToString("\n")
     }
 

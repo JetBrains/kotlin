@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 // ---------------------- callables with status ----------------------
 
@@ -87,6 +86,9 @@ inline val FirClassSymbol<*>.isClass: Boolean
 inline val FirClassSymbol<*>.isInterface: Boolean
     get() = classKind.isInterface
 
+inline val FirClassSymbol<*>.isAnnotationClass: Boolean
+    get() = classKind.isAnnotationClass
+
 inline val FirClassSymbol<*>.isEnumClass: Boolean
     get() = classKind.isEnumClass
 
@@ -94,3 +96,14 @@ inline val FirClassSymbol<*>.isEnumEntry: Boolean
     get() = classKind.isEnumEntry
 
 // ---------------------- specific callables ----------------------
+val FirCallableSymbol<*>.isExtension: Boolean
+    get() = fir.isExtension
+
+val FirCallableSymbol<*>.isCompanionExtension: Boolean
+    get() = fir.isCompanionExtension
+
+val FirCallableSymbol<*>.isInstanceExtension: Boolean
+    get() = fir.isInstanceExtension
+
+val FirCallableSymbol<*>.isCompanionBlockMember: Boolean
+    get() = fir.isCompanionBlockMember

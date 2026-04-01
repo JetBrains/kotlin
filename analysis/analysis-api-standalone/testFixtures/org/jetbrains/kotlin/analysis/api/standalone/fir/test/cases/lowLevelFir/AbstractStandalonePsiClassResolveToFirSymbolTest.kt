@@ -10,5 +10,5 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractPsiClassResolveTo
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 
 abstract class AbstractStandalonePsiClassResolveToFirSymbolTest : AbstractPsiClassResolveToFirSymbolTest() {
-    override val configurator: AnalysisApiTestConfigurator get() = StandaloneModeConfigurator
+    override val configurator: AnalysisApiTestConfigurator = StandaloneModeConfigurator()
 }

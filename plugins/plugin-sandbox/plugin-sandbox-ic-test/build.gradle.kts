@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("d8-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
 }
@@ -8,13 +8,12 @@ plugins {
 dependencies {
     testFixturesApi(project(":plugins:plugin-sandbox"))
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
+    testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
     testFixturesApi(libs.junit.jupiter.api)
 
     testCompileOnly(intellijCore())
 
-    testRuntimeOnly(project(":core:descriptors.runtime"))
-    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
     testRuntimeOnly(project(":compiler:fir:plugin-utils"))
 
     testRuntimeOnly(commonDependency("org.lz4:lz4-java"))
@@ -24,6 +23,8 @@ dependencies {
 
     testRuntimeOnly(toolsJar())
     testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 sourceSets {
@@ -38,11 +39,15 @@ projectTests {
         workingDir = rootDir
         dependsOn(":plugins:plugin-sandbox:jar")
         dependsOn(":plugins:plugin-sandbox:plugin-annotations:distAnnotations")
+        useJsIrBoxTests(buildDir = layout.buildDirectory)
     }
 
     testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForPluginSandboxICTestsKt")
 
     withJvmStdlibAndReflect()
+    withJsRuntime()
+    withStdlibWeb()
+    withStdlibCommon()
 }
 
 testsJar()

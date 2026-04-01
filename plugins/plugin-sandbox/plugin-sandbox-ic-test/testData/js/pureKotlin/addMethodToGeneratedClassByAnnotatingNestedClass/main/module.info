@@ -1,0 +1,17 @@
+STEP 0:
+    dependencies: lib
+    modifications:
+        U : usage.0.kt -> usage.kt
+    added file: usage.kt
+STEP 1:
+    dependencies: lib
+STEP 2:
+    dependencies: lib
+    modifications:
+        U : usage.1.kt -> usage.kt
+    modified ir: usage.kt
+STEP 3:
+    dependencies: lib
+    modifications:
+        U : usage.2.kt -> usage.kt
+    modified ir: usage.kt

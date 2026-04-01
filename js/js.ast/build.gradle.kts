@@ -1,9 +1,10 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
+    implementation(project(":core:util.runtime"))
+
     api(kotlinStdlib())
     compileOnly(intellijCore())
     compileOnly(libs.intellij.fastutil)

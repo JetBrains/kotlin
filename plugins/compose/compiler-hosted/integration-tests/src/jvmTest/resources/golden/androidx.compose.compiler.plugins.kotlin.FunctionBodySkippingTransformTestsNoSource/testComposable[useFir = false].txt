@@ -26,7 +26,10 @@ class ReturningProfileObViewModel : NewProfileOBViewModel {
     return {
     }
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @Target(allowedTargets = AnnotationTarget.TYPE)
 open annotation class Type : Annotation

@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("project-tests-convention")
     id("test-inputs-check")
     id("java-test-fixtures")
@@ -19,11 +18,11 @@ dependencies {
 
     api(libs.jsoup)
 
-    testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(toolsJar())
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(libs.junit.jupiter.params)
     runtimeOnly(libs.junit.vintage.engine)
     testFixturesImplementation(libs.junit4)
@@ -38,9 +37,9 @@ sourceSets {
 
 testsJar()
 
-val generateFeatureInteractionSpecTestData by generator("org.jetbrains.kotlin.spec.utils.tasks.GenerateFeatureInteractionSpecTestDataKt")
+val generateFeatureInteractionSpecTestData by generator("org.jetbrains.kotlin.spec.utils.tasks.GenerateFeatureInteractionSpecTestDataKt", testSourceSet)
 
-val printSpecTestsStatistic by generator("org.jetbrains.kotlin.spec.utils.tasks.PrintSpecTestsStatisticKt")
+val printSpecTestsStatistic by generator("org.jetbrains.kotlin.spec.utils.tasks.PrintSpecTestsStatisticKt", testSourceSet)
 
 val specConsistencyTests by task<Test> {
     filter {

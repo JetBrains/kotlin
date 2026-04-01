@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCo
 internal object KonanHomeConflictDeclarationChecker : KotlinGradleProjectChecker {
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         if (project.nativeProperties.konanDataDir.isPresent && project.nativeProperties.userProvidedNativeHome.isPresent) {
-            collector.report(
-                project, KotlinToolingDiagnostics.KonanHomeConflictDeclaration(
+            collector.report(diagnosticsContext, KotlinToolingDiagnostics.KonanHomeConflictDeclaration(
                     project.nativeProperties.konanDataDir.orNull,
                     project.nativeProperties.userProvidedNativeHome.orNull,
                 )

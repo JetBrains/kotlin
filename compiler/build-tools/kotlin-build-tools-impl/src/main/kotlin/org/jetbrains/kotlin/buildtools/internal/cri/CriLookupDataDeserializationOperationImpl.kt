@@ -11,13 +11,20 @@ import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.cri.CriLookupDataDeserializationOperation
 import org.jetbrains.kotlin.buildtools.api.cri.LookupEntry
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.Options
+import org.jetbrains.kotlin.buildtools.internal.initializeOptions
 
 internal class CriLookupDataDeserializationOperationImpl(
     private val deserializer: CriDataDeserializerImpl,
     private val data: ByteArray,
 ) : BuildOperationImpl<Iterable<LookupEntry>>(), CriLookupDataDeserializationOperation {
+    override val options: Options = Options(CriLookupDataDeserializationOperation::class)
 
-    override fun execute(
+    init {
+        initializeOptions(this::class, options)
+    }
+
+    override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,

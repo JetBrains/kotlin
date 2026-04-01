@@ -114,7 +114,7 @@ open fun toString(): kotlin.String
 
 open fun toCharArray(): kotlin.CharArray!
 
-open fun intern(): kotlin.String!
+open external fun intern(): kotlin.String!
 
 open operator fun get(index: kotlin.Int): kotlin.Char
 

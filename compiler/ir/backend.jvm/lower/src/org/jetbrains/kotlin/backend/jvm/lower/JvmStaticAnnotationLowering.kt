@@ -15,11 +15,12 @@ import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -64,13 +65,15 @@ private fun IrMemberAccessExpression<*>.makeStatic(irBuiltIns: IrBuiltIns, repla
     if (replaceCallee != null) {
         (this as IrCall).symbol = replaceCallee.symbol
     }
-    if (receiver == null || receiver.isTrivial()) {
-        // Receiver has no side effects (aside from maybe class initialization) so discard it.
-        return this
-    }
+    if (receiver == null) return this
+    return this.addEvaluationOfArgIfSideEffects(receiver, irBuiltIns)
+}
+
+private fun IrExpression.addEvaluationOfArgIfSideEffects(arg: IrExpression, builtIns: IrBuiltIns): IrExpression {
+    if (arg.isTrivial()) return this
     return IrBlockImpl(startOffset, endOffset, type).apply {
-        statements += receiver.coerceToUnit(irBuiltIns) // evaluate for side effects
-        statements += this@makeStatic
+        statements += arg.coerceToUnit(builtIns)
+        statements += this@addEvaluationOfArgIfSideEffects
     }
 }
 
@@ -118,6 +121,20 @@ class SingletonObjectJvmStaticTransformer(
         }
         return expression
     }
+
+    override fun visitRichPropertyReference(expression: IrRichPropertyReference): IrExpression {
+        expression.transformChildrenVoid(this)
+        val property = expression.reflectionTargetSymbol?.owner
+        if (property is IrDeclaration && property.isJvmStaticInObject()) {
+            val bound = expression.singleBoundValueOrNull ?: return expression
+            val objectClass = property.parentAsClass
+            val objectValue = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectClass.defaultType, objectClass.symbol)
+            expression.boundValues.clear()
+            expression.boundValues += objectValue
+            return expression.addEvaluationOfArgIfSideEffects(bound, irBuiltIns)
+        }
+        return expression
+    }
 }
 
 private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
@@ -153,29 +170,11 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid(this)
         val callee = expression.symbol.owner
-        return when {
-            shouldReplaceWithStaticCall(callee) -> {
-                val (staticProxy, _) = context.cachedDeclarations.getStaticAndCompanionDeclaration(callee)
-                expression.makeStatic(context.irBuiltIns, staticProxy)
-            }
-            callee.symbol == context.symbols.indyLambdaMetafactoryIntrinsic -> {
-                // TODO change after KT-78719
-                val implFunRef = expression.arguments[1] as? IrFunctionReference
-                    ?: throw AssertionError("'implMethodReference' is expected to be 'IrFunctionReference': ${expression.dump()}")
-                val implFun = implFunRef.symbol.owner
-                if (implFunRef.dispatchReceiver != null && implFun is IrSimpleFunction && shouldReplaceWithStaticCall(implFun)) {
-                    val (staticProxy, _) = context.cachedDeclarations.getStaticAndCompanionDeclaration(implFun)
-                    expression.arguments[1] = IrFunctionReferenceImpl(
-                        implFunRef.startOffset, implFunRef.endOffset, implFunRef.type,
-                        staticProxy.symbol,
-                        staticProxy.typeParameters.size,
-                        implFunRef.reflectionTarget, implFunRef.origin
-                    )
-                }
-                expression
-            }
-            else ->
-                expression
+        return if (shouldReplaceWithStaticCall(callee)) {
+            val (staticProxy, _) = context.cachedDeclarations.getStaticAndCompanionDeclaration(callee)
+            expression.makeStatic(context.irBuiltIns, staticProxy)
+        } else {
+            expression
         }
     }
 

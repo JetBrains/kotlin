@@ -1,10 +1,8 @@
 // IGNORE_BACKEND_K1: ANY
+// LANGUAGE: +ExplicitBackingFields
+
 // WITH_STDLIB
 // WITH_REFLECT
-// ISSUE: KT-80378
-// LANGUAGE: +ExplicitBackingFields
-// ^This explicit setting is only needed for some Native runners,
-//  as they haven't been translated to our proper test infrastructure.
 
 class A {
     val city: List<String>

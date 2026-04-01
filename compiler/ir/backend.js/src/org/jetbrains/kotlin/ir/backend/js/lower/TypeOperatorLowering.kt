@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isPure
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.AbstractValueUsageLowering.Companion.getActualType
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
@@ -25,6 +27,14 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
 
+private val NOT_NULL_CHECK by IrStatementOriginImpl
+
+@PhasePrerequisites(
+    JsBridgesConstruction::class,
+    RemoveInlineDeclarationsWithReifiedTypeParametersLowering::class,
+    JsSingleAbstractMethodLowering::class,
+    InteropCallableReferenceLowering::class,
+)
 class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val unit = context.irBuiltIns.unitType
     private val unitValue get() = JsIrBuilder.buildGetObjectValue(unit, unit.classifierOrFail as IrClassSymbol)
@@ -134,6 +144,9 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
                 val argument = cacheValue(expression.argument, newStatements, declaration)
                 val check = generateTypeCheck(argument, toType)
+
+                if (check.isTrueConst()) return expression.argument
+
                 val castedValue = expression.wrapWithUnsafeCast(argument())
 
                 newStatements += JsIrBuilder.buildIfElse(expression.type, check, castedValue, failResult)
@@ -241,7 +254,11 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
                 return when {
                     !isFromNullable -> instanceCheck // ! -> *
-                    isToNullable -> calculator.run { oror(nullCheck(argument()), instanceCheck) } // * -> ?
+                    isToNullable -> if (instanceCheck.isNotNullCheck() || instanceCheck.isTrueConst()) {
+                        litTrue
+                    } else {
+                        calculator.oror(nullCheck(argument()), instanceCheck) // * -> ?
+                    }
                     else -> if (isNativeCheck) instanceCheck else calculator.run {
                         andand(
                             not(nullCheck(argument())),
@@ -250,6 +267,9 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                     } // ? -> !
                 }
             }
+
+            private fun IrStatement.isNotNullCheck(): Boolean =
+                this is IrMemberAccessExpression<*> && origin == NOT_NULL_CHECK
 
             private fun generateTypeCheckNonNull(argument: IrExpression, toType: IrType): IrExpression {
                 assert(!toType.isMarkedNullable())
@@ -280,6 +300,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
             private fun generateIsObjectCheck(argument: IrExpression) = JsIrBuilder.buildCall(booleanNot).apply {
                 dispatchReceiver = nullCheck(argument)
+                origin = NOT_NULL_CHECK
             }
 
             private fun generateTypeCheckWithTypeParameter(argument: IrExpression, toType: IrType): IrExpression {
@@ -295,17 +316,18 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 // TODO either remove functions with reified type parameters or support this case
                 // assert(!typeParameter.isReified) { "reified parameters have to be lowered before" }
 
-                return typeParameter.superTypes.fold<IrType, IrExpression?>(null) { r, t ->
-                    val copy = argument.shallowCopyOrNull()
-                        ?: argument.deepCopyWithSymbols()
-                    val check = generateTypeCheckNonNull(copy, t.makeNotNull())
+                return typeParameter.superTypes
+                    .filter { !it.type.isNullableAny() }
+                    .fold<IrType, IrExpression?>(null) { r, t ->
+                        val copy = argument.shallowCopyOrNull() ?: argument.deepCopyWithSymbols()
+                        val check = generateTypeCheckNonNull(copy, t.makeNotNull())
 
-                    if (r == null) {
-                        check
-                    } else {
-                        calculator.andand(r, check)
-                    }
-                } ?: litTrue
+                        if (r == null) {
+                            check
+                        } else {
+                            calculator.andand(r, check)
+                        }
+                    } ?: litTrue
             }
 
 //            private fun generateCheckForChar(argument: IrExpression) =

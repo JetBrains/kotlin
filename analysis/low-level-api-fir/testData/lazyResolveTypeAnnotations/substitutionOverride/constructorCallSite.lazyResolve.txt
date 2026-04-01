@@ -342,7 +342,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSite.kt
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T2> createP2(): R|@R|Anno|(str = String(return type))  P1.P2<@R|Anno|(str = String(nested return type))  T2, T1>| { LAZY_BLOCK }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T2> createP2(): R|@R|Anno|(str = String(return type) [evaluated = String(return type)])  P1.P2<@R|Anno|(str = String(nested return type) [evaluated = String(nested return type)])  T2, T1>| { LAZY_BLOCK }
 
     }
 
@@ -371,15 +371,15 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSite.kt
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T2> createP2(): R|@R|Anno|(str = String(return type))  P1.P2<@R|Anno|(str = String(nested return type))  T2, T1>| {
-            ^createP2 this@R|/P1|.R|SubstitutionOverride</P1.P2.P2>|<R|@R|Anno|(str = String(nested return type))  T2|>()
+        public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T2> createP2(): R|@R|Anno|(str = String(return type) [evaluated = String(return type)])  P1.P2<@R|Anno|(str = String(nested return type) [evaluated = String(nested return type)])  T2, T1>| {
+            ^createP2 this@R|/P1|.R|SubstitutionOverride</P1.P2.P2>|<R|@R|Anno|(str = String(nested return type) [evaluated = String(nested return type)])  T2|>()
         }
 
     }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] constructorCallSite.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -393,9 +393,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] constructorCallSite.kt
             super<R|kotlin/Any|>()
         }
 
-        public final inner [ResolvedTo(BODY_RESOLVE)] class P2<[ResolvedTo(BODY_RESOLVE)] T2, [ResolvedTo(BODY_RESOLVE)] Outer(T1)> : R|@R|Anno|(str = String(P1 super type))  P1<@R|Anno|(str = String(nested P1 super type))  T1>| {
+        public final inner [ResolvedTo(BODY_RESOLVE)] class P2<[ResolvedTo(BODY_RESOLVE)] T2, [ResolvedTo(BODY_RESOLVE)] Outer(T1)> : R|@R|Anno|(str = String(P1 super type) [evaluated = String(P1 super type)])  P1<@R|Anno|(str = String(nested P1 super type) [evaluated = String(nested P1 super type)])  T1>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(BODY_RESOLVE)] T2>([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/String|): R|P1.P2<T2, T1>| {
-                super<R|@R|Anno|(str = String(P1 super type))  P1<@R|Anno|(str = String(nested P1 super type))  T1>|>()
+                super<R|@R|Anno|(str = String(P1 super type) [evaluated = String(P1 super type)])  P1<@R|Anno|(str = String(nested P1 super type) [evaluated = String(nested P1 super type)])  T1>|>()
             }
 
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(BODY_RESOLVE)] T2>(): R|P1.P2<T2, T1>| {
@@ -404,8 +404,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] constructorCallSite.kt
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T2> createP2(): R|@R|Anno|(str = String(return type))  P1.P2<@R|Anno|(str = String(nested return type))  T2, T1>| {
-            ^createP2 this@R|/P1|.R|SubstitutionOverride</P1.P2.P2>|<R|@R|Anno|(str = String(nested return type))  T2|>()
+        public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T2> createP2(): R|@R|Anno|(str = String(return type) [evaluated = String(return type)])  P1.P2<@R|Anno|(str = String(nested return type) [evaluated = String(nested return type)])  T2, T1>| {
+            ^createP2 this@R|/P1|.R|SubstitutionOverride</P1.P2.P2>|<R|@R|Anno|(str = String(nested return type) [evaluated = String(nested return type)])  T2|>()
         }
 
     }

@@ -89,10 +89,27 @@ internal sealed class WasmVM(
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
-                "--enable-gc",
-                "--enable-exception-handling",
                 entryFile,
                 "startTest",
+                workingDirectory = workingDirectory,
+            )
+    }
+
+    object Wasmtime : WasmVM(shortName = "Wasmtime", property = "wasm.engine.path.Wasmtime", entryPointIsJsFile = false) {
+        override fun run(
+            entryFile: String,
+            jsFiles: List<String>,
+            workingDirectory: File?,
+            useNewExceptionHandling: Boolean,
+            toolArgs: List<String>,
+        ) =
+            tool.run(
+                *toolArgs.toTypedArray(),
+                "-W",
+                "gc,function-references,exceptions",
+                "--invoke",
+                "startTest",
+                entryFile,
                 workingDirectory = workingDirectory,
             )
     }

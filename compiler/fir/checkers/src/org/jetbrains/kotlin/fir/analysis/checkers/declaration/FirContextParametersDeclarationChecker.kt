@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.resolve.allowedInContextParameters
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
@@ -110,7 +111,9 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
                 }
 
                 parameter.source?.getModifierList()?.modifiers?.forEach { modifier ->
-                    reporter.reportOn(modifier.source, FirErrors.WRONG_MODIFIER_TARGET, modifier.token, "context parameter")
+                    if (modifier.token !in allowedInContextParameters) {
+                        reporter.reportOn(modifier.source, FirErrors.WRONG_MODIFIER_TARGET, modifier.token, "context parameter")
+                    }
                 }
 
                 FirFunctionParameterChecker.checkValOrVar(parameter)
@@ -133,10 +136,10 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
     private fun KtSourceElement.findContextReceiverListSources(): List<KtSourceElement> {
         return when (this) {
             is KtPsiSourceElement ->
-                psi.getChildOfType<KtModifierList>()?.contextReceiverLists?.map { it.toKtPsiSourceElement() }.orEmpty()
+                psi.getChildOfType<KtModifierList>()?.contextParameterLists?.map { it.toKtPsiSourceElement() }.orEmpty()
             is KtLightSourceElement ->
                 treeStructure.findChildByType(lighterASTNode, KtNodeTypes.MODIFIER_LIST)
-                    ?.let { treeStructure.findChildrenByType(it, KtNodeTypes.CONTEXT_RECEIVER_LIST) }
+                    ?.let { treeStructure.findChildrenByType(it, KtNodeTypes.CONTEXT_PARAMETER_LIST) }
                     ?.map { it.toKtLightSourceElement(treeStructure) }
                     .orEmpty()
         }

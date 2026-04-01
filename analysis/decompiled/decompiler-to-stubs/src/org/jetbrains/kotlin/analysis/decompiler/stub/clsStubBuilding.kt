@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.decompiler.stub
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
@@ -19,11 +20,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.ClassIdBasedLocality
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
@@ -41,6 +38,8 @@ fun createTopLevelClassStub(
     context: ClsStubBuilderContext,
     isScript: Boolean,
 ): KotlinFileStubImpl {
+    ProgressManager.checkCanceled()
+
     val fileStub = createFileStub(classId.packageFqName, isScript)
     createClassStub(fileStub, classProto, context.nameResolver, classId, source, context)
     return fileStub
@@ -51,6 +50,8 @@ fun createPackageFacadeStub(
     packageFqName: FqName,
     c: ClsStubBuilderContext,
 ): KotlinFileStubImpl {
+    ProgressManager.checkCanceled()
+
     val fileStub = KotlinFileStubImpl.forFile(packageFqName)
     setupFileStub(fileStub)
     createPackageDeclarationsStubs(
@@ -66,6 +67,8 @@ fun createFileFacadeStub(
     jvmFqName: FqName,
     c: ClsStubBuilderContext,
 ): KotlinFileStubImpl {
+    ProgressManager.checkCanceled()
+
     val fileStub = KotlinFileStubImpl.forFacade(
         packageFqName = packageFqName,
         facadeFqName = jvmFqName,
@@ -93,6 +96,8 @@ fun createMultifileClassStub(
     jvmFqName: FqName,
     components: ClsStubBuilderComponents,
 ): KotlinFileStubImpl {
+    ProgressManager.checkCanceled()
+
     val partNames = partFiles.map { it.classId.shortClassName.asString() }
     val fileStub = KotlinFileStubImpl.forMultifileClass(
         packageFqName = packageFqName,
@@ -102,6 +107,8 @@ fun createMultifileClassStub(
 
     setupFileStub(fileStub)
     for (partFile in partFiles) {
+        ProgressManager.checkCanceled()
+
         val partHeader = partFile.classHeader
         val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(partHeader.data!!, partHeader.strings!!)
         val partContext = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))

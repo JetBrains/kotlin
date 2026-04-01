@@ -87,14 +87,14 @@ FUN name:bar visibility:private modality:FINAL returnType:kotlin.Int [inline]
         RETURNABLE_BLOCK type=<root>.Pair<<root>.bar.<no name provided>> origin=null
           INLINED_BLOCK type=<root>.Pair<<root>.bar.<no name provided>> origin=null
             inlinedFunctionSymbol: public final fun runTwice <T> (f: kotlin.Function0<T of <root>.runTwice>): <root>.Pair<T of <root>.runTwice> [inline] declared in <root>
-            inlinedFunctionFileEntry: FILE_ENTRY path:crossinlineLambdaAllocation.kt
+            inlinedFunctionFileEntry: FILE_ENTRY path:lib.kt
             RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
               TYPE_OP type=<root>.Pair<<root>.bar.<no name provided>> origin=IMPLICIT_CAST typeOperand=<root>.Pair<<root>.bar.<no name provided>>
                 CONSTRUCTOR_CALL 'public constructor <init> (first: T of <root>.Pair, second: T of <root>.Pair) [primary] declared in <root>.Pair' type=<root>.Pair<kotlin.Any?> origin=null
                   TYPE_ARG (of class) T: kotlin.Any?
                   ARG first: RETURNABLE_BLOCK type=kotlin.Any? origin=null
                     INLINED_BLOCK type=kotlin.Any? origin=null
-                      inlinedFunctionFileEntry: FILE_ENTRY path:crossinlineLambdaAllocation.kt
+                      inlinedFunctionFileEntry: FILE_ENTRY path:lib.kt
                       VAR name:insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> [val]
                         CONSTRUCTOR_CALL 'public constructor <init> (element: T of kotlin.internal.SharedVariableBox) [primary] declared in kotlin.internal.SharedVariableBox' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
                           TYPE_ARG (of class) T: kotlin.Int
@@ -118,7 +118,7 @@ FUN name:bar visibility:private modality:FINAL returnType:kotlin.Int [inline]
                           GET_VAR 'val r: <root>.bar.<no name provided> [val] declared in <root>.bar' type=<root>.bar.<no name provided> origin=null
                   ARG second: RETURNABLE_BLOCK type=kotlin.Any? origin=null
                     INLINED_BLOCK type=kotlin.Any? origin=null
-                      inlinedFunctionFileEntry: FILE_ENTRY path:crossinlineLambdaAllocation.kt
+                      inlinedFunctionFileEntry: FILE_ENTRY path:lib.kt
                       VAR name:insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> [val]
                         CONSTRUCTOR_CALL 'public constructor <init> (element: T of kotlin.internal.SharedVariableBox) [primary] declared in kotlin.internal.SharedVariableBox' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
                           TYPE_ARG (of class) T: kotlin.Int

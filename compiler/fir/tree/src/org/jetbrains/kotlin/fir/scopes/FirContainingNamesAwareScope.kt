@@ -15,6 +15,8 @@ abstract class FirContainingNamesAwareScope : FirScope() {
 
     abstract fun getClassifierNames(): Set<Name>
 
+    open val hasDefinitelyNoStaticMembers: Boolean get() = false
+
     @DelicateScopeAPI
     abstract override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirContainingNamesAwareScope?
 }

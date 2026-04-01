@@ -1,0 +1,5 @@
+KtCallExpression(86,92): 'foo(x)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(x: kotlin.Int): T
+    ]

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi
@@ -23,8 +12,57 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lang.BinaryOperationPrecedence
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.psi.utils.OperatorTokens
 
+/**
+ * Represents an operator symbol in an expression.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * val sum = a + b
+ * //          ^
+ * ```
+ *
+ * ### Analysis API Resolver Notes:
+ *
+ * **The resolver targets symbols contributed by the operation reference itself.**
+ *
+ * For compound cases, this includes the
+ * symbols corresponding to the resulting update, but not the symbols used only for intermediate reads.
+ *
+ * For instance, in compound array assignments this includes the operator symbol (e.g., `plus`)
+ * and the writing accessor (`set`), but not the reading accessor (`get`).
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * interface MyList {
+ *     operator fun get(index: Int): String
+ *     operator fun set(index: Int, value: String)
+ * }
+ *
+ * fun test(list: MyList) {
+ *     list[10] += "value"
+ * }
+ * ```
+ *
+ * `list[10] += "value"` desugars into something like
+ *
+ * ```kotlin
+ * val oldValue = list.get(10)
+ * val newValue = oldValue.plus("value")
+ * list.set(10, newValue)
+ * ```
+ *
+ * And the result will include symbols for the `plus` and `set` operators, but not for `get`.
+ *
+ * If the reading symbol is also needed, the API should be called on the parent expression
+ * (e.g., [KtBinaryExpression] or [KtUnaryExpression]).
+ *
+ * @see KtBinaryExpression
+ * @see KtUnaryExpression
+ */
 class KtOperationReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl(node) {
     private companion object {
         private val OPERATION_TOKENS: TokenSet = TokenSet.create(*buildList {
@@ -43,6 +81,6 @@ class KtOperationReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl
 
     fun isConventionOperator(): Boolean {
         val tokenType = operationSignTokenType ?: return false
-        return OperatorConventions.getNameForOperationSymbol(tokenType) != null
+        return OperatorTokens.operationName(tokenType) != null
     }
 }

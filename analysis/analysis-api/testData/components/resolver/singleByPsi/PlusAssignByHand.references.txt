@@ -2,5 +2,8 @@ KtOperationReferenceExpression(195,196): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in <local>: test) var variable: test.WithOperator
+    resolveToSymbols:
       Nothing (Unresolved reference)

@@ -195,7 +195,7 @@ class Fir2IrVisitor(
         return irEnumEntry
     }
 
-    override fun visitRegularClass(regularClass: FirRegularClass, data: Any?): IrElement = whileAnalysing(session, regularClass) {
+    override fun visitRegularClass(regularClass: FirRegularClass, data: Any?): IrClass = whileAnalysing(session, regularClass) {
         if (regularClass.visibility == Visibilities.Local) {
             val irParent = conversionScope.parentFromStack()
             // NB: for implicit types it is possible that local class is already cached
@@ -399,8 +399,10 @@ class Fir2IrVisitor(
                 }
             }
         }
+
         conversionScope.withParent(irSnippet) {
-            irSnippet.body = convertToIrBlockBody(replSnippet.body)
+            val irClass = visitRegularClass(replSnippet.snippetClass, data)
+            irSnippet.targetClass = irClass.symbol
         }
 
         declarationStorage.leaveScope(irSnippet.symbol)
@@ -609,8 +611,12 @@ class Fir2IrVisitor(
         return convertToIrExpression(wrappedArgumentExpression.expression)
     }
 
-    override fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression, data: Any?): IrElement {
-        return convertToIrExpression(samConversionExpression.expression)
+    override fun visitFunctionTypeConversionExpression(
+        functionTypeConversionExpression: FirFunctionTypeConversionExpression,
+        data: Any?
+    ): IrElement = with(c.adapterGenerator) {
+        return convertToIrExpression(functionTypeConversionExpression.expression)
+            .applyFunctionTypeConversion(functionTypeConversionExpression)
     }
 
     override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: Any?): IrElement {
@@ -621,10 +627,16 @@ class Fir2IrVisitor(
                 varargArgumentsExpression.resolvedType.toIrType(),
                 varargArgumentsExpression.coneElementTypeOrNull?.toIrType()
                     ?: error("Vararg expression has incorrect type: ${varargArgumentsExpression.render()}"),
-                varargArgumentsExpression.arguments.mapNotNull {
-                    if (isGetClassOfUnresolvedTypeInAnnotation(it)) null
-                    else it.convertToIrVarargElement()
-                }
+                varargArgumentsExpression.arguments
+                    .filter { !isGetClassOfUnresolvedTypeInAnnotation(it) }
+                    .flatMap {
+                        val varargElement = it.convertToIrVarargElement()
+                        if (!annotationMode) return@flatMap listOf(varargElement)
+                        when (val unwrapped = (varargElement as? IrSpreadElement)?.expression ?: varargElement) {
+                            is IrVararg -> unwrapped.elements
+                            else -> listOf(unwrapped)
+                        }
+                    }
             )
         }
     }
@@ -716,11 +728,11 @@ class Fir2IrVisitor(
     }
 
     override fun visitAnnotation(annotation: FirAnnotation, data: Any?): IrElement {
-        return callGenerator.convertToIrConstructorCall(annotation)
+        return callGenerator.convertToIrAnnotation(annotation)
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): IrElement = whileAnalysing(session, annotationCall) {
-        return callGenerator.convertToIrConstructorCall(annotationCall)
+        return callGenerator.convertToIrAnnotation(annotationCall)
     }
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Any?): IrElement {
@@ -851,10 +863,10 @@ class Fir2IrVisitor(
         val calleeReference = thisReceiverExpression.calleeReference
         val firSnippet = firSnippetSymbol.fir
         val origin = if (thisReceiverExpression.isImplicit) IrStatementOrigin.IMPLICIT_ARGUMENT else null
-        val irSnippet = declarationStorage.getCachedIrReplSnippet(firSnippet) ?: error("IrReplSnippet for ${firSnippet.name} not found")
+        val irSnippet = declarationStorage.getCachedIrReplSnippet(firSnippet)
+            ?: error("IrReplSnippet for ${firSnippet.snippetClass.name} not found")
         val contextParameterNumber = firSnippetSymbol.fir.receivers.indexOf(calleeReference.boundSymbol?.fir)
-        val receiverParameter =
-            irSnippet.receiverParameters.find { it.indexInParameters == contextParameterNumber }
+        val receiverParameter = irSnippet.receiverParameters.find { it.indexInParameters == contextParameterNumber }
         if (receiverParameter != null) {
             return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
                 IrGetValueImpl(startOffset, endOffset, receiverParameter.type, receiverParameter.symbol, origin)
@@ -971,6 +983,9 @@ class Fir2IrVisitor(
                 !isUnnamedLocalVariable -> null
                 else -> initializer?.accept(this@Fir2IrVisitor, null) as IrStatement
             }
+            is FirReplPropertyInitializer -> callGenerator.convertToIrSetCall(initializer, propertySymbol)
+            is FirReplPropertyDelegate -> callGenerator.convertToIrSetCall(delegate, propertySymbol)
+            is FirReplDeclarationReference -> null
             else -> accept(this@Fir2IrVisitor, null) as IrStatement
         }
     }
@@ -994,9 +1009,17 @@ class Fir2IrVisitor(
                 }
                 expression.convertToIrExpressionOrBlock(
                     origin,
-                    // We only pass the expected type if it's Unit to trigger coercion to Unit.
+                    // We only pass the expected type in 2 cases:
+                    // 1. If it's Unit to trigger coercion to Unit.
+                    // 2. If it's Nothing to propagate Nothing type from outer expression and avoid putting non-conforming Unit type to subblocks.
+                    //
                     // In all other cases, the block should have the type of the last statement, not the expected type.
-                    expectedType = if (origin == IrStatementOrigin.FOR_LOOP || expectedType?.isUnit == true) unitType else null
+                    expectedType =
+                        if (origin == IrStatementOrigin.FOR_LOOP || expectedType?.isUnit == true)
+                            unitType
+                        else if (expectedType?.isNothing == true)
+                            expectedType
+                        else null
                 )
             }
             is FirUnitExpression -> expression.convertWithOffsets { _, endOffset ->
@@ -1088,12 +1111,7 @@ class Fir2IrVisitor(
         return when (receiver) {
             realDispatchReceiver -> {
                 val dispatchReceiverType = referencedDeclaration?.dispatchReceiverType ?: return null
-                when (dispatchReceiverType) {
-                    is ConeClassLikeType -> dispatchReceiverType.replaceArgumentsWithStarProjections()
-                    // Intersection overrides can have intersection types as dispatch receivers
-                    is ConeIntersectionType -> dispatchReceiverType.mapTypes { (it as ConeClassLikeType).replaceArgumentsWithStarProjections() }
-                    else -> null
-                }
+                dispatchReceiverType.replaceArgumentsWithStarProjectionsOrNull()
             }
             extensionReceiver -> {
                 val extensionReceiverType = referencedDeclaration?.receiverParameter?.typeRef?.coneType ?: return null
@@ -1105,7 +1123,7 @@ class Fir2IrVisitor(
                     TypeApproximatorConfiguration.InternalTypesApproximation
                 ) ?: substitutedType
             }
-            else -> return null
+            else -> null
         }
     }
 
@@ -1332,7 +1350,10 @@ class Fir2IrVisitor(
         return conversionScope.withWhenSubject(subjectVariable) {
             whenExpression.convertWithOffsets { startOffset, endOffset ->
                 if (whenExpression.branches.isEmpty()) {
-                    return@convertWithOffsets IrBlockImpl(startOffset, endOffset, builtins.unitType, origin)
+                    return@convertWithOffsets IrBlockImpl(
+                        startOffset, endOffset, builtins.unitType, origin,
+                        statements = listOfNotNull(subjectVariable)
+                    )
                 }
                 val isProperlyExhaustive = whenExpression.isDeeplyProperlyExhaustive()
                 val whenExpressionType =

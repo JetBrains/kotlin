@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.addCloneForArrayIfNeeded
+import org.jetbrains.kotlin.fir.deserialization.applyKDoc
 import org.jetbrains.kotlin.fir.deserialization.deserializationExtension
+import org.jetbrains.kotlin.fir.deserialization.kdocText
 import org.jetbrains.kotlin.fir.deserialization.toLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -155,6 +157,9 @@ internal fun deserializeClassToSymbol(
             symbol,
             initialOrigin
         )
+
+    val classStub: KotlinClassStubImpl? = (classOrObject as? KtClass)?.compiledStub
+
     buildRegularClass {
         source = KtRealPsiSourceElement(classOrObject)
         this.moduleData = moduleData
@@ -257,9 +262,12 @@ internal fun deserializeClassToSymbol(
         companionObjectSymbol = (declarations.firstOrNull { it is FirRegularClass && it.isCompanion } as FirRegularClass?)?.symbol
 
         contextParameters.addAll(memberDeserializer.createContextReceiversForClass(classOrObject, symbol))
+
+        if (classStub != null) {
+            applyKDoc(classStub.kdocText)
+        }
     }.apply {
-        if (classOrObject is KtClass) {
-            val classStub: KotlinClassStubImpl = classOrObject.compiledStub
+        if (classStub != null) {
             if (isInlineOrValue) {
                 valueClassRepresentation = classStub.deserializeValueClassRepresentation(this)
             }

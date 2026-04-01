@@ -14,10 +14,9 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.friendSourceDependency
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.*
 import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.jetbrainsAnnotationDependencies
-import org.jetbrains.kotlin.gradle.util.kotlinStdlibDependencies
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -32,8 +31,6 @@ import kotlin.test.fail
 @AndroidTestVersions(
     maxVersion = TestVersions.AGP.AGP_813,
     additionalVersions = [
-        TestVersions.AGP.AGP_83,
-        TestVersions.AGP.AGP_84,
         TestVersions.AGP.AGP_85,
         TestVersions.AGP.AGP_86,
         TestVersions.AGP.AGP_87,

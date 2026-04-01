@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -367,4 +368,12 @@ internal fun IrFunction.isGeneratedCodeMarker(config: JvmBackendConfig, symbols:
     if (!config.enhancedCoroutinesDebugging) return false
     if (!isInline) return false
     return parentClassOrNull?.symbol == symbols.generatedCodeMarkersInCoroutinesClass
+}
+
+// returns true if both the caller and callee have exactly one type parameter, and the callee's type argument
+// matches the caller's type parameter
+internal fun IrFunctionAccessExpression.isGenericCallWithCallersSingleTypeParameter(caller: IrFunction): Boolean {
+    val calleeTypeArg = typeArguments.singleOrNull()?.classifierOrNull?.owner as? IrTypeParameter ?: return false
+    val callerTypeParam = caller.typeParameters.singleOrNull() ?: return false
+    return calleeTypeArg.name == callerTypeParam.name && calleeTypeArg.parent.kotlinFqName == callerTypeParam.parent.kotlinFqName
 }

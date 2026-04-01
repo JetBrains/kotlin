@@ -5,25 +5,21 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
-import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
@@ -136,41 +132,16 @@ abstract class MemoizedValueClassAbstractReplacements(
         }
 
     protected fun IrSimpleFunction.overridesOnlyMethodsFromJava(): Boolean = allOverridden().all { it.isFromJava() }
-
-    private fun String.escape() = asIterable().joinToString("") {
-        when (it) {
-            '-' -> "--"
-            '$' -> "$$"
-            '.' -> "-"
-            else -> "$it"
-        }
-    }
-
-    protected fun Name.withValueClassParameterNameIfNeeded(bound: IrClass, index: Int): Name =
-        Name.identifier($$"$v$c$$${bound.fqNameWhenAvailable?.asString().orEmpty().escape()}$-$${asString()}$$$index")
-
-    protected fun IrValueParameter.addOrInheritInlineClassPropertyNameParts(oldParameter: IrValueParameter) {
-        when {
-            hasFixedName -> return
-            oldParameter.hasFixedName -> hasFixedName = true
-            type.isNullable() -> return
-            type.isInlineClassType() -> {
-                name = name.withValueClassParameterNameIfNeeded(type.erasedUpperBound, index = 0)
-                hasFixedName = true
-            }
-            else -> return
-        }
-    }
 }
 
-fun List<IrConstructorCall>.withoutJvmExposeBoxedAnnotation(): List<IrConstructorCall> =
+fun List<IrAnnotation>.withoutJvmExposeBoxedAnnotation(): List<IrAnnotation> =
     this.toMutableList().apply {
         removeAll {
             it.symbol.owner.returnType.classOrNull?.owner?.hasEqualFqName(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) == true
         }
     }
 
-fun List<IrConstructorCall>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration, context: JvmBackendContext): List<IrConstructorCall> {
+fun List<IrAnnotation>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration, context: JvmBackendContext): List<IrAnnotation> {
     if (hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
         val jvmExposeBoxedAnnotation = findAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
         // If name is not provided, copy the name from @JvmName annotation, if the latter is present
@@ -185,7 +156,7 @@ fun List<IrConstructorCall>.withJvmExposeBoxedAnnotation(declaration: IrDeclarat
     // The declaration is not annotated with @JvmExposeBoxed - the annotation is on class
     // or -Xjvm-expose-boxed is specified. Add the annotation.
     val constructor = context.symbols.jvmExposeBoxedAnnotation.constructors.first()
-    return this + IrConstructorCallImpl.fromSymbolOwner(
+    return this + IrAnnotationImpl.fromSymbolOwner(
         constructor.owner.returnType,
         constructor
     ).apply {
@@ -195,6 +166,3 @@ fun List<IrConstructorCall>.withJvmExposeBoxedAnnotation(declaration: IrDeclarat
             ?: IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, "")
     }
 }
-
-var IrValueParameter.hasFixedName: Boolean by irFlag(copyByDefault = true)
-    internal set

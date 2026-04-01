@@ -306,6 +306,18 @@ internal fun getKotlinRepositoryBlock(
     |            }
     |        }
     |        ivy {
+    |            url = uri("https://github.com/swc-project/swc/releases/download")
+    |            patternLayout {
+    |                artifact("v[revision]/swc-[classifier]")
+    |            }
+    |            metadataSources { 
+    |                artifact() 
+    |            }
+    |            content { 
+    |                includeModule("com.github.swc-project", "swc") 
+    |            }
+    |        }
+    |        ivy {
     |            url = uri("https://storage.googleapis.com/chromium-v8/official/canary")
     |            patternLayout {
     |                artifact("[artifact]-[revision].[ext]")

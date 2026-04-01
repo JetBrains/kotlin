@@ -1,18 +1,19 @@
-/*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
- */
 // WITH_STDLIB
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
+import kotlin.test.*
+
+inline fun test(a: String, b: () -> String, c: () -> String, d: () -> String, e: String): String {
+    return a + b() + c() + d() + e
+}
+
+// FILE: main.kt
 
 import kotlin.test.*
 
 class Foo(val a: String) {
 
     fun test() = a
-}
-
-inline fun test(a: String, b: () -> String, c: () -> String, d: () -> String, e: String): String {
-    return a + b() + c() + d() + e
 }
 
 var effects = ""

@@ -34,11 +34,6 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
         a: FirCallableSymbol<*>,
         b: FirCallableSymbol<*>,
     ): ContextParameterShadowing {
-        // Fast-path when either symbol has no context parameters.
-        if (a.contextParameterSymbols.none() || b.contextParameterSymbols.none()) {
-            return if (isConflicting(a, b)) ContextParameterShadowing.BothWays else ContextParameterShadowing.None
-        }
-
         val sigA = createSignature(a, ignoreContextParameters = true)
         val sigB = createSignature(b, ignoreContextParameters = true)
 
@@ -124,7 +119,7 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
                 valueParameters.mapTo(this) { it.resolvedReturnType }
             },
             hasExtensionReceiver = declaration.receiverParameterSymbol != null,
-            contextReceiverCount = if (ignoreContextParameters) 0 else declaration.contextParameterSymbols.size,
+            contextReceiverCount = 0,
             hasVarargs = valueParameters.any { it.isVararg },
             numDefaults = 0,
             isExpect = declaration.isExpect,

@@ -1,0 +1,40 @@
+// FILE: Kotlin1.kt
+
+open class Kotlin1 : BaseJava {
+  constructor() /* primary */ {
+    super/*BaseJava*/()
+    /* <init>() */
+
+  }
+
+}
+
+// FILE: Kotlin2.kt
+
+open class Kotlin2 : Kotlin1 {
+  constructor() /* primary */ {
+    super/*Kotlin1*/()
+    /* <init>() */
+
+  }
+
+}
+
+// FILE: Kotlin3.kt
+
+class Kotlin3 : Kotlin2 {
+  constructor() /* primary */ {
+    super/*Kotlin2*/()
+    /* <init>() */
+
+  }
+
+  fun test() {
+    val x: Int = <this>.getE()
+    <this>.setE(p0 = x.plus(other = 1))
+    <this>.getJavaString() /*~> Unit */
+    <this>.doJavaAction()
+  }
+
+}
+

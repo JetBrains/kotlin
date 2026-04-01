@@ -4,5 +4,8 @@
  */
 package kotlin.js
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 @PublishedApi // Used from the JavaScript Plain Objects compiler plugin
+@UsedFromCompilerGeneratedCode
 internal val VOID: Nothing? = js("void 0")

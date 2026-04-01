@@ -1,0 +1,2 @@
+KtStringTemplateExpression(41,46): '"str"'
+  null

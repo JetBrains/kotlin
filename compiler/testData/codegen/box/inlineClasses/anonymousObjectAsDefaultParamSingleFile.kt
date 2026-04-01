@@ -1,7 +1,7 @@
 // ISSUE: KT-61258
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 // FILE: A.kt
 open class FooA(val string: String)

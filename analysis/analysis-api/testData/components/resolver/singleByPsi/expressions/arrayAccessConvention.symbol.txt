@@ -1,0 +1,7 @@
+KtBinaryExpression(128,139): 'm["a"] += 1'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int,
+      /MyMap.set(<dispatch receiver>: MyMap<K, V>, k: K, v: V): kotlin.Unit
+    ]

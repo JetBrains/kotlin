@@ -102,12 +102,15 @@ library {
 
       public final /* synthesized */ fun copy(fVal: kotlin/Int /* = ... */, fVar: kotlin/String /* = ... */): F
 
+      // must-use return value
       public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
 
       public final fun fFun(): kotlin/Unit
 
+      // must-use return value
       public open /* synthesized */ fun hashCode(): kotlin/Int
 
+      // must-use return value
       public open /* synthesized */ fun toString(): kotlin/String
 
       public final val fVal: kotlin/Int

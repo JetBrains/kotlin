@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.interpreter.transformer
 
-import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -27,7 +26,6 @@ fun IrElement.transformConst(
     irFile: IrFile,
     interpreter: IrInterpreter,
     mode: EvaluationMode,
-    evaluatedConstTracker: EvaluatedConstTracker? = null,
     inlineConstTracker: InlineConstTracker? = null,
     onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
@@ -40,7 +38,6 @@ fun IrElement.transformConst(
         irFile,
         mode,
         checker,
-        evaluatedConstTracker,
         inlineConstTracker,
         onWarning,
         onError,
@@ -60,7 +57,6 @@ fun IrElement.transformConst(
 fun IrFile.runConstOptimizations(
     interpreter: IrInterpreter,
     mode: EvaluationMode,
-    evaluatedConstTracker: EvaluatedConstTracker? = null,
     inlineConstTracker: InlineConstTracker? = null,
     suppressExceptions: Boolean = false,
 ) {
@@ -69,7 +65,7 @@ fun IrFile.runConstOptimizations(
     val checker = IrInterpreterCommonChecker()
     val irConstExpressionTransformer = IrConstAllTransformer(
         IrConstEvaluationContext(
-            interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker,
+            interpreter, preprocessedFile, mode, checker, inlineConstTracker,
             { _, _, _ -> }, { _, _, _ -> },
             suppressExceptions
         )

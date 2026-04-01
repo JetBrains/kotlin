@@ -5,7 +5,7 @@ fun test() {
     val a = 1 as Any?
     val b: Number = 1 as Number
     val c = null as String?
-    val d: Number = 1 <!USELESS_CAST!>as Int<!>
+    val d: Number = 1 <!INTEGER_LITERAL_CAST_INSTEAD_OF_TO_CALL!>as Int<!>
 }
 
 val c1 get() = 1 as Number

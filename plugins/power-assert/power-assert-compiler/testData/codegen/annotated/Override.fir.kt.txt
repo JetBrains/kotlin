@@ -1,0 +1,333 @@
+abstract class TypeB : TypeA {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @JvmSynthetic
+  override fun describe$powerassert(value: Any, $explanation: Function0<CallExplanation>): String? {
+    return "TypeB:\n".plus(other = { // BLOCK
+      val tmp_0: CallExplanation? = $explanation.invoke()
+      when {
+        EQEQ(arg0 = tmp_0, arg1 = null) -> null
+        else -> toDefaultMessage(/* <this> = tmp_0 /*as CallExplanation */ */)
+      }
+    })
+  }
+
+  override fun describe(value: Any): String? {
+    return "TypeB:\n".plus(other = { // BLOCK
+      val tmp_1: CallExplanation? = null
+      when {
+        EQEQ(arg0 = tmp_1, arg1 = null) -> null
+        else -> toDefaultMessage(/* <this> = tmp_1 /*as CallExplanation */ */)
+      }
+    })
+  }
+
+  override fun toString(): String {
+    return "TypeB"
+  }
+
+}
+
+open class TypeC : TypeB {
+  constructor() /* primary */ {
+    super/*TypeB*/()
+    /* <init>() */
+
+  }
+
+  @JvmSynthetic
+  override fun describe$powerassert(value: Any, $explanation: Function0<CallExplanation>): String? {
+    return "TypeC:\n".plus(other = super<TypeB>.describe$powerassert(value = value, $explanation = $explanation))
+  }
+
+  override fun describe(value: Any): String? {
+    return "TypeC:\n".plus(other = super<TypeB>.describe(value = value))
+  }
+
+  override fun toString(): String {
+    return "TypeC"
+  }
+
+}
+
+interface TypeA {
+  @JvmSynthetic
+  abstract fun describe$powerassert(value: Any, $explanation: Function0<CallExplanation>): String?
+
+  @PowerAssert
+  abstract fun describe(value: Any): String?
+
+}
+
+data object TypeD : TypeC {
+  private constructor() /* primary */ {
+    super/*TypeC*/()
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is TypeD -> return false
+    }
+    val tmp_2: TypeD = other /*as TypeD */
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return 81291306
+  }
+
+  override fun toString(): String {
+    return "TypeD"
+  }
+
+}
+
+data object TypeE : TypeC {
+  private constructor() /* primary */ {
+    super/*TypeC*/()
+    /* <init>() */
+
+  }
+
+  @JvmSynthetic
+  override fun describe$powerassert(value: Any, $explanation: Function0<CallExplanation>): String? {
+    return "TypeE:\n".plus(other = { // BLOCK
+      val tmp0_Explain: TypeC = TypeC()
+      { // BLOCK
+        val tmp1_Explain: Any = value
+        tmp0_Explain.describe$powerassert(value = tmp1_Explain, $explanation = local fun <anonymous>(): CallExplanation {
+          return CallExplanation(offset = 662, source = "                            TypeC().describe(value)", arguments = listOf<Argument>(elements = [Argument(startOffset = 28, endOffset = 35, kind = Kind.DISPATCH, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 28, endOffset = 35, displayOffset = 28, value = tmp0_Explain)])), Argument(startOffset = 45, endOffset = 50, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 45, endOffset = 50, displayOffset = 45, value = tmp1_Explain)]))]))
+        }
+)
+      }
+    })
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is TypeE -> return false
+    }
+    val tmp_3: TypeE = other /*as TypeE */
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return 81291307
+  }
+
+  override fun toString(): String {
+    return "TypeE"
+  }
+
+  override fun describe(value: Any): String? {
+    return "TypeE:\n".plus(other = { // BLOCK
+      val tmp0_Explain: TypeC = TypeC()
+      { // BLOCK
+        val tmp1_Explain: Any = value
+        tmp0_Explain.describe$powerassert(value = tmp1_Explain, $explanation = local fun <anonymous>(): CallExplanation {
+          return CallExplanation(offset = 662, source = "                            TypeC().describe(value)", arguments = listOf<Argument>(elements = [Argument(startOffset = 28, endOffset = 35, kind = Kind.DISPATCH, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 28, endOffset = 35, displayOffset = 28, value = tmp0_Explain)])), Argument(startOffset = 45, endOffset = 50, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 45, endOffset = 50, displayOffset = 45, value = tmp1_Explain)]))]))
+        }
+)
+      }
+    })
+  }
+
+}
+
+data object TypeF : TypeC {
+  private constructor() /* primary */ {
+    super/*TypeC*/()
+    /* <init>() */
+
+  }
+
+  @JvmSynthetic
+  override fun describe$powerassert(value: Any, $explanation: Function0<CallExplanation>): String? {
+    return "TypeF:\n".plus(other = { // BLOCK
+      val tmp_4: CallExplanation? = $explanation.invoke()
+      when {
+        EQEQ(arg0 = tmp_4, arg1 = null) -> null
+        else -> toDefaultMessage(/* <this> = tmp_4 /*as CallExplanation */ */)
+      }
+    })
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is TypeF -> return false
+    }
+    val tmp_5: TypeF = other /*as TypeF */
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return 81291308
+  }
+
+  override fun toString(): String {
+    return "TypeF"
+  }
+
+  override fun describe(value: Any): String? {
+    return "TypeF:\n".plus(other = { // BLOCK
+      val tmp_6: CallExplanation? = null
+      when {
+        EQEQ(arg0 = tmp_6, arg1 = null) -> null
+        else -> toDefaultMessage(/* <this> = tmp_6 /*as CallExplanation */ */)
+      }
+    })
+  }
+
+}
+
+fun box(): String {
+  return runAllOutput(tests = [to<String, KFunction0<String>>(/* <this> = "callTypeA", */ that = ::callTypeA), to<String, KFunction0<String>>(/* <this> = "callTypeB", */ that = ::callTypeB), to<String, KFunction0<String>>(/* <this> = "callTypeC", */ that = ::callTypeC), to<String, KFunction0<String>>(/* <this> = "callTypeD", */ that = ::callTypeD), to<String, KFunction0<String>>(/* <this> = "callTypeE", */ that = ::callTypeE), to<String, KFunction0<String>>(/* <this> = "callTypeF", */ that = ::callTypeF)])
+}
+
+fun callTypeA(): String {
+  val type: TypeA = TypeD
+  return { // BLOCK
+    val tmp_7: String? = { // BLOCK
+      val tmp0_Explain: TypeA = type
+      { // BLOCK
+        val tmp1_Explain: Int = 1
+        val tmp2_Explain: Int = 2
+        val tmp3_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = tmp2_Explain)
+        tmp0_Explain.describe$powerassert(value = tmp3_Explain, $explanation = local fun <anonymous>(): CallExplanation {
+          return CallExplanation(offset = 1166, source = "           type.describe(1 == 2)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 15, kind = Kind.DISPATCH, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 11, endOffset = 15, displayOffset = 11, value = tmp0_Explain)])), Argument(startOffset = 25, endOffset = 31, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 25, endOffset = 26, displayOffset = 25, value = tmp1_Explain), LiteralExpression(startOffset = 30, endOffset = 31, displayOffset = 30, value = tmp2_Explain), EqualityExpression(startOffset = 25, endOffset = 31, displayOffset = 27, value = tmp3_Explain, lhs = tmp1_Explain, rhs = tmp2_Explain)]))]))
+        }
+)
+      }
+    }
+    when {
+      EQEQ(arg0 = tmp_7, arg1 = null) -> "no description"
+      else -> tmp_7
+    }
+  }
+}
+
+fun callTypeB(): String {
+  val type: TypeB = TypeD
+  return { // BLOCK
+    val tmp_8: String? = { // BLOCK
+      val tmp0_Explain: TypeB = type
+      { // BLOCK
+        val tmp1_Explain: Int = 1
+        val tmp2_Explain: Int = 2
+        val tmp3_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = tmp2_Explain)
+        tmp0_Explain.describe$powerassert(value = tmp3_Explain, $explanation = local fun <anonymous>(): CallExplanation {
+          return CallExplanation(offset = 1276, source = "           type.describe(1 == 2)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 15, kind = Kind.DISPATCH, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 11, endOffset = 15, displayOffset = 11, value = tmp0_Explain)])), Argument(startOffset = 25, endOffset = 31, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 25, endOffset = 26, displayOffset = 25, value = tmp1_Explain), LiteralExpression(startOffset = 30, endOffset = 31, displayOffset = 30, value = tmp2_Explain), EqualityExpression(startOffset = 25, endOffset = 31, displayOffset = 27, value = tmp3_Explain, lhs = tmp1_Explain, rhs = tmp2_Explain)]))]))
+        }
+)
+      }
+    }
+    when {
+      EQEQ(arg0 = tmp_8, arg1 = null) -> "no description"
+      else -> tmp_8
+    }
+  }
+}
+
+fun callTypeC(): String {
+  val type: TypeC = TypeD
+  return { // BLOCK
+    val tmp_9: String? = { // BLOCK
+      val tmp0_Explain: TypeC = type
+      { // BLOCK
+        val tmp1_Explain: Int = 1
+        val tmp2_Explain: Int = 2
+        val tmp3_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = tmp2_Explain)
+        tmp0_Explain.describe$powerassert(value = tmp3_Explain, $explanation = local fun <anonymous>(): CallExplanation {
+          return CallExplanation(offset = 1386, source = "           type.describe(1 == 2)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 15, kind = Kind.DISPATCH, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 11, endOffset = 15, displayOffset = 11, value = tmp0_Explain)])), Argument(startOffset = 25, endOffset = 31, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 25, endOffset = 26, displayOffset = 25, value = tmp1_Explain), LiteralExpression(startOffset = 30, endOffset = 31, displayOffset = 30, value = tmp2_Explain), EqualityExpression(startOffset = 25, endOffset = 31, displayOffset = 27, value = tmp3_Explain, lhs = tmp1_Explain, rhs = tmp2_Explain)]))]))
+        }
+)
+      }
+    }
+    when {
+      EQEQ(arg0 = tmp_9, arg1 = null) -> "no description"
+      else -> tmp_9
+    }
+  }
+}
+
+fun callTypeD(): String {
+  val type: TypeD = TypeD
+  return { // BLOCK
+    val tmp_10: String? = { // BLOCK
+      val tmp0_Explain: TypeD = type
+      { // BLOCK
+        val tmp1_Explain: Int = 1
+        val tmp2_Explain: Int = 2
+        val tmp3_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = tmp2_Explain)
+        tmp0_Explain.describe$powerassert(value = tmp3_Explain, $explanation = local fun <anonymous>(): CallExplanation {
+          return CallExplanation(offset = 1496, source = "           type.describe(1 == 2)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 15, kind = Kind.DISPATCH, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 11, endOffset = 15, displayOffset = 11, value = tmp0_Explain)])), Argument(startOffset = 25, endOffset = 31, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 25, endOffset = 26, displayOffset = 25, value = tmp1_Explain), LiteralExpression(startOffset = 30, endOffset = 31, displayOffset = 30, value = tmp2_Explain), EqualityExpression(startOffset = 25, endOffset = 31, displayOffset = 27, value = tmp3_Explain, lhs = tmp1_Explain, rhs = tmp2_Explain)]))]))
+        }
+)
+      }
+    }
+    when {
+      EQEQ(arg0 = tmp_10, arg1 = null) -> "no description"
+      else -> tmp_10
+    }
+  }
+}
+
+fun callTypeE(): String {
+  val type: TypeE = TypeE
+  return { // BLOCK
+    val tmp_11: String? = { // BLOCK
+      val tmp0_Explain: TypeE = type
+      { // BLOCK
+        val tmp1_Explain: Int = 1
+        val tmp2_Explain: Int = 2
+        val tmp3_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = tmp2_Explain)
+        tmp0_Explain.describe$powerassert(value = tmp3_Explain, $explanation = local fun <anonymous>(): CallExplanation {
+          return CallExplanation(offset = 1606, source = "           type.describe(1 == 2)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 15, kind = Kind.DISPATCH, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 11, endOffset = 15, displayOffset = 11, value = tmp0_Explain)])), Argument(startOffset = 25, endOffset = 31, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 25, endOffset = 26, displayOffset = 25, value = tmp1_Explain), LiteralExpression(startOffset = 30, endOffset = 31, displayOffset = 30, value = tmp2_Explain), EqualityExpression(startOffset = 25, endOffset = 31, displayOffset = 27, value = tmp3_Explain, lhs = tmp1_Explain, rhs = tmp2_Explain)]))]))
+        }
+)
+      }
+    }
+    when {
+      EQEQ(arg0 = tmp_11, arg1 = null) -> "no description"
+      else -> tmp_11
+    }
+  }
+}
+
+fun callTypeF(): String {
+  val type: TypeF = TypeF
+  return { // BLOCK
+    val tmp_12: String? = { // BLOCK
+      val tmp0_Explain: TypeF = type
+      { // BLOCK
+        val tmp1_Explain: Int = 1
+        val tmp2_Explain: Int = 2
+        val tmp3_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = tmp2_Explain)
+        tmp0_Explain.describe$powerassert(value = tmp3_Explain, $explanation = local fun <anonymous>(): CallExplanation {
+          return CallExplanation(offset = 1716, source = "           type.describe(1 == 2)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 15, kind = Kind.DISPATCH, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 11, endOffset = 15, displayOffset = 11, value = tmp0_Explain)])), Argument(startOffset = 25, endOffset = 31, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 25, endOffset = 26, displayOffset = 25, value = tmp1_Explain), LiteralExpression(startOffset = 30, endOffset = 31, displayOffset = 30, value = tmp2_Explain), EqualityExpression(startOffset = 25, endOffset = 31, displayOffset = 27, value = tmp3_Explain, lhs = tmp1_Explain, rhs = tmp2_Explain)]))]))
+        }
+)
+      }
+    }
+    when {
+      EQEQ(arg0 = tmp_12, arg1 = null) -> "no description"
+      else -> tmp_12
+    }
+  }
+}
+

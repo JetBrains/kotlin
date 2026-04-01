@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeName
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
 import org.jetbrains.kotlin.js.backend.ast.REGULAR_EXTENSION
@@ -25,7 +28,6 @@ import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
+import org.jetbrains.kotlin.js.test.tools.SwcRunner
 import java.io.File
 
 class JsIrLoweringFacade(
@@ -78,9 +81,10 @@ class JsIrLoweringFacade(
         val perModule = JsEnvironmentConfigurationDirectives.PER_MODULE in module.directives
         val keep = module.directives[JsEnvironmentConfigurationDirectives.KEEP].toSet()
 
+        val moduleKind = JsEnvironmentConfigurator.getModuleKind(testServices, module)
         val granularity = when {
             !firstTimeCompilation -> JsGenerationGranularity.WHOLE_PROGRAM
-            splitPerFile || module.kind == ModuleKind.ES -> JsGenerationGranularity.PER_FILE
+            splitPerFile || moduleKind == ModuleKind.ES -> JsGenerationGranularity.PER_FILE
             splitPerModule || perModule -> JsGenerationGranularity.PER_MODULE
             else -> JsGenerationGranularity.WHOLE_PROGRAM
         }
@@ -92,9 +96,9 @@ class JsIrLoweringFacade(
 
         if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
             val outputFile = if (firstTimeCompilation) {
-                File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name) + module.kind.jsExtension)
+                File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name) + moduleKind.jsExtension)
             } else {
-                File(JsEnvironmentConfigurator.getRecompiledJsModuleArtifactPath(testServices, module.name) + module.kind.jsExtension)
+                File(JsEnvironmentConfigurator.getRecompiledJsModuleArtifactPath(testServices, module.name) + moduleKind.jsExtension)
             }
 
             val compiledModule = CompilerResult(
@@ -139,18 +143,12 @@ class JsIrLoweringFacade(
     }
 
     private fun loweredIr2JsArtifact(module: TestModule, loweredIr: LoweredIr, shouldReferMainFunction: Boolean): BinaryArtifacts.Js {
-        val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in module.directives
-        val onlyIrDce = JsEnvironmentConfigurationDirectives.ONLY_IR_DCE in module.directives
-        val perModuleOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in module.directives
-        val perFileOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_FILE in module.directives
-        val isEsModules = JsEnvironmentConfigurationDirectives.ES_MODULES in module.directives ||
-                module.directives[JsEnvironmentConfigurationDirectives.JS_MODULE_KIND].contains(ModuleKind.ES)
+        val moduleKind = JsEnvironmentConfigurator.getModuleKind(testServices, module)
+        val isEsModules = moduleKind == ModuleKind.ES
 
-        val outputFile =
-            File(
-                JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, TranslationMode.FULL_DEV)
-                    .finalizePath(module.kind)
-            )
+        val outputFile = File(
+            JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, TranslationMode.FULL_DEV).finalizePath(moduleKind)
+        )
 
         val transformer = IrModuleToJsTransformer(
             loweredIr.context,
@@ -161,19 +159,7 @@ class JsIrLoweringFacade(
             } ?: emptyMap(),
             shouldReferMainFunction,
         )
-        // If runIrDce then include DCE results
-        // If perModuleOnly then skip whole program
-        // (it.dce => runIrDce) && (perModuleOnly => it.perModule)
-        val translationModes = TranslationMode.entries
-            .filter {
-                (it.production || !onlyIrDce) &&
-                        (!it.production || runIrDce) &&
-                        (!perModuleOnly || it.granularity == JsGenerationGranularity.PER_MODULE) &&
-                        (!perFileOnly || it.granularity == JsGenerationGranularity.PER_FILE)
-            }
-            .filter { it.production == it.minimizedMemberNames }
-            .filter { isEsModules || it.granularity != JsGenerationGranularity.PER_FILE }
-            .toSet()
+        val translationModes = JsEnvironmentConfigurator.getTranslationModesForTest(testServices, module)
         val compilationOut = transformer.generateModule(loweredIr.allModules, translationModes, isEsModules)
         return BinaryArtifacts.Js.JsIrArtifact(outputFile, compilationOut).dump(module)
     }
@@ -191,7 +177,12 @@ class JsIrLoweringFacade(
         val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
 
         val generateDts = JsEnvironmentConfigurationDirectives.GENERATE_DTS in module.directives
+        val sourceMapsEnabled = JsEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP in module.directives
         val dontSkipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE !in module.directives
+        val delegateTranspilationToExternalTool =
+            JsEnvironmentConfigurationDirectives.DELEGATE_JS_TRANSPILATION in module.directives &&
+                    JsEnvironmentConfigurationDirectives.ES6_MODE !in module.directives
+
 
         if (dontSkipRegularMode) {
             for ((mode, output) in compilerResult.outputs.entries) {
@@ -206,7 +197,12 @@ class JsIrLoweringFacade(
                         ).finalizePath(moduleKind)
                     )
                 }
+
                 output.writeTo(outputFile, moduleId, moduleKind, mode.granularity)
+
+                if (delegateTranspilationToExternalTool) {
+                    SwcRunner.exec(outputFile.parentFile, moduleKind, mode, sourceMapsEnabled)
+                }
             }
         }
 
@@ -227,14 +223,15 @@ class JsIrLoweringFacade(
         val newJsCode = wrapWithModuleEmulationMarkers(readText(), moduleKind, moduleId)
         val jsCodeWithCorrectImportPath = jsIrPathReplacer.replacePathTokensWithRealPath(newJsCode, newJsTarget, rootDir)
 
-        val oldJsMap = File("$absolutePath.map")
-        val jsCodeMap = (moduleKind == ModuleKind.PLAIN && oldJsMap.exists()).ifTrue { oldJsMap.readText() }
-
-        this.delete()
-        oldJsMap.delete()
-
+        delete()
         newJsTarget.write(jsCodeWithCorrectImportPath)
-        jsCodeMap?.let { File("${newJsTarget.absolutePath}.map").write(it) }
+
+        File("$absolutePath.map")
+            .takeIf { it.exists() }
+            ?.let {
+                it.copyTo(File("${newJsTarget.absolutePath}.map"))
+                it.delete()
+            }
     }
 
     private fun CompilationOutputs.writeTo(
@@ -274,13 +271,6 @@ class JsIrLoweringFacade(
         writeText(text)
     }
 }
-
-val RegisteredDirectives.moduleKind: ModuleKind
-    get() = get(JsEnvironmentConfigurationDirectives.JS_MODULE_KIND).singleOrNull()
-        ?: if (contains(JsEnvironmentConfigurationDirectives.ES_MODULES)) ModuleKind.ES else ModuleKind.PLAIN
-
-val TestModule.kind: ModuleKind
-    get() = directives.moduleKind
 
 fun String.augmentWithModuleName(moduleName: String): String {
     val suffix = when {

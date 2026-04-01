@@ -139,7 +139,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(TYPES)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+        @R|pack/MyAnno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
             public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
 
         public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Boolean
@@ -164,7 +164,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+        @R|pack/MyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
 
         public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Boolean|
@@ -189,7 +189,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+        @R|pack/MyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
 
         public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Boolean|
@@ -214,7 +214,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+        @R|pack/MyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
 
         public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Boolean|
@@ -239,7 +239,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+        @R|pack/MyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
 
         public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Boolean|
@@ -264,7 +264,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+        @R|pack/MyAnno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
 
         public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Boolean|
@@ -285,16 +285,16 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
     }
     public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](value = Int(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](value = Int(1) [evaluated = Int(1)]) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+        @R|pack/MyAnno|[Types](value = Int(1) [evaluated = Int(1)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
 
         public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Boolean|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun copy([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|pack/MyAnno|[Types](value = Int(1)) disabled: R|kotlin/Boolean| = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun copy([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|pack/MyAnno|[Types](value = Int(1) [evaluated = Int(1)]) disabled: R|kotlin/Boolean| = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
 
     }
 
@@ -310,16 +310,16 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
     }
     public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](value = Int(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](value = Int(1) [evaluated = Int(1)]) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+        @R|pack/MyAnno|[Types](value = Int(1) [evaluated = Int(1)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
 
         public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Boolean|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] @R|pack/MyAnno|[Types](value = Int(1)) disabled: R|kotlin/Boolean| = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
+        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] @R|pack/MyAnno|[Types](value = Int(1) [evaluated = Int(1)]) disabled: R|kotlin/Boolean| = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
 
     }
 
@@ -335,15 +335,15 @@ FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
 
     }
     public final data [ResolvedTo(BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](value = Int(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](value = Int(1) [evaluated = Int(1)]) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+        @R|pack/MyAnno|[Types](value = Int(1) [evaluated = Int(1)]) public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
 
         public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Boolean|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] @R|pack/MyAnno|[Types](value = Int(1)) disabled: R|kotlin/Boolean| = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
+        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] @R|pack/MyAnno|[Types](value = Int(1) [evaluated = Int(1)]) disabled: R|kotlin/Boolean| = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
 
     }

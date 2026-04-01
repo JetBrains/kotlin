@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeFromTool
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
+import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import javax.inject.Inject
 
@@ -118,6 +119,11 @@ internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommo
 }
 
 private suspend fun Project.isCommonizeCInteropTaskRegistrationEnabled(): Boolean {
+    if (!HostManager.hostIsSupported) {
+        logger.debug("[${project.path}] $commonizeCInteropTaskName task registration disabled. Host is not supported.")
+        return false
+    }
+
     if (!cInteropCommonizationEnabled()) {
         logger.debug("[${project.path}] $commonizeCInteropTaskName task registration disabled. cInteropCommonizationEnabled == false")
         return false
@@ -157,8 +163,12 @@ internal suspend fun Project.copyCommonizeCInteropForIdeTask(): TaskProvider<Cop
     return null
 }
 
+internal const val fakeCommonizedNativeDistributionKlibs = "fakeCommonizedNativeDistributionKlibs"
+
 internal fun Project.commonizedNativeDistributionKlibsOrNull(target: SharedCommonizerTarget): Provider<List<File>>? {
     val task = commonizeNativeDistributionTask ?: return null
+    // task.map to preserve task dependency
+    if (project.kotlinPropertiesProvider.isFunctionalTestMode) return task.map { listOf(project.file(fakeCommonizedNativeDistributionKlibs)) }
     return task.flatMap { it.commonizedNativeDistributionLocationFile.map { getCommonizedPlatformLibrariesFor(it.asFile, target) } }
 }
 
@@ -185,7 +195,6 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
             if (projectIsolationEnabled) this else rootProject
         if (projectForAddingKotlinNativeBundleResolvableConfiguration.nativeProperties.isToolchainEnabled.get()) {
             KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(projectForAddingKotlinNativeBundleResolvableConfiguration.dependencies.attributesSchema)
-            KotlinNativeBundleArtifactFormat.setupTransform(projectForAddingKotlinNativeBundleResolvableConfiguration)
             addKotlinNativeBundleConfiguration(projectForAddingKotlinNativeBundleResolvableConfiguration)
             KotlinNativeBundleBuildService.registerIfAbsent(projectForAddingKotlinNativeBundleResolvableConfiguration)
         }

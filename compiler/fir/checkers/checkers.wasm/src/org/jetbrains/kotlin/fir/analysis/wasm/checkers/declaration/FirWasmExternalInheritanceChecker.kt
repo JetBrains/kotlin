@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
@@ -56,10 +57,11 @@ sealed class FirWasmExternalInheritanceChecker(mppKind: MppCheckerKind) : FirCla
                 // External enum and annotation classes are prohibited, but they add implicit non-external super types. Skip reporting errors for them.
                 if (declaration.classKind == ClassKind.ANNOTATION_CLASS && superClass.classId == StandardClassIds.Annotation) continue
                 if (declaration.classKind == ClassKind.ENUM_CLASS && superClass.classId == StandardClassIds.Enum) continue
+                if (superClass.isExpect) continue
 
                 reporter.reportOn(
                     declaration.source,
-                    FirWasmErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE,
+                    FirWebCommonErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE,
                     superTypeRef.coneType
                 )
             }

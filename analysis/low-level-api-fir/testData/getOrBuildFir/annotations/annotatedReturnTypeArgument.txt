@@ -1,0 +1,22 @@
+KT element: KtCallExpression
+FIR element: FirImplicitInvokeCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|/called|().R|SubstitutionOverride<kotlin/Function0.invoke: R|@R|org/jetbrains/annotations/Nls|()  kotlin/String|>|()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] first.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        R|/called|().R|SubstitutionOverride<kotlin/Function0.invoke: R|@R|org/jetbrains/annotations/Nls|()  kotlin/String|>|()
+    }
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] second.kt
+    public? final? [ResolvedTo(RAW_FIR)] var withoutAnno: ( () -> String ) = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): ( () -> String )
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: ( () -> String )): R|kotlin/Unit|
+    public? final? [ResolvedTo(RAW_FIR)] var withAnno: ( () -> @Nls[Unresolved]() String ) = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): ( () -> @Nls[Unresolved]() String )
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: ( () -> @Nls[Unresolved]() String )): R|kotlin/Unit|
+    public? final? [ResolvedTo(RAW_FIR)] fun unrelated([ResolvedTo(RAW_FIR)] block: ( (String, @Nls[Unresolved]() String) -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(CONTRACTS)] fun called(): R|() -> @R|org/jetbrains/annotations/Nls|()  kotlin/String| { LAZY_BLOCK }

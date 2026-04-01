@@ -1,7 +1,7 @@
 FILE: KotlinImporterComponent.kt
     package simulation
 
-    @R|simulation/State|(name = String(AutoImportedSourceRoots)) public final class KotlinImporterComponent : R|kotlin/Any| {
+    @R|simulation/State|(name = String(AutoImportedSourceRoots) [evaluated = String(AutoImportedSourceRoots)]) public final class KotlinImporterComponent : R|kotlin/Any| {
         public constructor(): R|simulation/KotlinImporterComponent| {
             super<R|kotlin/Any|>()
         }

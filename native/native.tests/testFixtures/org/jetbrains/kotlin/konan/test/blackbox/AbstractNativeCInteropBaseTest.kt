@@ -9,4 +9,20 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeCla
 
 abstract class AbstractNativeCInteropBaseTest : AbstractNativeSimpleTest() {
     internal val kotlinNativeClassLoader: KotlinNativeClassLoader get() = testRunSettings.get()
+
+    protected fun normalizeCSymbolNames(metadataDump: String): String =
+        if (targets.testTarget.family.isAppleFamily) {
+            // Remove '_' prefix from @CCall.Direct and @CGlobalAccess name values on Apple targets.
+            // It is added to symbol names there by default, unlike all other targets.
+            // This little hack allows us to keep using the same "golden file" for all targets.
+            metadataDump.replace(
+                "@kotlinx/cinterop/internal/CCall.Direct(name = \"_",
+                "@kotlinx/cinterop/internal/CCall.Direct(name = \""
+            ).replace(
+                "@kotlinx/cinterop/internal/CGlobalAccess(name = \"_",
+                "@kotlinx/cinterop/internal/CGlobalAccess(name = \""
+            )
+        } else {
+            metadataDump
+        }
 }

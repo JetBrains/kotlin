@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirCheckedSafeCallSubject
 import org.jetbrains.kotlin.fir.expressions.FirDesugaredAssignmentValueReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirReplExpressionReference
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
@@ -52,7 +53,8 @@ object FirExpressionWithErrorTypeChecker : FirBasicExpressionChecker(MppCheckerK
         if (expression is FirDesugaredAssignmentValueReferenceExpression ||
             expression is FirWhenSubjectExpression ||
             expression is FirSmartCastExpression ||
-            expression is FirCheckedSafeCallSubject
+            expression is FirCheckedSafeCallSubject ||
+            expression is FirReplExpressionReference
         ) return
         // Below we do a return in case expression has its own diagnostic or has a diagnostic inside child nodes
         // (as, again, ErrorNodeDiagnosticCollectorComponent handles such situations itself)

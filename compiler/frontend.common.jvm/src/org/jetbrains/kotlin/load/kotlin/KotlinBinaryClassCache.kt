@@ -59,22 +59,6 @@ class KotlinBinaryClassCache : Disposable {
     }
 
     companion object {
-        @Deprecated(
-            "Please pass metadataVersion explicitly",
-            ReplaceWith(
-                "getKotlinBinaryClassOrClassFileContent(file, MetadataVersion.INSTANCE, fileContent, perfManager)",
-                "org.jetbrains.kotlin.metadata.deserialization.MetadataVersion"
-            )
-        )
-        fun getKotlinBinaryClassOrClassFileContent(
-            file: VirtualFile, fileContent: ByteArray?
-        ) = getKotlinBinaryClassOrClassFileContent(
-            file,
-            metadataVersion = MetadataVersion.INSTANCE,
-            fileContent = fileContent,
-            perfManager = null,
-        )
-
         fun getKotlinBinaryClassOrClassFileContent(
             file: VirtualFile,
             metadataVersion: MetadataVersion,

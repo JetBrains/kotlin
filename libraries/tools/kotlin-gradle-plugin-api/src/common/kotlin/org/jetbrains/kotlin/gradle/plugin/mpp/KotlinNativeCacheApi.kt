@@ -6,16 +6,15 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 /**
- * This annotation marks the API for the Native Cache DSL as experimental and context-specific.
+ * Marks the Kotlin Native Cache DSL API as requiring explicit opt-in.
  *
- * Any API component marked with `@KotlinNativeCacheApi` is intended for use only within
- * the specific DSL scopes provided by the Kotlin Gradle Plugin, such as the `disableNativeCache` function.
- * Using these components outside of their intended scope is not supported and may lead to
- * unexpected behavior or compilation errors.
+ * Any declaration marked with `@KotlinNativeCacheApi` requires the caller to opt in
+ * by adding `@OptIn(KotlinNativeCacheApi::class)` to the file or enclosing declaration.
+ * This includes the `disableNativeCache` function and related types like `DisableCacheInKotlinVersion`.
  */
 @RequiresOptIn(
     level = RequiresOptIn.Level.ERROR,
-    message = "This API is intended for use only within the Kotlin Native Cache DSL."
+    message = "This API requires opt-in. Use '@OptIn(KotlinNativeCacheApi::class)' on the file or declaration that calls this API."
 )
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)

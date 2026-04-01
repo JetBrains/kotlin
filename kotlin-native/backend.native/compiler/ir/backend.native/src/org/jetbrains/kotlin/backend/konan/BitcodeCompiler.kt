@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.konan.config.overrideClangOptions
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.*
 import java.io.File
@@ -23,7 +24,7 @@ internal class BitcodeCompiler(
     private val debug = config.debug
 
     private val overrideClangOptions =
-            config.configuration.getList(KonanConfigKeys.OVERRIDE_CLANG_OPTIONS)
+            config.configuration.overrideClangOptions
 
     private fun MutableList<String>.addNonEmpty(elements: List<String>) {
         addAll(elements.filter { it.isNotEmpty() })

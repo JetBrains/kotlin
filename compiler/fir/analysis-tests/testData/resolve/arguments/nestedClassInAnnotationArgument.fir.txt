@@ -13,7 +13,7 @@ FILE: nestedClassInAnnotationArgument.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|Ann|(kClass = <getClass>(Q|A.EmptyList|)) public final fun foo(): R|kotlin/Unit| {
+        @R|Ann|(kClass = <getClass>(Q|A.EmptyList|) [evaluated = <getClass>(Q|A.EmptyList|)]) public final fun foo(): R|kotlin/Unit| {
         }
 
         public final object EmptyList : R|kotlin/Any| {

@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("generated-sources")
 }
 
@@ -8,6 +7,7 @@ dependencies {
     api(project(":compiler:fir:providers"))
     api(project(":compiler:fir:semantics"))
     api(project(":compiler:fir:raw-fir:raw-fir.common"))
+    implementation(project(":compiler:fir:diagnostic-renderers"))
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi:psi-api"))

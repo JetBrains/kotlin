@@ -1,6 +1,6 @@
 // WITH_STDLIB
 
-import kotlin.test.assertEquals
+// FILE: lib.kt
 
 inline fun <R, T> foo(x : R?, y : R?, block : (R?) -> T) : T {
     if (x == null) {
@@ -9,6 +9,9 @@ inline fun <R, T> foo(x : R?, y : R?, block : (R?) -> T) : T {
         return block(y)
     }
 }
+
+// FILE: main.kt
+import kotlin.test.assertEquals
 
 fun box() : String {
     assertEquals(3, foo(1, 2) { x -> if (x != null) 3 else 4 })

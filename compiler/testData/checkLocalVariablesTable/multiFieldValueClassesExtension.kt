@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 // IGNORE_K1
 
 @JvmInline
@@ -11,18 +11,18 @@ fun ValueClassTest.foo(x: Int, y: UInt, z: ValueClassTest) {
 }
 
 // METHOD : MultiFieldValueClassesExtensionKt.foo-09T95H0(IIIZIIIZIZIIIZ)V
-// VARIABLE : NAME=$context-Int TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$ValueClassTest$-$context-ValueClassTest$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$ValueClassTest$-$context-ValueClassTest$1 TYPE=Z INDEX=*
-// VARIABLE : NAME=$v$c$ValueClassTest$-$this$foo$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$ValueClassTest$-$this$foo$1 TYPE=Z INDEX=*
-// VARIABLE : NAME=$v$c$ValueClassTest$-c3$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$ValueClassTest$-c3$1 TYPE=Z INDEX=*
-// VARIABLE : NAME=$v$c$ValueClassTest$-z$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$ValueClassTest$-z$1 TYPE=Z INDEX=*
-// VARIABLE : NAME=$v$c$kotlin-UInt$-$context-UInt$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$kotlin-UInt$-c2$0 TYPE=I INDEX=*
-// VARIABLE : NAME=$v$c$kotlin-UInt$-y$0 TYPE=I INDEX=*
-// VARIABLE : NAME=arg0 TYPE=I INDEX=*
-// VARIABLE : NAME=c1 TYPE=I INDEX=*
-// VARIABLE : NAME=x TYPE=I INDEX=*
+// VARIABLE : NAME=$context-Int TYPE=I
+// VARIABLE : NAME=$context-UInt TYPE=I
+// VARIABLE : NAME=$context-ValueClassTest-a TYPE=I
+// VARIABLE : NAME=$context-ValueClassTest-boolean TYPE=Z
+// VARIABLE : NAME=$this$foo-a TYPE=I
+// VARIABLE : NAME=$this$foo-boolean TYPE=Z
+// VARIABLE : NAME=arg0 TYPE=I
+// VARIABLE : NAME=c1 TYPE=I
+// VARIABLE : NAME=c2 TYPE=I
+// VARIABLE : NAME=c3-a TYPE=I
+// VARIABLE : NAME=c3-boolean TYPE=Z
+// VARIABLE : NAME=x TYPE=I
+// VARIABLE : NAME=y TYPE=I
+// VARIABLE : NAME=z-a TYPE=I
+// VARIABLE : NAME=z-boolean TYPE=Z

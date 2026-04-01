@@ -1,5 +1,5 @@
 FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] delegatedFieldNestedName.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/Anno.i] i: R|kotlin/Int|): R|second/Anno| {
             super<R|kotlin/Any|>()
         }
@@ -18,7 +18,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] delegatedFieldNestedName.kt
         public [ResolvedTo(CONTRACTS)] get(): <implicit>
     public final const [ResolvedTo(CONTRACTS)] val inner: <implicit> = LAZY_EXPRESSION
         public [ResolvedTo(CONTRACTS)] get(): <implicit>
-    public final [ResolvedTo(CONSTANT_EVALUATION)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [DelegateFieldsMapKey={0=second/MyClass.$$delegate_0, 1=second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<<implicit>>
         }

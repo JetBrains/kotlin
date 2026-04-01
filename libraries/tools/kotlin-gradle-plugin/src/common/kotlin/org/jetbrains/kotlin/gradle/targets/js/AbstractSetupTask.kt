@@ -55,13 +55,6 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
     @get:Input
     internal val ivyDependencyProvider: Provider<String> = env.map { it.ivyDependency }
 
-    @Deprecated(
-        "Use ivyDependencyProvider instead. It uses Gradle Provider API. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    val ivyDependency: String
-        @Internal get() = ivyDependencyProvider.get()
-
     @get:Input
     @get:Optional
     val downloadBaseUrlProvider: Provider<String> = env.mapOrNull(project.providers) {
@@ -73,27 +66,12 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         it.allowInsecureProtocol
     }
 
-    @Deprecated(
-        "Use downloadBaseUrlProvider instead. It uses Gradle Provider API. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    val downloadBaseUrl: String?
-        @Internal
-        get() = downloadBaseUrlProvider.orNull
-
     @get:OutputDirectory
     val destinationProvider: RegularFileProperty = project.objects.fileProperty()
         .fileProvider(env.map { it.dir })
         .also {
             it.disallowChanges()
         }
-
-    @Deprecated(
-        "Use destinationProvider instead. It uses Gradle Provider API. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    val destination: File
-        @Internal get() = destinationProvider.getFile()
 
     @get:OutputFile
     val destinationHashFileProvider: RegularFileProperty = project.objects.fileProperty()
@@ -105,13 +83,6 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         ).also {
             it.disallowChanges()
         }
-
-    @Deprecated(
-        "Use destinationHashFileProvider instead. It uses Gradle Provider API. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    val destinationHashFile: File
-        @Internal get() = destinationHashFileProvider.getFile()
 
     @Transient
     @get:Internal

@@ -14,10 +14,7 @@ import org.gradle.api.internal.tasks.testing.TestResultProcessor
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
 import org.gradle.internal.logging.progress.ProgressLogger
-import org.gradle.internal.service.ServiceRegistry
-import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -36,8 +33,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.*
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework.Companion.CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework.Companion.createTestExecutionSpecDeprecated
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
@@ -61,24 +56,7 @@ class KotlinKarma internal constructor(
     override val compilation: KotlinJsIrCompilation,
     private val basePath: String,
     private val objects: ObjectFactory,
-    private val providers: ProviderFactory,
 ) : KotlinJsTestFramework {
-
-    @Deprecated(
-        "Manually creating instances of this class is deprecated. Scheduled for removal in Kotlin 2.4.",
-        level = DeprecationLevel.ERROR
-    )
-    constructor(
-        compilation: KotlinJsIrCompilation,
-        @Suppress("UNUSED_PARAMETER")
-        services: () -> ServiceRegistry,
-        basePath: String,
-    ) : this(
-        compilation = compilation,
-        basePath = basePath,
-        objects = compilation.target.project.objects,
-        providers = compilation.target.project.providers,
-    )
 
     @Transient
     private val project: Project = compilation.target.project
@@ -207,7 +185,6 @@ class KotlinKarma internal constructor(
                 "firefox-nightly-headless" -> useFirefoxNightlyHeadless()
                 "ie" -> useIe()
                 "opera" -> useOpera()
-                "phantom-js" -> usePhantomJS()
                 "safari" -> useSafari()
                 else -> project.logger.warn("Unrecognised `kotlin.js.browser.karma.browsers` value [$it]. Ignoring...")
             }
@@ -297,14 +274,6 @@ class KotlinKarma internal constructor(
         }
 
         useChromeLike(debuggableChrome)
-    }
-
-    @Deprecated(
-        "It is not supported anymore. Scheduled for removal in Kotlin 2.4.",
-        level = DeprecationLevel.ERROR
-    )
-    fun usePhantomJS() {
-        project.logger.warn("PhantomJS is not supported anymore. Use other browsers instead.")
     }
 
     private fun useFirefoxLike(id: String) = useBrowser(id, versions.karmaFirefoxLauncher)
@@ -636,26 +605,6 @@ class KotlinKarma internal constructor(
         appendConfigsFromDir(configDirectory)
         appendLine()
     }
-
-    @Deprecated(
-        CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG,
-        ReplaceWith("createTestExecutionSpec(task, launchOpts, nodeJsArgs, debug)"),
-        DeprecationLevel.ERROR
-    )
-    override fun createTestExecutionSpec(
-        task: KotlinJsTest,
-        forkOptions: ProcessForkOptions,
-        nodeJsArgs: MutableList<String>,
-        debug: Boolean,
-    ): TCServiceMessagesTestExecutionSpec =
-        createTestExecutionSpecDeprecated(
-            task = task,
-            forkOptions = forkOptions,
-            nodeJsArgs = nodeJsArgs,
-            debug = debug,
-            objects = objects,
-            providers = providers,
-        )
 }
 
 // In Karma config it means relative path based on basePath which is configured inside Karma config

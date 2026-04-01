@@ -1,5 +1,4 @@
 // WITH_SIGNATURES
-// JVM_ABI_K1_K2_DIFF: KT-63914
 
 // FILE: delegationToJavaInterfaceWithWildcardType.kt
 interface K {

@@ -1,0 +1,7 @@
+// LANGUAGE: +NameBasedDestructuring
+
+class Tuple(val first: String, val second: Int)
+
+fun loop(x: List<Tuple>) {
+    for ((<expr>val foo = first</expr>, val second,) in x) {}
+}

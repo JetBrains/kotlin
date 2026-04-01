@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.shrinkAndSaveClasspathSnapshot
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.dirtyFiles.JvmSourcesToCompileCalculator
 import org.jetbrains.kotlin.incremental.snapshots.LazyClasspathSnapshot
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.File
 
 open class IncrementalJvmCompilerRunner(
@@ -29,6 +31,8 @@ open class IncrementalJvmCompilerRunner(
     kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
     generateCompilerRefIndex: Boolean = false,
+    compilationCanceledStatus: CompilationCanceledStatus? = null,
+    override val lookupTrackerDelegate: LookupTracker = LookupTracker.DO_NOTHING,
 ) : IncrementalJvmCompilerRunnerBase(
     workingDir = workingDir,
     reporter = reporter,
@@ -37,6 +41,7 @@ open class IncrementalJvmCompilerRunner(
     kotlinSourceFilesExtensions = kotlinSourceFilesExtensions,
     icFeatures = icFeatures,
     generateCompilerRefIndex = generateCompilerRefIndex,
+    compilationCanceledStatus = compilationCanceledStatus,
 ) {
     override val shouldTrackChangesInLookupCache
         get() = classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun

@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
-import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel.ABI_LEVEL_2_3
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -36,6 +36,7 @@ import java.io.File
 import org.jetbrains.kotlin.backend.common.serialization.proto.FieldAccessCommon as ProtoFieldAccessCommon
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation as ProtoAnnotation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
@@ -78,8 +79,9 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunction
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrInstanceInitializerCall as ProtoInstanceInitializerCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedProperty as ProtoLocalDelegatedProperty
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference as ProtoLocalDelegatedPropertyReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrMissingExpression as ProtoMissingExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation as ProtoIrMultiFieldValueClassRepresentation
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation as ProtoOperation
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationPre_2_4_0 as ProtoOperationPre_2_4_0
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as ProtoProperty
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference as ProtoPropertyReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturn as ProtoReturn
@@ -108,16 +110,18 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable as Pro
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen as ProtoWhen
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile as ProtoWhile
 import org.jetbrains.kotlin.backend.common.serialization.proto.Loop as ProtoLoop
-import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon as ProtoMemberAccessCommon
+import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 as ProtoMemberAccessCommonPre_2_4_0
 import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression as ProtoNullableIrExpression
 
 open class IrFileSerializer(
-    private val settings: IrSerializationSettings,
+    protected val settings: IrSerializationSettings,
     private val declarationTable: DeclarationTable<*>,
 ) {
+    private val useVarIntInDataArrays = settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)
     private val loopIndex = hashMapOf<IrLoop, Int>()
     private var currentLoopIndex = 0
     private var fileBeingSerialized: IrFile? = null
+    private var isSerializingIrType = false
 
     /**
      * The abstraction that represents all [ProtoType]s to be serialized in the current [IrFile].
@@ -167,7 +171,8 @@ open class IrFileSerializer(
         ::serializeString,
         ::serializeDebugInfo,
         protoIdSignatureMap,
-        protoIdSignatureArray
+        protoIdSignatureArray,
+        serializeForKlibAbi_2_3 = !settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4),
     )
 
     protected val protoBodyArray = mutableListOf<XStatementOrExpression>()
@@ -204,13 +209,13 @@ open class IrFileSerializer(
         }
     }
 
-    private fun serializeIrExpressionBody(expression: IrExpression): Int {
-        protoBodyArray.add(XStatementOrExpression.XExpression(serializeExpression(expression)))
+    private fun serializeIrExpressionBody(expression: IrExpression, parent: IrElement?): Int {
+        protoBodyArray.add(XStatementOrExpression.XExpression(serializeExpression(expression, parent)))
         return protoBodyArray.size - 1
     }
 
-    private fun serializeIrStatementBody(statement: IrElement): Int {
-        protoBodyArray.add(XStatementOrExpression.XStatement(serializeStatement(statement)))
+    private fun serializeIrStatementBody(statement: IrElement, parent: IrElement?): Int {
+        protoBodyArray.add(XStatementOrExpression.XStatement(serializeStatement(statement, parent)))
         return protoBodyArray.size - 1
     }
 
@@ -228,26 +233,74 @@ open class IrFileSerializer(
         saveOriginIndex(originIndex)
     }
 
-    private fun serializeCoordinates(start: Int, end: Int): Long {
+    private enum class IrCoordinatesKind {
+        // Coordinates are encoded as absolute offset in the containing source file.
+        Global,
+        // Coordinates are encoded relatively to the parent IR element.
+        // Here, "parent" means the physical parent node in the IR tree structure. In case of declarations, it may be different than the
+        // higher-level notion of IrDeclaration.parent.
+        Local,
+    }
+
+    private fun serializeCoordinates(start: Int, end: Int, parent: IrElement?): Pair<IrCoordinatesKind, Long> {
+        val kind = if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) IrCoordinatesKind.Local
+        else IrCoordinatesKind.Global
+
         if (settings.publicAbiOnly && !isInsideInline) {
-            return 0
+            return kind to 0
         }
 
-        return if (start > end) {
+        // As IrType's themselves don't have coordinates and their instances can appear multiple times in the IR tree,
+        // it is quite meaningless to store coordinates of anything inside them - namely, type's annotations and their arguments.
+        if (isSerializingIrType && settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+            return kind to 0
+        }
+
+        var serStart = start
+        var serEnd = end
+        if (start > end) {
             // Kotlin < 2.3 does not support deserializing coordinates where start < end. Such coordinates are generally invalid, but
             // so far we don't have a mechanism to ensure they are not created. So they might occur (especially in the case of
             // compiler plugins) and we need to "fix" them somehow. See also KT-80910.
             if (end >= 0) {
                 // We simply flip start with end, which still encompasses the same span, and is likely what was intended by the creator
                 // of this IR element.
-                BinaryCoordinates.encode(end, start)
+                serStart = end
+                serEnd = start
             } else {
                 // Here, endOffset is one of the special "unknown" offset values. It is quite fair to make the entire coordinates "unknown"
                 // in the same way.
-                BinaryCoordinates.encode(end, end)
+                serStart = serEnd
             }
-        } else {
-            BinaryCoordinates.encode(start, end)
+        }
+
+        return when (kind) {
+            IrCoordinatesKind.Local -> {
+                requireNotNull(parent) { "Cannot serialize coordinates in a local mode as there is no parent node provided" }
+                serStart -= parent.startOffset
+                serEnd -= parent.startOffset
+                kind to BinaryCoordinatesEncoding.encode(serStart, serEnd, useZigZag = true)
+            }
+            IrCoordinatesKind.Global -> {
+                if (serStart == -3 && serEnd == -3) {
+                    // Such coordinates should never occur. If they do for some reason, we have to remap them to avoid serializing these
+                    // particular values. For why it's important, see the comment on IrExpression.coordinates in a file KotlinIr.proto.
+                    serStart = UNDEFINED_OFFSET
+                    serEnd = UNDEFINED_OFFSET
+                }
+                kind to BinaryCoordinatesEncoding.encode(serStart, serEnd, useZigZag = false)
+            }
+        }
+    }
+
+    private inline fun serializeAndSetCoordinates(
+        setGlobalCoordinatesField: (Long) -> Unit, setLocalCoordinatesField: (Long) -> Unit,
+        start: Int, end: Int, parent: IrElement?,
+    ) {
+        val (coordinatesKind, coordinates) = serializeCoordinates(start, end, parent)
+        when (coordinatesKind) {
+            IrCoordinatesKind.Global -> setGlobalCoordinatesField(coordinates)
+            IrCoordinatesKind.Local -> setLocalCoordinatesField(coordinates)
         }
     }
 
@@ -326,8 +379,7 @@ open class IrFileSerializer(
                         recordInSignatureClashDetector = isDeclared,
                     )
 
-                    symbolOwner is IrReturnableBlock && settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_3) ->
-                        declarationTable.signatureByReturnableBlock(symbolOwner)
+                    symbolOwner is IrReturnableBlock -> declarationTable.signatureByReturnableBlock(symbolOwner)
 
                     else -> error("Expected symbol owner: ${symbolOwner.render()}")
                 }
@@ -343,7 +395,7 @@ open class IrFileSerializer(
     /* ------- IrTypes ---------------------------------------------------------- */
 
     // Serializes all annotations, even having SOURCE retention, since they might be needed in backends, like @Volatile
-    private fun serializeAnnotations(annotations: List<IrConstructorCall>) =
+    private fun serializeAnnotations(annotations: List<IrAnnotation>, parent: IrElement?) =
         annotations.map {
             for (param in it.arguments) {
                 if (param != null) {
@@ -352,7 +404,7 @@ open class IrFileSerializer(
                     }
                 }
             }
-            serializeConstructorCall(it)
+            serializeAnnotation(it, parent)
         }
 
     private fun serializeFqName(fqName: String): List<Int> = fqName.split(".").map(::serializeString)
@@ -378,7 +430,7 @@ open class IrFileSerializer(
 
     private fun serializeSimpleType(type: IrSimpleType): ProtoSimpleType {
         val proto = ProtoSimpleType.newBuilder()
-            .addAllAnnotation(serializeAnnotations(type.annotations))
+            .addAllAnnotation(serializeAnnotations(type.annotations, null))
             .setClassifier(serializeIrSymbol(type.classifier))
         if (type.nullability != SimpleTypeNullability.NOT_SPECIFIED) {
             proto.setNullability(serializeNullability(type.nullability))
@@ -390,10 +442,12 @@ open class IrFileSerializer(
     }
 
     private fun serializeDynamicType(type: IrDynamicType): ProtoDynamicType = ProtoDynamicType.newBuilder()
-        .addAllAnnotation(serializeAnnotations(type.annotations))
+        .addAllAnnotation(serializeAnnotations(type.annotations, null))
         .build()
 
     private fun serializeIrTypeData(type: IrType): ProtoType {
+        val wasSerializingIrType = isSerializingIrType
+        isSerializingIrType = true
         val proto = ProtoType.newBuilder()
         when (type) {
             is IrSimpleType ->
@@ -403,6 +457,7 @@ open class IrFileSerializer(
             is IrErrorType ->
                 error("Serialization of IrErrorType is not supported anymore")
         }
+        isSerializingIrType = wasSerializingIrType
         return proto.build()
     }
 
@@ -480,7 +535,7 @@ open class IrFileSerializer(
     private fun serializeBlockBody(expression: IrBlockBody): ProtoBlockBody {
         val proto = ProtoBlockBody.newBuilder()
         expression.statements.forEach {
-            proto.addStatement(serializeStatement(it))
+            proto.addStatement(serializeStatement(it, expression))
         }
         return proto.build()
     }
@@ -488,8 +543,8 @@ open class IrFileSerializer(
     private fun serializeBranch(branch: IrBranch): ProtoBranch {
         val proto = ProtoBranch.newBuilder()
 
-        proto.condition = serializeExpression(branch.condition)
-        proto.result = serializeExpression(branch.result)
+        proto.condition = serializeExpression(branch.condition, branch)
+        proto.result = serializeExpression(branch.result, branch)
 
         return proto.build()
     }
@@ -500,14 +555,12 @@ open class IrFileSerializer(
         serializeIrStatementOrigin(block.origin, proto::setOriginName)
 
         block.statements.forEach {
-            proto.addStatement(serializeStatement(it))
+            proto.addStatement(serializeStatement(it, block))
         }
         return proto.build()
     }
 
     private fun serializeReturnableBlock(returnableBlock: IrReturnableBlock): ProtoReturnableBlock {
-        requireAbiAtLeast(ABI_LEVEL_2_3) { returnableBlock }
-
         val proto = ProtoReturnableBlock.newBuilder()
         proto.symbol = serializeIrSymbol(returnableBlock.symbol)
         proto.base = serializeBlock(returnableBlock)
@@ -515,8 +568,6 @@ open class IrFileSerializer(
     }
 
     private fun serializeInlinedFunctionBlock(inlinedFunctionBlock: IrInlinedFunctionBlock): ProtoInlinedFunctionBlock {
-        requireAbiAtLeast(ABI_LEVEL_2_3) { inlinedFunctionBlock }
-
         val proto = ProtoInlinedFunctionBlock.newBuilder()
         inlinedFunctionBlock.inlinedFunctionSymbol?.let { proto.setInlinedFunctionSymbol(serializeIrSymbol(it)) }
 
@@ -557,27 +608,27 @@ open class IrFileSerializer(
 
         serializeIrStatementOrigin(composite.origin, proto::setOriginName)
         composite.statements.forEach {
-            proto.addStatement(serializeStatement(it))
+            proto.addStatement(serializeStatement(it, composite))
         }
         return proto.build()
     }
 
     private fun serializeCatch(catch: IrCatch): ProtoCatch {
         val proto = ProtoCatch.newBuilder()
-            .setCatchParameter(serializeIrVariable(catch.catchParameter))
-            .setResult(serializeExpression(catch.result))
+            .setCatchParameter(serializeIrVariable(catch.catchParameter, catch))
+            .setResult(serializeExpression(catch.result, catch))
         return proto.build()
     }
 
     private fun serializeStringConcat(expression: IrStringConcatenation): ProtoStringConcat {
         val proto = ProtoStringConcat.newBuilder()
         expression.arguments.forEach {
-            proto.addArgument(serializeExpression(it))
+            proto.addArgument(serializeExpression(it, expression))
         }
         return proto.build()
     }
 
-    private fun serializeMemberAccessCommon(call: IrMemberAccessExpression<*>): ProtoMemberAccessCommon {
+    private fun serializeMemberAccessCommonPre2_4_0(call: IrMemberAccessExpression<*>): ProtoMemberAccessCommonPre_2_4_0 {
         fun buildProtoNullableIrExpression(arg: IrExpression?): ProtoNullableIrExpression.Builder {
             val argOrNullProto = ProtoNullableIrExpression.newBuilder()
             if (arg == null) {
@@ -588,24 +639,30 @@ open class IrFileSerializer(
                 // TODO: how do we assert that without descriptor?
                 //assert(it.varargElementType != null || it.hasDefaultValue())
             } else {
-                argOrNullProto.expression = serializeExpression(arg)
+                argOrNullProto.expression = serializeExpression(arg, call)
             }
             return argOrNullProto
         }
 
-        val proto = ProtoMemberAccessCommon.newBuilder()
+        val proto = ProtoMemberAccessCommonPre_2_4_0.newBuilder()
 
         for (arg in call.arguments) {
-            proto.addArgument(buildProtoNullableIrExpression(arg))
+            proto.addArgumentPre240(buildProtoNullableIrExpression(arg))
         }
-
-        for (typeArg in call.typeArguments) {
-            // See `ForbidUsingExtensionPropertyTypeParameterInDelegate` language feature
-            val typeArgumentIndex = typeArg?.let { serializeIrType(it) } ?: -1
-            proto.addTypeArgument(typeArgumentIndex)
-        }
+        proto.addAllTypeArgument(serializeTypeArguments(call))
 
         return proto.build()
+    }
+
+    private fun serializeArguments(call: IrMemberAccessExpression<*>): List<ProtoExpression> {
+        return call.arguments.map { serializeExpression(it, call) }
+    }
+
+    private fun serializeTypeArguments(call: IrMemberAccessExpression<*>): List<Int> {
+        return call.typeArguments.map {
+            // See `ForbidUsingExtensionPropertyTypeParameterInDelegate` language feature
+            if (it != null) serializeIrType(it) else -1
+        }
     }
 
     private fun serializeCall(call: IrCall): ProtoCall {
@@ -616,8 +673,13 @@ open class IrFileSerializer(
         call.superQualifierSymbol?.let {
             proto.`super` = serializeIrSymbol(it)
         }
-        proto.memberAccess = serializeMemberAccessCommon(call)
 
+        if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+            proto.addAllArgument(serializeArguments(call))
+            proto.addAllTypeArgument(serializeTypeArguments(call))
+        } else {
+            proto.memberAccessPre240 = serializeMemberAccessCommonPre2_4_0(call)
+        }
         return proto.build()
     }
 
@@ -625,20 +687,48 @@ open class IrFileSerializer(
         ProtoConstructorCall.newBuilder().apply {
             symbol = serializeIrSymbol(call.symbol)
             constructorTypeArgumentsCount = call.constructorTypeArgumentsCount
-            memberAccess = serializeMemberAccessCommon(call)
+            if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+                addAllArgument(serializeArguments(call))
+                addAllTypeArgument(serializeTypeArguments(call))
+            } else {
+                memberAccessPre240 = serializeMemberAccessCommonPre2_4_0(call)
+            }
             serializeIrStatementOrigin(call.origin, ::setOriginName)
+        }.build()
+
+    private fun serializeAnnotation(annotation: IrAnnotation, parent: IrElement?): ProtoAnnotation =
+        ProtoAnnotation.newBuilder().apply {
+            symbol = serializeIrSymbol(annotation.symbol)
+            constructorTypeArgumentsCount = annotation.constructorTypeArgumentsCount
+            if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+                addAllArgument(serializeArguments(annotation))
+                addAllTypeArgument(serializeTypeArguments(annotation))
+            } else {
+                memberAccessPre240 = serializeMemberAccessCommonPre2_4_0(annotation)
+            }
+            serializeIrStatementOrigin(annotation.origin, ::setOriginName)
+
+            val (coordinatesKind, coordinates) = serializeCoordinates(annotation.startOffset, annotation.endOffset, parent)
+            if (coordinatesKind == IrCoordinatesKind.Local) {
+                setLocalCoordinates(coordinates)
+            }
         }.build()
 
     private fun serializeFunctionExpression(functionExpression: IrFunctionExpression): ProtoFunctionExpression =
         ProtoFunctionExpression.newBuilder().apply {
-            function = serializeIrFunction(functionExpression.function)
+            function = serializeIrFunction(functionExpression.function, functionExpression)
             serializeIrStatementOrigin(functionExpression.origin, ::setOriginName)
         }.build()
 
     private fun serializeFunctionReference(callable: IrFunctionReference): ProtoFunctionReference {
         val proto = ProtoFunctionReference.newBuilder()
             .setSymbol(serializeIrSymbol(callable.symbol))
-            .setMemberAccess(serializeMemberAccessCommon(callable))
+        if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+            proto.addAllArgument(serializeArguments(callable))
+            proto.addAllTypeArgument(serializeTypeArguments(callable))
+        } else {
+            proto.memberAccessPre240 = serializeMemberAccessCommonPre2_4_0(callable)
+        }
 
         callable.reflectionTarget?.let { proto.reflectionTargetSymbol = serializeIrSymbol(it) }
         serializeIrStatementOrigin(callable.origin, proto::setOriginName)
@@ -646,30 +736,26 @@ open class IrFileSerializer(
     }
 
     private fun serializeRichFunctionReference(callable: IrRichFunctionReference): ProtoRichFunctionReference {
-        requireAbiAtLeast(ABI_LEVEL_2_3) { callable }
-
         return ProtoRichFunctionReference.newBuilder().apply {
             callable.reflectionTargetSymbol?.let { reflectionTargetSymbol = serializeIrSymbol(it) }
             overriddenFunctionSymbol = serializeIrSymbol(callable.overriddenFunctionSymbol)
             for (boundValue in callable.boundValues) {
-                addBoundValues(serializeExpression(boundValue))
+                addBoundValues(serializeExpression(boundValue, callable))
             }
-            invokeFunction = serializeIrFunction(callable.invokeFunction)
+            invokeFunction = serializeIrFunction(callable.invokeFunction, callable)
             serializeIrStatementOrigin(callable.origin, ::setOriginName)
             flags = RichFunctionReferenceFlags.encode(callable)
         }.build()
     }
 
     private fun serializeRichPropertyReference(callable: IrRichPropertyReference): ProtoRichPropertyReference {
-        requireAbiAtLeast(ABI_LEVEL_2_3) { callable }
-
         return ProtoRichPropertyReference.newBuilder().apply {
             callable.reflectionTargetSymbol?.let { reflectionTargetSymbol = serializeIrSymbol(it) }
             for (boundValue in callable.boundValues) {
-                addBoundValues(serializeExpression(boundValue))
+                addBoundValues(serializeExpression(boundValue, callable))
             }
-            getterFunction = serializeIrFunction(callable.getterFunction)
-            callable.setterFunction?.let { setterFunction = serializeIrFunction(it) }
+            getterFunction = serializeIrFunction(callable.getterFunction, callable)
+            callable.setterFunction?.let { setterFunction = serializeIrFunction(it, callable) }
             serializeIrStatementOrigin(callable.origin, ::setOriginName)
         }.build()
     }
@@ -690,8 +776,13 @@ open class IrFileSerializer(
 
     private fun serializePropertyReference(callable: IrPropertyReference): ProtoPropertyReference {
         val proto = ProtoPropertyReference.newBuilder()
-            .setMemberAccess(serializeMemberAccessCommon(callable))
             .setSymbol(serializeIrSymbol(callable.symbol))
+        if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+            proto.addAllArgument(serializeArguments(callable))
+            proto.addAllTypeArgument(serializeTypeArguments(callable))
+        } else {
+            proto.memberAccessPre240 = serializeMemberAccessCommonPre2_4_0(callable)
+        }
 
         serializeIrStatementOrigin(callable.origin, proto::setOriginName)
         callable.field?.let { proto.field = serializeIrSymbol(it) }
@@ -728,7 +819,12 @@ open class IrFileSerializer(
     private fun serializeDelegatingConstructorCall(call: IrDelegatingConstructorCall): ProtoDelegatingConstructorCall {
         val proto = ProtoDelegatingConstructorCall.newBuilder()
             .setSymbol(serializeIrSymbol(call.symbol))
-            .setMemberAccess(serializeMemberAccessCommon(call))
+        if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+            proto.addAllArgument(serializeArguments(call))
+            proto.addAllTypeArgument(serializeTypeArguments(call))
+        } else {
+            proto.memberAccessPre240 = serializeMemberAccessCommonPre2_4_0(call)
+        }
         return proto.build()
     }
 
@@ -740,13 +836,18 @@ open class IrFileSerializer(
     private fun serializeEnumConstructorCall(call: IrEnumConstructorCall): ProtoEnumConstructorCall {
         val proto = ProtoEnumConstructorCall.newBuilder()
             .setSymbol(serializeIrSymbol(call.symbol))
-            .setMemberAccess(serializeMemberAccessCommon(call))
+        if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+            proto.addAllArgument(serializeArguments(call))
+            proto.addAllTypeArgument(serializeTypeArguments(call))
+        } else {
+            proto.memberAccessPre240 = serializeMemberAccessCommonPre2_4_0(call)
+        }
         return proto.build()
     }
 
     private fun serializeGetClass(expression: IrGetClass): ProtoGetClass {
         val proto = ProtoGetClass.newBuilder()
-            .setArgument(serializeExpression(expression.argument))
+            .setArgument(serializeExpression(expression.argument, expression))
         return proto.build()
     }
 
@@ -760,7 +861,7 @@ open class IrFileSerializer(
         val proto = ProtoFieldAccessCommon.newBuilder()
             .setSymbol(serializeIrSymbol(expression.symbol))
         expression.superQualifierSymbol?.let { proto.`super` = serializeIrSymbol(it) }
-        expression.receiver?.let { proto.receiver = serializeExpression(it) }
+        expression.receiver?.let { proto.receiver = serializeExpression(it, expression) }
         return proto.build()
     }
 
@@ -792,17 +893,17 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeReturn(operation: ProtoOperation.Builder, expression: IrReturn) {
+    private fun serializeReturn(expression: IrReturn): ProtoReturn {
         val proto = ProtoReturn.newBuilder()
             .setReturnTarget(serializeIrSymbol(expression.returnTargetSymbol))
-            .setValue(serializeExpression(expression.value))
-        operation.`return` = proto.build()
+            .setValue(serializeExpression(expression.value, expression))
+        return proto.build()
     }
 
     private fun serializeSetField(expression: IrSetField): ProtoSetField =
         ProtoSetField.newBuilder()
             .setFieldAccess(serializeFieldAccessCommon(expression))
-            .setValue(serializeExpression(expression.value)).apply {
+            .setValue(serializeExpression(expression.value, expression)).apply {
                 serializeIrStatementOrigin(expression.origin, ::setOriginName)
             }
             .build()
@@ -810,17 +911,20 @@ open class IrFileSerializer(
     private fun serializeSetValue(expression: IrSetValue): ProtoSetValue =
         ProtoSetValue.newBuilder()
             .setSymbol(serializeIrSymbol(expression.symbol))
-            .setValue(serializeExpression(expression.value)).apply {
+            .setValue(serializeExpression(expression.value, expression)).apply {
                 serializeIrStatementOrigin(expression.origin, ::setOriginName)
             }
             .build()
 
-    private fun serializeSpreadElement(element: IrSpreadElement): ProtoSpreadElement {
-        val coordinates = serializeCoordinates(element.startOffset, element.endOffset)
-        return ProtoSpreadElement.newBuilder()
-            .setExpression(serializeExpression(element.expression))
-            .setCoordinates(coordinates)
-            .build()
+    private fun serializeSpreadElement(element: IrSpreadElement, parent: IrVararg): ProtoSpreadElement {
+        val proto = ProtoSpreadElement.newBuilder()
+        serializeAndSetCoordinates(
+            proto::setGlobalCoordinates, proto::setLocalCoordinates,
+            element.startOffset, element.endOffset, parent
+        )
+
+        proto.setExpression(serializeExpression(element.expression, element))
+        return proto.build()
     }
 
     private fun serializeSyntheticBody(expression: IrSyntheticBody) = ProtoSyntheticBody.newBuilder()
@@ -835,20 +939,20 @@ open class IrFileSerializer(
 
     private fun serializeThrow(expression: IrThrow): ProtoThrow {
         val proto = ProtoThrow.newBuilder()
-            .setValue(serializeExpression(expression.value))
+            .setValue(serializeExpression(expression.value, expression))
         return proto.build()
     }
 
     private fun serializeTry(expression: IrTry): ProtoTry {
         val proto = ProtoTry.newBuilder()
-            .setResult(serializeExpression(expression.tryResult))
+            .setResult(serializeExpression(expression.tryResult, expression))
         val catchList = expression.catches
         catchList.forEach {
-            proto.addCatch(serializeStatement(it))
+            proto.addCatch(serializeStatement(it, expression))
         }
         val finallyExpression = expression.finallyExpression
         if (finallyExpression != null) {
-            proto.finally = serializeExpression(finallyExpression)
+            proto.finally = serializeExpression(finallyExpression, expression)
         }
         return proto.build()
     }
@@ -882,7 +986,7 @@ open class IrFileSerializer(
         val proto = ProtoTypeOp.newBuilder()
             .setOperator(serializeTypeOperator(expression.operator))
             .setOperand(serializeIrType(expression.typeOperand))
-            .setArgument(serializeExpression(expression.argument))
+            .setArgument(serializeExpression(expression.argument, expression))
         return proto.build()
 
     }
@@ -891,18 +995,18 @@ open class IrFileSerializer(
         val proto = ProtoVararg.newBuilder()
             .setElementType(serializeIrType(expression.varargElementType))
         expression.elements.forEach {
-            proto.addElement(serializeVarargElement(it))
+            proto.addElement(serializeVarargElement(it, expression))
         }
         return proto.build()
     }
 
-    private fun serializeVarargElement(element: IrVarargElement): ProtoVarargElement {
+    private fun serializeVarargElement(element: IrVarargElement, parent: IrVararg): ProtoVarargElement {
         val proto = ProtoVarargElement.newBuilder()
         when (element) {
             is IrExpression,
-                -> proto.expression = serializeExpression(element)
+                -> proto.expression = serializeExpression(element, parent)
             is IrSpreadElement,
-                -> proto.spreadElement = serializeSpreadElement(element)
+                -> proto.spreadElement = serializeSpreadElement(element, parent)
             else -> error("Unknown vararg element kind")
         }
         return proto.build()
@@ -915,7 +1019,7 @@ open class IrFileSerializer(
 
         val branches = expression.branches
         branches.forEach {
-            proto.addBranch(serializeStatement(it))
+            proto.addBranch(serializeStatement(it, expression))
         }
 
         return proto.build()
@@ -926,7 +1030,7 @@ open class IrFileSerializer(
         loopIndex[expression] = loopIdx
 
         val proto = ProtoLoop.newBuilder()
-            .setCondition(serializeExpression(expression.condition)).apply {
+            .setCondition(serializeExpression(expression.condition, expression)).apply {
                 serializeIrStatementOrigin(expression.origin, ::setOriginName)
             }
 
@@ -938,7 +1042,7 @@ open class IrFileSerializer(
 
         val body = expression.body
         if (body != null) {
-            proto.body = serializeExpression(body)
+            proto.body = serializeExpression(body, expression)
         }
 
         return proto.build()
@@ -954,7 +1058,7 @@ open class IrFileSerializer(
     private fun serializeDynamicMemberExpression(expression: IrDynamicMemberExpression): ProtoDynamicMemberExpression {
         val proto = ProtoDynamicMemberExpression.newBuilder()
             .setMemberName(serializeString(expression.memberName))
-            .setReceiver(serializeExpression(expression.receiver))
+            .setReceiver(serializeExpression(expression.receiver, expression))
 
         return proto.build()
     }
@@ -962,9 +1066,9 @@ open class IrFileSerializer(
     private fun serializeDynamicOperatorExpression(expression: IrDynamicOperatorExpression): ProtoDynamicOperatorExpression {
         val proto = ProtoDynamicOperatorExpression.newBuilder()
             .setOperator(serializeDynamicOperator(expression.operator))
-            .setReceiver(serializeExpression(expression.receiver))
+            .setReceiver(serializeExpression(expression.receiver, expression))
 
-        expression.arguments.forEach { proto.addArgument(serializeExpression(it)) }
+        expression.arguments.forEach { proto.addArgument(serializeExpression(it, expression)) }
 
         return proto.build()
     }
@@ -977,10 +1081,10 @@ open class IrFileSerializer(
     private fun serializeErrorCallExpression(callExpression: IrErrorCallExpression): ProtoErrorCallExpression {
         val proto = ProtoErrorCallExpression.newBuilder().setDescription(serializeString(callExpression.description))
         callExpression.explicitReceiver?.let {
-            proto.setReceiver(serializeExpression(it))
+            proto.setReceiver(serializeExpression(it, callExpression))
         }
         callExpression.arguments.forEach {
-            proto.addValueArgument(serializeExpression(it))
+            proto.addValueArgument(serializeExpression(it, callExpression))
         }
         return proto.build()
     }
@@ -1051,77 +1155,134 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeExpression(expression: IrExpression): ProtoExpression {
-        val coordinates = serializeCoordinates(expression.startOffset, expression.endOffset)
+    private fun serializeExpression(expression: IrExpression?, parent: IrElement?): ProtoExpression {
         val proto = ProtoExpression.newBuilder()
-            .setType(serializeIrType(expression.type))
-            .setCoordinates(coordinates)
-
-        val operationProto = ProtoOperation.newBuilder()
-
-        // TODO: make me a visitor.
-        when (expression) {
-            is IrReturnableBlock -> operationProto.returnableBlock = serializeReturnableBlock(expression)
-            is IrInlinedFunctionBlock -> operationProto.inlinedFunctionBlock = serializeInlinedFunctionBlock(expression)
-            is IrBlock -> operationProto.block = serializeBlock(expression)
-            is IrBreak -> operationProto.`break` = serializeBreak(expression)
-            is IrClassReference -> operationProto.classReference = serializeClassReference(expression)
-            is IrCall -> operationProto.call = serializeCall(expression)
-            is IrConstructorCall -> operationProto.constructorCall = serializeConstructorCall(expression)
-            is IrComposite -> operationProto.composite = serializeComposite(expression)
-            is IrConst -> operationProto.const = serializeConst(expression)
-            is IrContinue -> operationProto.`continue` = serializeContinue(expression)
-            is IrDelegatingConstructorCall -> operationProto.delegatingConstructorCall = serializeDelegatingConstructorCall(expression)
-            is IrDoWhileLoop -> operationProto.doWhile = serializeDoWhile(expression)
-            is IrEnumConstructorCall -> operationProto.enumConstructorCall = serializeEnumConstructorCall(expression)
-            is IrFunctionExpression -> operationProto.functionExpression = serializeFunctionExpression(expression)
-            is IrFunctionReference -> operationProto.functionReference = serializeFunctionReference(expression)
-            is IrRichFunctionReference -> operationProto.richFunctionReference = serializeRichFunctionReference(expression)
-            is IrRichPropertyReference -> operationProto.richPropertyReference = serializeRichPropertyReference(expression)
-            is IrGetClass -> operationProto.getClass = serializeGetClass(expression)
-            is IrGetField -> operationProto.getField = serializeGetField(expression)
-            is IrGetValue -> operationProto.getValue = serializeGetValue(expression)
-            is IrGetEnumValue -> operationProto.getEnumValue = serializeGetEnumValue(expression)
-            is IrGetObjectValue -> operationProto.getObject = serializeGetObject(expression)
-            is IrInstanceInitializerCall -> operationProto.instanceInitializerCall = serializeInstanceInitializerCall(expression)
-            is IrLocalDelegatedPropertyReference -> operationProto.localDelegatedPropertyReference =
-                serializeIrLocalDelegatedPropertyReference(expression)
-            is IrPropertyReference -> operationProto.propertyReference = serializePropertyReference(expression)
-            is IrReturn -> serializeReturn(operationProto, expression)
-            is IrSetField -> operationProto.setField = serializeSetField(expression)
-            is IrSetValue -> operationProto.setValue = serializeSetValue(expression)
-            is IrStringConcatenation -> operationProto.stringConcat = serializeStringConcat(expression)
-            is IrThrow -> operationProto.`throw` = serializeThrow(expression)
-            is IrTry -> operationProto.`try` = serializeTry(expression)
-            is IrTypeOperatorCall -> operationProto.typeOp = serializeTypeOp(expression)
-            is IrVararg -> operationProto.vararg = serializeVararg(expression)
-            is IrWhen -> operationProto.`when` = serializeWhen(expression)
-            is IrWhileLoop -> operationProto.`while` = serializeWhile(expression)
-            is IrDynamicMemberExpression -> operationProto.dynamicMember = serializeDynamicMemberExpression(expression)
-            is IrDynamicOperatorExpression -> operationProto.dynamicOperator = serializeDynamicOperatorExpression(expression)
-            is IrErrorCallExpression -> operationProto.errorCallExpression = serializeErrorCallExpression(expression)
-            is IrErrorExpression -> operationProto.errorExpression = serializeErrorExpression(expression)
-            else -> error("Expression serialization is not supported yet: ${expression.render()}")
+        if (expression != null) {
+            proto.setType(serializeIrType(expression.type))
+            serializeAndSetCoordinates(
+                proto::setGlobalCoordinates, proto::setLocalCoordinates,
+                expression.startOffset, expression.endOffset, parent
+            )
         }
-        proto.setOperation(operationProto)
+
+        if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+            when (expression) {
+                is IrReturnableBlock -> proto.opReturnableBlock = serializeReturnableBlock(expression)
+                is IrInlinedFunctionBlock -> proto.opInlinedFunctionBlock = serializeInlinedFunctionBlock(expression)
+                is IrBlock -> proto.opBlock = serializeBlock(expression)
+                is IrBreak -> proto.opBreak = serializeBreak(expression)
+                is IrClassReference -> proto.opClassReference = serializeClassReference(expression)
+                is IrCall -> proto.opCall = serializeCall(expression)
+                is IrConstructorCall -> proto.opConstructorCall = serializeConstructorCall(expression)
+                is IrComposite -> proto.opComposite = serializeComposite(expression)
+                is IrConst -> proto.opConst = serializeConst(expression)
+                is IrContinue -> proto.opContinue = serializeContinue(expression)
+                is IrDelegatingConstructorCall -> proto.opDelegatingConstructorCall = serializeDelegatingConstructorCall(expression)
+                is IrDoWhileLoop -> proto.opDoWhile = serializeDoWhile(expression)
+                is IrEnumConstructorCall -> proto.opEnumConstructorCall = serializeEnumConstructorCall(expression)
+                is IrFunctionExpression -> proto.opFunctionExpression = serializeFunctionExpression(expression)
+                is IrFunctionReference -> proto.opFunctionReference = serializeFunctionReference(expression)
+                is IrRichFunctionReference -> proto.opRichFunctionReference = serializeRichFunctionReference(expression)
+                is IrRichPropertyReference -> proto.opRichPropertyReference = serializeRichPropertyReference(expression)
+                is IrGetClass -> proto.opGetClass = serializeGetClass(expression)
+                is IrGetField -> proto.opGetField = serializeGetField(expression)
+                is IrGetValue -> proto.opGetValue = serializeGetValue(expression)
+                is IrGetEnumValue -> proto.opGetEnumValue = serializeGetEnumValue(expression)
+                is IrGetObjectValue -> proto.opGetObject = serializeGetObject(expression)
+                is IrInstanceInitializerCall -> proto.opInstanceInitializerCall = serializeInstanceInitializerCall(expression)
+                is IrLocalDelegatedPropertyReference -> proto.opLocalDelegatedPropertyReference =
+                    serializeIrLocalDelegatedPropertyReference(expression)
+                is IrPropertyReference -> proto.opPropertyReference = serializePropertyReference(expression)
+                is IrReturn -> proto.opReturn = serializeReturn(expression)
+                is IrSetField -> proto.opSetField = serializeSetField(expression)
+                is IrSetValue -> proto.opSetValue = serializeSetValue(expression)
+                is IrStringConcatenation -> proto.opStringConcat = serializeStringConcat(expression)
+                is IrThrow -> proto.opThrow = serializeThrow(expression)
+                is IrTry -> proto.opTry = serializeTry(expression)
+                is IrTypeOperatorCall -> proto.opTypeOp = serializeTypeOp(expression)
+                is IrVararg -> proto.opVararg = serializeVararg(expression)
+                is IrWhen -> proto.opWhen = serializeWhen(expression)
+                is IrWhileLoop -> proto.opWhile = serializeWhile(expression)
+                is IrDynamicMemberExpression -> proto.opDynamicMember = serializeDynamicMemberExpression(expression)
+                is IrDynamicOperatorExpression -> proto.opDynamicOperator = serializeDynamicOperatorExpression(expression)
+                is IrErrorCallExpression -> proto.opErrorCallExpression = serializeErrorCallExpression(expression)
+                is IrErrorExpression -> proto.opErrorExpression = serializeErrorExpression(expression)
+                null -> proto.opMissingExpression = ProtoMissingExpression.newBuilder().build()
+                else -> error("Expression serialization is not supported yet: ${expression.render()}")
+            }
+        } else {
+            val operationProto = ProtoOperationPre_2_4_0.newBuilder()
+            when (expression) {
+                is IrReturnableBlock -> operationProto.returnableBlock = serializeReturnableBlock(expression)
+                is IrInlinedFunctionBlock -> operationProto.inlinedFunctionBlock = serializeInlinedFunctionBlock(expression)
+                is IrBlock -> operationProto.block = serializeBlock(expression)
+                is IrBreak -> operationProto.`break` = serializeBreak(expression)
+                is IrClassReference -> operationProto.classReference = serializeClassReference(expression)
+                is IrCall -> operationProto.call = serializeCall(expression)
+                is IrConstructorCall -> operationProto.constructorCall = serializeConstructorCall(expression)
+                is IrComposite -> operationProto.composite = serializeComposite(expression)
+                is IrConst -> operationProto.const = serializeConst(expression)
+                is IrContinue -> operationProto.`continue` = serializeContinue(expression)
+                is IrDelegatingConstructorCall -> operationProto.delegatingConstructorCall = serializeDelegatingConstructorCall(expression)
+                is IrDoWhileLoop -> operationProto.doWhile = serializeDoWhile(expression)
+                is IrEnumConstructorCall -> operationProto.enumConstructorCall = serializeEnumConstructorCall(expression)
+                is IrFunctionExpression -> operationProto.functionExpression = serializeFunctionExpression(expression)
+                is IrFunctionReference -> operationProto.functionReference = serializeFunctionReference(expression)
+                is IrRichFunctionReference -> operationProto.richFunctionReference = serializeRichFunctionReference(expression)
+                is IrRichPropertyReference -> operationProto.richPropertyReference = serializeRichPropertyReference(expression)
+                is IrGetClass -> operationProto.getClass = serializeGetClass(expression)
+                is IrGetField -> operationProto.getField = serializeGetField(expression)
+                is IrGetValue -> operationProto.getValue = serializeGetValue(expression)
+                is IrGetEnumValue -> operationProto.getEnumValue = serializeGetEnumValue(expression)
+                is IrGetObjectValue -> operationProto.getObject = serializeGetObject(expression)
+                is IrInstanceInitializerCall -> operationProto.instanceInitializerCall = serializeInstanceInitializerCall(expression)
+                is IrLocalDelegatedPropertyReference -> operationProto.localDelegatedPropertyReference =
+                    serializeIrLocalDelegatedPropertyReference(expression)
+                is IrPropertyReference -> operationProto.propertyReference = serializePropertyReference(expression)
+                is IrReturn -> operationProto.`return` = serializeReturn(expression)
+                is IrSetField -> operationProto.setField = serializeSetField(expression)
+                is IrSetValue -> operationProto.setValue = serializeSetValue(expression)
+                is IrStringConcatenation -> operationProto.stringConcat = serializeStringConcat(expression)
+                is IrThrow -> operationProto.`throw` = serializeThrow(expression)
+                is IrTry -> operationProto.`try` = serializeTry(expression)
+                is IrTypeOperatorCall -> operationProto.typeOp = serializeTypeOp(expression)
+                is IrVararg -> operationProto.vararg = serializeVararg(expression)
+                is IrWhen -> operationProto.`when` = serializeWhen(expression)
+                is IrWhileLoop -> operationProto.`while` = serializeWhile(expression)
+                is IrDynamicMemberExpression -> operationProto.dynamicMember = serializeDynamicMemberExpression(expression)
+                is IrDynamicOperatorExpression -> operationProto.dynamicOperator = serializeDynamicOperatorExpression(expression)
+                is IrErrorCallExpression -> operationProto.errorCallExpression = serializeErrorCallExpression(expression)
+                is IrErrorExpression -> operationProto.errorExpression = serializeErrorExpression(expression)
+                else -> error("Expression serialization is not supported yet: ${expression?.render()}")
+            }
+            proto.setOperationPre240(operationProto)
+        }
 
         return proto.build()
     }
 
-    private fun serializeStatement(statement: IrElement): ProtoStatement {
-        val coordinates =
-            // Both IrExpression and IrDeclaration have their own coordinate fields, the one on ProtoStatement is ignored for them.
-            if (statement is IrExpression || statement is IrDeclaration) 0
-            else serializeCoordinates(statement.startOffset, statement.endOffset)
+    private fun serializeStatement(statement: IrElement, parent: IrElement?): ProtoStatement {
         val proto = ProtoStatement.newBuilder()
-            .setCoordinates(coordinates)
+        if (statement is IrExpression || statement is IrDeclaration || statement is IrExpressionBody) {
+            // Both IrExpression and IrDeclaration have their own coordinate fields, the one on ProtoStatement is ignored for them.
+            // Coordinates of IrExpressionBody are derived from the wrapped IrExpression, and those on ProtoStatement are ignored as well.
+            if (!settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+                // Before 2.4.0 the field was `required`
+                proto.setGlobalCoordinates(0)
+            }
+        } else {
+            serializeAndSetCoordinates(
+                proto::setGlobalCoordinates, proto::setLocalCoordinates,
+                statement.startOffset, statement.endOffset, parent
+            )
+        }
 
         when (statement) {
             is IrDeclaration -> {
-                proto.declaration = serializeDeclaration(statement)
+                proto.declaration = serializeDeclaration(statement, parent)
             }
             is IrExpression -> {
-                proto.expression = serializeExpression(statement)
+                proto.expression = serializeExpression(statement, parent)
             }
             is IrBlockBody -> {
                 proto.blockBody = serializeBlockBody(statement)
@@ -1136,7 +1297,7 @@ open class IrFileSerializer(
                 proto.syntheticBody = serializeSyntheticBody(statement)
             }
             is IrExpressionBody -> {
-                proto.expression = serializeExpression(statement.expression)
+                proto.expression = serializeExpression(statement.expression, parent)
             }
             else -> {
                 TODO("Statement not implemented yet: ${statement.render()}")
@@ -1145,11 +1306,14 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeIrDeclarationBase(declaration: IrDeclaration, flags: Long?): ProtoDeclarationBase {
+    private fun serializeIrDeclarationBase(declaration: IrDeclaration, parent: IrElement?, flags: Long?): ProtoDeclarationBase {
         return with(ProtoDeclarationBase.newBuilder()) {
             symbol = serializeIrSymbol((declaration as IrSymbolOwner).symbol, isDeclared = true)
-            coordinates = serializeCoordinates(declaration.startOffset, declaration.endOffset)
-            addAllAnnotation(serializeAnnotations(declaration.annotations))
+            serializeAndSetCoordinates(
+                this::setGlobalCoordinates, this::setLocalCoordinates,
+                declaration.startOffset, declaration.endOffset, parent
+            )
+            addAllAnnotation(serializeAnnotations(declaration.annotations, declaration))
             flags?.let { setFlags(it) }
             originName = serializeIrDeclarationOrigin(declaration.origin)
             build()
@@ -1162,24 +1326,20 @@ open class IrFileSerializer(
         return BinaryNameAndType.encode(nameIndex, typeIndex)
     }
 
-    private fun serializeIrValueParameter(parameter: IrValueParameter): ProtoValueParameter {
-        if (parameter.kind == IrParameterKind.Context) {
-            requireAbiAtLeast(ABI_LEVEL_2_3, { "Context parameter" }) { parameter.parent }
-        }
-
+    private fun serializeIrValueParameter(parameter: IrValueParameter, parent: IrElement?): ProtoValueParameter {
         val proto = ProtoValueParameter.newBuilder()
-            .setBase(serializeIrDeclarationBase(parameter, ValueParameterFlags.encode(parameter)))
+            .setBase(serializeIrDeclarationBase(parameter, parent, ValueParameterFlags.encode(parameter)))
             .setNameType(serializeNameAndType(parameter.name, parameter.type))
 
         parameter.varargElementType?.let { proto.setVarargElementType(serializeIrType(it)) }
-        parameter.defaultValue?.let { proto.setDefaultValue(serializeIrExpressionBody(it.expression)) }
+        parameter.defaultValue?.let { proto.setDefaultValue(serializeIrExpressionBody(it.expression, parameter)) }
 
         return proto.build()
     }
 
-    private fun serializeIrTypeParameter(parameter: IrTypeParameter): ProtoTypeParameter {
+    private fun serializeIrTypeParameter(parameter: IrTypeParameter, parent: IrElement?): ProtoTypeParameter {
         val proto = ProtoTypeParameter.newBuilder()
-            .setBase(serializeIrDeclarationBase(parameter, TypeParameterFlags.encode(parameter)))
+            .setBase(serializeIrDeclarationBase(parameter, parent, TypeParameterFlags.encode(parameter)))
             .setName(serializeName(parameter.name))
         parameter.superTypes.forEach {
             proto.addSuperType(serializeIrType(it))
@@ -1188,17 +1348,17 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeIrFunctionBase(function: IrFunction, flags: Long): ProtoFunctionBase {
+    private fun serializeIrFunctionBase(function: IrFunction, parent: IrElement?, flags: Long): ProtoFunctionBase {
         val isInsideInlineBefore = isInsideInline
         isInsideInline = function.isInline || isInsideInlineBefore
         fileContainsInline = fileContainsInline || function.isInline
 
         val proto = ProtoFunctionBase.newBuilder()
-            .setBase(serializeIrDeclarationBase(function, flags))
+            .setBase(serializeIrDeclarationBase(function, parent, flags))
             .setNameType(serializeNameAndType(function.name, function.returnType))
 
         function.typeParameters.forEach {
-            proto.addTypeParameter(serializeIrTypeParameter(it))
+            proto.addTypeParameter(serializeIrTypeParameter(it, function))
         }
 
         val isAnnotationClass = ((function as? IrConstructor)?.returnType?.classifierOrNull as? IrClass)?.kind == ClassKind.ANNOTATION_CLASS
@@ -1210,7 +1370,7 @@ open class IrFileSerializer(
                 }
             }
 
-            val parameterProto = serializeIrValueParameter(parameter)
+            val parameterProto = serializeIrValueParameter(parameter, function)
             when (parameter.kind) {
                 IrParameterKind.DispatchReceiver -> proto.setDispatchReceiver(parameterProto)
                 IrParameterKind.Context -> proto.addContextParameter(parameterProto)
@@ -1220,21 +1380,21 @@ open class IrFileSerializer(
         }
 
         if (!settings.bodiesOnlyForInlines || function.isInline || (settings.publicAbiOnly && isInsideInline)) {
-            function.body?.let { proto.body = serializeIrStatementBody(it) }
+            function.body?.let { proto.body = serializeIrStatementBody(it, function) }
         }
         isInsideInline = isInsideInlineBefore
 
         return proto.build()
     }
 
-    private fun serializeIrConstructor(declaration: IrConstructor): ProtoConstructor =
+    private fun serializeIrConstructor(declaration: IrConstructor, parent: IrElement?): ProtoConstructor =
         ProtoConstructor.newBuilder()
-            .setBase(serializeIrFunctionBase(declaration, FunctionFlags.encode(declaration)))
+            .setBase(serializeIrFunctionBase(declaration, parent, FunctionFlags.encode(declaration)))
             .build()
 
-    private fun serializeIrFunction(declaration: IrSimpleFunction): ProtoFunction {
+    private fun serializeIrFunction(declaration: IrSimpleFunction, parent: IrElement?): ProtoFunction {
         val proto = ProtoFunction.newBuilder()
-            .setBase(serializeIrFunctionBase(declaration, FunctionFlags.encode(declaration)))
+            .setBase(serializeIrFunctionBase(declaration, parent, FunctionFlags.encode(declaration)))
 
         declaration.overriddenSymbols.forEach {
             proto.addOverridden(serializeIrSymbol(it))
@@ -1250,50 +1410,45 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeIrAnonymousInit(declaration: IrAnonymousInitializer): ProtoAnonymousInit {
+    private fun serializeIrAnonymousInit(declaration: IrAnonymousInitializer, parent: IrElement?): ProtoAnonymousInit {
         val proto = ProtoAnonymousInit.newBuilder()
-            .setBase(serializeIrDeclarationBase(declaration, null))
+            .setBase(serializeIrDeclarationBase(declaration, parent, null))
 
-        proto.body = serializeIrStatementBody(declaration.body)
+        proto.body = serializeIrStatementBody(declaration.body, declaration)
 
         return proto.build()
     }
 
-    private fun serializeIrLocalDelegatedProperty(variable: IrLocalDelegatedProperty): ProtoLocalDelegatedProperty {
+    private fun serializeIrLocalDelegatedProperty(variable: IrLocalDelegatedProperty, parent: IrElement?): ProtoLocalDelegatedProperty {
         val proto = ProtoLocalDelegatedProperty.newBuilder()
-            .setBase(serializeIrDeclarationBase(variable, LocalVariableFlags.encode(variable)))
+            .setBase(serializeIrDeclarationBase(variable, parent, LocalVariableFlags.encode(variable)))
             .setNameType(serializeNameAndType(variable.name, variable.type))
 
-        when (val delegate = variable.delegate) {
-            null -> requireAbiAtLeast(
-                abiCompatibilityLevel = ABI_LEVEL_2_3,
-                prefix = { "Nullable 'delegate' property in ${it::class.simpleName}" },
-                irNode = { variable }
-            )
-            else -> proto.delegate = serializeIrVariable(delegate)
+        variable.delegate?.let { delegate ->
+            proto.delegate = serializeIrVariable(delegate, variable)
         }
 
-        proto.getter = serializeIrFunction(variable.getter)
-        variable.setter?.let { proto.setSetter(serializeIrFunction(it)) }
+        proto.getter = serializeIrFunction(variable.getter, variable)
+        variable.setter?.let { proto.setSetter(serializeIrFunction(it, variable)) }
 
         return proto.build()
     }
 
-    private fun serializeIrProperty(property: IrProperty): ProtoProperty {
+    private fun serializeIrProperty(property: IrProperty, parent: IrElement?): ProtoProperty {
         val proto = ProtoProperty.newBuilder()
-            .setBase(serializeIrDeclarationBase(property, PropertyFlags.encode(property)))
+            .setBase(serializeIrDeclarationBase(property, parent, PropertyFlags.encode(property)))
             .setName(serializeName(property.name))
 
-        property.backingField?.takeUnless { skipIfPrivate(it) }?.let { proto.backingField = serializeIrField(it) }
-        property.getter?.takeUnless { skipIfPrivate(it) }?.let { proto.getter = serializeIrFunction(it) }
-        property.setter?.takeUnless { skipIfPrivate(it) }?.let { proto.setter = serializeIrFunction(it) }
+        property.backingField?.takeUnless { skipIfPrivate(it) }?.let { proto.backingField = serializeIrField(it, property) }
+        property.getter?.takeUnless { skipIfPrivate(it) }?.let { proto.getter = serializeIrFunction(it, property) }
+        property.setter?.takeUnless { skipIfPrivate(it) }?.let { proto.setter = serializeIrFunction(it, property) }
 
         return proto.build()
     }
 
-    private fun serializeIrField(field: IrField): ProtoField {
+    private fun serializeIrField(field: IrField, parent: IrElement?): ProtoField {
         val proto = ProtoField.newBuilder()
-            .setBase(serializeIrDeclarationBase(field, FieldFlags.encode(field)))
+            .setBase(serializeIrDeclarationBase(field, parent, FieldFlags.encode(field)))
             .setNameType(serializeNameAndType(field.name, field.type))
         if (!(settings.bodiesOnlyForInlines &&
                     (field.parent as? IrDeclarationWithVisibility)?.visibility != DescriptorVisibilities.LOCAL &&
@@ -1306,23 +1461,23 @@ open class IrFileSerializer(
                 }
 
             if (initializer != null) {
-                proto.initializer = serializeIrExpressionBody(initializer)
+                proto.initializer = serializeIrExpressionBody(initializer, field)
             }
         }
         return proto.build()
     }
 
-    private fun serializeIrVariable(variable: IrVariable): ProtoVariable {
+    private fun serializeIrVariable(variable: IrVariable, parent: IrElement?): ProtoVariable {
         val proto = ProtoVariable.newBuilder()
-            .setBase(serializeIrDeclarationBase(variable, LocalVariableFlags.encode(variable)))
+            .setBase(serializeIrDeclarationBase(variable, parent, LocalVariableFlags.encode(variable)))
             .setNameType(serializeNameAndType(variable.name, variable.type))
-        variable.initializer?.let { proto.initializer = serializeExpression(it) }
+        variable.initializer?.let { proto.initializer = serializeExpression(it, variable) }
         return proto.build()
     }
 
-    private fun serializeIrClass(clazz: IrClass): ProtoClass {
+    private fun serializeIrClass(clazz: IrClass, parent: IrElement?): ProtoClass {
         val proto = ProtoClass.newBuilder()
-            .setBase(serializeIrDeclarationBase(clazz, ClassFlags.encode(clazz, settings.languageVersionSettings)))
+            .setBase(serializeIrDeclarationBase(clazz, parent, ClassFlags.encode(clazz, settings.languageVersionSettings)))
             .setName(serializeName(clazz.name))
 
 
@@ -1334,14 +1489,14 @@ open class IrFileSerializer(
         }
 
         clazz.declarations.forEach {
-            if (memberNeedsSerialization(it)) proto.addDeclaration(serializeDeclaration(it))
+            if (memberNeedsSerialization(it)) proto.addDeclaration(serializeDeclaration(it, clazz))
         }
 
         clazz.typeParameters.forEach {
-            proto.addTypeParameter(serializeIrTypeParameter(it))
+            proto.addTypeParameter(serializeIrTypeParameter(it, clazz))
         }
 
-        clazz.thisReceiver?.let { proto.thisReceiver = serializeIrValueParameter(it) }
+        clazz.thisReceiver?.let { proto.thisReceiver = serializeIrValueParameter(it, clazz) }
 
         clazz.superTypes.forEach {
             proto.addSuperType(serializeIrType(it))
@@ -1367,61 +1522,61 @@ open class IrFileSerializer(
             addAllUnderlyingPropertyType(representation.underlyingPropertyNamesToTypes.map { (_, irType) -> serializeIrType(irType) })
         }.build()
 
-    private fun serializeIrTypeAlias(typeAlias: IrTypeAlias): ProtoTypeAlias {
+    private fun serializeIrTypeAlias(typeAlias: IrTypeAlias, parent: IrElement?): ProtoTypeAlias {
         val proto = ProtoTypeAlias.newBuilder()
 
-        proto.setBase(serializeIrDeclarationBase(typeAlias, TypeAliasFlags.encode(typeAlias))).nameType =
+        proto.setBase(serializeIrDeclarationBase(typeAlias, parent, TypeAliasFlags.encode(typeAlias))).nameType =
             serializeNameAndType(typeAlias.name, typeAlias.expandedType)
 
         typeAlias.typeParameters.forEach {
-            proto.addTypeParameter(serializeIrTypeParameter(it))
+            proto.addTypeParameter(serializeIrTypeParameter(it, typeAlias))
         }
 
         return proto.build()
     }
 
-    private fun serializeIrEnumEntry(enumEntry: IrEnumEntry): ProtoEnumEntry {
+    private fun serializeIrEnumEntry(enumEntry: IrEnumEntry, parent: IrElement?): ProtoEnumEntry {
         val proto = ProtoEnumEntry.newBuilder()
-            .setBase(serializeIrDeclarationBase(enumEntry, null))
+            .setBase(serializeIrDeclarationBase(enumEntry, parent, null))
             .setName(serializeName(enumEntry.name))
 
         enumEntry.initializerExpression?.let {
-            proto.initializer = serializeIrExpressionBody(it.expression)
+            proto.initializer = serializeIrExpressionBody(it.expression, enumEntry)
         }
         enumEntry.correspondingClass?.let {
-            proto.correspondingClass = serializeIrClass(it)
+            proto.correspondingClass = serializeIrClass(it, enumEntry)
         }
         return proto.build()
     }
 
-    fun serializeDeclaration(declaration: IrDeclaration): ProtoDeclaration {
+    fun serializeDeclaration(declaration: IrDeclaration, parent: IrElement?): ProtoDeclaration {
         val proto = ProtoDeclaration.newBuilder()
 
         when (declaration) {
             is IrAnonymousInitializer ->
-                proto.irAnonymousInit = serializeIrAnonymousInit(declaration)
+                proto.irAnonymousInit = serializeIrAnonymousInit(declaration, parent)
             is IrConstructor ->
-                proto.irConstructor = serializeIrConstructor(declaration)
+                proto.irConstructor = serializeIrConstructor(declaration, parent)
             is IrField ->
-                proto.irField = serializeIrField(declaration)
+                proto.irField = serializeIrField(declaration, parent)
             is IrSimpleFunction ->
-                proto.irFunction = serializeIrFunction(declaration)
+                proto.irFunction = serializeIrFunction(declaration, parent)
             is IrTypeParameter ->
-                proto.irTypeParameter = serializeIrTypeParameter(declaration)
+                proto.irTypeParameter = serializeIrTypeParameter(declaration, parent)
             is IrVariable ->
-                proto.irVariable = serializeIrVariable(declaration)
+                proto.irVariable = serializeIrVariable(declaration, parent)
             is IrValueParameter ->
-                proto.irValueParameter = serializeIrValueParameter(declaration)
+                proto.irValueParameter = serializeIrValueParameter(declaration, parent)
             is IrClass ->
-                proto.irClass = serializeIrClass(declaration)
+                proto.irClass = serializeIrClass(declaration, parent)
             is IrEnumEntry ->
-                proto.irEnumEntry = serializeIrEnumEntry(declaration)
+                proto.irEnumEntry = serializeIrEnumEntry(declaration, parent)
             is IrProperty ->
-                proto.irProperty = serializeIrProperty(declaration)
+                proto.irProperty = serializeIrProperty(declaration, parent)
             is IrLocalDelegatedProperty ->
-                proto.irLocalDelegatedProperty = serializeIrLocalDelegatedProperty(declaration)
+                proto.irLocalDelegatedProperty = serializeIrLocalDelegatedProperty(declaration, parent)
             is IrTypeAlias ->
-                proto.irTypeAlias = serializeIrTypeAlias(declaration)
+                proto.irTypeAlias = serializeIrTypeAlias(declaration, parent)
             else ->
                 TODO("Declaration serialization not supported yet: $declaration")
         }
@@ -1465,23 +1620,16 @@ open class IrFileSerializer(
         val name = entry.matchAndNormalizeFilePath()
         return ProtoFileEntry.newBuilder()
             .apply {
-                if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_3))
-                    setName(serializeString(name))
-                else
-                    setNameOld(name)
+                setName(serializeString(name))
             }
             .applyIf(includeLineStartOffsets) {
                 val firstRelevantLineIndex = relevantLinesRange?.first ?: entry.firstRelevantLineIndex
                 runIf(firstRelevantLineIndex != 0) { setFirstRelevantLineIndex(firstRelevantLineIndex) }
                 val lineOffsets = getRelevantOffsets(entry, relevantLinesRange)
-                if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_3)) {
-                    var lastOffset = 0
-                    for (offset in lineOffsets) {
-                        addLineStartOffsetDelta(offset - lastOffset)
-                        lastOffset = offset
-                    }
-                } else {
-                    addAllLineStartOffset(lineOffsets)
+                var lastOffset = 0
+                for (offset in lineOffsets) {
+                    addLineStartOffsetDelta(offset - lastOffset)
+                    lastOffset = offset
                 }
                 this
             }
@@ -1578,7 +1726,7 @@ open class IrFileSerializer(
 
         val proto = ProtoFile.newBuilder()
             .addAllFqName(serializeFqName(file.packageFqName.asString()))
-            .addAllAnnotation(serializeAnnotations(file.annotations))
+            .addAllAnnotation(serializeAnnotations(file.annotations, file))
 
         file.declarations.forEach {
             if (skipIfPrivate(it)) {
@@ -1591,7 +1739,7 @@ open class IrFileSerializer(
                 return@forEach
             }
 
-            val serializedDeclaration = serializeTopLevelDeclaration(it)
+            val serializedDeclaration = serializeTopLevelDeclaration(it, file)
             topLevelDeclarations.add(serializedDeclaration)
             proto.addDeclarationId(serializedDeclaration.id)
         }
@@ -1615,16 +1763,16 @@ open class IrFileSerializer(
             fileData = proto.build().toByteArray(),
             fqName = file.packageFqName.asString(),
             path = file.path,
-            types = IrArrayWriter(protoTypeArray.byteArrays).writeIntoMemory(),
-            signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }).writeIntoMemory(),
-            strings = IrStringWriter(protoStringArray).writeIntoMemory(),
-            bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }).writeIntoMemory(),
+            types = IrArrayWriter(protoTypeArray.byteArrays, useVarIntInDataArrays).writeIntoMemory(),
+            signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
+            strings = IrStringWriter(protoStringArray, useVarIntInDataArrays).writeIntoMemory(),
+            bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
             declarations = IrDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
-            debugInfo = IrStringWriter(protoDebugInfoArray).writeIntoMemory(),
+            debugInfo = IrStringWriter(protoDebugInfoArray, useVarIntInDataArrays).writeIntoMemory(),
             backendSpecificMetadata = backendSpecificMetadata(file)?.toByteArray(),
             fileEntries = with(protoIrFileEntryArray) {
                 if (isNotEmpty()) {
-                    IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }).writeIntoMemory()
+                    IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory()
                 } else {
                     null
                 }
@@ -1635,7 +1783,7 @@ open class IrFileSerializer(
     fun serializeIrFileWithPreparedInlineFunctions(preparedFunctions: List<IrSimpleFunction>): SerializedIrFile {
         val topLevelDeclarations = preparedFunctions.map { function ->
             inFile(function.file) {
-                val byteArray = serializeDeclaration(function).toByteArray()
+                val byteArray = serializeDeclaration(function, function.file).toByteArray()
                 val idSig = declarationTable.signatureByDeclaration(
                     function.originalOfPreparedInlineFunctionCopy!!,
                     compatibleMode = false,
@@ -1657,19 +1805,19 @@ open class IrFileSerializer(
             fileData = fileProto.build().toByteArray(),
             fqName = FqName.ROOT.asString(),
             path = "",
-            types = IrArrayWriter(protoTypeArray.byteArrays).writeIntoMemory(),
-            signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }).writeIntoMemory(),
-            strings = IrStringWriter(protoStringArray).writeIntoMemory(),
-            bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }).writeIntoMemory(),
+            types = IrArrayWriter(protoTypeArray.byteArrays, useVarIntInDataArrays).writeIntoMemory(),
+            signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
+            strings = IrStringWriter(protoStringArray, useVarIntInDataArrays).writeIntoMemory(),
+            bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
             declarations = IrDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
-            debugInfo = IrStringWriter(protoDebugInfoArray).writeIntoMemory(),
+            debugInfo = IrStringWriter(protoDebugInfoArray, useVarIntInDataArrays).writeIntoMemory(),
             backendSpecificMetadata = null,
-            fileEntries = IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }).writeIntoMemory(),
+            fileEntries = IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
         )
     }
 
-    private fun serializeTopLevelDeclaration(topLevelDeclaration: IrDeclaration): SerializedDeclaration {
-        val byteArray = serializeDeclaration(topLevelDeclaration).toByteArray()
+    private fun serializeTopLevelDeclaration(topLevelDeclaration: IrDeclaration, file: IrFile): SerializedDeclaration {
+        val byteArray = serializeDeclaration(topLevelDeclaration, file).toByteArray()
         val idSig = declarationTable.signatureByDeclaration(
             topLevelDeclaration,
             compatibleMode = false,

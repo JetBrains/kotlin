@@ -10,13 +10,11 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.handlers.FirInterpreterDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.JsKlibInterpreterDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
-import org.jetbrains.kotlin.test.backend.handlers.WasmIrInterpreterDumpHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonClassicFrontendHandlersForCodegenTest
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
+import org.jetbrains.kotlin.test.configuration.commonCodegenConfiguration
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
@@ -33,7 +31,9 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlin.wasm.test.converters.WasmPreSerializationLoweringFacade
+import org.jetbrains.kotlin.wasm.test.handlers.WasmIrHandler
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDtsHandler
+import org.jetbrains.kotlin.wasm.test.handlers.WasmTypeScriptCompilationHandler
 
 abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>, A : ResultingArtifact.Binary<A>>(
     private val targetFrontend: FrontendKind<R>,
@@ -58,12 +58,11 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
         customIgnoreDirective: ValueDirective<TargetBackend>? = null,
         additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>? = null,
     ) {
+        commonCodegenConfiguration()
         commonConfigurationForWasmFirstStageTest(
             targetFrontend,
             targetPlatform,
             wasmTarget,
-            pathToTestDir,
-            testGroupOutputDirPrefix,
             frontendFacade,
             frontendToBackendConverter,
             backendFacade,
@@ -71,13 +70,19 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
             customIgnoreDirective,
             additionalIgnoreDirectives,
         )
+        commonConfigurationForWasmSecondStageTest(
+            pathToTestDir,
+            testGroupOutputDirPrefix,
+        )
         useConfigurators(
             ::WasmSecondStageEnvironmentConfigurator.bind(wasmTarget),
         )
         facadeStep(afterBackendFacade)
 
         wasmArtifactsHandlersStep {
+            useHandlers(::WasmTypeScriptCompilationHandler)
             useHandlers(wasmBoxTestRunner)
+            useHandlers(::WasmIrHandler)
             useHandlers(::WasmDtsHandler)
         }
     }
@@ -95,25 +100,6 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
         }
 
         enableMetaInfoHandler()
-
-        forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
-            enableMetaInfoHandler()
-            configureFirHandlersStep {
-                useHandlers(::FirInterpreterDumpHandler)
-            }
-            configureKlibArtifactsHandlersStep {
-                useHandlers(::JsKlibInterpreterDumpHandler)
-            }
-            configureWasmArtifactsHandlersStep {
-                useHandlers(::WasmIrInterpreterDumpHandler)
-            }
-        }
-
-        forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
-            defaultDirectives {
-                LANGUAGE with "+ExplicitBackingFields"
-            }
-        }
     }
 }
 
@@ -122,8 +108,6 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
     targetFrontend: FrontendKind<R>,
     targetPlatform: TargetPlatform,
     wasmTarget: WasmTarget,
-    pathToTestDir: String,
-    testGroupOutputDirPrefix: String,
     frontendFacade: Constructor<FrontendFacade<R>>,
     frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>,
     backendFacade: Constructor<BackendFacade<I, A>>,
@@ -137,12 +121,7 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
         dependencyKind = DependencyKind.Binary
     }
 
-    val pathToRootOutputDir = System.getProperty("kotlin.wasm.test.root.out.dir") ?: error("'kotlin.wasm.test.root.out.dir' is not set")
     defaultDirectives {
-        +DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
-        WasmEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
-        WasmEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR with pathToTestDir
-        WasmEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX with testGroupOutputDirPrefix
         LANGUAGE with "+JsAllowImplementingFunctionInterface"
     }
 
@@ -190,5 +169,25 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
     loweredIrHandlersStep()
 
     facadeStep(backendFacade)
-    klibArtifactsHandlersStep()
+    klibArtifactsHandlersStep {
+        useHandlers(::KlibBackendDiagnosticsHandler)
+    }
+}
+
+/**
+ * Sets up configuration for Wasm second compilation phase (compilation from KLib to Wasm code).
+ * First compilation phase should be set up separately with [commonConfigurationForWasmFirstStageTest].
+ */
+fun TestConfigurationBuilder.commonConfigurationForWasmSecondStageTest(
+    pathToTestDir: String,
+    testGroupOutputDirPrefix: String,
+) {
+    val pathToRootOutputDir = System.getProperty("kotlin.wasm.test.root.out.dir") ?: error("'kotlin.wasm.test.root.out.dir' is not set")
+    val pathToNodeDir = System.getProperty("kotlin.wasm.test.node.dir") ?: error("'kotlin.wasm.test.node.dir' is not set")
+    defaultDirectives {
+        WasmEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
+        WasmEnvironmentConfigurationDirectives.PATH_TO_NODE_DIR with pathToNodeDir
+        WasmEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR with pathToTestDir
+        WasmEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX with testGroupOutputDirPrefix
+    }
 }

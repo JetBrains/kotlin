@@ -2,12 +2,17 @@ KtNameReferenceExpression(175,185): 'EnumValue1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MyEnum) EnumValue1
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -15,27 +20,40 @@ KtNameReferenceExpression(204,210): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(253,259): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(264,268): 'Unit'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) object Unit
 
 KtCallExpression(276,293): 'lEnum(EnumValue1)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -43,12 +61,14 @@ KtNameReferenceExpression(276,281): 'lEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       lEnum: (arg: MyEnum) -> kotlin.Unit
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -56,12 +76,15 @@ KtNameReferenceExpression(282,292): 'EnumValue1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
     symbols:
       Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -69,6 +92,7 @@ KtCallExpression(298,315): 'lEnum(EnumValue2)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -76,12 +100,14 @@ KtNameReferenceExpression(298,303): 'lEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       lEnum: (arg: MyEnum) -> kotlin.Unit
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -89,12 +115,15 @@ KtNameReferenceExpression(304,314): 'EnumValue2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue2>
     symbols:
       Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -102,13 +131,18 @@ KtNameReferenceExpression(349,350): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: receiveLambda) T
 
 KtCallExpression(387,423): 'receiveLambda<MyEnum> { EnumValue1 }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -116,12 +150,15 @@ KtNameReferenceExpression(387,400): 'receiveLambda'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
     symbols:
       (in ROOT) fun <T> receiveLambda(l: () -> T)
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -129,19 +166,26 @@ KtNameReferenceExpression(401,407): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(411,421): 'EnumValue1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
     symbols:
       Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -149,6 +193,7 @@ KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -156,12 +201,15 @@ KtNameReferenceExpression(428,441): 'receiveLambda'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
     symbols:
       (in ROOT) fun <T> receiveLambda(l: () -> T)
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -169,19 +217,26 @@ KtNameReferenceExpression(442,448): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(452,462): 'EnumValue3'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
     symbols:
       Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -189,6 +244,7 @@ KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -196,12 +252,15 @@ KtNameReferenceExpression(469,482): 'receiveLambda'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
     symbols:
       (in ROOT) fun <T> receiveLambda(l: () -> T)
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -209,18 +268,25 @@ KtNameReferenceExpression(483,489): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(493,497): 'prop'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
     symbols:
       Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

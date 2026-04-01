@@ -2,7 +2,7 @@ FILE: flowFromTwoInplaceLambdas.kt
     public final fun <T> n(): R|T?| {
         ^n Null(null)
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun <T> run2(x: R|() -> T|, y: R|() -> T|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun <T> run2(x: R|() -> T|, y: R|() -> T|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(x, EXACTLY_ONCE)

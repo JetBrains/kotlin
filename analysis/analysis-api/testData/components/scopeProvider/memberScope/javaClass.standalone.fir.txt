@@ -6,6 +6,7 @@ KaJavaFieldSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   isStatic: false
   isVal: false
   location: CLASS
@@ -107,6 +108,7 @@ KaNamedFunctionSymbol:
       compilerVisibility: Local
       isActual: false
       isExpect: false
+      isExternal: false
       isReified: false
       location: LOCAL
       modality: FINAL
@@ -137,6 +139,7 @@ KaNamedFunctionSymbol:
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true
@@ -177,6 +180,7 @@ KaJavaFieldSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   isStatic: false
   isVal: false
   location: CLASS
@@ -289,6 +293,7 @@ KaNamedFunctionSymbol:
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true
@@ -548,6 +553,7 @@ KaConstructorSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   isPrimary: true
   location: CLASS
   modality: FINAL

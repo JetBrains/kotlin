@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.swiftexport.standalone.test;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -18,8 +18,12 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/swift/swift-export-standalone-integration-tests/simple/testData/execution")
 @TestDataPath("$PROJECT_ROOT")
-@UseStandardTestCaseGroupProvider()
+@UseExtTestCaseGroupProvider()
 public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecutionTest {
+  private void run(String fileName) {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/" + fileName);
+  }
+
   @Test
   public void testAllFilesPresentInExecution() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone-integration-tests/simple/testData/execution"), Pattern.compile("^([^_](.+))$"), null, false);
@@ -134,6 +138,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   }
 
   @Test
+  @TestMetadata("ranges")
+  public void testRanges() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/ranges/");
+  }
+
+  @Test
   @TestMetadata("referenceTypes")
   public void testReferenceTypes() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/referenceTypes/");
@@ -161,6 +171,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   @TestMetadata("stdlibTypes")
   public void testStdlibTypes() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/stdlibTypes/");
+  }
+
+  @Test
+  @TestMetadata("valueClass")
+  public void testValueClass() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/valueClass/");
   }
 
   @Test

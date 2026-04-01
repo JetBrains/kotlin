@@ -21,7 +21,7 @@ class A(val firstName: String) : Parcelable {
 }
 
 @Parcelize
-@Suppress("WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET")
+@Suppress(<!ERROR_SUPPRESSION!>"WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET"<!>)
 class B(<!INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY!>@IgnoredOnParcel<!> val firstName: String) : Parcelable {
     @IgnoredOnParcel
     var a: String = ""

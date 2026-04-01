@@ -18,6 +18,22 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
+ * A very general representation of an annotation in Kotlin, like `@Ann(1, 2)`.
+ *
+ * Notable properties:
+ * - [argumentMapping] — the map "name to expression" for annotation arguments
+ * - [typeArguments] — annotation type arguments with projection (in/out) if needed
+ * - [annotationTypeRef] — type reference bound to this annotation (maybe used e.g. to find a corresponding [FirRegularClass] for the annotation)
+ * - [useSiteTarget] — annotation use-site target like GET (`@get:Ann`) or PARAMETER (`@param:Ann`), if any;
+ * normally annotation should be moved to corresponding element during raw FIR building phase or, in non-obvious cases,
+ * during type resolving phase. Sometimes, e.g. for [AnnotationUseSiteTarget.ALL] or for constructor properties annotation,
+ * it's copied to multiple elements. Targets [AnnotationUseSiteTarget.FIELD] and [AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD]
+ * are indistinguishable this way, as both occupy a backing field.
+ *
+ * Note: a declaration of an annotation class, like `annotation class Ann`, is represented by [FirRegularClass].
+ *
+ * See also a very similar [FirAnnotationCall]. 
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.annotation]
  */
 abstract class FirAnnotation : FirExpression() {

@@ -115,7 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|kotlin/Suppress|[Types](names = vararg(String(2)) [evaluated = vararg(String(2))]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 BODY_RESOLVE:
@@ -125,17 +125,17 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| {
+        @R|kotlin/Suppress|[Types](names = vararg(String(2)) [evaluated = vararg(String(2))]) public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| {
         }
 
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
+    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)) [evaluated = vararg(String(1))])
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-annotationsScript.kts>
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| {
+        @R|kotlin/Suppress|[Types](names = vararg(String(2)) [evaluated = vararg(String(2))]) public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| {
         }
 

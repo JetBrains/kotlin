@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companion.calculateOwnerKClass
-import org.jetbrains.kotlin.backend.jvm.lower.PropertyReferenceLowering.PropertyReferenceTarget.*
 import org.jetbrains.kotlin.codegen.inline.loadCompiledInlineFunction
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.usesLocalExceptParameterNullCheck
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrAttribute
@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrDeclarationWithAccessorsSymbol
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import java.util.concurrent.ConcurrentHashMap
@@ -80,7 +82,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             else property.setter?.let { it.resolveFakeOverride() ?: it }
 
     private val arrayItemGetter =
-        context.symbols.array.owner.functions.single { it.name.asString() == "get" }
+        context.irBuiltIns.arrayClass.owner.functions.single { it.name.asString() == "get" }
 
     private val signatureStringIntrinsic = context.symbols.signatureStringIntrinsic
 
@@ -92,7 +94,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     )
 
     private val kPropertiesFieldType =
-        context.symbols.array.createType(false, listOf(makeTypeProjection(kPropertyStarType, Variance.OUT_VARIANCE)))
+        context.irBuiltIns.arrayClass.createType(false, listOf(makeTypeProjection(kPropertyStarType, Variance.OUT_VARIANCE)))
 
     private val IrClass.isSynthetic
         get() = metadata !is MetadataSource.File && metadata !is MetadataSource.Class && metadata !is MetadataSource.Script
@@ -169,16 +171,16 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         }
 
     private fun propertyReferenceClassFor(expression: IrRichPropertyReference): IrClassSymbol {
-        val boundReceivers = expression.getBoundValues(REFLECTED_PROPERTY)
-        val getterFunction = expression.originalGetter ?: expression.getterFunction
-        val needReceiversCount = getterFunction.parameters.size + if (getterFunction.isJvmStaticInObject()) 1 else 0
+        val boundReceivers = expression.boundValues
+        val getterFunction = expression.getterFunction
+        val needReceiversCount = getterFunction.parameters.size
         check(boundReceivers.size < 2 && boundReceivers.size <= needReceiversCount) {
             "Property reference with two and more receivers is not supported: ${expression.dump()}"
         }
         val mutable = expression.setterFunction != null
-        val i = needReceiversCount - boundReceivers.size
-        check(i in 0..2) { "Incorrect number of receivers ($i) for property reference: ${expression.render()}" }
-        return context.symbols.getPropertyReferenceClass(mutable, i, true)
+        val unboundParameterCount = needReceiversCount - boundReceivers.size
+        check(unboundParameterCount in 0..2) { "Incorrect number of receivers ($unboundParameterCount) for property reference: ${expression.render()}" }
+        return context.symbols.getPropertyReferenceClass(mutable, unboundParameterCount, true)
     }
 
     private data class PropertyInstance(val initializer: IrExpression, val index: Int)
@@ -314,9 +316,8 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     // does not support local variables and is slower, but takes up less space in the output binary.
     // Example: `C::property` -> `Reflection.property1(PropertyReference1Impl(C::class, "property", "getProperty()LType;"))`.
     private fun createReflectedKProperty(expression: IrRichPropertyReference): IrExpression {
-        val boundReceivers = expression.getBoundValues(REFLECTED_PROPERTY)
-        require(boundReceivers.size <= 1) { "Property references can not capture more than one receiver: ${expression.dump()}" }
-        val boundReceiver = boundReceivers.firstOrNull()
+        require(expression.boundValues.size <= 1) { "Property references can not capture more than one receiver: ${expression.dump()}" }
+        val boundReceiver = expression.boundValues.firstOrNull()
         val referenceClass = propertyReferenceClassFor(expression)
         return context.createJvmIrBuilder(currentScope!!, expression).run {
             val arity = when {
@@ -324,7 +325,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
                 else -> 4 // (jClass, name, desc, flags)
             }
             irCall(referenceClass.constructors.single { it.owner.parameters.size == arity }).apply {
-                fillReflectedPropertyArguments(this, expression, boundReceiver?.let(expression.boundValues::get))
+                fillReflectedPropertyArguments(this, expression, boundReceiver)
             }
         }
     }
@@ -348,12 +349,20 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     }
 
     private val IrRichPropertyReference.isJavaSyntheticPropertyReference: Boolean
-        get() =
-            symbol.owner.let {
-                it is IrProperty && it.backingField == null &&
-                        (it.origin == IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE
-                                || it.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
-            }
+        get() {
+            val property = symbol.owner as? IrProperty ?: return false
+            return property.backingField == null && (
+                    property.origin == IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE ||
+                            (property.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && !property.isEnumEntries)
+                    )
+        }
+
+    private val IrProperty.isEnumEntries: Boolean
+        get() {
+            val getter = getter ?: return false
+            return parentAsClass.kind == ClassKind.ENUM_CLASS && getter.name == SpecialNames.ENUM_GET_ENTRIES && getter.hasShape() &&
+                    getter.returnType.classOrNull?.owner?.hasEqualFqName(StandardClassIds.EnumEntries.asSingleFqName()) == true
+        }
 
     // Create an instance of KProperty that overrides the get() and set() methods to directly call getX() and setX() on the object.
     // This is (relatively) fast, but space-inefficient. Also, the instances can store bound receivers in their fields. Example:
@@ -368,23 +377,19 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     //
     private fun createSpecializedKProperty(expression: IrRichPropertyReference): IrExpression {
         return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).irBlock {
-            val propertyBoundValues = expression.getBoundValues(REFLECTED_PROPERTY)
-            val getterBoundValues = expression.getBoundValues(GETTER)
-            val setterBoundValues = expression.getBoundValues(SETTER)
             // We do not reuse classes for non-reflective property references because they would not have
             // a valid enclosing method if the same property is referenced at many points.
-            val referenceClass = createKPropertySubclass(expression, getterBoundValues, setterBoundValues)
+            val referenceClass = createKPropertySubclass(expression, expression.boundValues)
             +referenceClass
             +irCall(referenceClass.constructors.single()).apply {
-                arguments.assignFrom(propertyBoundValues) { expression.boundValues[it] }
+                arguments.assignFrom(expression.boundValues)
             }
         }
     }
 
     private fun createKPropertySubclass(
         expression: IrRichPropertyReference,
-        getterBoundValues: List<Int>,
-        setterBoundValues: List<Int>,
+        boundValues: List<IrExpression>
     ): IrClass {
         val superClass = propertyReferenceClassFor(expression).owner
         val referenceClass = context.irFactory.buildClass {
@@ -405,7 +410,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         val set = superClass.functions.find { it.name.asString() == "set" }
         val invoke = superClass.functions.find { it.name.asString() == "invoke" }
 
-        fun IrBuilder.getArguments(boundParameters: List<Int>, function: IrSimpleFunction): List<() -> IrExpression> {
+        fun IrBuilder.getArguments(boundParameters: List<IrExpression>, function: IrSimpleFunction): List<() -> IrExpression> {
             require(boundParameters.size <= 1) { "Property references can not capture more than one receiver: ${function.dump()}" }
             val boundExpressions = boundParameters.map {
                 {
@@ -422,7 +427,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         expression.getterFunction.let { getter ->
             referenceClass.addOverride(get!!) { function ->
                 expression.constInitializer?.let { return@addOverride irExprBody(it) }
-                val arguments = getArguments(getterBoundValues, function)
+                val arguments = getArguments(boundValues, function)
                 getter.inlineWithoutTemporaryVariables(function, arguments)
             }
             referenceClass.addFakeOverride(invoke!!)
@@ -430,7 +435,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
 
         expression.setterFunction?.let { setter ->
             referenceClass.addOverride(set!!) { function ->
-                val arguments = getArguments(setterBoundValues, function)
+                val arguments = getArguments(boundValues, function)
                 setter.inlineWithoutTemporaryVariables(function, arguments)
             }
         }
@@ -462,7 +467,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     }
 
     private fun addConstructor(expression: IrRichPropertyReference, referenceClass: IrClass, superClass: IrClass) {
-        val hasBoundReceiver = expression.getBoundValues(REFLECTED_PROPERTY).isNotEmpty()
+        val hasBoundReceiver = expression.boundValues.isNotEmpty()
         val numOfSuperArgs = (if (hasBoundReceiver) 1 else 0) + 4
         val superConstructor = superClass.constructors.single { it.parameters.size == numOfSuperArgs }
 
@@ -482,32 +487,6 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         }
     }
 
-    private enum class PropertyReferenceTarget { REFLECTED_PROPERTY, GETTER, SETTER }
-
-    /**
-     * Retrieves the indices of bound values for a given property reference target.
-     *
-     * [propertyReferenceTarget] is necessary because [IrDeclaration.isJvmStaticInObject] accessors do not have a dispatch receiver parameter.
-     *
-     * @param propertyReferenceTarget Specifies the target of the property reference, which can be a reflected property, getter, or setter.
-     * @return The bound value indices of the property reference.
-     */
-    private fun IrRichPropertyReference.getBoundValues(propertyReferenceTarget: PropertyReferenceTarget): List<Int> {
-        val removeBoundReceiver = when (propertyReferenceTarget) {
-            GETTER -> originalGetter?.isJvmStaticInObject() == true
-            SETTER -> originalSetter?.isJvmStaticInObject() == true
-            REFLECTED_PROPERTY -> {
-                val callee = if (isLocalDelegatedPropertyReference) localDelegatedProperty else property
-                // without this exception, the PropertyReferenceLowering generates `clinit` with an attempt to use script as receiver
-                // TODO: find whether it is a valid exception and maybe how to make it more obvious (KT-72942)
-                callee is IrProperty
-                        && callee.getter?.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
-                        && callee.getter?.dispatchReceiverParameter?.origin == IrDeclarationOrigin.SCRIPT_THIS_RECEIVER
-            }
-        }
-
-        return boundValues.indices.drop(if (removeBoundReceiver) 1 else 0)
-    }
 }
 
 /**

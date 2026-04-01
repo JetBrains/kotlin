@@ -11,9 +11,9 @@ import kotlin.test.*
 class CharSequences {
     @Sample
     fun charSequenceLength() {
-        assertEquals(0, "".length)
-        assertEquals(6, "Kotlin".length)
+        assertPrints("".length, "0")
+        assertPrints("Kotlin".length, "6")
         // 🥦 is represented by a pair of UTF-16 characters, thus the string's length is 2, not 1
-        assertEquals(2, "🥦".length)
+        assertPrints("🥦".length, "2")
     }
 }

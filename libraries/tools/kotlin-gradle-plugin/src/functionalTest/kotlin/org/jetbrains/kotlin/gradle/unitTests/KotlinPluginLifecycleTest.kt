@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.tooling.core.withClosure
 import org.jetbrains.kotlin.tooling.core.withLinearClosure
 import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.junit.Test
+import kotlin.test.Test
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference

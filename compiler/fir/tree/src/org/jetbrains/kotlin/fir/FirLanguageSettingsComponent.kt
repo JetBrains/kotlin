@@ -8,10 +8,15 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 
 @NoMutableState
-class FirLanguageSettingsComponent(val languageVersionSettings: LanguageVersionSettings) : FirSessionComponent
+class FirLanguageSettingsComponent(
+    val languageVersionSettings: LanguageVersionSettings,
+    val isMetadataCompilation: Boolean,
+) : FirSessionComponent
 
 private val FirSession.languageSettingsComponent: FirLanguageSettingsComponent by FirSession.sessionComponentAccessor()
 
 val FirSession.languageVersionSettings: LanguageVersionSettings
     get() = languageSettingsComponent.languageVersionSettings
 
+val FirSession.isMetadataCompilation: Boolean
+    get() = languageSettingsComponent.isMetadataCompilation

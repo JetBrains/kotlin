@@ -1,7 +1,27 @@
 KtCallExpression(131,172): 'Annotation(strings = arrayOf("v1", "v2"))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Annotation
+        symbol = <constructor>(vararg strings: kotlin.String): Annotation
+        valueParameters = [
+          KaVariableSignature:
+            name = strings
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg strings: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         arrayOf("v1", "v2") -> (KaVariableSignature:
           name = strings
           receiverType = null
@@ -10,25 +30,4 @@ KtCallExpression(131,172): 'Annotation(strings = arrayOf("v1", "v2"))'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Annotation
-          symbol = <constructor>(vararg strings: kotlin.String): Annotation
-          valueParameters = [
-            KaVariableSignature:
-              name = strings
-              receiverType = null
-              returnType = kotlin.String
-              symbol = vararg strings: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true

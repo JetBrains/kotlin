@@ -1,0 +1,6 @@
+KtPostfixExpression(31,34): 'i++'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var i: kotlin.Int,
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]

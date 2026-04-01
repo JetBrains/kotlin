@@ -1,0 +1,179 @@
+KtFile: 'equals.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,64): 'class A {'
+  null
+
+KtClassBody(8,64): '{'
+  null
+
+KtNamedFunction(14,62): 'override fun equals(other: Any?): Boolean = true'
+  null
+
+KtDeclarationModifierList(14,22): 'override'
+  null
+
+KtParameterList(33,46): '(other: Any?)'
+  null
+
+KtParameter(34,45): 'other: Any?'
+  null
+
+KtTypeReference(41,45): 'Any?'
+  null
+
+KtNullableType(41,45): 'Any?'
+  null
+
+KtUserType(41,44): 'Any'
+  null
+
+KtNameReferenceExpression(41,44): 'Any'
+  null
+
+KtTypeReference(48,55): 'Boolean'
+  null
+
+KtUserType(48,55): 'Boolean'
+  null
+
+KtNameReferenceExpression(48,55): 'Boolean'
+  null
+
+KtConstantExpression(58,62): 'true'
+  null
+
+KtNamedFunction(66,158): 'fun test() {'
+  null
+
+KtParameterList(74,76): '()'
+  null
+
+KtBlockExpression(77,158): '{'
+  null
+
+KtProperty(83,94): 'val a = A()'
+  null
+
+KtCallExpression(91,94): 'A()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
+
+KtNameReferenceExpression(91,92): 'A'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
+
+KtValueArgumentList(92,94): '()'
+  null
+
+KtProperty(99,110): 'val b = A()'
+  null
+
+KtCallExpression(107,110): 'A()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
+
+KtNameReferenceExpression(107,108): 'A'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
+
+KtValueArgumentList(108,110): '()'
+  null
+
+KtBinaryExpression(115,121): 'a == b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.equals(<dispatch receiver>: A, other: kotlin.Any?): kotlin.Boolean
+    ]
+
+KtNameReferenceExpression(115,116): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
+
+KtOperationReferenceExpression(117,119): '=='
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.equals(<dispatch receiver>: A, other: kotlin.Any?): kotlin.Boolean
+    ]
+
+KtNameReferenceExpression(120,121): 'b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]
+
+KtBinaryExpression(126,132): 'a != b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.equals(<dispatch receiver>: A, other: kotlin.Any?): kotlin.Boolean
+    ]
+
+KtNameReferenceExpression(126,127): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
+
+KtOperationReferenceExpression(128,130): '!='
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.equals(<dispatch receiver>: A, other: kotlin.Any?): kotlin.Boolean
+    ]
+
+KtNameReferenceExpression(131,132): 'b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]
+
+KtBinaryExpression(137,144): 'a === b'
+  null
+
+KtNameReferenceExpression(137,138): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
+
+KtOperationReferenceExpression(139,142): '==='
+  null
+
+KtNameReferenceExpression(143,144): 'b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]
+
+KtBinaryExpression(149,156): 'a !== b'
+  null
+
+KtNameReferenceExpression(149,150): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
+
+KtOperationReferenceExpression(151,154): '!=='
+  null
+
+KtNameReferenceExpression(155,156): 'b'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]

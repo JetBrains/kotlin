@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationS
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.propertiesExtension
 import org.jetbrains.kotlin.gradle.util.setUklibResolutionStrategy
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class UKlibsFlagTests {

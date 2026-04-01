@@ -12,9 +12,11 @@ library {
       public constructor()
 
       @test/Ann
+      @receiver:test/Ann
       public final fun kotlin/Int.foo(@test/Ann arg: kotlin/Int): kotlin/Int
 
       @test/Ann
+      @receiver:test/Ann
       public final val kotlin/Int.bar: kotlin/Int
         public final /* non-default */ get
     }
@@ -27,9 +29,11 @@ library {
     package {
 
       @test/Ann
+      @receiver:test/Ann
       public final fun kotlin/Int.foo(@test/Ann arg: kotlin/Int): kotlin/Int
 
       @test/Ann
+      @receiver:test/Ann
       public final val kotlin/Int.bar: kotlin/Int
         public final /* non-default */ get
     }

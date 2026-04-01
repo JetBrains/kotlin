@@ -26,6 +26,6 @@ FILE: EnumWithToString.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<Some>|
-            public get(): R|kotlin/enums/EnumEntries<Some>|
+            public static get(): R|kotlin/enums/EnumEntries<Some>|
 
     }

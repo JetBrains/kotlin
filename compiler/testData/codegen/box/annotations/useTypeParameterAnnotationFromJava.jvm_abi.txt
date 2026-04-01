@@ -1,9 +1,0 @@
-MODULE main
-	CLASS Anno.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(I)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(value: kotlin/Int /* = ... */)
-					K2
-						(value: kotlin/Int = 0)

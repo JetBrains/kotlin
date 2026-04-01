@@ -1,0 +1,46 @@
+KtCallExpression(157,168): 'call(1, "")'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /call(a: @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int, b: @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
+            symbol = a: @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
+            symbol = b: @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /call
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
+          symbol = a: @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
+          contextParameters = []
+          callableId = null),
+        "" -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
+          symbol = b: @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
+          contextParameters = []
+          callableId = null)
+      }

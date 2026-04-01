@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  * [getEnlargementScopes]/[getRestrictionScopes] are called. Furthermore, implementations must not use [KotlinProjectStructureProvider], as
  * the content scope may be accessed during [KaModule] computation.
  */
+@KaPlatformInterface
 public interface KotlinContentScopeRefiner : KotlinPlatformComponent {
     /**
      * Given a [KaModule], [getEnlargementScopes] returns [GlobalSearchScope]s which enlarge [KaModule.baseContentScope] to form
@@ -44,6 +46,7 @@ public interface KotlinContentScopeRefiner : KotlinPlatformComponent {
      */
     public fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> = emptyList()
 
+    @KaPlatformInterface
     public companion object {
         public val EP_NAME: ExtensionPointName<KotlinContentScopeRefiner> =
             ExtensionPointName<KotlinContentScopeRefiner>(

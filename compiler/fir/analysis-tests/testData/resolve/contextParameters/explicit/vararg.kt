@@ -2,7 +2,6 @@
 // LANGUAGE: +ContextParameters +ExplicitContextArguments
 
 class A
-class B
 
 context(a: A)
 fun foo(vararg s: String) {}

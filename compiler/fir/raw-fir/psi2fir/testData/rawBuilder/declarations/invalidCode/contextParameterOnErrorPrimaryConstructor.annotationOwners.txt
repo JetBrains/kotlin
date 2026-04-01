@@ -6,14 +6,6 @@ context -> FirConstructorSymbol /Clazz.Clazz
 owner -> FirConstructorSymbol /Another.Another
 context -> FirConstructorSymbol /Another.Another
 
-@SharedTypeAnno()
-owner -> FirValueParameterSymbol <local>/<unused var> from FirConstructorSymbol /OneMore.OneMore
-context -> FirValueParameterSymbol <local>/<unused var> from FirConstructorSymbol /OneMore.OneMore
-
-@SharedAnno()
-owner -> FirValueParameterSymbol <local>/<unused var> from FirConstructorSymbol /OneMore.OneMore
-context -> FirValueParameterSymbol <local>/<unused var> from FirConstructorSymbol /OneMore.OneMore
-
 @Anno(String(str))
 owner -> FirConstructorSymbol /OneMore.OneMore
 context -> FirConstructorSymbol /OneMore.OneMore

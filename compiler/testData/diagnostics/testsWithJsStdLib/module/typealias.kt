@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +NestedTypeAliases
 @file:JsModule("lib")
 

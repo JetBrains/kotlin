@@ -160,8 +160,18 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         val scopes = lookupSuperTypes(
             owner, lookupInterfaces = true, deep = false, useSiteSession = session
         ).mapNotNull { useSiteSuperType ->
-            useSiteSuperType.scopeForSupertype(session, scopeSession, owner.fir, memberRequiredPhase = null)
+            useSiteSuperType.scopeForSupertype(
+                useSiteSession = session,
+                scopeSession = scopeSession,
+                derivedClass = owner.fir,
+                // The STATUS phase is required to safely iterate through super class members.
+                // It is legal to request it since the compiler guaranties that the class could be resolved to the STATUS phase
+                // only after all its super types are resolved to the STATUS phase.
+                // And this function (getFromSupertype) is supposed to be called not earlier than the STATUS phase as well.
+                memberRequiredPhase = FirResolvePhase.STATUS,
+            )
         }
+
         val targets = scopes.flatMap { extractor(it) }
         return targets.singleOrNull() ?: error("Zero or multiple overrides found for ${callableId.callableName} in $owner")
     }

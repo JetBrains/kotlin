@@ -36,6 +36,21 @@ fun nop() {}
 // test.kt:15 box
 // test.kt:10 box
 
+// EXPECTATIONS NATIVE
+// test.kt:6 box
+// test.kt:13 box
+// test.kt:21 nop
+// test.kt:14 box
+// test.kt:7 box
+// test.kt:21 nop
+// test.kt:8 box
+// test.kt:18 box
+// test.kt:21 nop
+// test.kt:19 box
+// test.kt:9 box
+// test.kt:15 box
+// test.kt:10 box
+
 // EXPECTATIONS JS_IR
 // test.kt:13 box
 // test.kt:21 nop

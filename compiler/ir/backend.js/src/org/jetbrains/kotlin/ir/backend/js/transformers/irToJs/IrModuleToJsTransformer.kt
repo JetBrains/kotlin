@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
+import org.jetbrains.kotlin.js.util.NameTable
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -184,7 +185,7 @@ class IrModuleToJsTransformer(
 
     private fun associateIrAndExport(modules: Iterable<IrModuleFragment>): List<IrAndExportedDeclarations> {
         val tsExportModelGenerator = runIf(shouldGenerateTypeScriptDefinitions) {
-            TsExportModelGenerator(backendContext, generateNamespacesForPackages = !isEsModules)
+            TsExportModelGenerator(backendContext, isEsModules = isEsModules)
         }
 
         return modules.map { module ->
@@ -248,7 +249,7 @@ class IrModuleToJsTransformer(
             runIf(shouldGenerateTypeScriptDefinitions) {
                 TsExportModelGenerator(
                     backendContext,
-                    generateNamespacesForPackages = !isEsModules
+                    isEsModules = isEsModules
                 )
             },
         )
@@ -407,7 +408,7 @@ class IrModuleToJsTransformer(
         return JsIrProgramFragment("", file.packageFqName.asString())
             .also {
                 it.dts = tsDeclarations
-                it.exports.statements += ExportModelToJsStatements(staticContext, backendContext.es6mode, { globalNames.declareFreshName(it, it) })
+                it.exports.statements += ExportModelToJsStatements(staticContext, backendContext.es6mode)
                     .generateModuleExport(ExportedModule(mainModuleName, exports), internalModuleName, isEsModules)
                 it.computeAndSaveNameBindings(emptySet(), nameGenerator)
             }
@@ -460,7 +461,7 @@ class IrModuleToJsTransformer(
 
         staticContext.classModels.entries.forEach { (symbol, model) ->
             result.classes[nameGenerator.getNameForClass(symbol.owner)] =
-                JsIrIcClassModel(model.superClasses.memoryOptimizedMap { staticContext.getNameForClass(it.owner) }).also {
+                JsIrIcClassModel(model.dependsOnClasses.memoryOptimizedMap(staticContext::getNameForClass)).also {
                     it.preDeclarationBlock.statements += model.preDeclarationBlock.statements
                     it.postDeclarationBlock.statements += model.postDeclarationBlock.statements
                 }

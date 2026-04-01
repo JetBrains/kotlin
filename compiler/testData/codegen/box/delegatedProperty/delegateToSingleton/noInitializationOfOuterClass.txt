@@ -2,11 +2,12 @@
 public final class NoInitializationOfOuterClassKt {
     // source: 'noInitializationOfOuterClass.kt'
     synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
-    private final static @org.jetbrains.annotations.NotNull field result$delegate: O$P
     static method <clinit>(): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private static method getResult$delegate(): java.lang.Object
     public final static @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.NotNull p0: O$P, @org.jetbrains.annotations.Nullable p1: java.lang.Object, @org.jetbrains.annotations.Nullable p2: java.lang.Object): java.lang.String
+    public final inner class O$P
 }
 
 @kotlin.Metadata

@@ -26,3 +26,4 @@ enum class State {
         fun done(state: State) = state.isFinished
     }
 }
+// LIGHT_ELEMENTS_NO_DECLARATION: Event.class[getEntries;valueOf;values], State.class[getEntries;valueOf;values]

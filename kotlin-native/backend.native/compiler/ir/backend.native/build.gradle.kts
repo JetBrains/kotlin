@@ -8,7 +8,6 @@ dependencies {
     api(project(":compiler:ir.tree"))
 
     compileOnly(jpsModel())
-    compileOnly(project(":compiler:cli-common"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
 
     implementation(commonDependency("com.fasterxml:aalto-xml")) { isTransitive = false }
@@ -26,7 +25,7 @@ dependencies {
     implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:ir.serialization.common"))
     implementation(project(":compiler:ir.serialization.native"))
-    implementation(project(":compiler:util"))
+    implementation(project(":native:unsafe-mem"))
     implementation(project(":core:compiler.common.native"))
     implementation(project(":core:descriptors"))
     implementation(project(":kotlin-native:llvmInterop"))
@@ -39,6 +38,7 @@ dependencies {
     implementation(project(":native:objcexport-header-generator-k1"))
     implementation(project(":native:binary-options"))
     implementation(project(":compiler:cli:cli-native-klib"))
+    implementation(project(":native:native.config"))
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {

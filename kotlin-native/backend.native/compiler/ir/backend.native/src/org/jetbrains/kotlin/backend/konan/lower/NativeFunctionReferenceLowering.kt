@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.reflectionTargetLinka
 import org.jetbrains.kotlin.backend.common.lower.AbstractFunctionReferenceLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.customNameInReflection
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageIssueSignificance
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
@@ -87,9 +88,9 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
 
     override fun IrBuilderWithScope.generateSuperClassConstructorCall(constructor: IrConstructor, superClassType: IrType, functionReference: IrRichFunctionReference): IrDelegatingConstructorCall {
         return irDelegatingConstructorCall(superClassType.classOrFail.owner.primaryConstructor!!).apply {
-            functionReference.reflectionTargetSymbol?.let { reflectionTarget ->
+            functionReference.reflectionTargetSymbol?.let {
                 val reflectionTargetLinkageError = functionReference.reflectionTargetLinkageError
-                val description = if (reflectionTargetLinkageError == null) KFunctionDescription(functionReference) else null
+                val description = KFunctionDescription(functionReference)
                 arguments[0] = irKFunctionDescription(functionReference, description, reflectionTargetLinkageError)
                 typeArguments[0] = functionReference.invokeFunction.returnType
             }
@@ -131,22 +132,22 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
         }
     }
 
-    private fun IrBuilderWithScope.irKFunctionDescription(functionReference: IrRichFunctionReference, description: KFunctionDescription?, reflectionTargetLinkageError: PartialLinkageCase?): IrConstantValue {
+    private fun IrBuilderWithScope.irKFunctionDescription(functionReference: IrRichFunctionReference, description: KFunctionDescription, reflectionTargetLinkageError: PartialLinkageCase?): IrConstantValue {
         if (reflectionTargetLinkageError != null) {
-            val errorMessage = generationState.context.partialLinkageSupport.prepareLinkageError(
-                    doNotLog = true,
+            val errorMessage = generationState.context.partialLinkageSupport.renderAndLogLinkageError(
                     reflectionTargetLinkageError,
                     functionReference,
                     PLFile.determineFileFor(functionReference.invokeFunction),
+                    PartialLinkageIssueSignificance.MINOR,
             )
             return irConstantObject(
                     kFunctionDescriptionLinkageErrorSymbol.owner,
                     mapOf(
+                            "name" to irConstantPrimitive(irString(description.getName())),
                             "reflectionTargetLinkageError" to irConstantPrimitive(irString(errorMessage))
                     )
             )
         } else {
-            requireNotNull(description)
             val kTypeGenerator = toNativeConstantReflectionBuilder(symbols)
             return irConstantObject(
                     kFunctionDescriptionCorrectSymbol.owner,

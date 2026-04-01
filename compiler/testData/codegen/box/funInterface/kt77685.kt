@@ -1,7 +1,5 @@
-/*
- * Copyright 2010-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
- */
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.2
+// ^^^ KT-77685 is fixed in 2.2.10-RC
 // WITH_STDLIB
 
 // FILE: lib.kt

@@ -132,7 +132,11 @@ private fun ConeRigidType.enhanceInflexibleType(
         precomputedTypeArguments,
     )
 
-    return if (enhanced != null && (effectiveQualifiers.isNullabilityQualifierForWarning || convertErrorToWarning)) {
+    return if (enhanced != null &&
+        (effectiveQualifiers.isNullabilityQualifierForWarning
+                || (effectiveQualifiers.isMutabilityQualifierForWarning && enhancedTag != lookupTag)
+                || convertErrorToWarning)
+    ) {
         val newAttributes = attributes.add(
             EnhancedTypeForWarningAttribute(
                 enhanced.enhancedTypeForWarningOrSelf,
@@ -140,9 +144,12 @@ private fun ConeRigidType.enhanceInflexibleType(
             )
         )
 
-        if (enhancedTag != lookupTag) {
-            // Handle case when mutability was enhanced and nullability was enhanced for warning.
+        if (enhancedTag != lookupTag && !effectiveQualifiers.isMutabilityQualifierForWarning) {
+            // Handle case when mutability was enhanced for error and nullability was enhanced for warning.
             enhancedTag.constructType(enhanced.typeArguments, isMarkedNullable, newAttributes)
+        } else if (enhancedTag != lookupTag && !effectiveQualifiers.isNullabilityQualifierForWarning) {
+            // Handle case when mutability was enhanced for warning and nullability was enhanced for error.
+            lookupTag.constructType(enhanced.typeArguments, enhanced.isMarkedNullable, newAttributes)
         } else {
             this.withAttributes(newAttributes).withArguments(enhanced.typeArguments)
         }.applyIf(isFromDefinitelyNotNullType) {

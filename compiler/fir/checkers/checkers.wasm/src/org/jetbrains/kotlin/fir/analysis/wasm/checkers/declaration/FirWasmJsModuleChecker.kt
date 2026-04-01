@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
-import org.jetbrains.kotlin.fir.analysis.checkers.closestNonLocalWith
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -21,12 +21,15 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsModule
 
 object FirWasmJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (declaration is FirFile || !declaration.hasAnnotation(JsModule, context.session)) return
 
         if (declaration is FirProperty && declaration.isVar) {
-            reporter.reportOn(declaration.source, FirWasmErrors.JS_MODULE_PROHIBITED_ON_VAR)
+            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR)
         }
 
         if (!declaration.symbol.isEffectivelyExternal(context.session)) {
@@ -34,7 +37,7 @@ object FirWasmJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common
         }
 
         if (context.isTopLevel && context.containingFileSymbol?.hasAnnotation(JsModule, context.session) == true) {
-            reporter.reportOn(declaration.source, FirWasmErrors.NESTED_JS_MODULE_PROHIBITED)
+            reporter.reportOn(declaration.source, FirWebCommonErrors.NESTED_JS_MODULE_PROHIBITED)
         }
     }
 }

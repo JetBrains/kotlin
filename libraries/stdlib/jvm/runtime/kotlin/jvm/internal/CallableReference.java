@@ -8,10 +8,12 @@ package kotlin.jvm.internal;
 import kotlin.SinceKotlin;
 import kotlin.jvm.KotlinReflectionNotSupportedError;
 import kotlin.reflect.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.GenericDeclaration;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +24,7 @@ import java.util.Map;
  * and stored in the {@link CallableReference#reflected} field.
  */
 @SuppressWarnings({"unchecked", "NullableProblems", "rawtypes"})
-public abstract class CallableReference implements KCallable, Serializable {
+public abstract class CallableReference implements KCallable, Serializable, KotlinGenericDeclaration {
     // This field is not volatile intentionally:
     // 1) It's fine if the value is computed multiple times in different threads;
     // 2) An uninitialized value cannot be observed in this field from other thread because only already initialized or safely initialized
@@ -130,6 +132,12 @@ public abstract class CallableReference implements KCallable, Serializable {
      */
     public String getSignature() {
         return signature;
+    }
+
+    @Override
+    @Nullable
+    public GenericDeclaration findJavaDeclaration() {
+        return KotlinGenericDeclarationKt.findMethodBySignature(getOwner(), getSignature());
     }
 
     // The following methods are the delegating implementations of reflection functions. They are called when you're using reflection

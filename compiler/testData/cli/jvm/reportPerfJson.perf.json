@@ -33,6 +33,8 @@
   },
   "dynamicStats": [
   ],
+  "klibElementStats": [
+  ],
   "findJavaClassStats": {
     "count": 1,
     "time": {

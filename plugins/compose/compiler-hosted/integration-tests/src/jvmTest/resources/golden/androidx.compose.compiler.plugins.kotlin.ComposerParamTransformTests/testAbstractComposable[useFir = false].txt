@@ -34,7 +34,10 @@ abstract class BaseFoo {
   @NonRestartableComposable
   @Composable
   abstract fun bar(%composer: Composer?, %changed: Int)
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 1)
 class FooImpl : BaseFoo {
@@ -51,5 +54,8 @@ class FooImpl : BaseFoo {
     }
     %composer.endReplaceGroup()
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }

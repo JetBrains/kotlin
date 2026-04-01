@@ -1,0 +1,8 @@
+KtOperationReferenceExpression(68,70): '+='
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /plus(<extension receiver>: R, other: P): R,
+      kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E,
+      kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with set>

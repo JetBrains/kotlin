@@ -3,16 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation
+package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.KEEP_IC_CACHES_IN_MEMORY
-import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertLogContainsPatterns
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.KEEP_IC_CACHES_IN_MEMORY
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.readText
@@ -38,8 +38,8 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
 
             module1.compileIncrementally(
                 SourcesChanges.Known(modifiedFiles = listOf(fooKt.toFile()), removedFiles = emptyList()),
-            ) { module ->
-                assertCompiledSources(module, "foo.kt", "bar.kt")
+            ) {
+                assertCompiledSources("foo.kt", "bar.kt")
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
             }
         }
@@ -71,8 +71,8 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
 
             module2.compileIncrementally(
                 SourcesChanges.Known(modifiedFiles = emptyList(), removedFiles = emptyList())
-            ) { module ->
-                assertCompiledSources(module, "b.kt")
+            ) {
+                assertCompiledSources("b.kt")
             }
         }
     }

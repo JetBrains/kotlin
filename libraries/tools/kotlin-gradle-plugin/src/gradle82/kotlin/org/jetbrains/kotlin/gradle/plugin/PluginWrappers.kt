@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporter
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporterG82
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporterG82
 import org.jetbrains.kotlin.gradle.plugin.internal.*
@@ -69,6 +71,8 @@ private fun Project.registerVariantImplementations() {
         ProjectIsolationStartParameterAccessorG82.Factory()
     factories[ProblemsReporter.Factory::class] =
         ProblemsReporterG82.Factory()
+    factories[CompilerDiagnosticsProblemsReporter.Factory::class] =
+        CompilerDiagnosticsProblemsReporterG82.Factory()
     if (gradleVersion < GradleVersion.version("8.3")) { // for versions higher than 8.3 use common implementation
         factories[MavenPublicationComponentAccessor.Factory::class] =
             MavenPublicationComponentAccessorG82.Factory()

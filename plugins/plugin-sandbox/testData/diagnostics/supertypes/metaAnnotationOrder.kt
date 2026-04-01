@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: main.kt
 package foo
 
@@ -43,3 +44,5 @@ import org.jetbrains.kotlin.plugin.sandbox.MetaSupertype
 
 @MetaSupertype
 annotation class AddSupertype1
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, interfaceDeclaration */

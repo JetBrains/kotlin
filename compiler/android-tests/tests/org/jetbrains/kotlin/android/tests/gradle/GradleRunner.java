@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.android.tests.run.RunUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.intellij.openapi.util.text.Strings.capitalize;
+
 public class GradleRunner {
     private final List<String> listOfCommands;
 
@@ -54,24 +56,17 @@ public class GradleRunner {
         OutputUtils.checkResult(result);
     }
 
-    public void installDebugAndroidTest() {
-        System.out.println("Install tests...");
-        OutputUtils.checkResult(RunUtils.execute(generateCommandLine("installDebug")));
-        OutputUtils.checkResult(RunUtils.execute(generateCommandLine("installDebugAndroidTest")));
+    public void installAndroidDebugTest(String flavorName) {
+        System.out.println("Install tests for flavor " + flavorName + "...");
+        String capitalizedFlavor = capitalize(flavorName);
+        OutputUtils.checkResult(RunUtils.execute(generateCommandLine("install" + capitalizedFlavor + "Debug")));
+        OutputUtils.checkResult(RunUtils.execute(generateCommandLine("install" + capitalizedFlavor + "DebugAndroidTest")));
     }
 
     public void uninstallDebugAndroidTest() {
         System.out.println("Uninstall tests...");
         RunUtils.execute(generateCommandLine("uninstallDebugAndroidTest"));
         RunUtils.execute(generateCommandLine("uninstallDebug"));
-    }
-
-    public String connectedDebugAndroidTest() {
-        System.out.println("Starting tests...");
-        GeneralCommandLine test = generateCommandLine("connectedAndroidTest");
-        test.addParameters("--stacktrace");
-        test.addParameters("--continue"); //run all flavors even if any fail
-        return RunUtils.execute(test).getOutput();
     }
 
     private GeneralCommandLine generateCommandLine(String taskName) {

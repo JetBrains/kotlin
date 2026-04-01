@@ -9,15 +9,24 @@ function assert(condition: boolean) {
 assert(typeof foo._any === "object");
 assert(foo._string === "ZZZ");
 assert(foo._boolean === true);
+assert(foo._char === 1105);
 assert(foo._byte === 1);
 assert(foo._short === 1);
 assert(foo._float === 1);
 assert(foo._double === 1);
+assert(foo._ubyte === -1);
+assert(foo._ushort === -1);
+assert(foo._uint === -1);
 assert(foo._byte_array instanceof Int8Array);
 assert(foo._short_array instanceof Int16Array);
 assert(foo._int_array instanceof Int32Array);
 assert(foo._float_array instanceof Float32Array);
 assert(foo._double_array instanceof Float64Array);
+assert(foo._boolean_array instanceof Array);
+assert(foo._char_array instanceof Uint16Array);
+assert(foo._ubyte_array instanceof Int8Array);
+assert(foo._ushort_array instanceof Int16Array);
+assert(foo._uint_array instanceof Int32Array);
 assert(foo._array_byte instanceof Array);
 assert(foo._array_short instanceof Array);
 assert(foo._array_int instanceof Array);
@@ -25,6 +34,9 @@ assert(foo._array_float instanceof Array);
 assert(foo._array_double instanceof Array);
 assert(foo._array_string instanceof Array);
 assert(foo._array_boolean instanceof Array);
+assert(foo._array_ubyte instanceof Array);
+assert(foo._array_ushort instanceof Array);
+assert(foo._array_uint instanceof Array);
 
 assert(foo._array_array_string instanceof Array);
 assert(foo._array_array_string[0] instanceof Array);
@@ -56,6 +68,7 @@ assert(x instanceof Array);
 assert(x == null ? false : (x[0] === ":)"));
 
 foo._fun_n_int_unit(null);
+foo._fun_n_int_unit_class(null);
 
 assert(foo._fun_n_boolean_n_int_n_string_n_intarray(false, undefined, "ZZZ") == null);
 assert(foo._n_curried_fun(10)(null)(30) === 40);

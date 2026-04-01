@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 project.updateJvmTarget("1.8")

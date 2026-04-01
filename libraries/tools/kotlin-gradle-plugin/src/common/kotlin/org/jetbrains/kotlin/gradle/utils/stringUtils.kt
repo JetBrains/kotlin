@@ -29,13 +29,13 @@ internal fun dashSeparatedName(vararg nameParts: String?): String {
 }
 
 internal fun String.decamelize(): String {
-    return replace(upperCaseRegex) {
-        val (first) = it.destructured
-        "-${first.toLowerCaseAsciiOnly()}"
-    }
+    return replace(upperCaseSequenceToCapitalizedWordRegex, "$1-$2")
+        .replace(lowerCaseOrDigitToUpperCaseRegex, "$1-$2")
+        .toLowerCaseAsciiOnly()
 }
 
-private val upperCaseRegex = "([A-Z])".toRegex()
+private val lowerCaseOrDigitToUpperCaseRegex = "([a-z\\d])([A-Z])".toRegex()
+private val upperCaseSequenceToCapitalizedWordRegex = "([A-Z]+)([A-Z][a-z])".toRegex()
 
 private val invalidTaskNameCharacters = "[/\\\\:<>\"?*|]".toRegex()
 

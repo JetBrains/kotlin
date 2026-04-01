@@ -2,5 +2,6 @@ KDocName(44,50): 'Nested'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in C) class Nested

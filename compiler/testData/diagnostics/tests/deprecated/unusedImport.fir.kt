@@ -8,6 +8,6 @@ interface A
 
 // FILE: B.kt
 
-import <!DEPRECATION!>test.A<!>
+import test.A
 
 /* GENERATED_FIR_TAGS: interfaceDeclaration, stringLiteral */

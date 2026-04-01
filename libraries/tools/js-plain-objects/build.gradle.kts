@@ -1,3 +1,5 @@
+import org.gradle.plugin.compatibility.compatibility
+
 plugins {
     id("gradle-plugin-common-configuration")
 }
@@ -13,6 +15,12 @@ gradlePlugin {
             displayName = "Kotlin compiler plugin for typed JS-objects library"
             description = displayName
             implementationClass = "org.jetbrains.kotlinx.jspo.gradle.JsPlainObjectsKotlinGradleSubplugin"
+
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
     }
 }

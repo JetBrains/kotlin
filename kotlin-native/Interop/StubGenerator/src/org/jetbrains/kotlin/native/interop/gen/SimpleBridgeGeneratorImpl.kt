@@ -194,12 +194,7 @@ class SimpleBridgeGeneratorImpl(
 
         buildKotlinCodeLines(topLevelKotlinScope) {
             var kotlinExpr = block(kotlinParameters.map { (name, _) -> name })
-            if (returnType == BridgedType.OBJC_POINTER) {
-                // The Kotlin code may lose the ownership on this pointer after returning from the bridge,
-                // so retain the pointer and autorelease it:
-                kotlinExpr = "objc_retainAutoreleaseReturnValue($kotlinExpr)"
-                // (Objective-C does the same for returned pointers).
-            }
+            require(returnType != BridgedType.OBJC_POINTER) { "Objective-C interop should not reach here" }
             returnResult(kotlinExpr)
         }.forEach {
             kotlinLines.add("    $it")

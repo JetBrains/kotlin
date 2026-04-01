@@ -23,6 +23,6 @@ data class KtObjCExportConfiguration(
      */
     val objcGenerics: Boolean = true,
 
-    val objcExportBlockExplicitParameterNames: Boolean = true,
+    val objcExportBlockExplicitParameterNames: Boolean = false,
 )
 

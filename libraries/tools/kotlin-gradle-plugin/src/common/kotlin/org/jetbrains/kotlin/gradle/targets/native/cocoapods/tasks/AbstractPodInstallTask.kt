@@ -113,7 +113,19 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
             |        
         """.trimMargin()
 
-        if (output.contains("No such file or directory")) {
+        if (output.contains("requires Ruby version")) {
+            message += """
+               |        Your Ruby version appears to be too old for CocoaPods.
+               |        
+               |        To resolve this, either:
+               |          - Install CocoaPods via Homebrew: brew install cocoapods
+               |          - Update Ruby using a version manager like rbenv or rvm
+               |        
+               |        For more information, see: https://guides.cocoapods.org/using/getting-started.html
+               |
+            """.trimMargin()
+            return message
+        } else if (output.contains("No such file or directory")) {
             message += """ 
                |        Full command: $command
                |        
@@ -121,17 +133,28 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
                |        Please check that CocoaPods v1.14 or above is installed.
                |        
                |        To check CocoaPods version type 'pod --version' in the terminal
-               |        To install CocoaPods execute 'sudo gem install cocoapods'
-               |        For more information, refer to the documentation: https://kotl.in/fx2sde
+               |        
+               |        You can install CocoaPods using Homebrew:
+               |        $ brew install cocoapods
+               |        
+               |        Or using RubyGems (may require updating Ruby via rbenv or rvm):
+               |        $ gem install cocoapods
+               |        
+               |        For more information, refer to the documentation: https://kotl.in/kmp-cocoapods
                |
             """.trimMargin()
             return message
         } else if (output.contains("[Xcodeproj] Unknown object version")) {
             message += """
                |        Your CocoaPods installation may be outdated or corrupted
-               |
-               |        To update CocoaPods execute 'sudo gem install cocoapods'
-               |        For more information, refer to the documentation: https://kotl.in/0xfxux
+               |        
+               |        You can update CocoaPods using Homebrew:
+               |        $ brew upgrade cocoapods
+               |        
+               |        Or using RubyGems:
+               |        $ gem update cocoapods
+               |        
+               |        For more information, refer to the documentation: https://kotl.in/kmp-cocoapods
                |
             """.trimMargin()
             return message
@@ -145,14 +168,21 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
                   |        ERROR: CocoaPods executable not found in your PATH.
                   |        Please make sure CocoaPods is installed on your system.
                   |
-                  |        You can install CocoaPods using the following command:
-                  |        ${'$'} sudo gem install cocoapods
+                  |        You can install CocoaPods using Homebrew:
+                  |        $ brew install cocoapods
+                  |
+                  |        Or using RubyGems (may require updating Ruby via rbenv or rvm):
+                  |        $ gem install cocoapods
+                  |
+                  |        For detailed installation instructions, see the CocoaPods Getting Started guide:
+                  |        https://guides.cocoapods.org/using/getting-started.html
                   |
                   |        If CocoaPods is already installed and not in your PATH, you can define the
-                  |        CocoaPods executable path in the local.properties file by executing the following:
-                  |        ${'$'} echo -e "kotlin.apple.cocoapods.bin=${'$'}(which pod)" >> local.properties
+                  |        CocoaPods executable path in the local.properties file:
+                  |        $ echo "kotlin.apple.cocoapods.bin=$(which pod)" >> local.properties
                   |
-                  |        For more information, refer to the documentation: https://kotl.in/hxxwtk
+                  |        For more information on CocoaPods integration with Kotlin Multiplatform:
+                  |        https://kotl.in/kmp-cocoapods
                   |        
                """.trimMargin()
     }

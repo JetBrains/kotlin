@@ -4,17 +4,22 @@
 // KJS_WITH_FULL_RUNTIME
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
+
+// DIAGNOSTICS: -WRONG_ANNOTATION_TARGET
+// ^ TODO(KT-49795): Remove this when we support export for type aliases
+
 // FILE: qualified.kt
 @file:JsQualifier("WebAssembly")
 package qualified
 
+@JsExport.Ignore
 external interface CompileError
-
 // FILE: notQualified.kt
+
 package notQualified
 
+@JsExport.Ignore
 external interface Console
-
 // FILE: member-properties.kt
 
 package foo
@@ -22,9 +27,16 @@ package foo
 import notQualified.Console
 import qualified.CompileError
 
+@JsExport.Ignore
 interface NonExportedInterface
+
+@JsExport.Ignore
 interface NonExportedGenericInterface<T>
+
+@JsExport.Ignore
 open class NonExportedType(val value: Int)
+
+@JsExport.Ignore
 open class NonExportedGenericType<T>(val value: T)
 
 @JsExport
@@ -91,6 +103,7 @@ val console: Console
 val error: CompileError
     get() = js("{}")
 
+@JsExport.Ignore
 typealias NotExportedTypeAlias = NonExportedGenericInterface<NonExportedType>
 
 @JsExport
@@ -108,7 +121,10 @@ interface Service<Self : Service<Self, TEvent>, in TEvent : Event<Self>>
 @JsExport
 interface Event<out TService : Service<out TService, *>>
 
+@JsExport.Ignore
 class SomeService : Service<SomeService, SomeEvent>
+
+@JsExport.Ignore
 class SomeEvent : Event<SomeService>
 
 @JsExport

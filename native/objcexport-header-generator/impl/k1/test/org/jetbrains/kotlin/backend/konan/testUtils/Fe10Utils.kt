@@ -19,10 +19,12 @@ import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.FakeTopDownAnalyzerFacadeForNative
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -57,18 +59,16 @@ fun createModuleDescriptor(
     val klibFactory = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
 
     val stdlibModuleDescriptor = klibFactory.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
-        library = resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(kotlinNativeStdlibPath)),
+        library = loadKlib(kotlinNativeStdlibPath),
         languageVersionSettings = createLanguageVersionSettings(),
         storageManager = LockBasedStorageManager.NO_LOCKS,
-        packageAccessHandler = null
     ).also { it.setDependencies(it) }
 
     val dependencyKlibDescriptors = dependencyKlibs.map { dependencyKlib ->
         klibFactory.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
-            library = resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(dependencyKlib)),
+            library = loadKlib(dependencyKlib),
             languageVersionSettings = createLanguageVersionSettings(),
             storageManager = LockBasedStorageManager.NO_LOCKS,
-            packageAccessHandler = null,
         )
     }
 
@@ -133,3 +133,12 @@ internal fun createLanguageVersionSettings() = LanguageVersionSettingsImpl(
     languageVersion = LanguageVersion.LATEST_STABLE,
     apiVersion = ApiVersion.LATEST_STABLE
 )
+
+private fun loadKlib(path: String): KotlinLibrary = KlibLoader { libraryPaths(path) }.loadOrFail()
+private fun loadKlib(path: Path): KotlinLibrary = KlibLoader { libraryPaths(path) }.loadOrFail()
+
+private fun KlibLoader.loadOrFail(): KotlinLibrary {
+    val result = load()
+    result.reportLoadingProblemsIfAny { _, message -> error(message) }
+    return result.librariesStdlibFirst.single()
+}

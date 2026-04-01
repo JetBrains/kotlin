@@ -1,3 +1,4 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import plugins.KotlinBuildPublishingPlugin
 
 plugins {
@@ -41,9 +42,9 @@ def sourceSet = sourceSets.main
 def jarTask = tasks.named(sourceSet.jarTaskName, Jar) {
     archiveClassifier.set("unshaded")
 }
-def shadowJarTask = EmbeddableKt.embeddableCompilerDummyForDependenciesRewriting(
-    project,
-    "${EmbeddableKt.EMBEDDABLE_COMPILER_TASK_NAME}${sourceSet.jarTaskName.capitalize()}"
+def shadowJarTask = tasks.register(
+        "${EmbeddableKt.EMBEDDABLE_COMPILER_TASK_NAME}${sourceSet.jarTaskName.capitalize()}",
+        ShadowJar
 ) {
     def emptyClassifier = provider { "" }
     SetupPublicJar.setupPublicJar(
@@ -53,11 +54,7 @@ def shadowJarTask = EmbeddableKt.embeddableCompilerDummyForDependenciesRewriting
     )
     AddEmbeddedRuntime.addEmbeddedRuntime(it)
     it.from(sourceSet.output)
-
-    // When Gradle traverses the inputs, reject the shaded compiler JAR,
-    // which leads to the content of that JAR being excluded as well:
-    def compilerDummyJarFile = project.provider { project.configurations.getByName("compilerDummyJar").singleFile }
-    it.exclude { it.file == compilerDummyJarFile.get() }
+    EmbeddableKt.configureEmbeddableCompilerRelocation(it, true)
 }
 
 // Removing artifact produced by Jar task

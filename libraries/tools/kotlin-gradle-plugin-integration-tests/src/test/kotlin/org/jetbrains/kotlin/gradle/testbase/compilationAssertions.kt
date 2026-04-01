@@ -91,7 +91,7 @@ fun GradleProject.assertCompiledJavaSources(
  */
 fun BuildResult.assertNonIncrementalCompilation(reason: BuildAttribute? = null) {
     if (reason != null) {
-        assertOutputContains("$NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED: ${reason.name}")
+        assertOutputContains("$NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED: ${reason.readableString}")
     } else {
         assertOutputContains(NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED)
     }

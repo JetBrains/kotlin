@@ -73,7 +73,7 @@ open internal class BackReferenceSet(val referencedGroup: Int, val consCounter: 
         var index = rightLimit
         while (index >= leftLimit) {
             index = testString.lastIndexOf(groupValue, index, ignoreCase)
-            if (index < 0) {
+            if (index < leftLimit) {
                 return -1
             }
             if (index >= 0 && next.matches(index + groupValue.length, testString, matchResult) >= 0) {
@@ -93,5 +93,11 @@ open internal class BackReferenceSet(val referencedGroup: Int, val consCounter: 
         val result = matchResult.getConsumed(consCounter) != 0
         matchResult.setConsumed(consCounter, -1)
         return result
+    }
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        properties.tracksConsumption = true
+        // TODO: investigate further; can the group value change in a way the backtracking is needed?
+        properties.nonTrivialBacktracking = true
     }
 }

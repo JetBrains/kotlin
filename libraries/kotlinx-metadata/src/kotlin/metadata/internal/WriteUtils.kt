@@ -112,3 +112,13 @@ internal fun StringTable.getClassNameIndex(name: ClassName): Int =
         getQualifiedClassNameIndex(name.substring(1), true)
     else
         getQualifiedClassNameIndex(name, false)
+
+internal fun writeCompilerPluginData(
+    pluginId: String,
+    data: ByteArray,
+    c: WriteContext
+): ProtoBuf.CompilerPluginData.Builder =
+    ProtoBuf.CompilerPluginData.newBuilder().apply {
+        this.pluginId = c[pluginId]
+        this.data = org.jetbrains.kotlin.protobuf.ByteString.copyFrom(data)
+    }

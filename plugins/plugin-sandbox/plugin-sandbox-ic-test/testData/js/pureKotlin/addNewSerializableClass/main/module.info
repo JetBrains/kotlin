@@ -1,0 +1,10 @@
+STEP 0:
+    modifications:
+        U : A.0.kt -> A.kt
+        U : Serializer.0.kt -> Serializer.kt
+    added file: A.kt, Serializer.kt
+STEP 1:
+    modifications:
+        U : B.1.kt -> B.kt
+    added file: B.kt
+    modified ir: Serializer.kt

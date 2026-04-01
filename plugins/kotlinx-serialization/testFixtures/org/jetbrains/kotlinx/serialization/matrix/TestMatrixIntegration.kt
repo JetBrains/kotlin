@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.generators.dsl.TestGroup
 import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
 import org.jetbrains.kotlinx.serialization.configureForKotlinxSerialization
 import org.jetbrains.kotlinx.serialization.matrix.impl.CombinationContextImpl
 import java.io.File
@@ -29,9 +28,6 @@ internal fun TestGroup.testMatrix(casesBlock: TestCaseContext.() -> Unit) {
         combinationContext.generateInto(dir.resolve("$caseName.kt"))
     }
 
-    testClass<AbstractTestMatrix> {
-        model(relativeRootPath)
-    }
     testClass<AbstractFirTestMatrix> {
         model(relativeRootPath)
     }
@@ -42,13 +38,6 @@ internal class TestCaseContext {
 
     fun add(name: String, block: CombinationContext.() -> Unit) {
         testCases[name] = block
-    }
-}
-
-internal open class AbstractTestMatrix : AbstractIrBlackBoxCodegenTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureForKotlinxSerialization()
     }
 }
 

@@ -1,0 +1,13 @@
+KT element: KtScriptInitializer
+Resolve target: scriptResult.kts -> <script-scriptResult.kts> -> $$result
+FIR:
+  public final val $$result: <implicit> = when () {
+      Boolean(true) ->  {
+          IntegerLiteral(1)
+      }
+      else ->  {
+          String(str)
+      }
+  }
+
+      public get(): <implicit>

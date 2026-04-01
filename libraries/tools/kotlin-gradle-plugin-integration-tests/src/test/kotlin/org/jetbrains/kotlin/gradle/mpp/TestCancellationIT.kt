@@ -105,7 +105,7 @@ class TestCancellationIT : KGPBaseTest() {
 
             // Fetch enabled KMP tests that use ExecHandle to launch the tests.
             // Currently, this is only Native and JS tests.
-            // Native test tasks are dynamically enabled based on the host machine.
+            // Native test tasks are enabled based on the current host.
             val enabledKotlinNativeTestPaths: List<String> =
                 buildScriptReturn {
                     project.tasks.withType(KotlinNativeTest::class.java)

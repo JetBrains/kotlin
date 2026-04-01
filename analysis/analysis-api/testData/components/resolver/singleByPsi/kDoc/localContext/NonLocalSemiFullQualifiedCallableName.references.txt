@@ -2,5 +2,6 @@ KDocName(164,171): 'X.YY.aa'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: f.C.X.YY) fun aa()

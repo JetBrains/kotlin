@@ -159,6 +159,26 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitDeclaration(codeFragment)
     }
 
+    override fun visitReplSnippet(replSnippet: FirReplSnippet) {
+        visitDeclaration(replSnippet)
+    }
+
+    override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference) {
+        visitStatement(replDeclarationReference)
+    }
+
+    override fun visitReplExpressionReference(replExpressionReference: FirReplExpressionReference) {
+        visitExpression(replExpressionReference)
+    }
+
+    override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer) {
+        visitStatement(replPropertyInitializer)
+    }
+
+    override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate) {
+        visitStatement(replPropertyDelegate)
+    }
+
     override fun visitResolvedImport(resolvedImport: FirResolvedImport) {
         visitImport(resolvedImport)
     }
@@ -215,8 +235,8 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitExpression(varargArgumentsExpression)
     }
 
-    override fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression) {
-        visitExpression(samConversionExpression)
+    override fun visitFunctionTypeConversionExpression(functionTypeConversionExpression: FirFunctionTypeConversionExpression) {
+        visitExpression(functionTypeConversionExpression)
     }
 
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {

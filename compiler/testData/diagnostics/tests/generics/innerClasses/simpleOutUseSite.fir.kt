@@ -29,8 +29,8 @@ fun main() {
     checkSubtype<Outer<out CharSequence>.Inner>(outer.bar())
     checkSubtype<Outer<out CharSequence>.Inner>(outer.Inner())
 
-    outer.set(<!ARGUMENT_TYPE_MISMATCH!>outer.bar()<!>)
-    outer.set(<!ARGUMENT_TYPE_MISMATCH!>outer.Inner()<!>)
+    outer.set(outer.bar())
+    outer.set(outer.Inner())
 
     val x: Outer<String>.Inner = factoryString()
     outer.set(<!ARGUMENT_TYPE_MISMATCH!>x<!>)

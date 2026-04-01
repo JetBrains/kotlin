@@ -1,0 +1,9 @@
+KtOperationReferenceExpression(97,98): '>'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /compareTo(<extension receiver>: R, number: kotlin.Int): kotlin.Int,
+      /compareTo(<extension receiver>: T, int: kotlin.Int): kotlin.Int
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun <T> T.compareTo(int: Int): Int
+    fun <R> R.compareTo(number: Int): Int>

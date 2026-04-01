@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
@@ -31,7 +30,7 @@ dependencies {
     compileOnly(intellijJDom())
     testCompileOnly(intellijJDom())
 
-    testImplementation(project(":compiler:cli-common"))
+    testImplementation(project(":compiler:cli-base"))
     testImplementation(jpsModelSerialization())
     testImplementation(libs.junit4)
     testImplementation(kotlin("test-junit"))

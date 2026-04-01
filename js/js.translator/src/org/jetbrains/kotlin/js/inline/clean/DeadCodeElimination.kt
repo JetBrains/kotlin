@@ -95,8 +95,8 @@ internal class DeadCodeElimination(private val root: JsStatement) {
             visitLoop(x.body) { true }
         }
 
-        override fun visitForIn(x: JsForIn) {
-            EliminationVisitor().accept(x.iterExpression)
+        override fun visitIterableLoop(x: JsIterableLoop) {
+            EliminationVisitor().accept(x.bindingExpression)
             visitLoop(x.body) { true }
         }
 

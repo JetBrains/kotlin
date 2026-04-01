@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 
-class FirPartialModifierRenderer : FirModifierRenderer() {
+class FirPartialModifierRenderer(private val staticPolicy: StaticPolicy) : FirModifierRenderer() {
     override fun renderModifiers(memberDeclaration: FirMemberDeclaration) {
         if (memberDeclaration.isExpect) {
             renderModifier("expect")
@@ -18,7 +18,8 @@ class FirPartialModifierRenderer : FirModifierRenderer() {
             renderModifier("actual")
         }
         if (memberDeclaration.isStatic) {
-            renderModifier("static")
+            memberDeclaration.origin
+            renderModifier(staticPolicy.renderStatic(memberDeclaration))
         }
         if (memberDeclaration.isInner) {
             renderModifier("inner")

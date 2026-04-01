@@ -2,5 +2,8 @@ KtNameReferenceExpression(136,140): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in ROOT) annotation class Anno
+    resolveToSymbols:
       (in Anno) constructor()

@@ -118,7 +118,10 @@ class ResolveDependenciesTest {
         evaluationConfiguration: ScriptEvaluationConfiguration?,
         expectedResult: T
     ) {
-        val res = BasicJvmScriptingHost().eval(script, compilationConfiguration, evaluationConfiguration).valueOrThrow().returnValue
+        val host =
+            if (isRunningTestOnK2) BasicJvmScriptingHost()
+            else BasicJvmScriptingHost.createLegacy()
+        val res = host.eval(script, compilationConfiguration, evaluationConfiguration).valueOrThrow().returnValue
         when (res) {
             is ResultValue.Value -> assertEquals(expectedResult, res.value)
             is ResultValue.Error -> throw res.error

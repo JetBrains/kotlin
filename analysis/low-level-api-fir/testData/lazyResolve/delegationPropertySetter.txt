@@ -7,7 +7,7 @@ FILE: [ResolvedTo(IMPORTS)] delegationPropertySetter.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] set([ResolvedTo(STATUS)] value: R|T|): R|kotlin/Unit|
 
     }
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /B.$$delegate_0}] class B : R|A<kotlin/String>| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/B.$$delegate_0}] class B : R|A<kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] a: R|A<kotlin/String>|): R|B| {
             LAZY_super<<implicit>>
         }
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] delegationPropertySetter.kt
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=A] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: R|T|): R|kotlin/Unit|
 
     }
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /B.$$delegate_0}] class B : R|A<kotlin/String>| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/B.$$delegate_0}] class B : R|A<kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] a: R|A<kotlin/String>|): R|B| {
             LAZY_super<<implicit>>
         }
@@ -43,7 +43,7 @@ FILE: [ResolvedTo(IMPORTS)] delegationPropertySetter.kt
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] set([ResolvedTo(CONTRACTS)] value: R|T|): R|kotlin/Unit|
 
     }
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /B.$$delegate_0}] class B : R|A<kotlin/String>| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/B.$$delegate_0}] class B : R|A<kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] a: R|A<kotlin/String>|): R|B| {
             LAZY_super<<implicit>>
         }
@@ -61,7 +61,7 @@ FILE: [ResolvedTo(IMPORTS)] delegationPropertySetter.kt
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=A] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|T|): R|kotlin/Unit|
 
     }
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /B.$$delegate_0}] class B : R|A<kotlin/String>| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/B.$$delegate_0}] class B : R|A<kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] a: R|A<kotlin/String>|): R|B| {
             LAZY_super<<implicit>>
         }
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] delegationPropertySetter.kt
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=A] set([ResolvedTo(CONSTANT_EVALUATION)] value: R|T|): R|kotlin/Unit|
 
     }
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /B.$$delegate_0}] class B : R|A<kotlin/String>| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/B.$$delegate_0}] class B : R|A<kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] a: R|A<kotlin/String>|): R|B| {
             LAZY_super<<implicit>>
         }
@@ -97,7 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] delegationPropertySetter.kt
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|T|): R|kotlin/Unit|
 
     }
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /B.$$delegate_0}] class B : R|A<kotlin/String>| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/B.$$delegate_0}] class B : R|A<kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] a: R|A<kotlin/String>|): R|B| {
             LAZY_super<<implicit>>
         }
@@ -115,7 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] delegationPropertySetter.kt
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|T|): R|kotlin/Unit|
 
     }
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /B.$$delegate_0}] class B : R|A<kotlin/String>| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/B.$$delegate_0}] class B : R|A<kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] a: R|A<kotlin/String>|): R|B| {
             LAZY_super<<implicit>>
         }
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegationPropertySetter.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] set([ResolvedTo(BODY_RESOLVE)] value: R|T|): R|kotlin/Unit|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /B.$$delegate_0}] class B : R|A<kotlin/String>| {
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=/B.$$delegate_0}] class B : R|A<kotlin/String>| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor([ResolvedTo(BODY_RESOLVE)] a: R|A<kotlin/String>|): R|B| {
             super<R|kotlin/Any|>()
         }

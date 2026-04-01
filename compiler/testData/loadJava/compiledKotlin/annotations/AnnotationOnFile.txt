@@ -1,0 +1,28 @@
+package test
+
+public val bar: kotlin.Int
+    public fun `<get-bar>`(): kotlin.Int
+public fun foo(/*0*/ x: kotlin.Int): kotlin.Int
+
+public final class A {
+    /*primary*/ public constructor A()
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FILE}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class MyFileAnnotationBinary : kotlin.Annotation {
+    /*primary*/ public constructor MyFileAnnotationBinary(/*0*/ value: kotlin.String)
+    public final val value: kotlin.String
+        public final fun `<get-value>`(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FILE}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class MyFileAnnotationRuntime : kotlin.Annotation {
+    /*primary*/ public constructor MyFileAnnotationRuntime(/*0*/ value: kotlin.String)
+    public final val value: kotlin.String
+        public final fun `<get-value>`(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FILE}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final annotation class MyFileAnnotationSource : kotlin.Annotation {
+    /*primary*/ public constructor MyFileAnnotationSource(/*0*/ value: kotlin.String)
+    public final val value: kotlin.String
+        public final fun `<get-value>`(): kotlin.String
+}
+public typealias B = test.A

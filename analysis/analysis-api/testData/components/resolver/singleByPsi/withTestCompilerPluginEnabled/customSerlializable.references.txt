@@ -2,5 +2,6 @@ KtNameReferenceExpression(331,351): 'serializeFirstTarget'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.Serializer) fun serializeFirstTarget(x: test.FirstTarget)

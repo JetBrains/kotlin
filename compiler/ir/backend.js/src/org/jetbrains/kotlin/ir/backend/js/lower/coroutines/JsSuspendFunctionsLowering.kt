@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering
+import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -62,6 +63,11 @@ class JsSuspendFunctionsLowering(
 
     override fun nameForCoroutineClass(function: IrFunction) = "${function.name}COROUTINE\$".synthesizedName
 
+    override fun lower(irModule: IrModuleFragment) {
+        if (context.compileSuspendAsJsGenerator) return
+        super.lower(irModule)
+    }
+
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (container is IrSimpleFunction && container.isSuspend) {
             transformSuspendFunction(container, irBody)?.let {
@@ -97,6 +103,28 @@ class JsSuspendFunctionsLowering(
         }
     }
 
+    /**
+     * For the delegating type of suspend functions we just compile them as a regular function (not generator), so it doesn't break semantic.
+     * For the following Kotlin code:
+     * ```kotlin
+     * suspend fun bar() = 42
+     * suspend fun foo() = bar()
+     * ```
+     *
+     * Instead of
+     * ```javascript
+     * function* foo() {
+     *   return yield* bar()
+     * }
+     * ```
+     *
+     * We generate the following, so it minimizes the output size:
+     * ```javascript
+     * function foo() {
+     *   return bar()
+     * }
+     * ```
+     */
     private fun removeReturnIfSuspendedCallAndSimplifyDelegatingCall(irFunction: IrFunction, delegatingCall: IrCall) {
         val returnValue =
             if (delegatingCall.isReturnIfSuspendedCall(context))
@@ -357,7 +385,8 @@ internal fun getSuspendFunctionKind(
     context: CommonBackendContext,
     function: IrSimpleFunction,
     body: IrBody,
-    includeSuspendLambda: Boolean = true
+    includeSuspendLambda: Boolean = true,
+    suspensionIntrinsic: IrSimpleFunctionSymbol? = null
 ): SuspendFunctionKind {
 
     fun IrSimpleFunction.isSuspendLambda() =
@@ -374,7 +403,7 @@ internal fun getSuspendFunctionKind(
 
         override fun visitCall(expression: IrCall) {
             expression.acceptChildrenVoid(this)
-            if (expression.isSuspend)
+            if (expression.isSuspend || expression.symbol == suspensionIntrinsic)
                 ++numberOfSuspendCalls
         }
     })

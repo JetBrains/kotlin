@@ -110,10 +110,10 @@ class FirKotlinKaptIntegrationTest(private val testInfo: TestInfo) {
             assertTrue(!File(stubsOutputDir, "test/Simple/InnerClass.java").exists())
 
             assertTrue(File(incrementalDataOutputDir, "test/Simple.class").exists())
-            assertTrue(File(incrementalDataOutputDir, "test/Simple\$Companion.class").exists())
-            assertTrue(File(incrementalDataOutputDir, "test/Simple\$InnerClass.class").exists())
-            assertTrue(File(incrementalDataOutputDir, "test/Simple\$NestedClass.class").exists())
-            assertTrue(File(incrementalDataOutputDir, "test/Simple\$NestedClass\$NestedNestedClass.class").exists())
+            assertTrue(File(incrementalDataOutputDir, $$"test/Simple$Companion.class").exists())
+            assertTrue(File(incrementalDataOutputDir, $$"test/Simple$InnerClass.class").exists())
+            assertTrue(File(incrementalDataOutputDir, $$"test/Simple$NestedClass.class").exists())
+            assertTrue(File(incrementalDataOutputDir, $$"test/Simple$NestedClass$NestedNestedClass.class").exists())
 
             assertTrue(bindings.any { it.key == "test/Simple" && it.value.name == "test/Simple.java" })
             assertTrue(bindings.none { it.key.contains("Companion") })
@@ -187,7 +187,7 @@ class FirKotlinKaptIntegrationTest(private val testInfo: TestInfo) {
 
 
     private fun bindingsTest(name: String, test: (File, File, Map<String, KaptJavaFileObject>) -> Unit) {
-        test(name, "test.MyAnnotation") { _, _, _, kaptExtension->
+        test(name, "test.MyAnnotation") { _, _, _, kaptExtension ->
             val stubsOutputDir = kaptExtension.options.stubsOutputDir
             val incrementalDataOutputDir = kaptExtension.options.incrementalDataOutputDir
 

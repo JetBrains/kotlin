@@ -6,6 +6,10 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.JvmSourceSetCreatedBeforeCompilation
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinJvmCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.DefaultKotlinCompilationSourceSetsContainerFactory
@@ -17,7 +21,7 @@ import org.jetbrains.kotlin.gradle.utils.javaSourceSets
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 
 open class KotlinJvmCompilationFactory internal constructor(
-    final override val target: KotlinJvmTarget
+    final override val target: KotlinJvmTarget,
 ) : KotlinCompilationFactory<KotlinJvmCompilation> {
 
     private val sourceSetsNaming = DefaultDefaultSourceSetNaming
@@ -40,6 +44,11 @@ open class KotlinJvmCompilationFactory internal constructor(
         get() = KotlinJvmCompilation::class.java
 
     override fun create(name: String): KotlinJvmCompilation {
+        val sourceSetName = sourceSetsNaming.defaultSourceSetName(target, name)
+        if (project.kotlinExtension.sourceSets.names.contains(sourceSetName) && GradleVersion.current() >= GradleVersion.version("9.0.0")) {
+            project.reportDiagnostic(JvmSourceSetCreatedBeforeCompilation(target.name, sourceSetName, name))
+        }
+
         // Dirty hack: Marking that we are in the compilation creation mode so any new invocation of
         // AbstractKotlinPlugin.setUpJavaSourceSets.javaSourceSets.all {} will be ignored as it is the default java source set
         // for this new compilation.

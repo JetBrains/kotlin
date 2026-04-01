@@ -33,7 +33,7 @@ abstract class WasmYarnRootExtension internal constructor(
 
         operator fun get(project: Project): WasmYarnRootExtension {
             val rootProject = project.rootProject
-            rootProject.plugins.apply(YarnPlugin::class.java)
+            rootProject.plugins.apply(WasmYarnPlugin::class.java)
             return rootProject.extensions.getByName(YARN) as WasmYarnRootExtension
         }
     }

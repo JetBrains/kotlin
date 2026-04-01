@@ -1,9 +1,0 @@
-MODULE main
-	CLASS Kt8666Kt.class
-		PACKAGE METADATA
-			PROPERTY getStringNPlus()Lkotlin/reflect/KFunction;
-				Property: class.metadata.property.returnType
-					K1
-						kotlin/reflect/KFunction2<kotlin/String?, @kotlin/ParameterName(name = "other") kotlin/Any?, kotlin/String>
-					K2
-						@kotlin/ExtensionFunctionType kotlin/reflect/KFunction2<kotlin/String?, @kotlin/ParameterName(name = "other") kotlin/Any?, kotlin/String>

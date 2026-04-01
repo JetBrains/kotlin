@@ -59,21 +59,20 @@ KtWhenExpression(192,332): 'when (problem) {'
   null
 
 KtNameReferenceExpression(198,205): 'problem'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = problem
-          receiverType = null
-          returnType = Problem
-          symbol = problem: Problem
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = problem
+        receiverType = null
+        returnType = Problem
+        symbol = problem: Problem
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(213,239): 'CONNECTION -> "connection"'
@@ -83,7 +82,7 @@ KtWhenConditionWithExpression(213,223): 'CONNECTION'
   null
 
 KtNameReferenceExpression(213,223): 'CONNECTION'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: CONNECTION>
 
@@ -100,7 +99,7 @@ KtWhenConditionWithExpression(244,258): 'AUTHENTICATION'
   null
 
 KtNameReferenceExpression(244,258): 'AUTHENTICATION'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: AUTHENTICATION>
 
@@ -117,7 +116,7 @@ KtWhenConditionWithExpression(283,291): 'DATABASE'
   null
 
 KtNameReferenceExpression(283,291): 'DATABASE'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: DATABASE>
 
@@ -134,7 +133,7 @@ KtWhenConditionWithExpression(310,317): 'UNKNOWN'
   null
 
 KtNameReferenceExpression(310,317): 'UNKNOWN'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: UNKNOWN>
 
@@ -175,21 +174,20 @@ KtWhenExpression(372,501): 'when (x) {'
   null
 
 KtNameReferenceExpression(378,379): 'x'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = kotlin.String
-          symbol = x: kotlin.String
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.String
+        symbol = x: kotlin.String
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(387,413): '"connection" -> CONNECTION'
@@ -205,7 +203,7 @@ KtLiteralStringTemplateEntry(388,398): 'connection'
   null
 
 KtNameReferenceExpression(403,413): 'CONNECTION'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: CONNECTION>
 
@@ -222,7 +220,7 @@ KtLiteralStringTemplateEntry(419,433): 'authentication'
   null
 
 KtNameReferenceExpression(438,452): 'AUTHENTICATION'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: AUTHENTICATION>
 
@@ -239,7 +237,7 @@ KtLiteralStringTemplateEntry(458,466): 'database'
   null
 
 KtNameReferenceExpression(471,479): 'DATABASE'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: DATABASE>
 
@@ -247,6 +245,6 @@ KtWhenEntry(484,499): 'else -> UNKNOWN'
   null
 
 KtNameReferenceExpression(492,499): 'UNKNOWN'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: UNKNOWN>

@@ -10,12 +10,14 @@ package org.jetbrains.kotlin.gradle.regressionTests
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.project
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
+import org.junit.jupiter.api.Assumptions
 import kotlin.test.Test
 import kotlin.test.fail
 
@@ -51,6 +53,7 @@ class KT60388PlainJvmDependingOnJvmWithJavaTest {
 
     @Test
     fun `test - plain jvm - depends on - jvm withJava and java plugin`() {
+        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
         val producer = buildProjectWithMPP(
             projectBuilder = { withName("producer").withParent(rootProject) },
             preApplyCode = { enableDefaultStdlibDependency(false) }

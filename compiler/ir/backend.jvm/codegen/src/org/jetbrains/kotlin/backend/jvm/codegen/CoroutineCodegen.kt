@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.hasContinuation
 import org.jetbrains.kotlin.backend.jvm.ir.isReadOfCrossinline
-import org.jetbrains.kotlin.backend.jvm.ir.suspendFunctionOriginal
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
@@ -54,9 +53,6 @@ internal fun MethodNode.acceptWithStateMachine(
         containingClassInternalName = classCodegen.type.internalName,
         obtainClassBuilderForCoroutineState = obtainContinuationClassBuilder,
         isForNamedFunction = irFunction.isSuspend,
-        disableTailCallOptimizationForFunctionReturningUnit = irFunction.isSuspend && irFunction.suspendFunctionOriginal().let {
-            it.returnType.isUnit() && it.anyOfOverriddenFunctionsReturnsNonUnit()
-        },
         reportSuspensionPointInsideMonitor = {
             classCodegen.context.ktDiagnosticReporter.at(irFunction, classCodegen.irClass)
                 .report(JvmBackendErrors.SUSPENSION_POINT_INSIDE_MONITOR, it)
@@ -72,9 +68,6 @@ internal fun MethodNode.acceptWithStateMachine(
     accept(visitor)
 }
 
-private fun IrFunction.anyOfOverriddenFunctionsReturnsNonUnit(): Boolean =
-    this is IrSimpleFunction && allOverridden().any { !it.returnType.isUnit() }
-
 internal fun IrFunction.isSuspendCapturingCrossinline(): Boolean =
     this is IrSimpleFunction && hasContinuation() && parent is IrClass && parentAsClass.declarations.any {
         it is IrSimpleFunction && it.attributeOwnerId == attributeOwnerId &&
@@ -86,7 +79,10 @@ internal fun IrFunction.continuationClass(): IrClass? =
             as IrClass?
 
 internal fun IrExpression?.isReadOfInlineLambda(): Boolean = isReadOfCrossinline() ||
-        (this is IrGetValue && origin == IrStatementOrigin.VARIABLE_AS_FUNCTION && (symbol.owner as? IrValueParameter)?.isNoinline == false)
+        (this is IrGetValue && origin == IrStatementOrigin.VARIABLE_AS_FUNCTION && (symbol.owner as? IrValueParameter)?.isInlineable() == true)
+
+private fun IrValueParameter.isInlineable(): Boolean =
+    !isNoinline && (parent as? IrFunction)?.isInline == true
 
 internal fun IrFunction.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(): IrType? {
     if (this !is IrSimpleFunction || !isSuspend) return null

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,11 +12,14 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinStringInterpolationPrefixStub
 
 /**
- * The class represents the [Multi-dollar interpolation](https://github.com/Kotlin/KEEP/issues/375) feature.
+ * Represents the multi-dollar interpolation prefix for string templates.
  *
- * #### Example
+ * ### Example:
  *
  * ```kotlin
+ * val s = $$"Price: $$price"
+ * //      ^^
+ *
  * val name = "Kotlin"
  *
  * "I'm $name" // I'm Kotlin

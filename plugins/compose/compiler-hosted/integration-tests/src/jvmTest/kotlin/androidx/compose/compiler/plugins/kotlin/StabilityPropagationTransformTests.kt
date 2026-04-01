@@ -43,11 +43,12 @@ class StabilityPropagationTransformTests(useFir: Boolean) : AbstractIrTransformT
     @Test
     fun testPassingLocalKnownStable(): Unit = stabilityPropagation(
         """
-            class Foo(val foo: Int)
             @Composable fun A(x: Any) {}
         """,
         """
             import androidx.compose.runtime.remember
+
+            class Foo(val foo: Int)
 
             @Composable
             fun Test(x: Foo) {
@@ -61,11 +62,12 @@ class StabilityPropagationTransformTests(useFir: Boolean) : AbstractIrTransformT
     @Test
     fun testPassingLocalKnownUnstable(): Unit = stabilityPropagation(
         """
-            class Foo(var foo: Int)
             @Composable fun A(x: Any) {}
         """,
         """
             import androidx.compose.runtime.remember
+
+            class Foo(var foo: Int)
 
             @Composable
             fun Test(x: Foo) {

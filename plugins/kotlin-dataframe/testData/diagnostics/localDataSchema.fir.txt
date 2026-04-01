@@ -1,0 +1,17 @@
+FILE: localDataSchema.kt
+    public final fun main(): R|kotlin/Unit| {
+        @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() local final data class Local : R|kotlin/Any|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
+            public constructor(a: R|kotlin/Int|): R|<local>/Local| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val a: R|kotlin/Int| = R|<local>/a|
+                public get(): R|kotlin/Int|
+
+            public final operator fun component1(): R|kotlin/Int|
+
+            public final fun copy(a: R|kotlin/Int| = this@R|<local>/Local|.R|<local>/a|): R|<local>/Local|
+
+        }
+
+    }

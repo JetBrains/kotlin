@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -61,8 +60,23 @@ val FirDeclaration.isLocal: Boolean
         else -> true
     }
 
+/**
+ * `true` when [FirCallableDeclaration.receiverParameter] is not `null`.
+ *
+ * Use [isInstanceExtension] to check for extensions excluding companion extensions
+ * or [isCompanionExtension] to check for companion extensions.
+ */
 val FirCallableDeclaration.isExtension: Boolean get() = receiverParameter != null
-val FirCallableSymbol<*>.isExtension: Boolean get() = fir.isExtension
+
+/**
+ * `true` when [FirCallableDeclaration.receiverParameter] is not `null` and the declaration is not static,
+ * meaning it's not a companion extension.
+ *
+ * As of writing this, companion block members cannot be extensions.
+ *
+ * @see isCompanionExtension
+ */
+val FirCallableDeclaration.isInstanceExtension: Boolean get() = isExtension && !isStatic
 
 val FirBasedSymbol<*>.isMemberDeclaration: Boolean
     // Accessing `fir` is ok, because we don't really use it

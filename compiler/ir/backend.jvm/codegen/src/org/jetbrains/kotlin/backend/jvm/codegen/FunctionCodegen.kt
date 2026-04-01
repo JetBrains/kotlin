@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
-import org.jetbrains.kotlin.backend.jvm.hasFixedName
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.isJavaLangDeprecatedOnlyAddedByCompiler
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeParameter
 import org.jetbrains.kotlin.backend.jvm.originalOfSuspendForInline
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
@@ -26,6 +27,9 @@ import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrVararg
+import org.jetbrains.kotlin.ir.types.isClassWithFqName
+import org.jetbrains.kotlin.ir.types.isKotlinResult
+import org.jetbrains.kotlin.ir.types.starProjectedType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -66,12 +70,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             flags,
             signature.asmMethod.name,
             signature.asmMethod.descriptor,
-            signature.genericsSignature
-                .takeIf {
-                    (irFunction.isInline && irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) ||
-                            (!isSynthetic && irFunction.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) ||
-                            (irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION)
-                },
+            signature.genericsSignature.takeIf { irFunction.needsGenericSignature(isSynthetic) },
             getThrownExceptions(irFunction)?.toTypedArray()
         )
         val methodVisitor: MethodVisitor = wrapWithMaxLocalCalc(methodNode)
@@ -80,7 +79,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             generateParameterNames(irFunction, methodVisitor, context.config)
         }
 
-        if (irFunction.isWithAnnotations) {
+        val useEnhancedBridges = context.config.languageVersionSettings.supportsFeature(LanguageFeature.JvmEnhancedBridges)
+        if (irFunction.isWithAnnotations(useEnhancedBridges)) {
             val annotationCodegen = object : AnnotationCodegen(classCodegen) {
                 override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                     return methodVisitor.visitAnnotation(descr, visible)
@@ -93,7 +93,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 }
             }
             annotationCodegen.genAnnotations(irFunction)
-            val generateNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE == 0 && flags and Opcodes.ACC_SYNTHETIC == 0
+            val generateNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE == 0 && flags and Opcodes.ACC_SYNTHETIC == 0 &&
+                    irFunction.origin != IrDeclarationOrigin.BRIDGE && irFunction.origin != IrDeclarationOrigin.BRIDGE_SPECIAL
             if (!AsmUtil.isPrimitive(signature.asmMethod.returnType) && generateNullabilityAnnotations) {
                 annotationCodegen.generateNullabilityAnnotation(irFunction)
             }
@@ -140,6 +141,20 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         }
         methodVisitor.visitEnd()
         return SMAPAndMethodNode(methodNode, smap)
+    }
+
+    private fun IrFunction.needsGenericSignature(isSynthetic: Boolean): Boolean {
+        if (irFunction.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) &&
+            typeParameters.any { it.erasedUpperBound.isClassWithFqName(StandardNames.RESULT_FQ_NAME) }
+        ) {
+            // Starting from JDK 11, javac reports ambiguity when there are two functions with the same generic signature.
+            // Do not write generic signature for exposed function when there's a type parameter with upper bound `Result`.
+            return false
+        }
+
+        return (isInline && origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) ||
+                (!isSynthetic && origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) ||
+                (irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION)
     }
 
     private fun postReifyEvaluatorGeneratedMethod(methodNode: MethodNode) {
@@ -236,7 +251,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
 
     private fun IrFunction.isDeprecatedHidden(): Boolean {
         // see KT-80649
-        if (isAnnotatedWithJavaLangDeprecated) return false
+        if (isAnnotatedWithJavaLangDeprecated && !isJavaLangDeprecatedOnlyAddedByCompiler) return false
 
         val mightBeDeprecated = if (this is IrSimpleFunction) {
             allOverridden(true).any {
@@ -350,17 +365,16 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
                 IrDeclarationOrigin.SYNTHETIC_ACCESSOR,
                 IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER,
-                IrDeclarationOrigin.BRIDGE,
-                IrDeclarationOrigin.BRIDGE_SPECIAL,
                 JvmLoweredDeclarationOrigin.ABSTRACT_BRIDGE_STUB,
                 JvmLoweredDeclarationOrigin.TO_ARRAY,
                 IrDeclarationOrigin.IR_BUILTINS_STUB,
                 IrDeclarationOrigin.PROPERTY_DELEGATE,
             )
 
-        private val IrFunction.isWithAnnotations: Boolean
-            get() = when (origin) {
+        private fun IrFunction.isWithAnnotations(useEnhancedBridges: Boolean): Boolean =
+            when (origin) {
                 in methodOriginsWithoutAnnotations -> false
+                IrDeclarationOrigin.BRIDGE, IrDeclarationOrigin.BRIDGE_SPECIAL -> useEnhancedBridges
                 IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> name.asString() == "<get-entries>"
                 else -> true
             }
@@ -373,9 +387,7 @@ private fun IrValueParameter.isSyntheticMarkerParameter(): Boolean =
 
 private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, config: JvmBackendConfig) {
     for (parameter in irFunction.parameters) {
-        val name = if (parameter.hasFixedName) {
-            parameter.name.asString()
-        } else when (parameter.kind) {
+        val name = when (parameter.kind) {
             IrParameterKind.DispatchReceiver -> continue
             IrParameterKind.Regular, IrParameterKind.Context -> parameter.name.asString()
             IrParameterKind.ExtensionReceiver -> irFunction.extensionReceiverName(config)
@@ -389,8 +401,7 @@ private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, co
             JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> Opcodes.ACC_MANDATED
             IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER -> Opcodes.ACC_MANDATED
             IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER -> Opcodes.ACC_SYNTHETIC
-            IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER -> Opcodes.ACC_MANDATED
-            else if parameter.kind == IrParameterKind.Context -> Opcodes.ACC_MANDATED
+            IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER -> Opcodes.ACC_SYNTHETIC
             else if origin.isSynthetic -> Opcodes.ACC_SYNTHETIC
             else -> 0
         }

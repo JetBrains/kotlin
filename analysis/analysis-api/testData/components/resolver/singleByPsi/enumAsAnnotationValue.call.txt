@@ -1,7 +1,27 @@
 KtAnnotationEntry(90,110): '@Annotation(Color.R)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Annotation
+        symbol = <constructor>(color: Color): Annotation
+        valueParameters = [
+          KaVariableSignature:
+            name = color
+            receiverType = null
+            returnType = Color
+            symbol = color: Color
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         Color.R -> (KaVariableSignature:
           name = color
           receiverType = null
@@ -10,23 +30,3 @@ KtAnnotationEntry(90,110): '@Annotation(Color.R)'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Annotation
-          symbol = <constructor>(color: Color): Annotation
-          valueParameters = [
-            KaVariableSignature:
-              name = color
-              receiverType = null
-              returnType = Color
-              symbol = color: Color
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}

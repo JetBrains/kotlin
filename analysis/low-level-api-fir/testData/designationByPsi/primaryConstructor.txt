@@ -1,0 +1,6 @@
+KT element: KtPrimaryConstructor
+Resolve target: primaryConstructor.kt -> WithConstructor -> constructor
+FIR:
+  public? constructor(x: Int): R|WithConstructor| {
+      LAZY_super<R|kotlin/Any|>
+  }

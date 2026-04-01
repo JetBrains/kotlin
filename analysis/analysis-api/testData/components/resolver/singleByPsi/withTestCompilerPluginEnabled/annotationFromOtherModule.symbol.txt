@@ -1,0 +1,5 @@
+KtNameReferenceExpression(140,151): 'materialize'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyClass.materialize(<dispatch receiver>: test.MyClass): test.MyClass
+    ]

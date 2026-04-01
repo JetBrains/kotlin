@@ -1,7 +1,8 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
 
+// FILE: lib.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class IcInt<T: Int>(val i: T) {
     fun simple(): String = i.toString()
@@ -22,6 +23,9 @@ value class IcOverIc<T: IcLong<Long>>(val o: T) {
     fun simple(): String = o.toString()
 }
 
+inline fun foo(init: () -> String): String = init()
+
+// FILE: main.kt
 fun testUnboxed(i: IcInt<Int>, l: IcLong<Long>, a: IcAny<Int>, o: IcOverIc<IcLong<Long>>): String =
     foo(i::simple) + foo(l::simple) + foo(a::simple) + foo(o::simple)
 
@@ -51,8 +55,6 @@ fun testCapturedVars(): String {
             IcAny(4).let { foo(it::simple) } +
             IcOverIc(IcLong(5)).let { foo(it::simple) }
 }
-
-inline fun foo(init: () -> String): String = init()
 
 fun box(): String {
     val i = IcInt(3)

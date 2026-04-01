@@ -1,0 +1,57 @@
+@kotlin.Metadata
+public interface I1 {
+    // source: 'KInterfaces.kt'
+    public abstract method bar(): int
+    public abstract method foo(): int
+}
+
+@kotlin.Metadata
+public interface I2 {
+    // source: 'KInterfaces.kt'
+    public abstract @org.jetbrains.annotations.NotNull method bar(): java.lang.Integer
+}
+
+@kotlin.Metadata
+public interface T1 {
+    // source: 'KInterfaces.kt'
+    public abstract @org.jetbrains.annotations.NotNull method bar(): java.lang.Integer
+}
+
+@kotlin.Metadata
+public interface T2 {
+    // source: 'KInterfaces.kt'
+    public synthetic bridge method bar(): int
+    public abstract @org.jetbrains.annotations.NotNull method bar(): java.lang.Integer
+    public synthetic bridge method foo(): int
+    public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.Integer
+}
+
+@kotlin.Metadata
+public interface TI3 {
+    // source: 'KInterfaces.kt'
+    public synthetic bridge method bar(): int
+    public synthetic bridge method bar(): java.lang.Integer
+    public abstract @org.jetbrains.annotations.NotNull method bar(): java.lang.Void
+    public synthetic bridge method foo(): int
+    public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.Void
+}
+
+@kotlin.Metadata
+public interface TI4 {
+    // source: 'KInterfaces.kt'
+    public synthetic bridge method bar(): int
+    public synthetic bridge method bar(): java.lang.Integer
+    public abstract @org.jetbrains.annotations.NotNull method bar(): java.lang.Void
+    public synthetic bridge method foo(): int
+    public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.Void
+}
+
+@kotlin.Metadata
+public interface TI5 {
+    // source: 'KInterfaces.kt'
+    public synthetic bridge method bar(): int
+    public synthetic bridge method bar(): java.lang.Integer
+    public abstract @org.jetbrains.annotations.NotNull method bar(): java.lang.Void
+    public synthetic bridge method foo(): int
+    public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.Void
+}

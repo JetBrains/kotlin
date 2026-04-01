@@ -1,0 +1,4 @@
+Caused by: java.lang.IllegalStateException: anonymous function fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+    ^ Unit
+}
+ not analyzed

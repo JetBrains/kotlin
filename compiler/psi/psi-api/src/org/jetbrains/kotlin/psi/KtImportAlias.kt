@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,16 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
 
+/**
+ * Represents an import alias that provides an alternative name for an imported declaration.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * import java.util.Date as JavaDate
+ * //                    ^^^^^^^^^^^
+ * ```
+ */
 class KtImportAlias : KtElementImplStub<KotlinImportAliasStub>, PsiNameIdentifierOwner {
     @Suppress("unused")
     constructor(node: ASTNode) : super(node)

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ObjCSignatureOverrideAnnotation
 // WITH_PLATFORM_LIBS
 

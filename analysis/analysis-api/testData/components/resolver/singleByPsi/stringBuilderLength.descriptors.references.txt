@@ -2,11 +2,15 @@ KtNameReferenceExpression(47,53): 'length'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in java.lang.StringBuilder) {psi: null} val length: kotlin.Int
+    resolveToSymbols:
       (in <local>: StringBuilder.length) {psi: null} get()
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

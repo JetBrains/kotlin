@@ -5,13 +5,15 @@
 package org.jetbrains.kotlin.generators.model
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.generators.MethodGenerator
-import org.jetbrains.kotlin.generators.impl.SimpleTestClassModelTestAllFilesPresentMethodGenerator
+import org.jetbrains.kotlin.generators.model.methods.RunTestMethodModel
+import org.jetbrains.kotlin.generators.model.methods.RunTestWithDirectoryPrefixMethodModel
+import org.jetbrains.kotlin.generators.model.methods.SimpleTestMethodModel
+import org.jetbrains.kotlin.generators.model.methods.TestAllFilesPresentMethodModel
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.fileNameToJavaIdentifier
 import org.jetbrains.kotlin.generators.util.extractTagsFromDirectory
 import org.jetbrains.kotlin.generators.util.extractTagsFromTestFile
+import org.jetbrains.kotlin.generators.util.getFilePath
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.util.regex.Pattern
 
@@ -28,13 +30,15 @@ import java.util.regex.Pattern
  * @property recursive if false then subdirectories wouldn't be traversed
  */
 class SimpleTestClassModel(
+    val testInfraRevision: TestInfraRevision,
+    val testDataRoot: File,
     val rootFile: File,
     val recursive: Boolean,
     private val excludeParentDirs: Boolean,
     val filenamePattern: Pattern,
     val excludePattern: Pattern?,
     private val doTestMethodName: String,
-    private val testClassName: String,
+    val testClassName: String,
     val targetBackend: TargetBackend?,
     excludeDirs: Collection<String>,
     excludeDirsRecursively: Collection<String>,
@@ -53,36 +57,32 @@ class SimpleTestClassModel(
         if (!rootFile.isDirectory || !recursive) {
             return@lazy emptyList()
         }
-        val children = mutableListOf<TestClassModel>()
-        val files = rootFile.listFiles() ?: return@lazy emptyList()
-        for (file in files) {
-            if (file.isDirectory && dirHasFilesInside(file) && !allExcludedDirs.contains(file.name)) {
-                val innerTestClassName = fileNameToJavaIdentifier(file)
-                children.add(
-                    SimpleTestClassModel(
-                        file,
-                        true,
-                        excludeParentDirs,
-                        filenamePattern,
-                        excludePattern,
-                        doTestMethodName,
-                        innerTestClassName,
-                        targetBackend,
-                        excludesStripOneDirectory(excludeDirs, file.name),
-                        excludeDirsRecursively,
-                        testRunnerMethodName,
-                        annotations,
-                        extractTagsFromDirectory(file),
-                        additionalMethods.filter { it.shouldBeGeneratedForInnerTestClass },
-                        skipTestAllFilesCheck,
-                    )
-                )
-            }
-        }
-        children.sortWith(BY_NAME)
-        children
-    }
+        rootFile.listFiles().orEmpty().mapNotNull l@{ file ->
+            if (!file.isDirectory) return@l null
+            if (!dirHasFilesInside(file)) return@l null
+            if (allExcludedDirs.contains(file.name)) return@l null
 
+            SimpleTestClassModel(
+                testInfraRevision,
+                testDataRoot,
+                rootFile = file,
+                recursive = true,
+                excludeParentDirs,
+                filenamePattern,
+                excludePattern,
+                doTestMethodName,
+                testClassName = fileNameToJavaIdentifier(file),
+                targetBackend,
+                excludesStripOneDirectory(excludeDirs, file.name),
+                excludeDirsRecursively,
+                testRunnerMethodName,
+                annotations,
+                extractTagsFromDirectory(file),
+                additionalMethods.filter { it.shouldBeGeneratedForInnerTestClass },
+                skipTestAllFilesCheck,
+            )
+        }.sortedWith(BY_NAME)
+    }
 
     private fun excludesStripOneDirectory(excludeDirs: Collection<String>, directoryName: String): Collection<String> {
         if (excludeDirs.isEmpty()) return excludeDirs
@@ -99,6 +99,7 @@ class SimpleTestClassModel(
     override val methods: Collection<MethodModel<*>> by lazy {
         if (!rootFile.isDirectory) {
             val methodModel = SimpleTestMethodModel(
+                testInfraRevision,
                 rootDir = rootFile,
                 file = rootFile,
                 filenamePattern,
@@ -106,45 +107,45 @@ class SimpleTestClassModel(
             )
             return@lazy listOf(methodModel)
         }
-        val result = mutableListOf<MethodModel<*>>()
-        result.add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName))
-        if (!skipTestAllFilesCheck) {
-            result.add(TestAllFilesPresentMethodModel())
-        }
-        result.addAll(additionalMethods)
-        val listFiles = rootFile.listFiles()
-        if (listFiles != null) {
-            for (file in listFiles) {
-                val excluded = let {
-                    val name = file.name
-                    val byPattern = excludePattern != null && excludePattern.matcher(name).matches()
-                    val byDirectory = file.isDirectory && (name in allExcludedDirs)
-                    return@let byPattern || byDirectory
-                }
-                if (!excluded && filenamePattern.matcher(file.name).matches()) {
-                    if (file.isDirectory && excludeParentDirs && dirHasSubDirs(file)) {
-                        continue
-                    }
-                    if (file.isDirectory && !dirHasFilesInside(file)) {
-                        throw IllegalStateException(
-                            "testData directory $file is empty. " +
-                                    "This might be due to git branch switching removed the contents but left directory intact. " +
-                                    "Consider removing empty directory or revert removing of its' contents."
-                        )
-                    }
-                    result.add(
-                        SimpleTestMethodModel(
-                            rootFile,
-                            file,
-                            filenamePattern,
-                            extractTagsFromTestFile(file)
-                        )
+
+        buildList {
+            when (testInfraRevision) {
+                TestInfraRevision.LegacyJUnit4 -> add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName))
+                TestInfraRevision.StandardJUnit5 -> add(RunTestWithDirectoryPrefixMethodModel(rootFile.getFilePath()))
+            }
+            if (!skipTestAllFilesCheck) {
+                add(TestAllFilesPresentMethodModel(this@SimpleTestClassModel))
+            }
+            addAll(additionalMethods)
+            rootFile.listFiles().orEmpty().mapNotNullTo(this) l@{ file ->
+                val fileName = file.name
+                // doesn't match testdata pattern
+                if (!filenamePattern.matcher(fileName).matches()) return@l null
+
+                // excluded by pattern
+                if (excludePattern != null && excludePattern.matcher(fileName).matches()) return@l null
+
+                // excluded by directory
+                if (file.isDirectory && (fileName in allExcludedDirs)) return@l null
+
+                if (file.isDirectory && excludeParentDirs && dirHasSubDirs(file)) return@l null
+
+                if (file.isDirectory && !dirHasFilesInside(file)) {
+                    error(
+                        "testData directory $file is empty. " +
+                                "This might be due to git branch switching removed the contents but left directory intact. " +
+                                "Consider removing empty directory or revert removing of its' contents."
                     )
                 }
+                SimpleTestMethodModel(
+                    testInfraRevision,
+                    rootFile,
+                    file,
+                    filenamePattern,
+                    extractTagsFromTestFile(file)
+                )
             }
-        }
-        result.sortWith(BY_NAME)
-        result
+        }.sortedWith(BY_NAME)
     }
 
     override val isEmpty: Boolean
@@ -154,31 +155,10 @@ class SimpleTestClassModel(
         }
 
     override val dataString: String
-        get() = KtTestUtil.getFilePath(rootFile)
+        get() = rootFile.getFilePath()
 
     override val dataPathRoot: String
         get() = "\$PROJECT_ROOT"
-
-    /**
-     * Test method which ensures that there is a generated test for each testdata file in the
-     *   corresponding directory. Used to validate that generated test is up-to-date.
-     */
-    inner class TestAllFilesPresentMethodModel : MethodModel<TestAllFilesPresentMethodModel>() {
-        override val generator: MethodGenerator<TestAllFilesPresentMethodModel>
-            get() = SimpleTestClassModelTestAllFilesPresentMethodGenerator
-
-        override val name: String
-            get() = "testAllFilesPresentIn$testClassName"
-
-        override val dataString: String?
-            get() = null
-
-        val classModel: SimpleTestClassModel
-            get() = this@SimpleTestClassModel
-
-        override val tags: List<String>
-            get() = emptyList()
-    }
 
     companion object {
         private val BY_NAME = Comparator.comparing(TestEntityModel::name)

@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// IGNORE_NON_REVERSED_RESOLVE: KT-62937
 // SKIP_TXT
 // LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 

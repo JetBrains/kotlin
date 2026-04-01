@@ -6,22 +6,12 @@
 package org.jetbrains.kotlinx.serialization.runners
 
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
-import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
-import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlinx.serialization.configureForKotlinxSerialization
 
-abstract class AbstractSerializationPluginDiagnosticTest : AbstractDiagnosticTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            configureForKotlinxSerialization()
-            disableOptInErrors()
-        }
-    }
-}
 
 abstract class AbstractSerializationFirPsiDiagnosticTest : AbstractFirPsiDiagnosticTest() {
     override fun configure(builder: TestConfigurationBuilder) {

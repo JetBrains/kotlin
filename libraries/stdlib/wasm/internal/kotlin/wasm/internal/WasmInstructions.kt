@@ -7,17 +7,22 @@
 
 package kotlin.wasm.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 @WasmOp(WasmOp.UNREACHABLE)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_unreachable(): Nothing =
     implementedAsIntrinsic
 
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
 @ExcludedFromCodegen
+@UsedFromCompilerGeneratedCode
 internal fun <reified To> wasm_ref_cast_null(a: Any?): To =
     implementedAsIntrinsic
 
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
 @ExcludedFromCodegen
+@UsedFromCompilerGeneratedCode
 internal fun <reified To> wasm_ref_test(a: Any?): Boolean =
     implementedAsIntrinsic
 
@@ -27,18 +32,22 @@ internal fun <reified To> wasm_ref_test_null(a: Any?): Boolean =
     implementedAsIntrinsic
 
 @ExcludedFromCodegen
+@UsedFromCompilerGeneratedCode
 internal fun <T> wasm_array_copy(destination: T, destinationIndex: Int, source: T, sourceIndex: Int, length: Int): Unit =
     implementedAsIntrinsic
 
 @ExcludedFromCodegen
+@UsedFromCompilerGeneratedCode
 internal fun <T> array_new_data0(address: Int, length: Int): T =
     implementedAsIntrinsic
 
 @ExcludedFromCodegen
+@UsedFromCompilerGeneratedCode
 internal fun array_new_data0_char_array(address: Int, length: Int): WasmCharArray =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I32_EQ)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_i32_eq(a: Int, b: Int): Boolean =
     implementedAsIntrinsic
 
@@ -47,6 +56,7 @@ internal fun wasm_i32_ne(a: Int, b: Int): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I32_LT_S)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_i32_lt_s(a: Int, b: Int): Boolean =
     implementedAsIntrinsic
 
@@ -55,6 +65,7 @@ internal fun wasm_i32_lt_u(a: Int, b: Int): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I32_GT_S)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_i32_gt_s(a: Int, b: Int): Boolean =
     implementedAsIntrinsic
 
@@ -63,6 +74,7 @@ internal fun wasm_i32_gt_u(a: Int, b: Int): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I32_LE_S)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_i32_le_s(a: Int, b: Int): Boolean =
     implementedAsIntrinsic
 
@@ -71,6 +83,7 @@ internal fun wasm_i32_le_u(a: Int, b: Int): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I32_GE_S)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_i32_ge_s(a: Int, b: Int): Boolean =
     implementedAsIntrinsic
 
@@ -79,6 +92,7 @@ internal fun wasm_i32_ge_u(a: Int, b: Int): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I64_EQ)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_i64_eq(a: Long, b: Long): Boolean =
     implementedAsIntrinsic
 
@@ -87,6 +101,7 @@ internal fun wasm_i64_ne(a: Long, b: Long): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I64_LT_S)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_i64_lt_s(a: Long, b: Long): Boolean =
     implementedAsIntrinsic
 
@@ -95,6 +110,7 @@ internal fun wasm_i64_lt_u(a: Long, b: Long): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I64_GT_S)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_i64_gt_s(a: Long, b: Long): Boolean =
     implementedAsIntrinsic
 
@@ -103,6 +119,7 @@ internal fun wasm_i64_gt_u(a: Long, b: Long): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I64_LE_S)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_i64_le_s(a: Long, b: Long): Boolean =
     implementedAsIntrinsic
 
@@ -111,6 +128,7 @@ internal fun wasm_i64_le_u(a: Long, b: Long): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I64_GE_S)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_i64_ge_s(a: Long, b: Long): Boolean =
     implementedAsIntrinsic
 
@@ -119,6 +137,7 @@ internal fun wasm_i64_ge_u(a: Long, b: Long): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.F32_EQ)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_f32_eq(a: Float, b: Float): Boolean =
     implementedAsIntrinsic
 
@@ -127,22 +146,27 @@ internal fun wasm_f32_ne(a: Float, b: Float): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.F32_LT)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_f32_lt(a: Float, b: Float): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.F32_GT)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_f32_gt(a: Float, b: Float): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.F32_LE)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_f32_le(a: Float, b: Float): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.F32_GE)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_f32_ge(a: Float, b: Float): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.F64_EQ)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_f64_eq(a: Double, b: Double): Boolean =
     implementedAsIntrinsic
 
@@ -151,18 +175,22 @@ internal fun wasm_f64_ne(a: Double, b: Double): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.F64_LT)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_f64_lt(a: Double, b: Double): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.F64_GT)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_f64_gt(a: Double, b: Double): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.F64_LE)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_f64_le(a: Double, b: Double): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.F64_GE)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_f64_ge(a: Double, b: Double): Boolean =
     implementedAsIntrinsic
 
@@ -195,6 +223,7 @@ internal fun wasm_i32_rem_u(a: Int, b: Int): Int =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I32_AND)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_i32_and(a: Int, b: Int): Int =
     implementedAsIntrinsic
 
@@ -386,10 +415,12 @@ internal fun wasm_f32_abs(a: Float): Float =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.REF_IS_NULL)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_ref_is_null(a: Any?): Boolean =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.REF_EQ)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_ref_eq(a: Any?, b: Any?): Boolean =
     implementedAsIntrinsic
 
@@ -408,6 +439,7 @@ internal fun wasm_i32_wrap_i64(a: Long): Int =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I64_EXTEND_I32_S)
+@UsedFromCompilerGeneratedCode
 internal fun wasm_i64_extend_i32_s(a: Int): Long =
     implementedAsIntrinsic
 
@@ -471,6 +503,10 @@ internal fun wasm_i64_trunc_sat_f64_s(a: Double): Long =
 internal fun wasm_i32_load(x: Int): Int =
     implementedAsIntrinsic
 
+@WasmOp(WasmOp.I32_LOAD8_S)
+internal fun wasm_i32_load8_s(x: Int): Byte =
+    implementedAsIntrinsic
+
 @WasmOp(WasmOp.I32_LOAD16_U)
 internal fun wasm_i32_load16_u(x: Int): Int =
     implementedAsIntrinsic
@@ -479,9 +515,48 @@ internal fun wasm_i32_load16_u(x: Int): Int =
 internal fun wasm_i32_store(addr: Int, i: Int): Unit =
     implementedAsIntrinsic
 
+@WasmOp(WasmOp.I32_STORE8)
+internal fun wasm_i32_store8(addr: Int, i: Byte): Unit =
+    implementedAsIntrinsic
+
 @WasmOp(WasmOp.I32_STORE16)
 internal fun wasm_i32_store16(addr: Int, c: Char): Unit =
     implementedAsIntrinsic
+
+/**
+ * Current linear memory size in pages
+ */
+@WasmOp(WasmOp.MEMORY_SIZE)
+internal fun wasm_memory_size(): Int =
+    implementedAsIntrinsic
+
+/**
+ * Grow memory by a given delta (in pages).
+ * Return the previous size, or -1 if enough memory cannot be allocated.
+ */
+@Suppress("UNUSED_PARAMETER")
+@WasmOp(WasmOp.MEMORY_GROW)
+internal fun wasm_memory_grow(delta: Int): Int =
+    implementedAsIntrinsic
+
+/**
+ * Copy `size` bytes from `src` to `dst` in linear memory.
+ */
+//@Suppress("UNUSED_PARAMETER")
+//@WasmOp(WasmOp.MEMORY_COPY)
+//internal fun wasm_memory_copy(dst: Int, src: Int, size: Int): Unit =
+//    implementedAsIntrinsic
+
+// TODO replace this function with intrinsic above after bootstrap
+internal fun wasm_memory_copy(dst: Int, src: Int, size: Int) {
+    var s = src
+    var d = dst
+    repeat(size) {
+        wasm_i32_store8(d, wasm_i32_load8_s(s))
+        s++
+        d++
+    }
+}
 
 @WasmOp(WasmOp.I32_CLZ)
 internal fun wasm_i32_clz(a: Int): Int =

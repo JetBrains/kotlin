@@ -26,7 +26,7 @@ internal class KlibIrInfoLoader(private val library: KotlinLibrary) {
         val inlinableFunctionsIr = library.inlinableFunctionsIr ?: return null
 
         val fileStream = inlinableFunctionsIr.irFile(0).codedInputStream
-        val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
+        val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.getEmptyRegistry())
 
         return KlibIrInfo(
             preparedInlineFunctionCopyNumber = fileProto.declarationIdList.size,

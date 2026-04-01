@@ -16,6 +16,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Print a synopsis of standard options.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
+        affectsCompilationOutcome = false
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0,
@@ -29,6 +30,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Print a synopsis of advanced options.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
+        affectsCompilationOutcome = false
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0,
@@ -41,6 +43,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Display the compiler version.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
+        affectsCompilationOutcome = false
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0,
@@ -53,6 +56,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Enable verbose logging output.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
+        affectsCompilationOutcome = false
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0,
@@ -66,6 +70,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Don't generate any warnings.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
+        affectsCompilationOutcome = false
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0,

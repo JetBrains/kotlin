@@ -2,27 +2,37 @@ KtNameReferenceExpression(66,70): 'test'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package test
 
 KtNameReferenceExpression(136,142): 'Sample'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in test) enum class Sample
 
 KtNameReferenceExpression(145,148): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      Nothing (Unresolved reference)
+    resolveToSymbols:
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(168,169): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       s: test.Sample
 
@@ -30,6 +40,7 @@ KtNameReferenceExpression(181,186): 'FIRST'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.Sample) FIRST
 
@@ -37,6 +48,7 @@ KtNameReferenceExpression(200,206): 'SECOND'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.Sample) SECOND
 
@@ -44,6 +56,7 @@ KtNameReferenceExpression(220,225): 'THIRD'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.Sample) THIRD
 
@@ -51,20 +64,27 @@ KtNameReferenceExpression(261,267): 'Sample'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in test) enum class Sample
 
 KtNameReferenceExpression(270,273): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      Nothing (Unresolved reference)
+    resolveToSymbols:
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(302,303): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       s: test.Sample
 
@@ -72,6 +92,7 @@ KtOperationReferenceExpression(304,306): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -79,6 +100,7 @@ KtNameReferenceExpression(307,312): 'FIRST'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.Sample) FIRST
 
@@ -86,6 +108,7 @@ KtNameReferenceExpression(326,327): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       s: test.Sample
 
@@ -93,6 +116,7 @@ KtOperationReferenceExpression(328,330): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -100,6 +124,7 @@ KtNameReferenceExpression(331,337): 'SECOND'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.Sample) SECOND
 
@@ -107,6 +132,7 @@ KtNameReferenceExpression(351,352): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       s: test.Sample
 
@@ -114,6 +140,7 @@ KtOperationReferenceExpression(353,355): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -121,6 +148,7 @@ KtNameReferenceExpression(356,361): 'THIRD'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.Sample) THIRD
 
@@ -128,13 +156,17 @@ KtNameReferenceExpression(429,433): 'test'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in test) enum class Sample
+    resolveToSymbols:
       package test
 
 KtNameReferenceExpression(434,440): 'Sample'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test) enum class Sample
 
@@ -142,6 +174,7 @@ KtNameReferenceExpression(441,447): 'SECOND'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.Sample) SECOND
 
@@ -149,27 +182,37 @@ KtNameReferenceExpression(469,475): 'Sample'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in test) enum class Sample
 
 KtNameReferenceExpression(478,481): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      Nothing (Unresolved reference)
+    resolveToSymbols:
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(504,508): 'test'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in test) enum class Sample
+    resolveToSymbols:
       package test
 
 KtNameReferenceExpression(509,515): 'Sample'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test) enum class Sample
 
@@ -177,6 +220,7 @@ KtNameReferenceExpression(516,521): 'THIRD'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.Sample) THIRD
 
@@ -184,6 +228,7 @@ KtNameReferenceExpression(543,544): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       s: test.Sample
 
@@ -191,6 +236,7 @@ KtNameReferenceExpression(560,565): 'FIRST'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: Container.priority) val FIRST: test.Sample
 
@@ -198,6 +244,7 @@ KtNameReferenceExpression(583,589): 'SECOND'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.Container) val SECOND: test.Sample
 
@@ -205,13 +252,17 @@ KtNameReferenceExpression(607,611): 'test'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in test) enum class Sample
+    resolveToSymbols:
       package test
 
 KtNameReferenceExpression(612,618): 'Sample'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test) enum class Sample
 
@@ -219,5 +270,6 @@ KtNameReferenceExpression(619,624): 'FIRST'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.Sample) FIRST

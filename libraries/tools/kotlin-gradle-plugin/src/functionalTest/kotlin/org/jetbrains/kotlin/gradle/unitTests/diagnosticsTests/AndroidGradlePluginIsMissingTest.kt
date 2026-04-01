@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
 import kotlin.test.assertFails
@@ -28,6 +27,6 @@ class AndroidGradlePluginIsMissingTest {
         project.androidApplication { compileSdk = 33 }
         @Suppress("DEPRECATION")
         project.multiplatformExtension.androidTarget()
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.NonKmpAgpIsDeprecated)
+        project.assertNoDiagnostics()
     }
 }

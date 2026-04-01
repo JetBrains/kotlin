@@ -1,0 +1,149 @@
+FILE fqName:<root> fileName:/main.kt
+  CLASS CLASS name:Inv modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Inv<T of <root>.Inv>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    PROPERTY name:t visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:t type:T of <root>.Inv visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 't: T of <root>.Inv declared in <root>.Inv.<init>' type=T of <root>.Inv origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-t> visibility:public modality:FINAL returnType:T of <root>.Inv
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Inv<T of <root>.Inv>
+        correspondingProperty: PROPERTY name:t visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-t> (): T of <root>.Inv declared in <root>.Inv'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:t type:T of <root>.Inv visibility:private [final]' type=T of <root>.Inv origin=null
+              receiver: GET_VAR '<this>: <root>.Inv<T of <root>.Inv> declared in <root>.Inv.<get-t>' type=<root>.Inv<T of <root>.Inv> origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.Inv<T of <root>.Inv> [primary]
+      VALUE_PARAMETER kind:Regular name:t index:0 type:T of <root>.Inv
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inv modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  CLASS INTERFACE name:C modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+      VALUE_PARAMETER kind:Regular name:t index:1 type:<root>.Inv<*>
+  CLASS INTERFACE name:D1 modality:ABSTRACT visibility:public superTypes:[<root>.C; <root>.B]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.D1
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+      VALUE_PARAMETER kind:Regular name:t index:1 type:<root>.Inv<*>
+      overridden:
+        public abstract fun foo (t: <root>.Inv<*>): kotlin.Unit declared in <root>.C
+        public abstract fun foo (t: @[FlexibleNullability] @[RawType] <root>.Inv<kotlin.Any?>?): kotlin.Unit declared in <root>.B
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.C
+        public open fun hashCode (): kotlin.Int declared in <root>.B
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.C
+        public open fun toString (): kotlin.String declared in <root>.B
+  CLASS INTERFACE name:D2 modality:ABSTRACT visibility:public superTypes:[<root>.C; <root>.B]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.D2
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.C
+        public open fun hashCode (): kotlin.Int declared in <root>.B
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.C
+        public open fun toString (): kotlin.String declared in <root>.B
+    FUN name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.D2
+      VALUE_PARAMETER kind:Regular name:t index:1 type:<root>.Inv<*>
+      overridden:
+        public abstract fun foo (t: <root>.Inv<*>): kotlin.Unit declared in <root>.C
+        public abstract fun foo (t: @[FlexibleNullability] @[RawType] <root>.Inv<kotlin.Any?>?): kotlin.Unit declared in <root>.B
+  CLASS INTERFACE name:D3 modality:ABSTRACT visibility:public superTypes:[<root>.B; <root>.C]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.D3
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B
+      VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] @[RawType] <root>.Inv<kotlin.Any?>?
+      annotations:
+        Override
+      overridden:
+        public abstract fun foo (t: @[FlexibleNullability] @[RawType] <root>.Inv<kotlin.Any?>?): kotlin.Unit declared in <root>.B
+        public abstract fun foo (t: <root>.Inv<*>): kotlin.Unit declared in <root>.C
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.B
+        public open fun hashCode (): kotlin.Int declared in <root>.C
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.B
+        public open fun toString (): kotlin.String declared in <root>.C
+  CLASS INTERFACE name:D4 modality:ABSTRACT visibility:public superTypes:[<root>.B; <root>.C]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.D4
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.B
+        public open fun hashCode (): kotlin.Int declared in <root>.C
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.B
+        public open fun toString (): kotlin.String declared in <root>.C
+    FUN name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.D4
+      VALUE_PARAMETER kind:Regular name:t index:1 type:<root>.Inv<*>
+      overridden:
+        public abstract fun foo (t: @[FlexibleNullability] @[RawType] <root>.Inv<kotlin.Any?>?): kotlin.Unit declared in <root>.B
+        public abstract fun foo (t: <root>.Inv<*>): kotlin.Unit declared in <root>.C

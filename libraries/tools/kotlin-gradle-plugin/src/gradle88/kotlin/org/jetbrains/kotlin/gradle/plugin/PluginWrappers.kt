@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporter
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporterG88
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporterG88
 import org.jetbrains.kotlin.gradle.plugin.internal.*
@@ -63,5 +65,7 @@ private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
     factories[ProblemsReporter.Factory::class] =
         ProblemsReporterG88.Factory()
+    factories[CompilerDiagnosticsProblemsReporter.Factory::class] =
+        CompilerDiagnosticsProblemsReporterG88.Factory()
     factories[ProjectDependencyAccessor.Factory::class] = ProjectDependencyAccessorG88.Factory()
 }

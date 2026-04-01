@@ -1,13 +1,12 @@
 // ISSUE: KT-68975
 // See same test for diagnostics: compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/inlineFunctionWithMultipleParameters.kt
-// LANGUAGE: +BreakContinueInInlineLambdas
+// LANGUAGE: +BreakContinueInInlineLambdas -ForbidCaptureInlinableLambdasInJsCode
 // WITH_STDLIB
 // TARGET_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // REASON: SyntaxError: Undefined label '$l$loop'
 
-import kotlin.test.assertEquals
-
+// FILE: lib.kt
 inline fun foo(
     block1: () -> Unit,
     noinline block2: () -> Unit,
@@ -17,6 +16,9 @@ inline fun foo(
     js("block2()")
     js("block3()")
 }
+
+// FILE: main.kt
+import kotlin.test.assertEquals
 
 fun box(): String {
     val visited = mutableListOf<Int>()

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-51156
 // WITH_STDLIB

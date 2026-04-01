@@ -1,0 +1,5 @@
+KtNameReferenceExpression(141,142): 'x'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var x: kotlin.Any
+    ]

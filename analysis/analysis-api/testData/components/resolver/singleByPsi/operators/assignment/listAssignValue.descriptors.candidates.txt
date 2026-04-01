@@ -4,7 +4,8 @@ KtOperationReferenceExpression(57,59): '+='
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
         operand = 1
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = l[0]
@@ -26,7 +27,10 @@ KtOperationReferenceExpression(57,59): '+='
             ]
             contextParameters = []
             callableId = kotlin/Int.plus
-      getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {}
+      getterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = l
@@ -48,10 +52,13 @@ KtOperationReferenceExpression(57,59): '+='
           ]
           contextParameters = []
           callableId = kotlin/collections/MutableList.get
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
       indexArguments = [
         0
       ]
-      setPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      setterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = l
@@ -80,4 +87,6 @@ KtOperationReferenceExpression(57,59): '+='
           ]
           contextParameters = []
           callableId = kotlin/collections/MutableList.set
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     isInBestCandidates = true

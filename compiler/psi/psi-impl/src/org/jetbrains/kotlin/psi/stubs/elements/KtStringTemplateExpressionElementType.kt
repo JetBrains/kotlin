@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi.stubs.elements
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.stubs.StubUtils
 
@@ -14,6 +15,7 @@ class KtStringTemplateExpressionElementType(@NonNls debugName: String) :
     KtPlaceHolderStubElementType<KtStringTemplateExpression>(debugName, KtStringTemplateExpression::class.java) {
 
     override fun shouldCreateStub(node: ASTNode): Boolean {
+        @OptIn(KtImplementationDetail::class)
         if (!StubUtils.isDeclaredInsideValueArgument(node)) {
             return false
         }

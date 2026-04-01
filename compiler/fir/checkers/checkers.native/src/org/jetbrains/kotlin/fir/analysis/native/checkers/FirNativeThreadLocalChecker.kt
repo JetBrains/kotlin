@@ -24,6 +24,9 @@ import org.jetbrains.kotlin.name.FqName
 object FirNativeThreadLocalChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     private val threadLocalClassId = ClassId.topLevel(FqName("kotlin.native.concurrent.ThreadLocal"))
 
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         val isObject = declaration is FirClass && declaration.classKind == ClassKind.OBJECT

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package foo
 
 import org.jetbrains.kotlin.plugin.sandbox.GeneratedEntityType
@@ -16,3 +17,5 @@ open class SomeClass
 
 <!MANY_CLASSES_IN_SUPERTYPE_LIST!>@GeneratedEntityType
 class WithExplicitClass : SomeClass()<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nullableType, typeParameter */

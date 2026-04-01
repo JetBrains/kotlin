@@ -44,24 +44,20 @@ import kotlin.properties.ReadOnlyProperty
 data class KotlinCompilerArgumentsLevel(
     val name: String,
     val arguments: Set<KotlinCompilerArgument>,
-    val nestedLevels: Set<KotlinCompilerArgumentsLevel>
+    val nestedLevels: Set<KotlinCompilerArgumentsLevel>,
+    val modifiers: Set<Modifier> = emptySet()
 ) {
 
     /**
      * Merge all arguments and nested levels from [another] level into this one.
      *
-     * [another] compiler arguments level must conform to the following requirements:
-     * - the [another.name][KotlinCompilerArgumentsLevel.name] value must be equal to the [name] value
-     * of this compiler argument level
+     * [another] compiler arguments level must conform to the following requirement:
      * - the [another] level must not contain [KotlinCompilerArguments][KotlinCompilerArgument]
      * with the same [KotlinCompilerArgument.name] as current level has
      *
      * Nested compiler argument levels with the same [name][KotlinCompilerArgumentsLevel.name] are merged together.
      */
     internal fun mergeWith(another: KotlinCompilerArgumentsLevel): KotlinCompilerArgumentsLevel {
-        require(name == another.name) {
-            "Names for compiler arguments level should be the same! We are trying to merge $name with ${another.name}"
-        }
         val argumentsWithTheSameNames = arguments.map { it.name }.intersect(another.arguments.map { it.name })
         require(argumentsWithTheSameNames.isEmpty()) {
             "Both levels with name $name contain compiler arguments with the same name(s): " +
@@ -78,7 +74,8 @@ data class KotlinCompilerArgumentsLevel(
         return KotlinCompilerArgumentsLevel(
             name,
             (arguments + another.arguments).sortedBy { it.name }.toSet(),
-            mergedNestedLevels
+            mergedNestedLevels,
+            modifiers
         )
     }
 }
@@ -91,6 +88,14 @@ internal class KotlinCompilerArgumentsLevelBuilder(
     val name: String
 ) {
     private val arguments = mutableSetOf<KotlinCompilerArgument>()
+    private val modifiers = mutableSetOf<Modifier>()
+
+    /**
+     * Add a [Modifier] to this level.
+     */
+    fun modifier(modifier: Modifier) {
+        modifiers.add(modifier)
+    }
 
     /**
      * Define a new [KotlinCompilerArgument].
@@ -120,7 +125,7 @@ internal class KotlinCompilerArgumentsLevelBuilder(
     fun subLevel(
         name: String,
         mergeWith: Set<KotlinCompilerArgumentsLevel> = emptySet(),
-        config: KotlinCompilerArgumentsLevelBuilder.() -> Unit
+        config: KotlinCompilerArgumentsLevelBuilder.() -> Unit,
     ) {
         val levelBuilder = KotlinCompilerArgumentsLevelBuilder(name)
         config(levelBuilder)
@@ -137,7 +142,8 @@ internal class KotlinCompilerArgumentsLevelBuilder(
     fun build(): KotlinCompilerArgumentsLevel = KotlinCompilerArgumentsLevel(
         name,
         arguments,
-        nestedLevels
+        nestedLevels,
+        modifiers.toSet()
     )
 }
 
@@ -167,4 +173,9 @@ internal fun compilerArgumentsLevel(
     config(levelBuilder)
     val compilerArgumentsLevel = levelBuilder.build()
     compilerArgumentsLevel
+}
+
+
+enum class Modifier {
+    DEPRECATED, SEALED
 }

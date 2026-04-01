@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.session
 
+import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
@@ -89,7 +90,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
         extensionRegistrars: List<FirExtensionRegistrar>
     ): FirSession {
         return FirCliSession(FirSession.Kind.Library).apply session@{
-            registerCliCompilerAndCommonComponents(languageVersionSettings)
+            registerCliCompilerAndCommonComponents(languageVersionSettings, isFactoryForMetadataCompilation)
             registerLibrarySessionComponents(context)
 
             val kotlinScopeProvider = createKotlinScopeProviderForLibrarySession()
@@ -156,7 +157,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                 it.bindSession(this)
             }
 
-            registerCliCompilerAndCommonComponents(languageVersionSettings)
+            registerCliCompilerAndCommonComponents(languageVersionSettings, isFactoryForMetadataCompilation)
             registerLibrarySessionComponents(context)
             register(FirBuiltinSyntheticFunctionInterfaceProvider::class, sharedLibrarySession.syntheticFunctionInterfacesSymbolProvider)
 
@@ -210,7 +211,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
     }
 
     protected abstract fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider
-    protected abstract fun FirSession.registerLibrarySessionComponents(c: CONTEXT)
+    abstract fun FirSession.registerLibrarySessionComponents(c: CONTEXT)
 
     // ==================================== Platform session ====================================
 
@@ -236,8 +237,9 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
             moduleData.bindSession(this@session)
             registerModuleData(moduleData)
             if (configuration.dumpInferenceLogs) register(FirInferenceLogger::class, FirInferenceLogger())
-            registerCliCompilerAndCommonComponents(languageVersionSettings)
+            registerCliCompilerAndCommonComponents(languageVersionSettings, isFactoryForMetadataCompilation)
             registerResolveComponents(
+                configuration.diagnosticFactoriesStorage ?: error("diagnosticFactoriesStorage is not registered in the configuration"),
                 configuration.lookupTracker,
                 configuration.enumWhenTracker,
                 configuration.importTracker,
@@ -333,11 +335,12 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
         moduleData: FirModuleData, languageVersionSettings: LanguageVersionSettings
     ): FirKotlinScopeProvider
 
-    protected abstract fun FirSessionConfigurator.registerPlatformCheckers()
-    protected abstract fun FirSessionConfigurator.registerExtraPlatformCheckers()
-    protected abstract fun FirSession.registerSourceSessionComponents(c: CONTEXT)
+    abstract fun FirSessionConfigurator.registerPlatformCheckers()
+    abstract fun FirSessionConfigurator.registerExtraPlatformCheckers()
+    abstract fun FirSession.registerSourceSessionComponents(c: CONTEXT)
 
     protected abstract val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
+    protected abstract val isFactoryForMetadataCompilation: Boolean
 
     // ==================================== Common parts ====================================
 
@@ -445,7 +448,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
     /* It eliminates dependency and composite providers since the current dependency provider is composite in fact.
     *  To prevent duplications and resolving errors, library or source providers from other modules should be filtered out during flattening.
     *  It depends on the session's kind of the top-level provider */
-    private fun FirSymbolProvider.flattenAndFilterOwnProviders(): List<FirSymbolProvider> {
+    fun FirSymbolProvider.flattenAndFilterOwnProviders(): List<FirSymbolProvider> {
         val originalSession = session.takeIf { it.kind == FirSession.Kind.Source }
         return flatten { provider ->
             // Make sure only source symbol providers from the same session as the original symbol provider are flattened. A composite

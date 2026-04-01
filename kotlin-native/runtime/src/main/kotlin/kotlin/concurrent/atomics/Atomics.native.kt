@@ -489,17 +489,7 @@ public class AtomicNativePtr(
      */
     @Deprecated("Use exchange(newValue: NativePtr) instead.", ReplaceWith("this.exchange(newValue)"), DeprecationLevel.ERROR)
     @Suppress("DEPRECATION_ERROR")
-    public fun getAndSet(newValue: NativePtr): NativePtr {
-        // Pointer types are allowed for atomicrmw xchg operand since LLVM 15.0,
-        // after LLVM version update, it may be implemented via getAndSetField intrinsic.
-        // Check: https://youtrack.jetbrains.com/issue/KT-57557
-        while (true) {
-            val old = value
-            if (this::value.compareAndSetField(old, newValue)) {
-                return old
-            }
-        }
-    }
+    public fun getAndSet(newValue: NativePtr): NativePtr = this::value.getAndSetField(newValue)
 
     /**
      * Returns the string representation of the underlying [NativePtr].

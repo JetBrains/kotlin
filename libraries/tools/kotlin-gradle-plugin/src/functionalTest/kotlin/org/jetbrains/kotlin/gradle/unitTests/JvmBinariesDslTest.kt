@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.onlyJars
-import org.junit.Assume
-import org.junit.Test
+import org.junit.jupiter.api.Assumptions
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -423,7 +423,7 @@ class JvmBinariesDslTest {
     @Test
     fun configuredToolchainIsAppliedToRunTask() {
         // On Windows toolchain detection is not working correctly in the functional tests
-        Assume.assumeTrue(!SystemUtils.IS_OS_WINDOWS)
+        Assumptions.assumeTrue(!SystemUtils.IS_OS_WINDOWS)
 
         val project = testMppProject {
             kotlin {

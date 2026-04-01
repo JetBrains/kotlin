@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
@@ -22,6 +21,7 @@ dependencies {
     compileOnly(project(":compiler:frontend.common.jvm"))
     compileOnly(project(":compiler:config.jvm"))
     compileOnly(project(":compiler:frontend"))
+    compileOnly(project(":core:compiler.common.web"))
 
     compileOnly(intellijCore())
 
@@ -38,9 +38,6 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testRuntimeOnly(project(":core:deserialization"))
-    testRuntimeOnly(project(":core:descriptors.runtime"))
-    testRuntimeOnly(project(":core:descriptors.jvm"))
     testRuntimeOnly(project(":compiler:fir:fir2ir:jvm-backend"))
     testRuntimeOnly(project(":kotlin-util-klib-abi"))
     testRuntimeOnly(project(":generators"))

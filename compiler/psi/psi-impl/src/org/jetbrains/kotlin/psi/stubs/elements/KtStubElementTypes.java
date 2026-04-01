@@ -42,6 +42,9 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtClassBody> CLASS_BODY =
             new KtPlaceHolderStubElementType<>("CLASS_BODY", KtClassBody.class);
 
+    KtPlaceHolderStubElementType<KtCompanionBlock> COMPANION_BLOCK =
+            new KtPlaceHolderStubElementType<>("COMPANION_BLOCK", KtCompanionBlock.class);
+
     KtPlaceHolderStubElementType<KtImportList> IMPORT_LIST =
             new KtPlaceHolderStubElementType<>("IMPORT_LIST", KtImportList.class);
 
@@ -98,7 +101,7 @@ public interface KtStubElementTypes {
             new KtPlaceHolderStubElementType<>("TYPE_ARGUMENT_LIST", KtTypeArgumentList.class);
 
     KtPlaceHolderStubElementType<KtValueArgumentList> VALUE_ARGUMENT_LIST =
-            new KtValueArgumentListElementType("VALUE_ARGUMENT_LIST");
+            new KtPlaceHolderStubElementType<>("VALUE_ARGUMENT_LIST", KtValueArgumentList.class);
 
     KtValueArgumentElementType<KtValueArgument> VALUE_ARGUMENT =
             new KtValueArgumentElementType<>("VALUE_ARGUMENT", KtValueArgument.class);
@@ -132,8 +135,10 @@ public interface KtStubElementTypes {
             new KtPlaceHolderStubElementType<>("CONSTRUCTOR_CALLEE", KtConstructorCalleeExpression.class);
 
     KtContextReceiverElementType CONTEXT_RECEIVER = new KtContextReceiverElementType("CONTEXT_RECEIVER");
-    KtPlaceHolderStubElementType<KtContextReceiverList> CONTEXT_RECEIVER_LIST =
-            new KtPlaceHolderStubElementType<>("CONTEXT_RECEIVER_LIST", KtContextReceiverList.class);
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    KtPlaceHolderStubElementType<KtContextParameterList> CONTEXT_PARAMETER_LIST =
+            new KtPlaceHolderStubElementType("CONTEXT_PARAMETER_LIST", KtContextReceiverList.class);
 
     KtConstantExpressionElementType NULL                = new KtConstantExpressionElementType("NULL");
     KtConstantExpressionElementType BOOLEAN_CONSTANT    = new KtConstantExpressionElementType("BOOLEAN_CONSTANT");

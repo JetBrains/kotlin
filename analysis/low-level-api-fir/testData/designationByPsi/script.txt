@@ -1,0 +1,8 @@
+KT element: KtScript
+Resolve target: script.kts -> <script-script.kts>
+FIR:
+  SCRIPT: <script-script.kts>
+      <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+      lval args: R|kotlin/Array<kotlin/String>|
+
+      public? final? fun scriptFun(): R|kotlin/Unit| { LAZY_BLOCK }

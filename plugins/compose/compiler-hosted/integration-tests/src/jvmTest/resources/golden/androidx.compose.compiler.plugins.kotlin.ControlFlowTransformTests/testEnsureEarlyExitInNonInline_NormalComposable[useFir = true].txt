@@ -28,7 +28,10 @@ fun Test(condition: Boolean) {
 @StabilityInferred(parameters = 1)
 object obj {
   val condition: Boolean = true
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @Composable
 fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {

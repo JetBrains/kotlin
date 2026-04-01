@@ -8,7 +8,7 @@ FILE: [ResolvedTo(RAW_FIR)] contextParameterOnPrimaryConstructorAndClass.kt
     }
     context([ResolvedTo(RAW_FIR)] s: String)
     public final? [ResolvedTo(RAW_FIR)] class Clazz : R|kotlin/Any| {
-        context([ResolvedTo(RAW_FIR)] c: Clazz, [ResolvedTo(RAW_FIR)] s: String)
+        context([ResolvedTo(RAW_FIR)] c: Clazz)
         @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Clazz] constructor([ResolvedTo(RAW_FIR)] i: Int): R|Clazz| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] contextParameterOnPrimaryConstructorAndClass.kt
     }
     context([ResolvedTo(RAW_FIR)] s: String)
     public final? [ResolvedTo(RAW_FIR)] class Clazz : R|kotlin/Any| {
-        context([ResolvedTo(RAW_FIR)] c: Clazz, [ResolvedTo(RAW_FIR)] s: String)
+        context([ResolvedTo(RAW_FIR)] c: Clazz)
         @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Clazz] constructor([ResolvedTo(RAW_FIR)] i: Int): R|Clazz| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -42,7 +42,7 @@ FILE: [ResolvedTo(IMPORTS)] contextParameterOnPrimaryConstructorAndClass.kt
     }
     context([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] s: String)
     public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Clazz : R|kotlin/Any| {
-        context([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] c: Clazz, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] s: String)
+        context([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] c: Clazz)
         @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Clazz] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] i: Int): R|Clazz| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -59,7 +59,7 @@ FILE: [ResolvedTo(IMPORTS)] contextParameterOnPrimaryConstructorAndClass.kt
     }
     context([ResolvedTo(COMPANION_GENERATION)] s: String)
     public final? [ResolvedTo(COMPANION_GENERATION)] class Clazz : R|kotlin/Any| {
-        context([ResolvedTo(COMPANION_GENERATION)] c: Clazz, [ResolvedTo(COMPANION_GENERATION)] s: String)
+        context([ResolvedTo(COMPANION_GENERATION)] c: Clazz)
         @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Clazz] constructor([ResolvedTo(COMPANION_GENERATION)] i: Int): R|Clazz| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] contextParameterOnPrimaryConstructorAndClass.kt
     }
     context([ResolvedTo(SUPER_TYPES)] s: String)
     public final? [ResolvedTo(SUPER_TYPES)] class Clazz : R|kotlin/Any| {
-        context([ResolvedTo(SUPER_TYPES)] c: Clazz, [ResolvedTo(SUPER_TYPES)] s: String)
+        context([ResolvedTo(SUPER_TYPES)] c: Clazz)
         @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Clazz] constructor([ResolvedTo(SUPER_TYPES)] i: Int): R|Clazz| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -93,7 +93,7 @@ FILE: [ResolvedTo(IMPORTS)] contextParameterOnPrimaryConstructorAndClass.kt
     }
     context([ResolvedTo(TYPES)] s: R|kotlin/String|)
     public final? [ResolvedTo(TYPES)] class Clazz : R|kotlin/Any| {
-        context([ResolvedTo(TYPES)] c: R|Clazz|, [ResolvedTo(TYPES)] s: R|kotlin/String|)
+        context([ResolvedTo(TYPES)] c: R|Clazz|)
         @R|Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] [ContainingClassKey=Clazz] constructor([ResolvedTo(TYPES)] i: R|kotlin/Int|): R|Clazz| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] contextParameterOnPrimaryConstructorAndClass.kt
     }
     context([ResolvedTo(STATUS)] s: R|kotlin/String|)
     public final [ResolvedTo(STATUS)] class Clazz : R|kotlin/Any| {
-        context([ResolvedTo(STATUS)] c: R|Clazz|, [ResolvedTo(STATUS)] s: R|kotlin/String|)
+        context([ResolvedTo(STATUS)] c: R|Clazz|)
         @R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=Clazz] constructor([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|Clazz| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -127,7 +127,7 @@ FILE: [ResolvedTo(IMPORTS)] contextParameterOnPrimaryConstructorAndClass.kt
     }
     context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] s: R|kotlin/String|)
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Clazz : R|kotlin/Any| {
-        context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] c: R|Clazz|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] s: R|kotlin/String|)
+        context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] c: R|Clazz|)
         @R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Clazz] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] i: R|kotlin/Int|): R|Clazz| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] contextParameterOnPrimaryConstructorAndClass.kt
     }
     context([ResolvedTo(CONTRACTS)] s: R|kotlin/String|)
     public final [ResolvedTo(CONTRACTS)] class Clazz : R|kotlin/Any| {
-        context([ResolvedTo(CONTRACTS)] c: R|Clazz|, [ResolvedTo(CONTRACTS)] s: R|kotlin/String|)
+        context([ResolvedTo(CONTRACTS)] c: R|Clazz|)
         @R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Clazz] constructor([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|): R|Clazz| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -161,7 +161,7 @@ FILE: [ResolvedTo(IMPORTS)] contextParameterOnPrimaryConstructorAndClass.kt
     }
     context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] s: R|kotlin/String|)
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Clazz : R|kotlin/Any| {
-        context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] c: R|Clazz|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] s: R|kotlin/String|)
+        context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] c: R|Clazz|)
         @R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Clazz] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] i: R|kotlin/Int|): R|Clazz| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -178,7 +178,7 @@ FILE: [ResolvedTo(IMPORTS)] contextParameterOnPrimaryConstructorAndClass.kt
     }
     context([ResolvedTo(CONSTANT_EVALUATION)] s: R|kotlin/String|)
     public final [ResolvedTo(CONSTANT_EVALUATION)] class Clazz : R|kotlin/Any| {
-        context([ResolvedTo(CONSTANT_EVALUATION)] c: R|Clazz|, [ResolvedTo(CONSTANT_EVALUATION)] s: R|kotlin/String|)
+        context([ResolvedTo(CONSTANT_EVALUATION)] c: R|Clazz|)
         @R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Clazz] constructor([ResolvedTo(CONSTANT_EVALUATION)] i: R|kotlin/Int|): R|Clazz| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -195,7 +195,7 @@ FILE: [ResolvedTo(IMPORTS)] contextParameterOnPrimaryConstructorAndClass.kt
     }
     context([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|)
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Clazz : R|kotlin/Any| {
-        context([ResolvedTo(ANNOTATION_ARGUMENTS)] c: R|Clazz|, [ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|)
+        context([ResolvedTo(ANNOTATION_ARGUMENTS)] c: R|Clazz|)
         @R|Anno|[Types]() public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Clazz] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] i: R|kotlin/Int|): R|Clazz| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -212,7 +212,7 @@ FILE: [ResolvedTo(IMPORTS)] contextParameterOnPrimaryConstructorAndClass.kt
     }
     context([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|)
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Clazz : R|kotlin/Any| {
-        context([ResolvedTo(BODY_RESOLVE)] c: R|Clazz|, [ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|)
+        context([ResolvedTo(BODY_RESOLVE)] c: R|Clazz|)
         @R|Anno|[Types]() public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Clazz] constructor([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|Clazz| {
             super<R|kotlin/Any|>()
         }
@@ -229,7 +229,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] contextParameterOnPrimaryConstructorAndClass.kt
     }
     context([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|)
     public final [ResolvedTo(BODY_RESOLVE)] class Clazz : R|kotlin/Any| {
-        context([ResolvedTo(BODY_RESOLVE)] c: R|Clazz|, [ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|)
+        context([ResolvedTo(BODY_RESOLVE)] c: R|Clazz|)
         @R|Anno|[Types]() public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Clazz] constructor([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|Clazz| {
             super<R|kotlin/Any|>()
         }

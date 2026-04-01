@@ -95,6 +95,7 @@ scopes:
             isCrossinline: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
             isVal: true
@@ -186,6 +187,7 @@ scopes:
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isPrimary: true
         location: CLASS
         modality: FINAL
@@ -211,13 +213,13 @@ scopes:
     callables: 0
     constructors: 0
 
-  ExplicitSimpleImportingScope, index = 4
+  ExplicitSimpleImportingScope, index = 5
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 5
+  PackageMemberScope, index = 6
     packages: 0
     classifiers: 3
       KaNamedClassSymbol:
@@ -301,15 +303,14 @@ scopes:
     callables: 0
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 6
-
   DefaultSimpleImportingScope, index = 7
 
-  ExplicitStarImportingScope, index = 8
+  DefaultSimpleImportingScope, index = 8
+
+  ExplicitStarImportingScope, index = 9
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 9
-
+  DefaultStarImportingScope, index = 10

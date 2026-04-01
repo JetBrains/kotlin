@@ -24,7 +24,7 @@ annotation class Ann(
         <!UNRESOLVED_REFERENCE!>Nested<!>.CONST,
         <!UNRESOLVED_REFERENCE!>Interface<!>.CONST,
         <!UNRESOLVED_REFERENCE!>a<!>,
-        <!UNRESOLVED_REFERENCE!>b<!>()
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>b<!>()<!>
 )
 class A {
 

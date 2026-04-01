@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonAbstractNativeAnnotationChecker
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
-internal object FirWasmJsNativeInvokeChecker :
-    FirWebCommonAbstractNativeAnnotationChecker(
-        WebCommonStandardClassIds.Annotations.JsNativeInvoke,
-        FirWasmErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN
-    )
+internal object FirWasmJsNativeInvokeChecker : FirWebCommonAbstractNativeAnnotationChecker(
+    WebCommonStandardClassIds.Annotations.JsNativeInvoke,
+    FirWasmErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN
+) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+}

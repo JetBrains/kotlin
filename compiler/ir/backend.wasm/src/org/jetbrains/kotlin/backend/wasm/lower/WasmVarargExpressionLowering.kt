@@ -41,11 +41,11 @@ internal class WasmVarargExpressionLowering(
             arrayType.getClass() ?: throw IllegalArgumentException("Argument ${arrayType.render()} must have a class")
 
         init {
-            check(arrayClass.symbol in context.wasmSymbols.arrays) { "Argument ${ir2string(arrayClass)} must be an array" }
+            check(arrayClass.symbol in context.irBuiltIns.arrays) { "Argument ${ir2string(arrayClass)} must be an array" }
         }
 
         val isUnsigned
-            get() = arrayClass.symbol in context.wasmSymbols.unsignedTypesToUnsignedArrays.values
+            get() = arrayClass.symbol in context.irBuiltIns.unsignedTypesToUnsignedArrays.values
 
         val primaryConstructor: IrConstructor
             get() =
@@ -283,7 +283,7 @@ internal class WasmVarargExpressionLowering(
         when (expr) {
             is IrFunctionAccessExpression -> {
                 val arrDescr = ArrayDescr(expr.type, context)
-                expr.symbol.owner in arrDescr.constructors || expr.symbol == context.wasmSymbols.arrayOfNulls
+                expr.symbol.owner in arrDescr.constructors || expr.symbol == context.irBuiltIns.arrayOfNulls
             }
             is IrTypeOperatorCall -> isImmediatelyCreatedArray(expr.argument)
             is IrComposite ->

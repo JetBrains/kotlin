@@ -47,4 +47,4 @@ fun consumeChar(x: Char?): String? = x?.toString()
 fun consumeString(x: String?): String? = x
 
 @JsExport
-fun consumeFunction(fn: ((String) -> Int)?): Int? = fn?.invoke("42")
+fun consumeFunction(fn: ((string: String) -> Int)?): Int? = fn?.invoke("42")

@@ -144,7 +144,7 @@ internal open class StaticData(val module: LLVMModuleRef, private val llvm: Code
             global.setConstant(true)
             return global.pointer.getElementPtr(llvm, LLVMArrayType(elemType, elements.size)!!, 0)
         } else {
-            return NullPointer(elemType)
+            return llvm.nullPointer
         }
     }
 
@@ -155,6 +155,12 @@ internal open class StaticData(val module: LLVMModuleRef, private val llvm: Code
     }
 
     internal fun cStringLiteral(value: String) = cStringLiterals.getOrPut(value) { placeCStringLiteral(value) }
+
+    private val objCProtocolCacheByName = mutableMapOf<String, ConstPointer>()
+
+    internal fun objCProtocolCache(protocolName: String): ConstPointer = objCProtocolCacheByName.getOrPut(protocolName) {
+        placeGlobal("", llvm.nullPointer, isExported = false).pointer
+    }
 
     companion object {
         fun getGlobal(module: LLVMModuleRef, name: String) = Global.get(module, name)

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.codegen.CodegenTestCase;
+import org.jetbrains.kotlin.test.FirParser;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.*;
 
@@ -54,6 +55,15 @@ import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPref
  * FLAGS: ACC_PUBLIC, ACC_SYNTHETIC
  */
 public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
+    @Override
+    public boolean getUseFir() {
+        return true;
+    }
+
+    @Override
+    public @NotNull FirParser getFirParser() {
+        return FirParser.LightTree;
+    }
 
     @Override
     protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<? extends TestFile> files) throws Exception {

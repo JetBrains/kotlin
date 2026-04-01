@@ -28,7 +28,7 @@ class ClasspathOrderTest : TestCaseWithTmpdir() {
     }
 
     fun testClasspathOrderForCLI() {
-        MockLibraryUtil.compileKotlin(sourceDir.path, tmpdir)
+        MockLibraryUtil.compileKotlinSources(sourceDir.path, tmpdir)
     }
 
     fun testClasspathOrderForModuleScriptBuild() {

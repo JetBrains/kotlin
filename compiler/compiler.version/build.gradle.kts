@@ -2,15 +2,12 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     java
-    id("jps-compatible")
     id("gradle-plugin-compiler-dependency-configuration")
 }
 
 // This module does not apply Kotlin plugin, so we are setting toolchain via
 // java extension
-if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    configureJavaOnlyToolchain(JdkMajorVersion.JDK_1_8)
-}
+configureJavaOnlyToolchain(JdkMajorVersion.JDK_1_8)
 
 val kotlinVersion: String by rootProject.extra
 

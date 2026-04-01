@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// Wrong function resolution after package renaming
+// The test uses 'kotlin' package, which is being renamed in Android tests
 // IGNORE_BACKEND: ANDROID
 
 // FILE: 1.kt

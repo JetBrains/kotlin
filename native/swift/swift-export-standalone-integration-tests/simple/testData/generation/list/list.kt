@@ -50,3 +50,17 @@ fun testListNothing(l: MyList<Nothing>) = l
 fun testListOptNothing(l: MyList<Nothing?>) = l
 
 fun testStarList(l: MyList<*>) = l
+
+// MODULE: KT_85380
+// EXPORT_TO_SWIFT
+// FILE: main_2.kt
+
+import kotlin.reflect.KClass
+
+fun badKClassList(): List<KClass<*>> = TODO()
+
+@OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
+@HiddenFromObjC
+class Hidden
+
+fun badHiddenList(): List<Hidden> = TODO()

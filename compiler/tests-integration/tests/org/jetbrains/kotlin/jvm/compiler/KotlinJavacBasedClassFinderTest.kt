@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.javac.registerJavac
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.javac.components.JavacBasedClassFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
@@ -97,7 +98,7 @@ class KotlinJavacBasedClassFinderTest : KotlinTestWithEnvironmentManagement() {
         ).apply {
             registerJavac(files)
             // Activate Kotlin light class finder
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             JvmResolveUtil.analyze(this)
         }
     }

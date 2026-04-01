@@ -13,16 +13,16 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinApiPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinJvmFactory
 import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.util.buildProject
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.io.TempDir
+import kotlin.test.Test
 import kotlin.test.assertEquals
+import java.io.File
 
 class KaptApiTest {
 
-    @get:Rule
-    val tmpDir = TemporaryFolder()
+    @field:TempDir
+    lateinit var tmpDir: File
 
     private lateinit var project: ProjectInternal
     private lateinit var plugin: KotlinJvmFactory
@@ -32,7 +32,7 @@ class KaptApiTest {
         private const val GENERATE_STUBS = "kaptGenerateStubs"
     }
 
-    @Before
+    @BeforeEach
     fun setUpProject() {
         project = buildProject {}
         plugin = project.plugins.apply(KotlinApiPlugin::class.java)
@@ -47,7 +47,7 @@ class KaptApiTest {
 
     @Test
     fun testSources() {
-        val sourcePath = tmpDir.newFolder().resolve("foo.kt").also {
+        val sourcePath = tmpDir.resolve("source").also { it.mkdirs() }.resolve("foo.kt").also {
             it.createNewFile()
         }
         val task = configureKapt {
@@ -55,7 +55,7 @@ class KaptApiTest {
         }
         assertEquals(setOf(sourcePath), task.source.files)
 
-        val sourcesDir = tmpDir.newFolder().also {
+        val sourcesDir = tmpDir.resolve("sourcesDir").also { it.mkdirs() }.also {
             it.resolve("a.kt").createNewFile()
             it.resolve("b.kt").createNewFile()
         }
@@ -65,8 +65,8 @@ class KaptApiTest {
 
     @Test
     fun testKaptClasspath() {
-        val kaptClasspath = tmpDir.newFolder()
-        val externalClasspath = tmpDir.newFolder()
+        val kaptClasspath = tmpDir.resolve("kaptClasspath").also { it.mkdirs() }
+        val externalClasspath = tmpDir.resolve("externalClasspath").also { it.mkdirs() }
         val configurationNames = listOf("a", "b", "c")
         val task = configureKapt {
             this.kaptClasspath.from(kaptClasspath)
@@ -81,10 +81,10 @@ class KaptApiTest {
 
     @Test
     fun testKaptOutputs() {
-        val incAptCache = tmpDir.newFolder()
-        val classesDir = tmpDir.newFolder()
-        val destinationDir = tmpDir.newFolder()
-        val generatedKotlinSources = tmpDir.newFolder()
+        val incAptCache = tmpDir.resolve("incAptCache").also { it.mkdirs() }
+        val classesDir = tmpDir.resolve("classesDir").also { it.mkdirs() }
+        val destinationDir = tmpDir.resolve("destinationDir").also { it.mkdirs() }
+        val generatedKotlinSources = tmpDir.resolve("generatedKotlinSources").also { it.mkdirs() }
 
         val task = configureKapt {
             this.incAptCache.fileValue(incAptCache)
@@ -101,8 +101,8 @@ class KaptApiTest {
 
     @Test
     fun testClasspath() {
-        val compiledSources = tmpDir.newFolder()
-        val classpath = tmpDir.newFolder()
+        val compiledSources = tmpDir.resolve("compiledSources").also { it.mkdirs() }
+        val classpath = tmpDir.resolve("classpath").also { it.mkdirs() }
         val includeCompileClasspath = false
 
         val task = configureKapt {
@@ -152,8 +152,8 @@ class KaptApiTest {
 
     @Test
     fun testGenerateStubsOptions() {
-        val stubsDir = tmpDir.newFolder()
-        val kaptClasspath = setOf(tmpDir.newFolder())
+        val stubsDir = tmpDir.resolve("stubsDir").also { it.mkdirs() }
+        val kaptClasspath = setOf(tmpDir.resolve("kaptClasspath2").also { it.mkdirs() })
         val task = plugin.registerKaptGenerateStubsTask(
             GENERATE_STUBS,
             plugin.registerKotlinJvmCompileTask("customCompileKotlin", plugin.createCompilerJvmOptions()),

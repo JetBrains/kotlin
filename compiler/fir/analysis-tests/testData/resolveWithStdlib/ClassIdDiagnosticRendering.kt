@@ -4,7 +4,7 @@
 
 package a.b.c
 
-import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN("kotlin.jvm.functions.Function0")!>kotlin.jvm.functions.Function0<!>
+import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN("kotlin.Function0")!>kotlin.jvm.functions.Function0<!>
 
 @RequiresOptIn
 annotation class Marker

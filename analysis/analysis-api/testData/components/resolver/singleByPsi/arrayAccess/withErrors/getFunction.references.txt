@@ -2,5 +2,7 @@ KtArrayAccessExpression(44,48): '1[2]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<OPERATOR_MODIFIER_REQUIRED: 'operator' modifier is required on 'fun Int.get(index: Int): Int'.>
     symbols:
       (in ROOT) fun kotlin.Int.get(index: kotlin.Int): kotlin.Int

@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
 /**
@@ -17,7 +19,9 @@ import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
  * The component is optional. If [KotlinCompilerPluginsProvider] is not implemented, the Analysis API engine will assume that no compiler
  * plugins are registered.
  */
+@KaPlatformInterface
 public interface KotlinCompilerPluginsProvider : KotlinOptionalPlatformComponent {
+    @KaPlatformInterface
     public enum class CompilerPluginType {
         /**
          * An assign expression alterer extension. See `FirAssignExpressionAltererExtension`.
@@ -30,13 +34,14 @@ public interface KotlinCompilerPluginsProvider : KotlinOptionalPlatformComponent
      *
      * These extensions are used in addition to those provided by the extension descriptor's [ProjectExtensionDescriptor.getInstances].
      */
-    public fun <T : Any> getRegisteredExtensions(module: KaModule, extensionType: ProjectExtensionDescriptor<T>): List<T>
+    public fun <T : Any> getRegisteredExtensions(module: KaModule, extensionType: ExtensionPointDescriptor<T>): List<T>
 
     /**
      * Returns `true` if at least one plugin with the requested [pluginType] is registered, and `false` otherwise.
      */
     public fun isPluginOfTypeRegistered(module: KaModule, pluginType: CompilerPluginType): Boolean
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinCompilerPluginsProvider? = project.serviceOrNull()
     }

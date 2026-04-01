@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +BreakContinueInInlineLambdas +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 // ISSUE: KT-68975
@@ -10,9 +11,9 @@ inline fun foo(
     noinline block2: () -> Unit,
     block3: () -> Unit
 ) {
-    js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>"block1()"<!>)
+    js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_ERROR!>"block1()"<!>)
     js("block2()")
-    js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>"block3()"<!>)
+    js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_ERROR!>"block3()"<!>)
 }
 
 fun box(): String {

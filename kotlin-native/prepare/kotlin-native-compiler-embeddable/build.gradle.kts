@@ -1,7 +1,6 @@
 import org.gradle.kotlin.dsl.support.serviceOf
-import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
+import org.jetbrains.kotlin.nativeDistribution.asNativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
-import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
 
 plugins {
     kotlin("jvm")
@@ -15,13 +14,12 @@ repositories {
     mavenCentral()
 }
 
-val kotlinNativeEmbedded by configurations.creating {
-    isCanBeConsumed = false
-    isCanBeResolved = true
+val kotlinNativeEmbedded = configurations.dependencyScope("kotlinNativeEmbedded")
+val kotlinNativeEmbeddedClasspath = configurations.resolvable("kotlinNativeEmbeddableClasspath") {
+    extendsFrom(kotlinNativeEmbedded.get())
 }
 
 val kotlinNativeSources by configurations.creating {
-    isVisible = false
     isCanBeConsumed = false
     isCanBeResolved = true
 
@@ -32,7 +30,6 @@ val kotlinNativeSources by configurations.creating {
 }
 
 val kotlinNativeJavadoc by configurations.creating {
-    isVisible = false
     isCanBeConsumed = false
     isCanBeResolved = true
 
@@ -51,7 +48,6 @@ dependencies {
     kotlinNativeEmbedded(project(":kotlin-native:klib"))
     kotlinNativeEmbedded(project(":native:cli-native"))
     kotlinNativeEmbedded(project(":kotlin-native:endorsedLibraries:kotlinx.cli", "jvmRuntimeElements"))
-    kotlinNativeEmbedded(project(":kotlin-compiler")) { isTransitive = false }
 
     kotlinNativeSources(project(":kotlin-native:backend.native"))
     kotlinNativeSources(project(":native:cli-native"))
@@ -63,14 +59,17 @@ dependencies {
 }
 
 val compiler = embeddableCompiler("kotlin-native-compiler-embeddable") {
-    from(kotlinNativeEmbedded)
-    mergeServiceFiles()
-}
-
-val runtimeJar = runtimeJar(compiler) {
+    configurations.add(kotlinNativeEmbeddedClasspath)
     exclude("com/sun/jna/**")
     mergeServiceFiles()
+    // Shadow uses by default 'DuplicatesStrategy.EXCLUDE' which prevents duplicate service files from being processed,
+    // see https://gradleup.com/shadow/configuration/merging/#handling-duplicates-strategy
+    filesMatching("META-INF/services/**") {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
 }
+
+val runtimeJar = runtimeJar(compiler)
 
 val archiveZipper = serviceOf<ArchiveOperations>()::zipTree
 
@@ -105,7 +104,9 @@ open class ProjectTestArgumentProvider @Inject constructor(
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val nativeDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
+    val nativeDistributionRoot: DirectoryProperty = objectFactory.directoryProperty()
+
+    private val nativeDistribution = nativeDistributionRoot.asNativeDistribution()
 
     override fun asArguments(): Iterable<String> = listOf(
             "-DcompilerClasspath=${compilerClasspath.files.joinToString(separator = File.pathSeparator) { it.absolutePath }}",
@@ -123,7 +124,7 @@ projectTests {
 
             // The tests run the compiler and try to produce an executable on host.
             // So, distribution with stdlib and runtime for host is required.
-            nativeDistribution.set(project.nativeDistribution)
+            nativeDistributionRoot.set(project.nativeDistribution.map { it.root })
             dependsOn(":kotlin-native:distRuntime")
         })
     }

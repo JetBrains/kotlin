@@ -1,0 +1,15 @@
+KT element: KtScript
+Resolve target: replWithResult.repl.kts -> <snippet-replWithResult.repl.kts>
+FIR:
+  REPL_SNIPPET: <snippet-replWithResult.repl.kts>
+      public final object ReplWithResult_repl : R|kotlin/Any| {
+          public ReplWithResult_repl.constructor(): R|ReplWithResult_repl| {
+              super<R|kotlin/Any|>()
+          }
+
+          public final fun $$eval(): <implicit> { LAZY_BLOCK }
+
+          public final val $$result: <implicit> = REPL_EXPRESSION_REF
+              public get(): <implicit>
+
+      }

@@ -20,9 +20,10 @@ import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionDeserializ
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -37,13 +38,13 @@ private var IrClass.layoutBuilder: ClassLayoutBuilder? by irAttribute(copyByDefa
 
 // TODO: Can be renamed or merged with KonanBackendContext
 internal class Context(
-        config: KonanConfig,
+        config: NativeSecondStageCompilationConfig,
         val sourcesModules: Set<ModuleDescriptor>,
         override val builtIns: KonanBuiltIns,
         override val irBuiltIns: IrBuiltIns,
         val irModules: Map<String, IrModuleFragment>,
         val irLinker: KonanIrLinker,
-        override val symbols: KonanSymbols,
+        override val symbols: BackendNativeSymbols,
         val symbolTable: ReferenceSymbolTable,
 ) : KonanBackendContext(config) {
     override val configuration get() = config.configuration
@@ -51,7 +52,7 @@ internal class Context(
     override val optimizeLoopsOverUnsignedArrays = true
 
     override val innerClassesSupport: NativeInnerClassesSupport by lazy { NativeInnerClassesSupport(irFactory) }
-    val bridgesSupport by lazy { BridgesSupport(irBuiltIns, irFactory) }
+    val bridgesSupport by lazy { BridgesSupport(irBuiltIns, symbols, irFactory) }
     val enumsSupport by lazy { EnumsSupport(irBuiltIns, irFactory) }
     val cachesAbiSupport by lazy { CachesAbiSupport(irFactory) }
 
@@ -105,7 +106,10 @@ internal class Context(
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
             config.partialLinkageConfig,
             irBuiltIns,
-            configuration.messageCollector
+            KtDiagnosticReporterWithImplicitIrBasedContext(
+                    configuration.diagnosticsCollector,
+                    config.languageVersionSettings,
+            )
     )
 }
 

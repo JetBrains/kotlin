@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirBridgeProvider
 import org.jetbrains.kotlin.sir.providers.SirChildrenProvider
+import org.jetbrains.kotlin.sir.providers.SirCustomTypeTranslator
 import org.jetbrains.kotlin.sir.providers.SirDeclarationNamer
 import org.jetbrains.kotlin.sir.providers.SirDeclarationProvider
 import org.jetbrains.kotlin.sir.providers.SirEnumGenerator
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
 import org.jetbrains.kotlin.sir.providers.impl.*
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.SirBridgeProviderImpl
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.SirCustomTypeTranslatorImpl
 import org.jetbrains.kotlin.sir.providers.utils.SilentUnsupportedDeclarationReporter
 import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
 
@@ -33,6 +35,8 @@ class TestSirSession(
     referencedTypeHandler: SirKaClassReferenceHandler? = null,
 ) : SirSession {
     override val useSiteModule: KaModule = kaModule
+    override val moduleToTranslate: KaModule
+        get() = useSiteModule
     override val declarationNamer: SirDeclarationNamer = SirDeclarationNamerImpl()
     override val moduleProvider: SirModuleProvider = SirOneToOneModuleProvider(emptyList())
     override val declarationProvider: SirDeclarationProvider = CachingSirDeclarationProvider(
@@ -53,6 +57,7 @@ class TestSirSession(
         unsupportedTypeStrategy = SirTypeProvider.ErrorTypeStrategy.ErrorType,
         sirSession = sirSession,
     )
+    override val customTypeTranslator: SirCustomTypeTranslator = SirCustomTypeTranslatorImpl(sirSession)
     override val visibilityChecker: SirVisibilityChecker = SirVisibilityCheckerImpl(
         sirSession = sirSession,
         unsupportedDeclarationReporter = SilentUnsupportedDeclarationReporter,

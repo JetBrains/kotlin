@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -2750,6 +2750,486 @@ public inline fun UShortArray.takeWhile(predicate: (UShort) -> Boolean): List<US
         list.add(item)
     }
     return list
+}
+
+/**
+ * Returns `true` if each element in the array is less than or equal
+ * to the following element according to their natural sort order.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially,
+ * and the array is considered sorted if for each pair of adjacent elements
+ * the preceding element is not greater than the following one.
+ * 
+ * @sample samples.generated.issorted.IsSortedUIntArraySamples.isSorted
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public fun UIntArray.isSorted(): Boolean {
+    for (i in 1..lastIndex) {
+        if (this[i - 1] > this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array is less than or equal
+ * to the following element according to their natural sort order.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially,
+ * and the array is considered sorted if for each pair of adjacent elements
+ * the preceding element is not greater than the following one.
+ * 
+ * @sample samples.generated.issorted.IsSortedULongArraySamples.isSorted
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public fun ULongArray.isSorted(): Boolean {
+    for (i in 1..lastIndex) {
+        if (this[i - 1] > this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array is less than or equal
+ * to the following element according to their natural sort order.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially,
+ * and the array is considered sorted if for each pair of adjacent elements
+ * the preceding element is not greater than the following one.
+ * 
+ * @sample samples.generated.issorted.IsSortedUByteArraySamples.isSorted
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public fun UByteArray.isSorted(): Boolean {
+    for (i in 1..lastIndex) {
+        if (this[i - 1] > this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array is less than or equal
+ * to the following element according to their natural sort order.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially,
+ * and the array is considered sorted if for each pair of adjacent elements
+ * the preceding element is not greater than the following one.
+ * 
+ * @sample samples.generated.issorted.IsSortedUShortArraySamples.isSorted
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public fun UShortArray.isSorted(): Boolean {
+    for (i in 1..lastIndex) {
+        if (this[i - 1] > this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array yields a [selector] value
+ * that is less than or equal to the [selector] value of the following element
+ * according to the natural sort order of the selector values.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [selector] values of adjacent elements are compared sequentially using [compareValues],
+ * and the array is considered sorted if for each pair of adjacent elements
+ * the [selector] value of the preceding element is not greater than that of the following one.
+ * 
+ * If the [selector] returns `null` for an element, the `null` value is treated as less than any non-null value.
+ * 
+ * @sample samples.generated.issorted.IsSortedUIntArraySamples.isSortedBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public inline fun <R : Comparable<R>> UIntArray.isSortedBy(selector: (UInt) -> R?): Boolean {
+    if (size < 2) return true
+    var previousValue = selector(this[0])
+    for (i in 1..lastIndex) {
+        val currentValue = selector(this[i])
+        if (compareValues(previousValue, currentValue) > 0) return false
+        previousValue = currentValue
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array yields a [selector] value
+ * that is less than or equal to the [selector] value of the following element
+ * according to the natural sort order of the selector values.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [selector] values of adjacent elements are compared sequentially using [compareValues],
+ * and the array is considered sorted if for each pair of adjacent elements
+ * the [selector] value of the preceding element is not greater than that of the following one.
+ * 
+ * If the [selector] returns `null` for an element, the `null` value is treated as less than any non-null value.
+ * 
+ * @sample samples.generated.issorted.IsSortedULongArraySamples.isSortedBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public inline fun <R : Comparable<R>> ULongArray.isSortedBy(selector: (ULong) -> R?): Boolean {
+    if (size < 2) return true
+    var previousValue = selector(this[0])
+    for (i in 1..lastIndex) {
+        val currentValue = selector(this[i])
+        if (compareValues(previousValue, currentValue) > 0) return false
+        previousValue = currentValue
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array yields a [selector] value
+ * that is less than or equal to the [selector] value of the following element
+ * according to the natural sort order of the selector values.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [selector] values of adjacent elements are compared sequentially using [compareValues],
+ * and the array is considered sorted if for each pair of adjacent elements
+ * the [selector] value of the preceding element is not greater than that of the following one.
+ * 
+ * If the [selector] returns `null` for an element, the `null` value is treated as less than any non-null value.
+ * 
+ * @sample samples.generated.issorted.IsSortedUByteArraySamples.isSortedBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public inline fun <R : Comparable<R>> UByteArray.isSortedBy(selector: (UByte) -> R?): Boolean {
+    if (size < 2) return true
+    var previousValue = selector(this[0])
+    for (i in 1..lastIndex) {
+        val currentValue = selector(this[i])
+        if (compareValues(previousValue, currentValue) > 0) return false
+        previousValue = currentValue
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array yields a [selector] value
+ * that is less than or equal to the [selector] value of the following element
+ * according to the natural sort order of the selector values.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [selector] values of adjacent elements are compared sequentially using [compareValues],
+ * and the array is considered sorted if for each pair of adjacent elements
+ * the [selector] value of the preceding element is not greater than that of the following one.
+ * 
+ * If the [selector] returns `null` for an element, the `null` value is treated as less than any non-null value.
+ * 
+ * @sample samples.generated.issorted.IsSortedUShortArraySamples.isSortedBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public inline fun <R : Comparable<R>> UShortArray.isSortedBy(selector: (UShort) -> R?): Boolean {
+    if (size < 2) return true
+    var previousValue = selector(this[0])
+    for (i in 1..lastIndex) {
+        val currentValue = selector(this[i])
+        if (compareValues(previousValue, currentValue) > 0) return false
+        previousValue = currentValue
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array yields a [selector] value
+ * that is greater than or equal to the [selector] value of the following element
+ * according to the natural sort order of the selector values.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [selector] values of adjacent elements are compared sequentially using [compareValues],
+ * and the array is considered sorted in descending order if for each pair
+ * of adjacent elements the [selector] value of the preceding element is not less
+ * than that of the following one.
+ * 
+ * If the [selector] returns `null` for an element, the `null` value is treated as less than any non-null value.
+ * 
+ * @sample samples.generated.issorted.IsSortedUIntArraySamples.isSortedByDescending
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public inline fun <R : Comparable<R>> UIntArray.isSortedByDescending(selector: (UInt) -> R?): Boolean {
+    if (size < 2) return true
+    var previousValue = selector(this[0])
+    for (i in 1..lastIndex) {
+        val currentValue = selector(this[i])
+        if (compareValues(previousValue, currentValue) < 0) return false
+        previousValue = currentValue
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array yields a [selector] value
+ * that is greater than or equal to the [selector] value of the following element
+ * according to the natural sort order of the selector values.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [selector] values of adjacent elements are compared sequentially using [compareValues],
+ * and the array is considered sorted in descending order if for each pair
+ * of adjacent elements the [selector] value of the preceding element is not less
+ * than that of the following one.
+ * 
+ * If the [selector] returns `null` for an element, the `null` value is treated as less than any non-null value.
+ * 
+ * @sample samples.generated.issorted.IsSortedULongArraySamples.isSortedByDescending
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public inline fun <R : Comparable<R>> ULongArray.isSortedByDescending(selector: (ULong) -> R?): Boolean {
+    if (size < 2) return true
+    var previousValue = selector(this[0])
+    for (i in 1..lastIndex) {
+        val currentValue = selector(this[i])
+        if (compareValues(previousValue, currentValue) < 0) return false
+        previousValue = currentValue
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array yields a [selector] value
+ * that is greater than or equal to the [selector] value of the following element
+ * according to the natural sort order of the selector values.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [selector] values of adjacent elements are compared sequentially using [compareValues],
+ * and the array is considered sorted in descending order if for each pair
+ * of adjacent elements the [selector] value of the preceding element is not less
+ * than that of the following one.
+ * 
+ * If the [selector] returns `null` for an element, the `null` value is treated as less than any non-null value.
+ * 
+ * @sample samples.generated.issorted.IsSortedUByteArraySamples.isSortedByDescending
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public inline fun <R : Comparable<R>> UByteArray.isSortedByDescending(selector: (UByte) -> R?): Boolean {
+    if (size < 2) return true
+    var previousValue = selector(this[0])
+    for (i in 1..lastIndex) {
+        val currentValue = selector(this[i])
+        if (compareValues(previousValue, currentValue) < 0) return false
+        previousValue = currentValue
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array yields a [selector] value
+ * that is greater than or equal to the [selector] value of the following element
+ * according to the natural sort order of the selector values.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [selector] values of adjacent elements are compared sequentially using [compareValues],
+ * and the array is considered sorted in descending order if for each pair
+ * of adjacent elements the [selector] value of the preceding element is not less
+ * than that of the following one.
+ * 
+ * If the [selector] returns `null` for an element, the `null` value is treated as less than any non-null value.
+ * 
+ * @sample samples.generated.issorted.IsSortedUShortArraySamples.isSortedByDescending
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public inline fun <R : Comparable<R>> UShortArray.isSortedByDescending(selector: (UShort) -> R?): Boolean {
+    if (size < 2) return true
+    var previousValue = selector(this[0])
+    for (i in 1..lastIndex) {
+        val currentValue = selector(this[i])
+        if (compareValues(previousValue, currentValue) < 0) return false
+        previousValue = currentValue
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array is greater than or equal
+ * to the following element according to their natural sort order.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially,
+ * and the array is considered sorted in descending order if for each
+ * pair of adjacent elements the preceding element is not less than the following one.
+ * 
+ * @sample samples.generated.issorted.IsSortedUIntArraySamples.isSortedDescending
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public fun UIntArray.isSortedDescending(): Boolean {
+    for (i in 1..lastIndex) {
+        if (this[i - 1] < this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array is greater than or equal
+ * to the following element according to their natural sort order.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially,
+ * and the array is considered sorted in descending order if for each
+ * pair of adjacent elements the preceding element is not less than the following one.
+ * 
+ * @sample samples.generated.issorted.IsSortedULongArraySamples.isSortedDescending
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public fun ULongArray.isSortedDescending(): Boolean {
+    for (i in 1..lastIndex) {
+        if (this[i - 1] < this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array is greater than or equal
+ * to the following element according to their natural sort order.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially,
+ * and the array is considered sorted in descending order if for each
+ * pair of adjacent elements the preceding element is not less than the following one.
+ * 
+ * @sample samples.generated.issorted.IsSortedUByteArraySamples.isSortedDescending
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public fun UByteArray.isSortedDescending(): Boolean {
+    for (i in 1..lastIndex) {
+        if (this[i - 1] < this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array is greater than or equal
+ * to the following element according to their natural sort order.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially,
+ * and the array is considered sorted in descending order if for each
+ * pair of adjacent elements the preceding element is not less than the following one.
+ * 
+ * @sample samples.generated.issorted.IsSortedUShortArraySamples.isSortedDescending
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public fun UShortArray.isSortedDescending(): Boolean {
+    for (i in 1..lastIndex) {
+        if (this[i - 1] < this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array is less than or equal
+ * to the following element according to the specified [comparator].
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially using [Comparator.compare],
+ * and the array is considered sorted if for each pair of adjacent elements
+ * the preceding element is not greater than the following one.
+ * 
+ * @sample samples.generated.issorted.IsSortedUIntArraySamples.isSortedWith
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public fun UIntArray.isSortedWith(comparator: Comparator<in UInt>): Boolean {
+    for (i in 1..lastIndex) {
+        if (comparator.compare(this[i - 1], this[i]) > 0) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array is less than or equal
+ * to the following element according to the specified [comparator].
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially using [Comparator.compare],
+ * and the array is considered sorted if for each pair of adjacent elements
+ * the preceding element is not greater than the following one.
+ * 
+ * @sample samples.generated.issorted.IsSortedULongArraySamples.isSortedWith
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public fun ULongArray.isSortedWith(comparator: Comparator<in ULong>): Boolean {
+    for (i in 1..lastIndex) {
+        if (comparator.compare(this[i - 1], this[i]) > 0) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array is less than or equal
+ * to the following element according to the specified [comparator].
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially using [Comparator.compare],
+ * and the array is considered sorted if for each pair of adjacent elements
+ * the preceding element is not greater than the following one.
+ * 
+ * @sample samples.generated.issorted.IsSortedUByteArraySamples.isSortedWith
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public fun UByteArray.isSortedWith(comparator: Comparator<in UByte>): Boolean {
+    for (i in 1..lastIndex) {
+        if (comparator.compare(this[i - 1], this[i]) > 0) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the array is less than or equal
+ * to the following element according to the specified [comparator].
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially using [Comparator.compare],
+ * and the array is considered sorted if for each pair of adjacent elements
+ * the preceding element is not greater than the following one.
+ * 
+ * @sample samples.generated.issorted.IsSortedUShortArraySamples.isSortedWith
+ */
+@SinceKotlin("2.4")
+@ExperimentalUnsignedTypes
+public fun UShortArray.isSortedWith(comparator: Comparator<in UShort>): Boolean {
+    for (i in 1..lastIndex) {
+        if (comparator.compare(this[i - 1], this[i]) > 0) return false
+    }
+    return true
 }
 
 /**

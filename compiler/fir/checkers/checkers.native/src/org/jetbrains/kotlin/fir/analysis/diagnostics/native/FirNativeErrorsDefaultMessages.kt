@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics.native
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS_ON_NEXT_LINES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CALLABLE_REFERENCES_TO_VARIADIC_C_FUNCTIONS_ARE_NOT_SUPPORTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CALLABLE_REFERENCES_TO_VARIADIC_OBJECTIVE_C_METHODS_ARE_NOT_SUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CANNOT_CHECK_FOR_FORWARD_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CONFLICTING_OBJC_OVERLOADS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CONSTRUCTOR_DOES_NOT_OVERRIDE_ANY_SUPER_CONSTRUCTOR
@@ -32,7 +33,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_THROWS_INHERITED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_THROWS_OVERRIDE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_CHARACTERS_NATIVE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_CHARACTERS_NATIVE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_OBJC_HIDES_TARGETS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_OBJC_NAME_CHARS
@@ -45,12 +46,17 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MUST
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MUST_NOT_HAVE_EXTENSION_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.NATIVE_SPECIFIC_ATOMIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.NON_LITERAL_OBJC_NAME_ARG
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.PROPERTY_MUST_BE_VAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.REDUNDANT_SWIFT_REFINEMENT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.SUBTYPE_OF_HIDDEN_FROM_OBJC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.THROWS_LIST_EMPTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.UNCHECKED_CAST_TO_FORWARD_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.VARIADIC_C_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.VARIADIC_OBJC_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF
 
 object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("FIR") { map ->
@@ -72,7 +78,7 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "'@ThreadLocal' is applicable only to property with backing field, to property with delegation, or to objects."
         )
         map.put(INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL, "'@ThreadLocal' is applicable only to top-level declarations.")
-        map.put(INVALID_CHARACTERS_NATIVE, "Name {0}.", TO_STRING)
+        map.put(INVALID_CHARACTERS_NATIVE_ERROR, "Name {0}.", TO_STRING)
         map.put(REDUNDANT_SWIFT_REFINEMENT, "ObjC refined declarations cannot be refined in Swift.")
         map.put(
             INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE,
@@ -175,6 +181,38 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             IDENTITY_HASH_CODE_ON_VALUE_TYPE,
             "Call to ''kotlin.native.identityHashCode'' on an instance of value type ''{0}'' can have unexpected behavior.",
             RENDER_TYPE,
+        )
+        map.put(
+            VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED,
+            "Variadic function pointers are not supported: {0}",
+            SYMBOL,
+        )
+        map.put(
+            OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED,
+            "Overriding variadic Objective-C methods are not supported: {0}",
+            SYMBOL,
+        )
+        map.put(
+            CALLABLE_REFERENCES_TO_VARIADIC_C_FUNCTIONS_ARE_NOT_SUPPORTED,
+            "Callable references to variadic C functions are not supported: {0}",
+            SYMBOL,
+        )
+        map.put(
+            CALLABLE_REFERENCES_TO_VARIADIC_OBJECTIVE_C_METHODS_ARE_NOT_SUPPORTED,
+            "Callable references to variadic Objective-C methods are not supported: {0}",
+            SYMBOL,
+        )
+        map.put(
+            STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS,
+            "Passing String as variadic Objective-C argument is ambiguous; cast it to NSString or pass with '.cstr' as C string.",
+        )
+        map.put(
+            VARIADIC_OBJC_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF,
+            "When calling variadic Objective-C methods spread operator is supported only for *arrayOf(...).",
+        )
+        map.put(
+            VARIADIC_C_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF,
+            "When calling variadic C functions spread operator is supported only for *arrayOf(...).",
         )
     }
 }

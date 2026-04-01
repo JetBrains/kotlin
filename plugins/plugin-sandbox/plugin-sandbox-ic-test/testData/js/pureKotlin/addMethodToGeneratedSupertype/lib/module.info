@@ -1,0 +1,11 @@
+STEP 0:
+    modifications:
+        U : MyInterface.0.kt -> MyInterface.kt
+        U : SomeClass.0.kt -> SomeClass.kt
+    added file: MyInterface.kt, SomeClass.kt
+STEP 1:
+    modifications:
+        U : MyInterface.1.kt -> MyInterface.kt
+    modified ir: MyInterface.kt
+    updated imports: SomeClass.kt
+    updated exports: MyInterface.kt

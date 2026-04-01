@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.konan.TempFiles
+import org.jetbrains.kotlin.konan.config.verifyBitcode
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
@@ -41,7 +42,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
-internal fun PhaseEngine<NativeBackendPhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
+internal fun PhaseEngine<NativeBackendPhaseContext>.runFrontend(config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
     val languageVersion = config.languageVersionSettings.languageVersion
     val kotlinSourceRoots = environment.configuration.kotlinSourceRoots
     if (languageVersion.usesK2 && kotlinSourceRoots.isNotEmpty()) {
@@ -149,6 +150,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             // (like IR visibility checks).
             // This is what we call a 'lowering synchronization point'.
             fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, validateIrBeforeLowering) }
+            fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, checkInlineCallCyclesPhase) }
 
             run {
                 // This is a so-called "KLIB Common Lowerings Prefix".
@@ -163,7 +165,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                 fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, getLoweringsUpToAndIncludingSyntheticAccessors()) }
                 fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, validateIrAfterInliningOnlyPrivateFunctions) }
                 fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, listOf(inlineAllFunctionsPhase)) }
-                fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, listOf(specialObjCValidationPhase)) }
+                fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, listOf(specialObjCValidationPhase, redundantCastsRemoverPhase)) }
             }
 
             fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, validateIrAfterInliningAllFunctions) }
@@ -479,7 +481,7 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
     //  Motivation: possibility to run LTO on bitcode level after separate IR compilation.
     val llvmModule = context.llvm.module
     // TODO: Consider dropping these in favor of proper phases dumping and validation.
-    if (context.config.needCompilerVerification || context.config.configuration.getBoolean(KonanConfigKeys.VERIFY_BITCODE)) {
+    if (context.config.needCompilerVerification || context.config.configuration.verifyBitcode) {
         runAndMeasurePhase(VerifyBitcodePhase, llvmModule)
     }
     if (context.shouldPrintBitCode()) {
@@ -541,7 +543,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
 
 private fun PhaseEngine<NativeGenerationState>.findDependenciesToCompile(): List<IrModuleFragment> {
     return context.config.librariesWithDependencies()
-            .mapNotNull { context.context.irModules[it.libraryName] }
+            .mapNotNull { context.context.irModules[it.location.path] }
             .filter { context.llvmModuleSpecification.containsModule(it) }
 }
 

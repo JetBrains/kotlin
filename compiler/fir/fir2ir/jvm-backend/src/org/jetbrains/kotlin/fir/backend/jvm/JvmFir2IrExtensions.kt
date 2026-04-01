@@ -7,17 +7,13 @@ package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.CachedFieldsForObjectInstances
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
-import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializer
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.overrides.IrJavaIncompatibilityRulesOverridabilityCondition
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.utils.InjectedValue
@@ -33,8 +29,8 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
@@ -46,11 +42,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class JvmFir2IrExtensions(
     configuration: CompilerConfiguration,
-    private val irDeserializer: JvmIrDeserializer,
 ) : Fir2IrExtensions, JvmGeneratorExtensions {
-    private var irBuiltIns: IrBuiltIns? = null
-    private var symbolTable: SymbolTable? = null
-
     override val parametersAreAssignable: Boolean get() = true
     override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>
         get() = listOf(IrJavaIncompatibilityRulesOverridabilityCondition())
@@ -69,9 +61,9 @@ class JvmFir2IrExtensions(
     private val rawTypeAnnotationClassConstructor: IrConstructor =
         createSpecialAnnotationClass(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME, kotlinIrInternalPackage).constructors.single()
 
-    override fun generateRawTypeAnnotationCall(): IrConstructorCall =
+    override fun generateRawTypeAnnotation(): IrAnnotation =
         rawTypeAnnotationClassConstructor.let {
-            IrConstructorCallImpl.fromSymbolOwner(
+            IrAnnotationImpl.fromSymbolOwner(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
                 it.constructedClassType,
@@ -96,17 +88,6 @@ class JvmFir2IrExtensions(
 
     override fun findInjectedInlineLambdaArgument(parameter: FirValueParameterSymbol): FirExpression? = null
 
-    override val irNeedsDeserialization: Boolean =
-        configuration.get(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE) != JvmSerializeIrMode.NONE
-
-    override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean {
-        val builtIns = irBuiltIns ?: error("BuiltIns are not initialized")
-        val symbolTable = symbolTable ?: error("SymbolTable is not initialized")
-        return irDeserializer.deserializeTopLevelClass(
-            irClass, builtIns, symbolTable, components.irProviders, this
-        )
-    }
-
     override fun hasBackingField(property: FirProperty, session: FirSession): Boolean =
         property.origin is FirDeclarationOrigin.Java ||
                 // Metadata for properties says that the backing field doesn't exist,
@@ -119,13 +100,6 @@ class JvmFir2IrExtensions(
         return runIf(firProperty.hasJvmFieldAnnotation(session)) {
             firProperty.status.visibility
         }
-    }
-
-    override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {
-        require(this.irBuiltIns == null) { "BuiltIns are already initialized" }
-        this.irBuiltIns = irBuiltIns
-        require(this.symbolTable == null) { "SymboTable is already initialized" }
-        this.symbolTable = symbolTable
     }
 
     // See FirJvmDelegatedMembersFilter for reference

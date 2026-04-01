@@ -38,7 +38,7 @@ object FakeTopDownAnalyzerFacadeForNative {
             compilerEnvironment
         )
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         analyzerForNative.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files as Collection<com.intellij.psi.PsiElement>)
         return AnalysisResult.success(trace.bindingContext, moduleContext.module)
     }

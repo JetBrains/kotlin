@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// RENDER_DIAGNOSTICS_MESSAGES
+// RENDER_DIAGNOSTIC_ARGUMENTS
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS,  AnnotationTarget.VALUE_PARAMETER,  AnnotationTarget.PROPERTY)
 annotation class An

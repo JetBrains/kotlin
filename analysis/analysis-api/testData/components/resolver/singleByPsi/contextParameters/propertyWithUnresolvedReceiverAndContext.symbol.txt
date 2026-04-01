@@ -1,0 +1,6 @@
+KtNameReferenceExpression(112,115): 'foo'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      val foo: kotlin.Boolean
+    ]
+    diagnostic = ERROR<AMBIGUOUS_CONTEXT_ARGUMENT: Multiple potential context arguments for 'string: String' in scope.>

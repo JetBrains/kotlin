@@ -42,11 +42,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
         private val PREDICATE = LookupPredicate.create { annotated("ExternalClassWithNested".fqn()) }
     }
 
-    object Key : GeneratedDeclarationKey() {
-        override fun toString(): String {
-            return "AllOpenClassGeneratorKey"
-        }
-    }
+    data object ExternalClassGeneratorKey : GeneratedDeclarationKey()
 
     private val predicateBasedProvider = session.predicateBasedProvider
     private val matchedClasses by lazy {
@@ -61,7 +57,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
     override fun generateTopLevelClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
         if (classId != GENERATED_CLASS_ID) return null
         if (matchedClasses.isEmpty()) return null
-        return createTopLevelClass(classId, Key).symbol
+        return createTopLevelClass(classId, ExternalClassGeneratorKey).symbol
     }
 
     override fun generateNestedClassLikeDeclaration(
@@ -71,7 +67,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
     ): FirClassLikeSymbol<*>? {
         return when (val origin = owner.origin) {
             is FirDeclarationOrigin.Plugin -> when (origin.key) {
-                Key -> generateNestedClass(owner.classId.createNestedClassId(name), owner)
+                ExternalClassGeneratorKey -> generateNestedClass(owner.classId.createNestedClassId(name), owner)
                 else -> null
             }
             else -> null
@@ -81,14 +77,14 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
         val classId = context.owner.classId
         if (classId != GENERATED_CLASS_ID && classId !in classIdsForMatchedClasses) return emptyList()
-        return listOf(createConstructor(context.owner, Key).symbol)
+        return listOf(createConstructor(context.owner, ExternalClassGeneratorKey).symbol)
     }
 
     private fun generateNestedClass(classId: ClassId, owner: FirClassSymbol<*>): FirClassLikeSymbol<*>? {
         if (owner.classId != GENERATED_CLASS_ID) return null
         val matchedClass = classIdsForMatchedClasses[classId] ?: return null
 
-        return createNestedClass(owner, classId.shortClassName, Key).also {
+        return createNestedClass(owner, classId.shortClassName, ExternalClassGeneratorKey).also {
             it.matchedClass = matchedClass.classId
         }.symbol
     }
@@ -99,7 +95,11 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
         require(owner is FirRegularClassSymbol)
         val matchedClassId = owner.matchedClass ?: return emptyList()
         val matchedClassSymbol = session.getRegularClassSymbolByClassId(matchedClassId) ?: return emptyList()
-        val function = createMemberFunction(owner, Key, callableId.callableName, matchedClassSymbol.constructStarProjectedType())
+        val function = createMemberFunction(
+            owner, ExternalClassGeneratorKey, callableId.callableName, matchedClassSymbol.constructStarProjectedType(),
+        ) {
+            withGeneratedDefaultBody()
+        }
         return listOf(function.symbol)
     }
 
@@ -113,7 +113,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
         return if (classSymbol.classId == GENERATED_CLASS_ID) {
-            return classIdsForMatchedClasses.keys.mapTo(mutableSetOf()) { it.shortClassName }
+            classIdsForMatchedClasses.keys.mapTo(mutableSetOf()) { it.shortClassName }
         } else {
             emptySet()
         }

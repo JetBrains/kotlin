@@ -186,7 +186,7 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
     val generatedKotlin: SourceDirectorySet
 
     /**
-     * Represents a combined set of Kotlin source files that are included in [kotlin] and [generatedKotlin]
+     * Represents a combined set of Kotlin source files that are included in [kotlin] and [generatedKotlin][generatedKotlin]
      * [SourceDirectorySets][SourceDirectorySet].
      */
     @ExperimentalKotlinGradlePluginApi

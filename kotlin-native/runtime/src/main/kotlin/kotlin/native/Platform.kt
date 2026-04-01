@@ -52,6 +52,22 @@ public enum class MemoryModel {
 }
 
 /**
+ * Object allocation mode.
+ */
+@ExperimentalNativeApi
+internal enum class Allocator {
+    /**
+     * Objects are allocated in pages.
+     */
+    PAGED,
+
+    /**
+     * Each object is allocated separately.
+     */
+    PER_OBJECT,
+}
+
+/**
  * Object describing the current platform program executes upon.
  */
 @ExperimentalNativeApi
@@ -143,6 +159,14 @@ public object Platform {
         return fromEnv.toIntOrNull()?.takeIf { it > 0 } ?:
             throw IllegalStateException("Available processors has incorrect environment override: $fromEnv")
     }
+
+    /**
+     * Object allocation mode the binary was compiled with.
+     *
+     * Controlled by `-Xbinary=pagedAllocator=true|false` option.
+     */
+    internal val allocator: Allocator
+        get() = Allocator.entries[Platform_getAllocator()]
 }
 
 @GCUnsafeCall("Konan_Platform_canAccessUnaligned")
@@ -174,3 +198,6 @@ private external fun Platform_getAvailableProcessors(): Int
 @ExperimentalStdlibApi
 @Deprecated("This property always returns true, its usages can be safely removed.", ReplaceWith("true"))
 public fun isExperimentalMM(): Boolean = true
+
+@GCUnsafeCall("Konan_Platform_getAllocator")
+private external fun Platform_getAllocator(): Int

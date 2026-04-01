@@ -1,0 +1,3 @@
+var prop: kotlin.Int
+  @kotlin.jvm.JvmName(name = "customName")
+  get()

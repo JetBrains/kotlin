@@ -1,7 +1,29 @@
 KtNameReferenceExpression(129,133): 'post'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/post(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+            symbol = action: kotlin.Function1<T, kotlin.Unit>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/post
+      typeArgumentsMapping = {
+        T -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
         {} -> (KaVariableSignature:
           name = action
           receiverType = null
@@ -10,35 +32,32 @@ KtNameReferenceExpression(129,133): 'post'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = test/post(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = action
-              receiverType = null
-              returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
-              symbol = action: kotlin.Function1<T, kotlin.Unit>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = test/post
-      typeArgumentsMapping = {
-        T -> (ERROR_TYPE)
-      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with post>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/post(action: kotlin.Function1<kotlin.Unit, kotlin.Unit>): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = kotlin.Function1<kotlin.Unit, kotlin.Unit>
+            symbol = action: kotlin.Function1<kotlin.Unit, kotlin.Unit>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/post
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         {} -> (KaVariableSignature:
           name = action
           receiverType = null
@@ -47,25 +66,4 @@ KtNameReferenceExpression(129,133): 'post'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = test/post(action: kotlin.Function1<kotlin.Unit, kotlin.Unit>): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = action
-              receiverType = null
-              returnType = kotlin.Function1<kotlin.Unit, kotlin.Unit>
-              symbol = action: kotlin.Function1<kotlin.Unit, kotlin.Unit>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = test/post
-      typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -1,6 +1,7 @@
 // FULL_JDK
 // WITH_STDLIB
 
+// FILE: lib.kt
 val z = ArrayList<String>()
 
 inline fun a(body: () -> Unit) {
@@ -14,6 +15,7 @@ inline fun b(body: () -> Unit) {
     a { z += "from b" }
 }
 
+// FILE: main.kt
 fun test() {
     b { z += "test" }
 }

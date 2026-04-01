@@ -11,6 +11,6 @@ public interface J {
 
 // FILE: K.kt
 
-import <!DEPRECATION!>test.J<!>
+import test.J
 
 /* GENERATED_FIR_TAGS:  */

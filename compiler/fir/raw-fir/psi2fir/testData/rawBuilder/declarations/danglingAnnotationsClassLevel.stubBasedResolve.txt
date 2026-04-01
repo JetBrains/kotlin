@@ -4,14 +4,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationsClassLevel.kt
             super<R|kotlin/Any|>()
         }
 
-        [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
+        [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] @R|kotlin/Suppress|[Types](names = vararg(String()) [evaluated = vararg(String())]) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
     }
     public final [ResolvedTo(BODY_RESOLVE)] class B : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
             super<R|kotlin/Any|>()
         }
 
-        [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
+        [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] @R|kotlin/Suppress|[Types](names = vararg(String()) [evaluated = vararg(String())]) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
     }
     public final [ResolvedTo(BODY_RESOLVE)] class Outer : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Outer] constructor(): R|Outer| {
@@ -23,7 +23,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationsClassLevel.kt
                 super<R|kotlin/Any|>()
             }
 
-            [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inner] @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
+            [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inner] @R|kotlin/Suppress|[Types](names = vararg(String()) [evaluated = vararg(String())]) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
         }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withLocal(): R|kotlin/Unit| { LAZY_BLOCK }

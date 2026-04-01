@@ -18,17 +18,17 @@ val property2: String
     get() = <!OVERLOAD_RESOLUTION_AMBIGUITY!>a<!>
 
 context(_: Int, <!VAL_OR_VAR_ON_FUN_PARAMETER!>var<!> a: String)
-fun test1() {}
+<!CONTEXTUAL_OVERLOAD_SHADOWED!>fun test1()<!> {}
 
 context(_: Int, <!VAL_OR_VAR_ON_FUN_PARAMETER!>val<!> a: String)
-fun test2() {}
+<!CONTEXTUAL_OVERLOAD_SHADOWED!>fun test2()<!> {}
 
 context(_: Int, <!VAL_OR_VAR_ON_FUN_PARAMETER!>val<!> a: String)
-val property1: String
+<!CONTEXTUAL_OVERLOAD_SHADOWED!>val property1: String<!>
     get() = a
 
 context(_: Int, <!VAL_OR_VAR_ON_FUN_PARAMETER!>var<!> a: String)
-val property2: String
+<!CONTEXTUAL_OVERLOAD_SHADOWED!>val property2: String<!>
     get() = a
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, getter, propertyDeclaration,

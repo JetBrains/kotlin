@@ -46,6 +46,8 @@ object StandardNames {
 
     @JvmField val CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME = Name.identifier("count")
 
+    @JvmField val DEFAULT_IMPLS_CLASS_NAME = Name.identifier("DefaultImpls")
+
     @JvmField val DYNAMIC_FQ_NAME = FqName("<dynamic>")
 
     @JvmField val COROUTINES_PACKAGE_FQ_NAME = FqName("kotlin.coroutines")
@@ -83,6 +85,9 @@ object StandardNames {
 
     @JvmField
     val COLLECTIONS_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("collections"))
+
+    @JvmField
+    val SEQUENCES_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("sequences"))
 
     @JvmField
     val RANGES_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("ranges"))

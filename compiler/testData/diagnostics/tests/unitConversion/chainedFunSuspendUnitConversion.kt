@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// FIR_DUMP
 // LANGUAGE: +UnitConversionsOnArbitraryExpressions +SuspendConversion
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 

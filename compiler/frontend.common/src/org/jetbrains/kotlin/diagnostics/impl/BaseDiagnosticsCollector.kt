@@ -5,29 +5,29 @@
 
 package org.jetbrains.kotlin.diagnostics.impl
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 
+/**
+ * [BaseDiagnosticsCollector] is a [DiagnosticReporter] which stores all reported diagnostics inside itself.
+ */
 abstract class BaseDiagnosticsCollector : DiagnosticReporter() {
     abstract val diagnostics: List<KtDiagnostic>
-    abstract val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
+    abstract val diagnosticsByFile: Map<KtSourceFile?, List<KtDiagnostic>>
 
-    abstract val rawReporter: RawReporter
+    object DoNothing : BaseDiagnosticsCollector() {
+        override val diagnostics: List<KtDiagnostic>
+            get() = emptyList()
+        override val diagnosticsByFile: Map<KtSourceFile?, List<KtDiagnostic>>
+            get() = emptyMap()
 
-    fun interface RawReporter {
-        companion object {
-            val DO_NOTHING: RawReporter = RawReporter { _, _ -> }
-        }
+        override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {}
 
-        fun report(message: String, severity: CompilerMessageSeverity)
-
-        fun reportWarning(message: String) {
-            report(message, CompilerMessageSeverity.WARNING)
-        }
-
-        fun reportError(message: String) {
-            report(message, CompilerMessageSeverity.ERROR)
-        }
+        override val hasErrors: Boolean
+            get() = false
+        override val hasWarningsForWError: Boolean
+            get() = false
     }
 }

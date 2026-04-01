@@ -1,76 +1,76 @@
 KtNameReferenceExpression(112,115): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaImplicitReceiverValue:
-          symbol = KaReceiverParameterSymbol:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
+          annotations: []
+          callableId: null
+          compilerVisibility: Local
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isExternal: false
+          isVal: true
+          location: LOCAL
+          modality: FINAL
+          name: <receiver>
+          origin: SOURCE
+          owningCallableSymbol: KaNamedFunctionSymbol(/usage)
+          receiverParameter: null
+          returnType: KaClassErrorType:
             annotations: []
-            callableId: null
-            compilerVisibility: Local
-            contextReceivers: []
-            isActual: false
-            isExpect: false
-            isExtension: false
-            isVal: true
-            location: LOCAL
-            modality: FINAL
-            name: <receiver>
-            origin: SOURCE
-            owningCallableSymbol: KaNamedFunctionSymbol(/usage)
-            receiverParameter: null
-            returnType: KaClassErrorType:
-              annotations: []
-              type: ERROR_TYPE
-            visibility: LOCAL
-          type = ERROR_TYPE
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
-          valueParameters = []
-          contextParameters = []
-          callableId = /<Error class: unknown class>.<Error function>
+            type: ERROR_TYPE
+          visibility: LOCAL
+        type = ERROR_TYPE
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+        valueParameters = []
+        contextParameters = []
+        callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaImplicitReceiverValue:
-          symbol = KaReceiverParameterSymbol:
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
+          annotations: []
+          callableId: null
+          compilerVisibility: Local
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isExternal: false
+          isVal: true
+          location: LOCAL
+          modality: FINAL
+          name: <receiver>
+          origin: SOURCE
+          owningCallableSymbol: KaNamedFunctionSymbol(/usage)
+          receiverParameter: null
+          returnType: KaClassErrorType:
             annotations: []
-            callableId: null
-            compilerVisibility: Local
-            contextReceivers: []
-            isActual: false
-            isExpect: false
-            isExtension: false
-            isVal: true
-            location: LOCAL
-            modality: FINAL
-            name: <receiver>
-            origin: SOURCE
-            owningCallableSymbol: KaNamedFunctionSymbol(/usage)
-            receiverParameter: null
-            returnType: KaClassErrorType:
-              annotations: []
-              type: ERROR_TYPE
-            visibility: LOCAL
-          type = ERROR_TYPE
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = <Error property>
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = var <Error property>: ERROR_TYPE
-          contextParameters = []
-          callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
+            type: ERROR_TYPE
+          visibility: LOCAL
+        type = ERROR_TYPE
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = <Error property>
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = var <Error property>: ERROR_TYPE
+        contextParameters = []
+        callableId = /<Error class: unknown class>.<Error property>
       typeArgumentsMapping = {}
     isInBestCandidates = false

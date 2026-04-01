@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
     id("gradle-plugin-compiler-dependency-configuration")
@@ -8,8 +7,10 @@ plugins {
 
 dependencies {
     testFixturesImplementation(libs.opentest4j)
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils.common")))
     testFixturesImplementation(project(":compiler:fir:entrypoint"))
     testFixturesImplementation(project(":compiler:cli"))
+    testFixturesImplementation(project(":compiler:cli-jvm"))
     testFixturesImplementation(intellijCore())
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(kotlin("test"))

@@ -6,6 +6,7 @@ KaJavaFieldSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   isStatic: true
   isVal: false
   location: CLASS
@@ -32,6 +33,7 @@ KaJavaFieldSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   isStatic: false
   isVal: false
   location: CLASS
@@ -211,6 +213,7 @@ KaConstructorSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   isPrimary: true
   location: CLASS
   modality: FINAL

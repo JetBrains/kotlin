@@ -14,6 +14,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: false
@@ -65,6 +66,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: false
@@ -83,6 +85,7 @@ KaKotlinPropertySymbol:
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true
@@ -120,6 +123,7 @@ KaKotlinPropertySymbol:
         isCrossinline: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
         isVal: true
@@ -152,9 +156,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script entryInScriptDestructuringDeclarationMutable.kts"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getA
   javaSetterName: setA
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: a

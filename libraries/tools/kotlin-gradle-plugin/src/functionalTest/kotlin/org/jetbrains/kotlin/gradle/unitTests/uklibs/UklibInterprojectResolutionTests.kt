@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.testing.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.tooling.core.closure
-import org.junit.Test
+import kotlin.test.Test
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -119,7 +119,7 @@ class UklibInterprojectResolutionTests {
                             "artifactType" to "jar",
                             "org.gradle.category" to "library",
                             "org.gradle.dependency.bundling" to "external",
-                            "org.gradle.jvm.version" to "17",
+                            "org.gradle.jvm.version" to "21",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
                         ),
@@ -152,7 +152,7 @@ class UklibInterprojectResolutionTests {
                             "artifactType" to "jar",
                             "org.gradle.category" to "library",
                             "org.gradle.dependency.bundling" to "external",
-                            "org.gradle.jvm.version" to "17",
+                            "org.gradle.jvm.version" to "21",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
                         ),
@@ -184,7 +184,7 @@ class UklibInterprojectResolutionTests {
                             "artifactType" to "jar",
                             "org.gradle.category" to "library",
                             "org.gradle.dependency.bundling" to "external",
-                            "org.gradle.jvm.version" to "17",
+                            "org.gradle.jvm.version" to "21",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-runtime",
                         ),
@@ -220,7 +220,7 @@ class UklibInterprojectResolutionTests {
                                 "artifactType" to "jar",
                                 "org.gradle.category" to "library",
                                 "org.gradle.dependency.bundling" to "external",
-                                "org.gradle.jvm.version" to "17",
+                                "org.gradle.jvm.version" to "21",
                                 "org.gradle.libraryelements" to "jar",
                                 "org.gradle.usage" to "java-api",
                             ),

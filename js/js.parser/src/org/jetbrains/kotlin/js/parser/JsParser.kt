@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.js.parser
 
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
-import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsScope
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
@@ -153,26 +152,6 @@ object JsParser {
         fun parse(): TParseResult?
         fun validate(result: TParseResult)
         fun map(result: TParseResult): TMapResult
-    }
-
-    private class ExpressionParserProfile(
-        private val parser: JavaScriptParser,
-        private val parserContext: JsParserContext,
-        private val reporter: ErrorReporter,
-    ) : ParserProfile<JavaScriptParser.SingleExpressionContext, JsExpression> {
-        override fun parse(): JavaScriptParser.SingleExpressionContext? {
-            return parser.optionalSingleExpression().singleExpression()?.also {
-                val commentsCollector = AntlrJsCommentsCollector(parser.tokenStream as CommonTokenStream)
-                commentsCollector.visit(it)
-            }
-        }
-
-        override fun validate(result: JavaScriptParser.SingleExpressionContext) {
-            result.accept(AntlrJsValidationVisitor(reporter))
-        }
-
-        override fun map(result: JavaScriptParser.SingleExpressionContext): JsExpression =
-            JsAstMapper(parserContext.scope, parserContext.fileName, reporter).mapExpression(result)
     }
 
     private class StatementsParserProfile(

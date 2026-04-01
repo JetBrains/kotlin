@@ -28,6 +28,7 @@ Tower Data Context:
         Scope: FirNestedClassifierScopeImpl
             Classifiers:
                 FirRegularClassSymbol public final? companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public final class TopLevelClass : R|pack/SuperClass|
     Element 10
         Implicit receiver:
             FirRegularClassSymbol public final class TopLevelClass : R|pack/SuperClass|
@@ -75,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterAnnotation.kt
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
         public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(BODY_RESOLVE)] R|T|.foo: R|kotlin/Int|
-            @PROPERTY_GETTER:R|pack/Anno|[Types](value = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST|) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+            @PROPERTY_GETTER:R|pack/Anno|[Types](value = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST| [evaluated = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST|]) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
                 ^ Int(0)
             }
 

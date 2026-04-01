@@ -18,11 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -56,7 +52,7 @@ open class SerializerIrGenerator(
     compilerContext: SerializationPluginContext,
     metadataPlugin: SerializationDescriptorSerializerPlugin?,
 ) : BaseIrGenerator(irClass, compilerContext) {
-    protected val serializableIrClass = compilerContext.getSerializableClassDescriptorBySerializer(irClass)!!
+    protected val serializableIrClass = getSerializableClassDescriptorBySerializer(irClass)!!
 
     protected val serialName: String = serializableIrClass.serialName()
     protected val properties = serializablePropertiesForIrBackend(serializableIrClass, metadataPlugin)
@@ -482,8 +478,7 @@ open class SerializerIrGenerator(
                     decoderCalls.forEach { (i, e) -> +IrBranchImpl(irEquals(indexVar.get(), irInt(i)), e) }
 
                     // throw exception on unknown field
-
-                    val excClassRef = compilerContext.referenceConstructors(
+                    val excClassRef = compilerContext.finderForBuiltins().findConstructors(
                         ClassId(
                             SerializationPackages.packageFqName,
                             Name.identifier(UNKNOWN_FIELD_EXC)
@@ -530,7 +525,8 @@ open class SerializerIrGenerator(
 
             generateGoldenMaskCheck(bitMasks, properties, localSerialDesc.get())
 
-            val ctor: IrConstructorSymbol = serializableIrClass.primaryConstructorOrFail.symbol
+            val ctorDeclaration = serializableIrClass.primaryConstructorOrFail
+            val ctor: IrConstructorSymbol = ctorDeclaration.symbol
 
             val variableByParamReplacer: (ValueParameterDescriptor) -> IrExpression? = { vpd ->
                 val propertyDescriptor = serializableIrClass.properties.find { it.name == vpd.name }
@@ -639,7 +635,7 @@ open class SerializerIrGenerator(
             context: SerializationPluginContext,
             metadataPlugin: SerializationDescriptorSerializerPlugin?,
         ) {
-            val serializableDesc = context.getSerializableClassDescriptorBySerializer(irClass) ?: return
+            val serializableDesc = getSerializableClassDescriptorBySerializer(irClass) ?: return
             val generator = when {
                 serializableDesc.isEnumWithLegacyGeneratedSerializer() -> SerializerForEnumsGenerator(
                     irClass,

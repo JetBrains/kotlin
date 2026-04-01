@@ -57,6 +57,10 @@ import static org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectio
         return owner.getPsi().hasModifierProperty(PsiModifier.SEALED);
     }
 
+    public static boolean isNative(@NotNull JavaModifierListOwnerImpl owner) {
+        return owner.getPsi().hasModifierProperty(PsiModifier.NATIVE);
+    }
+
     @NotNull
     public static Visibility getVisibility(@NotNull JavaModifierListOwnerImpl owner) {
         PsiModifierListOwner psiOwner = owner.getPsi();

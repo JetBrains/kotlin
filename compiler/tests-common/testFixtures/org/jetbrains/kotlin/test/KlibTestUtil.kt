@@ -45,12 +45,15 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
-import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
+import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.writer.KlibWriter
+import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.util.toKlibMetadataVersion
 import java.io.File
 import java.nio.file.Path
+import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 
 object KlibTestUtil {
     fun compileCommonSourcesToKlib(
@@ -66,6 +69,7 @@ object KlibTestUtil {
             FilteringMessageCollector(
                 PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false)
             ) /* decline = */ { !it.isError }
+        configuration.renderDiagnosticInternalName = true
         configuration.put(CommonConfigurationKeys.MODULE_NAME, libraryName)
         configuration.addKotlinSourceRoots(sourceFiles.map { it.absolutePath })
         val stdlibFile = ForTestCompileRuntime.stdlibCommonForTests()
@@ -83,11 +87,7 @@ object KlibTestUtil {
 
             val projectContext = ProjectContext(environment.project, "Compile common sources to KLIB metadata")
 
-            val analyzer = AnalyzerWithCompilerReport(
-                configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY),
-                configuration.languageVersionSettings,
-                renderDiagnosticName = true,
-            )
+            val analyzer = AnalyzerWithCompilerReport(configuration)
 
             analyzer.analyzeAndReport(environment.getSourceFiles()) {
                 CommonResolverForModuleFactory.analyzeFiles(
@@ -133,25 +133,25 @@ object KlibTestUtil {
 
         val serializedMetadata = serializer.serializeModule(module)
 
-        buildKotlinLibrary(
-            linkDependencies = emptyList(),
-            metadata = serializedMetadata,
-            ir = null,
-            versions = KotlinLibraryVersioning(
-                compilerVersion = null,
-                abiVersion = null,
-                metadataVersion = LanguageVersionSettingsImpl.DEFAULT.languageVersion.toKlibMetadataVersion(),
-            ),
-            output = klibFile.path,
-            moduleName = libraryName,
-            nopack = false,
-            manifestProperties = null,
-            builtInsPlatform = BuiltInsPlatform.COMMON,
-        )
+        KlibWriter {
+            format(KlibFormat.ZipArchive)
+            manifest {
+                moduleName(libraryName)
+                versions(
+                    KotlinLibraryVersioning(
+                        compilerVersion = null,
+                        abiVersion = null,
+                        metadataVersion = LanguageVersionSettingsImpl.DEFAULT.languageVersion.toKlibMetadataVersion(),
+                    )
+                )
+                platformAndTargets(BuiltInsPlatform.COMMON)
+            }
+            includeMetadata(serializedMetadata)
+        }.writeTo(klibFile.path)
     }
 
     fun deserializeKlibToCommonModule(klibFile: File): ModuleDescriptorImpl {
-        val library = KlibLoader { libraryPaths(klibFile.path) }.load().librariesStdlibFirst.single()
+        val library = KlibLoader { libraryPaths(klibFile) }.load().librariesStdlibFirst.single()
 
         val metadataFactories = KlibMetadataFactories({ DefaultBuiltIns.Instance }, NullFlexibleTypeDeserializer)
 
@@ -160,7 +160,6 @@ object KlibTestUtil {
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
             storageManager = LockBasedStorageManager.NO_LOCKS,
             builtIns = DefaultBuiltIns.Instance,
-            packageAccessHandler = null
         )
         module.setDependencies(listOf(DefaultBuiltIns.Instance.builtInsModule, module))
 
@@ -208,7 +207,6 @@ private fun createAndInitializeKlibBasedStdlibCommonDescriptor(
 
     val klibPackageFragmentProvider = metadataModuleDescriptorFactory.createPackageFragmentProvider(
         library = stdlibKlib,
-        packageAccessHandler = null,
         customMetadataProtoLoader = null,
         storageManager = projectContext.storageManager,
         moduleDescriptor = stdlibCommonDescriptor,

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.frontend.fir
 import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
 import org.jetbrains.kotlin.backend.common.actualizer.IrExtraActualDeclarationExtractor
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
@@ -38,7 +37,7 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
     override fun createIrMangler(): KotlinMangler.IrMangler = JvmIrMangler
 
     override fun createFir2IrExtensions(compilerConfiguration: CompilerConfiguration): JvmFir2IrExtensions {
-        return JvmFir2IrExtensions(compilerConfiguration, JvmIrDeserializerImpl())
+        return JvmFir2IrExtensions(compilerConfiguration)
     }
 
     override fun createFir2IrVisibilityConverter(): Fir2IrVisibilityConverter {
@@ -85,7 +84,7 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
         fir2KlibMetadataSerializer: Fir2KlibMetadataSerializer,
     ): IrBackendInput {
         // TODO: handle fir from light tree
-        val sourceFiles = inputArtifact.mainFirFiles.mapNotNull { it.value.sourceFile }
+        val sourceFiles = inputArtifact.mainFirFilesByTestFile.mapNotNull { it.value.sourceFile }
 
         val backendInput = JvmIrCodegenFactory.BackendInput(
             fir2IrResult.irModuleFragment,

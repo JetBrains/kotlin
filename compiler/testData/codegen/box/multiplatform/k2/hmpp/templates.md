@@ -25,7 +25,7 @@ This file contains some template module structures for different setups
 
 // MODULE: app-common(lib-common)
 
-// MODULE: app-inter(lib-inter)()(app-common)
+// MODULE: app-inter(lib-inter)(lib-common)(app-common)
 
 // MODULE: app-platform(lib-platform)()(app-inter)
 ```

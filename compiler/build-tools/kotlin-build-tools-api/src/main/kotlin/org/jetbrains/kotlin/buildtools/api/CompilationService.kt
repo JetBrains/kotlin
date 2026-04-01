@@ -3,13 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.buildtools.api
 
 import org.jetbrains.kotlin.buildtools.api.CompilationService.Companion.loadImplementation
 import org.jetbrains.kotlin.buildtools.api.internal.KotlinCompilerVersion
-import org.jetbrains.kotlin.buildtools.api.internal.wrappers.PreKotlin220Wrapper
+import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_2_0
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
@@ -28,7 +28,7 @@ import java.io.File
  *
  * This interface is not intended to be implemented by the API consumers. An instance of [CompilationService] is expected to be obtained from [loadImplementation].
  */
-@Deprecated("Use the new BTA API with entry points in KotlinToolchain instead")
+@Deprecated("Use the new BTA API with entry points in KotlinToolchain instead", level = DeprecationLevel.ERROR)
 @ExperimentalBuildToolsApi
 public interface CompilationService {
     /**
@@ -119,6 +119,7 @@ public interface CompilationService {
     public fun getCompilerVersion(): String
 
     @ExperimentalBuildToolsApi
+    @Deprecated("Use the new BTA API with entry points in KotlinToolchain instead", level = DeprecationLevel.ERROR)
     public companion object {
         @JvmStatic
         public fun loadImplementation(classLoader: ClassLoader): CompilationService  {
@@ -127,7 +128,7 @@ public interface CompilationService {
 
             return when {
                 kotlinCompilerVersion <= KotlinCompilerVersion(2, 1, 255, null) -> {
-                    PreKotlin220Wrapper(baseImplementation)
+                    KotlinWrapperPre2_2_0(baseImplementation)
                 }
                 else -> baseImplementation
             }

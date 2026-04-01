@@ -1,0 +1,8 @@
+KtArrayAccessExpression(59,63): '1[2]'
+  KtArrayAccessReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with set>
+    symbols:
+      (in ROOT) fun kotlin.Int.set(index: kotlin.Int, value: kotlin.Int): kotlin.Int

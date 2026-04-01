@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.tasks.abi
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
@@ -14,8 +15,11 @@ import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY
 
 @DisableCachingByDefault(because = "File copy should not be cacheable")
 internal abstract class KotlinAbiUpdateTask : DefaultTask() {
-    @get:OutputDirectory
+    @get:Internal
     abstract val referenceDir: DirectoryProperty
+
+    @get:OutputFiles
+    abstract val referenceDumps: ConfigurableFileCollection
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -39,13 +43,17 @@ internal abstract class KotlinAbiUpdateTask : DefaultTask() {
         val jvmDumpName = projectName + LEGACY_JVM_DUMP_EXTENSION
         val klibDumpName = projectName + LEGACY_KLIB_DUMP_EXTENSION
 
+        val referenceFiles = referenceDumps.files.map { it.absolutePath }.toSet()
+
         actualDir.walk()
             .filter { file -> file.isFile && file.name == jvmDumpName || file.name == klibDumpName }
             .forEach { actualDump ->
                 val relative = actualDump.toRelativeString(actualDir)
                 val referenceDump = referenceDir.resolve(relative)
 
-                actualDump.copyTo(referenceDump, overwrite = true)
+                if (referenceFiles.contains(referenceDump.absolutePath)) {
+                    actualDump.copyTo(referenceDump, overwrite = true)
+                }
             }
 
     }

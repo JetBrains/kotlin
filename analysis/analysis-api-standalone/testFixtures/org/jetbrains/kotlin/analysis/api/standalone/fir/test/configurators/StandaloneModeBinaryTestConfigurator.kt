@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.libraries.Dispatchi
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleDecompiler
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleDecompilerJar
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.preprocessors.ExternalAnnotationsSourcePreprocessor
@@ -64,10 +65,12 @@ abstract class StandaloneModeBinaryTestConfigurator : StandaloneModeConfigurator
     }
 }
 
-object StandaloneModeLibraryBinaryTestConfigurator : StandaloneModeBinaryTestConfigurator() {
+class StandaloneModeLibraryBinaryTestConfigurator(override val defaultTargetPlatform: TargetPlatform) :
+    StandaloneModeBinaryTestConfigurator() {
     override val testModuleFactory: KtTestModuleFactory get() = KtLibraryBinaryTestModuleFactory
 }
 
-object StandaloneModeLibraryBinaryDecompiledTestConfigurator : StandaloneModeBinaryTestConfigurator() {
+class StandaloneModeLibraryBinaryDecompiledTestConfigurator(override val defaultTargetPlatform: TargetPlatform) :
+    StandaloneModeBinaryTestConfigurator() {
     override val testModuleFactory: KtTestModuleFactory get() = KtLibraryBinaryDecompiledTestModuleFactory
 }

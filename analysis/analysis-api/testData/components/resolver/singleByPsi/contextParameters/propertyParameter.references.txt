@@ -2,5 +2,6 @@ KtNameReferenceExpression(102,107): 'param'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       param: Context

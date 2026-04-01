@@ -76,12 +76,17 @@ internal class KaFe10JvmTypeMapperContext(private val resolveSession: ResolveSes
 
         return when (val parent = descriptor.containingDeclaration) {
             is PackageFragmentDescriptor -> {
-                val packageInternalName = parent.fqName.asString().replace('.', '/')
-                "$packageInternalName/$selfName"
+                val fqName = parent.fqName
+                if (fqName.isRoot) {
+                    selfName.asString()
+                } else {
+                    val packageInternalName = parent.fqName.asString().replace('.', '/')
+                    "$packageInternalName/" + selfName.asString()
+                }
             }
             is ClassDescriptor -> {
                 val parentInternalName = computeClassInternalName(parent)
-                if (parentInternalName != null) "$parentInternalName$$selfName" else null
+                if (parentInternalName != null) "$parentInternalName$" + selfName.asString() else null
             }
             else -> selfName.asString()
         }

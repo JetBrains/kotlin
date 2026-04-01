@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_LEGACY_REFLECTION_IMPLEMENTATION
 
 open class AbstractReflectionLegacyImplementationTest : AbstractFirLightTreeBlackBoxCodegenTest() {
@@ -15,7 +14,6 @@ open class AbstractReflectionLegacyImplementationTest : AbstractFirLightTreeBlac
         with(builder) {
             defaultDirectives {
                 +USE_LEGACY_REFLECTION_IMPLEMENTATION
-                +REQUIRES_SEPARATE_PROCESS
             }
         }
     }

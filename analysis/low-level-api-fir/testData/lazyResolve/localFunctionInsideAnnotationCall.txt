@@ -9,7 +9,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
+    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
+    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
+    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -63,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
+    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
+    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
+    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
+    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
+    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -153,7 +153,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
+    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -171,7 +171,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
+    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -189,7 +189,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
+    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -207,7 +207,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
+    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -225,7 +225,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
+    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -243,7 +243,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideAnnotationCall.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
+    @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
             super<R|kotlin/Any|>()
         }

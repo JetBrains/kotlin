@@ -15,4 +15,4 @@ export declare function consumeInt(x: Nullable<number>): Nullable<string>;
 export declare function consumeLong(x: Nullable<bigint>): Nullable<string>;
 export declare function consumeChar(x: Nullable<number>): Nullable<string>;
 export declare function consumeString(x: Nullable<string>): Nullable<string>;
-export declare function consumeFunction(fn: Nullable<(p0: string) => number>): Nullable<number>;
+export declare function consumeFunction(fn: Nullable<(string: string) => number>): Nullable<number>;

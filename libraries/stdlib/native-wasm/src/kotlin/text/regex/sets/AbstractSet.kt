@@ -55,6 +55,13 @@ internal abstract class AbstractSet(val type: Int = 0) {
                 throw AssertionError("This method is not expected to be called.")
             override fun processSecondPassInternal(): AbstractSet = this
             override fun processSecondPass(): AbstractSet = this
+            override fun reportOwnProperties(properties: SetProperties) {
+                // nothing to report
+            }
+
+            override fun collectProperties(properties: SetProperties, finalSet: AbstractSet?) {
+                //throw AssertionError("This method is not expected to be called.")
+            }
         }
     }
 
@@ -131,7 +138,7 @@ internal abstract class AbstractSet(val type: Int = 0) {
     /**
      * Returns true if the given node intersects with this one, false otherwise.
      * This method is being used for quantifiers construction, lets consider the
-     * following regular expression (a|b)*ccc. (a|b) does not intersects with "ccc"
+     * following regular expression (a|b)*ccc. (a|b) does not intersect with "ccc"
      * and thus can be quantified greedily (w/o kickbacks), like *+ instead of *.
 
      * @param set - A node the intersection is checked for. Usually a previous node.
@@ -166,4 +173,79 @@ internal abstract class AbstractSet(val type: Int = 0) {
         secondPassVisited = true
         return processSecondPassInternal()
     }
+
+    /**
+     * Updates [properties] with information about a tree representing a regular expression
+     * rooted at [this] set.
+     *
+     * Information is collected starting for [this] set until either some final set not having a [next] element
+     * is reached, or until the set currently being inspected is not equal to [finalSet].
+     * The latter condition is checked for a case when the tree is no longer a tree, but rather a graph with a cycle.
+     * That's a particular case for [GroupQuantifierSet], which has a subtree with a final set referencing back to the [GroupQuantifierSet].
+     * Unless you don't have a value to supply as a [finalSet], you don't have to worry about it, but if a set has
+     * some inner set and specific final set, then the latter could be used as an iteration terminator.
+     *
+     * This function relies on [reportOwnProperties] to collect properties for this set.
+     */
+    open fun collectProperties(properties: SetProperties, finalSet: AbstractSet? = null) {
+        reportOwnProperties(properties)
+        if (next !== finalSet) {
+            next.collectProperties(properties, finalSet)
+        }
+    }
+
+    /**
+     * Updates [properties] with information about this set (and its internal set, not reachable via [next]).
+     */
+    abstract fun reportOwnProperties(properties: SetProperties)
+}
+
+/**
+ * Various properties affecting how a regular expression might be evaluated.
+ *
+ * @property capturesGroups if `true`, a regex captures group values when evaluated
+ * @property tracksConsumption if `true`, a regex updates [MatchResultImpl.consumers],
+ *   which is required to bound [GroupQuantifierSet]'s recursion in certain cases
+ * @property nonTrivialBacktracking if `true`, a regex evaluation requires non-trivial backtracking,
+ *   mainly because unsuccessful matching, followed by a backtracking may result in evaluating some of the sets
+ *   differently. For example, for a RE like `(aa|a)a` and input `"aa"`, a first attempt to match with `(aa)a` will fail,
+ *   we will backtrack and re-evaluate the group, to match only a single letter.
+ * @property requiresCheckpointing if `true`, regex's evaluation require [MatchResultImpl] checkpointing via
+ *   [MatchResultImpl.saveState] and [MatchResultImpl.rollbackState].
+ */
+internal data class SetProperties(
+    var capturesGroups: Boolean = false,
+    var tracksConsumption: Boolean = false,
+    var nonTrivialBacktracking: Boolean = false,
+    var requiresCheckpointing: Boolean = false,
+)
+
+/**
+ * Returns `true` if [this] is a capturing or non-capturing group,
+ * that is trivial enough to match without a recursion when quantified.
+ *
+ * A quantified group qualified as trivial, could be match using [TrivialGroupQuantifierSet]
+ * or [ReluctantTrivialGroupQuantifierSet], which match iteratively, without a recursion (there is no
+ * corresponding possessive set, because possessively quantified sets are free of this problem).
+ */
+internal fun JointSet.isTrivialGroupForQuantification(): Boolean {
+    val enclosedSet: AbstractSet
+    val terminator: AbstractSet
+
+    // Here, we're only considering capturing and non-capturing groups with a single child
+    when (this) {
+        is SingleSet -> {
+            enclosedSet = kid
+            terminator = fSet
+        }
+        is NonCapturingJointSet -> {
+            enclosedSet = getSingleChildOrNull() ?: return false
+            terminator = fSet
+        }
+        else -> return false
+    }
+
+    val properties = SetProperties().also { enclosedSet.collectProperties(it, terminator) }
+    // Either of group capturing, checkpointing (for lookaround sets), or complicated backtracking make a set non-trivial.
+    return !(properties.nonTrivialBacktracking || properties.capturesGroups || properties.requiresCheckpointing)
 }

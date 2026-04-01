@@ -9,3 +9,13 @@ enum class Bar {
 }
 
 fun foo(times: Int, name: String): List<Foo> = (1..times).map{Foo(name)}
+
+fun Foo.extensionFunction() = "Toplevel extension function"
+val Foo.extensionProperty get() = "Toplevel extension property"
+
+class Baz {
+    companion object {
+        fun Foo.nestedExtensionFunction() = "Nested extension function"
+        val Foo.nestedExtensionProperty get() = "Nested extension property"
+    }
+}

@@ -1,5 +1,8 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// NO_CHECK_LAMBDA_INLINING
+
+// FILE: lib.kt
 import helpers.*
 import kotlin.coroutines.*
 
@@ -15,6 +18,7 @@ val b: (Int) -> Unit = { test2 = "K" }
 
 suspend inline fun invokeSuspend(fn: suspend Int.() -> Unit) { fn(1) }
 
+// FILE: main.kt
 fun box(): String {
     runSuspend {
         invokeSuspend(::a.get())

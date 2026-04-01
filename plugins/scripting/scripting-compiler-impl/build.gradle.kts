@@ -4,7 +4,6 @@ description = "Kotlin Compiler Infrastructure for Scripting"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {

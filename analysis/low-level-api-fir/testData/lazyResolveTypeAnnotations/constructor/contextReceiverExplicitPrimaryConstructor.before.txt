@@ -1,7 +1,3 @@
-@R|Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /Foo.Foo
-  anchor -> [FirValueParameterSymbol <local>/List from FirConstructorSymbol /Foo.Foo]
-
 FILE: [ResolvedTo(IMPORTS)] contextReceiverExplicitPrimaryConstructor.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
@@ -16,7 +12,6 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverExplicitPrimaryConstructor.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(TYPES)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final? [ResolvedTo(TYPES)] class Foo : R|kotlin/Any| {
-        context([ResolvedTo(TYPES)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }

@@ -26,7 +26,6 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.From
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Group0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AggregateDslInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByToDataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Insert0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Insert1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Into
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Into0
@@ -65,6 +64,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslAddGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslAddGroupInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslNamedGroup
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslReferencePlus
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslStringInvoke
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddId
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Aggregate
@@ -92,6 +92,10 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByIterable
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByName
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByRegex
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByStringDelimiters
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColByIndex
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColByIndexUntyped
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColByString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColByStringUntyped
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups2
@@ -103,6 +107,11 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnOfPairs
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathColUntyped
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathGetColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathInvokeTyped
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathSelect
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnRange
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConcatWithKeys
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertAsColumn
@@ -126,6 +135,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropNa1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropNulls1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ExcludeJoin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ExcludeJoinWith
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FillNaNs0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FillNulls0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FilterJoin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FilterJoinWith
@@ -236,9 +246,13 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.NameStartsWith0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.NameStartsWith1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.NameStartsWith2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Named0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Named1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.NestedSelect
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairToConstructor
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Parse
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ParseDefault
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PathOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PerRowCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Percentile0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Percentile1
@@ -282,6 +296,14 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformIntoRow
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformInward0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Std0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Std1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringGetColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringInvokeTyped
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringInvokeUntyped
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringNestedCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringNestedColUntyped
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ParseString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Require0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringSelect
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Sum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Sum1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCols2
@@ -294,6 +316,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TakeLast2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificTypePattern
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificTypeZone
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TrimIndent
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateAt
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerColLambda
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerColMap
@@ -324,7 +347,7 @@ private object Stdlib {
         register(Names.TO, Names.PAIR, PairToConstructor())
         register(Names.PAIR_CONSTRUCTOR, Names.PAIR, PairConstructor())
         register(Names.TRIM_MARGIN, StandardClassIds.String, TrimMargin())
-        register(Names.TRIM_INDENT, StandardClassIds.String, TrimMargin())
+        register(Names.TRIM_INDENT, StandardClassIds.String, TrimIndent())
     }
 
     @OptIn(UnresolvedExpressionTypeAccess::class)
@@ -356,7 +379,8 @@ internal fun FirFunctionCall.interpreterName(session: FirSession): String? {
         }
 }
 
-internal val KotlinTypeFacade.loadInterpreter: FirFunctionCall.() -> Interpreter<*>? get() = { this.loadInterpreter(session, isTest) }
+context(facade: KotlinTypeFacade)
+fun FirFunctionCall.loadInterpreter(): Interpreter<*>? = this.loadInterpreter(facade.session, facade.isTest)
 
 internal val FirGetClassCall.classId: ClassId?
     get() {
@@ -367,20 +391,16 @@ internal val FirGetClassCall.classId: ClassId?
         }
     }
 
-internal inline fun <reified T> ClassId.load(): T {
-    val constructor = Class.forName(asFqNameString())
-        .constructors
-        .firstOrNull { constructor -> constructor.parameterCount == 0 }
-        ?: error("Interpreter $this must have an empty constructor")
-
-    return constructor.newInstance() as T
+internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T? {
+    return loadImpl(isTest) as T?
 }
 
-internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T? {
+private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
     return when (this) {
         "Add" -> Add()
         "From" -> From()
         "Into" -> Into()
+        "AddDslReferencePlus" -> AddDslReferencePlus()
         "AddWithDsl" -> AddWithDsl()
         "And10" -> And10()
         "Convert0" -> Convert0()
@@ -401,7 +421,6 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "Explode0" -> Explode0()
         "Implode" -> Implode()
         "ImplodeDefault" -> ImplodeDefault()
-        "Insert0" -> Insert0()
         "Insert1" -> Insert1()
         "Under0" -> Under0()
         "Under1" -> Under1()
@@ -553,6 +572,7 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "DataFrameBuilderInvoke0" -> DataFrameBuilderInvoke0()
         "ToDataFrameColumn" -> ToDataFrameColumn()
         "FillNulls0" -> FillNulls0()
+        "FillNaNs0" -> FillNaNs0()
         "UpdateWith0" -> UpdateWith0()
         "UpdateNotNull" -> UpdateNotNullWith()
         "UpdateNotNullDefault" -> UpdateNotNull()
@@ -659,6 +679,27 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "GatherKeysInto" -> GatherKeysInto()
         "ConcatWithKeys" -> ConcatWithKeys()
         "DataFrameUnfold" -> DataFrameUnfold()
+        "StringInvokeUntyped" -> StringInvokeUntyped()
+        "StringInvokeTyped" -> StringInvokeTyped()
+        "ColumnPathInvokeTyped" -> ColumnPathInvokeTyped()
+        "StringGetColumn" -> StringGetColumn()
+        "ColumnPathGetColumn" -> ColumnPathGetColumn()
+        "ColByIndex" -> ColByIndex()
+        "ColByIndexUntyped" -> ColByIndexUntyped()
+        "Named1" -> Named1()
+        "ColByString" -> ColByString()
+        "ColByStringUntyped" -> ColByStringUntyped()
+        "StringNestedColUntyped" -> StringNestedColUntyped()
+        "StringNestedCol" -> StringNestedCol()
+        "ColumnPathColUntyped" -> ColumnPathColUntyped()
+        "ColumnPathCol" -> ColumnPathCol()
+        "StringSelect" -> StringSelect()
+        "ColumnPathSelect" -> ColumnPathSelect()
+        "PathOf" -> PathOf()
+        "Parse" -> Parse()
+        "ParseString" -> ParseString()
+        "ParseDefault" -> ParseDefault()
+        "Require0" -> Require0()
         else -> if (isTest) error(this) else null
-    } as T?
+    }
 }

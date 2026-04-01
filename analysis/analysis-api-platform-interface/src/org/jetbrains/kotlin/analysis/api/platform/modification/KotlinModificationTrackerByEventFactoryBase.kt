@@ -9,12 +9,14 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.SimpleModificationTracker
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 
 /**
  * A base implementation of [KotlinModificationTrackerFactory] which defines basic modification trackers that are incremented after
  * receiving [KotlinModificationEvent]s.
  */
+@KaPlatformInterface
 public abstract class KotlinModificationTrackerByEventFactoryBase(project: Project) : KotlinModificationTrackerFactory, Disposable {
     protected val eventSourceModificationTracker: SimpleModificationTracker = SimpleModificationTracker()
 

@@ -1,0 +1,30 @@
+public final static fun R|test/C|.bar(x: R|kotlin/Boolean|): R|kotlin/Unit|
+
+public final static val R|test/C|.xx: R|kotlin/Int|
+    public static get(): R|kotlin/Int|
+
+public final static var R|test/C|.yy: R|kotlin/Boolean|
+    public static get(): R|kotlin/Boolean|
+    public static set(value: R|kotlin/Boolean|): R|kotlin/Unit|
+
+public final static var R|test/C|.zz: R|kotlin/String|
+    public static get(): R|kotlin/String|
+    public static set(value: R|kotlin/String|): R|kotlin/Unit|
+
+public final class C : R|kotlin/Any| {
+    public final static fun foo(s: R|kotlin/String|): R|kotlin/Int|
+
+    public final static val x: R|kotlin/Int|
+        public static get(): R|kotlin/Int|
+
+    public final static var y: R|kotlin/Boolean|
+        public static get(): R|kotlin/Boolean|
+        public static set(value: R|kotlin/Boolean|): R|kotlin/Unit|
+
+    public final static var z: R|kotlin/String|
+        public static get(): R|kotlin/String|
+        public static set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    public constructor(): R|test/C|
+
+}

@@ -57,7 +57,7 @@ internal class TowerLevelHandler {
                     processResult += towerLevel.processObjectsByName(info, processor)
                 }
             }
-            CallKind.Function -> {
+            CallKind.Function, CallKind.CollectionLiteral -> {
                 processResult += towerLevel.processFunctionsByName(info, processor)
             }
             CallKind.CallableReference -> {

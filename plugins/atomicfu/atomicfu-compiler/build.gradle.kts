@@ -8,7 +8,6 @@ description = "Atomicfu Compiler Plugin"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("d8-configuration")
     id("project-tests-convention")
 }
@@ -70,7 +69,7 @@ dependencies {
     compileOnly(project(":compiler:fir:entrypoint"))
 
     compileOnly(project(":compiler:plugin-api"))
-    compileOnly(project(":compiler:cli-common"))
+    compileOnly(project(":compiler:cli-base"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:ir.backend.common"))
@@ -79,6 +78,7 @@ dependencies {
 
     compileOnly(project(":compiler:backend.jvm"))
     compileOnly(project(":compiler:ir.tree"))
+    compileOnly(project(":native:native.config"))
 
     compileOnly(kotlinStdlib())
 
@@ -97,7 +97,7 @@ dependencies {
     testImplementation(kotlinTest())
 
     // Dependencies for Kotlin/Native test infra:
-    if (!kotlinBuildProperties.isInIdeaSync) {
+    if (!kotlinBuildProperties.isInIdeaSync.get()) {
         testImplementation(testFixtures(project(":native:native.tests")))
     }
     testImplementation(project(":compiler:ir.backend.native"))
@@ -189,7 +189,7 @@ projectTests {
             // Exclude all tests with the "atomicfu-native" tag. They should be launched by another test task.
             excludeTags("atomicfu-native")
         }
-        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+        useJsIrBoxTests(buildDir = layout.buildDirectory)
 
         workingDir = rootDir
 
@@ -241,7 +241,7 @@ standardPublicJars()
 tasks.named("check") {
     // Depend on the test task that launches Native tests so that it will also run together with tests
     // for all other targets if K/N is enabled
-    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+    if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         dependsOn(tasks.named("nativeTest"))
     }
 }

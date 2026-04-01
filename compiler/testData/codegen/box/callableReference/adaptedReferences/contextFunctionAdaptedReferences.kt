@@ -1,6 +1,17 @@
 // IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +ContextParameters
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
+
 class A
+
+inline fun inlineValueParamFun(a: A, i: Int) { }
+inline fun A.inlineExtensionFun(i: Int) { }
+
+inline fun <reified T> inlineReifiedValueParamFun(a: T, i: Int) { }
+inline fun <reified T> T.inlineReifiedExtensionFun(i: Int) { }
+
+// FILE: main.kt
 
 fun funWithContextAndValueType(x: context(A) (Int) -> Unit) {}
 fun funWithContextAndExtensionType(x: context(A) Int.() -> Unit) {}
@@ -8,12 +19,6 @@ fun funWithContextsType(x: context(A, Int) () -> Unit) {}
 
 fun valueParamFun(a: A, i: Int) { }
 fun A.extensionFun(i: Int) { }
-
-inline fun inlineValueParamFun(a: A, i: Int) { }
-inline fun A.inlineExtensionFun(i: Int) { }
-
-inline fun <reified T> inlineReifiedValueParamFun(a: T, i: Int) { }
-inline fun <reified T> T.inlineReifiedExtensionFun(i: Int) { }
 
 fun box(): String {
     funWithContextAndValueType(::valueParamFun)

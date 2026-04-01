@@ -16,6 +16,21 @@ fun box(): String {
 // test.kt:8 bar
 // test.kt:11 box
 
+// EXPECTATIONS NATIVE
+// test.kt:11 box
+// test.kt:5 bar$default
+// test.kt:6 bar$default
+// test.kt:3 bar$default
+// test.kt:6 bar$default
+// test.kt:8 bar$default
+// test.kt:5 bar$default
+// test.kt:5 bar
+// test.kt:8 bar
+// test.kt:5 bar$default
+// test.kt:8 bar$default
+// test.kt:11 box
+// test.kt:12 box
+
 // EXPECTATIONS JS_IR
 // test.kt:11 box
 // test.kt:3 bar

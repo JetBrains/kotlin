@@ -1,23 +1,30 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("gradle-plugin-compiler-dependency-configuration")
     id("generated-sources")
 }
 
 dependencies {
-    api(project(":compiler:cli-common"))
+    api(project(":core:util.runtime"))
+    api(project(":compiler:arguments.common"))
+    api(project(":compiler:plugin-api"))
     api(project(":compiler:resolution.common"))
-    api(project(":compiler:frontend:cfg"))
-    implementation(project(":compiler:backend.jvm"))
     api(project(":compiler:light-classes"))
-    api(project(":compiler:javac-wrapper"))
+
+    implementation(project(":compiler:config.jvm"))
+    implementation(project(":js:js.config"))
+    implementation(project(":wasm:wasm.config"))
+    implementation(project(":native:native.config"))
+    api(project(":compiler:plugin-api"))
     implementation(project(":kotlin-util-klib-metadata"))
 
-    compileOnly(toolsJarApi())
     compileOnly(intellijCore())
     compileOnly(libs.intellij.fastutil)
     compileOnly(libs.intellij.asm)
-    runtimeOnly(libs.kotlinx.coroutines.core)
+    compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    compileOnly(intellijCore())
+    compileOnly(libs.guava)
+    implementation(libs.kotlinx.coroutines.core)
 }
 
 sourceSets {
@@ -30,4 +37,30 @@ sourceSets {
 optInToExperimentalCompilerApi()
 optInToK1Deprecation()
 
+tasks.jar.configure {
+    //excludes unused bunch files
+    exclude("META-INF/extensions/*.xml.**")
+}
+
 generatedConfigurationKeys("CLIConfigurationKeys")
+
+generatedSourcesTask(
+    taskName = "generateCliArguments",
+    generatorProject = ":compiler:cli:cli-arguments-generator",
+    generatorMainClass = "org.jetbrains.kotlin.cli.arguments.generator.MainKt",
+    argsProvider = { generationRoot ->
+        listOf(
+            generationRoot.toString(),
+            "commonToolArguments",
+            "commonCompilerArguments",
+            "jvmCompilerArguments",
+            "commonKlibBasedArguments",
+            "wasmArguments",
+            "jsArguments",
+            "nativeArguments",
+            "metadataArguments",
+            "commonJsAndWasmArguments",
+            "legacyWasmArguments",
+        )
+    }
+)

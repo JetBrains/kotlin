@@ -12,15 +12,17 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.isImplicitWhenSubjectVariable
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.SmartcastStability
 import java.util.*
@@ -62,11 +64,8 @@ class RealVariable(
     override val originalType: ConeKotlinType,
 ) : DataFlowVariable() {
     companion object {
-        fun local(symbol: FirVariableSymbol<*>): RealVariable =
-            RealVariable(symbol, isImplicit = false, dispatchReceiver = null, extensionReceiver = null, symbol.resolvedReturnType)
-
         fun implicit(symbol: FirBasedSymbol<*>, type: ConeKotlinType): RealVariable =
-            RealVariable(symbol, isImplicit = true, dispatchReceiver = null, extensionReceiver = null, type)
+            RealVariable(symbol, isImplicit = true, dispatchReceiver = null, extensionReceiver = null, originalType = type)
     }
 
     // `originalType` cannot be included into equality comparisons because it can be a captured type.
@@ -86,7 +85,7 @@ class RealVariable(
         append(
             when (symbol) {
                 is FirClassSymbol<*> -> symbol.classId
-                is FirCallableSymbol<*> -> symbol.callableId
+                is FirCallableSymbol<*> -> symbol.callableId ?: symbol.name
                 else -> symbol
             }
         )
@@ -107,6 +106,9 @@ class RealVariable(
             if (isUnstableSmartcastOnDelegatedProperties && (symbol.fir as? FirProperty)?.isDelegated == true) return SmartcastStability.DELEGATED_PROPERTY
 
             stability.inherentInstability?.let { return it }
+            if (symbol is FirPropertySymbol && symbol.fir.isImplicitWhenSubjectVariable) {
+                flow.unwrapVariable(this).takeIf { it != this }?.let { return it.getStability(flow, session) }
+            }
             if (stability.checkReceiver && dispatchReceiver?.hasFinalType(flow, session) == false)
                 return SmartcastStability.PROPERTY_WITH_GETTER
             if (stability.checkModule && !(symbol.fir as FirVariable).isInCurrentOrFriendModule(session))
@@ -148,6 +150,9 @@ class RealVariable(
                 fir.receiverParameter != null -> PropertyStability.PROPERTY_WITH_GETTER
                 fir.getter !is FirDefaultPropertyAccessor? -> PropertyStability.PROPERTY_WITH_GETTER
                 fir.visibility == Visibilities.Private -> PropertyStability.PRIVATE_OR_CONST_VAL
+                // REPL vals can be treated the same as local vals.
+                // TODO(???): allow REPL vars to be treated as local vars.
+                fir.isReplSnippetDeclaration == true -> PropertyStability.PRIVATE_OR_CONST_VAL
                 fir.isFinal -> PropertyStability.PUBLIC_FINAL_VAL
                 else -> PropertyStability.PUBLIC_OPEN_VAL
             }

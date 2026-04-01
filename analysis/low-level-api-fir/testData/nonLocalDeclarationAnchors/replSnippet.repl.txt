@@ -1,0 +1,29 @@
+/* anchor (KtScript) --> *//* anchor (KtClass) --> */class B {
+    /* anchor (KtNamedFunction) --> */fun bar() {}/* <-- */
+
+    /* anchor (KtProperty) --> */val foo = 1/* <-- */
+
+    /* anchor (KtObjectDeclaration) --> */object Nested {
+        /* anchor (KtNamedFunction) --> */fun member() {
+
+        }/* <-- */
+
+        /* anchor (KtClassInitializer) --> */init {
+            member()
+        }/* <-- */
+
+        /* anchor (KtProperty) --> */val member: String
+            /* anchor (KtPropertyAccessor) --> */get() = "str"/* <-- *//* <-- */
+    }/* <-- */
+}/* <-- */
+
+/* anchor (KtNamedFunction) --> */fun topLevel() {
+
+}/* <-- */
+
+/* anchor (KtProperty) --> */var topLevelVar = 1/* <-- */
+
+topLevel()
+
+123
+/* <-- */

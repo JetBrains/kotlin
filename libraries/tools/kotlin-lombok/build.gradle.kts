@@ -1,8 +1,9 @@
+import org.gradle.plugin.compatibility.compatibility
+
 description = "Kotlin lombok compiler plugin"
 
 plugins {
     id("gradle-plugin-common-configuration")
-    id("jps-compatible")
 }
 
 dependencies {
@@ -16,6 +17,12 @@ gradlePlugin {
             displayName = "Kotlin Lombok plugin"
             description = displayName
             implementationClass = "org.jetbrains.kotlin.lombok.gradle.LombokSubplugin"
+
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
     }
 }

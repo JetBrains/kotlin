@@ -137,6 +137,7 @@ library {
       @test/AnnoConstructor
       public constructor(@test/AnnoConstructorParameter i: kotlin/Int)
 
+      @delegate:test/AnnoDelegatedField
       public final /* delegated */ val immutableProp: kotlin/Int
         public final /* non-default */ get
 
@@ -146,6 +147,7 @@ library {
         public final /* non-default */ set(@test/AnnoSetParam2 x: kotlin/Int)
 
       @test/AnnoProperty
+      @field:test/AnnoBackingField
       public final var prop: kotlin/Int
         @test/AnnoGetter
         public final /* non-default */ get
@@ -161,6 +163,7 @@ library {
     package {
 
       @test/AnnoFunction
+      @receiver:test/AnnoFunctionExtensionReceiver
       public final fun test/Foo.extfun(@test/AnnoFunctionParam x: kotlin/Int): kotlin/Unit
 
       public final fun <@test/AnnoFunctionTypeParameter T#0 /* T */> f(x: test/B<@test/AnnoClassUsageTypeParameter kotlin/Int>): kotlin/Unit

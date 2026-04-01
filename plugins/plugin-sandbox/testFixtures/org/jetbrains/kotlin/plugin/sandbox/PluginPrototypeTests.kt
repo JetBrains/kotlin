@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.plugin.sandbox
 
-import org.jetbrains.kotlin.js.test.fir.AbstractJsTest
-import org.jetbrains.kotlin.js.test.fir.AbstractLoadCompiledJsKotlinTest
-import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase
+import org.jetbrains.kotlin.js.test.runners.AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase
+import org.jetbrains.kotlin.js.test.runners.AbstractJsTest
+import org.jetbrains.kotlin.js.test.runners.AbstractLoadCompiledJsKotlinTest
 import org.jetbrains.kotlin.kotlinp.jvm.test.CompareMetadataHandler
 import org.jetbrains.kotlin.plugin.sandbox.PluginSandboxDirectives.DONT_LOAD_IN_SYNTHETIC_MODULES
 import org.jetbrains.kotlin.test.FirParser
@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractFirLoadK2CompiledJvmKotlinTest
-import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticPsiTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractJvmBlackBoxCodegenWithSeparateKmpCompilationTestBase
 
@@ -81,7 +81,7 @@ open class AbstractJsLightTreePluginBlackBoxCodegenWithSeparateKmpCompilationTes
     }
 }
 
-abstract class AbstractFirPsiPluginDiagnosticTest : AbstractFirPsiDiagnosticTest() {
+abstract class AbstractFirPsiPluginDiagnosticTest : AbstractPhasedJvmDiagnosticPsiTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
@@ -129,7 +129,7 @@ open class AbstractFirMetadataPluginSandboxTest : AbstractKotlinCompilerWithTarg
             configureFirParser(FirParser.LightTree)
             commonFirWithPluginFrontendConfiguration(dumpFir = false)
             configureJvmArtifactsHandlersStep {
-                useHandlers({ CompareMetadataHandler(it, extension = ".metadata.txt") })
+                useHandlers({ CompareMetadataHandler(it, extension = ".metadata.txt", verbose = true) })
             }
         }
     }

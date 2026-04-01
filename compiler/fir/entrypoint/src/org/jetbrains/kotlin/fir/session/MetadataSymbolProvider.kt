@@ -59,6 +59,7 @@ class MetadataSymbolProvider(
                 annotationDeserializer = annotationDeserializer,
                 FirTypeDeserializer.FlexibleTypeFactory.Default,
                 constDeserializer = constDeserializer,
+                kdocDeserializer,
                 containerSource = null
             )
 

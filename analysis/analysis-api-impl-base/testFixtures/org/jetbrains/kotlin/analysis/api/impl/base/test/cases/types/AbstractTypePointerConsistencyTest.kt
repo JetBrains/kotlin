@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types
 
-import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -26,7 +26,7 @@ abstract class AbstractTypePointerConsistencyTest : AbstractAnalysisApiBasedTest
         ).takeIf { it.isNotEmpty() }?.single()?.first
             ?: mainFile
 
-        val renderer = DebugSymbolRenderer(renderTypeByProperties = true)
+        val renderer = KaDebugRenderer(renderTypeByProperties = true)
 
         lateinit var beforeString: String
         lateinit var typePointer: KaTypePointer<*>

@@ -33,6 +33,9 @@ private val nameToOperator = mapOf(
 )
 
 object FirJsDynamicCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
         val callee = expression.calleeReference.resolved ?: return

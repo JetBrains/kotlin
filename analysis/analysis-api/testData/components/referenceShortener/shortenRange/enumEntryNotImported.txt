@@ -1,0 +1,10 @@
+Before shortening: test.MyEnum.A
+with default settings:
+[qualifier] test.MyEnum
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[qualifier] test.MyEnum
+with SHORTEN_AND_IMPORT:
+[qualifier] test.MyEnum.A
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] test.MyEnum.A

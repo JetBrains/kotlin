@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -96,7 +96,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
     fun getAllCandidatesForDelegatedConstructor(
         resolutionFacade: LLResolutionFacade,
         delegatedConstructorCall: FirDelegatedConstructorCall,
-        derivedClassLookupTag: ConeClassLikeLookupTag,
+        derivedClass: FirClassSymbol<*>,
         element: KtElement
     ): List<OverloadCandidate> {
         initializeBodyResolveContext(resolutionFacade, element)
@@ -110,7 +110,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
 
             with(bodyResolveComponents.towerResolver) {
                 reset()
-                runResolverForDelegatingConstructor(callInfo, constructedType, derivedClassLookupTag, resolutionContext)
+                runResolverForDelegatingConstructor(callInfo, constructedType, derivedClass, resolutionContext)
             }
 
             bodyResolveComponents.collector.allCandidates

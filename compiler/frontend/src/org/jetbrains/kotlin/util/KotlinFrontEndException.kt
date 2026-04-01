@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.util
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
+import org.jetbrains.kotlin.utils.exceptions.getExceptionMessage
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 class KotlinFrontEndException(message: String, cause: Throwable) : KotlinExceptionWithAttachments(message, cause) {

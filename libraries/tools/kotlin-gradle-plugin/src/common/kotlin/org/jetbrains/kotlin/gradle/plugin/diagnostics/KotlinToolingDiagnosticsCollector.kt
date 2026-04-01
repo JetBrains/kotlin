@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -41,18 +42,18 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
     private val rawDiagnosticsFromProject: MutableMap<GradleProjectPath, MutableList<ToolingDiagnostic>> = ConcurrentHashMap()
     private val reportedIds: MutableSet<ToolingDiagnosticId> = Collections.newSetFromMap(ConcurrentHashMap())
 
-    fun getDiagnosticsForProject(project: Project): Collection<ToolingDiagnostic> {
-        return rawDiagnosticsFromProject[project.path] ?: return emptyList()
+    fun getDiagnosticsForProject(projectPath: GradleProjectPath): Collection<ToolingDiagnostic> {
+        return rawDiagnosticsFromProject[projectPath] ?: emptyList()
     }
 
     fun report(
-        project: Project,
+        context: ToolingDiagnosticsContext,
         diagnostic: ToolingDiagnostic,
         reportOnce: Boolean = false,
         key: ToolingDiagnosticId = diagnostic.id,
     ) {
         if (reportedIds.add(key) || !reportOnce) {
-            handleDiagnostic(project, diagnostic)
+            handleDiagnostic(context, diagnostic)
         }
     }
 
@@ -63,8 +64,9 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
         key: ToolingDiagnosticId = diagnostic.id,
     ) {
         if (reportedIds.add(key) || !reportOnce) {
-            val options = from.diagnosticRenderingOptions.get()
-            problemsReporter.reportProblemDiagnostic(diagnostic, options)
+            // Execution-phase reporters must render immediately: with configuration cache, Gradle can
+            // deserialize a fresh BuildService instance where transparent mode is not yet enabled.
+            handleDiagnostic(from.toolingDiagnosticsContext.get(), diagnostic, forceRender = true)
         }
     }
 
@@ -72,15 +74,24 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
         isTransparent = true
     }
 
-    private fun handleDiagnostic(project: Project, diagnostic: ToolingDiagnostic) {
-        val options = ToolingDiagnosticRenderingOptions.forProject(project)
+    private fun handleDiagnostic(
+        context: ToolingDiagnosticsContext,
+        diagnostic: ToolingDiagnostic,
+        // Force immediate rendering for execution-phase reporters; configuration cache may
+        // deserialize a fresh BuildService instance before transparent mode is enabled.
+        forceRender: Boolean = false,
+    ) {
+        val projectPath = context.projectPath
+        val options = context.renderingOptions
         if (diagnostic.isSuppressed(options)) return
 
-        rawDiagnosticsFromProject.compute(project.path) { _, previousListIfAny ->
-            previousListIfAny?.apply { add(diagnostic) } ?: mutableListOf(diagnostic)
+        if (!forceRender) {
+            rawDiagnosticsFromProject.compute(projectPath) { _, previousListIfAny ->
+                previousListIfAny?.apply { add(diagnostic) } ?: mutableListOf(diagnostic)
+            }
         }
 
-        if (isTransparent) {
+        if (isTransparent || forceRender) {
             problemsReporter.reportProblemDiagnostic(diagnostic, options)
             return
         }
@@ -99,39 +110,77 @@ internal val Project.kotlinToolingDiagnosticsCollectorProvider: Provider<KotlinT
 internal val Project.kotlinToolingDiagnosticsCollector: KotlinToolingDiagnosticsCollector
     get() = kotlinToolingDiagnosticsCollectorProvider.get()
 
+/**
+ * Reports [diagnostic] through this project's [KotlinToolingDiagnosticsCollector].
+ *
+ * This method does not deduplicate diagnostics and reports each invocation independently.
+ */
 internal fun Project.reportDiagnostic(diagnostic: ToolingDiagnostic) {
-    kotlinToolingDiagnosticsCollector.report(this, diagnostic)
+    kotlinToolingDiagnosticsCollector.report(toolingDiagnosticsContext, diagnostic)
 }
 
+/**
+ * Reports [diagnostic] at most once during the current Gradle build.
+ *
+ * Subsequent calls with the same [key] are ignored.
+ */
 internal fun KotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(
-    fromProject: Project,
+    context: ToolingDiagnosticsContext,
     diagnostic: ToolingDiagnostic,
     key: ToolingDiagnosticId = diagnostic.id,
 ) {
-    report(fromProject, diagnostic, reportOnce = true, ":#$key")
+    report(context, diagnostic, reportOnce = true, ":#$key")
 }
 
+/**
+ * Reports [diagnostic] at most once for a given Gradle project.
+ *
+ * Deduplication is scoped to `context.projectPath`, so different projects can report the same [key].
+ */
 internal fun KotlinToolingDiagnosticsCollector.reportOncePerGradleProject(
-    fromProject: Project,
+    context: ToolingDiagnosticsContext,
     diagnostic: ToolingDiagnostic,
     key: ToolingDiagnosticId = diagnostic.id,
 ) {
-    report(fromProject, diagnostic, reportOnce = true, "${fromProject.path}#$key")
+    report(context, diagnostic, reportOnce = true, "${context.projectPath}#$key")
 }
 
+/**
+ * Convenience wrapper for [KotlinToolingDiagnosticsCollector.reportOncePerGradleProject]
+ * that uses this project's diagnostics context.
+ */
 internal fun Project.reportDiagnosticOncePerProject(diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.id) {
-    kotlinToolingDiagnosticsCollector.reportOncePerGradleProject(this, diagnostic, key)
+    kotlinToolingDiagnosticsCollector.reportOncePerGradleProject(toolingDiagnosticsContext, diagnostic, key)
 }
 
+/**
+ * Convenience wrapper for [KotlinToolingDiagnosticsCollector.reportOncePerGradleBuild]
+ * that uses this project's diagnostics context.
+ */
 internal fun Project.reportDiagnosticOncePerBuild(diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.id) {
-    kotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(this, diagnostic, key)
+    kotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(toolingDiagnosticsContext, diagnostic, key)
 }
 
 @RequiresOptIn("Usage of immediate diagnostic reporting is discouraged. Please use the regular diagnostics pipeline.")
 internal annotation class ImmediateDiagnosticReporting
 
+/**
+ * Renders [diagnostic] immediately using the provided logger and rendering options.
+ */
+@ImmediateDiagnosticReporting
+internal fun reportDiagnosticImmediately(
+    logger: Logger,
+    renderingOptions: ToolingDiagnosticRenderingOptions,
+    diagnostic: ToolingDiagnostic,
+) {
+    diagnostic.renderReportedDiagnostic(logger, renderingOptions)
+}
+
+/**
+ * Convenience overload of [reportDiagnosticImmediately] that resolves logger and rendering options
+ * from this [Project].
+ */
 @ImmediateDiagnosticReporting
 internal fun Project.reportDiagnosticImmediately(diagnostic: ToolingDiagnostic) {
-    val renderingOptions = ToolingDiagnosticRenderingOptions.forProject(project)
-    diagnostic.renderReportedDiagnostic(logger, renderingOptions)
+    reportDiagnosticImmediately(logger, ToolingDiagnosticRenderingOptions.forProject(this), diagnostic)
 }

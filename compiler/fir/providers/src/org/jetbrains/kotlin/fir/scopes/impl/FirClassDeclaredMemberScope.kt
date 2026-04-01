@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.isEnumEntries
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -40,13 +41,19 @@ class FirClassDeclaredMemberScopeImpl(
         useSiteSession.nestedClassifierScope(klass)
     }
 
+    private class CallablesIndex(
+        val callablesByName: Map<Name, List<FirCallableSymbol<*>>>,
+        val hasStaticMembers: Boolean,
+    )
+
     /**
      * This index should be lazy to avoid SOE for Java classes as [FirClass.declarations] in this case may lead to it
      *
      * Issues: KT-72660
      */
-    private val callablesIndex: Map<Name, List<FirCallableSymbol<*>>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val callablesIndex: CallablesIndex by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val result = mutableMapOf<Name, MutableList<FirCallableSymbol<*>>>()
+        var hasStatic = false
         for (declaration in klass.declarations) {
             if (declaration !is FirCallableDeclaration) continue
 
@@ -62,9 +69,10 @@ class FirClassDeclaredMemberScopeImpl(
             }
 
             result.getOrPut(name) { mutableListOf() } += declaration.symbol
+            hasStatic = hasStatic || declaration.isStatic
         }
 
-        result
+        CallablesIndex(result, hasStatic)
     }
 
     private val FirClass.supportsEnumEntries get() = useSiteSession.enumEntriesSupport.canSynthesizeEnumEntriesFor(this)
@@ -86,7 +94,7 @@ class FirClassDeclaredMemberScopeImpl(
         name: Name,
         processor: (D) -> Unit
     ) {
-        val symbols = callablesIndex[name] ?: emptyList()
+        val symbols = callablesIndex.callablesByName[name] ?: emptyList()
         for (symbol in symbols) {
             if (symbol is D) {
                 processor(symbol)
@@ -102,12 +110,15 @@ class FirClassDeclaredMemberScopeImpl(
     }
 
     override fun getCallableNames(): Set<Name> {
-        return callablesIndex.keys
+        return callablesIndex.callablesByName.keys
     }
 
     override fun getClassifierNames(): Set<Name> {
         return nestedClassifierScope?.getClassifierNames().orEmpty()
     }
+
+    override val hasDefinitelyNoStaticMembers: Boolean
+        get() = !callablesIndex.hasStaticMembers
 
     @DelicateScopeAPI
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirClassDeclaredMemberScopeImpl {

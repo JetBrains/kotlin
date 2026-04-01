@@ -108,14 +108,6 @@ object NON_INCREMENTAL_COMPILATION_IN_PROCESS :
     private fun readResolve(): Any = NON_INCREMENTAL_COMPILATION_IN_PROCESS
 }
 
-object NON_INCREMENTAL_COMPILATION_OUT_OF_PROCESS : GradleBuildTimeMetric(
-    RUN_COMPILATION,
-    "Non incremental out of process compilation",
-    name = "NON_INCREMENTAL_COMPILATION_OUT_OF_PROCESS"
-) {
-    private fun readResolve(): Any = NON_INCREMENTAL_COMPILATION_OUT_OF_PROCESS
-}
-
 object NON_INCREMENTAL_COMPILATION_DAEMON :
     GradleBuildTimeMetric(RUN_COMPILATION, "Non incremental compilation in daemon", name = "NON_INCREMENTAL_COMPILATION_DAEMON") {
     private fun readResolve(): Any = NON_INCREMENTAL_COMPILATION_DAEMON
@@ -247,7 +239,9 @@ object CLEAR_OUTPUT_ON_REBUILD :
     GradleBuildTimeMetric(INCREMENTAL_COMPILATION_DAEMON, "Clear outputs on rebuild", name = "CLEAR_OUTPUT_ON_REBUILD") {
     private fun readResolve(): Any = CLEAR_OUTPUT_ON_REBUILD
 }
-
+object IC_GEN_COMPILER_REF_INDEX : GradleBuildTimeMetric(INCREMENTAL_COMPILATION_DAEMON, "Generate compiler reference index", name = "IC_GEN_COMPILER_REF_INDEX") {
+    private fun readResolve(): Any = IC_GEN_COMPILER_REF_INDEX
+}
 object IC_UPDATE_CACHES : GradleBuildTimeMetric(INCREMENTAL_COMPILATION_DAEMON, "Update caches", name = "IC_UPDATE_CACHES") {
     private fun readResolve(): Any = IC_UPDATE_CACHES
 }

@@ -1,0 +1,26 @@
+<caret_1>:
+  KDocName(26,28): 'AA'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        AA: kotlin.Int
+
+<caret_2>:
+  KDocName(95,97): 'BB'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in ROOT) class BB(x: kotlin.Int)
+
+<caret_3>:
+  KDocName(160,162): 'CC'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in ROOT) class CC(x: kotlin.Int)

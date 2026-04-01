@@ -20,7 +20,7 @@ fun DiagnosticReporter.toKotlinParsingErrorListener(
     languageVersionSettings: LanguageVersionSettings
 ): KotlinLightParser.LightTreeParsingErrorListener {
     val diagnosticContext = object : DiagnosticContext {
-        override val containingFilePath = sourceFile.path
+        override val containingFile: KtSourceFile = sourceFile
         override val languageVersionSettings: LanguageVersionSettings get() = languageVersionSettings
         override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean = false
     }

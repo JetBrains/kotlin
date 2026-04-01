@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirWebCommonExternalPropertyAccessorChecker : FirPropertyAccessorChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirPropertyAccessor) {
         if (

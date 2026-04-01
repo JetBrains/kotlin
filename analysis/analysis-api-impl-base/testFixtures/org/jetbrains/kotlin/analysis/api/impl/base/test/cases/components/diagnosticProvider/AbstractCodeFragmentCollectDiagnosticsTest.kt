@@ -14,7 +14,7 @@ import java.io.File
 abstract class AbstractCodeFragmentCollectDiagnosticsTest : AbstractCollectDiagnosticsTest() {
     // We have to override `doTest` instead of `doTestByMainFile` because `AbstractCollectDiagnosticsTest` already overrides `doTest`.
     override fun doTest(testServices: TestServices) {
-        val (mainFile, mainModule) = findMainFileAndModule(testServices)
+        val (mainFile, mainModule) = findMainFileAndModule(testServices) ?: error("Main module is not found")
         if (mainFile == null) {
             error("`${AbstractCodeFragmentCollectDiagnosticsTest::class.simpleName}` does not support multiple use-site files.")
         }

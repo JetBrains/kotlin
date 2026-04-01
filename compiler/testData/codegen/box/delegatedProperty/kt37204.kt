@@ -1,5 +1,6 @@
 // WITH_STDLIB
 
+// FILE: lib.kt
 val log = StringBuilder()
 
 inline fun test() {
@@ -11,6 +12,7 @@ inline fun test() {
     log.append(localLazy)
 }
 
+// FILE: main.kt
 fun box(): String {
     test()
     val t = log.toString()

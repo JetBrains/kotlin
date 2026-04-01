@@ -13,6 +13,8 @@ KaValueParameterSymbol:
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
+      isNotDefault: false
       isVal: true
       location: PROPERTY
       modality: FINAL
@@ -47,6 +49,7 @@ KaValueParameterSymbol:
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isInline: false
       isNotDefault: false
       isOverride: false
@@ -104,10 +107,8 @@ KaValueParameterSymbol:
     getContainingJvmClassName: pack.Anno
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    getterDeprecationStatus: null
     javaGetterName: getAn
     javaSetterName: null
-    setterDeprecationStatus: null
     isInline: false
     importableFqName: null
   hasDeclaredDefaultValue: true
@@ -116,6 +117,7 @@ KaValueParameterSymbol:
   isCrossinline: false
   isExpect: false
   isExtension: false
+  isExternal: false
   isImplicitLambdaParameter: false
   isNoinline: false
   isVal: true

@@ -2,15 +2,23 @@
 // FIR_DUMP
 // LANGUAGE: +ContextParameters +ExplicitContextArguments
 
-class A
+open class A
+class SubA : A()
 
-context(a: A) fun foo() { }
-fun foo(a: A = A(), x: Int = 1) { }
+context(a: A) fun foo0() { }
+fun foo0(a: A = A(), x: Int = 1) { }
+
+context(a: A) fun foo1() { }
+fun foo1(a: SubA = SubA(), x: Int = 1) { }
 
 fun test() {
-    foo()
-    foo(a = A())
-    foo(a = A(), x = 2)
+    foo0()
+    foo0(a = A())
+    foo0(a = A(), x = 2)
+
+    foo1()
+    foo1(a = A())
+    foo1(a = SubA())
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, integerLiteral */

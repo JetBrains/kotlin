@@ -1,0 +1,5 @@
+KtNameReferenceExpression(96,102): 'Helper'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo.Helper
+    ]

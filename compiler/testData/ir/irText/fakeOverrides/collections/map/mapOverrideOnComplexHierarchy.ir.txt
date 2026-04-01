@@ -153,6 +153,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] K of java.util.SortedMap?, value: @[FlexibleNullability] V of java.util.SortedMap?): kotlin.Boolean declared in java.util.SortedMap
         public open fun remove (key: @[EnhancedNullability] K of java.util.HashMap, value: @[EnhancedNullability] V of java.util.HashMap): kotlin.Boolean declared in java.util.HashMap
@@ -380,6 +381,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] K of java.util.SortedMap?, value: @[FlexibleNullability] V of java.util.SortedMap?): kotlin.Boolean declared in java.util.SortedMap
         public open fun remove (key: @[EnhancedNullability] K of java.util.HashMap, value: @[EnhancedNullability] V of java.util.HashMap): kotlin.Boolean declared in java.util.HashMap
@@ -624,6 +626,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] K of java.util.SortedMap?, value: @[FlexibleNullability] V of java.util.SortedMap?): kotlin.Boolean declared in java.util.SortedMap
         public open fun remove (key: @[EnhancedNullability] K of java.util.HashMap, value: @[EnhancedNullability] V of java.util.HashMap): kotlin.Boolean declared in java.util.HashMap
@@ -851,6 +854,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] K of java.util.SortedMap?, value: @[FlexibleNullability] V of java.util.SortedMap?): kotlin.Boolean declared in java.util.SortedMap
         public open fun remove (key: @[EnhancedNullability] K of java.util.HashMap, value: @[EnhancedNullability] V of java.util.HashMap): kotlin.Boolean declared in java.util.HashMap
@@ -1092,6 +1096,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] K of java.util.SortedMap?, value: @[FlexibleNullability] V of java.util.SortedMap?): kotlin.Boolean declared in java.util.SortedMap
         public open fun remove (key: K of kotlin.collections.MutableMap, value: V of kotlin.collections.MutableMap): kotlin.Boolean declared in kotlin.collections.MutableMap
@@ -1319,6 +1324,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] K of java.util.SortedMap?, value: @[FlexibleNullability] V of java.util.SortedMap?): kotlin.Boolean declared in java.util.SortedMap
         public open fun remove (key: K of kotlin.collections.MutableMap, value: V of kotlin.collections.MutableMap): kotlin.Boolean declared in kotlin.collections.MutableMap
@@ -1542,6 +1548,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] kotlin.Boolean?, value: @[FlexibleNullability] kotlin.Boolean?): kotlin.Boolean declared in <root>.Java2
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]
@@ -1737,6 +1744,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] kotlin.Boolean?, value: @[FlexibleNullability] kotlin.Boolean?): kotlin.Boolean declared in <root>.Java2
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]
@@ -1934,6 +1942,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] kotlin.Boolean?, value: @[FlexibleNullability] kotlin.Boolean?): kotlin.Boolean declared in <root>.Java3
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]
@@ -2105,6 +2114,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] kotlin.Boolean?, value: @[FlexibleNullability] kotlin.Boolean?): kotlin.Boolean declared in <root>.Java3
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]
@@ -2287,6 +2297,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: kotlin.Boolean, value: kotlin.Boolean): kotlin.Boolean declared in <root>.KotlinInterface3
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]
@@ -2454,6 +2465,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: kotlin.Boolean, value: kotlin.Boolean): kotlin.Boolean declared in <root>.KotlinInterface3
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]
@@ -2660,6 +2672,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] K of java.util.SortedMap?, value: @[FlexibleNullability] V of java.util.SortedMap?): kotlin.Boolean declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]
@@ -2833,6 +2846,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: K of kotlin.collections.MutableMap, value: V of kotlin.collections.MutableMap): kotlin.Boolean declared in kotlin.collections.MutableMap
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]

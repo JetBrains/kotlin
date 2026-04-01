@@ -9,7 +9,7 @@ import org.jetbrains.kotlinx.dataframe.api.JoinType
 import org.jetbrains.kotlinx.dataframe.impl.ColumnNameGenerator
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 
-internal abstract class AbstractJoinWith() : AbstractInterpreter<PluginDataFrameSchema>() {
+internal abstract class AbstractJoinWith : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     val Arguments.right: PluginDataFrameSchema by dataFrame()
     val Arguments.joinExpression by ignore()

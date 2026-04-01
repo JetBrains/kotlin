@@ -26,7 +26,7 @@ var inlineProperty8
     get() = 42
     set(value) = Unit
 
-external val externalProperty1: Int
+val externalProperty1: Int = 1
 val externalProperty2: Int = 1
 
 var externalSetGet: Int

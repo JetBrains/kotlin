@@ -5,7 +5,6 @@ description = "KLIB ABI reader"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 val jarBaseName = the<BasePluginExtension>().archivesName

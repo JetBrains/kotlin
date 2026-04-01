@@ -10,12 +10,9 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqueNames
 import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
-import org.jetbrains.kotlin.cli.common.allowKotlinPackage
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.contentRoots
-import org.jetbrains.kotlin.cli.common.createPerformanceManagerFor
-import org.jetbrains.kotlin.cli.common.metadataDestinationDirectory
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
@@ -31,14 +28,18 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.backend.js.moduleName
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 data class NamedMetadata(
@@ -58,11 +59,13 @@ private fun nativeDistributionKlibPath(): File = nativeDistributionPath().resolv
 
 private fun stdlibPath(): File = nativeDistributionKlibPath().resolve("common").resolve("stdlib")
 
+private fun mockJdk(): File = KtTestUtil.findMockJdkRtJar()
+
 fun loadStdlibMetadata() = loadStdlibMetadata(KotlinTestUtils.newConfiguration())
 
 fun loadStdlibMetadata(configuration: CompilerConfiguration): NamedMetadata {
     val kotlinLoaderResult = KlibLoader {
-        libraryPaths(stdlibPath().absolutePath)
+        libraryPaths(stdlibPath())
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
     }.load()
         .apply { reportLoadingProblemsIfAny(configuration, allAsErrors = true) }
@@ -73,7 +76,7 @@ fun loadStdlibMetadata(configuration: CompilerConfiguration): NamedMetadata {
     val dummyLogger = CliLoggerAdapter(CommonizerLogLevel.Quiet, 2)
     val stdlibModuleProvider = DefaultModulesProvider.forDependencies(listOf(NativeLibrary(stdlib)), dummyLogger)
 
-    return NamedMetadata(stdlib.libraryName, stdlibModuleProvider.loadModuleMetadata(stdlib.moduleName))
+    return NamedMetadata(stdlib.moduleName, stdlibModuleProvider.loadModuleMetadata(stdlib.moduleName))
 }
 
 fun createEmptyModule(name: String, disposable: Disposable): SerializedMetadata {
@@ -127,7 +130,7 @@ fun serializeModuleAndAllDependenciesToMetadata(
     }
 
     return serializeModuleToMetadata(
-        module.name, moduleRoot, disposable,
+        module.name, moduleRoot, CommonPlatforms.defaultCommonPlatform, disposable,
         regularDependencies = module.dependencies.map { dependency ->
             dependencyToMetadata[dependency]?.let { JvmClasspathRoot(File(it.destination)) }
                 ?: error("Missing dependency metadata for ${dependency.name}")
@@ -138,6 +141,7 @@ fun serializeModuleAndAllDependenciesToMetadata(
 fun serializeModuleToMetadata(
     moduleName: String,
     moduleRoot: File,
+    targetPlatform: TargetPlatform,
     disposable: Disposable,
     regularDependencies: List<ContentRoot> = emptyList(),
     refinesDependencies: List<String> = emptyList(),
@@ -157,7 +161,13 @@ fun serializeModuleToMetadata(
         ),
     )
 
+    configuration.targetPlatform = targetPlatform
+    configuration.renderDiagnosticInternalName = true
+
     configuration.contentRoots += JvmClasspathRoot(stdlibPath())
+    if (targetPlatform.isJvm()) {
+        configuration.contentRoots += JvmClasspathRoot(mockJdk())
+    }
     configuration.contentRoots += regularDependencies + refinesDependencies.map { JvmClasspathRoot(File(it)) }
     configuration.putIfNotNull(K2MetadataConfigurationKeys.REFINES_PATHS, refinesDependencies.takeIf { it.isNotEmpty() })
     configuration.contentRoots += moduleRoot.walkTopDown()
@@ -165,19 +175,15 @@ fun serializeModuleToMetadata(
         .map { KotlinSourceRoot(it.path, isCommon, hmppModuleName = null) }
         .toList()
 
-    val diagnosticCollector = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
     val performanceManager = createPerformanceManagerFor(JvmPlatforms.unspecifiedJvmPlatform)
 
     val phaseConfig = PhaseConfig()
     val context = PipelineContext(
-        configuration.messageCollector,
-        diagnosticCollector,
         performanceManager,
-        renderDiagnosticInternalName = true,
         kaptMode = false,
     )
 
-    val configurationArtifact = ConfigurationPipelineArtifact(configuration, diagnosticCollector, disposable)
+    val configurationArtifact = ConfigurationPipelineArtifact(configuration, disposable)
     val serializationPipeline = MetadataFrontendPipelinePhase thenMaybe firTransformationPhase then MetadataKlibInMemorySerializerPhase
     return configuration to serializationPipeline.invokeToplevel(phaseConfig, context, configurationArtifact)
 }

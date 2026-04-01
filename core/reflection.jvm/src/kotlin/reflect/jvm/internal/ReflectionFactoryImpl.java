@@ -6,7 +6,11 @@
 
 package kotlin.reflect.jvm.internal;
 
+import kotlin.Metadata;
 import kotlin.jvm.internal.*;
+import kotlin.metadata.KmConstructor;
+import kotlin.metadata.KmFunction;
+import kotlin.metadata.KmProperty;
 import kotlin.reflect.*;
 import kotlin.reflect.full.KClassifiers;
 import kotlin.reflect.jvm.ReflectLambdaKt;
@@ -14,6 +18,10 @@ import kotlin.reflect.jvm.internal.types.TypeOfImplKt;
 import kotlin.text.MatchResult;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
 
@@ -66,7 +74,36 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KFunction function(FunctionReference f) {
-        return new DescriptorKFunction(getOwner(f), f.getName(), f.getSignature(), f.getBoundReceiver());
+        KDeclarationContainerImpl container = getOwner(f);
+        String name = f.getName();
+        String signature = f.getSignature();
+        if (!SystemPropertiesKt.getUseK1Implementation()) {
+            boolean isJava =
+                    container instanceof KClassImpl &&
+                    container.getJClass().getAnnotation(Metadata.class) == null &&
+                    !ConvertFromJavaKt.isMappedBuiltin((KClass<?>) container);
+            if (name.equals("<init>")) {
+                if (isJava) {
+                    Constructor<?> constructor = container.findJavaConstructor(signature);
+                    return new JavaKConstructor(container, constructor, f.getBoundReceiver());
+                }
+                else {
+                    KmConstructor kmConstructor = container.findConstructorMetadata(signature);
+                    return new KotlinKConstructor(container, signature, f.getBoundReceiver(), kmConstructor);
+                }
+            }
+            else if (isJava) {
+                Method method = container.findJavaMethod(name, signature);
+                if (Modifier.isStatic(method.getModifiers())) {
+                    return new JavaKNamedFunction(container, method, f.getBoundReceiver(), KCallableOverriddenStorage.EMPTY);
+                }
+            }
+            else if (container instanceof KPackageImpl) {
+                KmFunction kmFunction = container.findFunctionMetadata(name, signature);
+                return new KotlinKNamedFunction(container, signature, f.getBoundReceiver(), kmFunction, KCallableOverriddenStorage.EMPTY);
+            }
+        }
+        return new DescriptorKFunction(container, name, signature, f.getBoundReceiver());
     }
 
     // Properties
@@ -76,11 +113,30 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
         KDeclarationContainerImpl container = getOwner(p);
         String signature = p.getSignature();
         if (!SystemPropertiesKt.getUseK1Implementation()) {
-            MatchResult result = KDeclarationContainerImpl.LOCAL_PROPERTY_SIGNATURE.matchEntire(signature);
-            if (result != null) {
-                List<String> values = result.getGroupValues();
-                return container.createLocalProperty(Integer.parseInt(values.get(1)), signature);
-            }
+            return new LazyKProperty0(() -> {
+                MatchResult result = KDeclarationContainerImpl.LOCAL_PROPERTY_SIGNATURE.matchEntire(signature);
+                if (result != null) {
+                    List<String> values = result.getGroupValues();
+                    return container.createLocalProperty(Integer.parseInt(values.get(1)), signature);
+                }
+                if (container instanceof KClassImpl && container.getJClass().getAnnotation(Metadata.class) == null) {
+                    try {
+                        Field field = container.findJavaField(p.getName());
+                        if (Modifier.isStatic(field.getModifiers())) {
+                            return new JavaKProperty0(container, field, p.getBoundReceiver(), KCallableOverriddenStorage.EMPTY);
+                        }
+                    } catch (Exception e) {
+                        if (signature.equals(JavaEnumEntriesKProperty.ENUM_ENTRIES_SIGNATURE)) {
+                            return new JavaEnumEntriesKProperty((KClassImpl<? extends Enum<?>>) container);
+                        }
+                    }
+                }
+                if (container instanceof KPackageImpl) {
+                    KmProperty kmProperty = container.findPropertyMetadata(p.getName(), signature);
+                    return new KotlinKProperty0(container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY);
+                }
+                return new DescriptorKProperty0(container, p.getName(), signature, p.getBoundReceiver());
+            });
         }
         return new DescriptorKProperty0(container, p.getName(), signature, p.getBoundReceiver());
     }
@@ -90,23 +146,62 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
         KDeclarationContainerImpl container = getOwner(p);
         String signature = p.getSignature();
         if (!SystemPropertiesKt.getUseK1Implementation()) {
-            MatchResult result = KDeclarationContainerImpl.LOCAL_PROPERTY_SIGNATURE.matchEntire(signature);
-            if (result != null) {
-                List<String> values = result.getGroupValues();
-                return (KMutableProperty0) container.createLocalProperty(Integer.parseInt(values.get(1)), signature);
-            }
+            return new LazyKMutableProperty0(() -> {
+                MatchResult result = KDeclarationContainerImpl.LOCAL_PROPERTY_SIGNATURE.matchEntire(signature);
+                if (result != null) {
+                    List<String> values = result.getGroupValues();
+                    return container.createLocalProperty(Integer.parseInt(values.get(1)), signature);
+                }
+                if (container instanceof KClassImpl && container.getJClass().getAnnotation(Metadata.class) == null) {
+                    Field field = container.findJavaField(p.getName());
+                    if (Modifier.isStatic(field.getModifiers())) {
+                        return new JavaKMutableProperty0(container, field, p.getBoundReceiver(), KCallableOverriddenStorage.EMPTY);
+                    }
+                }
+                if (container instanceof KPackageImpl) {
+                    KmProperty kmProperty = container.findPropertyMetadata(p.getName(), signature);
+                    return new KotlinKMutableProperty0(
+                            container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY
+                    );
+                }
+                return new DescriptorKMutableProperty0(container, p.getName(), signature, p.getBoundReceiver());
+            });
         }
-        return new DescriptorKMutableProperty0(getOwner(p), p.getName(), p.getSignature(), p.getBoundReceiver());
+        return new DescriptorKMutableProperty0(container, p.getName(), signature, p.getBoundReceiver());
     }
 
     @Override
     public KProperty1 property1(PropertyReference1 p) {
-        return new DescriptorKProperty1(getOwner(p), p.getName(), p.getSignature(), p.getBoundReceiver());
+        KDeclarationContainerImpl container = getOwner(p);
+        String signature = p.getSignature();
+        if (!SystemPropertiesKt.getUseK1Implementation()) {
+            return new LazyKProperty1(() -> {
+                if (container instanceof KPackageImpl) {
+                    KmProperty kmProperty = container.findPropertyMetadata(p.getName(), signature);
+                    return new KotlinKProperty1(container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY);
+                }
+                return new DescriptorKProperty1(container, p.getName(), signature, p.getBoundReceiver());
+            });
+        }
+        return new DescriptorKProperty1(container, p.getName(), signature, p.getBoundReceiver());
     }
 
     @Override
     public KMutableProperty1 mutableProperty1(MutablePropertyReference1 p) {
-        return new DescriptorKMutableProperty1(getOwner(p), p.getName(), p.getSignature(), p.getBoundReceiver());
+        KDeclarationContainerImpl container = getOwner(p);
+        String signature = p.getSignature();
+        if (!SystemPropertiesKt.getUseK1Implementation()) {
+            return new LazyKMutableProperty1(() -> {
+                if (container instanceof KPackageImpl) {
+                    KmProperty kmProperty = container.findPropertyMetadata(p.getName(), signature);
+                    return new KotlinKMutableProperty1(
+                            container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY
+                    );
+                }
+                return new DescriptorKMutableProperty1(container, p.getName(), signature, p.getBoundReceiver());
+            });
+        }
+        return new DescriptorKMutableProperty1(container, p.getName(), signature, p.getBoundReceiver());
     }
 
     @Override
@@ -167,7 +262,8 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     // @Override // JPS
     public KType platformType(KType lowerBound, KType upperBound) {
-        return TypeOfImplKt.createPlatformKType(lowerBound, upperBound);
+        // TODO: KT-78951 typeOf creates a non-raw type for raw types from Java
+        return TypeOfImplKt.createPlatformKType(lowerBound, upperBound, false);
     }
 
     // @Override // JPS

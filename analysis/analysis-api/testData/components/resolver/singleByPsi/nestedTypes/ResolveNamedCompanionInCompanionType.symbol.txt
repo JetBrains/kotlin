@@ -1,0 +1,5 @@
+KtNameReferenceExpression(125,129): 'COMP'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/bar/baz/X.COMP
+    ]

@@ -1,0 +1,5 @@
+KtNameReferenceExpression(120,125): 'Named'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a/A.Named
+    ]

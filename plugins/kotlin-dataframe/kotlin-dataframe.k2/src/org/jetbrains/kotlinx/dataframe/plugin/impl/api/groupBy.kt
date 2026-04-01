@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.api.remove
 import org.jetbrains.kotlinx.dataframe.impl.aggregation.aggregators.Aggregator
 import org.jetbrains.kotlinx.dataframe.plugin.InterpretationErrorReporter
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
@@ -29,7 +30,10 @@ class DataFrameGroupBy : AbstractInterpreter<GroupBy>() {
     val Arguments.cols: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): GroupBy {
-        return GroupBy(keys = createPluginDataFrameSchema(cols.resolve(receiver), moveToTop), groups = receiver)
+        return GroupBy(
+            keys = createPluginDataFrameSchema(cols.resolve(receiver), moveToTop),
+            groups = receiver.insertImpliedColumns(cols)
+        )
     }
 }
 
@@ -40,7 +44,7 @@ class AsGroupBy : AbstractInterpreter<GroupBy>() {
     override fun Arguments.interpret(): GroupBy {
         val column = selector.resolve(receiver).singleOrNull()?.column
         return if (column is SimpleFrameColumn) {
-            GroupBy(receiver.asDataFrame().remove { selector }.toPluginDataFrameSchema(), PluginDataFrameSchema(column.columns()))
+            GroupBy(receiver.modify { remove { selector } }, PluginDataFrameSchema(column.columns()))
         } else {
             GroupBy.EMPTY
         }
@@ -53,7 +57,7 @@ class AsGroupByDefault : AbstractInterpreter<GroupBy>() {
     override fun Arguments.interpret(): GroupBy {
         val groups = receiver.columns().singleOrNull { it is SimpleFrameColumn } as? SimpleFrameColumn
         return if (groups != null) {
-            GroupBy(receiver.asDataFrame().remove(groups.name).toPluginDataFrameSchema(), PluginDataFrameSchema(groups.columns()))
+            GroupBy(receiver.modify { remove(groups.name) }, PluginDataFrameSchema(groups.columns()))
         } else {
             GroupBy.EMPTY
         }
@@ -141,7 +145,7 @@ fun KotlinTypeFacade.aggregate(
     return PluginDataFrameSchema(groupBy.keys.columns() + aggregated)
 }
 
-fun KotlinTypeFacade.createPluginDataFrameSchema(
+fun createPluginDataFrameSchema(
     keys: List<ColumnWithPathApproximation>,
     moveToTop: Boolean,
 ): PluginDataFrameSchema {
@@ -229,10 +233,10 @@ class GroupByAdd : AbstractInterpreter<GroupBy>() {
     val Arguments.receiver: GroupBy by groupBy()
     val Arguments.name: String by arg()
     val Arguments.infer by ignore()
-    val Arguments.type: TypeApproximation by type(name("expression"))
+    val Arguments.type: ColumnType by type(name("expression"))
 
     override fun Arguments.interpret(): GroupBy {
-        return GroupBy(receiver.keys, receiver.groups.add(name, type.type, context = this))
+        return GroupBy(receiver.keys, receiver.groups.add(name, type.coneType, context = this))
     }
 }
 
@@ -282,9 +286,9 @@ private fun Arguments.interpretGroupByAggregatorOf(
     receiver: GroupBy,
     name: String,
     aggregator: Aggregator<*, *>,
-    expressionReturnType: TypeApproximation,
+    expressionReturnType: ColumnType,
 ): PluginDataFrameSchema {
-    val aggregatedCol = makeNullable(simpleColumnOf(name, expressionReturnType.type))
+    val aggregatedCol = makeNullable(simpleColumnOf(name, expressionReturnType.coneType))
     val typeAdjustedCol = generateStatisticResultColumn(aggregator, aggregatedCol as SimpleDataColumn)
     return PluginDataFrameSchema(receiver.keys.columns() + typeAdjustedCol)
 }
@@ -442,7 +446,7 @@ class GroupByMax1 : GroupByAggregatorComparable1(max)
 abstract class GroupByAggregator2(val defaultName: String, val aggregator: Aggregator<*, *>) : AbstractSchemaModificationInterpreter() {
     // return type for `columns`
     // will be `null` when mixed number columns are provided
-    val Arguments.typeArg1: TypeApproximation? by arg(defaultValue = Present(null))
+    val Arguments.typeArg1: ColumnType? by arg(defaultValue = Present(null))
 
     val Arguments.receiver by groupBy()
     val Arguments.name: String? by arg(defaultValue = Present(null))
@@ -453,10 +457,10 @@ abstract class GroupByAggregator2(val defaultName: String, val aggregator: Aggre
         val selectedColumns = columns.resolve(receiver.groups)
         val newColumnName = name ?: selectedColumns.singleOrNull()?.column?.name ?: defaultName
         val selectedColumnTypes = selectedColumns.mapNotNull {
-            (it.column as? SimpleDataColumn)?.type?.type
+            (it.column as? SimpleDataColumn)?.type?.coneType
         }.toSet()
 
-        val returnType = typeArg1?.type
+        val returnType = typeArg1?.coneType
 
         // if all our columns are primitives, ask the aggregator what the return type will be given the selected columns
         // else, the type will always be the same as the return type of the selection dsl

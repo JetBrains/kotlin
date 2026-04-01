@@ -16,20 +16,22 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
+import org.jetbrains.kotlin.util.OperatorNameConventions
+
 /**
  * The type which has exact counterparts on both Kotlin and native side and can be directly passed through bridges.
  */
 enum class BridgedType(val kotlinType: KotlinClassifierType, val convertor: String? = null) {
-    BYTE(KotlinTypes.byte, "toByte"),
-    SHORT(KotlinTypes.short, "toShort"),
-    INT(KotlinTypes.int, "toInt"),
-    LONG(KotlinTypes.long, "toLong"),
-    UBYTE(KotlinTypes.uByte, "toUByte"),
-    USHORT(KotlinTypes.uShort, "toUShort"),
-    UINT(KotlinTypes.uInt, "toUInt"),
-    ULONG(KotlinTypes.uLong, "toULong"),
-    FLOAT(KotlinTypes.float, "toFloat"),
-    DOUBLE(KotlinTypes.double, "toDouble"),
+    BYTE(KotlinTypes.byte, OperatorNameConventions.TO_BYTE.asString()),
+    SHORT(KotlinTypes.short, OperatorNameConventions.TO_SHORT.asString()),
+    INT(KotlinTypes.int, OperatorNameConventions.TO_INT.asString()),
+    LONG(KotlinTypes.long, OperatorNameConventions.TO_LONG.asString()),
+    UBYTE(KotlinTypes.uByte, OperatorNameConventions.TO_UBYTE.asString()),
+    USHORT(KotlinTypes.uShort, OperatorNameConventions.TO_USHORT.asString()),
+    UINT(KotlinTypes.uInt, OperatorNameConventions.TO_UINT.asString()),
+    ULONG(KotlinTypes.uLong, OperatorNameConventions.TO_ULONG.asString()),
+    FLOAT(KotlinTypes.float, OperatorNameConventions.TO_FLOAT.asString()),
+    DOUBLE(KotlinTypes.double, OperatorNameConventions.TO_DOUBLE.asString()),
     VECTOR128(KotlinTypes.vector128),
     NATIVE_PTR(KotlinTypes.nativePtr),
     OBJC_POINTER(KotlinTypes.nativePtr),

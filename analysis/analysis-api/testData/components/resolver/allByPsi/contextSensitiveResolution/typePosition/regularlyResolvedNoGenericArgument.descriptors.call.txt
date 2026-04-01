@@ -152,44 +152,44 @@ KtNameReferenceExpression(279,283): 'Left'
   null
 
 KtNameReferenceExpression(287,288): 'z'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaImplicitReceiverValue:
-            symbol = KaReceiverParameterSymbol:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Local
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
+            receiverParameter: null
+            returnType: KaUsualClassType:
               annotations: []
-              callableId: null
-              compilerVisibility: Local
-              contextReceivers: []
-              isActual: false
-              isExpect: false
-              isExtension: false
-              isVal: true
-              location: LOCAL
-              modality: FINAL
-              name: <receiver>
-              origin: SOURCE
-              owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
-              receiverParameter: null
-              returnType: KaUsualClassType:
-                annotations: []
-                typeArguments: []
-                type: MySealed
-              visibility: LOCAL
-            type = MySealed
-          type = Left<*>
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = z
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val z: kotlin.String
-          contextParameters = []
-          callableId = /Left.z
-      simpleAccess = Read
+              typeArguments: []
+              type: MySealed
+            visibility: LOCAL
+          type = MySealed
+        type = Left<*>
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = z
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val z: kotlin.String
+        contextParameters = []
+        callableId = /Left.z
       typeArgumentsMapping = {}
 
 KtWhenEntry(293,306): 'is Right -> y'
@@ -205,12 +205,12 @@ KtUserType(296,301): 'Right'
   null
 
 KtNameReferenceExpression(296,301): 'Right'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Right>
 
 KtNameReferenceExpression(305,306): 'y'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: y>
 

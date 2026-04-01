@@ -1,0 +1,60 @@
+KtFile: MarkdownCodeBlocks.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n ')
+    KDOC_SECTION
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' `')
+      PsiElement(KDOC_CODE_SPAN_TEXT)('code')
+      PsiElement(KDOC_TEXT)('` -- single line code block')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' ``')
+      PsiElement(KDOC_CODE_SPAN_TEXT)('code')
+      PsiElement(KDOC_TEXT)('`` -- single line code block')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' ```')
+      PsiElement(KDOC_CODE_SPAN_TEXT)('code')
+      PsiElement(KDOC_TEXT)('``` -- single line code block')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' ````')
+      PsiElement(KDOC_CODE_SPAN_TEXT)('code')
+      PsiElement(KDOC_TEXT)('```` -- single line code block')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' ````')
+      PsiElement(KDOC_CODE_SPAN_TEXT)('co``de')
+      PsiElement(KDOC_TEXT)('```` -- single line code block')
+    PsiWhiteSpace('\n ')
+    PsiElement(KDOC_END)('*/')
+  PsiWhiteSpace('\n\n')
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n ')
+    KDOC_SECTION
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' ```')
+      PsiElement(KDOC_CODE_SPAN_TEXT)('code')
+      PsiElement(KDOC_TEXT)('``` ')
+      KDOC_MARKDOWN_LINK
+        PsiElement(LBRACKET)('[')
+        KDOC_NAME
+          PsiElement(IDENTIFIER)('String')
+        PsiElement(RBRACKET)(']')
+      PsiElement(KDOC_TEXT)(' -- link after single line code block')
+    PsiWhiteSpace('\n ')
+    PsiElement(KDOC_END)('*/')

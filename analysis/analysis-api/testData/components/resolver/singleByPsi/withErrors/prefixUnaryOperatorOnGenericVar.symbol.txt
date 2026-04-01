@@ -1,0 +1,6 @@
+KtPrefixExpression(47,58): '++foo.value'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var value: T,
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]

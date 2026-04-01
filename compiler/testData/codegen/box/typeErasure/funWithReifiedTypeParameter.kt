@@ -1,8 +1,12 @@
 // DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS
 // WITH_STDLIB
+// FILE: lib.kt
 import kotlin.reflect.typeOf
 
 inline fun <reified T> foo(a: T) = typeOf<T>()
+
+// FILE: main.kt
+import kotlin.reflect.typeOf
 
 fun box(): String {
     val arguments = listOf<Any?>("0123456789", 4.20, true, null)

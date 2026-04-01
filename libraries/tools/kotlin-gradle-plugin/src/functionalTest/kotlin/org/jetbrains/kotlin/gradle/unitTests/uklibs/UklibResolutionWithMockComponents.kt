@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleDependency
-import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.internal.component.resolution.failure.exception.VariantSelectionByAttributesException
 import org.gradle.internal.exceptions.MultiCauseException
-import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.maven
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -33,15 +31,15 @@ import org.jetbrains.kotlin.gradle.unitTests.uklibs.MavenComponent.MockArtifactT
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.incremental.createDirectory
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
-import org.junit.Test
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalWasmDsl::class)
 class UklibResolutionTestsWithMockComponents {
-    @get:Rule
-    val tmpDir = TemporaryFolder()
+    @field:TempDir
+    lateinit var tmpDir: File
 
     @Test
     fun `uklib resolution - direct dependency on a pure uklib component`() {
@@ -536,7 +534,7 @@ class UklibResolutionTestsWithMockComponents {
             assertEquals(
                 mapOf<String, ResolvedComponentWithArtifacts>(
                     "org.jetbrains.kotlin:kotlin-dom-api-compat:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
-                        configuration = "commonFakeApiElements-published",
+                        configuration = "fallbackVariant_KT-81412",
                         artifacts = mutableListOf()
                     ),
                 ).prettyPrinted,
@@ -1463,7 +1461,7 @@ class UklibResolutionTestsWithMockComponents {
                     artifacts = mutableListOf()
                 ),
             ).prettyPrinted,
-            consumer.configurations.getByName("androidDebugCompileClasspath")
+            consumer.configurations.getByName("debugCompileClasspath")
                 .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
         )
         assertEquals(
@@ -1473,7 +1471,7 @@ class UklibResolutionTestsWithMockComponents {
                     artifacts = mutableListOf()
                 ),
             ).prettyPrinted,
-            consumer.configurations.getByName("androidDebugRuntimeClasspath")
+            consumer.configurations.getByName("debugRuntimeClasspath")
                 .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
         )
     }
@@ -1528,7 +1526,7 @@ class UklibResolutionTestsWithMockComponents {
                     configuration = "jvmApiElements-published",
                 ),
             ).prettyPrinted,
-            consumer.configurations.getByName("androidDebugCompileClasspath")
+            consumer.configurations.getByName("debugCompileClasspath")
                 .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
         )
         assertEquals(
@@ -1547,7 +1545,7 @@ class UklibResolutionTestsWithMockComponents {
                     configuration = "jvmRuntimeElements-published",
                 ),
             ).prettyPrinted,
-            consumer.configurations.getByName("androidDebugRuntimeClasspath")
+            consumer.configurations.getByName("debugRuntimeClasspath")
                 .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
         )
     }
@@ -1604,7 +1602,7 @@ class UklibResolutionTestsWithMockComponents {
                     configuration = "androidApiElements-published",
                 ),
             ).prettyPrinted,
-            consumer.configurations.getByName("androidDebugCompileClasspath")
+            consumer.configurations.getByName("debugCompileClasspath")
                 .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
         )
         assertEquals(
@@ -1623,7 +1621,7 @@ class UklibResolutionTestsWithMockComponents {
                     configuration = "androidRuntimeElements-published",
                 ),
             ).prettyPrinted,
-            consumer.configurations.getByName("androidDebugRuntimeClasspath")
+            consumer.configurations.getByName("debugRuntimeClasspath")
                 .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
         )
     }

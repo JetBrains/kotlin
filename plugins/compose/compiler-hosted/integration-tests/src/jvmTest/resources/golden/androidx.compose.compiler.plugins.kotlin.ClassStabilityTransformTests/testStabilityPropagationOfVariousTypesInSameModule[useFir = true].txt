@@ -28,29 +28,38 @@ class UnstableDelegateProp {
 
 @StabilityInferred(parameters = 0)
 class X<T> (val p1: List<T>) {
-  static val %stable: Int = 8
+  val %stable: Int = 8
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 1)
 class StableDelegateProp {
   var p1: StableDelegate = StableDelegate()
     get() {
-      return <this>.p1%delegate.getValue(<this>, ::p1)
+      return field.getValue(<this>, ::p1)
     }
     set(value) {
-      return <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
+      return field.setValue(<this>, ::p1, <set-?>)
     }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 0)
 class UnstableDelegateProp {
   var p1: UnstableDelegate = UnstableDelegate()
     get() {
-      return <this>.p1%delegate.getValue(<this>, ::p1)
+      return field.getValue(<this>, ::p1)
     }
     set(value) {
-      return <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
+      return field.setValue(<this>, ::p1, <set-?>)
     }
-  static val %stable: Int = UnstableDelegate.%stable
+  val %stable: Int = UnstableDelegate.%stable
+    get() {
+      return field
+    }
 }
 @Composable
 fun A(y: Any, %composer: Composer?, %changed: Int) {

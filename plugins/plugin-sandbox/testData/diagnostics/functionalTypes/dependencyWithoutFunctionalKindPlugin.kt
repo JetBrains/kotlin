@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import org.jetbrains.kotlin.plugin.sandbox.*
 
 fun consumeRegularFunction(block: () -> Unit) {}
@@ -29,3 +30,5 @@ fun test_3() {
     consumeOurInlineableFunction(block)
     consumeInlineableFunction(block)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, localProperty, propertyDeclaration, suspend */

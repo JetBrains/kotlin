@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,9 +18,12 @@ import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.idea.references.KtPropertyDelegationMethodsReference
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
+import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 
+@OptIn(KtImplementationDetail::class)
 internal class KaFirPropertyDelegationMethodsReference(
     element: KtPropertyDelegate,
 ) : KtPropertyDelegationMethodsReference(element), KaFirReference {
@@ -47,4 +50,11 @@ internal class KaFirPropertyDelegationMethodsReference(
         return super<KaFirReference>.isReferenceToImportAlias(alias)
     }
 
+    class Provider : KotlinPsiReferenceProviderContributor<KtPropertyDelegate> {
+        override val elementClass: Class<KtPropertyDelegate>
+            get() = KtPropertyDelegate::class.java
+
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtPropertyDelegate>
+            get() = { listOf(KaFirPropertyDelegationMethodsReference(it)) }
+    }
 }

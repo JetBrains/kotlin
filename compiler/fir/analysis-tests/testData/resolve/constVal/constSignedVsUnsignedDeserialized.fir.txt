@@ -1,0 +1,52 @@
+Module: m1
+FILE: m1.kt
+    public final object O1 : R|kotlin/Any| {
+        private constructor(): R|O1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final const val ub1: R|kotlin/UByte| = UByte(1)
+            public get(): R|kotlin/UByte|
+
+        public final const val i2: R|kotlin/Int| = Int(2)
+            public get(): R|kotlin/Int|
+
+        public final const val us3: R|kotlin/UShort| = UShort(3)
+            public get(): R|kotlin/UShort|
+
+        public final const val l4: R|kotlin/Long| = Long(4)
+            public get(): R|kotlin/Long|
+
+    }
+    public final object O2 : R|kotlin/Any| {
+        private constructor(): R|O2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final const val b1: R|kotlin/Byte| = Byte(1)
+            public get(): R|kotlin/Byte|
+
+        public final const val ui2: R|kotlin/UInt| = UInt(2)
+            public get(): R|kotlin/UInt|
+
+        public final const val s3: R|kotlin/Short| = Short(3)
+            public get(): R|kotlin/Short|
+
+        public final const val ul4: R|kotlin/ULong| = ULong(4)
+            public get(): R|kotlin/ULong|
+
+    }
+Module: m2
+FILE: m2.kt
+    public final const val li42: R|kotlin/Long| = Q|O1|.R|/O1.l4|.R|kotlin/Long.plus|(Q|O1|.R|/O1.i2|)
+        public get(): R|kotlin/Long|
+    public final const val s: R|kotlin/UShort| = Q|O1|.R|/O1.us3|
+        public get(): R|kotlin/UShort|
+    public final const val b: R|kotlin/UByte| = Q|O1|.R|/O1.ub1|
+        public get(): R|kotlin/UByte|
+    public final const val bs31: R|kotlin/Int| = Q|O2|.R|/O2.s3|.R|kotlin/Short.plus|(Q|O2|.R|/O2.b1|)
+        public get(): R|kotlin/Int|
+    public final const val l: R|kotlin/ULong| = Q|O2|.R|/O2.ul4|
+        public get(): R|kotlin/ULong|
+    public final const val i: R|kotlin/UInt| = Q|O2|.R|/O2.ui2|
+        public get(): R|kotlin/UInt|

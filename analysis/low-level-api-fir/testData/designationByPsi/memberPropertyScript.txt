@@ -1,0 +1,5 @@
+KT element: KtProperty
+Resolve target: memberPropertyScript.kts -> <script-memberPropertyScript.kts> -> MyClass -> memberProp
+FIR:
+  public? final? val memberProp: Int = LAZY_EXPRESSION
+      public? get(): Int

@@ -254,8 +254,8 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             reporter.reportOn(
                 classSymbol.serializableOrMetaAnnotationSource(session),
                 FirSerializationErrors.PROVIDED_RUNTIME_TOO_LOW,
-                KotlinCompilerVersion.getVersion() ?: TOO_LOW,
                 currentVersions.implementationVersion?.toString() ?: UNKNOWN,
+                KotlinCompilerVersion.getVersion() ?: TOO_LOW,
                 RuntimeVersions.MINIMAL_SUPPORTED_VERSION.toString()
             )
         }
@@ -318,11 +318,11 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
             // TODO should we throw error if there is no `number` argument or there is evaluation error
             val argument = annotation.findArgumentByName(Name.identifier("number")) ?: return@forEachIndexed
-            val literal = argument.evaluateAs<FirLiteralExpression>(session) ?: return@forEachIndexed
-            val customNumber = literal.value as? Long ?: return@forEachIndexed
+            val literal = argument as? FirLiteralExpression ?: return@forEachIndexed
+            val customNumber = (literal.value as? Number)?.toInt() ?: return@forEachIndexed
 
             // use +1 to follow the rule that fields are numbered from 1
-            originToCustom[index + 1] = customNumber.toInt()
+            originToCustom[index + 1] = customNumber
         }
 
         // there is no ProtoNumber annotation
@@ -410,16 +410,6 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         if (classSymbol.isInner) {
             reporter.reportOn(classSymbol.serializableOrMetaAnnotationSource(session), FirSerializationErrors.INNER_CLASSES_NOT_SUPPORTED)
-            return false
-        }
-
-        if (classSymbol.isInlineOrValue && !session.versionReader.canSupportInlineClasses) {
-            reporter.reportOn(
-                classSymbol.serializableOrMetaAnnotationSource(session),
-                FirSerializationErrors.INLINE_CLASSES_NOT_SUPPORTED,
-                RuntimeVersions.MINIMAL_VERSION_FOR_INLINE_CLASSES.toString(),
-                session.versionReader.runtimeVersions?.implementationVersion.toString()
-            )
             return false
         }
 
@@ -665,23 +655,11 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         return result
     }
 
-    private fun CheckerContext.canSupportInlineClasses(): Boolean {
-        return session.versionReader.canSupportInlineClasses
-    }
-
     private fun ConeKotlinType.isUnsupportedInlineType(session: FirSession): Boolean = isSingleFieldValueClass(session) && !isPrimitiveOrNullablePrimitive
 
     private fun CheckerContext.checkType(typeRef: FirTypeRef, typeSource: KtSourceElement?, reporter: DiagnosticReporter) {
         val type = typeRef.coneType.fullyExpandedType()
         if (type.lowerBoundIfFlexible().isTypeParameter) return // type parameters always have serializer stored in class' field
-        if (type.isUnsupportedInlineType(session) && !canSupportInlineClasses()) {
-            reporter.reportOn(
-                typeRef.source ?: typeSource,
-                FirSerializationErrors.INLINE_CLASSES_NOT_SUPPORTED,
-                RuntimeVersions.MINIMAL_VERSION_FOR_INLINE_CLASSES.toString(),
-                session.versionReader.runtimeVersions?.implementationVersion.toString()
-            )
-        }
 
         val serializer = findTypeSerializerOrContextUnchecked(type, this)
         if (serializer != null) {

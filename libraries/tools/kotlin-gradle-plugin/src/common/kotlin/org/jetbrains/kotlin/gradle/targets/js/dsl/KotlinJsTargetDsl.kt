@@ -260,9 +260,6 @@ interface KotlinJsTargetDsl :
     override val binaries: KotlinJsBinaryContainer
 
     //region Deprecated Properties
-    @Deprecated("Use outputModuleName with Provider API instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
-    var moduleName: String?
-
     @Deprecated(
         message = "produceExecutable() was changed on binaries.executable(). Scheduled for removal in Kotlin 2.3.",
         replaceWith = ReplaceWith("binaries.executable()"),

@@ -1,0 +1,5 @@
+KtOperationReferenceExpression(57,58): '='
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
+    ]

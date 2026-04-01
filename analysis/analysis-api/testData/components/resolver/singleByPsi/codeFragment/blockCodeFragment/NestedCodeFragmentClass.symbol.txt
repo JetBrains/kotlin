@@ -1,0 +1,5 @@
+KtNameReferenceExpression(152,157): 'Local'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): <local>.Local
+    ]

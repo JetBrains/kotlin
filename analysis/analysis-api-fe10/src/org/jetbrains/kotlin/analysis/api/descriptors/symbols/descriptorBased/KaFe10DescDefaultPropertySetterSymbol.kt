@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 internal class KaFe10DescDefaultPropertySetterSymbol(
     private val propertyDescriptor: PropertyDescriptor,
@@ -80,6 +81,9 @@ internal class KaFe10DescDefaultPropertySetterSymbol(
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion { KaBaseEmptyAnnotationList(token) }
+
+    override val isExternal: Boolean
+        get() = withValidityAssertion { propertyDescriptor.isEffectivelyExternal() }
 
     override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol> = withValidityAssertion {
         KaFe10NeverRestoringSymbolPointer()

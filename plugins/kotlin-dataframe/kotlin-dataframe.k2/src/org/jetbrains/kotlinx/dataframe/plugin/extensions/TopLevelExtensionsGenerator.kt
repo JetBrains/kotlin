@@ -30,7 +30,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.utils.*
 
 /**
  * extensions inside scope classes are generated here:
- * @see TokenGenerator
+ * @see TokenContentGenerator
  */
 class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     private companion object {
@@ -41,7 +41,7 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
     private val matchedClasses by lazy {
         predicateBasedProvider.getSymbolsByPredicate(predicate)
             .filterIsInstance<FirRegularClassSymbol>()
-            .filter { it.effectiveVisibility in ALLOWED_DECLARATION_VISIBILITY }
+            .filter { !it.isLocal }
     }
 
     private val predicate: LookupPredicate = LookupPredicate.BuilderContext.annotated(dataSchema)
@@ -50,8 +50,16 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
         register(predicate)
     }
 
+    private val fieldNames by lazy {
+        matchedClasses.flatMapTo(mutableSetOf()) { classSymbol ->
+            classSymbol.declaredProperties(session, FirResolvePhase.RAW_FIR).map {
+                CallableId(packageName = it.callableId.packageName, className = null, callableName = it.name)
+            }
+        }
+    }
+
     private val fields by lazy {
-        matchedClasses.filterNot { it.isLocal }.flatMap { classSymbol ->
+        matchedClasses.flatMap { classSymbol ->
             classSymbol.declaredProperties(session).map { propertySymbol ->
                 DataSchemaField(
                     classSymbol,
@@ -70,9 +78,7 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
 
     @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
     override fun getTopLevelCallableIds(): Set<CallableId> {
-        return buildSet {
-            fields.mapTo(this) { it.callableId }
-        }
+        return fieldNames
     }
 
     override fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> {

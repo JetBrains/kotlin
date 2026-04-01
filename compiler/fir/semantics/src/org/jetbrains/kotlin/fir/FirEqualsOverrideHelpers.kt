@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.isObject
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
 import org.jetbrains.kotlin.fir.declarations.isEquals
@@ -14,15 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
-import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
-import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.collectSymbolsForType
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
-import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -36,7 +27,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
  * The entries are ordered from least trustworthy to most trustworthy.
- * `A` is more trustworthy than `B` iff we can rely on `A` in more cases compared to `B`.
+ * `A` is more trustworthy than `B` iff the set of cases where we can rely on `A`
+ * is a superset of that of `B`.
  */
 enum class EqualsOverrideContract {
     UNKNOWN,
@@ -78,7 +70,7 @@ fun computeEqualsOverrideContract(
 ): EqualsOverrideContract {
     val subtypesContract = symbolsForType
         .maxOfOrNull { it.computeEqualsOverrideContract(session, scopeSession, visitedSymbols, trustExpectClasses) }
-        ?: EqualsOverrideContract.SAFE_FOR_SMART_CAST
+        ?: EqualsOverrideContract.UNKNOWN
 
     if (subtypesContract == EqualsOverrideContract.UNKNOWN) {
         return EqualsOverrideContract.UNKNOWN

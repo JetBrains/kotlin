@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.util.assertAllImplementationsAlsoImplement
-import org.junit.Test
+import kotlin.test.Test
 
 class InternalKotlinSourceSetTest {
     @Test

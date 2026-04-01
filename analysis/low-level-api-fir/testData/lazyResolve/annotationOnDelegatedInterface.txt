@@ -24,7 +24,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : Base {
+    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -59,7 +59,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : Base {
+    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -94,7 +94,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : Base {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -129,7 +129,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final? [ResolvedTo(COMPANION_GENERATION)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : Base {
+    public final? [ResolvedTo(COMPANION_GENERATION)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -164,7 +164,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final? [ResolvedTo(SUPER_TYPES)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|Base| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -199,7 +199,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|Base| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -234,7 +234,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|Base|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -269,7 +269,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|Base|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -304,7 +304,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final [ResolvedTo(CONTRACTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final [ResolvedTo(CONTRACTS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|Base|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -339,7 +339,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|Base|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -374,7 +374,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|Base|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -409,7 +409,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|Base|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -444,12 +444,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Some] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|Base|): R|Derived| {
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|Base| = @R|Some|[Types](s = String(Anything)) R|<local>/b|
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|Base| = @R|Some|[Types](s = String(Anything) [evaluated = String(Anything)]) R|<local>/b|
 
     }
 
@@ -471,7 +471,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnDelegatedInterface.kt
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Some : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Some : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Some] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Some.s] s: R|kotlin/String|): R|Some| {
             super<R|kotlin/Any|>()
         }
@@ -480,11 +480,11 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnDelegatedInterface.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Some] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|Base| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] constructor([ResolvedTo(BODY_RESOLVE)] b: R|Base|): R|Derived| {
             super<R|kotlin/Any|>()
         }
 
-        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|Base| = @R|Some|[Types](s = String(Anything)) R|<local>/b|
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|Base| = @R|Some|[Types](s = String(Anything) [evaluated = String(Anything)]) R|<local>/b|
 
     }

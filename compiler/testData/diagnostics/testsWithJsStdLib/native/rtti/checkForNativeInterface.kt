@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 external interface I
 
 fun box(a: Any, b: Any): Boolean {

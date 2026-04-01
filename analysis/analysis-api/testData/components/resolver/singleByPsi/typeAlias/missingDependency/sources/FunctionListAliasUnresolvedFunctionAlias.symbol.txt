@@ -1,0 +1,5 @@
+KtNameReferenceExpression(166,171): 'check'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      dependency3/MyInterface.check(<dispatch receiver>: dependency3.MyInterface, list: {dependency2.ListAlias<(kotlin.String) -> kotlin.Int>=} kotlin.collections.List<(kotlin.String) -> kotlin.Int>): kotlin.Unit
+    ]

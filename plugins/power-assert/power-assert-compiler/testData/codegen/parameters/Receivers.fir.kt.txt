@@ -1,0 +1,164 @@
+data object Asserter {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Asserter -> return false
+    }
+    val tmp_0: Asserter = other /*as Asserter */
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return -308598125
+  }
+
+  override fun toString(): String {
+    return "Asserter"
+  }
+
+  fun dispatchAssert(condition: Boolean, msg: Any? = null) {
+    when {
+      condition.not() -> throw AssertionError(p0 = toString(/* <this> = msg */))
+    }
+  }
+
+  fun Asserter.memberExtensionAssert(condition: Boolean, msg: Any? = null) {
+    when {
+      condition.not() -> throw AssertionError(p0 = toString(/* <this> = msg */))
+    }
+  }
+
+}
+
+fun box(): String {
+  return runAll(tests = [to<String, Function0<Unit>>(/* <this> = "test1", */ that = local fun <anonymous>() {
+    test1()
+  }
+), to<String, Function0<Unit>>(/* <this> = "test2", */ that = local fun <anonymous>() {
+    test2()
+  }
+), to<String, Function0<Unit>>(/* <this> = "test3", */ that = local fun <anonymous>() {
+    test3()
+  }
+), to<String, Function0<Unit>>(/* <this> = "test4", */ that = local fun <anonymous>() {
+    test4()
+  }
+), to<String, Function0<Unit>>(/* <this> = "test5", */ that = local fun <anonymous>() {
+    test5()
+  }
+), to<String, Function0<Unit>>(/* <this> = "test6", */ that = local fun <anonymous>() {
+    test6()
+  }
+)])
+}
+
+fun Asserter.extensionAssert(condition: Boolean, msg: Any? = null) {
+  when {
+    condition.not() -> throw AssertionError(p0 = toString(/* <this> = msg */))
+  }
+}
+
+fun test1() {
+  { // BLOCK
+    val tmp0_Explain: Asserter = Asserter
+    { // BLOCK
+      val tmp1_Explain: String = "test"
+      val tmp2_Explain: Int = tmp1_Explain.<get-length>()
+      val tmp3_Explain: Int = 5
+      val tmp4_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp3_Explain)
+      tmp0_Explain.dispatchAssert(condition = tmp4_Explain, msg = "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 770, source = "    Asserter.dispatchAssert(\"test\".length == 5)", arguments = listOf<Argument>(elements = [null, Argument(startOffset = 28, endOffset = 46, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 28, endOffset = 34, displayOffset = 28, value = tmp1_Explain), ValueExpression(startOffset = 28, endOffset = 41, displayOffset = 35, value = tmp2_Explain), LiteralExpression(startOffset = 45, endOffset = 46, displayOffset = 45, value = tmp3_Explain), EqualityExpression(startOffset = 28, endOffset = 46, displayOffset = 42, value = tmp4_Explain, lhs = tmp2_Explain, rhs = tmp3_Explain)])), null])) */))
+    }
+  }
+}
+
+fun test2() {
+  with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Asserter = $this$with
+      { // BLOCK
+        val tmp1_Explain: String = "test"
+        val tmp2_Explain: Int = tmp1_Explain.<get-length>()
+        val tmp3_Explain: Int = 5
+        val tmp4_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp3_Explain)
+        tmp0_Explain.dispatchAssert(condition = tmp4_Explain, msg = "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 856, source = "        dispatchAssert(\"test\".length == 5)", arguments = listOf<Argument>(elements = [null, Argument(startOffset = 23, endOffset = 41, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 23, endOffset = 29, displayOffset = 23, value = tmp1_Explain), ValueExpression(startOffset = 23, endOffset = 36, displayOffset = 30, value = tmp2_Explain), LiteralExpression(startOffset = 40, endOffset = 41, displayOffset = 40, value = tmp3_Explain), EqualityExpression(startOffset = 23, endOffset = 41, displayOffset = 37, value = tmp4_Explain, lhs = tmp2_Explain, rhs = tmp3_Explain)])), null])) */))
+      }
+    }
+  }
+)
+}
+
+fun test3() {
+  { // BLOCK
+    val tmp0_Explain: Asserter = Asserter
+    { // BLOCK
+      val tmp1_Explain: String = "test"
+      val tmp2_Explain: Int = tmp1_Explain.<get-length>()
+      val tmp3_Explain: Int = 5
+      val tmp4_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp3_Explain)
+      extensionAssert(/* <this> = tmp0_Explain, */ condition = tmp4_Explain, msg = "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 922, source = "    Asserter.extensionAssert(\"test\".length == 5)", arguments = listOf<Argument>(elements = [null, Argument(startOffset = 29, endOffset = 47, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 29, endOffset = 35, displayOffset = 29, value = tmp1_Explain), ValueExpression(startOffset = 29, endOffset = 42, displayOffset = 36, value = tmp2_Explain), LiteralExpression(startOffset = 46, endOffset = 47, displayOffset = 46, value = tmp3_Explain), EqualityExpression(startOffset = 29, endOffset = 47, displayOffset = 43, value = tmp4_Explain, lhs = tmp2_Explain, rhs = tmp3_Explain)])), null])) */))
+    }
+  }
+}
+
+fun test4() {
+  with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Asserter = $this$with
+      { // BLOCK
+        val tmp1_Explain: String = "test"
+        val tmp2_Explain: Int = tmp1_Explain.<get-length>()
+        val tmp3_Explain: Int = 5
+        val tmp4_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp3_Explain)
+        extensionAssert(/* <this> = tmp0_Explain, */ condition = tmp4_Explain, msg = "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 1009, source = "        extensionAssert(\"test\".length == 5)", arguments = listOf<Argument>(elements = [null, Argument(startOffset = 24, endOffset = 42, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 24, endOffset = 30, displayOffset = 24, value = tmp1_Explain), ValueExpression(startOffset = 24, endOffset = 37, displayOffset = 31, value = tmp2_Explain), LiteralExpression(startOffset = 41, endOffset = 42, displayOffset = 41, value = tmp3_Explain), EqualityExpression(startOffset = 24, endOffset = 42, displayOffset = 38, value = tmp4_Explain, lhs = tmp2_Explain, rhs = tmp3_Explain)])), null])) */))
+      }
+    }
+  }
+)
+}
+
+fun test5() {
+  with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Asserter = $this$with
+      { // BLOCK
+        val tmp1_Explain: Asserter = Asserter
+        { // BLOCK
+          val tmp2_Explain: String = "test"
+          val tmp3_Explain: Int = tmp2_Explain.<get-length>()
+          val tmp4_Explain: Int = 5
+          val tmp5_Explain: Boolean = EQEQ(arg0 = tmp3_Explain, arg1 = tmp4_Explain)
+          tmp0_Explain.memberExtensionAssert(/* <this> = tmp1_Explain, */ condition = tmp5_Explain, msg = "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 1097, source = "        Asserter.memberExtensionAssert(\"test\".length == 5)", arguments = listOf<Argument>(elements = [null, null, Argument(startOffset = 39, endOffset = 57, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 39, endOffset = 45, displayOffset = 39, value = tmp2_Explain), ValueExpression(startOffset = 39, endOffset = 52, displayOffset = 46, value = tmp3_Explain), LiteralExpression(startOffset = 56, endOffset = 57, displayOffset = 56, value = tmp4_Explain), EqualityExpression(startOffset = 39, endOffset = 57, displayOffset = 53, value = tmp5_Explain, lhs = tmp3_Explain, rhs = tmp4_Explain)])), null])) */))
+        }
+      }
+    }
+  }
+)
+}
+
+fun test6() {
+  with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Asserter = $this$with
+      { // BLOCK
+        val tmp1_Explain: Asserter = $this$with
+        { // BLOCK
+          val tmp2_Explain: String = "test"
+          val tmp3_Explain: Int = tmp2_Explain.<get-length>()
+          val tmp4_Explain: Int = 5
+          val tmp5_Explain: Boolean = EQEQ(arg0 = tmp3_Explain, arg1 = tmp4_Explain)
+          tmp0_Explain.memberExtensionAssert(/* <this> = tmp1_Explain, */ condition = tmp5_Explain, msg = "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 1200, source = "        memberExtensionAssert(\"test\".length == 5)", arguments = listOf<Argument>(elements = [null, null, Argument(startOffset = 30, endOffset = 48, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 30, endOffset = 36, displayOffset = 30, value = tmp2_Explain), ValueExpression(startOffset = 30, endOffset = 43, displayOffset = 37, value = tmp3_Explain), LiteralExpression(startOffset = 47, endOffset = 48, displayOffset = 47, value = tmp4_Explain), EqualityExpression(startOffset = 30, endOffset = 48, displayOffset = 44, value = tmp5_Explain, lhs = tmp3_Explain, rhs = tmp4_Explain)])), null])) */))
+        }
+      }
+    }
+  }
+)
+}
+

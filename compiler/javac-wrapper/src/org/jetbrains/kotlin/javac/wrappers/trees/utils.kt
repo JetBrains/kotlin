@@ -39,6 +39,9 @@ internal val JCTree.JCModifiers.isStatic: Boolean
 internal val JCTree.JCModifiers.hasDefaultModifier: Boolean
     get() = Modifier.DEFAULT in getFlags()
 
+internal val JCTree.JCModifiers.isNative: Boolean
+    get() = Modifier.NATIVE in getFlags()
+
 internal val JCTree.JCModifiers.visibility: Visibility
     get() = getFlags().getVisibility()
 

@@ -32,7 +32,7 @@ class FatFrameworkIT : KGPBaseTest() {
             )
 
             val binary = projectPath.resolve("build/fat-framework/smoke.framework/smoke").absolutePathString()
-            assertProcessRunResult(runProcess(listOf("file", binary), projectPath.toFile())) {
+            runProcess(listOf("file", binary), projectPath.toFile()).assertProcessRunResult {
                 assertTrue(isSuccessful)
                 assertTrue(output.contains("\\(for architecture x86_64\\):\\s+Mach-O 64-bit dynamically linked shared library x86_64".toRegex()))
                 assertTrue(output.contains("\\(for architecture arm64\\):\\s+Mach-O 64-bit dynamically linked shared library arm64".toRegex()))
@@ -57,7 +57,7 @@ class FatFrameworkIT : KGPBaseTest() {
                 expectedPlistPlatform = "WatchOS"
             )
             val binary = projectPath.resolve("build/fat-framework/smoke.framework/smoke").absolutePathString()
-            assertProcessRunResult(runProcess(listOf("file", binary), projectPath.toFile())) {
+            runProcess(listOf("file", binary), projectPath.toFile()).assertProcessRunResult {
                 assertTrue(isSuccessful)
                 assertTrue(output.contains("\\(for architecture x86_64\\):\\s+Mach-O 64-bit dynamically linked shared library x86_64".toRegex()))
                 assertTrue(output.contains("\\(for architecture arm64_32\\):\\s+Mach-O dynamically linked shared library arm64_32_v8".toRegex()))
@@ -84,7 +84,7 @@ class FatFrameworkIT : KGPBaseTest() {
                 true
             )
             val binary = projectPath.resolve("build/fat-framework/smoke.framework/Versions/A/smoke").absolutePathString()
-            assertProcessRunResult(runProcess(listOf("file", binary), projectPath.toFile())) {
+            runProcess(listOf("file", binary), projectPath.toFile()).assertProcessRunResult {
                 assertTrue(isSuccessful)
                 assertTrue(output.contains("\\(for architecture x86_64\\):\\s+Mach-O 64-bit dynamically linked shared library x86_64".toRegex()))
                 assertTrue(output.contains("\\(for architecture arm64\\):\\s+Mach-O 64-bit dynamically linked shared library arm64".toRegex()))
@@ -177,7 +177,7 @@ class FatFrameworkIT : KGPBaseTest() {
 
             build("fat") {
                 val binary = projectPath.resolve("build/fat-framework/custom.framework/custom").absolutePathString()
-                assertProcessRunResult(runProcess(listOf("otool", "-D", binary), projectPath.toFile())) {
+                runProcess(listOf("otool", "-D", binary), projectPath.toFile()).assertProcessRunResult {
                     assertTrue(isSuccessful)
                     assertTrue { output.lines().any { it.contains("@rpath/custom.framework/custom") } }
                 }

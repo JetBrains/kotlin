@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 
 /**
  * This backend context is used in the first compilation stage. Namely, it is passed to lowerings
@@ -27,4 +29,7 @@ abstract class PreSerializationLoweringContext(
         get() = IrFactoryImpl
 
     override var inVerbosePhase: Boolean = false
+
+    val typeSystem: IrTypeSystemContext
+        get() = IrTypeSystemContextImpl(irBuiltIns)
 }

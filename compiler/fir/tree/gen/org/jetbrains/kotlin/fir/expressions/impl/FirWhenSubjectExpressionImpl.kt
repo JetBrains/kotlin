@@ -11,14 +11,12 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirIdeOnly
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -27,13 +25,15 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
-@OptIn(UnresolvedExpressionTypeAccess::class)
+@OptIn(UnresolvedExpressionTypeAccess::class, FirIdeOnly::class)
 internal class FirWhenSubjectExpressionImpl(
     @property:UnresolvedExpressionTypeAccess
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
+    @property:FirIdeOnly
+    override var contextSensitiveAlternative: FirPropertyAccessExpression?,
     override var calleeReference: FirNamedReference,
 ) : FirWhenSubjectExpression() {
     override val contextArguments: List<FirExpression>
@@ -105,6 +105,10 @@ internal class FirWhenSubjectExpressionImpl(
 
     override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>) {
         nonFatalDiagnostics = newNonFatalDiagnostics.toMutableOrEmpty()
+    }
+
+    override fun replaceContextSensitiveAlternative(newContextSensitiveAlternative: FirPropertyAccessExpression?) {
+        contextSensitiveAlternative = newContextSensitiveAlternative
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirNamedReference) {

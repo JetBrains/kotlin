@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("generated-sources")
 }
 
@@ -8,7 +7,9 @@ dependencies {
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
     compileOnly(kotlinStdlib())
     compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:cli-jvm"))
     compileOnly(project(":compiler:cli-js"))
+    compileOnly(project(":compiler:cli-metadata"))
     compileOnly(project(":kotlin-build-common"))
     compileOnly(project(":daemon-common"))
     compileOnly(project(":kotlin-daemon-client"))
@@ -41,7 +42,6 @@ kotlin {
 generatedSourcesTask(
     taskName = "generateBtaArguments",
     generatorProject = ":compiler:build-tools:kotlin-build-tools-options-generator",
-    generatorRoot = "compiler/build-tools/kotlin-build-tools-options-generator/src",
     generatorMainClass = "org.jetbrains.kotlin.buildtools.options.generator.MainKt",
     argsProvider = { generationRoot ->
         listOf(

@@ -32,12 +32,6 @@ enum class KotlinCompilerExecutionStrategy(
      */
     IN_PROCESS("in-process"),
 
-    /**
-     * Execute Kotlin compiler in a new forked process for each compilation
-     *
-     * Note: currently this strategy doesn't support incremental compilation
-     */
-    OUT_OF_PROCESS("out-of-process"),
     ;
 
     /**
@@ -52,7 +46,14 @@ enum class KotlinCompilerExecutionStrategy(
                 DAEMON
             } else {
                 values().find { it.propertyValue.equals(value, ignoreCase = true) }
-                    ?: error("Unknown value '$value' is passed for Kotlin compiler execution strategy")
+                    ?: if (value.equals("out-of-process", ignoreCase = true)) {
+                        error(
+                            "The 'out-of-process' execution strategy has been removed in Kotlin 2.4.0. " +
+                                    "Please use 'daemon' instead."
+                        )
+                    } else {
+                        error("Unknown value '$value' is passed for Kotlin compiler execution strategy")
+                    }
             }
     }
 }

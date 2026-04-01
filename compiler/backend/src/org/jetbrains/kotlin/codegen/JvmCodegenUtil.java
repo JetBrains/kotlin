@@ -71,7 +71,11 @@ public class JvmCodegenUtil {
 
     @NotNull
     public static String getMappingFileName(@NotNull String moduleName) {
-        return "META-INF/" + moduleName + "." + ModuleMapping.MAPPING_FILE_EXT;
+        // Replace characters forbidden in Windows file names: < > : " / \ | ? *
+        // and ASCII control characters 0x00–0x1F, replacing each with '_'.
+        // '%' is also replaced to avoid variable expansion in shell/batch environments.
+        String sanitizedName = moduleName.replaceAll("[<>:\"/\\\\|?*%\\x00-\\x1F]", "_");
+        return "META-INF/" + sanitizedName + "." + ModuleMapping.MAPPING_FILE_EXT;
     }
 
     public static boolean isDeclarationOfBigArityFunctionInvoke(@Nullable DeclarationDescriptor descriptor) {

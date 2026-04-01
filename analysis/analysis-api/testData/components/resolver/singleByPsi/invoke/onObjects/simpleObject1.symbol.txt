@@ -1,0 +1,5 @@
+KtNameReferenceExpression(62,65): 'Foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo
+    ]

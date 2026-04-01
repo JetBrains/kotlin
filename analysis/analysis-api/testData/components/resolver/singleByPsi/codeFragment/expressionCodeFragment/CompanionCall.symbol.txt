@@ -1,0 +1,5 @@
+KtNameReferenceExpression(138,144): 'String'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String.Companion
+    ]

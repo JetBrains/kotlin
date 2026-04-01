@@ -35,7 +35,10 @@ open class Foo {
     }
     sourceInformationMarkerEnd(%composer)
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 1)
 class Bar : Foo {
@@ -52,5 +55,8 @@ class Bar : Foo {
     }
     sourceInformationMarkerEnd(%composer)
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }

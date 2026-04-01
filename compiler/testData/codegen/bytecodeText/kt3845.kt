@@ -1,4 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-63854, KT-76258
 
 class Example
 {

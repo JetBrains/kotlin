@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertFails
 
 class WasmSourceSetsNotFoundErrorTest {
@@ -54,6 +54,6 @@ class WasmSourceSetsNotFoundErrorTest {
         }
 
         assertFails { project.evaluate() }
-        return project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project).toList()
+        return project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project.path).toList()
     }
 }

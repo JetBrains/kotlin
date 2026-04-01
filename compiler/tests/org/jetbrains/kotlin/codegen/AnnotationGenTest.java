@@ -19,11 +19,22 @@ package org.jetbrains.kotlin.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.FirParser;
 
 import java.lang.annotation.*;
 import java.lang.reflect.*;
 
 public class AnnotationGenTest extends CodegenTestCase {
+    @Override
+    public boolean getUseFir() {
+        return true;
+    }
+
+    @Override
+    public @NotNull FirParser getFirParser() {
+        return FirParser.LightTree;
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();

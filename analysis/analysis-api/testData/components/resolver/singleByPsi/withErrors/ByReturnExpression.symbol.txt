@@ -1,0 +1,4 @@
+KtLabelReferenceExpression(67,69): '@b'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_LABEL: Unresolved label.>

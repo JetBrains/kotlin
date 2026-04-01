@@ -41,13 +41,13 @@ class StringJVMTest {
 
         assertEquals("1,234,567.890", "%,.3f".format(Locale.ENGLISH, 1234567.890))
         assertEquals("1.234.567,890", "%,.3f".format(Locale.GERMAN,  1234567.890))
-        assertEquals("1 234 567,890", "%,.3f".format(Locale("fr"),   1234567.890))
+        assertEquals("1 234 567,890", "%,.3f".format(Locale("uk"),   1234567.890))
         assertEquals("1,234,567.890", "%,.3f".format(null,           1234567.890))
         assertEquals("1,234,567.890", "%,.3f".format(platformNull<Locale>(), 1234567.890))
 
         assertEquals("1,234,567.890", String.format(Locale.ENGLISH, "%,.3f", 1234567.890))
         assertEquals("1.234.567,890", String.format(Locale.GERMAN,  "%,.3f", 1234567.890))
-        assertEquals("1 234 567,890", String.format(Locale("fr"),   "%,.3f", 1234567.890))
+        assertEquals("1 234 567,890", String.format(Locale("uk"),   "%,.3f", 1234567.890))
         assertEquals("1,234,567.890", String.format(null,           "%,.3f", 1234567.890))
         assertEquals("1,234,567.890", String.format(platformNull<Locale>(), "%,.3f", 1234567.890))
     }

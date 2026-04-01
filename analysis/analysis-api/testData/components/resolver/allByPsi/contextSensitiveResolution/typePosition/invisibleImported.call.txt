@@ -134,44 +134,44 @@ KtNameReferenceExpression(197,201): 'Left'
   null
 
 KtNameReferenceExpression(205,206): 'x'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaImplicitReceiverValue:
-            symbol = KaReceiverParameterSymbol:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse1)
+            receiverParameter: null
+            returnType: KaUsualClassType:
               annotations: []
-              callableId: null
-              compilerVisibility: Public
-              contextReceivers: []
-              isActual: false
-              isExpect: false
-              isExtension: false
-              isVal: true
-              location: LOCAL
-              modality: FINAL
-              name: <receiver>
-              origin: SOURCE
-              owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse1)
-              receiverParameter: null
-              returnType: KaUsualClassType:
-                annotations: []
-                typeArguments: []
-                type: MySealed
-              visibility: PUBLIC
-            type = MySealed
-          type = MySealed.Left
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val x: kotlin.String
-          contextParameters = []
-          callableId = /MySealed.Left.x
-      simpleAccess = Read
+              typeArguments: []
+              type: MySealed
+            visibility: PUBLIC
+          type = MySealed
+        type = MySealed.Left
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val x: kotlin.String
+        contextParameters = []
+        callableId = /MySealed.Left.x
       typeArgumentsMapping = {}
 
 KtWhenEntry(211,224): 'is Right -> y'
@@ -190,44 +190,44 @@ KtNameReferenceExpression(214,219): 'Right'
   null
 
 KtNameReferenceExpression(223,224): 'y'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaImplicitReceiverValue:
-            symbol = KaReceiverParameterSymbol:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse1)
+            receiverParameter: null
+            returnType: KaUsualClassType:
               annotations: []
-              callableId: null
-              compilerVisibility: Public
-              contextReceivers: []
-              isActual: false
-              isExpect: false
-              isExtension: false
-              isVal: true
-              location: LOCAL
-              modality: FINAL
-              name: <receiver>
-              origin: SOURCE
-              owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse1)
-              receiverParameter: null
-              returnType: KaUsualClassType:
-                annotations: []
-                typeArguments: []
-                type: MySealed
-              visibility: PUBLIC
-            type = MySealed
-          type = MySealed.Right
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = y
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val y: kotlin.String
-          contextParameters = []
-          callableId = /MySealed.Right.y
-      simpleAccess = Read
+              typeArguments: []
+              type: MySealed
+            visibility: PUBLIC
+          type = MySealed
+        type = MySealed.Right
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = y
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val y: kotlin.String
+        contextParameters = []
+        callableId = /MySealed.Right.y
       typeArgumentsMapping = {}
 
 KtNamedFunction(228,301): 'fun Any.getOrElse2() = when (this) {'
@@ -267,12 +267,12 @@ KtUserType(272,276): 'Left'
   null
 
 KtNameReferenceExpression(272,276): 'Left'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'class Left : Any': it is private in file.>
 
 KtNameReferenceExpression(280,281): 'x'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
 
@@ -289,11 +289,11 @@ KtUserType(289,294): 'Right'
   null
 
 KtNameReferenceExpression(289,294): 'Right'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
 KtNameReferenceExpression(298,299): 'y'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>

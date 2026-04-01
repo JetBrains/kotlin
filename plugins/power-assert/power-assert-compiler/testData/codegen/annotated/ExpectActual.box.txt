@@ -1,0 +1,12 @@
+test1: ---
+explain(reallyLongList.reversed() == emptyList<String>())
+        |              |          |  |
+        [a, b]         [b, a]     |  []
+                                  false
+---
+test2: ---
+explainer.explain(reallyLongList.reversed() == emptyList<String>())
+                  |              |          |  |
+                  [a, b]         [b, a]     |  []
+                                            false
+---

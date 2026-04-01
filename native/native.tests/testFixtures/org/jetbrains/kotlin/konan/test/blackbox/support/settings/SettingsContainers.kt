@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.settings
 
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
-import org.jetbrains.kotlin.config.nativeBinaryOptions.MacAbi
+import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Configurables
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
+import org.jetbrains.kotlin.test.services.TestService
 import kotlin.reflect.KClass
 
 abstract class Settings(private val parent: Settings?, settings: Iterable<Any>) {
@@ -52,7 +54,7 @@ abstract class Settings(private val parent: Settings?, settings: Iterable<Any>) 
  */
 class TestProcessSettings(vararg settings: Any) : Settings(parent = null, settings.asIterable())
 class TestClassSettings(parent: TestProcessSettings, settings: Iterable<Any>) : Settings(parent, settings)
-class TestRunSettings(parent: TestClassSettings, settings: Iterable<Any>) : Settings(parent, settings)
+class TestRunSettings(parent: TestClassSettings, settings: Iterable<Any>) : Settings(parent, settings), TestService
 
 /**
  * The hierarchy of settings containers for simple Native tests (e.g. KLIB tests):
@@ -72,15 +74,17 @@ val Settings.configurables: Configurables
             // Development variant of LLVM is used to have utilities like FileCheck
             put("llvmHome.${HostManager.hostName}", "\$llvm.${HostManager.hostName}.dev")
 
-            val macabi = get<ExplicitBinaryOptions>().getOrNull(BinaryOptions.macabi)
-            if (macabi != null) {
+            val macabi = get<ExplicitBinaryOptions>().getOrNull(BinaryOptions.macabi) ?: false
+            if (macabi) {
                 // The same as in KonanConfig. See the motivation there.
-                val arch = when (macabi) {
-                    MacAbi.X64 -> "x86_64"
-                    MacAbi.ARM64 -> "arm64"
+                val target = get<KotlinNativeTargets>().testTarget
+                val arch = when (target) {
+                    KonanTarget.IOS_X64 -> "x86_64"
+                    KonanTarget.IOS_SIMULATOR_ARM64 -> "arm64"
+                    else -> error("Unsupported target for macabi: $target")
                 }
-                put("targetTriple.ios_arm64", "$arch-apple-ios-macabi")
-                put("targetSysRoot.ios_arm64", "\$targetSysRoot.macos_arm64")
+                put("targetTriple.${target.name}", "$arch-apple-ios-macabi")
+                put("targetSysRoot.${target.name}", "\$targetSysRoot.macos_arm64")
             }
         }
         val distribution = Distribution(

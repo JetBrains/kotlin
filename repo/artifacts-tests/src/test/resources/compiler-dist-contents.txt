@@ -7,12 +7,15 @@ bin/kotlinc-js
 bin/kotlinc-js.bat
 bin/kotlinc-jvm
 bin/kotlinc-jvm.bat
+bin/kotlinc-wasm
+bin/kotlinc-wasm.bat
 bin/kotlinc.bat
 build.txt
 lib/allopen-compiler-plugin.jar
 lib/annotations-13.0.jar
 lib/assignment-compiler-plugin.jar
 lib/compose-compiler-plugin.jar
+lib/jklib-compiler.jar
 lib/jvm-abi-gen.jar
 lib/kotlin-annotation-processing-cli.jar
 lib/kotlin-annotation-processing-runtime.jar
@@ -43,6 +46,7 @@ lib/kotlin-stdlib-jdk8.jar
 lib/kotlin-stdlib-js-sources.jar
 lib/kotlin-stdlib-js.klib
 lib/kotlin-stdlib-sources.jar
+lib/kotlin-stdlib-wasm-js.klib
 lib/kotlin-stdlib.jar
 lib/kotlin-test-js-sources.jar
 lib/kotlin-test-js.klib

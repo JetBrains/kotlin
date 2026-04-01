@@ -4,67 +4,38 @@
  */
 package org.jetbrains.kotlin
 
-import java.io.File
-import java.net.HttpURLConnection
-import java.net.URL
-import java.util.*
-import java.util.concurrent.TimeUnit
-import kotlinBuildProperties
 import org.gradle.api.Project
-import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
-fun Project.kotlinInit(cacheRedirectorEnabled: Boolean) {
-    extensions.extraProperties["defaultSnapshotVersion"] = kotlinBuildProperties.defaultSnapshotVersion
-    extensions.extraProperties["kotlinVersion"] = findProperty("kotlinVersion")
-}
+internal val Project.kotlin: KotlinMultiplatformExtension
+    get() = extensions.getByName("kotlin") as KotlinMultiplatformExtension
 
-fun String.splitCommaSeparatedOption(optionName: String) =
-        split("\\s*,\\s*".toRegex()).map {
-            if (it.isNotEmpty()) listOf(optionName, it) else listOf(null)
-        }.flatten().filterNotNull()
-
-data class Commit(val revision: String, val developer: String, val webUrlWithDescription: String)
-
-val teamCityUrl = "https://buildserver.labs.intellij.net"
-
-fun buildsUrl(buildLocator: String) =
-        "$teamCityUrl/app/rest/builds/?locator=$buildLocator"
-
-fun getBuild(buildLocator: String, user: String, password: String) =
-        try {
-            sendGetRequest(buildsUrl(buildLocator), user, password)
-        } catch (t: Throwable) {
-            error("Try to get build! TeamCity is unreachable!")
-        }
-
-fun sendGetRequest(url: String, username: String? = null, password: String? = null): String {
-    val connection = URL(url).openConnection() as HttpURLConnection
-    if (username != null && password != null) {
-        val auth = Base64.getEncoder().encode(("$username:$password").toByteArray()).toString(Charsets.UTF_8)
-        connection.addRequestProperty("Authorization", "Basic $auth")
+val hostKotlinNativeTargetName: String
+    get() = when (HostManager.host) {
+        KonanTarget.LINUX_X64 -> "linuxX64"
+        KonanTarget.MACOS_ARM64 -> "macosArm64"
+        KonanTarget.MINGW_X64 -> "mingwX64"
+        else -> error("Unexpected host: ${HostManager.host}")
     }
-    connection.setRequestProperty("Accept", "application/json");
-    connection.connect()
-    return connection.inputStream.use { it.reader().use { reader -> reader.readText() } }
+
+internal fun KotlinMultiplatformExtension.hostTarget(): KotlinNativeTarget = when (HostManager.host) {
+    KonanTarget.LINUX_X64 -> linuxX64()
+    KonanTarget.MACOS_ARM64 -> macosArm64()
+    KonanTarget.MINGW_X64 -> mingwX64()
+    else -> error("Unexpected host: ${HostManager.host}")
 }
 
-val Project.platformManager
-    get() = findProperty("platformManager") as PlatformManager
+/**
+ * Common set of targets on which benchmarks are available
+ */
+fun KotlinMultiplatformExtension.benchmarkingTargets() {
+    linuxX64()
+    macosArm64()
+    mingwX64()
+}
 
-val validPropertiesNames = listOf(
-        "konan.home",
-        "org.jetbrains.kotlin.native.home",
-        "kotlin.native.home"
-)
-
-val Project.kotlinNativeDist
-    get() = rootProject.currentKotlinNativeDist
-
-val Project.currentKotlinNativeDist
-    get() = file(validPropertiesNames.firstOrNull { hasProperty(it) }?.let { findProperty(it) } ?: "dist")
-
-val kotlinNativeHome
-    get() = validPropertiesNames.mapNotNull(System::getProperty).first()
-
-val Project.useCustomDist
-    get() = validPropertiesNames.any { hasProperty(it) }
+val String.capitalized: String
+    get() = replaceFirstChar { it.uppercaseChar() }

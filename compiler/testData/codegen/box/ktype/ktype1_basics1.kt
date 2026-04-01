@@ -1,21 +1,22 @@
-/*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
- */
 // AssertionError: Expected <C<kotlin.Int?>>, actual <C<Int?>>.
 // AssertionError: Expected <C<C<kotlin.Any>>>, actual <C<C<Any>>>.
+// The test is moved to another package in android tests
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6, ANDROID
 
 // WITH_STDLIB
 // WITH_REFLECT
 
-import kotlin.test.*
+// FILE: lib.kt
 import kotlin.reflect.*
 
 @OptIn(ExperimentalStdlibApi::class)
 inline fun <reified R> kType() = typeOf<R>()
 
 inline fun <reified R> kType(obj: R) = kType<R>()
+
+// FILE: main.kt
+import kotlin.test.*
+import kotlin.reflect.*
 
 class C<T>
 class D

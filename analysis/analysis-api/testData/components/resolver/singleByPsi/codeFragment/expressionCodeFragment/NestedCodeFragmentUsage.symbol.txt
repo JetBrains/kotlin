@@ -1,0 +1,5 @@
+KtNameReferenceExpression(160,163): 'bar'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar(<dispatch receiver>: <anonymous>): kotlin.Unit
+    ]

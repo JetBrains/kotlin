@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.group
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestRunnerType
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestConfiguration
 
 @Target(AnnotationTarget.CLASS)
@@ -24,4 +26,16 @@ internal annotation class PredefinedTestCase(
 
 internal object PredefinedPaths {
     const val KOTLIN_NATIVE_DISTRIBUTION = "\$KOTLIN_NATIVE_DISTRIBUTION\$"
+
+    /**
+     * Substitutes predefined path placeholders in [value] with actual paths from [settings].
+     * Currently, supports only [KOTLIN_NATIVE_DISTRIBUTION] placeholder.
+     */
+    fun substitutePlaceholders(value: String, settings: Settings): String =
+        if ('$' in value) {
+            // N.B. Here, more substitutions can be supported in the future if it would be necessary.
+            value.replace(KOTLIN_NATIVE_DISTRIBUTION, settings.get<KotlinNativeHome>().dir.path)
+        } else {
+            value
+        }
 }

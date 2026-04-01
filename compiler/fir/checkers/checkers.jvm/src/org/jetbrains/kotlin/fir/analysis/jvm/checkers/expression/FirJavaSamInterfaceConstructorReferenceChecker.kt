@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallableReferenceAccessChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -20,11 +21,9 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
-object FirJavaSamInterfaceConstructorReferenceChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
+object FirJavaSamInterfaceConstructorReferenceChecker : FirCallableReferenceAccessChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(expression: FirQualifiedAccessExpression) {
-        if (expression !is FirCallableReferenceAccess) return
-
+    override fun check(expression: FirCallableReferenceAccess) {
         val reference = expression.calleeReference as? FirResolvedNamedReference ?: return
         val referredSymbol = reference.resolvedSymbol
 

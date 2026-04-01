@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.clangArgs
 import org.jetbrains.kotlin.execLlvmUtility
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.platformManagerProvider
+import org.jetbrains.kotlin.utils.reproducibilityCompilerFlags
 import java.io.File
 import javax.inject.Inject
 
@@ -147,7 +148,7 @@ open class ClangFrontend @Inject constructor(
         files.map {
             val relativePath = it.asFile.toRelativeString(base.asFile)
             WorkUnit(relativePath, out.file(relativePath.replaceAfterLast(".", "bc")))
-        }
+        }.sortedBy { it.inputPathRelativeToWorkingDir }
     }
 
     @get:Nested
@@ -184,9 +185,7 @@ open class ClangFrontend @Inject constructor(
             add("-emit-llvm")
             addAll(headersDirs.asCompilerArguments.get())
             // Prevent generated binaries from containing absolute paths
-            addAll(reproducibilityRootsMap.map {
-                "-ffile-prefix-map=${it.key}=${it.value}"
-            })
+            addAll(reproducibilityCompilerFlags(reproducibilityRootsMap))
         }
     }
 }

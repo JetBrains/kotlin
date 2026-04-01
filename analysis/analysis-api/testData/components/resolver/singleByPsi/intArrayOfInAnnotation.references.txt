@@ -2,5 +2,8 @@ KtNameReferenceExpression(86,96): 'intArrayOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+    resolveToSymbols:
       Nothing (Unresolved reference)

@@ -1,0 +1,2 @@
+KtStringTemplateExpression(28,32): '"13"'
+  NO_CANDIDATES

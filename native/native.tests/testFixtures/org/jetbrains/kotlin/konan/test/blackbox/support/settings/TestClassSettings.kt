@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.settings
 
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
+import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
 import java.io.File
@@ -13,7 +13,7 @@ import java.io.File
 /**
  * The directories with original sources (aka testData).
  */
-internal class TestRoots(val roots: Set<File>, val baseDir: File)
+class TestRoots(val roots: Set<File>, val baseDir: File)
 
 /**
  * [testSourcesDir] - The directory with generated (preprocessed) test sources.

@@ -22,8 +22,8 @@ data class Task(val input: StringProperty)
 
 fun `should report an error for assign method return type on assignment for annotated class`() {
     val task = Task(StringProperty("Fail"))
-    <!VAL_REASSIGNMENT!>task.input<!> <!CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT!>=<!> "42"
-    <!VAL_REASSIGNMENT!>task.input<!> <!CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT!>=<!> 42
+    task.input <!CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT!>=<!> "42"
+    task.input <!CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT!>=<!> 42
 }
 
 fun `should not report an error for assign return type for unannotated class`() {
@@ -32,5 +32,5 @@ fun `should not report an error for assign return type for unannotated class`() 
     data class IntTask(val input: IntProperty)
 
     val task = IntTask(IntProperty(42))
-    <!VAL_REASSIGNMENT!>task.input<!> = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!>
+    task.<!VAL_REASSIGNMENT!>input<!> <!ASSIGNMENT_TYPE_MISMATCH!>=<!> 42
 }

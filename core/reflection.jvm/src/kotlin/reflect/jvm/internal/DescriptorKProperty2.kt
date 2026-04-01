@@ -27,11 +27,13 @@ internal open class DescriptorKProperty2<D, E, out V> : KProperty2<D, E, V>, Des
         container, name, signature, CallableReference.NO_RECEIVER
     )
 
-    constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
+    constructor(
+        container: KDeclarationContainerImpl,
+        descriptor: PropertyDescriptor,
+        overriddenStorage: KCallableOverriddenStorage,
+    ) : super(container, descriptor, overriddenStorage)
 
-    private val _getter = lazy(PUBLICATION) { Getter(this) }
-
-    override val getter: Getter<D, E, V> get() = _getter.value
+    override val getter: Getter<D, E, V> by lazy(PUBLICATION) { Getter(this) }
 
     override fun get(receiver1: D, receiver2: E): V = getter.call(receiver1, receiver2)
 
@@ -41,6 +43,12 @@ internal open class DescriptorKProperty2<D, E, out V> : KProperty2<D, E, V>, Des
 
     override fun invoke(receiver1: D, receiver2: E): V = get(receiver1, receiver2)
 
+    override fun shallowCopy(
+        container: KDeclarationContainerImpl,
+        overriddenStorage: KCallableOverriddenStorage,
+    ): DescriptorKProperty2<D, E, V> =
+        DescriptorKProperty2<D, E, V>(container, descriptor, overriddenStorage)
+
     class Getter<D, E, out V>(override val property: DescriptorKProperty2<D, E, V>) : DescriptorKProperty.Getter<V>(), KProperty2.Getter<D, E, V> {
         override fun invoke(receiver1: D, receiver2: E): V = property.get(receiver1, receiver2)
     }
@@ -49,13 +57,21 @@ internal open class DescriptorKProperty2<D, E, out V> : KProperty2<D, E, V>, Des
 internal class DescriptorKMutableProperty2<D, E, V> : DescriptorKProperty2<D, E, V>, KMutableProperty2<D, E, V> {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(container, name, signature)
 
-    constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
+    constructor(
+        container: KDeclarationContainerImpl,
+        descriptor: PropertyDescriptor,
+        overriddenStorage: KCallableOverriddenStorage,
+    ) : super(container, descriptor, overriddenStorage)
 
-    private val _setter = lazy(PUBLICATION) { Setter(this) }
-
-    override val setter: Setter<D, E, V> get() = _setter.value
+    override val setter: Setter<D, E, V> by lazy(PUBLICATION) { Setter(this) }
 
     override fun set(receiver1: D, receiver2: E, value: V) = setter.call(receiver1, receiver2, value)
+
+    override fun shallowCopy(
+        container: KDeclarationContainerImpl,
+        overriddenStorage: KCallableOverriddenStorage,
+    ): DescriptorKMutableProperty2<D, E, V> =
+        DescriptorKMutableProperty2<D, E, V>(container, descriptor, overriddenStorage)
 
     class Setter<D, E, V>(override val property: DescriptorKMutableProperty2<D, E, V>) : DescriptorKProperty.Setter<V>(),
         KMutableProperty2.Setter<D, E, V> {

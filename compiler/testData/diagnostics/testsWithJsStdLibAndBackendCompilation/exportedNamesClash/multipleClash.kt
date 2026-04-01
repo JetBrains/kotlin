@@ -1,9 +1,9 @@
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -ERROR_SUPPRESSION
 // RENDER_ALL_DIAGNOSTICS_FULL_TEXT
 // FILE: Function1.kt
 @file:Suppress("OPT_IN_USAGE", "JS_NAME_CLASH")
 package foo.bar.baz
-
 <!EXPORTING_JS_NAME_CLASH, EXPORTING_JS_NAME_CLASH_ES!>@JsExport fun test() = 1<!>
 
 // FILE: Function2.kt

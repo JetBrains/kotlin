@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
+// LANGUAGE: -ImprovedResolutionInSecondaryConstructors
 // ISSUE: KT-48870
 
 open class Base(p: Any?) {

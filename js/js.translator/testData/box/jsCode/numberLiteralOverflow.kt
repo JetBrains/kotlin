@@ -9,10 +9,22 @@ fun box(): String {
     if (c != 10000000000.0) return "fail3: $c"
 
     val d = js("037700000000")
-    if (d != 4278190080.0) return "fail4: $a"
+    if (d != 4278190080.0) return "fail4: $d"
 
     val e = js("-037700000000")
-    if (e != -4278190080.0) return "fail5: $a"
+    if (e != -4278190080.0) return "fail5: $e"
+
+    val f = js("0o37700000000")
+    if (f != 4278190080.0) return "fail6: $f"
+
+    val g = js("-0o37700000000")
+    if (g != -4278190080.0) return "fail7: $g"
+
+    val h = js("0b11111111000000000000000000000000")
+    if (h != 4278190080.0) return "fail8: $h"
+
+    val i = js("-0b11111111000000000000000000000000")
+    if (i != -4278190080.0) return "fail9: $i"
 
     return "OK"
 }

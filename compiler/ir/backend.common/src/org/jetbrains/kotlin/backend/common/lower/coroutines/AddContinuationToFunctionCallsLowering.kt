@@ -30,13 +30,16 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
 
     protected abstract fun IrSimpleFunction.isContinuationItself(): Boolean
 
+    protected open val IrSimpleFunction.continuationOwner: IrSimpleFunction
+        get() = this
+
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile, withLocalDeclarations = true)
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val continuation: IrValueParameter? by lazy {
-            (container as IrSimpleFunction).getContinuationParameter()
+            (container as IrSimpleFunction).continuationOwner.getContinuationParameter()
         }
 
         val builder by lazy { context.createIrBuilder(container.symbol) }
@@ -48,6 +51,16 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
             override fun visitBody(body: IrBody): IrBody {
                 // Nested bodies are covered by separate `lower` invocation
                 return body
+            }
+
+            override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrExpression {
+                val oldFun = expression.symbol.owner as? IrSimpleFunction
+
+                if (oldFun?.isSuspend == true) {
+                    expression.symbol = oldFun.getOrCreateFunctionWithContinuationStub(context).symbol
+                }
+
+                return super.visitRawFunctionReference(expression)
             }
 
             override fun visitCall(expression: IrCall): IrExpression {

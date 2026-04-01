@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import kotlin.native.concurrent.*
 
 class Z(val x: Int) {

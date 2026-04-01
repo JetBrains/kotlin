@@ -72,27 +72,6 @@ abstract class LockCopyTask : DefaultTask() {
         @InternalKotlinGradlePluginApi
         const val UPGRADE_PACKAGE_LOCK_BASE_NAME = "upgradePackageLock"
 
-        @Deprecated(
-            "Use storePackageLockTaskProvider from NpmExtension or WasmNpmExtension instead. " +
-                    "Scheduled for removal in Kotlin 2.4.",
-            level = DeprecationLevel.ERROR
-        )
-        const val STORE_PACKAGE_LOCK_NAME = "kotlinStorePackageLock"
-
-        @Deprecated(
-            "Use restorePackageLockTaskProvider from NpmExtension or WasmNpmExtension instead. " +
-                    "Scheduled for removal in Kotlin 2.4.",
-            level = DeprecationLevel.ERROR
-        )
-        const val RESTORE_PACKAGE_LOCK_NAME = "kotlinRestorePackageLock"
-
-        @Deprecated(
-            "It is task name for JS target only. Use UPGRADE_PACKAGE_LOCK_BASE_NAME to calculate correct name for your platform. " +
-                    "Scheduled for removal in Kotlin 2.4.",
-            level = DeprecationLevel.ERROR
-        )
-        const val UPGRADE_PACKAGE_LOCK = "kotlinUpgradePackageLock"
-
         const val KOTLIN_JS_STORE = "kotlin-js-store"
         const val PACKAGE_LOCK = "package-lock.json"
         const val YARN_LOCK = "yarn.lock"

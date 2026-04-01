@@ -1,8 +1,10 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationOnTopLevelProperty.kt
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor(): R|Ann| {
-            super<R|kotlin/Any|>()
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Ann : R|kotlin/Annotation| {
+        @R|Ann|[Types]() public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Ann] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/Ann.x] x: R|kotlin/Int| = LAZY_EXPRESSION): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
         }
 
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] get(): R|kotlin/Int|
+
     }
-    [ResolvedTo(CONSTANT_EVALUATION)] @R|Ann|[Types](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>

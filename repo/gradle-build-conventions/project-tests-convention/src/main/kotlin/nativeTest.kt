@@ -12,6 +12,7 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.environment
+import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.project
 import org.gradle.process.CommandLineArgumentProvider
@@ -147,10 +148,10 @@ private open class NativeArgsProvider @Inject constructor(
     protected val dependOnPlatformLibs = xcTestEnabled.orElse(requirePlatformLibs)
 
     @get:Input
-    protected val teamcity: Boolean = project.kotlinBuildProperties.isTeamcityBuild
+    protected val teamcity: Boolean = project.kotlinBuildProperties.isTeamcityBuild.get()
 
     @get:Internal
-    protected val customNativeHome: Provider<String?> = providers.testProperty(KOTLIN_NATIVE_HOME)
+    protected val customNativeHome: Provider<String> = providers.testProperty(KOTLIN_NATIVE_HOME)
 
     @get:Classpath
     val customCompilerDependencies: ConfigurableFileCollection = objects.fileCollection()
@@ -321,7 +322,7 @@ fun ProjectTestsExtension.nativeTestTask(
 
     group = "verification"
 
-    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+    if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         workingDir = project.rootDir
 
         // Use ARM64 JDK on ARM64 Mac as required by the K/N compiler.
@@ -346,6 +347,10 @@ fun ProjectTestsExtension.nativeTestTask(
         // additional stack frames more compared to the old one because of another launcher, etc. and it turns out this is not enough.
         jvmArgs("-Xss2m")
 
+        // Allow the test to access Kotlin/Native-specific locations.
+        // See `repo/gradle-build-conventions/project-tests-convention/Readme.md` for more details
+        extensions.findByType<TestInputsCheckExtension>()?.isNative?.set(true)
+
         jvmArgumentProviders.add(project.objects.newInstance(NativeArgsProvider::class.java, requirePlatformLibs).apply {
             this.customCompilerDependencies.from(customCompilerDependencies)
             this.compilerPluginDependencies.from(compilerPluginDependencies)
@@ -356,7 +361,7 @@ fun ProjectTestsExtension.nativeTestTask(
         })
 
         val availableCpuCores: Int = if (allowParallelExecution) Runtime.getRuntime().availableProcessors() else 1
-        if (!kotlinBuildProperties.isTeamcityBuild
+        if (!kotlinBuildProperties.isTeamcityBuild.get()
             && minOf(kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution ?: 16, availableCpuCores) > 4
         ) {
             logger.info("$path JIT C2 compiler has been disabled")

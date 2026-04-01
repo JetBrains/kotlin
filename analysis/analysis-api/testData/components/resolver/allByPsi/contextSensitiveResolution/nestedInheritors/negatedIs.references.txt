@@ -2,27 +2,37 @@ KtNameReferenceExpression(120,126): 'Simple'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) interface Simple
 
 KtNameReferenceExpression(144,150): 'Simple'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) interface Simple
 
 KtNameReferenceExpression(177,183): 'Simple'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) interface Simple
 
 KtNameReferenceExpression(192,193): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       s: Simple
 
@@ -30,13 +40,18 @@ KtNameReferenceExpression(205,209): 'Left'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in Simple) class Left : Simple
 
 KtOperationReferenceExpression(231,232): '!'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -44,6 +59,8 @@ KtNameReferenceExpression(232,248): 'USELESS_IS_CHECK'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'USELESS_IS_CHECK'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -51,6 +68,8 @@ KtOperationReferenceExpression(248,249): '!'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -58,6 +77,7 @@ KtOperationReferenceExpression(250,253): '!is'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -65,6 +85,8 @@ KtNameReferenceExpression(254,259): 'Right'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -72,6 +94,8 @@ KtOperationReferenceExpression(285,286): '!'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -79,6 +103,8 @@ KtNameReferenceExpression(286,308): 'REDUNDANT_ELSE_IN_WHEN'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'REDUNDANT_ELSE_IN_WHEN'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -86,5 +112,7 @@ KtOperationReferenceExpression(308,309): '!'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
     symbols:
       Nothing (Unresolved reference)

@@ -174,9 +174,7 @@ class TryNextIT : KGPBaseTest() {
             localRepoDir = localRepository,
             buildOptions = defaultBuildOptions.copy(
                 logLevel = LogLevel.DEBUG,
-                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-            ),
+            ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             enableTryNext()
 
@@ -261,14 +259,14 @@ class TryNextIT : KGPBaseTest() {
             buildGradle.appendText(
                 """
                 |
-                |kotlin.compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
+                |kotlin.compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
                 """.trimMargin()
             )
 
             build("compileKotlin") {
                 assertTasksExecuted(":compileKotlin")
 
-                assertCompilerArgument(":compileKotlin", "-language-version 1.9")
+                assertCompilerArgument(":compileKotlin", "-language-version 2.1")
             }
         }
     }
@@ -282,9 +280,7 @@ class TryNextIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 logLevel = LogLevel.DEBUG,
-                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-            ),
+            ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             enableTryNext()
 
@@ -303,10 +299,7 @@ class TryNextIT : KGPBaseTest() {
         project(
             "kotlin-js-nodejs-project",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-            ),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             enableTryNext()
 

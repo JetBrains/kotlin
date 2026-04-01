@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.packages
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProvider
 import org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProviderFactory
 import org.jetbrains.kotlin.name.FqName
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
  * A composite [KotlinPackageProvider] which combines all packages provided by its child [providers]. It should be created with
  * [KotlinCompositePackageProvider.create].
  */
+@KaPlatformInterface
 public class KotlinCompositePackageProvider private constructor(
     override val providers: List<KotlinPackageProvider>,
 ) : KotlinPackageProvider, KotlinCompositeProvider<KotlinPackageProvider> {
@@ -42,6 +44,7 @@ public class KotlinCompositePackageProvider private constructor(
         return providers.flatMapTo(mutableSetOf()) { it.getPlatformSpecificSubpackageNames(packageFqName, platform) }
     }
 
+    @KaPlatformInterface
     public companion object {
         public val factory: KotlinCompositeProviderFactory<KotlinPackageProvider> = KotlinCompositeProviderFactory(
             KotlinEmptyPackageProvider,

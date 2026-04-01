@@ -49,8 +49,9 @@ public actual interface KCallable<out R> : KAnnotatedElement {
 
     /**
      * Calls this callable with the specified mapping of parameters to arguments and returns the result.
-     * If a parameter is not found in the mapping and is not optional (as per [KParameter.isOptional]),
-     * or its type does not match the type of the provided value, an exception is thrown.
+     * Parameter can be omitted from the mapping if it is either optional ([KParameter.isOptional]) or vararg ([KParameter.isVararg]).
+     * If a parameter is not found in the mapping and cannot be omitted, or its type does not match the type of the provided value,
+     * an exception is thrown.
      */
     public fun callBy(args: Map<KParameter, Any?>): R
 

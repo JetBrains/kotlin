@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.fir.*
@@ -50,7 +51,8 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-internal object FirLazyBodiesCalculator {
+@LLFirInternals
+object FirLazyBodiesCalculator {
     fun calculateBodies(designation: FirDesignation) {
         designation.target.transformSingle(
             FirTargetLazyBodiesCalculatorTransformer,
@@ -180,11 +182,33 @@ private val FirCallableDeclaration.originalPsi: PsiElement? get() = unwrapFakeOv
 private fun calculateLazyBodiesForFunction(designation: FirDesignation) {
     val simpleFunction = designation.target as FirNamedFunction
     require(needCalculatingLazyBodyForFunction(simpleFunction))
+    if (simpleFunction.origin == FirDeclarationOrigin.Synthetic.ReplEvalFunction) {
+        calculateLazyBodyForEvalFunction(simpleFunction, designation)
+        return
+    }
 
     val newSimpleFunction = revive<FirNamedFunction>(designation, simpleFunction.originalPsi)
 
     replaceLazyBody(simpleFunction, newSimpleFunction)
     replaceLazyValueParameters(simpleFunction, newSimpleFunction)
+}
+
+private fun calculateLazyBodyForEvalFunction(
+    function: FirNamedFunction,
+    designation: FirDesignation,
+) {
+    val snippet = designation.path.getOrNull(1)
+    if (snippet !is FirReplSnippet) {
+        errorWithAttachment("Unexpected designation path: ${snippet?.let { it::class.simpleName }}") {
+            withFirDesignationEntry("designation", designation)
+            withFirEntry("snippet", snippet)
+        }
+    }
+
+    val replDesignation = FirDesignation(listOf(designation.file), snippet)
+    val newSnippet = revive<FirReplSnippet>(replDesignation)
+    val newFunction = newSnippet.evalFunctionSymbol.fir
+    replaceLazyBody(function, newFunction)
 }
 
 private fun calculateLazyBodyForConstructor(designation: FirDesignation) {
@@ -759,7 +783,7 @@ private fun <E : FirElement> FirTransformer<PersistentList<FirDeclaration>>.recu
     element: E,
     data: PersistentList<FirDeclaration>,
 ): E {
-    if (element is FirFile || element is FirScript || element is FirRegularClass) {
+    if (element is FirFile || element is FirScript || element is FirRegularClass || element is FirReplSnippet) {
         val newList = data.add(element as FirDeclaration)
         element.transformChildren(this, newList)
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,14 +15,14 @@ import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.analyzeCopy
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
+import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions
+import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
-import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
-import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor
-import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
-import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.*
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
@@ -33,9 +33,8 @@ import org.jetbrains.kotlin.analysis.test.framework.utils.singleOrZeroValue
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.TestConfiguration
+import org.jetbrains.kotlin.test.NonGroupingPhaseTestConfiguration
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
-import org.jetbrains.kotlin.test.backend.handlers.UpdateTestDataSupport
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -53,7 +52,6 @@ import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
-import org.junit.jupiter.api.extension.ExtendWith
 import java.io.IOException
 import java.nio.file.Path
 import kotlin.io.path.exists
@@ -75,9 +73,11 @@ import kotlin.io.path.nameWithoutExtension
  * @see doTestByMainModuleAndOptionalMainFile
  * @see doTest
  */
-@ExtendWith(UpdateTestDataSupport::class)
-abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
+abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest {
     abstract val configurator: AnalysisApiTestConfigurator
+
+    override val variantChain: TestVariantChain
+        get() = configurator.testPrefixes
 
     /**
      * Allows easily specifying additional service registrars in tests which rely on a preset configurator, such as tests generated for FIR
@@ -173,7 +173,8 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
      * Use only if [doTestByMainModuleAndOptionalMainFile] is not suitable for your use case.
      */
     protected open fun doTest(testServices: TestServices) {
-        val (mainFile, mainModule) = findMainFileAndModule(testServices)
+        val (mainFile, mainModule) = findMainFileAndModule(testServices) ?: error("Cannot find the main test module")
+
         doTestByMainModuleAndOptionalMainFile(mainFile, mainModule, testServices)
     }
 
@@ -220,12 +221,12 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
     data class ModuleWithMainFile(val mainFile: KtFile?, val module: KtTestModule)
 
-    protected fun findMainFileAndModule(testServices: TestServices): ModuleWithMainFile {
+    protected fun findMainFileAndModule(testServices: TestServices): ModuleWithMainFile? {
         findMainFileByMarkers(testServices)?.let { return it }
 
         // We have this search not at the beginning of the function as we should prefer marked files to
         // a main module with one file
-        val mainModule = findMainModule(testServices) ?: error("Cannot find the main test module")
+        val mainModule = findMainModule(testServices) ?: return null
         val mainFile = findMainFile(mainModule, testServices)
         return ModuleWithMainFile(mainFile, mainModule)
     }
@@ -284,13 +285,19 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     }
 
     /**
+     * THE FUNCTION IS OBSOLETE. USE THE ONE WITHOUT THE RECEIVER.
+     *
      * Checks whether the [actual] string matches the content of the test output file.
      *
-     * If a non-empty list of [testPrefixes] is specified, the function will firstly check whether test output files with any of the
-     * specified prefixes exist. If so, it will check the [actual] content against that file (the first prefix has the highest priority).
-     * Also, if files with latter prefixes or the non-prefixed file contain the same output, an assertion error is raised.
+     * If [actual] is `null`, asserts that the corresponding test output file does not exist. If the file exists, it will be deleted
+     * (in UPDATE mode or CHECK mode locally) and an assertion error is raised (in CHECK mode). Only the write-target file is checked —
+     * fallback files in the variant chain are not affected.
      *
-     * If no prefixes are specified, or if no prefixed files exist, the function compares [actual] against the non-prefixed (default)
+     * If a non-empty [variantChain] is specified, the function will firstly check whether test output files with any of the
+     * specified variants exist. If so, it will check the [actual] content against that file (the last variant has the highest priority).
+     * Also, if files with earlier variants or the non-variant file contain the same output, an assertion error is raised.
+     *
+     * If no variants are specified, or if no variant files exist, the function compares [actual] against the non-variant (default)
      * test output file.
      *
      * If none of the test output files exist, the function creates an output file, writes the content of [actual] to it, and throws
@@ -298,35 +305,84 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
      *
      * If a [subdirectoryName] is specified, the test output file will be resolved in the given subdirectory, instead of as a sibling of the
      * test data. The purpose of this setting is to allow tests to define multiple sets of output files, e.g. for tests that share the same
-     * test data but have different test output. This is in contrast to [testPrefixes]: Each test prefix defines a specialized version of a
-     * test output file that is used when a specific test configuration (e.g. Standalone) deviates from the default (non-prefixed) test
+     * test data but have different test output. This is in contrast to [variantChain]: Each variant defines a specialized version of a
+     * test output file that is used when a specific test configuration (e.g. Standalone) deviates from the default (non-variant) test
      * output.
+     *
+     * In silent update mode ([org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerMode.UPDATE]), the function will update test data files
+     * instead of throwing assertions:
+     * - For golden tests (empty [variantChain]): writes to the default file
+     * - For secondary tests: writes to a variant file only if different from golden
      */
+    @Suppress("UnusedReceiverParameter")
     protected fun AssertionsService.assertEqualsToTestOutputFile(
-        actual: String,
+        actual: String?,
         extension: String = ".txt",
         subdirectoryName: String? = null,
-        testPrefixes: List<String> = configurator.testPrefixes,
+        testPrefixes: List<String> = variantChain,
     ) {
-        val expectedFiles = buildList {
-            testPrefixes.mapNotNullTo(this) { findPrefixedTestOutputFile(extension, subdirectoryName, testPrefix = it) }
-            add(getDefaultTestOutputFile(extension, subdirectoryName))
-        }
-
-        val mainExpectedFile = expectedFiles.first()
-        val otherExpectedFiles = expectedFiles.drop(1)
-
-        assertEqualsToFile(mainExpectedFile, actual)
-
-        for (otherExpectedFile in otherExpectedFiles) {
-            if (doesEqualToFile(otherExpectedFile.toFile(), actual)) {
-                throw AssertionError("\"$mainExpectedFile\" has the same content as \"$otherExpectedFile\". Delete the prefixed file.")
-            }
-        }
+        this@AbstractAnalysisApiBasedTest.assertEqualsToTestOutputFile(
+            actual = actual,
+            extension = extension,
+            subdirectoryName = subdirectoryName,
+            variantChain = testPrefixes,
+        )
     }
 
     /**
-     * Returns the test output file with any of the [testPrefixes] if it exists, of the non-prefixed (default) test output file.
+     * Checks whether the [actual] string matches the content of the test output file.
+     *
+     * If [actual] is `null`, asserts that the corresponding test output file does not exist. If the file exists, it will be deleted
+     * (in UPDATE mode or CHECK mode locally) and an assertion error is raised (in CHECK mode). Only the write-target file is checked —
+     * fallback files in the variant chain are not affected.
+     *
+     * If a non-empty [variantChain] is specified, the function will firstly check whether test output files with any of the
+     * specified variants exist. If so, it will check the [actual] content against that file (the last variant has the highest priority).
+     * Also, if files with earlier variants or the non-variant file contain the same output, an assertion error is raised.
+     *
+     * If no variants are specified, or if no variant files exist, the function compares [actual] against the non-variant (default)
+     * test output file.
+     *
+     * Before comparing [actual] against the content of test files, applies [sanitizer] to [actual] and the text of the output files.
+     *
+     * If none of the test output files exist, the function creates an output file, writes the sanitized content of [actual] to it,
+     * and throws an exception.
+     *
+     * If a [subdirectoryName] is specified, the test output file will be resolved in the given subdirectory, instead of as a sibling of the
+     * test data. The purpose of this setting is to allow tests to define multiple sets of output files, e.g. for tests that share the same
+     * test data but have different test output. This is in contrast to [variantChain]: Each variant defines a specialized version of a
+     * test output file that is used when a specific test configuration (e.g. Standalone) deviates from the default (non-variant) test
+     * output.
+     *
+     * In silent update mode ([org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerMode.UPDATE]), the function will update test data files
+     * instead of throwing assertions:
+     * - For golden tests (empty [variantChain]): writes to the default file
+     * - For secondary tests: writes to a variant file only if different from golden
+     */
+    fun assertEqualsToTestOutputFile(
+        actual: String?,
+        extension: String = ".txt",
+        subdirectoryName: String? = null,
+        variantChain: TestVariantChain = this.variantChain,
+        sanitizer: (String) -> String = testServices.testOutputSanitizerOrDefault
+    ) {
+        val resolvedPath = if (subdirectoryName != null) {
+            testDataPath.resolveSibling(subdirectoryName).resolve(testDataPath.fileName)
+        } else {
+            testDataPath
+        }
+
+        ManagedTestAssertions.assertEqualsToTestDataFile(
+            testDataPath = resolvedPath,
+            actual = actual,
+            variantChain = variantChain,
+            extension = extension,
+            sanitizer = sanitizer,
+        )
+    }
+
+    /**
+     * Returns the test output file with any of the [variantChain] if it exists, or the non-variant (default) test output file.
      *
      * If a [subdirectoryName] is specified, the test output file will be resolved in the given subdirectory, instead of as a sibling of the
      * test data.
@@ -336,35 +392,35 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     protected fun getTestOutputFile(
         extension: String = "txt",
         subdirectoryName: String? = null,
-        testPrefixes: List<String> = configurator.testPrefixes,
+        testPrefixes: List<String> = variantChain,
     ): Path {
-        for (testPrefix in testPrefixes) {
-            findPrefixedTestOutputFile(extension, subdirectoryName, testPrefix)?.let { return it }
+        for (variant in testPrefixes) {
+            findVariantTestOutputFile(extension, subdirectoryName, variant)?.let { return it }
         }
         return getDefaultTestOutputFile(extension, subdirectoryName)
     }
 
     /**
-     * Returns the default test output file without a test prefix. The file is resolved in the given [subdirectoryName] directory, or as a
+     * Returns the default test output file without a variant. The file is resolved in the given [subdirectoryName] directory, or as a
      * sibling of the test data file if no [subdirectoryName] is provided.
      */
     private fun getDefaultTestOutputFile(extension: String, subdirectoryName: String?): Path =
-        buildTestOutputFilePath(extension, subdirectoryName, testPrefix = null)
+        buildTestOutputFilePath(extension, subdirectoryName, variant = null)
 
     /**
-     * Returns the test output file with the given [testPrefix] if it exists. The file is resolved in the given [subdirectoryName]
+     * Returns the test output file with the given [variant] if it exists. The file is resolved in the given [subdirectoryName]
      * directory, or as a sibling of the test data file if no [subdirectoryName] is provided.
      */
-    private fun findPrefixedTestOutputFile(extension: String, subdirectoryName: String?, testPrefix: String): Path? =
-        buildTestOutputFilePath(extension, subdirectoryName, testPrefix).takeIf { it.exists() }
+    private fun findVariantTestOutputFile(extension: String, subdirectoryName: String?, variant: String): Path? =
+        buildTestOutputFilePath(extension, subdirectoryName, variant).takeIf { it.exists() }
 
-    private fun buildTestOutputFilePath(extension: String, subdirectoryName: String?, testPrefix: String?): Path {
+    private fun buildTestOutputFilePath(extension: String, subdirectoryName: String?, variant: String?): Path {
         val extensionWithDot = "." + extension.removePrefix(".")
         val baseName = testDataPath.nameWithoutExtension
         val directoryPath = subdirectoryName?.let { testDataPath.resolveSibling(it) } ?: testDataPath.parent
 
-        val relativePath = if (testPrefix != null) {
-            "$baseName.$testPrefix$extensionWithDot"
+        val relativePath = if (variant != null) {
+            "$baseName.$variant$extensionWithDot"
         } else {
             baseName + extensionWithDot
         }
@@ -438,13 +494,13 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         }
     }
 
-    private fun createTestConfiguration(): TestConfiguration {
+    private fun createTestConfiguration(): NonGroupingPhaseTestConfiguration {
         val testConfiguration = testConfiguration(testDataPath.toString(), configure)
         Disposer.register(disposable, testConfiguration.rootDisposable)
         return testConfiguration
     }
 
-    private fun createAndRegisterTestModuleStructure(testConfiguration: TestConfiguration) {
+    private fun createAndRegisterTestModuleStructure(testConfiguration: NonGroupingPhaseTestConfiguration) {
         val moduleStructure = testConfiguration.moduleStructureExtractor.splitTestDataByModules(
             testDataPath.toString(),
             testConfiguration.directives,
@@ -453,7 +509,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         testServices.register(TestModuleStructure::class, moduleStructure)
     }
 
-    private fun prepareToTheAnalysis(testConfiguration: TestConfiguration) {
+    private fun prepareToTheAnalysis(testConfiguration: NonGroupingPhaseTestConfiguration) {
         val moduleStructure = testServices.moduleStructure
         val artifactsProvider = ArtifactsProvider(testServices, moduleStructure.modules)
         testServices.registerArtifactsProvider(artifactsProvider)

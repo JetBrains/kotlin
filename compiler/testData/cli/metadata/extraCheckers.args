@@ -3,3 +3,5 @@ $TESTDATA_DIR$/extraCheckers.kt
 -d
 $TEMP_DIR$
 -Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native
+-cp
+$TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib

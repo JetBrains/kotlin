@@ -150,6 +150,74 @@ TYPED_TEST_P(TracingGCTest, ReleaseStableRefDuringRSCollection) {
     }
 }
 
+TYPED_TEST_P(TracingGCTest, TerminateInSTW) {
+    // Try to drive the concurrent mark to terminate in STW (after several unsuccessful concurrent attempts).
+    // Construct a linked list of arrays and continuously steal from the list just one step ahead of the GC's mark front.
+
+    constexpr int kListLength = 1000;
+    constexpr int kArraySize = 200;
+    // too many threads over-pace the GC
+    constexpr int kMutatorsCount = 2;
+
+    std::atomic gcDone = false;
+    std::atomic ready = 0;
+
+    std::vector<Mutator> mutators{kMutatorsCount};
+    std::vector<std::future<void>> futures{};
+    for (auto& mutator : mutators) {
+        futures.emplace_back(mutator.Execute([&ready, &gcDone](mm::ThreadData& threadData, Mutator&mutator) {
+            //prepare
+            auto& global = mutator.AddGlobalRoot();
+            auto& local = mutator.AddStackRoot();
+
+            for (int i = 0; i < kListLength; ++i) {
+                auto& next = AllocateArray<kArraySize>(threadData);
+                next.elements()[kArraySize - 1] = global->field1.accessor().load();
+                global->field1 = next.header();
+            }
+            local->field1 = global->field1.accessor().load();
+
+            ++ready;
+
+            // wait for GC
+            while (!mm::IsThreadSuspensionRequested()) {}
+            mm::safePoint(threadData);
+
+            // run
+            while (!gcDone.load(std::memory_order_relaxed)) {
+                auto* nextPtr = local->field1.accessor().load()->array();
+                if (nextPtr == nullptr) break;
+
+                auto& next = test_support::ObjectArray<kArraySize>::FromArrayHeader(nextPtr);
+                auto lastAccessor = next.elements()[kArraySize - 1].accessor();
+                local->field1 = lastAccessor.load();
+                lastAccessor.store(nullptr);
+
+                while (!mm::test_support::safePointsAreActive() && !gcDone.load(std::memory_order_relaxed)) {}
+                mm::safePoint(threadData);
+            }
+
+            // let the GC catch up if we were too fast
+            while (!gcDone) {
+                mm::safePoint(threadData);
+            }
+        }));
+    }
+
+    while (ready < kMutatorsCount) {}
+
+    mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
+    gcDone = true;
+
+    for (auto& future : futures) {
+        future.wait();
+    }
+}
+
 REGISTER_TYPED_TEST_SUITE_WITH_LISTS(
-        TracingGCTest, TRACING_GC_TEST_LIST, WeakResurrectionAtMarkTermination, ReleaseStableRefDuringRSCollection);
+        TracingGCTest, TRACING_GC_TEST_LIST,
+        WeakResurrectionAtMarkTermination,
+        ReleaseStableRefDuringRSCollection,
+        TerminateInSTW
+);
 INSTANTIATE_TYPED_TEST_SUITE_P(CMS, TracingGCTest, ConcurrentMarkAndSweepTest);

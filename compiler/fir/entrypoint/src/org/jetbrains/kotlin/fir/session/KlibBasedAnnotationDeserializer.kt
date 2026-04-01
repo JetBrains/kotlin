@@ -24,7 +24,6 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
     override fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<FirAnnotation> =
         loadAnnotationsFromMetadataIfNotEmpty(
             session,
-            classProto.flags,
             classProto.annotationList,
             nameResolver,
         ) ?: super.loadClassAnnotations(classProto, nameResolver)
@@ -37,7 +36,6 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
     ): List<FirAnnotation> =
         loadAnnotationsFromMetadataIfNotEmpty(
             session,
-            functionProto.flags,
             functionProto.annotationList,
             nameResolver,
         ) ?: super.loadFunctionAnnotations(containerSource, functionProto, nameResolver, typeTable)
@@ -51,7 +49,6 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
     ): List<FirAnnotation> =
         loadAnnotationsFromMetadataIfNotEmpty(
             session,
-            propertyProto.flags,
             propertyProto.annotationList,
             nameResolver,
             AnnotationUseSiteTarget.PROPERTY,
@@ -65,7 +62,6 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
     ): List<FirAnnotation> =
         loadAnnotationsFromMetadataIfNotEmpty(
             session,
-            constructorProto.flags,
             constructorProto.annotationList,
             nameResolver,
         ) ?: super.loadConstructorAnnotations(containerSource, constructorProto, nameResolver, typeTable)
@@ -82,7 +78,6 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
     ): List<FirAnnotation> =
         loadAnnotationsFromMetadataIfNotEmpty(
             session,
-            valueParameterProto.flags,
             valueParameterProto.annotationList,
             nameResolver,
         ) ?: super.loadValueParameterAnnotations(
@@ -103,7 +98,6 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
     ): List<FirAnnotation> =
         loadAnnotationsFromMetadataIfNotEmpty(
             session,
-            flags = null,
             enumEntryProto.annotationList,
             nameResolver,
         ) ?: super.loadEnumEntryAnnotations(classId, enumEntryProto, nameResolver)
@@ -117,7 +111,6 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
     ): List<FirAnnotation> =
         loadAnnotationsFromMetadataIfNotEmpty(
             session,
-            getterFlags,
             propertyProto.getterAnnotationList,
             nameResolver,
             AnnotationUseSiteTarget.PROPERTY_GETTER
@@ -132,7 +125,6 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
     ): List<FirAnnotation> =
         loadAnnotationsFromMetadataIfNotEmpty(
             session,
-            setterFlags,
             propertyProto.setterAnnotationList,
             nameResolver,
             AnnotationUseSiteTarget.PROPERTY_SETTER
@@ -146,7 +138,6 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
     ): List<FirAnnotation> =
         loadAnnotationsFromMetadataIfNotEmpty(
             session,
-            propertyProto.flags,
             propertyProto.backingFieldAnnotationList,
             nameResolver,
             AnnotationUseSiteTarget.FIELD,
@@ -160,7 +151,6 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
     ): List<FirAnnotation> =
         loadAnnotationsFromMetadataIfNotEmpty(
             session,
-            propertyProto.flags,
             propertyProto.delegateFieldAnnotationList,
             nameResolver,
             AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD,
@@ -173,26 +163,16 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
         typeTable: TypeTable,
         kind: CallableKind,
     ): List<FirAnnotation> = when (callableProto) {
-        is ProtoBuf.Function -> loadAnnotationsFromMetadataIfNotEmpty(
-            session,
-            callableProto.flags,
-            callableProto.extensionReceiverAnnotationList,
-            nameResolver,
-        )
-        is ProtoBuf.Property -> loadAnnotationsFromMetadataIfNotEmpty(
-            session,
-            callableProto.flags,
-            callableProto.extensionReceiverAnnotationList,
-            nameResolver,
-        )
+        is ProtoBuf.Function -> loadAnnotationsFromMetadataIfNotEmpty(session, callableProto.extensionReceiverAnnotationList, nameResolver)
+        is ProtoBuf.Property -> loadAnnotationsFromMetadataIfNotEmpty(session, callableProto.extensionReceiverAnnotationList, nameResolver)
         else -> null
     } ?: super.loadExtensionReceiverParameterAnnotations(containerSource, callableProto, nameResolver, typeTable, kind)
 
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> =
-        loadAnnotationsFromMetadataIfNotEmpty(session, null, typeProto.annotationList, nameResolver)
+        loadAnnotationsFromMetadataIfNotEmpty(session, typeProto.annotationList, nameResolver)
             ?: super.loadTypeAnnotations(typeProto, nameResolver)
 
     override fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> =
-        loadAnnotationsFromMetadataIfNotEmpty(session, null, typeParameterProto.annotationList, nameResolver)
+        loadAnnotationsFromMetadataIfNotEmpty(session, typeParameterProto.annotationList, nameResolver)
             ?: super.loadTypeParameterAnnotations(typeParameterProto, nameResolver)
 }

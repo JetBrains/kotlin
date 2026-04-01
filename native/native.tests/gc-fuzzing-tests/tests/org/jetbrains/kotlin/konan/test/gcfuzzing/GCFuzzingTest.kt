@@ -12,34 +12,32 @@ import org.junit.jupiter.api.TestFactory
 import java.util.stream.Stream
 import kotlin.time.TimeSource
 import kotlin.streams.asStream
+import kotlin.test.fail
 import kotlin.time.Duration
 
 class GCFuzzingTest : AbstractNativeSimpleTest() {
 
     @TestFactory
-    fun executeSingle(): Collection<DynamicTest> {
-        return listOfNotNull(System.getProperty("gcfuzzing.id"))
-            .mapNotNull {
-                ProgramId.fromString(it)
-            }
-            .mapNotNull {
-                DynamicTest.dynamicTest("$it") {
-                    execute(it)
-                }
-            }
-    }
+    fun simple(): Stream<DynamicTest> {
+        val executeSingleId = System.getProperty("gcfuzzing.single.id")
+        if (executeSingleId != null) {
+            val id = ProgramId.fromString(executeSingleId) ?: fail("Invalid program ID \"$executeSingleId\"")
+            return listOf(DynamicTest.dynamicTest("$id") {
+                execute(id)
+            }).stream()
+        }
 
-    @TestFactory
-    fun simpleFuzz(): Stream<DynamicTest> {
+
         val timelimit = Duration.parse(System.getProperty("gcfuzzing.timelimit")!!)
         val start = TimeSource.Monotonic.markNow()
 
-        val fuzzer = SimpleFuzzer(0)
+        val seed = System.getProperty("gcfuzzing.seed")!!.toInt()
+        val fuzzer = SimpleFuzzer(seed)
         var stepCounter = 0
         return generateSequence {
             if (start.elapsedNow() > timelimit) return@generateSequence null
             val stepId = fuzzer.nextStepId()
-            DynamicTest.dynamicTest("step #${stepCounter++} ($stepId)") {
+            DynamicTest.dynamicTest("SimpleFuzzer($seed) step #${stepCounter++} ($stepId)") {
                 execute(stepId)
             }
         }.asStream()

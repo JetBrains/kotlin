@@ -1,0 +1,15 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public val kotlin.String.bar1: kotlin.Int /* compiled code */
+
+private val kotlin.String.bar2: kotlin.Int /* compiled code */
+
+public val kotlin.String.bar3: kotlin.Int /* compiled code */
+    public final inline get() { /* compiled code */ }
+
+public fun kotlin.String.foo1(): kotlin.Unit { /* compiled code */ }
+
+private fun kotlin.String.foo2(): kotlin.Unit { /* compiled code */ }
+
+public inline fun kotlin.String.foo3(): kotlin.Unit { /* compiled code */ }

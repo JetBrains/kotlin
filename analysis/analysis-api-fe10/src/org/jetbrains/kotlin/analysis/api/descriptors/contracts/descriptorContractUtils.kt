@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractCallsInPlaceContractEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsResultOfEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractConditionalContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractConstantValue
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractExplicitParameterValue
@@ -67,6 +68,9 @@ private class ContractDescriptionElementToAnalysisApi(val analysisContext: Fe10A
 
     override fun visitCallsEffectDeclaration(callsEffect: CallsEffectDeclaration, data: Unit): Any =
         KaBaseContractCallsInPlaceContractEffectDeclaration(callsEffect.variableReference.accept(), callsEffect.kind)
+
+    override fun visitReturnsResultOfEffectDeclaration(returnsResultOfEffect: ReturnsResultOfEffectDeclaration, data: Unit): Any =
+        KaBaseContractReturnsResultOfEffectDeclaration(returnsResultOfEffect.variableReference.accept())
 
     override fun visitLogicalOr(logicalOr: LogicalOr, data: Unit): Any = KaBaseContractBinaryLogicExpression(
         logicalOr.left.accept(),

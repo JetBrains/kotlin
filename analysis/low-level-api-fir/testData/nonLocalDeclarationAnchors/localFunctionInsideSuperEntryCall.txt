@@ -1,12 +1,12 @@
 package one
 
-/* anchor --> */interface Interface {
-    /* anchor --> */fun foo(/* anchor --> */param: String/* <-- */)/* <-- */
+/* anchor (KtClass) --> */interface Interface {
+    /* anchor (KtNamedFunction) --> */fun foo(/* anchor (KtParameter) --> */param: String/* <-- */)/* <-- */
 }/* <-- */
 
-/* anchor --> */open class ClassWithParameter/* anchor --> */(/* anchor --> */i: Interface/* <-- */)/* <-- *//* <-- */
+/* anchor (KtClass) --> */open class ClassWithParameter/* anchor (KtPrimaryConstructor) --> */(/* anchor (KtParameter) --> */i: Interface/* <-- */)/* <-- *//* <-- */
 
-/* anchor --> */class TopLevelClass : ClassWithParameter(object : Interface {
+/* anchor (KtClass) --> */class TopLevelClass : ClassWithParameter(object : Interface {
     override fun foo(param: String) {
     }
 })/* <-- */

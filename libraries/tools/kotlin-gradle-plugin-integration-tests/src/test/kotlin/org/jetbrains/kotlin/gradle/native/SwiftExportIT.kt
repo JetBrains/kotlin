@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
+import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -30,6 +31,13 @@ import kotlin.test.assertNotNull
 @SwiftExportGradlePluginTests
 class SwiftExportIT : KGPBaseTest() {
 
+    // Raw USR expectations are hardcoded with demangled form for readability.
+    // See docs/swift-export/testing-usr-stability.md.
+
+    private companion object {
+        private const val DEFAULT_IOS_DEPLOYMENT_TARGET = "14.1"
+    }
+
     @DisplayName("embedSwiftExportForXcode fail")
     @GradleTest
     fun shouldFailWithExecutingEmbedSwiftExportForXcode(
@@ -47,6 +55,36 @@ class SwiftExportIT : KGPBaseTest() {
             buildAndFail(":embedSwiftExportForXcode") {
                 assertOutputContains("Please run the embedSwiftExportForXcode task from Xcode")
                 assertOutputDoesNotContain("ConfigurationCacheProblemsException: Configuration cache problems found in this build")
+            }
+        }
+    }
+
+    @DisplayName("embedSwiftExportForXcode fails for missing configured architecture")
+    @GradleTest
+    fun shouldFailSwiftExportWhenXcodeRequestsArchitectureNotConfiguredInGradle(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                }
+            }
+            buildAndFail(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(
+                    testBuildDir,
+                    archs = listOf("arm64", "x86_64"),
+                    sdk = "iphonesimulator",
+                )
+            ) {
+                assertTasksFailed(":validateArchitecturesForEmbedSwiftExportForXcode")
+                assertHasDiagnostic(KotlinToolingDiagnostics.XcodeArchitectureNotConfiguredInGradle)
+                assertOutputContains("ios_x64")
             }
         }
     }
@@ -181,6 +219,21 @@ class SwiftExportIT : KGPBaseTest() {
             assert(nmOutput.output.contains("com_github_jetbrains_swiftexport_functionToRemove").not()) {
                 "functionToRemove function is present in libShared.a"
             }
+
+            // Verify Swift module API surface using symbolgraph-extract
+            assertSwiftModuleSymbols(
+                workingDir = projectPath.toFile(),
+                moduleName = "Shared",
+                target = "arm64-apple-ios$DEFAULT_IOS_DEPLOYMENT_TARGET",
+                sdk = "iphoneos",
+                searchPaths = listOf(builtProductsDir.toFile()),
+                expectedSymbols = setOf(
+                    SwiftSymbol(
+                        demangledId = "static (extension in Shared):ExportedKotlinPackages.com.github.jetbrains.swiftexport.barbarbar() -> Swift.Int32",
+                        pathComponents = listOf("barbarbar()")
+                    )
+                )
+            )
         }
     }
 
@@ -376,6 +429,36 @@ class SwiftExportIT : KGPBaseTest() {
 
             assert(arm64Compilation.isSuccessful)
             assert(x64Compilation.isSuccessful)
+
+            // Verify Swift module API surface for arm64 (iosSimulatorArm64)
+            assertSwiftModuleSymbols(
+                workingDir = projectPath.toFile(),
+                moduleName = "Shared",
+                target = "arm64-apple-ios${sdkVersion.output.trim()}-simulator",
+                sdk = "iphonesimulator",
+                searchPaths = listOf(builtProductsDir),
+                expectedSymbols = setOf(
+                    SwiftSymbol(
+                        demangledId = "Shared.iosSimulatorArm64Bar() -> ()",
+                        pathComponents = listOf("iosSimulatorArm64Bar()")
+                    )
+                )
+            )
+
+            // Verify Swift module API surface for x86_64 (iosX64)
+            assertSwiftModuleSymbols(
+                workingDir = projectPath.toFile(),
+                moduleName = "Shared",
+                target = "x86_64-apple-ios${sdkVersion.output.trim()}-simulator",
+                sdk = "iphonesimulator",
+                searchPaths = listOf(builtProductsDir),
+                expectedSymbols = setOf(
+                    SwiftSymbol(
+                        demangledId = "Shared.iosX64Bar() -> ()",
+                        pathComponents = listOf("iosX64Bar()")
+                    )
+                )
+            )
         }
     }
 
@@ -443,8 +526,9 @@ class SwiftExportIT : KGPBaseTest() {
             include(subprojectOne, "dep-one")
             include(subprojectTwo, "dep-two")
 
+            // dep-two is intentionally not part of the exported API surface.
             build(
-                ":iosArm64DebugSwiftExport",
+                ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 assertTasksExecuted(":dep-one:compileKotlinIosArm64")
@@ -462,16 +546,76 @@ class SwiftExportIT : KGPBaseTest() {
                 val modulesFile = projectPath.resolve("build/SwiftExport/iosArm64/Debug/modules/Shared.json")
                 assertFileExists(modulesFile)
 
-                val modules = parseJsonToMap(modulesFile).getNestedValue<List<Map<String, Any>>>("modules")
+                val modules = parseJsonToMap(modulesFile).getNestedList("modules")
                 assertNotNull(modules)
 
-                val actualModules = modules.map { it["name"] as String }.toSet()
+                val actualModules = modules.map { it["name"]?.jsonPrimitive?.content ?: "" }.toSet()
 
                 assertEquals(
                     setOf("Shared", "SharedDepOne", "ExportedKotlinPackages", "KotlinRuntimeSupport"),
                     actualModules
                 )
             }
+
+            val builtProductsDir = projectPath.resolve("build/builtProductsDir").toFile()
+            // Verify Swift module API surface for all exported modules
+            // - Shared: exports foo() which returns One from SharedDepOne
+            // - SharedDepOne: exports the One class
+            // - ExportedKotlinPackages: contains package-namespaced declarations (empty in this test)
+            // - KotlinRuntimeSupport: exposes Swift-side runtime helpers
+            assertAllSwiftModuleSymbols(
+                workingDir = projectPath.toFile(),
+                builtProductsDir = builtProductsDir,
+                target = "arm64-apple-ios$DEFAULT_IOS_DEPLOYMENT_TARGET",
+                sdk = "iphoneos",
+                expectedSymbolsByModule = mapOf(
+                    "Shared" to setOf(
+                        SwiftSymbol(
+                            demangledId = "Shared.foo() -> (extension in SharedDepOne):ExportedKotlinPackages.org.foo.One",
+                            pathComponents = listOf("foo()")
+                        )
+                    ),
+                    "SharedDepOne" to setOf(
+                        SwiftSymbol(
+                            demangledId = "(extension in SharedDepOne):ExportedKotlinPackages.org.foo.One",
+                            pathComponents = listOf("org.foo.One")
+                        ),
+                        SwiftSymbol(
+                            demangledId = "(extension in SharedDepOne):ExportedKotlinPackages.org.foo.One.init() -> (extension in SharedDepOne):ExportedKotlinPackages.org.foo.One",
+                            pathComponents = listOf("org.foo.One.init()")
+                        )
+                    ),
+                    "ExportedKotlinPackages" to setOf(
+                        SwiftSymbol(
+                            demangledId = "ExportedKotlinPackages.org",
+                            pathComponents = listOf("org")
+                        ),
+                        SwiftSymbol(
+                            demangledId = "ExportedKotlinPackages.org.foo",
+                            pathComponents = listOf("org.foo")
+                        )
+                    ),
+                    // KotlinError exports the struct and its declared members.
+                    "KotlinRuntimeSupport" to setOf(
+                        SwiftSymbol(
+                            demangledId = "KotlinRuntimeSupport.KotlinError",
+                            pathComponents = listOf("KotlinError")
+                        ),
+                        SwiftSymbol(
+                            demangledId = "KotlinRuntimeSupport.KotlinError.init(wrapped: __C.KotlinBase) -> KotlinRuntimeSupport.KotlinError",
+                            pathComponents = listOf("KotlinError.init(wrapped:)")
+                        ),
+                        SwiftSymbol(
+                            demangledId = "KotlinRuntimeSupport.KotlinError.wrapped : __C.KotlinBase",
+                            pathComponents = listOf("KotlinError.wrapped")
+                        ),
+                        SwiftSymbol(
+                            demangledId = "KotlinRuntimeSupport.KotlinError.description : Swift.String",
+                            pathComponents = listOf("KotlinError.description")
+                        )
+                    )
+                )
+            )
         }
     }
 
@@ -567,6 +711,22 @@ class SwiftExportIT : KGPBaseTest() {
             ) {
                 assertTasksExecuted(":iosArm64DebugBuildSPMPackage")
             }
+
+            // Verify Swift module API surface using symbolgraph-extract
+            val builtProductsDir = projectPath.resolve("build/builtProductsDir")
+            assertSwiftModuleSymbols(
+                workingDir = projectPath.toFile(),
+                moduleName = "Shared",
+                target = "arm64-apple-ios17.0",
+                sdk = "iphoneos",
+                searchPaths = listOf(builtProductsDir.toFile()),
+                expectedSymbols = setOf(
+                    SwiftSymbol(
+                        demangledId = "Shared.demo() -> UIKit.UIContentUnavailableConfiguration",
+                        pathComponents = listOf("demo()")
+                    )
+                )
+            )
         }
     }
 }

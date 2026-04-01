@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 
-class StripTypeAliasDeclarationsLowering : DeclarationTransformer {
+class StripTypeAliasDeclarationsLowering(@Suppress("unused") context: LoweringContext) : DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         return if (declaration is IrTypeAlias) listOf() else null

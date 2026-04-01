@@ -14,9 +14,14 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.stats.ModulesReportsData
+import org.jetbrains.kotlin.stats.StatsCalculator
 import org.jetbrains.kotlin.util.PerformanceCounter
-import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PerformanceManagerImpl
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.Time
+import org.jetbrains.kotlin.util.UnitStats
+import org.jetbrains.kotlin.util.forEachPhaseMeasurement
 import java.io.FileOutputStream
 import java.io.PrintStream
 import java.nio.file.Files
@@ -39,32 +44,10 @@ abstract class AbstractFullPipelineModularizedTest(config: ModularizedTestConfig
 
     private val isolated = AbstractIsolatedFullPipelineModularizedTest(config)
 
-    protected data class CumulativeTime(
-        val gcInfo: Map<String, GCInfo>,
-        val components: Map<String, Long>,
-        val files: Int,
-        val lines: Int
-    ) {
-        constructor() : this(emptyMap(), emptyMap(), 0, 0)
-
-        operator fun plus(other: CumulativeTime): CumulativeTime {
-            return CumulativeTime(
-                (gcInfo.values + other.gcInfo.values).groupingBy { it.name }.reduce { key, accumulator, element ->
-                    GCInfo(key, accumulator.gcTime + element.gcTime, accumulator.collections + element.collections)
-                },
-                (components.toList() + other.components.toList()).groupingBy { (name, _) -> name }.fold(0L) { a, b -> a + b.second },
-                files + other.files,
-                lines + other.lines
-            )
-        }
-
-        fun totalTime() = components.values.sum()
-    }
-
-    protected lateinit var totalPassResult: CumulativeTime
+    private val passResults: MutableMap<String, UnitStats> = mutableMapOf()
 
     override fun beforePass(pass: Int) {
-        totalPassResult = CumulativeTime()
+        passResults.clear()
         totalModules.clear()
         okModules.clear()
         errorModules.clear()
@@ -82,7 +65,7 @@ abstract class AbstractFullPipelineModularizedTest(config: ModularizedTestConfig
     }
 
     protected fun formatReportTable(stream: PrintStream) {
-        val total = totalPassResult
+        val totalStats = StatsCalculator(ModulesReportsData(passResults)).totalStats
         var totalGcTimeMs = 0L
         var totalGcCount = 0L
         printTable(stream) {
@@ -95,14 +78,13 @@ abstract class AbstractFullPipelineModularizedTest(config: ModularizedTestConfig
                     cell(count.toString())
                 }
             }
-            for (measurement in total.gcInfo.values) {
-                totalGcTimeMs += measurement.gcTime
-                totalGcCount += measurement.collections
-                gcRow(measurement.name, measurement.gcTime, measurement.collections)
+            for (gcStats in totalStats.gcStats) {
+                totalGcTimeMs += gcStats.millis
+                totalGcCount += gcStats.count
+                gcRow(gcStats.kind, gcStats.millis, gcStats.count)
             }
             separator()
             gcRow("Total", totalGcTimeMs, totalGcCount)
-
         }
 
         printTable(stream) {
@@ -117,14 +99,39 @@ abstract class AbstractFullPipelineModularizedTest(config: ModularizedTestConfig
                     linePerSecondCell(lines, timeMs, timeUnit = TableTimeUnit.MS)
                 }
             }
-            for (component in total.components) {
-                phase(component.key, component.value, total.files, total.lines)
+
+            totalStats.forEachPhaseMeasurement { type, time ->
+                val finalTime = when (type) {
+                    PhaseType.Initialization -> {
+                        // Append the extra time to the initialization time to preserve compatibility with the dashboard measurements
+                        (time ?: Time.ZERO) + totalStats.findJavaClassStats?.time + totalStats.findKotlinClassStats?.time
+                    }
+                    PhaseType.Analysis -> {
+                        // Always fill the Analysis time to make sure it doesn't break dashboard measurements
+                        time ?: Time.ZERO
+                    }
+                    else -> {
+                        time ?: return@forEachPhaseMeasurement
+                    }
+                }
+                // Preserve old names and drop some new measurements for compatibility with the dashboard format
+                val name = when (type) {
+                    PhaseType.Initialization -> "Init"
+                    PhaseType.Analysis -> "Analysis"
+                    PhaseType.TranslationToIr -> "Translation"
+                    PhaseType.IrPreLowering,
+                    PhaseType.IrSerialization,
+                    PhaseType.KlibWriting -> {
+                        return@forEachPhaseMeasurement
+                    }
+                    PhaseType.IrLowering -> "Lowering"
+                    PhaseType.Backend -> "Generation"
+                }
+                phase(name, finalTime.millis, totalStats.filesCount, totalStats.linesCount)
             }
-
             separator()
-            phase("Total", total.totalTime(), total.files, total.lines)
+            phase("Total", totalStats.getTotalTime().millis, totalStats.filesCount, totalStats.linesCount)
         }
-
     }
 
     abstract fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData)
@@ -218,7 +225,7 @@ abstract class AbstractFullPipelineModularizedTest(config: ModularizedTestConfig
 
     override fun processModule(moduleData: ModuleData): ProcessorAction {
         val outputDir = Files.createTempDirectory("compile-output").toFile()
-        val manager = CompilerPerformanceManager()
+        val manager = PerformanceManagerImpl(JvmPlatforms.defaultJvmPlatform, "Modularized test performance manager")
         val collector = TestMessageCollector()
 
         CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
@@ -226,12 +233,18 @@ abstract class AbstractFullPipelineModularizedTest(config: ModularizedTestConfig
             configureArguments(arguments, moduleData)
             manager.detailedPerf = arguments.detailedPerf
         }
-        val resultTime = manager.reportCumulativeTime()
+        val resultStats = manager.unitStats
         PerformanceCounter.resetAllCounters()
 
         outputDir.deleteRecursively()
         if (result == ExitCode.OK) {
-            totalPassResult = totalPassResult + resultTime
+            // Use the compound key that include the `timestamp` because module names sometimes overlap
+            val key = "${moduleData.name}-${moduleData.timestamp}"
+            if (!passResults.containsKey(key)) {
+                passResults[key] = resultStats
+            } else {
+                error("All keys should be unique, the '${key}' is duplicated")
+            }
         }
         return handleResult(result, moduleData, collector, manager.getTargetInfo())
     }
@@ -248,38 +261,6 @@ abstract class AbstractFullPipelineModularizedTest(config: ModularizedTestConfig
             formatReport(stream, finalReport)
             stream.println()
             stream.println()
-        }
-    }
-
-
-    private class CompilerPerformanceManager : PerformanceManager(JvmPlatforms.defaultJvmPlatform, "Modularized test performance manager") {
-
-        fun reportCumulativeTime(): CumulativeTime {
-            val gcInfo = unitStats.gcStats.associate { it.kind to GCInfo(it.kind, it.millis, it.count) }
-
-            val initTime = unitStats.let {
-                (it.initStats ?: Time.ZERO) +
-                        (it.findJavaClassStats?.time ?: Time.ZERO) +
-                        (it.findKotlinClassStats?.time ?: Time.ZERO)
-            }
-
-            val components = buildMap {
-                put("Init", initTime.millis)
-                put("Analysis", unitStats.analysisStats?.millis ?: 0)
-                unitStats.translationToIrStats?.millis?.let { put("Translation", it) }
-                unitStats.irPreLoweringStats?.millis?.let { put("Pre-lowering", it) }
-                unitStats.irSerializationStats?.millis?.let { put("Serialization", it) }
-                unitStats.klibWritingStats?.millis?.let { put("Klib writing", it) }
-                unitStats.irLoweringStats?.millis?.let { put("Lowering", it) }
-                unitStats.backendStats?.millis?.let { put("Generation", it) }
-            }
-
-            return CumulativeTime(
-                gcInfo,
-                components,
-                files,
-                lines
-            )
         }
     }
 

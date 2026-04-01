@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlinx.serialization.matrix.cases
 
+import org.jetbrains.kotlinx.serialization.matrix.*
 import org.jetbrains.kotlinx.serialization.matrix.SerializerKind.*
 import org.jetbrains.kotlinx.serialization.matrix.TypeLocation.FILE_ROOT
 import org.jetbrains.kotlinx.serialization.matrix.TypeLocation.NESTED
-import org.jetbrains.kotlinx.serialization.matrix.*
-import org.jetbrains.kotlinx.serialization.matrix.impl.*
 import org.jetbrains.kotlinx.serialization.matrix.impl.elements
 import org.jetbrains.kotlinx.serialization.matrix.impl.serialName
+import org.jetbrains.kotlinx.serialization.matrix.impl.serializerName
 
 fun CombinationContext.enumsTestMatrix() {
     val enums = defineEnums(

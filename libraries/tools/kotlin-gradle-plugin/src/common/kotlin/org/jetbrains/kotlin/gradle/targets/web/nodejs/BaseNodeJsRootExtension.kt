@@ -41,12 +41,8 @@ abstract class BaseNodeJsRootExtension internal constructor(
         if (projectProperties.errorJsGenerateExternals != null) {
             project.logger.warn(
                 """
-                |
-                |==========
-                |Please note, Dukat integration in Gradle plugin does not work now, it was removed.
-                |We rethink how we can integrate properly.
-                |==========
-                |
+                |The Dukat integration in Gradle plugin has been removed.
+                |Remove the `kotlin.js.generate.externals` Gradle property.
                 """.trimMargin()
             )
         }

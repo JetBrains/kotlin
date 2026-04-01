@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.swiftexport.standalone.test
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
+import org.jetbrains.kotlin.test.backend.handlers.UpdateTestDataSupport
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.io.path.div
 
+@ExtendWith(UpdateTestDataSupport::class)
 abstract class AbstractSwiftExportWithResultValidationTest : AbstractSwiftExportTest(), SwiftExportValidator {
     private object Directives : SimpleDirectivesContainer() {
         // TODO: better refactor to new test infrastructure

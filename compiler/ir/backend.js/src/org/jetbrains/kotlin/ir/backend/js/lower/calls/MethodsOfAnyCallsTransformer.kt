@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransformer {
+    private val irBuiltIns = context.irBuiltIns
     private val symbols = context.symbols
     private val nameToTransformer: Map<Name, (IrFunctionAccessExpression) -> IrExpression>
 
@@ -70,7 +71,7 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
             val superQualifierSymbol = call.superQualifierSymbol
             if (superQualifierSymbol != null &&
                 !superQualifierSymbol.owner.isInterface &&
-                superQualifierSymbol != symbols.anyClassSymbol) {
+                superQualifierSymbol != irBuiltIns.anyClass) {
                 return false
             }
         }

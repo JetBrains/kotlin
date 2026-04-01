@@ -2,7 +2,7 @@
 <results>
   <testsuite name="Tests" tests="1" skipped="0" failures="1" errors="0" timestamp="..." hostname="..." time="...">
     <properties />
-    <testcase name="testHello[node]" classname="Tests" time="...">
+    <testcase name="testHello[js, node]" classname="Tests" time="...">
       <failure message="..." type="AssertionError">...</failure>
     </testcase>
     <system-out />

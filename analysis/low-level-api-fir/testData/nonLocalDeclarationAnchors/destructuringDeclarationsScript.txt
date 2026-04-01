@@ -1,14 +1,14 @@
-/* anchor --> *//* anchor --> */val (/* anchor --> */a/* <-- */, /* anchor --> */b/* <-- */) = 1 to 2/* <-- */
+/* anchor (KtScript) --> *//* anchor (KtDestructuringDeclaration) --> */val (/* anchor (KtDestructuringDeclarationEntry) --> */a/* <-- */, /* anchor (KtDestructuringDeclarationEntry) --> */b/* <-- */) = 1 to 2/* <-- */
 
-/* anchor --> */class Foo {
-    /* anchor --> */val (c, d) = 3 to 4/* <-- */
+/* anchor (KtClass) --> */class Foo {
+    /* anchor (KtDestructuringDeclaration) --> */val (c, d) = 3 to 4/* <-- */
 }/* <-- */
 
-/* anchor --> */if (true) {
+/* anchor (KtScriptInitializer) --> */if (true) {
     val (e, f) = 5 to 6
 }/* <-- */
 
-/* anchor --> */fun foo() {
+/* anchor (KtNamedFunction) --> */fun foo() {
     val (g, h) = 7 to 9
 
     ba { (a, b), c ->
@@ -16,7 +16,7 @@
     }
 }/* <-- */
 
-/* anchor --> */ba { (a, b), c ->
+/* anchor (KtScriptInitializer) --> */ba { (a, b), c ->
 
 }/* <-- */
 /* <-- */

@@ -1,24 +1,24 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.test.services.configuration
 
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.evaluatedConstTracker
-import org.jetbrains.kotlin.constant.EvaluatedConstTracker
+import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
+import org.jetbrains.kotlin.test.model.ArtifactKinds
+import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import java.io.File
 
-class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : JsEnvironmentConfigurator(testServices) {
+open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : JsEnvironmentConfigurator(testServices) {
     override val compilationStage: CompilationStage
         get() = CompilationStage.SECOND
 
@@ -32,6 +32,19 @@ class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : JsEnvir
 
         super.configureCompilerConfiguration(configuration, module)
 
+        val runtimeKlibs = getRuntimePathsForModule(module, testServices)
+        val klibDependencies = getKlibDependencies(module, testServices, DependencyRelation.RegularDependency)
+            .map { it.absolutePath }
+        val klibFriendDependencies = getKlibDependencies(module, testServices, DependencyRelation.FriendDependency)
+            .map { it.absolutePath }
+
+        val klibArtifact = testServices.artifactsProvider.getArtifact(module, ArtifactKinds.KLib)
+        val mainModule = MainModule.Klib(klibArtifact.outputFile.absolutePath)
+        val mainPath = File(mainModule.libPath).canonicalPath
+        configuration.libraries = runtimeKlibs + klibDependencies + klibFriendDependencies + mainPath
+        configuration.friendLibraries = klibFriendDependencies
+        configuration.includes = mainPath
+
         val sourceDirs = module.files.mapNotNull { it.originalFile.parent }.distinct()
         configuration.sourceMapSourceRoots = sourceDirs
         configuration.sourceMap = true
@@ -43,11 +56,5 @@ class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : JsEnvir
         configuration.generateRegionComments = true
 
         configuration.filePathsPrefixMap = mapOf(File(".").absolutePath.removeSuffix(".") to "")
-
-        val firstPhaseConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
-        configuration.putIfAbsent(
-            CommonConfigurationKeys.EVALUATED_CONST_TRACKER,
-            firstPhaseConfiguration.evaluatedConstTracker ?: EvaluatedConstTracker.create()
-        )
     }
 }

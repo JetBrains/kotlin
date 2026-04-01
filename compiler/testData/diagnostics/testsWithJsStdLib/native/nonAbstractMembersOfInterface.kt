@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 external interface I {
     <!NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE!>fun foo(): Unit<!> = definedExternally
 

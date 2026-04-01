@@ -1,9 +1,5 @@
-/*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
- */
 // WITH_STDLIB
-
+// FILE: lib.kt
 import kotlin.test.*
 
 @Suppress("NOTHING_TO_INLINE")
@@ -14,6 +10,10 @@ inline fun <T, C : MutableCollection<in T>> foo(destination: C, predicate: (T) -
     }
     return destination
 }
+
+// FILE: main.kt
+
+import kotlin.test.*
 
 fun bar(): Boolean {
     val result = foo <Int, MutableList<Int>> (mutableListOf(1, 2, 3)) { true }

@@ -2,5 +2,6 @@ KDocName(48,66): 'foo.Foo.Nested.foo'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo.Foo.Nested) val foo: kotlin.Int

@@ -1,0 +1,7 @@
+KtValueArgument(41,46): '"str"'
+  KtDefaultAnnotationArgumentReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      {psi: ClsMethodImpl} value: kotlin.String

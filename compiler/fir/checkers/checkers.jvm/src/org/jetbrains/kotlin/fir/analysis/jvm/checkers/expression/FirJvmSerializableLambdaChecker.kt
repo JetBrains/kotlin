@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
 
 object FirJvmSerializableLambdaChecker : FirAnnotationChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirAnnotation) {
         if (expression.fqName(context.session) == JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME) {

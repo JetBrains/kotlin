@@ -65,8 +65,6 @@ private fun checkClashWithInvisibleProperty(
     expression: FirQualifiedAccessExpression,
 ) {
     val scope = dispatchReceiver.resolvedType.scope(
-        context.session,
-        context.scopeSession,
         CallableCopyTypeCalculator.CalculateDeferredForceLazyResolution,
         requiredMembersPhase = null
     ) ?: return

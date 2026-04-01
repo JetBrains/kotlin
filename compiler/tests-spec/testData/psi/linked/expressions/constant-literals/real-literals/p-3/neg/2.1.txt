@@ -49,24 +49,7 @@ KtFile: 2.1.kt
     FLOAT_CONSTANT
       PsiElement(FLOAT_CONSTANT)('4444E-99999999999999999f')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
+      PsiElement(INTEGER_LITERAL)('000000000000000000')
   PsiWhiteSpace('\n')
   PROPERTY
     PsiElement(val)('val')
@@ -138,8 +121,7 @@ KtFile: 2.1.kt
     FLOAT_CONSTANT
       PsiElement(FLOAT_CONSTANT)('5e50501f')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('11')
+      PsiElement(INTEGER_LITERAL)('011')
   PsiWhiteSpace('\n')
   PROPERTY
     PsiElement(val)('val')
@@ -163,11 +145,7 @@ KtFile: 2.1.kt
     FLOAT_CONSTANT
       PsiElement(FLOAT_CONSTANT)('76543f')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('0')
+      PsiElement(INTEGER_LITERAL)('00000')
   PsiWhiteSpace('\n')
   PROPERTY
     PsiElement(val)('val')
@@ -179,8 +157,7 @@ KtFile: 2.1.kt
     FLOAT_CONSTANT
       PsiElement(FLOAT_CONSTANT)('8765432F')
     PsiErrorElement:Property getter or setter expected
-      PsiElement(INTEGER_LITERAL)('0')
-      PsiElement(INTEGER_LITERAL)('10')
+      PsiElement(INTEGER_LITERAL)('010')
   PsiWhiteSpace('\n')
   PROPERTY
     PsiElement(val)('val')

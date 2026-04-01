@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.js")
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 repositories {

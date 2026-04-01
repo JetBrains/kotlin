@@ -390,9 +390,14 @@ private fun unfoldStringConcatenation(expression: IrStringConcatenation, environ
             is Primitive -> {
                 // This block is not really needed, but this way it is easier to handle `toString` for JS.
                 callStack.popState()
+
+                if (state.isNull()) {
+                    return callStack.pushState(convertToPrimitive("null", environment.irBuiltIns.stringType))
+                }
+
                 val toStringCall = IrCallImpl.fromSymbolOwner(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    if (state.isNull()) environment.irBuiltIns.extensionToString else environment.irBuiltIns.memberToString
+                    environment.toStringSymbol
                 )
                 callStack.pushSimpleInstruction(toStringCall)
                 callStack.pushState(state)

@@ -1,0 +1,5 @@
+KtNameReferenceExpression(54,64): 'plusAssign'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit
+    ]

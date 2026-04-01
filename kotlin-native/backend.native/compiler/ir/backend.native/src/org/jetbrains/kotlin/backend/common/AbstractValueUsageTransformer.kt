@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * TODO: consider making this visitor non-recursive to make it more general.
  */
 internal abstract class AbstractValueUsageTransformer(
-        val symbols: KonanSymbols,
+        val symbols: BackendNativeSymbols,
         val irBuiltIns: IrBuiltIns
 ): IrElementTransformerVoid() {
 
@@ -192,7 +192,7 @@ internal abstract class AbstractValueUsageTransformer(
     override fun visitThrow(expression: IrThrow): IrExpression {
         expression.transformChildrenVoid(this)
 
-        expression.value = expression.value.useAs(symbols.throwable.owner.defaultType)
+        expression.value = expression.value.useAs(irBuiltIns.throwableClass.owner.defaultType)
 
         return expression
     }

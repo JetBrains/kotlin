@@ -1,5 +1,7 @@
 // DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS
 // WITH_STDLIB
+
+// FILE: lib.kt
 class A {
     inner class Inner {
         inline fun <T : CharSequence> foo(a: T) = a.length
@@ -8,6 +10,7 @@ class A {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     val arguments = listOf<String>("0123456789", "", "\n")
     for (arg in arguments)

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.psi.utils.OperatorTokens
 import java.util.*
 
 // NOTE: in this file we collect only Kotlin-specific methods working with PSI and not modifying it
@@ -105,7 +105,7 @@ fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
             }
         }
         parent is KtBinaryExpression && parent.operationReference == this -> {
-            return if (parent.operationToken in OperatorConventions.IN_OPERATIONS) parent.right else parent.left
+            return if (parent.operationToken in OperatorTokens.IN_OPERATIONS) parent.right else parent.left
         }
         parent is KtUnaryExpression && parent.operationReference == this -> {
             return parent.baseExpression
@@ -377,7 +377,7 @@ fun PsiElement.parameterIndex(): Int {
     val parent = parent
     return when (this) {
         is KtParameter if parent is KtParameterList -> parent.parameters.indexOf(this)
-        is KtParameter if parent is KtContextReceiverList -> parent.contextParameters().indexOf(this)
+        is KtParameter if parent is KtContextParameterList -> parent.contextParameters.indexOf(this)
         is PsiParameter if parent is PsiParameterList -> parent.getParameterIndex(this)
         else -> -1
     }
@@ -525,14 +525,63 @@ fun KtStringTemplateExpression.isPlainWithEscapes() =
 // Correct for class members only (including constructors and nested classes)
 // Returns null e.g. for member function parameters, member function locals, property accessors
 val KtDeclaration.containingClassOrObject: KtClassOrObject?
-    get() = parent.let {
-        when (it) {
-            is KtClassBody -> it.parent as? KtClassOrObject
-            is KtClassOrObject -> it
-            is KtParameterList -> (it.parent as? KtPrimaryConstructor)?.getContainingClassOrObject()
-            else -> null
-        }
+    get() = when (val parent = parent) {
+        is KtClassBody -> parent.containingClassOrObject
+        is KtClassOrObject -> parent
+        is KtParameterList -> (parent.parent as? KtPrimaryConstructor)?.getContainingClassOrObject()
+        else -> null
     }
+
+/**
+ * The containing script for top-level declarations.
+ *
+ * @see containingClassOrObject
+ */
+@KtExperimentalApi
+val KtDeclaration.containingScript: KtScript?
+    get() = when (val parent = parent) {
+        is KtBlockExpression -> parent.parent as? KtScript
+        else -> null
+    }
+
+
+/**
+ * Containing [ClassId] for a declaration. It supports [KtScript] in REPL mode.
+ *
+ * @see containingScript
+ * @see containingClassOrObject
+ */
+@KtExperimentalApi
+val KtDeclaration.containingClassId: ClassId?
+    get() {
+        containingClassOrObject?.let {
+            return it.getClassId()
+        }
+
+        val script = containingScript?.takeIf(KtScript::isReplSnippet) ?: return null
+        return ClassId.topLevel(script.fqName)
+    }
+
+
+/**
+ * The containing class for the body.
+ *
+ * **Note**: it bypasses [KtCompanionBlock].
+ */
+@OptIn(KtExperimentalApi::class)
+val KtClassBody.containingClassOrObject: KtClassOrObject?
+    get() = when (val parent = parent) {
+        is KtClassOrObject -> parent
+        is KtCompanionBlock -> parent.containingClassOrObject
+        else -> null
+    }
+
+/**
+ * The containing class for the companion block.
+ */
+@KtExperimentalApi
+val KtCompanionBlock.containingClassOrObject: KtClassOrObject?
+    get() = (parent as? KtClassBody)?.containingClassOrObject
 
 fun KtExpression.getOutermostParenthesizerOrThis(): KtExpression {
     return (parentsWithSelf.zip(parents)).firstOrNull {
@@ -660,12 +709,30 @@ fun KtExpression.getLabeledParent(labelName: String): KtLabeledExpression? {
 
 fun PsiElement.astReplace(newElement: PsiElement) = parent.node.replaceChild(node, newElement.node)
 
-var KtElement.parentSubstitute: PsiElement? by UserDataProperty(Key.create<PsiElement>("PARENT_SUBSTITUTE"))
+@Deprecated("The API is deprecated and is preserved only for compatibility with K1")
+var KtElement.parentSubstitute: PsiElement? by UserDataProperty(Key.create("PARENT_SUBSTITUTE"))
 
 private val HARD_KEYWORDS: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
     KtTokens.KEYWORDS.types.mapTo(HashSet()) { (it as KtKeywordToken).value }
 }
 
+/**
+ * Checks if this string is a valid Kotlin identifier.
+ *
+ * A regular identifier (without backticks) must:
+ * - Start with a letter (including Unicode letters) or underscore;
+ * - Contain only letters, digits, or underscores;
+ * - Not be a hard keyword.
+ *
+ * Escaped identifiers (strings starting with a backtick) are also supported: the function returns `true` for strings like
+ * "`class`" or "`with spaces`".
+ *
+ * The function performs only basic, platform-agnostic validation. Individual build targets may impose additional restrictions.
+ * Such as, for the JVM platform, Java bytecode and Dalvik restrictions apply
+ * (see 'org.jetbrains.kotlin.resolve.jvm.checkers.DalvikIdentifierUtils.isValidDalvikCharacter').
+ *
+ * @see quoteIfNeeded
+ */
 fun String?.isIdentifier(): Boolean {
     if (this == null || isEmpty()) return false
 
@@ -685,14 +752,9 @@ fun String?.isIdentifier(): Boolean {
     while (index < length) {
         val codePoint = codePointAt(index)
 
-        val isValid = if (codePoint < 256) {
-            (codePoint == '_'.code)
-                    || (codePoint in 'A'.code..'Z'.code)
-                    || (codePoint in 'a'.code..'z'.code)
-                    || (index > 0 && codePoint in '0'.code..'9'.code)
-        } else {
-            Character.isLetter(codePoint) || (index > 0 && Character.isDigit(codePoint))
-        }
+        val isValid = (codePoint == '_'.code)
+                || Character.isLetter(codePoint)
+                || (index > 0 && Character.isDigit(codePoint))
 
         if (!isValid) {
             return false

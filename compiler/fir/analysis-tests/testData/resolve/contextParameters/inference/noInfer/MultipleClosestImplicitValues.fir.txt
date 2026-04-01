@@ -1,12 +1,12 @@
 FILE: MultipleClosestImplicitValues.kt
     context(<unused var>: R|@NoInfer T|)
-    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE))) public final fun <T> function(): R|kotlin/Unit| {
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE)) [evaluated = vararg(String(INVISIBLE_REFERENCE))]) public final fun <T> function(): R|kotlin/Unit| {
     }
     context(<unused var>: R|@NoInfer T|)
-    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE))) public final fun <T> function2(t: R|Box<T>|): R|kotlin/Unit| {
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE)) [evaluated = vararg(String(INVISIBLE_REFERENCE))]) public final fun <T> function2(t: R|Box<T>|): R|kotlin/Unit| {
     }
     context(<unused var>: R|Box<@NoInfer T>|)
-    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE))) public final fun <T> function3(): R|kotlin/Unit| {
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE)) [evaluated = vararg(String(INVISIBLE_REFERENCE))]) public final fun <T> function3(): R|kotlin/Unit| {
     }
     public final class Box<T> : R|kotlin/Any| {
         public constructor<T>(): R|Box<T>| {

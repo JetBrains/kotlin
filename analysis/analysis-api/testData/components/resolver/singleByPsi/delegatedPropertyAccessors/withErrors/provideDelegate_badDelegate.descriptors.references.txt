@@ -1,0 +1,9 @@
+KtPropertyDelegate(127,135): 'by Bar()'
+  KtPropertyDelegationMethodsReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
+      (in ROOT) operator fun Bar.provideDelegate(_this: kotlin.Any?, p: kotlin.Any?): NoDelegate

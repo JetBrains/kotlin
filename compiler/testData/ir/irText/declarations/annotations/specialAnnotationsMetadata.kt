@@ -1,4 +1,5 @@
 // MODULE: lib
+// IGNORE_BACKEND: JKLIB
 // IGNORE_BACKEND_K1: NATIVE
 // REASON: ClassicFrontendFacade.performNativeModuleResolve expects DependencyKind.Source, not DependencyKind.Binary
 // FILE: lib.kt

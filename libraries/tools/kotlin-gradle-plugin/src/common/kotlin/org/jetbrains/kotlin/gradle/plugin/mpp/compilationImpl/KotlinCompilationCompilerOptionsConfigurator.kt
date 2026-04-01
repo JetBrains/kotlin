@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.internal.targetCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.moduleNameForCompilation
+import org.jetbrains.kotlin.gradle.utils.moduleName
 
 internal object KotlinCompilationCompilerOptionsFromTargetConfigurator : KotlinCompilationImplFactory.PostConfigure {
     override fun configure(compilation: DecoratedKotlinCompilation<*>) {
@@ -44,7 +45,11 @@ internal object KotlinCompilationCompilerOptionsFromTargetConfigurator : KotlinC
             moduleNameForCompilation(
                 compilationName,
                 targetCompilerOptions.moduleName
-            ).orElse(moduleNameForCompilation())
+            ).orElse(
+                project.moduleName(
+                    moduleNameForCompilation(project.baseModuleName())
+                )
+            )
         )
     }
 
@@ -65,7 +70,11 @@ internal object KotlinCompilationCompilerOptionsFromTargetConfigurator : KotlinC
             moduleNameForCompilation(
                 compilationName,
                 targetCompilerOptions.moduleName
-            ).orElse(moduleNameForCompilation())
+            ).orElse(
+                project.moduleName(
+                    moduleNameForCompilation(project.baseModuleName())
+                )
+            )
         )
     }
 

@@ -1,0 +1,5 @@
+KtBinaryExpression(73,79): 'l += 1'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.plusAssign(<dispatch receiver>: A, i: kotlin.Int): kotlin.Unit
+    ]

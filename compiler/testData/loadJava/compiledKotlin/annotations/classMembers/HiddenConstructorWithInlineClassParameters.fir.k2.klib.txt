@@ -4,7 +4,7 @@ public final annotation class Ann : R|kotlin/Annotation| {
 }
 
 public sealed class Sealed : R|kotlin/Any| {
-    public final val z: R|test/Z|
+    @PROPERTY:R|test/Ann|() public final val z: R|test/Z|
         public get(): R|test/Z|
 
     @R|test/Ann|() protected constructor(@R|test/Ann|() z: R|test/Z|): R|test/Sealed|
@@ -17,7 +17,7 @@ public sealed class Sealed : R|kotlin/Any| {
 }
 
 public final class Test : R|kotlin/Any| {
-    public final val z: R|test/Z|
+    @PROPERTY:R|test/Ann|() public final val z: R|test/Z|
         public get(): R|test/Z|
 
     @R|test/Ann|() public constructor(@R|test/Ann|() z: R|test/Z|): R|test/Test|

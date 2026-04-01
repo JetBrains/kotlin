@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.scripting.compiler.test
 
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.scripting.compiler.plugin.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.getBaseCompilerArgumentsFromProperty
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIsolated
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMembers
@@ -17,6 +20,9 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.test.*
 
 class ScriptCompilerTest {
+
+    private val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true &&
+            System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
 
     @Test
     fun testCompilationWithRefinementError() {
@@ -31,6 +37,19 @@ class ScriptCompilerTest {
         assertTrue(res is ResultWithDiagnostics.Failure)
         assertTrue(res.reports.any { it.message == "err13" })
         assertTrue(res.reports.none { it.message.contains("nonsense") })
+    }
+
+    @Test
+    fun testCompilationError() {
+        val res = compile("val x = 1\nnonsense".toScriptSource("err.kts")) {}
+
+        assertTrue(res is ResultWithDiagnostics.Failure)
+        assertTrue(res.reports.first { it.severity == ScriptDiagnostic.Severity.ERROR }.let {
+            it.message.contains("nonsense") &&
+                    it.sourcePath == "err.kts" &&
+                    it.location?.start?.line == 2 &&
+                    it.location?.end?.col == 9
+        }, "No expected diagnostic found: ${res.reports.joinToString("\n")}")
     }
 
     @Test
@@ -154,7 +173,9 @@ class ScriptCompilerTest {
                 compilerOptions.append(it)
             }
         }
-        val compiler = ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration)
+        val compiler =
+            if (isK2) ScriptJvmK2CompilerIsolated(defaultJvmScriptingHostConfiguration)
+            else ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration)
         return compiler.compile(script, compilationConfiguration)
     }
 

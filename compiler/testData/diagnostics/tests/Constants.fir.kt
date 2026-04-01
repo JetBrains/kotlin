@@ -33,11 +33,11 @@ fun test() {
     checkSubtype<Double>(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     checkSubtype<Float>(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 
-    1 <!CAST_NEVER_SUCCEEDS!>as<!> Byte
-    1 <!USELESS_CAST!>as Int<!>
-    0xff <!CAST_NEVER_SUCCEEDS!>as<!> Long
+    1 <!NUMERIC_CAST_NEVER_SUCCEEDS_BUT_CAN_BE_REPLACED_WITH_TO_CALL!>as Byte<!>
+    1 <!INTEGER_LITERAL_CAST_INSTEAD_OF_TO_CALL!>as Int<!>
+    0xff <!NUMERIC_CAST_NEVER_SUCCEEDS_BUT_CAN_BE_REPLACED_WITH_TO_CALL!>as Long<!>
 
-    1.1 <!CAST_NEVER_SUCCEEDS!>as<!> Int
+    1.1 <!NUMERIC_CAST_NEVER_SUCCEEDS_BUT_CAN_BE_REPLACED_WITH_TO_CALL!>as Int<!>
     checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>1.1<!>)
 
     varargByte(0x77, 1, 3, <!ARGUMENT_TYPE_MISMATCH!>200<!>, 0b111)

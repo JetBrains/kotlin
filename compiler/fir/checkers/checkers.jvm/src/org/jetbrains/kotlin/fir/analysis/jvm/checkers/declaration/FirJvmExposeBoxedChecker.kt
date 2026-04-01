@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 
 object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
@@ -52,9 +54,13 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
                 reporter.reportOn(name.source, FirJvmErrors.INAPPLICABLE_JVM_EXPOSE_BOXED_WITH_NAME)
             }
 
-            val value = name.evaluateAs<FirLiteralExpression>(context.session)?.value as? String
+            val value = (name as? FirLiteralExpression)?.value as? String
             if (value != null && !Name.isValidIdentifier(value)) {
                 reporter.reportOn(name.source, FirJvmErrors.ILLEGAL_JVM_NAME)
+            }
+
+            if (declaration is FirFunction && declaration.nameOrSpecialName.asString() == value) {
+                reporter.reportOn(name.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME)
             }
         }
 
@@ -103,17 +109,13 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
         declaration: FirDeclaration,
     ) {
         if (name == null) return
-        val value = name.evaluateAs<FirLiteralExpression>(context.session)?.value as? String ?: return
+        val value = (name as? FirLiteralExpression)?.value as? String ?: return
 
         if (value == declaration.findJvmNameValue()) {
             reporter.reportOn(
                 name.source,
                 FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME_AS_JVM_NAME
             )
-        }
-
-        if (declaration is FirFunction && declaration.nameOrSpecialName.asString() == value) {
-            reporter.reportOn(name.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME)
         }
     }
 

@@ -5,7 +5,6 @@
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
@@ -24,7 +23,6 @@ dependencies {
     testFixturesApi(project(":compiler:frontend"))
 
     testFixturesApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testRuntimeOnly(project(":core:descriptors.runtime"))
 
     testFixturesCompileOnly(intellijCore())
     testRuntimeOnly(intellijCore())

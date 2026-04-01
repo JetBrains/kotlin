@@ -110,7 +110,7 @@ KtNameReferenceExpression(359,365): 'MyEnum'
   null
 
 KtNameReferenceExpression(368,375): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -127,21 +127,20 @@ KtNameReferenceExpression(393,399): 'MyEnum'
   null
 
 KtNameReferenceExpression(402,413): 'OptionAlias'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = OptionAlias
-          receiverType = null
-          returnType = MyEnum
-          symbol = val OptionAlias: MyEnum
-          contextParameters = []
-          callableId = /OptionAlias
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = OptionAlias
+        receiverType = null
+        returnType = MyEnum
+        symbol = val OptionAlias: MyEnum
+        contextParameters = []
+        callableId = /OptionAlias
       typeArgumentsMapping = {}
 
 KtProperty(414,448): 'val tlEnumProp3: MyEnum = enumProp'
@@ -157,7 +156,7 @@ KtNameReferenceExpression(431,437): 'MyEnum'
   null
 
 KtNameReferenceExpression(440,448): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -174,7 +173,7 @@ KtNameReferenceExpression(468,474): 'MyEnum'
   null
 
 KtNameReferenceExpression(477,487): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
@@ -200,206 +199,196 @@ KtNameReferenceExpression(525,531): 'MyEnum'
   null
 
 KtNameReferenceExpression(534,541): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
 KtBinaryExpression(546,557): 'm = Option1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyEnum
-          symbol = var m: MyEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Write:
+      kind = Write:
         value = Option1
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyEnum
+        symbol = var m: MyEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(546,547): 'm'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyEnum
-          symbol = var m: MyEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Write:
+      kind = Write:
         value = Option1
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyEnum
+        symbol = var m: MyEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(548,549): '='
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyEnum
-          symbol = var m: MyEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Write:
+      kind = Write:
         value = Option1
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyEnum
+        symbol = var m: MyEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(550,557): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
 KtBinaryExpression(562,577): 'm = OptionAlias'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyEnum
-          symbol = var m: MyEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Write:
+      kind = Write:
         value = OptionAlias
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyEnum
+        symbol = var m: MyEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(562,563): 'm'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyEnum
-          symbol = var m: MyEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Write:
+      kind = Write:
         value = OptionAlias
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyEnum
+        symbol = var m: MyEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(564,565): '='
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyEnum
-          symbol = var m: MyEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Write:
+      kind = Write:
         value = OptionAlias
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyEnum
+        symbol = var m: MyEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(566,577): 'OptionAlias'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = OptionAlias
-          receiverType = null
-          returnType = MyEnum
-          symbol = val OptionAlias: MyEnum
-          contextParameters = []
-          callableId = /OptionAlias
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = OptionAlias
+        receiverType = null
+        returnType = MyEnum
+        symbol = val OptionAlias: MyEnum
+        contextParameters = []
+        callableId = /OptionAlias
       typeArgumentsMapping = {}
 
 KtBinaryExpression(582,596): 'm = stringProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyEnum
-          symbol = var m: MyEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Write:
+      kind = Write:
         value = stringProp
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyEnum
+        symbol = var m: MyEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(582,583): 'm'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyEnum
-          symbol = var m: MyEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Write:
+      kind = Write:
         value = stringProp
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyEnum
+        symbol = var m: MyEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(584,585): '='
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyEnum
-          symbol = var m: MyEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Write:
+      kind = Write:
         value = stringProp
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyEnum
+        symbol = var m: MyEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(586,596): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
@@ -422,7 +411,7 @@ KtNameReferenceExpression(634,640): 'MyEnum'
   null
 
 KtNameReferenceExpression(643,650): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -439,7 +428,7 @@ KtNameReferenceExpression(658,664): 'MyEnum'
   null
 
 KtNameReferenceExpression(667,675): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -465,7 +454,7 @@ KtNameReferenceExpression(711,717): 'MyEnum'
   null
 
 KtNameReferenceExpression(720,730): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
@@ -494,7 +483,7 @@ KtNameReferenceExpression(762,768): 'MyEnum'
   null
 
 KtNameReferenceExpression(771,778): 'Option2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option2>
 
@@ -514,7 +503,7 @@ KtNameReferenceExpression(797,803): 'MyEnum'
   null
 
 KtNameReferenceExpression(806,814): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -531,6 +520,6 @@ KtNameReferenceExpression(830,836): 'MyEnum'
   null
 
 KtNameReferenceExpression(839,849): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>

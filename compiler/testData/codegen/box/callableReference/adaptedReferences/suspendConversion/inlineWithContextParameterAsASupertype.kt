@@ -5,7 +5,14 @@
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR
 // ^ IMPLEMENTING_FUNCTION_INTERFACE: Implementing function interface is prohibited in JavaScript
 // IGNORE_BACKEND_K1: JVM_IR, WASM, NATIVE
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
+import helpers.*
+import kotlin.coroutines.*
 
+suspend inline fun invokeSuspend(fn: suspend context(String) () -> Unit) { fn("OK") }
+
+// FILE: main.kt
 import helpers.*
 import kotlin.coroutines.*
 
@@ -34,8 +41,6 @@ class C: context(String)() -> Unit {
         test3 = p1
     }
 }
-
-suspend inline fun invokeSuspend(fn: suspend context(String) () -> Unit) { fn("OK") }
 
 fun box(): String {
     runSuspend {

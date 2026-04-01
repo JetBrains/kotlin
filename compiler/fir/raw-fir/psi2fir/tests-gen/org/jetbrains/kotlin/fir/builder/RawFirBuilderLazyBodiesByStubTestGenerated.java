@@ -66,6 +66,16 @@ public class RawFirBuilderLazyBodiesByStubTestGenerated extends AbstractRawFirBu
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnField.kt");
     }
 
+    @TestMetadata("annotationOnFullNameBasedDestructuring.kt")
+    public void testAnnotationOnFullNameBasedDestructuring() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnFullNameBasedDestructuring.kt");
+    }
+
+    @TestMetadata("annotationOnFullNameBasedDestructuringScript.kts")
+    public void testAnnotationOnFullNameBasedDestructuringScript() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnFullNameBasedDestructuringScript.kts");
+    }
+
     @TestMetadata("annotationOnProperty.kt")
     public void testAnnotationOnProperty() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnProperty.kt");
@@ -114,6 +124,16 @@ public class RawFirBuilderLazyBodiesByStubTestGenerated extends AbstractRawFirBu
     @TestMetadata("classWithWrongSuperCall.kt")
     public void testClassWithWrongSuperCall() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/classWithWrongSuperCall.kt");
+    }
+
+    @TestMetadata("companionBlocks.kt")
+    public void testCompanionBlocks() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/companionBlocks.kt");
+    }
+
+    @TestMetadata("companionExtensions.kt")
+    public void testCompanionExtensions() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/companionExtensions.kt");
     }
 
     @TestMetadata("complexTypes.kt")
@@ -414,6 +434,41 @@ public class RawFirBuilderLazyBodiesByStubTestGenerated extends AbstractRawFirBu
     @TestMetadata("propertyWithBackingFieldDifferentTypes.kt")
     public void testPropertyWithBackingFieldDifferentTypes() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/propertyWithBackingFieldDifferentTypes.kt");
+    }
+
+    @TestMetadata("replLevelDestructuringWithAnnotation.repl.kts")
+    public void testReplLevelDestructuringWithAnnotation_repl() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replLevelDestructuringWithAnnotation.repl.kts");
+    }
+
+    @TestMetadata("replNestedClass.repl.kts")
+    public void testReplNestedClass_repl() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replNestedClass.repl.kts");
+    }
+
+    @TestMetadata("replPropertyDelegated.repl.kts")
+    public void testReplPropertyDelegated_repl() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replPropertyDelegated.repl.kts");
+    }
+
+    @TestMetadata("replSealedClass.repl.kts")
+    public void testReplSealedClass_repl() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replSealedClass.repl.kts");
+    }
+
+    @TestMetadata("replSimple.repl.kts")
+    public void testReplSimple_repl() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replSimple.repl.kts");
+    }
+
+    @TestMetadata("replSmartcastImplDelegate.repl.kts")
+    public void testReplSmartcastImplDelegate_repl() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replSmartcastImplDelegate.repl.kts");
+    }
+
+    @TestMetadata("replWithPackage.repl.kts")
+    public void testReplWithPackage_repl() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replWithPackage.repl.kts");
     }
 
     @TestMetadata("script.kts")

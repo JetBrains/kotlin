@@ -118,10 +118,9 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 *targetsToRun.map { ":compileKotlin${it.capitalize()}" }.toTypedArray(),
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED, // otherwise we would access GMT task outputs before the task execution
             )
-            for ((targetName, particularCompileArgs) in compileArgs) {
+            for ((_, particularCompileArgs) in compileArgs) {
                 val fragmentDependencies = particularCompileArgs.fragmentDependencies
-                assert(fragmentDependencies != null) { "Fragment dependencies are not set for $targetName" }
-                val dependenciesPerFragment = fragmentDependencies!!
+                val dependenciesPerFragment = fragmentDependencies
                     .map { it.replace('\\', '/') }
                     .groupBy({ it.substringBefore(":") }) { it.substringAfter(":") }
                 assertions(dependenciesPerFragment)
@@ -147,7 +146,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
             gradleVersion,
             localRepoDir = localRepository,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             plugins {
                 kotlin("multiplatform")
@@ -244,6 +243,8 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     ":library:compileNativeMainKotlinMetadata",
                     ":library:exportCommonSourceSetsMetadataLocationsForMetadataApiElements",
                     ":library:exportRootPublicationCoordinatesForMetadataApiElements",
+                    ":library:exportCrossCompilationMetadataForLinuxArm64ApiElements",
+                    ":library:exportCrossCompilationMetadataForLinuxX64ApiElements",
                     ":library:generateProjectStructureMetadata",
                     ":library:generateSourceIn_commonMain_0",
                     ":library:generateSourceIn_jsMain_2",
@@ -343,7 +344,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             sourceStubs = false,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
             additionalProjectConfiguration = {
                 project.applyMultiplatform {
                     jvm()
@@ -429,7 +430,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
             gradleVersion,
             autoEnableSeparateKmpCompilation = false,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             val eventPrefix = "${BooleanMetrics.KOTLIN_SEPARATE_KMP_COMPILATION_ENABLED.name}="
             assertEquals(

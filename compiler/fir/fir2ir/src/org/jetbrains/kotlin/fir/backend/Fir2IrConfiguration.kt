@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
@@ -34,7 +33,6 @@ class Fir2IrConfiguration private constructor(
     val languageVersionSettings: LanguageVersionSettings,
     val diagnosticReporter: BaseDiagnosticsCollector,
     val messageCollector: MessageCollector,
-    val evaluatedConstTracker: EvaluatedConstTracker,
     val inlineConstTracker: InlineConstTracker?,
     val expectActualTracker: ExpectActualTracker?,
     val allowNonCachedDeclarations: Boolean,
@@ -59,10 +57,6 @@ class Fir2IrConfiguration private constructor(
                 languageVersionSettings = compilerConfiguration.languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
                 messageCollector = compilerConfiguration.messageCollector,
-                evaluatedConstTracker = compilerConfiguration.putIfAbsent(
-                    CommonConfigurationKeys.EVALUATED_CONST_TRACKER,
-                    EvaluatedConstTracker.create(),
-                ),
                 inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
@@ -85,10 +79,6 @@ class Fir2IrConfiguration private constructor(
                 languageVersionSettings = compilerConfiguration.languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
                 messageCollector = compilerConfiguration.messageCollector,
-                evaluatedConstTracker = compilerConfiguration.putIfAbsent(
-                    CommonConfigurationKeys.EVALUATED_CONST_TRACKER,
-                    EvaluatedConstTracker.create(),
-                ),
                 inlineConstTracker = null,
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
@@ -112,10 +102,6 @@ class Fir2IrConfiguration private constructor(
                 languageVersionSettings = languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
                 messageCollector = compilerConfiguration.messageCollector,
-                evaluatedConstTracker = compilerConfiguration.putIfAbsent(
-                    CommonConfigurationKeys.EVALUATED_CONST_TRACKER,
-                    EvaluatedConstTracker.create(),
-                ),
                 inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = true,

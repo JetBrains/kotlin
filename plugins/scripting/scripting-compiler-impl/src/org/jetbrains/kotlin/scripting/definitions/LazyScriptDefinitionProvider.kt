@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.scripting.definitions
 
-import com.intellij.ide.highlighter.JavaFileType
-import org.jetbrains.kotlin.idea.KotlinFileType
-import java.net.URI
 import java.util.concurrent.locks.ReentrantLock
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -81,7 +78,7 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
 
     companion object {
         // TODO: find a common place for storing kotlin-related extensions and reuse values from it everywhere
-        protected val nonScriptFilenameSuffixes = arrayOf(".${KotlinFileType.EXTENSION}", ".${JavaFileType.DEFAULT_EXTENSION}")
+        protected val nonScriptFilenameSuffixes = arrayOf(".kt", ".java")
     }
 }
 

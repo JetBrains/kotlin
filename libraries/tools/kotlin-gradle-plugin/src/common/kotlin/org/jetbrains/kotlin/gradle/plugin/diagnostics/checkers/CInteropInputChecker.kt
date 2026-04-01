@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 
 /**
@@ -24,8 +23,10 @@ internal object CInteropInputChecker : KotlinGradleProjectChecker {
         KotlinPluginLifecycle.Stage.ReadyForExecution.await()
 
         project.tasks.withType(CInteropProcess::class.java).configureEach {
+            // For SwiftPM import we generate all the parameters of the cinterop at execution time
+            if (it.isGeneratedCinterop) return@configureEach
             if (!it.definitionFile.isPresent && it.packageName.isNullOrBlank()) {
-                project.reportDiagnostic(KotlinToolingDiagnostics.CInteropRequiredParametersNotSpecifiedError())
+                collector.report(diagnosticsContext, KotlinToolingDiagnostics.CInteropRequiredParametersNotSpecifiedError())
             }
         }
     }

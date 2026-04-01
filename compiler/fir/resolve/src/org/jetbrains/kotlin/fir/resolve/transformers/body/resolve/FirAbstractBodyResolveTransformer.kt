@@ -112,7 +112,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val session: FirSession,
         override val scopeSession: ScopeSession,
         val transformer: FirAbstractBodyResolveTransformerDispatcher,
-        val context: BodyResolveContext,
+        override val context: BodyResolveContext,
         expandTypeAliases: Boolean,
     ) : BodyResolveComponents() {
         override val fileImportsScope: List<FirScope> get() = context.fileImportsScope
@@ -132,7 +132,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
 
         override val resolutionStageRunner: ResolutionStageRunner = ResolutionStageRunner()
 
-        override val inlineFunction: FirFunction? by context::inlineFunction
+        override val inlineFunction: FirFunction? by context::publicApiInlineFunction
 
         override val callResolver: FirCallResolver by lazy(LazyThreadSafetyMode.NONE) {
             FirCallResolver(this)
@@ -149,7 +149,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
 
         override val syntheticCallGenerator: FirSyntheticCallGenerator by lazy(LazyThreadSafetyMode.NONE) { FirSyntheticCallGenerator(this) }
         override val doubleColonExpressionResolver: FirDoubleColonExpressionResolver by lazy(LazyThreadSafetyMode.NONE) {
-            FirDoubleColonExpressionResolver(session)
+            FirDoubleColonExpressionResolver(this, context)
         }
 
         override val outerClassManager: FirOuterClassManager by lazy(LazyThreadSafetyMode.NONE) {
@@ -164,5 +164,8 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
                 by lazy(LazyThreadSafetyMode.NONE) {
                     IntegerLiteralAndOperatorApproximationTransformer(session, scopeSession)
                 }
+
+        override val resolutionContext: ResolutionContext
+            get() = transformer.resolutionContext
     }
 }

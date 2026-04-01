@@ -1,5 +1,5 @@
 FILE: test.kt
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|)) public final annotation class KotlinMessage : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|)]) public final annotation class KotlinMessage : R|kotlin/Annotation| {
         public constructor(): R|KotlinMessage| {
             super<R|kotlin/Any|>()
         }
@@ -29,7 +29,7 @@ FILE: test.kt
             }
 
             public open val INSTANCE: R|kotlin/String|
-                @PROPERTY_GETTER:R|kotlin/jvm/JvmName|(name = String(getInstance)) public get(): R|kotlin/String| {
+                @PROPERTY_GETTER:R|kotlin/jvm/JvmName|(name = String(getInstance) [evaluated = String(getInstance)]) public get(): R|kotlin/String| {
                     ^ String(Omega)
                 }
 

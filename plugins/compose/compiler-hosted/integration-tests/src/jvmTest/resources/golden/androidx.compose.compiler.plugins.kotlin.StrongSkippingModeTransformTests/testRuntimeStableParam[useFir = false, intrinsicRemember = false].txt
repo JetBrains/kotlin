@@ -48,5 +48,8 @@ class Holder<T>  {
       tmp0_rcvr.Test(x, %composer, updateChangedFlags(%changed or 0b0001))
     }
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }

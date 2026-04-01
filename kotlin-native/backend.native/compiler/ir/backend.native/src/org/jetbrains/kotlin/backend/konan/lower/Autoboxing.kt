@@ -139,7 +139,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             is IrGetField -> this.symbol.owner.type
             is IrCall -> when (this.symbol) {
                 symbols.reinterpret -> this.typeArguments[1]!!
-                symbols.createUninitializedInstance -> this.typeArguments[0]!!
                 else -> this.type
             }
             is IrTypeOperatorCall -> when (this.operator) {
@@ -182,6 +181,8 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     private fun IrClass.canBeAssignedTo(expectedClass: IrClass) =
             this.isNothing() || expectedClass == anyClass /* A workaround for plugins emitting classes with empty superTypes */
                     || (expectedClass.isCompanion && expectedClass.parentAsClass.isObjCClass()) // TODO: a workaround for CMP-9000.
+                    // TODO: roll back once MapLibre is fixed (KT-85358).
+                    || (expectedClass.isObjCClass() && expectedClass.name.asString() == "MLNScaleBar")
                     || this.symbol.isSubtypeOfClass(expectedClass.symbol)
 
     private fun IrExpression.adaptIfNecessary(actualType: IrType, expectedType: IrType, skipTypeCheck: Boolean = false): IrExpression {
@@ -197,7 +198,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 erasedExpectedClass.partialLinkageStatus is ClassifierPartialLinkageStatus.Unusable -> {
                     this
                 }
-                //expectedType.isNothing() -> this // TODO
+                expectedType.isNullableNothing() -> this // Work around KT-82040. Remove when K1 is deprecated.
                 insertSafeCasts && !skipTypeCheck
                         // For type parameters, actualClass is null, and we
                         // conservatively insert type check for them (due to unsafe casts).
@@ -221,7 +222,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 return it
             }
             val parameter = conversion.owner.parameters.single()
-            val argument = if (insertSafeCasts && !skipTypeCheck && expectedType.isInlinedNative())
+            val argument = if (insertSafeCasts && !skipTypeCheck && expectedType.isInlinedNative() && !actualType.isNothing())
                 this.checkedCast(actualType, conversion.owner.returnType)
             else this
 
@@ -246,6 +247,17 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 expression
             }
 
+            symbols.initInstance -> {
+                val instance = expression.arguments[0]!!
+                val constructorCall = expression.arguments[1]!!
+                check(constructorCall is IrConstructorCall) { "Expected a constructor call: ${constructorCall.render()}" }
+                expression.arguments[0] = instance.transform(this, data = null).useAs(irBuiltIns.anyType)
+                // Leave the second argument of [initInstance] as is.
+                super.visitConstructorCall(constructorCall)
+
+                expression
+            }
+
             else -> super.visitCall(expression)
         }
     }
@@ -257,12 +269,12 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
     private val symbols = context.symbols
     private val irBuiltIns = context.irBuiltIns
 
-    private val builtBoxUnboxFunctions = mutableListOf<IrFunction>()
+    private val builtSpecialFunctions = mutableListOf<IrFunction>()
 
     override fun visitFile(declaration: IrFile): IrFile {
         declaration.transformChildrenVoid(this)
-        declaration.declarations.addAll(builtBoxUnboxFunctions)
-        builtBoxUnboxFunctions.clear()
+        declaration.declarations.addAll(builtSpecialFunctions)
+        builtSpecialFunctions.clear()
         return declaration
     }
 
@@ -277,6 +289,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
 
                 buildBoxFunction(declaration, context.getBoxFunction(declaration))
                 buildUnboxFunction(declaration, context.getUnboxFunction(declaration))
+                buildBackingFieldSetter(declaration, context.getInlineClassFieldSetter(declaration))
             }
 
             if (declaration.isNativePrimitiveType()) {
@@ -334,6 +347,26 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             builder.lowerConstructorCallToValue(expression, constructor)
         } else {
             expression
+        }
+    }
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        if (expression.symbol != symbols.initInstance)
+            return super.visitCall(expression)
+
+        val instance = expression.arguments[0]!!
+        val constructorCall = expression.arguments[1]!!
+        check(constructorCall is IrConstructorCall) { "Expected a constructor call: ${constructorCall.render()}" }
+        val constructor = constructorCall.symbol.owner
+        return if (!constructor.constructedClass.isInlined())
+            super.visitCall(expression)
+        else {
+            val backingFieldSetter = context.getInlineClassFieldSetter(constructor.constructedClass)
+            builder.at(expression).irCall(backingFieldSetter).apply {
+                arguments[0] = instance.transform(this@InlineClassTransformer, data = null)
+                constructorCall.transformChildrenVoid()
+                arguments[1] = builder.lowerConstructorCallToValue(constructorCall, constructor)
+            }
         }
     }
 
@@ -403,7 +436,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             +irReturn(irGet(box))
         }
 
-        builtBoxUnboxFunctions += function
+        builtSpecialFunctions += function
     }
 
     private fun IrBuilderWithScope.irNullPointerOrReference(type: IrType): IrExpression =
@@ -429,7 +462,18 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             +irReturn(irGetField(irGet(boxParameter), getInlineClassBackingField(irClass)))
         }
 
-        builtBoxUnboxFunctions += function
+        builtSpecialFunctions += function
+    }
+
+    private fun buildBackingFieldSetter(irClass: IrClass, function: IrFunction) {
+        val builder = context.createIrBuilder(function.symbol)
+
+        function.body = builder.irBlockBody(function) {
+            val field = getInlineClassBackingField(irClass)
+            +irSetField(irGet(function.parameters[0]), field, irGet(function.parameters[1]))
+        }
+
+        builtSpecialFunctions += function
     }
 
     private fun buildBoxField(declaration: IrClass) {
@@ -549,7 +593,9 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                     }
                 })
             }
-            +irReturn(genReturnValue())
+            // return Unit will be added anyway by ReturnsInsertionLowering.
+            if (!irConstructor.isPrimary)
+                +irReturn(genReturnValue())
         }
     }
 

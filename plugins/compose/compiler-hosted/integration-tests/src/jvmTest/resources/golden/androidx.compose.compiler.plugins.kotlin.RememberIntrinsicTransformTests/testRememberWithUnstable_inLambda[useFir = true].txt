@@ -4,7 +4,9 @@
 
 import androidx.compose.runtime.*
 
-@Composable fun Test(param: String, unstable: List<*>) {
+class Unstable(var x: Int)
+
+@Composable fun Test(param: String, unstable: Unstable) {
     Wrapper {
         remember(param, unstable) { param }
     }
@@ -14,8 +16,15 @@ import androidx.compose.runtime.*
 // Transformed IR
 // ------------------------------------------
 
+@StabilityInferred(parameters = 0)
+class Unstable(var x: Int) {
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
 @Composable
-fun Test(param: String, unstable: List<*>, %composer: Composer?, %changed: Int) {
+fun Test(param: String, unstable: Unstable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(param,unstable)<{>,<Wrappe...>:Test.kt")
   val %dirty = %changed

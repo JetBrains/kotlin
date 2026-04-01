@@ -7,42 +7,50 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 
-internal class ResultHandler(
+open class ResultHandler(
     runResult: RunResult,
-    private val checks: TestRunChecks,
-    private val testRun: TestRun,
-    private val loggedParameters: LoggedData.TestRunParameters,
+    protected val checks: TestRunChecks,
+    protected val testRun: TestRun,
+    protected val loggedParameters: LoggedData.TestRunParameters,
 ) : AbstractResultHandler<Unit>(runResult) {
 
-    override fun getLoggedRun() = LoggedData.TestRun(loggedParameters, runResult)
+    override fun getLoggedRun(): LoggedData.TestRun = LoggedData.TestRun(loggedParameters, runResult)
 
     override fun handle() {
         val failedResults = checks.map { check ->
             check.apply(testRun, runResult)
         }.filterIsInstance<TestRunCheck.Result.Failed>()
         if (!testRun.expectedFailure) {
-            verifyExpectation(failedResults.isEmpty()) {
-                failedResults.joinToString("\n")
-            }
+            processNonExpectedFailure(failedResults)
         } else {
-            val runResultInfo = buildString {
-                appendLine("TestCase Kind: ${testRun.testCase.kind}")
-                appendLine("TestCaseId: ${testRun.testCase.id}")
-                appendLine("Exit code: ${runResult.exitCode}")
-                appendLine("Filtered test output is")
-                appendLine(runResult.processOutput.stdOut.filteredOutput.let {
-                    if (it.isNotEmpty()) ":\n$it" else " empty."
-                })
-                appendLine(runResult.processOutput.stdOut.testReport)
-            }
-            verifyExpectation(failedResults.isNotEmpty()) {
-                "Test did not fail as expected: $runResultInfo"
-            }
-            println("Test failed as expected.\n$runResultInfo")
-            if (failedResults.isNotEmpty()) {
-                println("Diagnostics are:")
-                failedResults.forEach(::println)
-            }
+            processExpectedFailure(failedResults)
+        }
+    }
+
+    protected open fun processNonExpectedFailure(failedResults: List<TestRunCheck.Result.Failed>) {
+        verifyExpectation(failedResults.isEmpty(), failedResults) {
+            failedResults.joinToString("\n")
+        }
+    }
+
+    protected open fun processExpectedFailure(failedResults: List<TestRunCheck.Result.Failed>) {
+        val runResultInfo = buildString {
+            appendLine("TestCase Kind: ${testRun.testCase.kind}")
+            appendLine("TestCaseId: ${testRun.testCase.id}")
+            appendLine("Exit code: ${runResult.exitCode}")
+            appendLine("Filtered test output is")
+            appendLine(runResult.processOutput.stdOut.filteredOutput.let {
+                if (it.isNotEmpty()) ":\n$it" else " empty."
+            })
+            appendLine(runResult.processOutput.stdOut.testReport)
+        }
+        verifyExpectation(failedResults.isNotEmpty(), failedResults) {
+            "Test did not fail as expected: $runResultInfo"
+        }
+        println("Test failed as expected.\n$runResultInfo")
+        if (failedResults.isNotEmpty()) {
+            println("Diagnostics are:")
+            failedResults.forEach(::println)
         }
     }
 }

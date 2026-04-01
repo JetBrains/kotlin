@@ -20,15 +20,16 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
+import org.jetbrains.kotlin.cli.registerExtensionStorage
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt.base.*
@@ -41,14 +42,13 @@ import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter.KaptStub
 import org.jetbrains.kotlin.kapt.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt.util.prettyPrint
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
 
 /**
- * This extension implements K2 kapt in the same way as K1 kapt: invoke the compiler in the "skip bodies" / suppress-errors mode,
- * and translate the resulting in-memory class files, correcting error types.
+ * This extension implements K2 kapt by invoking the compiler in the "skip bodies" / suppress-errors mode, and translating the resulting
+ * in-memory class files to Java sources, correcting error types.
  */
 @OptIn(LegacyK2CliPipeline::class)
 open class FirKaptAnalysisHandlerExtension(
@@ -58,7 +58,7 @@ open class FirKaptAnalysisHandlerExtension(
     lateinit var options: KaptOptions
 
     override fun isApplicable(configuration: CompilerConfiguration): Boolean {
-        return configuration[KAPT_OPTIONS] != null && configuration.getBoolean(USE_FIR) && !configuration.skipBodies
+        return configuration[KAPT_OPTIONS] != null && !configuration.skipBodies
     }
 
     override fun doAnalysis(project: Project, configuration: CompilerConfiguration): Boolean {
@@ -67,7 +67,7 @@ open class FirKaptAnalysisHandlerExtension(
             ?: MessageCollectorBackedKaptLogger(
                 KaptFlag.VERBOSE in optionsBuilder.flags,
                 KaptFlag.INFO_AS_WARNINGS in optionsBuilder.flags,
-                configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                configuration.messageCollector,
             )
         val messageCollector = logger.messageCollector
 
@@ -78,10 +78,10 @@ open class FirKaptAnalysisHandlerExtension(
 
         optionsBuilder.apply {
             projectBaseDir = projectBaseDir ?: project.basePath?.let(::File)
-            val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
+            val contentRoots = configuration.contentRoots
             compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
             javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
-            classesOutputDir = classesOutputDir ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
+            classesOutputDir = classesOutputDir ?: configuration.outputDirectory
         }
 
         optionsBuilder.checkOptions(logger, configuration)?.let { return it }
@@ -96,6 +96,13 @@ open class FirKaptAnalysisHandlerExtension(
                 this.messageCollector = messageCollector
                 skipBodies = true
                 useLightTree = false
+
+                /*
+                 * Later the KAPT pipeline registers extensions once again, so the extensions storage
+                 * should be reset. Otherwise the extensions would be duplicated.
+                 */
+                @OptIn(CompilerConfiguration.Internals::class)
+                registerExtensionStorage()
             }
             val disposable = Disposer.newDisposable("K2KaptSession.project")
             try {
@@ -107,38 +114,40 @@ open class FirKaptAnalysisHandlerExtension(
 
         if (!options.mode.runAnnotationProcessing) return true
 
-        val processors = loadProcessors()
-        if (processors.processors.isEmpty()) return true
+        createProcessorLoader().use { processorLoader ->
+            val processors = processorLoader.loadProcessors()
+            if (processors.processors.isEmpty()) return true
 
-        val kaptContext = KaptContext(options, false, logger)
+            val kaptContext = KaptContext(options, false, logger)
 
-        fun handleKaptError(error: KaptError): Boolean {
-            val cause = error.cause
+            fun handleKaptError(error: KaptError): Boolean {
+                val cause = error.cause
 
-            if (cause != null) {
-                kaptContext.logger.exception(cause)
+                if (cause != null) {
+                    kaptContext.logger.exception(cause)
+                }
+
+                return false
             }
 
-            return false
-        }
+            try {
+                runAnnotationProcessing(kaptContext, processors)
+            } catch (error: KaptBaseError) {
+                val kind = when (error.kind) {
+                    KaptBaseError.Kind.EXCEPTION -> KaptError.Kind.EXCEPTION
+                    KaptBaseError.Kind.ERROR_RAISED -> KaptError.Kind.ERROR_RAISED
+                }
 
-        try {
-            runAnnotationProcessing(kaptContext, processors)
-        } catch (error: KaptBaseError) {
-            val kind = when (error.kind) {
-                KaptBaseError.Kind.EXCEPTION -> KaptError.Kind.EXCEPTION
-                KaptBaseError.Kind.ERROR_RAISED -> KaptError.Kind.ERROR_RAISED
+                val cause = error.cause
+                return handleKaptError(if (cause != null) KaptError(kind, cause) else KaptError(kind))
+            } catch (error: KaptError) {
+                return handleKaptError(error)
+            } catch (thr: Throwable) {
+                kaptContext.logger.exception(thr)
+                return false
+            } finally {
+                kaptContext.close()
             }
-
-            val cause = error.cause
-            return handleKaptError(if (cause != null) KaptError(kind, cause) else KaptError(kind))
-        } catch (error: KaptError) {
-            return handleKaptError(error)
-        } catch (thr: Throwable) {
-            kaptContext.logger.exception(thr)
-            return false
-        } finally {
-            kaptContext.close()
         }
 
         return true
@@ -176,50 +185,62 @@ open class FirKaptAnalysisHandlerExtension(
     protected open fun updateConfiguration(configuration: CompilerConfiguration) {
     }
 
+    @OptIn(PipelineArtifact.CliPipelineInternals::class)
     private fun contextForStubGeneration(disposable: Disposable, configuration: CompilerConfiguration): KaptContextForStubGeneration? {
         updateConfiguration(configuration)
         configuration.moduleChunk = ModuleChunk(configuration.modules)
 
-        val frontendInput = ConfigurationPipelineArtifact(
-            configuration, DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector), disposable,
-        )
+        // We want to ignore all diagnostics except syntax one, which will be checked manually.
+        // So we need to create a new configuration with a separate diagnostics collector, to avoid
+        // reporting any errors into the diagnostics collector of the root configuration, which would be
+        // checked by the main CLI pipeline upon finishing the KAPT stage.
+        val configurationForFrontend = configuration.copy().apply {
+            diagnosticsCollector = DiagnosticsCollectorImpl()
+        }
+
+        val frontendInput = ConfigurationPipelineArtifact(configurationForFrontend, disposable)
         val frontendOutput = JvmFrontendPipelinePhase.executePhase(frontendInput) ?: return null
 
-        if (checkForSyntaxErrorsAndReport(frontendOutput, configuration)) return null
+        if (checkForSyntaxErrorsAndReport(frontendOutput)) return null
 
         configuration.perfManager?.notifyPhaseFinished(PhaseType.Analysis)
 
+        // FIR2IR checks for diagnostics in the collector after the main transformation and before const and plugin transformation,
+        // and early returns if there are any errors, so we need to create an empty diagnostics collector once again
+        val configurationForFir2Ir = configuration.copy().apply {
+            diagnosticsCollector = DiagnosticsCollectorImpl()
+        }
         val fir2IrOutput = JvmFir2IrPipelinePhase.executePhase(
-            frontendOutput.copy(
-                // Ignore all other FE errors
-                diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector),
-            ),
-            emptyList(),
+            frontendOutput.withCompilerConfiguration(configurationForFir2Ir),
+            irGenerationExtensions = emptyList()
         ) ?: return null
 
         val builderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
-        configuration.put(KotlinToJVMBytecodeCompiler.customClassBuilderFactory, builderFactory)
-        val backendOutput = JvmBackendPipelinePhase.executePhase(fir2IrOutput) ?: return null
+
+        // JVM backend checks for diagnostics in the collector and early returns if there are any errors
+        // so we need to create an empty diagnostics collector once again
+        val configurationForBackend = configuration.copy().apply {
+            diagnosticsCollector = DiagnosticsCollectorImpl()
+            put(KotlinToJVMBytecodeCompiler.customClassBuilderFactory, builderFactory)
+        }
+        val backendOutput = JvmBackendPipelinePhase.executePhase(fir2IrOutput.withCompilerConfiguration(configurationForBackend))
         val generationState = backendOutput.outputs.singleOrNull() ?: return null
 
         return KaptContextForStubGeneration(
             options, false, logger, builderFactory.compiledClasses, builderFactory.origins, generationState,
-            BindingContext.EMPTY, frontendOutput.result.outputs.flatMap { it.fir },
+            frontendOutput.frontendOutput.outputs.flatMap { it.fir },
         )
     }
 
-    private fun checkForSyntaxErrorsAndReport(
-        frontendOutput: JvmFrontendPipelineArtifact,
-        configuration: CompilerConfiguration,
-    ): Boolean {
+    private fun checkForSyntaxErrorsAndReport(frontendOutput: JvmFrontendPipelineArtifact): Boolean {
         var reported = false
-        FirDiagnosticsCompilerResultsReporter.reportByFile(frontendOutput.diagnosticCollector) { diagnostic, location ->
+        FirDiagnosticsCompilerResultsReporter.reportByFile(frontendOutput.configuration.diagnosticsCollector) { diagnostic, location ->
             if (diagnostic.factory == FirSyntaxErrors.SYNTAX) {
                 FirDiagnosticsCompilerResultsReporter.reportDiagnosticToMessageCollector(
                     diagnostic,
                     location,
                     logger.messageCollector,
-                    configuration.renderDiagnosticInternalName
+                    frontendOutput.configuration.renderDiagnosticInternalName
                 )
                 reported = true
             }
@@ -246,7 +267,7 @@ open class FirKaptAnalysisHandlerExtension(
         stubs: List<KaptStub>,
         messageCollector: MessageCollector,
     ) {
-        val reportOutputFiles = kaptContext.generationState.configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
+        val reportOutputFiles = kaptContext.generationState.configuration.reportOutputFiles
         val outputFiles = if (reportOutputFiles) kaptContext.generationState.factory.asList().associateBy {
             it.relativePath.substringBeforeLast(".class", missingDelimiterValue = "")
         } else null
@@ -299,7 +320,7 @@ open class FirKaptAnalysisHandlerExtension(
     ) {
         val incrementalDataOutputDir = options.incrementalDataOutputDir ?: return
 
-        val reportOutputFiles = kaptContext.generationState.configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
+        val reportOutputFiles = kaptContext.generationState.configuration.reportOutputFiles
         kaptContext.generationState.factory.writeAll(incrementalDataOutputDir) { outputInfo, output ->
             kaptContext.generationState.configuration.fileMappingTracker?.let {
                 when (outputInfo.generatedForCompilerPlugin) {
@@ -317,12 +338,11 @@ open class FirKaptAnalysisHandlerExtension(
         }
     }
 
-    protected open fun loadProcessors(): LoadedProcessors {
-        return EfficientProcessorLoader(options, logger).loadProcessors()
-    }
+    protected open fun createProcessorLoader(): ProcessorLoader =
+        EfficientProcessorLoader(options, logger)
 
     private fun KaptOptions.Builder.checkOptions(logger: KaptLogger, configuration: CompilerConfiguration): Boolean? {
-        if (classesOutputDir == null && configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
+        if (classesOutputDir == null && configuration.outputJar != null) {
             logger.error("Kapt does not support specifying JAR file outputs. Please specify the classes output directory explicitly.")
             return false
         }
@@ -339,9 +359,7 @@ open class FirKaptAnalysisHandlerExtension(
                 classesOutputDir == null -> "Classes output directory"
                 else -> "Stubs output directory"
             }
-            val moduleName = configuration.get(CommonConfigurationKeys.MODULE_NAME)
-                ?: configuration.get(JVMConfigurationKeys.MODULES).orEmpty().joinToString()
-
+            val moduleName = configuration.moduleName ?: configuration.modules.joinToString()
             logger.warn("$nonExistentOptionName is not specified for $moduleName, skipping annotation processing")
             return false
         }
@@ -351,5 +369,11 @@ open class FirKaptAnalysisHandlerExtension(
         }
 
         return null
+    }
+
+    private inline fun <T> measureTimeMillis(block: () -> T): Pair<Long, T> {
+        val start = System.currentTimeMillis()
+        val result = block()
+        return Pair(System.currentTimeMillis() - start, result)
     }
 }

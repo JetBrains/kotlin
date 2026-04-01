@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
-    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4)) @R|kotlin/SinceKotlin|[Types](version = String(1.2)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4) [evaluated = String(1.4)]) @R|kotlin/SinceKotlin|[Types](version = String(1.2) [evaluated = String(1.2)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -108,7 +108,7 @@ FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
-    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4)) @R|kotlin/SinceKotlin|[Types](version = String(1.2)) public final [ResolvedTo(BODY_RESOLVE)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4) [evaluated = String(1.4)]) @R|kotlin/SinceKotlin|[Types](version = String(1.2) [evaluated = String(1.2)]) public final [ResolvedTo(BODY_RESOLVE)] class ClassCur : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             super<R|kotlin/Any|>()
         }
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] deprecatedSinceKotlin.kt
-    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4)) @R|kotlin/SinceKotlin|[Types](version = String(1.2)) public final [ResolvedTo(BODY_RESOLVE)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4) [evaluated = String(1.4)]) @R|kotlin/SinceKotlin|[Types](version = String(1.2) [evaluated = String(1.2)]) public final [ResolvedTo(BODY_RESOLVE)] class ClassCur : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             super<R|kotlin/Any|>()
         }

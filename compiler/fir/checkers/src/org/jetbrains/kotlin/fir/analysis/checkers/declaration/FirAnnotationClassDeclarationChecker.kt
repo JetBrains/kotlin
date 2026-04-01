@@ -64,8 +64,8 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkAnnotationClassMember(member: FirBasedSymbol<*>) {
-        when {
-            member is FirConstructorSymbol && member.isPrimary -> {
+        when (member) {
+            is FirConstructorSymbol if member.isPrimary -> {
                 for (parameter in member.valueParameterSymbols) {
                     val source = parameter.source ?: continue
                     if (!source.hasValOrVar()) {
@@ -127,13 +127,13 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
                     }
                 }
             }
-            member is FirRegularClassSymbol -> {
+            is FirRegularClassSymbol -> {
                 // DO NOTHING: nested annotation classes are allowed in 1.3+
             }
-            member is FirPropertySymbol && member.source?.elementType == VALUE_PARAMETER -> {
+            is FirPropertySymbol if member.source?.elementType == VALUE_PARAMETER -> {
                 // DO NOTHING to avoid reporting constructor properties
             }
-            member is FirNamedFunctionSymbol && member.isSynthetic -> {
+            is FirNamedFunctionSymbol if member.isSynthetic -> {
                 // DO NOTHING to avoid reporting synthetic functions
             }
             else -> {

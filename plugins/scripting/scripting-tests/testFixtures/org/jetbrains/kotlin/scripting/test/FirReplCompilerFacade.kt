@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptDiagnosticsMess
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.frontend.fir.FirModuleInfoProvider
@@ -87,6 +88,9 @@ class FirReplCompilerFacade(
                         listOf(testServices.standardLibrariesPathProvider.runtimeJarForTests())
                     )
                     compilerOptions("-Xrender-internal-diagnostic-names=true")
+                    for (languageFeature in module.directives[LanguageSettingsDirectives.LANGUAGE]) {
+                        compilerOptions("-XXLanguage:$languageFeature")
+                    }
                 }
                 K2ReplCompiler(
                     K2ReplCompiler.createCompilationState(

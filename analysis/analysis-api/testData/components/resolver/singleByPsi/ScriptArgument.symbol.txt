@@ -1,0 +1,5 @@
+KtNameReferenceExpression(16,20): 'args'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val args: kotlin.Array<kotlin.String>
+    ]

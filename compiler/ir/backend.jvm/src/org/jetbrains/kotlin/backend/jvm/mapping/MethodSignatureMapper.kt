@@ -13,13 +13,14 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.sanitizeNameIfNeeded
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
+import org.jetbrains.kotlin.codegen.signature.WritingParameterToGenericSignatureMode
 import org.jetbrains.kotlin.codegen.state.extractTypeMappingModeFromAnnotation
 import org.jetbrains.kotlin.codegen.state.isMethodWithDeclarationSiteWildcardsFqName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClassBase
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -30,14 +31,16 @@ import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescriptor
-import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.load.kotlin.getOptimalModeForReturnType
+import org.jetbrains.kotlin.load.kotlin.getOptimalModeForValueParameter
+import org.jetbrains.kotlin.load.kotlin.signatures
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -109,7 +112,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             if (function.isInvisibleInMultifilePart()) function.parentAsClass.name.asString() else null
         } else {
             function.getInternalFunctionForManglingIfNeeded()?.let {
-                NameUtils.sanitizeAsJavaIdentifier(getModuleName(it))
+                NameUtils.sanitizeAsJavaIdentifier(getModuleNameForClassMember(it))
             }
         } ?: return newName
 
@@ -149,10 +152,12 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             defaultArgumentsOriginalFunction as IrSimpleFunction
         } else null
 
-    private fun getModuleName(function: IrSimpleFunction): String =
-        (if (function is IrLazyFunctionBase)
-            getJvmModuleNameForDeserialized(function)
-        else null) ?: context.state.moduleName
+    private fun getModuleNameForClassMember(function: IrSimpleFunction): String {
+        val parent = function.parent
+        return if (parent is IrLazyClassBase) {
+            (if (parent.isK2) parent.moduleName else parent.irLazyClassModuleName) ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
+        } else context.state.moduleName
+    }
 
     fun mapReturnType(declaration: IrDeclaration, sw: JvmSignatureWriter? = null, materialized: Boolean = true): Type {
         if (declaration !is IrFunction) {
@@ -226,7 +231,9 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     ): JvmMethodGenericSignature {
         if (function is IrLazyFunctionBase &&
             (!function.isFakeOverride || function.parentAsClass.isFromJava()) &&
-            function.initialSignatureFunction != null
+            function.initialSignatureFunction != null &&
+            // TODO(KT-84903): Remove this extra check once we fix J2KLIB to not create self-referencing functions.
+            function.initialSignatureFunction !== function
         ) {
             // Overrides of special builtin in Kotlin classes always have special signature
             if ((function as? IrSimpleFunction)?.getDifferentNameForJvmBuiltinFunction() == null ||
@@ -249,7 +256,14 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
                 else parameter.type
             writeParameter(
                 sw = sw,
-                isSkippedInGenericSignature = parameter.kind == IrParameterKind.Regular && parameter.isSkippedInGenericSignature,
+                mode = when (parameter.origin) {
+                    JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS if parameter.kind == IrParameterKind.Regular ->
+                        WritingParameterToGenericSignatureMode.OUTER_THIS
+                    JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER if parameter.kind == IrParameterKind.Regular ->
+                        WritingParameterToGenericSignatureMode.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER
+                    else ->
+                        WritingParameterToGenericSignatureMode.REGULAR
+                },
                 type = type,
                 function = function,
                 materialized = parameter.kind == IrParameterKind.Regular && materialized
@@ -329,12 +343,12 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
     private fun writeParameter(
         sw: JvmSignatureWriter,
-        isSkippedInGenericSignature: Boolean,
+        mode: WritingParameterToGenericSignatureMode,
         type: IrType,
         function: IrFunction,
         materialized: Boolean = true
     ) {
-        sw.writeParameterType(JvmMethodParameterKind.VALUE, isSkippedInGenericSignature)
+        sw.writeParameterType(mode)
         writeParameterType(sw, type, function, materialized)
         sw.writeParameterTypeEnd()
     }
@@ -468,31 +482,12 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         return signature(classPart, signature)
     }
 
-    // From org.jetbrains.kotlin.load.kotlin.getJvmModuleNameForDeserializedDescriptor
-    private fun getJvmModuleNameForDeserialized(function: IrLazyFunctionBase): String? {
-        var current: IrDeclarationParent? = function.parent
-        while (current != null) {
-            when (current) {
-                is IrLazyClassBase -> {
-                    val moduleName = if (current.isK2) current.moduleName else current.irLazyClassModuleName
-                    return moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
-                }
-                is IrExternalPackageFragment -> {
-                    val source = current.containerSource ?: return null
-                    return (source as? JvmPackagePartSource)?.moduleName
-                }
-                else -> current = (current as? IrDeclaration)?.parent ?: return null
-            }
-        }
-        return null
-    }
-
     fun mapToMethodHandle(irFun: IrFunction): Handle {
         val irNonFakeFun = when (irFun) {
             is IrConstructor -> irFun
             is IrSimpleFunction -> findSuperDeclaration(irFun)
         }
-        val irParentClass = irNonFakeFun.parent as? IrClass
+        val irParentClass = irNonFakeFun.parents.filterIsInstance<IrClass>().firstOrNull()
             ?: throw AssertionError("Unexpected parent: ${irNonFakeFun.parent.render()}")
         val owner = typeMapper.mapOwner(irParentClass)
         val asmMethod = mapAsmMethod(irNonFakeFun)

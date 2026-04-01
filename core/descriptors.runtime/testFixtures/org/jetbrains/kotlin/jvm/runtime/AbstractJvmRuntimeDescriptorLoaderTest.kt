@@ -72,6 +72,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         val text = FileUtil.loadFile(file, true)
 
         if (InTextDirectivesUtils.isDirectiveDefined(text, "SKIP_IN_RUNTIME_TEST")) return
+        if (InTextDirectivesUtils.isDirectiveDefined(text, "// IGNORE_BACKEND_K1: ")) return
 
         val jdkKind =
             if (InTextDirectivesUtils.isDirectiveDefined(text, "FULL_JDK")) TestJdkKind.FULL_JDK

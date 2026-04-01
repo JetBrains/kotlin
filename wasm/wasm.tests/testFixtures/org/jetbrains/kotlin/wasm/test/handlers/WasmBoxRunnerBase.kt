@@ -9,15 +9,28 @@ import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_NO_JS_TAG
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
 abstract class WasmBoxRunnerBase(
-    testServices: TestServices
+    testServices: TestServices,
+    executeWithV8Only: Boolean = false,
 ) : AbstractWasmArtifactsCollector(testServices) {
-    internal abstract val vmsToCheck: List<WasmVM>
+    private val wasmEngines = if (executeWithV8Only) {
+        // JavaScriptCore may glitch on Linux CI: `libglib-2.0.so.0: file too short`
+        // however this engine can be avoided for some testrunners like klib compatibility tests,
+        // where it's enough to execute an image only on any one of engine, which is the reliable and simple to setup, like V8.
+        listOfNotNull(WasmVM.V8)
+    } else {
+        // KT-82392 [Wasm] Investigate and fix JSC test run on windows
+        val jscOfNotWindows = WasmVM.JavaScriptCore.takeIf {
+            !System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
+        }
+        listOfNotNull(WasmVM.V8, WasmVM.SpiderMonkey, jscOfNotWindows)
+    }
 
     protected fun saveAdditionalFilesAndRun(
         outputDir: File,
@@ -26,14 +39,18 @@ abstract class WasmBoxRunnerBase(
         filesToIgnoreInSizeChecks: MutableSet<File>
     ): List<Throwable> {
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val collectedJsArtifacts = collectJsArtifacts(originalFile)
+        val collectedJsArtifacts = collectJsArtifacts(originalFile, mark)
 
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
         val startUnitTests = RUN_UNIT_TESTS in testServices.moduleStructure.allDirectives
 
         fun File.ignoreInSizeChecks() = also { filesToIgnoreInSizeChecks.add(it) }
 
+        val isNoJsTag = WASM_NO_JS_TAG in testServices.moduleStructure.allDirectives
+
         val testJs = """
+                    ${if (isNoJsTag) "import './tag.mjs'" else ""}
+                    import * as jsModule from './$WASM_BASE_FILE_NAME.mjs'
                     if (globalThis.console == null) {
                         globalThis.console = {};
                     }
@@ -42,8 +59,6 @@ abstract class WasmBoxRunnerBase(
                     }
                     let actualResult;
                     try {
-                        // Use "dynamic import" to catch exception happened during JS & Wasm modules initialization
-                        let jsModule = await import('./index.mjs');
                         ${if (startUnitTests) "jsModule.startUnitTests();" else ""}
                         actualResult = jsModule.box();
                     } catch(e) {
@@ -65,6 +80,12 @@ abstract class WasmBoxRunnerBase(
 
                     ${if (debugMode >= DebugMode.DEBUG) "console.log('test passed');" else ""}                        
                 """.trimIndent()
+
+        if (isNoJsTag) {
+            File(outputDir, "tag.mjs")
+                .ignoreInSizeChecks()
+                .writeText("delete WebAssembly.JSTag;")
+        }
 
         File(outputDir, "test.mjs")
             .ignoreInSizeChecks()
@@ -112,14 +133,14 @@ abstract class WasmBoxRunnerBase(
             }
 
 
-            for (mjsFile: AdditionalFile in collectedJsArtifacts.mjsFiles) {
+            for (mjsFile: WasmArtifactsCollector.AdditionalFile in collectedJsArtifacts.mjsFiles) {
                 println(" ------ $mark External ESM file://$outputPath/${mjsFile.name}")
             }
         }
 
         val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
 
-        return vmsToCheck
+        return wasmEngines
             .mapNotNull { vm ->
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
@@ -147,7 +168,7 @@ internal fun WasmVM.runWithCaughtExceptions(
         if (debugMode >= DebugMode.DEBUG) {
             println(" ------ Run in $vmName" + if (shortName in failsIn) " (expected to fail)" else "")
         }
-        run(
+        val str = run(
             "./${entryFile}",
             jsFilePaths,
             workingDirectory = workingDirectory,

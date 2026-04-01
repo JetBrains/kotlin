@@ -37,4 +37,8 @@ internal class EOISet : SimpleSet() {
     override fun hasConsumed(matchResult: MatchResultImpl): Boolean = false
     override val name: String
             get() = "EOI"
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        // does nothing interesting
+    }
 }

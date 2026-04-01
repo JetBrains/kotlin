@@ -2,5 +2,6 @@ KtNameReferenceExpression(74,77): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in DeclSite) open var foo: kotlin.Int

@@ -48,67 +48,68 @@ digraph delayedAssignment_kt {
         subgraph cluster_6 {
             color=blue
             12 [label="Enter block"];
-            13 [label="Variable declaration: lval a: R|A?|"];
+            13 [label="Enter variable declaration: lval a: R|A?|"];
+            14 [label="Exit variable declaration: lval a: R|A?|"];
             subgraph cluster_7 {
                 color=blue
-                14 [label="Enter when"];
+                15 [label="Enter when"];
                 subgraph cluster_8 {
                     color=blue
-                    15 [label="Enter when branch condition "];
-                    16 [label="Access variable R|<local>/b|"];
-                    17 [label="Exit when branch condition"];
+                    16 [label="Enter when branch condition "];
+                    17 [label="Access variable R|<local>/b|"];
+                    18 [label="Exit when branch condition"];
                 }
                 subgraph cluster_9 {
                     color=blue
-                    18 [label="Enter when branch condition else"];
-                    19 [label="Exit when branch condition"];
+                    19 [label="Enter when branch condition else"];
+                    20 [label="Exit when branch condition"];
                 }
-                20 [label="Enter when branch result"];
+                21 [label="Enter when branch result"];
                 subgraph cluster_10 {
                     color=blue
-                    21 [label="Enter block"];
-                    22 [label="Const: Null(null)"];
-                    23 [label="Assignment: R|<local>/a|"];
-                    24 [label="Exit block"];
+                    22 [label="Enter block"];
+                    23 [label="Const: Null(null)"];
+                    24 [label="Assignment: R|<local>/a|"];
+                    25 [label="Exit block"];
                 }
-                25 [label="Exit when branch result"];
-                26 [label="Enter when branch result"];
+                26 [label="Exit when branch result"];
+                27 [label="Enter when branch result"];
                 subgraph cluster_11 {
                     color=blue
-                    27 [label="Enter block"];
+                    28 [label="Enter block"];
                     subgraph cluster_12 {
                         color=blue
-                        28 [label="Function call arguments enter"];
-                        29 [label="Function call arguments exit"];
+                        29 [label="Function call arguments enter"];
+                        30 [label="Function call arguments exit"];
                     }
-                    30 [label="Function call enter: R|/A.A|()"];
-                    31 [label="Function call exit: R|/A.A|()" style="filled" fillcolor=yellow];
-                    32 [label="Assignment: R|<local>/a|"];
+                    31 [label="Function call enter: R|/A.A|()"];
+                    32 [label="Function call exit: R|/A.A|()" style="filled" fillcolor=yellow];
+                    33 [label="Assignment: R|<local>/a|"];
                     subgraph cluster_13 {
                         color=blue
-                        33 [label="Function call arguments enter"];
-                        34 [label="Access variable R|<local>/a|"];
-                        35 [label="Smart cast: R|<local>/a|"];
-                        36 [label="Function call arguments exit"];
+                        34 [label="Function call arguments enter"];
+                        35 [label="Access variable R|<local>/a|"];
+                        36 [label="Smart cast: R|<local>/a|"];
+                        37 [label="Function call arguments exit"];
                     }
-                    37 [label="Function call enter: R|<local>/a|.R|/A.foo|()"];
-                    38 [label="Function call exit: R|<local>/a|.R|/A.foo|()" style="filled" fillcolor=yellow];
-                    39 [label="Exit block"];
+                    38 [label="Function call enter: R|<local>/a|.R|/A.foo|()"];
+                    39 [label="Function call exit: R|<local>/a|.R|/A.foo|()" style="filled" fillcolor=yellow];
+                    40 [label="Exit block"];
                 }
-                40 [label="Exit when branch result"];
-                41 [label="Exit when"];
+                41 [label="Exit when branch result"];
+                42 [label="Exit when"];
             }
             subgraph cluster_14 {
                 color=blue
-                42 [label="Function call arguments enter"];
-                43 [label="Access variable R|<local>/a|"];
-                44 [label="Function call arguments exit"];
+                43 [label="Function call arguments enter"];
+                44 [label="Access variable R|<local>/a|"];
+                45 [label="Function call arguments exit"];
             }
-            45 [label="Function call enter: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()"];
-            46 [label="Function call exit: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
-            47 [label="Exit block"];
+            46 [label="Function call enter: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()"];
+            47 [label="Function call exit: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
+            48 [label="Exit block"];
         }
-        48 [label="Exit function test" style="filled" fillcolor=red];
+        49 [label="Exit function test" style="filled" fillcolor=red];
     }
     11 -> {12};
     12 -> {13};
@@ -116,16 +117,16 @@ digraph delayedAssignment_kt {
     14 -> {15};
     15 -> {16};
     16 -> {17};
-    17 -> {18 26};
-    18 -> {19};
+    17 -> {18};
+    18 -> {19 27};
     19 -> {20};
     20 -> {21};
     21 -> {22};
     22 -> {23};
     23 -> {24};
     24 -> {25};
-    25 -> {41};
-    26 -> {27};
+    25 -> {26};
+    26 -> {42};
     27 -> {28};
     28 -> {29};
     29 -> {30};
@@ -147,5 +148,6 @@ digraph delayedAssignment_kt {
     45 -> {46};
     46 -> {47};
     47 -> {48};
+    48 -> {49};
 
 }

@@ -1,0 +1,130 @@
+FILE: companionBlocks.kt
+    public final? [FirCompanionBlockDataKey=[valid=4 nested=1]] class C : R|kotlin/Any| {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? static [ContainingClassKey=C] fun foo(): R|kotlin/Unit| {
+        }
+
+        public? final? fun member1(): R|kotlin/Unit| {
+        }
+
+        init {
+        }
+
+        public? final? static [ContainingClassKey=C] val bar: <implicit> = IntegerLiteral(1)
+            public? static [ContainingClassKey=C] get(): <implicit>
+
+        public? final? static [ContainingClassKey=C] val baz: <implicit>
+            public? static [ContainingClassKey=C] get(): <implicit> {
+                ^ IntegerLiteral(2)
+            }
+
+        public? final? val member2: <implicit> = IntegerLiteral(1)
+            public? [ContainingClassKey=C] get(): <implicit>
+
+        public? final? static [ContainingClassKey=C] fun qux(): R|kotlin/Unit| {
+            local final? class Local : R|kotlin/Any| {
+                public? [ContainingClassKey=Local] constructor(): R|<local>/Local| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? fun insideLocal(): R|kotlin/Unit| {
+                }
+
+                public? final? val insideLocalVal: <implicit> = IntegerLiteral(1)
+                    public? [ContainingClassKey=Local] get(): <implicit>
+
+            }
+
+        }
+
+        public final? companion object Companion : R|kotlin/Any| {
+            private [ContainingClassKey=Companion] constructor(): R|C.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final? [FirIllegalCompanionBlockMemberKey=true] class Nested : R|kotlin/Any| {
+            public? [ContainingClassKey=Nested] constructor(): R|C.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final [FirIllegalCompanionBlockMemberKey=true] typealias TA = Int
+
+        public? [ContainingClassKey=C, FirIllegalCompanionBlockMemberKey=true] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        [FirIllegalCompanionBlockMemberKey=true] init {
+        }
+
+        public? final? static [ContainingClassKey=C] fun doubleNestedFun(): R|kotlin/Unit| {
+        }
+
+        public? final? static [ContainingClassKey=C] val doubleNestedProp: <implicit> = IntegerLiteral(1)
+            public? static [ContainingClassKey=C] get(): <implicit>
+
+        public final? [FirIllegalCompanionBlockMemberKey=true] class DoubleNestedNested : R|kotlin/Any| {
+            public? [ContainingClassKey=DoubleNestedNested] constructor(): R|C.DoubleNestedNested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final [FirIllegalCompanionBlockMemberKey=true] typealias DoubleNestedTA = Int
+
+        public? [ContainingClassKey=C, FirIllegalCompanionBlockMemberKey=true] constructor(x: Int): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        [FirIllegalCompanionBlockMemberKey=true] init {
+        }
+
+    }
+    public final? enum class E : R|kotlin/Enum<E>| {
+        private [ContainingClassKey=E] constructor(): R|E| {
+            super<R|kotlin/Enum<E>|>()
+        }
+
+        public final static [ContainingClassKey=E] enum entry Entry: R|E| = object : R|E| {
+            private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|E|>()
+            }
+
+            public? final? static [ContainingClassKey=<anonymous>] fun foo(): R|kotlin/Unit| {
+            }
+
+            public? final? static [ContainingClassKey=<anonymous>] val bar: <implicit> = IntegerLiteral(1)
+                public? static [ContainingClassKey=<anonymous>] get(): <implicit>
+
+        }
+
+        public final static [ContainingClassKey=E] fun values(): R|kotlin/Array<E>| {
+        }
+
+        public final static [ContainingClassKey=E] fun valueOf(value: R|kotlin/String|): R|E| {
+        }
+
+        public final static [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<E>|
+            public static get(): R|kotlin/enums/EnumEntries<E>|
+
+    }
+    public? final? val o: <implicit> = object : R|kotlin/Any| {
+        private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? static [ContainingClassKey=<anonymous>] fun foo(): R|kotlin/Unit| {
+        }
+
+        public? final? static [ContainingClassKey=<anonymous>] val bar: <implicit> = IntegerLiteral(1)
+            public? static [ContainingClassKey=<anonymous>] get(): <implicit>
+
+    }
+
+        public? get(): <implicit>

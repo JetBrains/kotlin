@@ -1,0 +1,33 @@
+// FILE: common.kt
+
+fun test1(): String {
+  val reallyLongList: List<String> = listOf<String>(elements = ["a", "b"])
+  return { // BLOCK
+    val tmp_0: String? = explain(value = EQEQ(arg0 = reversed<String>(/* <this> = reallyLongList */), arg1 = emptyList<String>()))
+    when {
+      EQEQ(arg0 = tmp_0, arg1 = null) -> "FAIL"
+      else -> tmp_0
+    }
+  }
+}
+
+// FILE: platform.kt
+
+fun box(): String {
+  return runAllOutput(tests = [to<String, KFunction0<String>>(/* <this> = "test1", */ that = ::test1), to<String, KFunction0<String>>(/* <this> = "test2", */ that = ::test2)])
+}
+
+fun explain(value: Any): String? {
+  return "OK"
+}
+
+fun test2(): String {
+  val reallyLongList: List<String> = listOf<String>(elements = ["a", "b"])
+  return { // BLOCK
+    val tmp_0: String? = explain(value = EQEQ(arg0 = reversed<String>(/* <this> = reallyLongList */), arg1 = emptyList<String>()))
+    when {
+      EQEQ(arg0 = tmp_0, arg1 = null) -> "FAIL"
+      else -> tmp_0
+    }
+  }
+}

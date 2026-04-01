@@ -29,7 +29,7 @@ import p2.*
 }
 
 // FILE: explicitlyImportP1.kt
-import <!DEPRECATION_ERROR!>p1.A<!>
+import p1.A
 import p2.*
 
 <!CONFLICTING_OVERLOADS!>fun test(a: A)<!> {

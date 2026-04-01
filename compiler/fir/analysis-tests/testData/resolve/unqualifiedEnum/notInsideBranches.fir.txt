@@ -13,7 +13,7 @@ FILE: notInsideBranches.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<Some>|
-            public get(): R|kotlin/enums/EnumEntries<Some>|
+            public static get(): R|kotlin/enums/EnumEntries<Some>|
 
     }
     public final fun foo(s: R|Some|): <ERROR TYPE REF: Cannot infer argument for type parameter K> {

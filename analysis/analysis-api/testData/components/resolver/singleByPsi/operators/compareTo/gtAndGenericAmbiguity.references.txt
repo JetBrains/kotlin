@@ -2,6 +2,10 @@ KtOperationReferenceExpression(97,98): '>'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun <T> T.compareTo(int: Int): Int
+    fun <R> R.compareTo(number: Int): Int>
     symbols:
       0: (in ROOT) operator fun <R> R.compareTo(number: kotlin.Int): kotlin.Int
       1: (in ROOT) operator fun <T> T.compareTo(int: kotlin.Int): kotlin.Int

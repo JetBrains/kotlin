@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.createResolvable
 import org.jetbrains.kotlin.gradle.utils.currentBuild
+import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 import java.io.Serializable
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNpmResolutionManager as wasmKotlinNpmResolutionManager
@@ -96,8 +97,6 @@ class KotlinCompilationNpmResolver(
             it.npmResolutionManager.value(npmResolutionManager)
                 .disallowChanges()
 
-            @Suppress("DEPRECATION_ERROR")
-            it.jsIrCompilation.set(true)
             it.npmProjectName.set(npmProject.name)
             it.npmProjectMain.set(npmProject.main)
             it.npmProjectTypes.set(npmProject.typesFileName)
@@ -160,12 +159,11 @@ class KotlinCompilationNpmResolver(
 
     private fun createAggregatedConfiguration(): Configuration {
         return project.configurations.createResolvable(compilation.npmAggregatedConfigurationName) {
+            setInvisibleIfSupported()
             usesPlatformOf(target)
             attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
             attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             attributes.attribute(publicPackageJsonAttribute, PUBLIC_PACKAGE_JSON_ATTR_VALUE)
-            @Suppress("DEPRECATION")
-            isVisible = false
             description = "NPM configuration for $compilation."
 
             /**
@@ -195,12 +193,11 @@ class KotlinCompilationNpmResolver(
 
     private fun createPublicPackageJsonConfiguration(): Configuration {
         return project.configurations.createConsumable(compilation.publicPackageJsonConfigurationName) {
+            setInvisibleIfSupported()
             usesPlatformOf(target)
             attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
             attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             attributes.attribute(publicPackageJsonAttribute, PUBLIC_PACKAGE_JSON_ATTR_VALUE)
-            @Suppress("DEPRECATION")
-            isVisible = false
         }
     }
 
@@ -306,9 +303,6 @@ class KotlinCompilationNpmResolver(
             val includedBuild = project.gradle.includedBuild(identifier.identityPath.topRealPath().name!!)
             internalCompositeDependencies.add(
                 CompositeDependency(
-                    dependencyName = "", // deprecated, no longer used
-                    dependencyVersion = "",  // deprecated, no longer used
-                    includedBuildDir = includedBuild.projectDir,
                     includedBuild = includedBuild,
                 )
             )

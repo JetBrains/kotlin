@@ -1,0 +1,4 @@
+KT element: KtScriptInitializer
+Resolve target: scriptInitializer.kts -> <script-scriptInitializer.kts> -> <init-block>
+FIR:
+  init { LAZY_BLOCK }

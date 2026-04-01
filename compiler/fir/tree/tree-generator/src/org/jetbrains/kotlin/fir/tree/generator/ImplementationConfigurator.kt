@@ -70,6 +70,26 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             additionalImports(visibilitiesImport)
         }
 
+        impl(replDeclarationReference) {
+            defaultEmptyList("annotations", withGetter = true)
+        }
+
+        impl(replExpressionReference) {
+            defaultEmptyList("annotations", withGetter = true)
+            default("coneTypeOrNull") {
+                value = "expressionRef.value.coneTypeOrNull"
+                withGetter = true
+            }
+        }
+
+        impl(replPropertyInitializer) {
+            defaultEmptyList("annotations", withGetter = true)
+        }
+
+        impl(replPropertyDelegate) {
+            defaultEmptyList("annotations", withGetter = true)
+        }
+
         impl(import)
 
         impl(resolvedImport) {
@@ -405,8 +425,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(comparisonExpression) {
-            default("coneTypeOrNull", "StandardClassIds.Boolean.constructClassLikeType()")
-            additionalImports(standardClassIdsType, constructClassLikeTypeImport)
+            default("coneTypeOrNull", "StandardTypes.Boolean")
+            additionalImports(standardTypes)
         }
 
         impl(typeOperatorCall) {
@@ -418,8 +438,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(incrementDecrementExpression)
 
         impl(equalityOperatorCall) {
-            default("coneTypeOrNull", "StandardClassIds.Boolean.constructClassLikeType()")
-            additionalImports(standardClassIdsType, constructClassLikeTypeImport)
+            default("coneTypeOrNull", "StandardTypes.Boolean")
+            additionalImports(standardTypes)
         }
 
         impl(whenBranch, "FirRegularWhenBranch") {
@@ -514,6 +534,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 "contextParameters", "typeParameters",
                 withGetter = true
             )
+            default("deprecationsProvider") {
+                value = "EmptyDeprecationsProvider"
+                withGetter = true
+            }
         }
 
         impl(whenSubjectExpression) {
@@ -682,6 +706,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(valueParameter) {
             configureCommonValueParameter()
+            default("deprecationsProvider") {
+                value = "EmptyDeprecationsProvider"
+                withGetter = true
+            }
         }
 
         impl(valueParameter, "FirDefaultSetterValueParameter") {

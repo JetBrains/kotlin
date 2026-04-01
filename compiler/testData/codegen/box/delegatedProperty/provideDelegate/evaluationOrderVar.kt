@@ -1,15 +1,17 @@
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 var log: String = ""
-
-val dispatcher = hashMapOf<String, String>()
 
 inline fun <T> runLogged(entry: String, action: () -> T): T {
     log += entry
     return action()
 }
+
+// FILE: main.kt
+import kotlin.test.*
+
+val dispatcher = hashMapOf<String, String>()
 
 operator fun String.provideDelegate(host: Any?, p: Any): String  {
     dispatcher[this] = this

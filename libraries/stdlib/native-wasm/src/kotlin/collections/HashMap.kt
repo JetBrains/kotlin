@@ -1,10 +1,80 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
 package kotlin.collections
 
+/**
+ * A hash table implementation of [MutableMap].
+ *
+ * This class stores key-value pairs using a hash table data structure that provides fast lookups
+ * based on keys. It fully implements the [MutableMap] contract, providing all standard map operations
+ * including insertion, removal, and lookup of values by key.
+ *
+ * ## Null keys and values
+ *
+ * [HashMap] accepts `null` as a key. Since keys are unique, at most one entry with a `null` key
+ * can exist in the map. [HashMap] also accepts `null` as a value, and multiple entries can have
+ * `null` values.
+ *
+ * ## Key's hash code and equality contracts
+ *
+ * [HashMap] relies on the [Any.hashCode] and [Any.equals] functions of keys to organize and locate entries.
+ * Keys are considered equal if their [Any.equals] function returns `true`, and keys that are equal must
+ * have the same [Any.hashCode] value. Violating this contract can lead to incorrect behavior.
+ *
+ * The [Any.hashCode] and [Any.equals] functions should be consistent and immutable during the lifetime
+ * of the key objects. Modifying a key object in a way that changes its hash code or equality
+ * after it has been used as a key in a [HashMap] may lead to the entry becoming unreachable.
+ *
+ * ## Performance characteristics
+ *
+ * The performance characteristics below assume that the [Any.hashCode] function of keys distributes
+ * them uniformly across the hash table, minimizing collisions. A poor hash function that causes
+ * many collisions can degrade performance.
+ *
+ * [HashMap] provides efficient implementation for common operations:
+ *
+ * - **Lookup** ([get], [containsKey]): O(1) time
+ * - **Insertion and removal** ([put], [remove]): O(1) time
+ * - **Value search** ([containsValue]): O(n) time, requires scanning all entries
+ * - **Iteration** ([entries], [keys], [values]): O(n) time
+ *
+ * ## Iteration order
+ *
+ * [HashMap] does not guarantee any particular order for iteration over its keys, values, or entries.
+ * The iteration order is unpredictable and may change when the map is rehashed (when entries are
+ * added or removed and the internal capacity is adjusted). Do not rely on any specific iteration order.
+ *
+ * If a predictable iteration order is required, consider using [LinkedHashMap], which maintains
+ * insertion order.
+ *
+ * ## Usage guidelines
+ *
+ * [HashMap] uses an internal data structure with a finite *capacity* - the maximum number of entries
+ * it can store before needing to grow. When the map becomes full, it automatically increases its capacity
+ * and performs *rehashing* - rebuilding the internal data structure to redistribute entries. Rehashing is
+ * a relatively expensive operation that temporarily impacts performance. When creating a [HashMap], you can
+ * optionally provide an initial capacity value, which will be used to size the internal data structure,
+ * potentially avoiding rehashing operations as the map grows.
+ *
+ * To optimize performance and memory usage:
+ *
+ * - If the number of entries is known in advance, use the constructor with initial capacity
+ *   to avoid multiple rehashing operations as the map grows.
+ * - Ensure key objects have well-distributed [Any.hashCode] implementations to minimize collisions
+ *   and maintain good performance.
+ * - Prefer [putAll] over multiple individual [put] calls when adding multiple entries.
+ *
+ * ## Thread safety
+ *
+ * [HashMap] is not thread-safe. If multiple threads access an instance concurrently and at least
+ * one thread modifies it, external synchronization is required.
+ *
+ * @param K the type of map keys. The map is invariant in its key type.
+ * @param V the type of map values. The mutable map is invariant in its value type.
+ */
 public actual class HashMap<K, V> private constructor(
     // keys in insert order
     private var keysArray: Array<K>,
@@ -12,7 +82,7 @@ public actual class HashMap<K, V> private constructor(
     private var valuesArray: Array<V>?,
     // hash of a key by its index, -1 if a key at that index was removed
     private var presenceArray: IntArray,
-    // (index + 1) of a key by its hash, 0 if there is no key with that hash, -1 if collision chain continues to the hash-1
+    // (index + 1) of a key by its hash, 0 if there is no key with that hash
     private var hashArray: IntArray,
     // max length of a collision chain
     private var maxProbeDistance: Int,
@@ -53,22 +123,22 @@ public actual class HashMap<K, V> private constructor(
     /**
      * Creates a new empty [HashMap] with the specified initial capacity.
      *
-     * Capacity is the maximum number of entries the map is able to store in current internal data structure.
-     * When the map gets full by a certain default load factor, its capacity is expanded,
-     * which usually leads to rebuild of the internal data structure.
+     * Capacity is the maximum number of entries the map is able to store in the current internal data structure.
+     * When the map gets full, its capacity is expanded, which usually leads to rebuild of the internal
+     * data structure.
      *
      * @param initialCapacity the initial capacity of the created map.
-     *   Note that the argument is just a hint for the implementation and can be ignored.
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
     public actual constructor(initialCapacity: Int) : this(
-            arrayOfUninitializedElements(initialCapacity),
-            null,
-            IntArray(initialCapacity),
-            IntArray(computeHashSize(initialCapacity)),
-            INITIAL_MAX_PROBE_DISTANCE,
-            0)
+        arrayOfUninitializedElements(initialCapacity),
+        null,
+        IntArray(initialCapacity),
+        IntArray(computeHashSize(initialCapacity)),
+        INITIAL_MAX_PROBE_DISTANCE,
+        0
+    )
 
     /**
      * Creates a new [HashMap] filled with the contents of the specified [original] map.
@@ -80,14 +150,11 @@ public actual class HashMap<K, V> private constructor(
     /**
      * Creates a new empty [HashMap] with the specified initial capacity and load factor.
      *
-     * Capacity is the maximum number of entries the map is able to store in current internal data structure.
-     * Load factor is the measure of how full the map is allowed to get in relation to
-     * its capacity before the capacity is expanded, which usually leads to rebuild of the internal data structure.
+     * Capacity is the maximum number of entries the map is able to store in the current internal data structure.
      *
      * @param initialCapacity the initial capacity of the created map.
-     *   Note that the argument is just a hint for the implementation and can be ignored.
      * @param loadFactor the load factor of the created map.
-     *   Note that the argument is just a hint for the implementation and can be ignored.
+     *   Note that this parameter is not used by this implementation.
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
@@ -329,7 +396,7 @@ public actual class HashMap<K, V> private constructor(
         while (true) {
             val index = hashArray[hash]
             if (index == 0) return TOMBSTONE
-            if (index > 0 && keysArray[index - 1] == key) return index - 1
+            if (keysArray[index - 1] == key) return index - 1
             if (--probesLeft < 0) return TOMBSTONE
             if (hash-- == 0) hash = hashSize - 1
         }
@@ -353,7 +420,7 @@ public actual class HashMap<K, V> private constructor(
             var probeDistance = 0
             while (true) {
                 val index = hashArray[hash]
-                if (index <= 0) { // claim or reuse hash slot
+                if (index == 0) { // claim or reuse hash slot
                     if (length >= capacity) {
                         ensureExtraCapacity(1)
                         continue@retry
@@ -399,50 +466,32 @@ public actual class HashMap<K, V> private constructor(
 
     private fun removeHashAt(removedHash: Int) {
         var hash = removedHash
-        var hole = removedHash // will try to patch the hole in hash array
+        var hole = removedHash // will try to patch the hole in the hash array
         var probeDistance = 0
-        var patchAttemptsLeft = (maxProbeDistance * 2).coerceAtMost(hashSize / 2) // don't spend too much effort
         while (true) {
             if (hash-- == 0) hash = hashSize - 1
-            if (++probeDistance > maxProbeDistance) {
-                // too far away -- can release the hole, bad case will not happen
-                hashArray[hole] = 0
-                return
-            }
             val index = hashArray[hash]
-            if (index == 0) {
-                // end of chain -- can release the hole, bad case will not happen
+            if (++probeDistance > maxProbeDistance) {
+                // too far away - can release the hole, a bad case will not happen
                 hashArray[hole] = 0
                 return
             }
-            if (index < 0) {
-                // TOMBSTONE FOUND
-                //   - <--- [ TS ] ------ [hole] ---> +
-                //             \------------/
-                //             probeDistance
-                // move tombstone into the hole
-                hashArray[hole] = TOMBSTONE
+            if (index == 0) {
+                // end of chain - can release the hole, a bad case will not happen
+                hashArray[hole] = 0
+                return
+            }
+            val otherHash = hash(keysArray[index - 1])
+            // Bad case:
+            //   - <--- [hash] ------ [hole] ------ [otherHash] ---> +
+            //             \------------/
+            //             probeDistance
+            if ((otherHash - hash) and (hashSize - 1) >= probeDistance) {
+                // move otherHash into the hole, move the hole
+                hashArray[hole] = index
+                presenceArray[index - 1] = hole
                 hole = hash
                 probeDistance = 0
-            } else {
-                val otherHash = hash(keysArray[index - 1])
-                // Bad case:
-                //   - <--- [hash] ------ [hole] ------ [otherHash] ---> +
-                //             \------------/
-                //             probeDistance
-                if ((otherHash - hash) and (hashSize - 1) >= probeDistance) {
-                    // move otherHash into the hole, move the hole
-                    hashArray[hole] = index
-                    presenceArray[index - 1] = hole
-                    hole = hash
-                    probeDistance = 0
-                }
-            }
-            // check how long we're patching holes
-            if (--patchAttemptsLeft < 0) {
-                // just place tombstone into the hole
-                hashArray[hole] = TOMBSTONE
-                return
             }
         }
     }
@@ -752,7 +801,7 @@ internal class HashMapValues<V> internal constructor(
  * Changing type from [MutableMap.MutableEntry] to [E] makes the compiler generate barriers checking that
  * argument `is` [E] (so technically `is` [Map.Entry]) instead of `is` [MutableMap.MutableEntry].
  *
- * See also [KT-42248](https://youtrack.jetbrains.com/issue/KT-42428).
+ * See also [KT-42428](https://youtrack.jetbrains.com/issue/KT-42428).
  */
 internal abstract class HashMapEntrySetBase<K, V, E : Map.Entry<K, V>> internal constructor(
         val backing: HashMap<K, V>
@@ -789,5 +838,80 @@ internal class HashMapEntrySet<K, V> internal constructor(
     override fun iterator(): MutableIterator<MutableMap.MutableEntry<K, V>> = backing.entriesIterator()
 }
 
-// This hash map keeps insertion order.
+/**
+ * A hash table implementation of [MutableMap] that maintains insertion order.
+ *
+ * This class stores key-value pairs using a hash table data structure that provides fast lookups
+ * based on keys, while also maintaining the order in which entries were inserted.
+ * It fully implements the [MutableMap] contract, providing all standard map operations
+ * including insertion, removal, and lookup of values by key.
+ *
+ * ## Null keys and values
+ *
+ * [LinkedHashMap] accepts `null` as a key. Since keys are unique, at most one entry with a `null` key
+ * can exist in the map. [LinkedHashMap] also accepts `null` as a value, and multiple entries can have
+ * `null` values.
+ *
+ * ## Key's hash code and equality contracts
+ *
+ * [LinkedHashMap] relies on the [Any.hashCode] and [Any.equals] functions of keys to organize and locate entries.
+ * Keys are considered equal if their [Any.equals] function returns `true`, and keys that are equal must
+ * have the same [Any.hashCode] value. Violating this contract can lead to incorrect behavior.
+ *
+ * The [Any.hashCode] and [Any.equals] functions should be consistent and immutable during the lifetime
+ * of the key objects. Modifying a key object in a way that changes its hash code or equality
+ * after it has been used as a key in a [LinkedHashMap] may lead to the entry becoming unreachable.
+ *
+ * ## Performance characteristics
+ *
+ * The performance characteristics below assume that the [Any.hashCode] function of keys distributes
+ * them uniformly across the hash table, minimizing collisions. A poor hash function that causes
+ * many collisions can degrade performance.
+ *
+ * [LinkedHashMap] provides efficient implementation for common operations:
+ *
+ * - **Lookup** ([get], [containsKey]): O(1) time
+ * - **Insertion and removal** ([put], [remove]): O(1) time
+ * - **Value search** ([containsValue]): O(n) time, requires scanning all entries
+ * - **Iteration** ([entries], [keys], [values]): O(n) time
+ *
+ * ## Iteration order
+ *
+ * [LinkedHashMap] maintains a predictable iteration order for its keys, values, and entries.
+ * Entries are iterated in the order they were inserted into the map, from oldest to newest.
+ * This insertion order is preserved even when the map is rehashed (when entries are added or removed
+ * and the internal capacity is adjusted).
+ *
+ * Note that the insertion order is not affected if a key is _re-inserted_ into the map.
+ * A key `k` is re-inserted into the map when `put(k, v)` is called and the map already contains
+ * an entry with key `k`.
+ *
+ * If predictable iteration order is not required, consider using [HashMap], which may have
+ * slightly better performance characteristics.
+ *
+ * ## Usage guidelines
+ *
+ * [LinkedHashMap] uses an internal data structure with a finite *capacity* - the maximum number of entries
+ * it can store before needing to grow. When the map becomes full, the map automatically increases its capacity
+ * and performs *rehashing* - rebuilding the internal data structure to redistribute entries. Rehashing is a
+ * relatively expensive operation that temporarily impacts performance. When creating a [LinkedHashMap], you can
+ * optionally provide an initial capacity value, which will be used to size the internal data structure,
+ * potentially avoiding rehashing operations as the map grows.
+ *
+ * To optimize performance and memory usage:
+ *
+ * - If the number of entries is known in advance, use the constructor with initial capacity
+ *   to avoid multiple rehashing operations as the map grows.
+ * - Ensure key objects have well-distributed [Any.hashCode] implementations to minimize collisions
+ *   and maintain good performance.
+ * - Prefer [putAll] over multiple individual [put] calls when adding multiple entries.
+ *
+ * ## Thread safety
+ *
+ * [LinkedHashMap] is not thread-safe. If multiple threads access an instance concurrently and at least
+ * one thread modifies it, external synchronization is required.
+ *
+ * @param K the type of map keys. The map is invariant in its key type.
+ * @param V the type of map values. The mutable map is invariant in its value type.
+ */
 public actual typealias LinkedHashMap<K, V> = HashMap<K, V>

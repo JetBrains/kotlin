@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -519,9 +519,9 @@ public class KaScopeWithKindImpl(
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaDeclarationContainerSymbol.memberScope: KaScope
-    get() = with(s) { memberScope }
+    get() = with(session) { memberScope }
 
 /**
  * A [KaScope] containing the *static* members of the given [KaDeclarationContainerSymbol].
@@ -602,18 +602,18 @@ public val KaDeclarationContainerSymbol.memberScope: KaScope
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaDeclarationContainerSymbol.staticMemberScope: KaScope
-    get() = with(s) { staticMemberScope }
+    get() = with(session) { staticMemberScope }
 
 /**
  * A [KaScope] containing *all* members from [memberScope] and [staticMemberScope].
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaDeclarationContainerSymbol.combinedMemberScope: KaScope
-    get() = with(s) { combinedMemberScope }
+    get() = with(session) { combinedMemberScope }
 
 /**
  * A [KaScope] containing the *non-static* callables (functions, properties, and constructors) and inner classes explicitly
@@ -627,9 +627,9 @@ public val KaDeclarationContainerSymbol.combinedMemberScope: KaScope
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaDeclarationContainerSymbol.declaredMemberScope: KaScope
-    get() = with(s) { declaredMemberScope }
+    get() = with(session) { declaredMemberScope }
 
 /**
  * A [KaScope] containing the *static* callables (functions and properties) and all classifiers (classes and objects) explicitly
@@ -643,9 +643,9 @@ public val KaDeclarationContainerSymbol.declaredMemberScope: KaScope
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaDeclarationContainerSymbol.staticDeclaredMemberScope: KaScope
-    get() = with(s) { staticDeclaredMemberScope }
+    get() = with(session) { staticDeclaredMemberScope }
 
 /**
  * A [KaScope] containing *all* members explicitly declared in the given [KaDeclarationContainerSymbol].
@@ -654,9 +654,9 @@ public val KaDeclarationContainerSymbol.staticDeclaredMemberScope: KaScope
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaDeclarationContainerSymbol.combinedDeclaredMemberScope: KaScope
-    get() = with(s) { combinedDeclaredMemberScope }
+    get() = with(session) { combinedDeclaredMemberScope }
 
 /**
  * A [KaScope] containing synthetic callables (functions and properties) created by interface delegation.
@@ -689,36 +689,36 @@ public val KaDeclarationContainerSymbol.combinedDeclaredMemberScope: KaScope
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaDeclarationContainerSymbol.delegatedMemberScope: KaScope
-    get() = with(s) { delegatedMemberScope }
+    get() = with(session) { delegatedMemberScope }
 
 /**
  * A [KaScope] containing the top-level declarations (such as classes, functions and properties) in the given [KaFileSymbol].
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaFileSymbol.fileScope: KaScope
-    get() = with(s) { fileScope }
+    get() = with(session) { fileScope }
 
 /**
  * A [KaScope] containing all members of the package represented by the given [KaPackageSymbol], not including members of subpackages.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaPackageSymbol.packageScope: KaScope
-    get() = with(s) { packageScope }
+    get() = with(session) { packageScope }
 
 /**
  * Combines a list of [KaScope]s into a single composite [KaScope]. The resulting scope contains all members of its constituent scopes.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun List<KaScope>.asCompositeScope(): KaScope {
-    return with(s) {
+    return with(session) {
         asCompositeScope()
     }
 }
@@ -748,9 +748,9 @@ public fun List<KaScope>.asCompositeScope(): KaScope {
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaType.scope: KaTypeScope?
-    get() = with(s) { scope }
+    get() = with(session) { scope }
 
 /**
  * A [KaScope] containing unsubstituted declarations from the [KaType]'s underlying declaration.
@@ -758,9 +758,9 @@ public val KaType.scope: KaTypeScope?
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaTypeScope.declarationScope: KaScope
-    get() = with(s) { declarationScope }
+    get() = with(session) { declarationScope }
 
 /**
  * A [KaTypeScope] containing the [synthetic Java properties](https://kotlinlang.org/docs/java-interop.html#getters-and-setters) created
@@ -769,9 +769,9 @@ public val KaTypeScope.declarationScope: KaScope
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaType.syntheticJavaPropertiesScope: KaTypeScope?
-    get() = with(s) { syntheticJavaPropertiesScope }
+    get() = with(session) { syntheticJavaPropertiesScope }
 
 /**
  * Computes the lexical scope context for a given [position] in the [KtFile]. The scope context includes all scopes that are relevant
@@ -779,9 +779,9 @@ public val KaType.syntheticJavaPropertiesScope: KaTypeScope?
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KtFile.scopeContext(position: KtElement): KaScopeContext {
-    return with(s) {
+    return with(session) {
         scopeContext(
             position = position,
         )
@@ -795,9 +795,9 @@ public fun KtFile.scopeContext(position: KtElement): KaScopeContext {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtFile.importingScopeContext: KaScopeContext
-    get() = with(s) { importingScopeContext }
+    get() = with(session) { importingScopeContext }
 
 /**
  * Returns a single [KaScope] that contains declarations from all scopes that satisfy [filter].
@@ -807,9 +807,9 @@ public val KtFile.importingScopeContext: KaScopeContext
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KaScopeContext.compositeScope(filter: (KaScopeKind) -> Boolean = { true }): KaScope {
-    return with(s) {
+    return with(session) {
         compositeScope(
             filter = filter,
         )

@@ -1,0 +1,6 @@
+KtCallExpression(14,20): 'foo(1)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /foo(): kotlin.Unit
+    ]
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun foo(): Unit'.>

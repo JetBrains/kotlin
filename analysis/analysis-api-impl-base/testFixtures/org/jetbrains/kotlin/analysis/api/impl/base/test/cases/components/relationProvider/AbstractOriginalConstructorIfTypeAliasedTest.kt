@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relati
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.resolveToSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractOriginalConstructorIfTypeAliasedTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = executeOnPooledThreadInReadAction {
-            val symbolRenderer = DebugSymbolRenderer(renderExtra = true, renderExpandedTypes = true)
+            val symbolRenderer = KaDebugRenderer(renderExtra = true, renderExpandedTypes = true)
             copyAwareAnalyzeForTest(mainFile) { contextFile ->
                 val referencedConstructor = getReferencedConstructorSymbol(contextFile, testServices) ?: error("No constructor symbol")
                 val originalConstructor = referencedConstructor.originalConstructorIfTypeAliased

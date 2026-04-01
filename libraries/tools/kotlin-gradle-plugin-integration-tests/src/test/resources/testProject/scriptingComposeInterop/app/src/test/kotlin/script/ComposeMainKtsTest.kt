@@ -4,6 +4,7 @@
  */
 package script
 
+import androidx.compose.runtime.Composable
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
 import org.jetbrains.kotlin.mainKts.MainKtsEvaluationConfiguration
 import org.jetbrains.kotlin.mainKts.MainKtsScript
@@ -11,22 +12,27 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
-import java.io.*
-import kotlin.script.experimental.api.*
+import java.io.File
+import kotlin.script.experimental.api.EvaluationResult
+import kotlin.script.experimental.api.ResultValue
+import kotlin.script.experimental.api.ResultWithDiagnostics
+import kotlin.script.experimental.api.constructorArgs
+import kotlin.script.experimental.api.enableScriptsInstancesSharing
+import kotlin.script.experimental.api.valueOrThrow
+import kotlin.script.experimental.api.with
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.updateClasspath
+import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
 
 fun evalFile(scriptFile: File, cacheDir: File? = null): ResultWithDiagnostics<EvaluationResult> =
     withMainKtsCacheDir(cacheDir?.absolutePath ?: "") {
-        val scriptDefinition = createJvmCompilationConfigurationFromTemplate<MainKtsScript> {
-            // Scripting doesn't support K2 yet.
-            // See KT-64362
-            compilerOptions("-language-version", "1.9")
+        val scriptDefinition = createJvmCompilationConfigurationFromTemplate<MainKtsScript>() {
+            updateClasspath(classpathFromClass<Composable>())
         }
-
         val evaluationEnv = MainKtsEvaluationConfiguration.with {
             jvm {
                 baseClassLoader(null)
@@ -35,7 +41,7 @@ fun evalFile(scriptFile: File, cacheDir: File? = null): ResultWithDiagnostics<Ev
             enableScriptsInstancesSharing()
         }
 
-        BasicJvmScriptingHost().eval(scriptFile.toScriptSource(), scriptDefinition, evaluationEnv)
+        BasicJvmScriptingHost.createLegacy().eval(scriptFile.toScriptSource(), scriptDefinition, evaluationEnv)
     }
 
 const val TEST_DATA_ROOT = "testData"

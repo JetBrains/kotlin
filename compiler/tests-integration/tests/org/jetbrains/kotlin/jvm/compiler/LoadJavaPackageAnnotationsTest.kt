@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.javac.registerJavac
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
@@ -62,7 +63,7 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
             }
         }
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val moduleDescriptor = JvmResolveUtil.analyze(environment).moduleDescriptor
 
         val packageFragmentDescriptor = moduleDescriptor.getPackage(FqName("test")).fragments

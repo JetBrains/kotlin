@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isProxyParameterForExportedSuspendFunction
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isProxyParameterWithDefaultForExportedSuspendFunction
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.shouldBeCompiledAsGenerator
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
@@ -80,7 +81,7 @@ fun jsElementAccess(name: String, receiver: JsExpression?): JsExpression =
     jsElementAccess(JsName(name, false), receiver)
 
 fun JsExpression.putIntoVariableWitName(name: JsName): JsVars {
-    return JsVars(JsVars.JsVar(name, this))
+    return JsVars(JsVars.Variant.Var, JsVars.JsVar(name, this))
 }
 
 fun jsElementAccess(name: JsName, computedName: JsExpression?, receiver: JsExpression?): JsExpression =
@@ -230,7 +231,7 @@ fun translateFunction(
     val function = JsFunction(emptyScope, body, "member function ${name ?: "annon"}")
         .apply {
             if (declaration.isEs6ConstructorReplacement) modifiers.add(JsFunction.Modifier.STATIC)
-            if (declaration.shouldBeCompiledAsGenerator()) {
+            if (declaration.shouldBeCompiledAsGenerator) {
                 name?.isGeneratorFunction = true
                 computedName?.isGeneratorFunction = true
                 modifiers.add(JsFunction.Modifier.GENERATOR)
@@ -250,9 +251,6 @@ fun translateFunction(
 
     return function
 }
-
-private fun IrFunction.shouldBeCompiledAsGenerator(): Boolean =
-    hasAnnotation(JsAnnotations.jsGeneratorFqn)
 
 private fun isFunctionTypeInvoke(receiver: JsExpression?, call: IrCall): Boolean {
     if (receiver == null || receiver is JsThisRef) return false
@@ -381,7 +379,7 @@ fun translateCall(
                 val iifeFun = JsFunction(
                     emptyScope,
                     JsBlock(
-                        JsVars(JsVars.JsVar(receiverName, jsDispatchReceiver)),
+                        JsVars(JsVars.Variant.Var, JsVars.JsVar(receiverName, jsDispatchReceiver)),
                         JsReturn(
                             JsInvocation(
                                 JsNameRef("apply", jsElementAccess(functionName.ident, receiverRef)),
@@ -508,7 +506,7 @@ internal fun translateNonDispatchCallArguments(
     return function.nonDispatchParameters
         .map { parameter ->
             val argument = expression.arguments[parameter.indexInParameters]
-            if (argument == null && !(validWithNullArgs || parameter.isBoxParameter || parameter.isProxyParameterForExportedSuspendFunction)) {
+            if (argument == null && !(validWithNullArgs || parameter.isBoxParameter || parameter.isProxyParameterWithDefaultForExportedSuspendFunction)) {
                 compilationException("Argument for parameter ${parameter.name} cannot be null", expression)
             }
             var jsArgument = when {
@@ -600,7 +598,7 @@ object JsAstUtils {
     }
 
     fun newVar(name: JsName, expr: JsExpression?): JsVars {
-        return JsVars(JsVars.JsVar(name, expr))
+        return JsVars(JsVars.Variant.Var, JsVars.JsVar(name, expr))
     }
 }
 
@@ -687,7 +685,9 @@ inline fun IrElement.getSourceLocation(fileEntry: IrFileEntry, offsetSelector: I
     val path = fileEntry.name
     val offset = offsetSelector()
     val (startLine, startColumn) = fileEntry.getLineAndColumnNumbers(offset)
-    return JsLocation(path, startLine, startColumn)
+    return runIf(startLine >= 0 && startColumn >= 0) {
+        JsLocation(path, startLine, startColumn)
+    }
 }
 
 /**

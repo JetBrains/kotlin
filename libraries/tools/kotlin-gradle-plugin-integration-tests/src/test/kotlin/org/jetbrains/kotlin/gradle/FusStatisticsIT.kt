@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.version
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
@@ -21,17 +21,11 @@ import org.jetbrains.kotlin.gradle.util.filterKotlinFusFiles
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
 import org.jetbrains.kotlin.statistics.metrics.StringAnonymizationPolicy
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.appendText
-import kotlin.io.path.deleteIfExists
-import kotlin.io.path.writeText
-import kotlin.io.path.deleteRecursively
-import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -216,11 +210,19 @@ class FusStatisticsIT : KGPBaseTest() {
     )
     fun testMetricCollectingOfApplyingKotlinJsPlugin(gradleVersion: GradleVersion) {
         project(
-            "simple-js-library",
+            "empty",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
             buildOptions = defaultBuildOptions.copy(isolatedProjects = IsolatedProjectsMode.DISABLED),
         ) {
+            plugins {
+                kotlin("js")
+            }
+            buildScriptInjection {
+                (project.extensions.getByName("kotlin") as KotlinJsProjectExtension).apply {
+                    js()
+                }
+            }
             assertNoErrorFilesCreated {
                 build("assemble", "-Pkotlin.session.logger.root.path=$projectPath") {
                     assertOutputDoesNotContainFusErrors()
@@ -229,7 +231,6 @@ class FusStatisticsIT : KGPBaseTest() {
             }
         }
     }
-
 
     @JvmGradlePluginTests
     @DisplayName("Ensure that the metric are not collected if plugins were not applied to simple project")
@@ -558,7 +559,7 @@ class FusStatisticsIT : KGPBaseTest() {
             "new-mpp-wasm-test",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             gradleProperties.writeText("kotlin.incremental.wasm=true")
 
@@ -804,6 +805,7 @@ class FusStatisticsIT : KGPBaseTest() {
                 buildScriptInjection {
                     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
                     kotlinJvm.compilerVersion.set("2.2.20")
+                    kotlinJvm.coreLibrariesVersion = "2.2.20"
                 }
                 build(
                     "compileKotlin",

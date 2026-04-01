@@ -20,4 +20,14 @@ enum class MppCheckerKind {
 
 interface FirCheckerWithMppKind {
     val mppKind: MppCheckerKind
+
+    /**
+     * If this property returns `true` and the checker is defined as a platform-specific checker (e.g. JVM-only checker),
+     * then it would be enabled in the metadata compilation.
+     *
+     * Before enabling this flag ensure that the checker works correctly with metadata sources and metadata-klib dependencies
+     * (e.g. it doesn't rely on some optional-expectation annotations, which are not being serialized into metadata).
+     */
+    val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = false
 }

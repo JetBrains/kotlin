@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
@@ -351,9 +352,36 @@ fun <T> List<T>.smartPlus(other: List<T>): List<T> = when {
 }
 
 // Source element may be missing if the class came from a library
-fun FirVariable.isEnumEntries(containingClass: FirClass): Boolean = isStatic && name == StandardNames.ENUM_ENTRIES && containingClass.isEnumClass
+fun FirVariable.isEnumEntries(containingClass: FirClass): Boolean {
+    return name == StandardNames.ENUM_ENTRIES && isSimpleStaticMemberOfEnumClass(containingClass)
+}
+
 fun FirVariable.isEnumEntries(containingClassSymbol: FirClassSymbol<*>): Boolean {
-    return isStatic && name == StandardNames.ENUM_ENTRIES && containingClassSymbol.isEnumClass
+    return isEnumEntries(containingClassSymbol.fir)
+}
+
+fun FirCallableDeclaration.isGeneratedStaticEnumMember(containingClass: FirClass): Boolean {
+    return when (this) {
+        is FirVariable -> isEnumEntries(containingClass)
+        is FirNamedFunction -> when (name) {
+            StandardNames.ENUM_VALUES ->
+                isSimpleStaticMemberOfEnumClass(containingClass) &&
+                        valueParameters.isEmpty()
+            StandardNames.ENUM_VALUE_OF ->
+                isSimpleStaticMemberOfEnumClass(containingClass) &&
+                        valueParameters.singleOrNull()?.returnTypeRef?.coneType?.isString == true
+            else -> false
+        }
+        else -> false
+    }
+}
+
+private fun FirCallableDeclaration.isSimpleStaticMemberOfEnumClass(containingClass: FirClass): Boolean {
+    return isStatic &&
+            containingClass.isEnumClass &&
+            contextParameters.isEmpty() &&
+            // Currently, companion block members can't have receivers, but maybe in the future they will.
+            receiverParameter == null
 }
 
 val FirExpression.isArraySet: Boolean
@@ -380,6 +408,7 @@ fun FirBasedSymbol<*>.packageFqName(): FqName {
         is FirClassLikeSymbol<*> -> classId.packageFqName
         is FirPropertyAccessorSymbol -> propertySymbol.packageFqName()
         is FirCallableSymbol<*> -> callableId.packageName
+        is FirScriptSymbol -> this.fqName.parent()
         is FirReplSnippetSymbol -> FqName.ROOT // TODO: add package FQN to snippet symbol (KT-74126)
         else -> error("No package fq name for $this")
     }
@@ -430,3 +459,6 @@ fun ConeKotlinType.toFirResolvedTypeRef(
         }
     }
 }
+
+val FirResolvedQualifier.ownTypeArguments: List<FirTypeProjection>
+    get() = typeArguments.subList(0, typeArguments.size - (explicitParent?.typeArguments?.size ?: 0))

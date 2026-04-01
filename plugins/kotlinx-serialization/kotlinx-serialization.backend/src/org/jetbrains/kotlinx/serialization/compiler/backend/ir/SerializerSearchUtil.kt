@@ -8,8 +8,8 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -17,10 +17,6 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SpecialBuiltins
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.contextSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.enumSerializerId
@@ -78,6 +74,13 @@ fun BaseIrGenerator.findAddOnSerializer(propertyType: IrType, ctx: Serialization
     return null
 }
 
+fun BaseIrGenerator.findTypeSerializerOrContext(
+    kType: IrType
+): IrClassSymbol? {
+    if (kType.isTypeParameter()) return null
+    return findTypeSerializerOrContextUnchecked(compilerContext, kType) ?: error("Serializer for element of type ${kType.render()} has not been found")
+}
+
 fun BaseIrGenerator?.findTypeSerializerOrContext(
     context: SerializationBaseContext, kType: IrType
 ): IrClassSymbol? {
@@ -101,7 +104,7 @@ fun BaseIrGenerator?.findTypeSerializerOrContextUnchecked(
 
 fun analyzeSpecialSerializers(
     context: SerializationBaseContext,
-    annotations: List<IrConstructorCall>
+    annotations: List<IrAnnotation>
 ): IrClassSymbol? = when {
     annotations.hasAnnotation(SerializationAnnotations.contextualFqName) || annotations.hasAnnotation(SerializationAnnotations.contextualOnPropertyFqName) ->
         context.referenceClassId(contextSerializerId)
@@ -110,7 +113,6 @@ fun analyzeSpecialSerializers(
         context.referenceClassId(polymorphicSerializerId)
     else -> null
 }
-
 
 fun findTypeSerializer(context: SerializationBaseContext, type: IrType, useTypeAnnotations: Boolean = true): IrClassSymbol? {
     if (useTypeAnnotations) type.overriddenSerializer?.let { return it }
@@ -225,7 +227,7 @@ fun findStandardKotlinTypeSerializer(context: SerializationBaseContext, type: Ir
 }
 
 // @Serializable(X::class) -> X
-internal fun List<IrConstructorCall>.serializableWith(): IrClassSymbol? {
+internal fun List<IrAnnotation>.serializableWith(): IrClassSymbol? {
     val annotation = findAnnotation(SerializationAnnotations.serializableAnnotationFqName) ?: return null
     val arg = annotation.arguments[0] as? IrClassReference ?: return null
     return arg.symbol as? IrClassSymbol
@@ -254,7 +256,7 @@ fun BaseIrGenerator?.allSealedSerializableSubclassesFor(
     }.unzip()
 }
 
-internal fun SerializationBaseContext.getSerializableClassDescriptorBySerializer(serializer: IrClass): IrClass? {
+internal fun getSerializableClassDescriptorBySerializer(serializer: IrClass): IrClass? {
     val serializerForClass = serializer.serializerForClass
     if (serializerForClass != null) return serializerForClass.owner
     if (serializer.name !in setOf(
@@ -285,4 +287,3 @@ fun SerializationBaseContext.getClassFromRuntime(className: String, vararg packa
 fun SerializationBaseContext.getClassFromInternalSerializationPackage(className: String): IrClassSymbol =
     getClassFromRuntimeOrNull(className, SerializationPackages.internalPackageFqName)
         ?: error("Class $className wasn't found in ${SerializationPackages.internalPackageFqName}. Check that you have correct version of serialization runtime in classpath.")
-

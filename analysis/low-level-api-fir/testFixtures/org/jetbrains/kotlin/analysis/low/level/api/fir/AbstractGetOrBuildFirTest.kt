@@ -51,14 +51,28 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         fun findElement(qualifierIndex: Int?): KtElement? {
             val qualifier = if (qualifierIndex != null) "$qualifierIndex" else ""
-            val element = testServices.expressionMarkerProvider
-                .getTopmostSelectedElementOfTypeByDirectiveOrNull(mainFile, mainModule, defaultType = KtElement::class, qualifier)
-            return element as KtElement?
+
+            val elements = mainModule.ktFiles
+                .mapNotNull { file ->
+                    testServices.expressionMarkerProvider.getTopmostSelectedElementOfTypeByDirectiveOrNull(
+                        file = file,
+                        module = mainModule,
+                        defaultType = KtElement::class,
+                        qualifier = qualifier
+                    )
+                }
+
+            require(elements.size < 2) {
+                val fileNames = elements.joinToString(", ") { it.containingFile.name }
+                "Selection with the same qualifier '$qualifier' found in multiple files: $fileNames"
+            }
+
+            return elements.firstOrNull() as? KtElement
         }
 
         val isContainmentCheckActive = SKIP_CONTAINMENT_CHECK !in mainModule.testModule.directives
 
-        val results = withResolutionFacade(mainFile) { resolutionFacade ->
+        val results = withResolutionFacade(mainModule.ktModule) { resolutionFacade ->
             val elementsToAnalyze = sequence {
                 val firstCandidate = findElement(qualifierIndex = null) ?: error("No selected element found")
                 yield(firstCandidate)
@@ -74,11 +88,12 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
             val renderingOptions = testServices.firRenderingOptions
                 .copy(renderKtText = elementsToAnalyze.size > 1)
 
-            val firFile by lazy { resolutionFacade.getOrBuildFirFile(mainFile) }
-
             val results = mutableListOf<String>()
 
             for ((index, element) in elementsToAnalyze.withIndex()) {
+                val ktFile = element.containingKtFile
+                val firFile by lazy { resolutionFacade.getOrBuildFirFile(ktFile) }
+
                 val firElement = intercept(index, mainModule.testModule) { element.getOrBuildFir(resolutionFacade) }
 
                 if (firElement != null && isContainmentCheckActive && shouldPerformContainmentCheck(firElement)) {
@@ -89,7 +104,7 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
                     fir = firElement,
                     ktElement = element,
                     renderingOptions = renderingOptions,
-                    firFile = mainFile.getOrBuildFirFile(resolutionFacade),
+                    firFiles = mainModule.ktFiles.map { it.getOrBuildFirFile(resolutionFacade) }
                 )
             }
 
@@ -161,7 +176,7 @@ internal fun renderActualFir(
     fir: FirElement?,
     ktElement: KtElement,
     renderingOptions: FirRenderingOptions,
-    firFile: FirFile? = null,
+    firFiles: List<FirFile> = emptyList(),
 ): String = buildString {
     appendLine("KT element: ${ktElement::class.simpleName}")
     if (renderingOptions.renderKtText) {
@@ -176,7 +191,7 @@ internal fun renderActualFir(
         appendLine("File name: ${ktElement.containingKtFile.name}")
     appendLine("\nFIR element rendered:")
     appendLine(render(fir).trimEnd())
-    if (firFile != null) {
+    for (firFile in firFiles) {
         appendLine("\nFIR FILE:")
         append(render(firFile).trimEnd())
     }

@@ -27,4 +27,5 @@ enum class ObservablePlugins(
     SERIALIZATION_PLUGIN("org.jetbrains.kotlin.plugin.serialization", BooleanMetrics.KOTLINX_SERIALIZATION_GRADLE_PLUGIN_ENABLED),
     ATOMICFU_PLUGIN("org.jetbrains.kotlinx.atomicfu", BooleanMetrics.KOTLINX_ATOMICFU_GRADLE_PLUGIN_ENABLED),
     BINARY_COMPATIBILITY_VALIDATOR_PLUGIN("org.jetbrains.kotlinx.binary-compatibility-validator", BooleanMetrics.KOTLINX_BINARY_COMPATIBILITY_GRADLE_PLUGIN_ENABLED),
+    NPM_PUBLISH_PLUGIN("org.jetbrains.kotlin.npm-publish", BooleanMetrics.NPM_PUBLISH_PLUGIN_ENABLED),
 }

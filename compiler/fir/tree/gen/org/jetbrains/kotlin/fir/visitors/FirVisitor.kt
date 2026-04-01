@@ -284,6 +284,18 @@ abstract class FirVisitor<out R, in D> {
     open fun visitReplSnippet(replSnippet: FirReplSnippet, data: D): R =
         visitElement(replSnippet, data)
 
+    open fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: D): R =
+        visitElement(replDeclarationReference, data)
+
+    open fun visitReplExpressionReference(replExpressionReference: FirReplExpressionReference, data: D): R =
+        visitElement(replExpressionReference, data)
+
+    open fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: D): R =
+        visitElement(replPropertyInitializer, data)
+
+    open fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: D): R =
+        visitElement(replPropertyDelegate, data)
+
     open fun visitPackageDirective(packageDirective: FirPackageDirective, data: D): R =
         visitElement(packageDirective, data)
 
@@ -326,6 +338,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: D): R =
         visitElement(callableReferenceAccess, data)
 
+    open fun visitQualifierWithContextSensitiveAlternative(qualifierWithContextSensitiveAlternative: FirQualifierWithContextSensitiveAlternative, data: D): R =
+        visitElement(qualifierWithContextSensitiveAlternative, data)
+
     open fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: D): R =
         visitElement(propertyAccessExpression, data)
 
@@ -344,8 +359,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: D): R =
         visitElement(varargArgumentsExpression, data)
 
-    open fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression, data: D): R =
-        visitElement(samConversionExpression, data)
+    open fun visitFunctionTypeConversionExpression(functionTypeConversionExpression: FirFunctionTypeConversionExpression, data: D): R =
+        visitElement(functionTypeConversionExpression, data)
 
     open fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: D): R =
         visitElement(resolvedQualifier, data)

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
@@ -15,12 +16,14 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 /**
  * [KotlinModuleOutputProvider] provides build output directories for [KaModule]s.
  */
+@KaPlatformInterface
 public interface KotlinModuleOutputProvider : KotlinOptionalPlatformComponent {
     /**
      * Returns the compilation output file/directory for the [module], or `null` if it is unset or unknown.
      */
     public fun getCompilationOutput(module: KaSourceModule): VirtualFile?
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinModuleOutputProvider = project.service()
     }

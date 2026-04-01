@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhenSubjectExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -30,6 +31,7 @@ class FirWhenSubjectExpressionBuilder : FirQualifiedAccessExpressionBuilder, Fir
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override var source: KtSourceElement? = null
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
+    var contextSensitiveAlternative: FirPropertyAccessExpression? = null
     lateinit var calleeReference: FirNamedReference
 
     override fun build(): FirWhenSubjectExpression {
@@ -38,6 +40,7 @@ class FirWhenSubjectExpressionBuilder : FirQualifiedAccessExpressionBuilder, Fir
             annotations.toMutableOrEmpty(),
             source,
             nonFatalDiagnostics.toMutableOrEmpty(),
+            contextSensitiveAlternative,
             calleeReference,
         )
     }

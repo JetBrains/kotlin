@@ -2,7 +2,10 @@
 // FILECHECK_STAGE: CStubs
 // DISABLE_IR_VISIBILITY_CHECKS: ANY
 
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 import kotlin.concurrent.*
+import kotlinx.cinterop.NativePtr
 
 // CHECK-AAPCS-LABEL: define i8 @"kfun:#<get-byteGlobal>(){}kotlin.Byte"()
 // CHECK-DEFAULTABI-LABEL: define signext i8 @"kfun:#<get-byteGlobal>(){}kotlin.Byte"()
@@ -39,6 +42,9 @@ import kotlin.concurrent.*
 // CHECK-LABEL: define void @"kfun:#<set-booleanGlobal>(kotlin.Boolean){}"(i1
 // CHECK: store atomic i8 %{{[0-9]+}}, ptr @"kvar:booleanGlobal#internal" seq_cst
 @Volatile var booleanGlobal: Boolean = true
+
+// NativePtr
+@Volatile var nativePtrGlobal: NativePtr = NativePtr.NULL
 
 // Byte
 fun byteGlobal_getField() = byteGlobal
@@ -174,6 +180,11 @@ fun booleanGlobal_setField() { booleanGlobal = false }
 // CHECK: atomicrmw xchg ptr @"kvar:booleanGlobal#internal", i8 %{{[0-9]+}} seq_cst
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun booleanGlobal_getAndSetField() = ::booleanGlobal.getAndSetField(false)
+
+// CHECK-LABEL: define ptr @"kfun:#nativePtrGlobal_getAndSetField(){}kotlin.native.internal.NativePtr"
+// CHECK: atomicrmw xchg ptr @"kvar:nativePtrGlobal#internal", ptr %{{[0-9]+}} seq_cst
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+fun nativePtrGlobal_getAndSetField() = ::nativePtrGlobal.getAndSetField(NativePtr.NULL)
 
 // CHECK-AAPCS-LABEL: define i1 @"kfun:#booleanGlobal_compareAndSetField(){}
 // CHECK-DEFAULTABI-LABEL: define zeroext i1 @"kfun:#booleanGlobal_compareAndSetField(){}
@@ -349,6 +360,8 @@ fun box(): String {
     booleanGlobal_getAndSetField()
     booleanGlobal_compareAndSetField()
     booleanGlobal_compareAndExchangeField()
+
+    nativePtrGlobal_getAndSetField()
 
     intArr_atomicGet()
     intArr_atomicSet()

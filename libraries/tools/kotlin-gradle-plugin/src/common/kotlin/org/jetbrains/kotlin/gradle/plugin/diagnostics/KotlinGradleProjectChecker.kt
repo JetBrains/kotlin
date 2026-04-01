@@ -101,4 +101,8 @@ internal open class KotlinGradleProjectCheckerContext(
     val project: Project,
     val kotlinPropertiesProvider: PropertiesProvider,
     val multiplatformExtension: KotlinMultiplatformExtension?,
-)
+    val diagnosticsContext: ToolingDiagnosticsContext,
+) {
+    val projectPath: String get() = diagnosticsContext.projectPath
+    val projectName: String get() = diagnosticsContext.projectName
+}

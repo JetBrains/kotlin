@@ -82,6 +82,9 @@ internal class KaFirPropertySetterSymbol(
     override val hasStableParameterNames: Boolean
         get() = hasStableParameterNamesImpl
 
+    override val isExternal: Boolean
+        get() = isExternalImpl
+
     override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaPropertySetterSymbol>()
             ?: KaBasePropertySetterSymbolPointer(owningKaProperty.createPointer(), this)

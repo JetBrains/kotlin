@@ -15,7 +15,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] contextParameterOnErrorPrimaryConstructor.kt
     }
     context([ResolvedTo(BODY_RESOLVE)] @<ERROR TYPE REF: Symbol not found for SharedAnno>[Types]() <unused var>: R|@<ERROR TYPE REF: Symbol not found for SharedTypeAnno>()  Clazz|)
     public final [ResolvedTo(BODY_RESOLVE)] class OneMore : R|kotlin/Any| {
-        context([ResolvedTo(BODY_RESOLVE)] c: R|Another|, [ResolvedTo(BODY_RESOLVE)] @<ERROR TYPE REF: Symbol not found for SharedAnno>[Types]() <unused var>: R|@<ERROR TYPE REF: Symbol not found for SharedTypeAnno>()  Clazz|)
+        context([ResolvedTo(BODY_RESOLVE)] c: R|Another|)
         @<ERROR TYPE REF: Symbol not found for Anno>[Types]() public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OneMore] constructor([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|OneMore| {
             super<R|kotlin/Any|>()
         }

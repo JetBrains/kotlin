@@ -16,26 +16,35 @@ import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 
 object KlibConfigurationKeys {
+    // Provides a path from which relative paths in klib are being computed.
     @JvmField
-    val KLIB_RELATIVE_PATH_BASES = CompilerConfigurationKey.create<List<String>>("Provides a path from which relative paths in klib are being computed")
+    val KLIB_RELATIVE_PATH_BASES = CompilerConfigurationKey.create<List<String>>("KLIB_RELATIVE_PATH_BASES")
+
+    // Normalize absolute paths in klib (replace file separator with '/').
+    @JvmField
+    val KLIB_NORMALIZE_ABSOLUTE_PATH = CompilerConfigurationKey.create<Boolean>("KLIB_NORMALIZE_ABSOLUTE_PATH")
+
+    // Turn on the checks on uniqueness of signatures.
+    @JvmField
+    val PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS = CompilerConfigurationKey.create<Boolean>("PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS")
+
+    // Duplicated KLIB dependencies handling strategy.
+    @JvmField
+    val DUPLICATED_UNIQUE_NAME_STRATEGY = CompilerConfigurationKey.create<DuplicatedUniqueNameStrategy>("DUPLICATED_UNIQUE_NAME_STRATEGY")
 
     @JvmField
-    val KLIB_NORMALIZE_ABSOLUTE_PATH = CompilerConfigurationKey.create<Boolean>("Normalize absolute paths in klib (replace file separator with '/')")
+    val CUSTOM_KLIB_ABI_VERSION = CompilerConfigurationKey.create<KotlinAbiVersion>("CUSTOM_KLIB_ABI_VERSION")
 
     @JvmField
-    val PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS = CompilerConfigurationKey.create<Boolean>("Turn on the checks on uniqueness of signatures")
+    val KLIB_ABI_COMPATIBILITY_LEVEL = CompilerConfigurationKey.create<KlibAbiCompatibilityLevel>("KLIB_ABI_COMPATIBILITY_LEVEL")
 
+    // Zip file system accessor, used for klib reading.
     @JvmField
-    val DUPLICATED_UNIQUE_NAME_STRATEGY = CompilerConfigurationKey.create<DuplicatedUniqueNameStrategy>("Duplicated KLIB dependencies handling strategy")
+    val ZIP_FILE_SYSTEM_ACCESSOR = CompilerConfigurationKey.create<ZipFileSystemAccessor>("ZIP_FILE_SYSTEM_ACCESSOR")
 
+    // Skip library compatibility checks for stdlib and kotlin.test library.
     @JvmField
-    val CUSTOM_KLIB_ABI_VERSION = CompilerConfigurationKey.create<KotlinAbiVersion>("Custom KLIB ABI version")
-
-    @JvmField
-    val KLIB_ABI_COMPATIBILITY_LEVEL = CompilerConfigurationKey.create<KlibAbiCompatibilityLevel>("KLIB ABI compatibility level")
-
-    @JvmField
-    val ZIP_FILE_SYSTEM_ACCESSOR = CompilerConfigurationKey.create<ZipFileSystemAccessor>("zip file system accessor, used for klib reading")
+    val SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS = CompilerConfigurationKey.create<Boolean>("SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS")
 
 }
 
@@ -66,4 +75,8 @@ var CompilerConfiguration.klibAbiCompatibilityLevel: KlibAbiCompatibilityLevel
 var CompilerConfiguration.zipFileSystemAccessor: ZipFileSystemAccessor?
     get() = get(KlibConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
     set(value) { put(KlibConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.skipLibrarySpecialCompatibilityChecks: Boolean
+    get() = getBoolean(KlibConfigurationKeys.SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS)
+    set(value) { put(KlibConfigurationKeys.SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS, value) }
 

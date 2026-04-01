@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterfac
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.FunctionTypeInterfacePackages
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
@@ -35,8 +37,9 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isAnyPlatformStdlib
+import org.jetbrains.kotlin.library.isJsStdlib
+import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.library.uniqueName
-import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -128,6 +131,7 @@ internal class JsIrLinkerLoader(
     private val mainModuleFriends: Collection<KotlinLibrary>,
     private val irFactory: IrFactory,
     private val stubbedSignatures: Set<IdSignature>,
+    private val loadBodiesOnlyForMainModule: Boolean,
 ) {
     private val mainLibrary = orderedLibraries.lastOrNull() ?: notFoundIcError("main library")
 
@@ -159,15 +163,18 @@ internal class JsIrLinkerLoader(
         val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
         val messageCollector = compilerConfiguration.messageCollector
+        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+            compilerConfiguration.diagnosticsCollector,
+            compilerConfiguration.languageVersionSettings,
+        )
         val linker = JsIrLinker(
-            currentModule = null,
             messageCollector = messageCollector,
             builtIns = irBuiltIns,
             symbolTable = symbolTable,
             partialLinkageSupport = createPartialLinkageSupportForLinker(
                 partialLinkageConfig = compilerConfiguration.partialLinkageConfig,
                 builtIns = irBuiltIns,
-                messageCollector = messageCollector,
+                diagnosticReporter = irDiagnosticReporter,
             ),
             friendModules = mapOf(mainLibrary.uniqueName to mainModuleFriends.map { it.uniqueName })
         )
@@ -184,7 +191,7 @@ internal class JsIrLinkerLoader(
                 return descriptors.getValue(current)
             }
 
-            val isBuiltIns = current.unresolvedDependencies.isEmpty()
+            val isBuiltIns = current.isJsStdlib || current.isWasmStdlib
 
             val lookupTracker = LookupTracker.DO_NOTHING
             val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
@@ -192,7 +199,6 @@ internal class JsIrLinkerLoader(
                 compilerConfiguration.languageVersionSettings,
                 LockBasedStorageManager.NO_LOCKS,
                 runtimeModule?.builtIns,
-                packageAccessHandler = null, // TODO: This is a speed optimization used by Native. Don't bother for now.
                 lookupTracker = lookupTracker
             )
             if (isBuiltIns) runtimeModule = md
@@ -220,6 +226,7 @@ internal class JsIrLinkerLoader(
             val modifiedStrategy = when {
                 loadAllIr -> DeserializationStrategy.ALL
                 module == mainLibrary -> DeserializationStrategy.ALL
+                loadBodiesOnlyForMainModule -> DeserializationStrategy.WITH_INLINE_BODIES
                 else -> DeserializationStrategy.EXPLICITLY_EXPORTED
             }
             val modified = modifiedFiles[libraryFile]?.keys?.mapTo(hashSetOf()) { it.path } ?: emptySet()
@@ -253,14 +260,14 @@ internal class JsIrLinkerLoader(
                             val topLevelSignature = loadingSignature.topLevelSignature()
                             moduleDeserializer.tryDeserializeIrSymbol(topLevelSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL)
                         } else if (loadingSignature in moduleDeserializer) {
-                            moduleDeserializer.addModuleReachableTopLevel(loadingSignature)
+                            moduleDeserializer.addModuleReachableTopLevel(loadingSignature.topLevelSignature())
                         }
                     }
                 }
 
                 for (stubbedSignature in stubbedSignatures) {
                     if (stubbedSignature in moduleDeserializer) {
-                        moduleDeserializer.addModuleReachableTopLevel(stubbedSignature)
+                        moduleDeserializer.addModuleReachableTopLevel(stubbedSignature.topLevelSignature())
                     }
                 }
             }

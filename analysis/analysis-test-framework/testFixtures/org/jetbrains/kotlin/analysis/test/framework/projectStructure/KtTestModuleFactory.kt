@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -54,5 +54,5 @@ fun TestServices.getKtModuleFactoryForTestModule(testModule: TestModule): KtTest
     TestModuleKind.ScriptSource -> KtScriptTestModuleFactory
     TestModuleKind.CodeFragment -> KtCodeFragmentTestModuleFactory
     TestModuleKind.NotUnderContentRoot, TestModuleKind.NotUnderContentRootWithDependencies -> error("Unsupported test module kind: $testModule")
-    else -> ktTestModuleFactory
+    null -> ktTestModuleFactory
 }

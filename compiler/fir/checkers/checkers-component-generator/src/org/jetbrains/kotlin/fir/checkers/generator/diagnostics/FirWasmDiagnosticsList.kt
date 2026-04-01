@@ -16,28 +16,19 @@ import org.jetbrains.kotlin.util.PrivateForInline
 @OptIn(PrivateForInline::class)
 object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
     val ANNOTATIONS by object : DiagnosticGroup("Annotations") {
-        val JS_MODULE_PROHIBITED_ON_VAR by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val JS_MODULE_PROHIBITED_ON_NON_EXTERNAL by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("type")
         }
-        val NESTED_JS_MODULE_PROHIBITED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
     }
 
     val EXTERNALS by object : DiagnosticGroup("Externals") {
         val NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("superType")
         }
-        val EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
-            parameter<ConeKotlinType>("superType")
-        }
-        val CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION by error<PsiElement>()
         val WRONG_JS_INTEROP_TYPE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("type")
             parameter<String>("place")
-        }
-        val NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
-            parameter<ConeKotlinType>("type")
         }
     }
 

@@ -1,18 +1,17 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
 package org.jetbrains.kotlin.analysis.decompiler.stub
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
-import org.jetbrains.kotlin.serialization.deserialization.AnnotationLoader
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getName
@@ -21,11 +20,8 @@ data class AnnotationWithTarget(val annotationWithArgs: AnnotationWithArgs, val 
 
 class ClsStubBuilderComponents(
     val classDataFinder: ClassDataFinder,
-    val annotationLoader: AnnotationLoader<AnnotationWithArgs>,
+    val annotationLoader: ClsAnnotationLoader,
     val virtualFileForDebug: VirtualFile,
-    val serializationProtocol: SerializerExtensionProtocol,
-    val classFinder: KotlinClassFinder? = null,
-    val metadataVersion: MetadataVersion? = null
 ) {
     fun createContext(
         nameResolver: NameResolver,

@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 class CharacterLiteral(private val prefix: NamelessString, private val s: NamelessString) {
     override fun toString(): String = "$prefix'$s'"

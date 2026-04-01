@@ -54,53 +54,51 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
             // which will confuse the autoboxing lowering downstream.
             return IrConstImpl.long(expression.startOffset, expression.endOffset, context.irBuiltIns.longType, v)
         }
-        return lowerConst(expression, context.symbols.longClassSymbol, IrConstImpl.Companion::int, v.toInt(), (v shr 32).toInt())
+        return lowerConst(expression, context.irBuiltIns.longClass, IrConstImpl.Companion::int, v.toInt(), (v shr 32).toInt())
     }
 
     override fun visitConst(expression: IrConst): IrExpression {
-        with(context.symbols) {
-            if (expression.type.isUnsigned() && expression.kind != IrConstKind.Null) {
-                return when (expression.type.classifierOrNull) {
-                    context.irBuiltIns.ubyteClass -> lowerConst(
-                        expression,
-                        context.irBuiltIns.ubyteClass!!,
-                        IrConstImpl.Companion::byte,
-                        expression.value as Byte
-                    )
+        if (expression.type.isUnsigned() && expression.kind != IrConstKind.Null) {
+            return when (expression.type.classifierOrNull) {
+                context.irBuiltIns.ubyteClass -> lowerConst(
+                    expression,
+                    context.irBuiltIns.ubyteClass!!,
+                    IrConstImpl.Companion::byte,
+                    expression.value as Byte
+                )
 
-                    context.irBuiltIns.ushortClass -> lowerConst(
-                        expression,
-                        context.irBuiltIns.ushortClass!!,
-                        IrConstImpl.Companion::short,
-                        expression.value as Short
-                    )
+                context.irBuiltIns.ushortClass -> lowerConst(
+                    expression,
+                    context.irBuiltIns.ushortClass!!,
+                    IrConstImpl.Companion::short,
+                    expression.value as Short
+                )
 
-                    context.irBuiltIns.uintClass -> lowerConst(
-                        expression,
-                        context.irBuiltIns.uintClass!!,
-                        IrConstImpl.Companion::int,
-                        expression.value as Int
-                    )
+                context.irBuiltIns.uintClass -> lowerConst(
+                    expression,
+                    context.irBuiltIns.uintClass!!,
+                    IrConstImpl.Companion::int,
+                    expression.value as Int
+                )
 
-                    context.irBuiltIns.ulongClass -> lowerConst(
-                        expression,
-                        context.irBuiltIns.ulongClass!!,
-                        { _, _, _, v -> createLong(expression, v) },
-                        expression.value as Long
-                    )
+                context.irBuiltIns.ulongClass -> lowerConst(
+                    expression,
+                    context.irBuiltIns.ulongClass!!,
+                    { _, _, _, v -> createLong(expression, v) },
+                    expression.value as Long
+                )
 
-                    else -> compilationException("Unknown unsigned type", expression)
-                }
+                else -> compilationException("Unknown unsigned type", expression)
             }
-            return when {
-                expression.kind is IrConstKind.Char ->
-                    lowerConst(expression, charClassSymbol, IrConstImpl.Companion::int, (expression.value as Char).code)
+        }
+        return when {
+            expression.kind is IrConstKind.Char ->
+                lowerConst(expression, context.irBuiltIns.charClass, IrConstImpl.Companion::int, (expression.value as Char).code)
 
-                expression.kind is IrConstKind.Long ->
-                    createLong(expression, expression.value as Long)
+            expression.kind is IrConstKind.Long ->
+                createLong(expression, expression.value as Long)
 
-                else -> super.visitConst(expression)
-            }
+            else -> super.visitConst(expression)
         }
     }
 }

@@ -1,0 +1,194 @@
+fun box(): String {
+  return test1(a = 2, b = 1).plus(other = test1(a = 1, b = 2)).plus(other = test1(a = 1, b = 1)).plus(other = test2(a = 1, b = 2)).plus(other = test2(a = 2, b = 1)).plus(other = test3(a = 2, b = 1)).plus(other = test3(a = 1, b = 2)).plus(other = test3(a = 1, b = 1)).plus(other = test4(initial = true, a = 2, b = 1)).plus(other = test4(initial = true, a = 1, b = 2)).plus(other = test4(initial = true, a = 1, b = 1)).plus(other = test4(initial = false, a = 1, b = 1))
+}
+
+fun test1(a: Int, b: Int): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Int = a
+      val tmp1_Explain: Int = b
+      val tmp2_Explain: Boolean = less(arg0 = tmp0_Explain, arg1 = tmp1_Explain)
+      when {
+        tmp2_Explain -> { // BLOCK
+          val tmp3_Explain: Int = a
+          val tmp4_Explain: Int = b
+          val tmp5_Explain: Boolean = EQEQ(arg0 = tmp3_Explain, arg1 = tmp4_Explain)
+          assert(value = tmp5_Explain, lazyMessage = local fun <anonymous>(): String {
+            return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 425, source = "    assert(if (a < b) a == b else if (b < a) b == a else false)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 62, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 15, endOffset = 16, displayOffset = 15, value = tmp0_Explain), ValueExpression(startOffset = 19, endOffset = 20, displayOffset = 19, value = tmp1_Explain), ValueExpression(startOffset = 15, endOffset = 20, displayOffset = 17, value = tmp2_Explain), ValueExpression(startOffset = 22, endOffset = 23, displayOffset = 22, value = tmp3_Explain), ValueExpression(startOffset = 27, endOffset = 28, displayOffset = 27, value = tmp4_Explain), EqualityExpression(startOffset = 22, endOffset = 28, displayOffset = 24, value = tmp5_Explain, lhs = tmp3_Explain, rhs = tmp4_Explain)]))])) */)
+          }
+)
+        }
+        else -> { // BLOCK
+          val tmp6_Explain: Int = b
+          val tmp7_Explain: Int = a
+          val tmp8_Explain: Boolean = less(arg0 = tmp6_Explain, arg1 = tmp7_Explain)
+          when {
+            tmp8_Explain -> { // BLOCK
+              val tmp9_Explain: Int = b
+              val tmp10_Explain: Int = a
+              val tmp11_Explain: Boolean = EQEQ(arg0 = tmp9_Explain, arg1 = tmp10_Explain)
+              assert(value = tmp11_Explain, lazyMessage = local fun <anonymous>(): String {
+                return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 425, source = "    assert(if (a < b) a == b else if (b < a) b == a else false)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 62, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 15, endOffset = 16, displayOffset = 15, value = tmp0_Explain), ValueExpression(startOffset = 19, endOffset = 20, displayOffset = 19, value = tmp1_Explain), ValueExpression(startOffset = 15, endOffset = 20, displayOffset = 17, value = tmp2_Explain), ValueExpression(startOffset = 38, endOffset = 39, displayOffset = 38, value = tmp6_Explain), ValueExpression(startOffset = 42, endOffset = 43, displayOffset = 42, value = tmp7_Explain), ValueExpression(startOffset = 38, endOffset = 43, displayOffset = 40, value = tmp8_Explain), ValueExpression(startOffset = 45, endOffset = 46, displayOffset = 45, value = tmp9_Explain), ValueExpression(startOffset = 50, endOffset = 51, displayOffset = 50, value = tmp10_Explain), EqualityExpression(startOffset = 45, endOffset = 51, displayOffset = 47, value = tmp11_Explain, lhs = tmp9_Explain, rhs = tmp10_Explain)]))])) */)
+              }
+)
+            }
+            else -> { // BLOCK
+              val tmp12_Explain: Boolean = true
+              val tmp13_Explain: Boolean = false
+              assert(value = tmp13_Explain, lazyMessage = local fun <anonymous>(): String {
+                return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 425, source = "    assert(if (a < b) a == b else if (b < a) b == a else false)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 62, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 15, endOffset = 16, displayOffset = 15, value = tmp0_Explain), ValueExpression(startOffset = 19, endOffset = 20, displayOffset = 19, value = tmp1_Explain), ValueExpression(startOffset = 15, endOffset = 20, displayOffset = 17, value = tmp2_Explain), ValueExpression(startOffset = 38, endOffset = 39, displayOffset = 38, value = tmp6_Explain), ValueExpression(startOffset = 42, endOffset = 43, displayOffset = 42, value = tmp7_Explain), ValueExpression(startOffset = 38, endOffset = 43, displayOffset = 40, value = tmp8_Explain), LiteralExpression(startOffset = 57, endOffset = 62, displayOffset = 57, value = tmp12_Explain), LiteralExpression(startOffset = 57, endOffset = 62, displayOffset = 57, value = tmp13_Explain)]))])) */)
+              }
+)
+            }
+          }
+        }
+      }
+    }
+  }
+)
+}
+
+fun test2(a: Int, b: Int): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Int = a
+      val tmp1_Explain: Int = a
+      val tmp2_Explain: Int = b
+      val tmp3_Explain: Boolean = less(arg0 = tmp1_Explain, arg1 = tmp2_Explain)
+      when {
+        tmp3_Explain -> { // BLOCK
+          val tmp4_Explain: Int = a
+          val tmp5_Explain: Int = tmp0_Explain.plus(other = tmp4_Explain)
+          val tmp6_Explain: Int = b
+          val tmp7_Explain: Int = tmp5_Explain.plus(other = tmp6_Explain)
+          val tmp8_Explain: Int = a
+          val tmp9_Explain: Boolean = EQEQ(arg0 = tmp7_Explain, arg1 = tmp8_Explain)
+          assert(value = tmp9_Explain, lazyMessage = local fun <anonymous>(): String {
+            return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 545, source = "    assert(a + (if (a < b) a else b) + b == a)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 45, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 11, endOffset = 12, displayOffset = 11, value = tmp0_Explain), ValueExpression(startOffset = 20, endOffset = 21, displayOffset = 20, value = tmp1_Explain), ValueExpression(startOffset = 24, endOffset = 25, displayOffset = 24, value = tmp2_Explain), ValueExpression(startOffset = 20, endOffset = 25, displayOffset = 22, value = tmp3_Explain), ValueExpression(startOffset = 27, endOffset = 28, displayOffset = 27, value = tmp4_Explain), ValueExpression(startOffset = 11, endOffset = 36, displayOffset = 13, value = tmp5_Explain), ValueExpression(startOffset = 39, endOffset = 40, displayOffset = 39, value = tmp6_Explain), ValueExpression(startOffset = 11, endOffset = 40, displayOffset = 37, value = tmp7_Explain), ValueExpression(startOffset = 44, endOffset = 45, displayOffset = 44, value = tmp8_Explain), EqualityExpression(startOffset = 11, endOffset = 45, displayOffset = 41, value = tmp9_Explain, lhs = tmp7_Explain, rhs = tmp8_Explain)]))])) */)
+          }
+)
+        }
+        else -> { // BLOCK
+          val tmp10_Explain: Boolean = true
+          val tmp11_Explain: Int = b
+          val tmp12_Explain: Int = tmp0_Explain.plus(other = tmp11_Explain)
+          val tmp13_Explain: Int = b
+          val tmp14_Explain: Int = tmp12_Explain.plus(other = tmp13_Explain)
+          val tmp15_Explain: Int = a
+          val tmp16_Explain: Boolean = EQEQ(arg0 = tmp14_Explain, arg1 = tmp15_Explain)
+          assert(value = tmp16_Explain, lazyMessage = local fun <anonymous>(): String {
+            return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 545, source = "    assert(a + (if (a < b) a else b) + b == a)", arguments = listOf<Argument>(elements = [Argument(startOffset = 11, endOffset = 45, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 11, endOffset = 12, displayOffset = 11, value = tmp0_Explain), ValueExpression(startOffset = 20, endOffset = 21, displayOffset = 20, value = tmp1_Explain), ValueExpression(startOffset = 24, endOffset = 25, displayOffset = 24, value = tmp2_Explain), ValueExpression(startOffset = 20, endOffset = 25, displayOffset = 22, value = tmp3_Explain), LiteralExpression(startOffset = 34, endOffset = 35, displayOffset = 34, value = tmp10_Explain), ValueExpression(startOffset = 34, endOffset = 35, displayOffset = 34, value = tmp11_Explain), ValueExpression(startOffset = 11, endOffset = 36, displayOffset = 13, value = tmp12_Explain), ValueExpression(startOffset = 39, endOffset = 40, displayOffset = 39, value = tmp13_Explain), ValueExpression(startOffset = 11, endOffset = 40, displayOffset = 37, value = tmp14_Explain), ValueExpression(startOffset = 44, endOffset = 45, displayOffset = 44, value = tmp15_Explain), EqualityExpression(startOffset = 11, endOffset = 45, displayOffset = 41, value = tmp16_Explain, lhs = tmp14_Explain, rhs = tmp15_Explain)]))])) */)
+          }
+)
+        }
+      }
+    }
+  }
+)
+}
+
+fun test3(a: Int, b: Int): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Int = a
+      val tmp1_Explain: Int = b
+      val tmp2_Explain: Boolean = less(arg0 = tmp0_Explain, arg1 = tmp1_Explain)
+      when {
+        tmp2_Explain -> { // BLOCK
+          val tmp3_Explain: Int = a
+          val tmp4_Explain: Int = b
+          val tmp5_Explain: Boolean = EQEQ(arg0 = tmp3_Explain, arg1 = tmp4_Explain)
+          assert(value = tmp5_Explain, lazyMessage = local fun <anonymous>(): String {
+            return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 648, source = "    assert(\n        when {\n            a < b -> a == b\n            b < a -> b == a\n            else -> false\n        }\n    )", arguments = listOf<Argument>(elements = [Argument(startOffset = 20, endOffset = 118, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 39, endOffset = 40, displayOffset = 39, value = tmp0_Explain), ValueExpression(startOffset = 43, endOffset = 44, displayOffset = 43, value = tmp1_Explain), ValueExpression(startOffset = 39, endOffset = 44, displayOffset = 41, value = tmp2_Explain), ValueExpression(startOffset = 48, endOffset = 49, displayOffset = 48, value = tmp3_Explain), ValueExpression(startOffset = 53, endOffset = 54, displayOffset = 53, value = tmp4_Explain), EqualityExpression(startOffset = 48, endOffset = 54, displayOffset = 50, value = tmp5_Explain, lhs = tmp3_Explain, rhs = tmp4_Explain)]))])) */)
+          }
+)
+        }
+        else -> { // BLOCK
+          val tmp6_Explain: Int = b
+          val tmp7_Explain: Int = a
+          val tmp8_Explain: Boolean = less(arg0 = tmp6_Explain, arg1 = tmp7_Explain)
+          when {
+            tmp8_Explain -> { // BLOCK
+              val tmp9_Explain: Int = b
+              val tmp10_Explain: Int = a
+              val tmp11_Explain: Boolean = EQEQ(arg0 = tmp9_Explain, arg1 = tmp10_Explain)
+              assert(value = tmp11_Explain, lazyMessage = local fun <anonymous>(): String {
+                return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 648, source = "    assert(\n        when {\n            a < b -> a == b\n            b < a -> b == a\n            else -> false\n        }\n    )", arguments = listOf<Argument>(elements = [Argument(startOffset = 20, endOffset = 118, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 39, endOffset = 40, displayOffset = 39, value = tmp0_Explain), ValueExpression(startOffset = 43, endOffset = 44, displayOffset = 43, value = tmp1_Explain), ValueExpression(startOffset = 39, endOffset = 44, displayOffset = 41, value = tmp2_Explain), ValueExpression(startOffset = 67, endOffset = 68, displayOffset = 67, value = tmp6_Explain), ValueExpression(startOffset = 71, endOffset = 72, displayOffset = 71, value = tmp7_Explain), ValueExpression(startOffset = 67, endOffset = 72, displayOffset = 69, value = tmp8_Explain), ValueExpression(startOffset = 76, endOffset = 77, displayOffset = 76, value = tmp9_Explain), ValueExpression(startOffset = 81, endOffset = 82, displayOffset = 81, value = tmp10_Explain), EqualityExpression(startOffset = 76, endOffset = 82, displayOffset = 78, value = tmp11_Explain, lhs = tmp9_Explain, rhs = tmp10_Explain)]))])) */)
+              }
+)
+            }
+            else -> { // BLOCK
+              val tmp12_Explain: Boolean = true
+              val tmp13_Explain: Boolean = false
+              assert(value = tmp13_Explain, lazyMessage = local fun <anonymous>(): String {
+                return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 648, source = "    assert(\n        when {\n            a < b -> a == b\n            b < a -> b == a\n            else -> false\n        }\n    )", arguments = listOf<Argument>(elements = [Argument(startOffset = 20, endOffset = 118, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 39, endOffset = 40, displayOffset = 39, value = tmp0_Explain), ValueExpression(startOffset = 43, endOffset = 44, displayOffset = 43, value = tmp1_Explain), ValueExpression(startOffset = 39, endOffset = 44, displayOffset = 41, value = tmp2_Explain), ValueExpression(startOffset = 67, endOffset = 68, displayOffset = 67, value = tmp6_Explain), ValueExpression(startOffset = 71, endOffset = 72, displayOffset = 71, value = tmp7_Explain), ValueExpression(startOffset = 67, endOffset = 72, displayOffset = 69, value = tmp8_Explain), LiteralExpression(startOffset = 103, endOffset = 108, displayOffset = 103, value = tmp12_Explain), LiteralExpression(startOffset = 103, endOffset = 108, displayOffset = 103, value = tmp13_Explain)]))])) */)
+              }
+)
+            }
+          }
+        }
+      }
+    }
+  }
+)
+}
+
+fun test4(initial: Boolean, a: Int, b: Int): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Boolean = initial
+      when {
+        tmp0_Explain -> { // BLOCK
+          val tmp1_Explain: Int = a
+          val tmp2_Explain: Int = b
+          val tmp3_Explain: Boolean = less(arg0 = tmp1_Explain, arg1 = tmp2_Explain)
+          when {
+            tmp3_Explain -> { // BLOCK
+              val tmp4_Explain: Int = a
+              val tmp5_Explain: Int = b
+              val tmp6_Explain: Boolean = EQEQ(arg0 = tmp4_Explain, arg1 = tmp5_Explain)
+              assert(value = tmp6_Explain, lazyMessage = local fun <anonymous>(): String {
+                return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 847, source = "    assert(\n        initial && when {\n            a < b -> a == b\n            b < a -> b == a\n            else -> false\n        }\n    )", arguments = listOf<Argument>(elements = [Argument(startOffset = 20, endOffset = 129, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 20, endOffset = 27, displayOffset = 20, value = tmp0_Explain), ValueExpression(startOffset = 50, endOffset = 51, displayOffset = 50, value = tmp1_Explain), ValueExpression(startOffset = 54, endOffset = 55, displayOffset = 54, value = tmp2_Explain), ValueExpression(startOffset = 50, endOffset = 55, displayOffset = 52, value = tmp3_Explain), ValueExpression(startOffset = 59, endOffset = 60, displayOffset = 59, value = tmp4_Explain), ValueExpression(startOffset = 64, endOffset = 65, displayOffset = 64, value = tmp5_Explain), EqualityExpression(startOffset = 59, endOffset = 65, displayOffset = 61, value = tmp6_Explain, lhs = tmp4_Explain, rhs = tmp5_Explain)]))])) */)
+              }
+)
+            }
+            else -> { // BLOCK
+              val tmp7_Explain: Int = b
+              val tmp8_Explain: Int = a
+              val tmp9_Explain: Boolean = less(arg0 = tmp7_Explain, arg1 = tmp8_Explain)
+              when {
+                tmp9_Explain -> { // BLOCK
+                  val tmp10_Explain: Int = b
+                  val tmp11_Explain: Int = a
+                  val tmp12_Explain: Boolean = EQEQ(arg0 = tmp10_Explain, arg1 = tmp11_Explain)
+                  assert(value = tmp12_Explain, lazyMessage = local fun <anonymous>(): String {
+                    return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 847, source = "    assert(\n        initial && when {\n            a < b -> a == b\n            b < a -> b == a\n            else -> false\n        }\n    )", arguments = listOf<Argument>(elements = [Argument(startOffset = 20, endOffset = 129, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 20, endOffset = 27, displayOffset = 20, value = tmp0_Explain), ValueExpression(startOffset = 50, endOffset = 51, displayOffset = 50, value = tmp1_Explain), ValueExpression(startOffset = 54, endOffset = 55, displayOffset = 54, value = tmp2_Explain), ValueExpression(startOffset = 50, endOffset = 55, displayOffset = 52, value = tmp3_Explain), ValueExpression(startOffset = 78, endOffset = 79, displayOffset = 78, value = tmp7_Explain), ValueExpression(startOffset = 82, endOffset = 83, displayOffset = 82, value = tmp8_Explain), ValueExpression(startOffset = 78, endOffset = 83, displayOffset = 80, value = tmp9_Explain), ValueExpression(startOffset = 87, endOffset = 88, displayOffset = 87, value = tmp10_Explain), ValueExpression(startOffset = 92, endOffset = 93, displayOffset = 92, value = tmp11_Explain), EqualityExpression(startOffset = 87, endOffset = 93, displayOffset = 89, value = tmp12_Explain, lhs = tmp10_Explain, rhs = tmp11_Explain)]))])) */)
+                  }
+)
+                }
+                else -> { // BLOCK
+                  val tmp13_Explain: Boolean = true
+                  val tmp14_Explain: Boolean = false
+                  assert(value = tmp14_Explain, lazyMessage = local fun <anonymous>(): String {
+                    return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 847, source = "    assert(\n        initial && when {\n            a < b -> a == b\n            b < a -> b == a\n            else -> false\n        }\n    )", arguments = listOf<Argument>(elements = [Argument(startOffset = 20, endOffset = 129, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 20, endOffset = 27, displayOffset = 20, value = tmp0_Explain), ValueExpression(startOffset = 50, endOffset = 51, displayOffset = 50, value = tmp1_Explain), ValueExpression(startOffset = 54, endOffset = 55, displayOffset = 54, value = tmp2_Explain), ValueExpression(startOffset = 50, endOffset = 55, displayOffset = 52, value = tmp3_Explain), ValueExpression(startOffset = 78, endOffset = 79, displayOffset = 78, value = tmp7_Explain), ValueExpression(startOffset = 82, endOffset = 83, displayOffset = 82, value = tmp8_Explain), ValueExpression(startOffset = 78, endOffset = 83, displayOffset = 80, value = tmp9_Explain), LiteralExpression(startOffset = 114, endOffset = 119, displayOffset = 114, value = tmp13_Explain), LiteralExpression(startOffset = 114, endOffset = 119, displayOffset = 114, value = tmp14_Explain)]))])) */)
+                  }
+)
+                }
+              }
+            }
+          }
+        }
+        else -> { // BLOCK
+          val tmp15_Explain: Boolean = true
+          val tmp16_Explain: Boolean = false
+          assert(value = tmp16_Explain, lazyMessage = local fun <anonymous>(): String {
+            return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 847, source = "    assert(\n        initial && when {\n            a < b -> a == b\n            b < a -> b == a\n            else -> false\n        }\n    )", arguments = listOf<Argument>(elements = [Argument(startOffset = 20, endOffset = 129, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 20, endOffset = 27, displayOffset = 20, value = tmp0_Explain), LiteralExpression(startOffset = 31, endOffset = 129, displayOffset = 31, value = tmp15_Explain), LiteralExpression(startOffset = 31, endOffset = 129, displayOffset = 31, value = tmp16_Explain)]))])) */)
+          }
+)
+        }
+      }
+    }
+  }
+)
+}
+

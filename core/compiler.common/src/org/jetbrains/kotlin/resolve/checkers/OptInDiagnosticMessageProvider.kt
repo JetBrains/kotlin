@@ -18,6 +18,15 @@ object OptInUsagesDiagnosticMessageProvider : OptInDiagnosticMessageProvider() {
 
 }
 
+object OptInUsagesDiagnosticMessageProviderForDeprecation : OptInDiagnosticMessageProvider() {
+    override fun buildDefaultDiagnosticMessage(markerName: String, verb: String): String =
+        OptInNames.buildDefaultDiagnosticMessage(
+            "This declaration needs opt-in. Its usage $verb be marked",
+            markerName,
+            postfix = "This will become an error in future releases"
+        )
+}
+
 object OptInUsagesInFutureDiagnosticMessageProvider : OptInDiagnosticMessageProvider() {
     override fun buildDefaultDiagnosticMessage(markerName: String, verb: String): String =
         OptInNames.buildDefaultDiagnosticMessage(

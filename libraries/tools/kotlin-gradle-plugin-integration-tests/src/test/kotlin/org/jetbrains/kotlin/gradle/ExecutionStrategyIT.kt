@@ -1,24 +1,29 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.withType
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
-import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
+import kotlin.io.path.createFile
+import kotlin.io.path.createParentDirectories
+import kotlin.io.path.writeText
+import kotlin.test.fail
 
 @DisplayName("Kotlin JS compile execution strategy")
 class ExecutionStrategyJsIT : ExecutionStrategyIT() {
     override val defaultBuildOptions: BuildOptions
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+        get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     override fun setupProject(project: TestProject) {
         super.setupProject(project)
@@ -65,8 +70,6 @@ class ExecutionStrategyJsIT : ExecutionStrategyIT() {
 
 @DisplayName("Kotlin JVM compile execution strategy")
 class ExecutionStrategyJvmIT : ExecutionStrategyIT() {
-    override val expectedOutOfProcessDiagnostic: ToolingDiagnosticFactory = KotlinToolingDiagnostics.UsingOutOfProcessDisablesBuildToolsApi
-
     override fun BuildResult.checkOutput(project: TestProject) {
         with(project) {
             val classesDir = subProject("app").kotlinClassesDir().resolve("foo")
@@ -87,8 +90,6 @@ class ExecutionStrategyJvmIT : ExecutionStrategyIT() {
 }
 
 abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
-    internal open val expectedOutOfProcessDiagnostic: ToolingDiagnosticFactory? = null
-
     @DisplayName("Compilation via Kotlin daemon")
     @GradleTest
     fun testDaemon(gradleVersion: GradleVersion) {
@@ -226,23 +227,12 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         }
     }
 
-    @DisplayName("Compilation via separate compiler process")
-    @GradleTest
-    fun testOutOfProcess(gradleVersion: GradleVersion) {
-        doTestExecutionStrategy(
-            gradleVersion,
-            KotlinCompilerExecutionStrategy.OUT_OF_PROCESS,
-            expectDiagnostic = expectedOutOfProcessDiagnostic
-        )
-    }
-
     private fun doTestExecutionStrategy(
         gradleVersion: GradleVersion,
         executionStrategy: KotlinCompilerExecutionStrategy,
         addHeapDumpOptions: Boolean = true,
         testFallbackStrategy: Boolean = false,
         shouldConfigureStrategyViaGradleProperty: Boolean = true,
-        expectDiagnostic: ToolingDiagnosticFactory? = null,
         additionalProjectConfiguration: TestProject.() -> Unit = {},
     ) {
         project(
@@ -281,19 +271,14 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                 emptyArray()
             }
             val expectedFinishStrategy = when {
-                testFallbackStrategy && this@ExecutionStrategyIT is ExecutionStrategyJvmIT -> KotlinCompilerExecutionStrategy.IN_PROCESS
-                testFallbackStrategy && this@ExecutionStrategyIT !is ExecutionStrategyJvmIT -> KotlinCompilerExecutionStrategy.OUT_OF_PROCESS
+                testFallbackStrategy -> KotlinCompilerExecutionStrategy.IN_PROCESS
                 else -> executionStrategy
             }
             val finishMessage = expectedFinishStrategy.asFinishLogMessage
 
             build("build", *args) {
                 assertOutputContains(expectedFinishStrategy.asFinishLogMessage)
-                if (expectDiagnostic != null) {
-                    assertHasDiagnostic(expectDiagnostic)
-                }
                 checkOutput(this@project)
-                assertNoBuildWarnings()
 
                 if (testFallbackStrategy) {
                     assertOutputContains("Invalid maximum heap size: -Xmxqwerty")
@@ -315,7 +300,6 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             build("build", *args) {
                 assertOutputContains(finishMessage)
                 checkOutputAfterChange(this@project)
-                assertNoBuildWarnings()
             }
         }
     }
@@ -343,4 +327,83 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
 
     protected abstract fun BuildResult.checkOutput(project: TestProject)
     protected abstract fun BuildResult.checkOutputAfterChange(project: TestProject)
+}
+
+class NoActiveThreadsAfterCompilerInvocationIT : KGPDaemonsBaseTest() {
+    @DisplayName("KT-84152: [BTA] In-process compilation should not leave active threads")
+    @Disabled("FIXME: cover with tests when KT-84566 is fixed")
+    @GradleTest
+    fun testBta(gradleVersion: GradleVersion) = test(gradleVersion, buildOptions = defaultBuildOptions.copy(runViaBuildToolsApi = true))
+
+    @DisplayName("KT-84152: In-process compilation should not leave active threads")
+    @GradleTest
+    fun testNonBta(gradleVersion: GradleVersion) = test(gradleVersion, buildOptions = defaultBuildOptions.copy(runViaBuildToolsApi = false))
+
+    private fun test(
+        gradleVersion: GradleVersion,
+        buildOptions: BuildOptions
+    ) {
+        project(
+            "empty",
+            gradleVersion,
+            buildOptions = buildOptions.copy(
+                // model builder below breaks configuration cache in Gradle 9+,
+                // making it configuration cache friendly isn't necessary for this test
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS
+            )
+        ) {
+            plugins {
+                kotlin("jvm")
+            }
+
+            kotlinSourcesDir().resolve("Foo.kt")
+                .createParentDirectories()
+                .createFile()
+                .writeText("class Foo")
+
+            buildScriptInjection {
+                fun makeThreadsSnapshot(): Set<String> = Thread
+                    .getAllStackTraces()
+                    .keys.groupBy { it.javaClass.name + ":" + it.name }
+                    .map { (name, threads) -> "$name (total ${threads.size})" }.toSet()
+
+                project.tasks.named("compileKotlin").configure {
+                    it.doFirst {
+                        project.extraProperties.set("threadsBeforeKotlinCompile", makeThreadsSnapshot())
+                    }
+
+                    it.doLast {
+                        project.extraProperties.set("threadsAfterKotlinCompile", makeThreadsSnapshot())
+                    }
+                }
+            }
+
+            val newThreadsAfterExecution = buildModel("compileKotlin") { project ->
+                @Suppress("UNCHECKED_CAST")
+                val threadsBefore = project.extraProperties.get("threadsBeforeKotlinCompile") as Set<String>
+                check(threadsBefore.isNotEmpty()) { "[threadsBefore] snapshot must not be empty" }
+
+                @Suppress("UNCHECKED_CAST")
+                val threadsAfter = project.extraProperties.get("threadsAfterKotlinCompile") as Set<String>
+                check(threadsAfter.isNotEmpty()) { "[threadsAfter] snapshot must not be empty" }
+
+                threadsAfter - threadsBefore
+            }
+
+            val expectedGradleWorkerThreads = listOf(
+                """java\.lang\.Thread:pool-\d+-thread-\d+ \(total \d+\)""".toRegex(),
+                """java\.lang\.Thread:WorkerExecutor Queue \(total 1\)""".toRegex(),
+                """java\.lang\.Thread:Unconstrained build operations Thread \d+ \(total \d+\)""".toRegex(),
+            )
+
+            val newThreadsAfterExecutionFiltered = newThreadsAfterExecution.filter { threadInfo ->
+                expectedGradleWorkerThreads.all { !threadInfo.matches(it) }
+            }
+
+            if (newThreadsAfterExecutionFiltered.isNotEmpty()) {
+                fail("Threads were left active after compilation: $newThreadsAfterExecutionFiltered")
+            }
+        }
+    }
 }

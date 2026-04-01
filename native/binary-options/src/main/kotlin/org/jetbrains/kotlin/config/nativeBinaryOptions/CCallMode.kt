@@ -16,6 +16,11 @@ package org.jetbrains.kotlin.config.nativeBinaryOptions
  * which is controlled by this enum, [CCallMode].
  *
  * See [KT-79751](https://youtrack.jetbrains.com/issue/KT-79751) for more details.
+ *
+ * The same flags are used for other similar concepts.
+ * For example, C global access (indirect with `@CCall`, direct with `@CGlobalAccess`).
+ * Or Objective-C protocol type checks
+ * (indirect with `protocolGetter` parameter in `@ExternalObjCClass`, direct with `binaryName` parameter).
  */
 enum class CCallMode {
     /**
@@ -38,5 +43,19 @@ enum class CCallMode {
      * Use only `@CCall.Direct`, ignore `@CCall`.
      * If the function has only `@CCall`, the compilation fails with an error.
      */
-    Direct,
+    Direct;
+
+    /**
+     * Implements the selection behaviour designated by this mode.
+     * `indirect` and `direct` are the generation methods that can return `null` when unavailable.
+     */
+    fun <T> select(
+        indirect: () -> T?,
+        direct: () -> T?,
+    ): T? = when (this) {
+        Indirect -> indirect()
+        IndirectOrDirect -> indirect() ?: direct()
+        DirectOrIndirect -> direct() ?: indirect()
+        Direct -> direct()
+    }
 }

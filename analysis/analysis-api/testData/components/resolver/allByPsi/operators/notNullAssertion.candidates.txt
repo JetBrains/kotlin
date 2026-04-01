@@ -1,0 +1,56 @@
+KtFile: 'notNullAssertion.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtNamedFunction(0,32): 'fun test(a: String?) {'
+  NO_CANDIDATES
+
+KtParameterList(8,20): '(a: String?)'
+  NO_CANDIDATES
+
+KtParameter(9,19): 'a: String?'
+  NO_CANDIDATES
+
+KtTypeReference(12,19): 'String?'
+  NO_CANDIDATES
+
+KtNullableType(12,19): 'String?'
+  NO_CANDIDATES
+
+KtUserType(12,18): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(12,18): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(21,32): '{'
+  NO_CANDIDATES
+
+KtPostfixExpression(27,30): 'a!!'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(27,28): 'a'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = kotlin.String?
+        symbol = a: kotlin.String?
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(28,30): '!!'
+  NO_CANDIDATES

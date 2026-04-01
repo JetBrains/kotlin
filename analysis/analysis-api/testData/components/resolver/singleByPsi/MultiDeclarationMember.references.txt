@@ -2,6 +2,9 @@ KtDestructuringDeclarationEntry(162,163): 'b'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in a.MyPair) operator fun component2(): kotlin.Int
+    resolveToSymbols:
       0: (in <local>: main) val b: kotlin.Int
       1: (in a.MyPair) operator fun component2(): kotlin.Int

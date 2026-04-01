@@ -26,7 +26,7 @@ fun Ref(content: @[ExtensionFunctionType] Function4<Cls, Int, Composer, Int, Uni
       val tmp0_group = %composer.cache(false) {
         @Composable
         fun Cls.Fn(int: Int, %composer: Composer?, %changed: Int) {
-          receiver.Fn(int, %composer, 0b1110 and %changed or 0b01110000 and %changed, 0)
+          receiver.Fn(int, %composer, Cls.%stable or 0b1110 and %changed or 0b01110000 and %changed, 0)
         }
         ::Fn
       }

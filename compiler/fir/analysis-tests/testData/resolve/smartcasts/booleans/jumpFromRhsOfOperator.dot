@@ -35,7 +35,7 @@ digraph jumpFromRhsOfOperator_kt {
                 8 [label="Enter ||"];
                 9 [label="Access variable R|<local>/a|"];
                 10 [label="Const: Null(null)"];
-                11 [label="Equality operator !="];
+                11 [label="Equality operator !=" style="filled" fillcolor=yellow];
                 12 [label="Exit left part of ||"];
                 13 [label="Enter right part of ||"];
                 subgraph cluster_6 {
@@ -96,7 +96,7 @@ digraph jumpFromRhsOfOperator_kt {
                 31 [label="Enter &&"];
                 32 [label="Access variable R|<local>/a|"];
                 33 [label="Const: Null(null)"];
-                34 [label="Equality operator =="];
+                34 [label="Equality operator ==" style="filled" fillcolor=yellow];
                 35 [label="Exit left part of &&"];
                 36 [label="Enter right part of &&"];
                 subgraph cluster_11 {
@@ -163,7 +163,7 @@ digraph jumpFromRhsOfOperator_kt {
                         56 [label="Enter ||"];
                         57 [label="Access variable R|<local>/a|"];
                         58 [label="Const: Null(null)"];
-                        59 [label="Equality operator !="];
+                        59 [label="Equality operator !=" style="filled" fillcolor=yellow];
                         60 [label="Exit left part of ||"];
                         61 [label="Enter right part of ||"];
                         subgraph cluster_18 {
@@ -266,7 +266,7 @@ digraph jumpFromRhsOfOperator_kt {
                         94 [label="Enter &&"];
                         95 [label="Access variable R|<local>/a|"];
                         96 [label="Const: Null(null)"];
-                        97 [label="Equality operator =="];
+                        97 [label="Equality operator ==" style="filled" fillcolor=yellow];
                         98 [label="Exit left part of &&"];
                         99 [label="Enter right part of &&"];
                         subgraph cluster_27 {
@@ -363,7 +363,7 @@ digraph jumpFromRhsOfOperator_kt {
                 130 [label="Enter ||"];
                 131 [label="Access variable R|<local>/a|"];
                 132 [label="Const: Null(null)"];
-                133 [label="Equality operator =="];
+                133 [label="Equality operator ==" style="filled" fillcolor=yellow];
                 134 [label="Exit left part of ||"];
                 135 [label="Enter right part of ||"];
                 subgraph cluster_34 {
@@ -424,7 +424,7 @@ digraph jumpFromRhsOfOperator_kt {
                 153 [label="Enter &&"];
                 154 [label="Access variable R|<local>/a|"];
                 155 [label="Const: Null(null)"];
-                156 [label="Equality operator !="];
+                156 [label="Equality operator !=" style="filled" fillcolor=yellow];
                 157 [label="Exit left part of &&"];
                 158 [label="Enter right part of &&"];
                 subgraph cluster_39 {
@@ -491,7 +491,7 @@ digraph jumpFromRhsOfOperator_kt {
                         178 [label="Enter ||"];
                         179 [label="Access variable R|<local>/a|"];
                         180 [label="Const: Null(null)"];
-                        181 [label="Equality operator =="];
+                        181 [label="Equality operator ==" style="filled" fillcolor=yellow];
                         182 [label="Exit left part of ||"];
                         183 [label="Enter right part of ||"];
                         subgraph cluster_46 {
@@ -594,7 +594,7 @@ digraph jumpFromRhsOfOperator_kt {
                         216 [label="Enter &&"];
                         217 [label="Access variable R|<local>/a|"];
                         218 [label="Const: Null(null)"];
-                        219 [label="Equality operator !="];
+                        219 [label="Equality operator !=" style="filled" fillcolor=yellow];
                         220 [label="Exit left part of &&"];
                         221 [label="Enter right part of &&"];
                         subgraph cluster_55 {

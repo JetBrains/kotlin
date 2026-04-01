@@ -1,2 +1,4 @@
 KtDestructuringDeclarationEntry(34,35): 'x'
-  null
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<SYNTAX: Syntax error: Initializer required for destructuring declaration.>

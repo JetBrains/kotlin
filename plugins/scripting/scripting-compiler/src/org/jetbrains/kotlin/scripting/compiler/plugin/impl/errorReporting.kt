@@ -27,17 +27,16 @@ import kotlin.script.experimental.jvm.util.toSourceCodePosition
 
 class ScriptDiagnosticsMessageCollector(private val parentMessageCollector: MessageCollector?) : MessageCollector {
 
-    private val _diagnostics = arrayListOf<ScriptDiagnostic>()
-
-    val diagnostics: List<ScriptDiagnostic> get() = _diagnostics
+    val diagnostics: List<ScriptDiagnostic>
+        field = arrayListOf<ScriptDiagnostic>()
 
     override fun clear() {
-        _diagnostics.clear()
+        diagnostics.clear()
         parentMessageCollector?.clear()
     }
 
     override fun hasErrors(): Boolean =
-        _diagnostics.any { it.severity == ScriptDiagnostic.Severity.ERROR } || parentMessageCollector?.hasErrors() == true
+        diagnostics.any { it.severity == ScriptDiagnostic.Severity.ERROR } || parentMessageCollector?.hasErrors() == true
 
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
         val mappedSeverity = severity.toScriptingSeverity()
@@ -61,13 +60,13 @@ class ScriptDiagnosticsMessageCollector(private val parentMessageCollector: Mess
                     )
                 )
             }
-            _diagnostics.add(ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, message, mappedSeverity, location?.path, mappedLocation))
+            diagnostics.add(ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, message, mappedSeverity, location?.path, mappedLocation))
         }
         parentMessageCollector?.report(severity, message, location)
     }
 
     fun report(diagnostic: ScriptDiagnostic) {
-        _diagnostics.add(diagnostic)
+        diagnostics.add(diagnostic)
 
         if (parentMessageCollector == null) return
         if (parentMessageCollector is ScriptDiagnosticsMessageCollector) {
@@ -133,7 +132,6 @@ internal fun reportArgumentsNotAllowed(
         CompilerMessageSeverity.ERROR,
         messageCollector,
         reportingState,
-        K2JVMCompilerArguments::useJavac,
     )
 
 internal fun reportArgumentsIgnoredGenerally(
@@ -159,8 +157,6 @@ internal fun reportArgumentsIgnoredGenerally(
         K2JVMCompilerArguments::disableStandardScript,
         K2JVMCompilerArguments::defaultScriptExtension,
         K2JVMCompilerArguments::disableDefaultScriptingPlugin,
-        K2JVMCompilerArguments::useJavac,
-        K2JVMCompilerArguments::compileJava,
         K2JVMCompilerArguments::reportPerf,
         K2JVMCompilerArguments::dumpPerf
     )
@@ -193,7 +189,9 @@ private fun reportInvalidArguments(
     vararg toIgnore: KMutableProperty1<K2JVMCompilerArguments, *>
 ): Boolean {
     val invalidArgKeys = toIgnore.mapNotNull { argProperty ->
-        if (argProperty.get(arguments) != argProperty.get(reportingState.currentArguments)) {
+        val currentArg = argProperty.get(reportingState.currentArguments)
+        val arg = argProperty.get(arguments)
+        if (!(arg == currentArg || arg.isEmptyArray() && currentArg.isEmptyArray())) {
             argProperty.javaField?.getAnnotation(Argument::class.java)?.value
                 ?: throw IllegalStateException("unknown compiler argument property: $argProperty: no Argument annotation found")
         } else null
@@ -206,6 +204,8 @@ private fun reportInvalidArguments(
     return false
 }
 
+private fun Any?.isEmptyArray(): Boolean = this is Array<*> && isEmpty()
+
 val MessageCollector.reporter: MessageReporter
     get() = { severity, message ->
         this.report(severity.toCompilerMessageSeverity(), message)
@@ -215,7 +215,7 @@ fun KtDiagnostic.asScriptDiagnostic(sourceCode: SourceCode): ScriptDiagnostic {
     val (diagnosticCode, scriptSeverity) = when (severity) {
         Severity.INFO -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.INFO
         Severity.ERROR -> ScriptDiagnostic.unspecifiedError to ScriptDiagnostic.Severity.ERROR
-        Severity.WARNING, Severity.FIXED_WARNING -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.WARNING
+        Severity.WARNING, Severity.FIXED_WARNING, Severity.STRONG_WARNING -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.WARNING
     }
 
     val textRanges = (this as? KtDiagnosticWithSource)?.textRanges

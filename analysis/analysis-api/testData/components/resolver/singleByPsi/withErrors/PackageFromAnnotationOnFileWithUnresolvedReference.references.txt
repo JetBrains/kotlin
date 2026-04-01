@@ -2,5 +2,9 @@ KtNameReferenceExpression(28,31): 'jvm'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'JvmName23'.>
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package kotlin.jvm

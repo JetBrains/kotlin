@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.utils.*
+import org.jetbrains.kotlin.fir.backend.utils.toIrConst
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
@@ -278,17 +280,19 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                                 classifierStorage.preCacheTypeParameters(it)
                             }
                             createBackingField(
-                                this,
-                                property,
-                                IrDeclarationOrigin.PROPERTY_DELEGATE,
-                                symbols.backingFieldSymbol!!,
-                                c.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
-                                NameUtils.propertyDelegateName(property.name),
-                                true,
-                                delegate
+                                irProperty = this,
+                                firProperty = property,
+                                origin = IrDeclarationOrigin.PROPERTY_DELEGATE,
+                                symbol = symbols.backingFieldSymbol!!,
+                                visibility = c.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
+                                name = NameUtils.propertyDelegateName(property.name),
+                                isFinal = true,
+                                firInitializerExpression = delegate.takeIf { property.isReplSnippetDeclaration != true },
+                                type = delegate.resolvedType.toIrType(),
                             )
                         } else {
                             val initializer = getEffectivePropertyInitializer(property, resolveIfNeeded = true)
+
                             // There are cases when we get here for properties
                             // that have no backing field. For example, in the
                             // funExpression.kt test there's an attempt
@@ -304,11 +308,25 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                                 property.name,
                                 property.isVal,
                                 initializer,
-                                typeToUse
+                                typeToUse,
                             ).also { field ->
                                 if (initializer is FirLiteralExpression) {
                                     val constType = initializer.resolvedType.toIrType()
                                     field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
+                                } else if (property.isConst) {
+                                    val evaluatedInitializer = property.evaluatedInitializer?.unwrapOr<FirLiteralExpression> {}
+                                    // The evaluated initializer can be missing in case of an error. It will be reported as diagnostic.
+                                    val expression = if (evaluatedInitializer != null) {
+                                        evaluatedInitializer.toIrConst(evaluatedInitializer.resolvedType.toIrType())
+                                    } else {
+                                        IrErrorExpressionImpl(
+                                            startOffset = field.initializer?.startOffset ?: UNDEFINED_OFFSET,
+                                            endOffset = field.initializer?.endOffset ?: UNDEFINED_OFFSET,
+                                            type = typeToUse,
+                                            "Initializer for const property ${property.name} was not evaluated"
+                                        )
+                                    }
+                                    field.initializer = factory.createExpressionBody(expression)
                                 }
                             }
                         }
@@ -488,7 +506,8 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 visibility = visibility,
                 symbol = symbol,
                 type = inferredType,
-                isFinal = isFinal,
+                // REPL snippet properties are initialized within the `$$eval` function so cannot be final.
+                isFinal = isFinal && firProperty.isReplSnippetDeclaration != true,
                 isStatic = firProperty.isStatic || !(irProperty.parent is IrClass || irProperty.parent is IrScript),
                 isExternal = firProperty.isExternal || irProperty.isExternal,
             ).also {
@@ -657,26 +676,28 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             val typeOrigin = if (forSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
 
             // extension receiver
-            val receiver: FirReceiverParameter? =
-                if (function !is FirPropertyAccessor && function != null) function.receiverParameter
-                else parentProperty?.receiverParameter
+            if (function?.isCompanionExtension != true && parentProperty?.isCompanionExtension != true) {
+                val receiver: FirReceiverParameter? =
+                    if (function !is FirPropertyAccessor && function != null) function.receiverParameter
+                    else parentProperty?.receiverParameter
 
-            if (receiver != null) {
-                this += receiver.convertWithOffsets { startOffset, endOffset ->
-                    val name = (function as? FirAnonymousFunction)?.label?.name?.let {
-                        val suffix = it.takeIf(Name::isValidIdentifier) ?: $$"$receiver"
-                        Name.identifier($$"$this$$$suffix")
-                    } ?: SpecialNames.THIS
-                    declareThisReceiverParameter(
-                        thisType = receiver.typeRef.toIrType(typeOrigin),
-                        thisOrigin = IrDeclarationOrigin.DEFINED,
-                        startOffset = startOffset,
-                        endOffset = endOffset,
-                        name = name,
-                        explicitReceiver = receiver,
-                        isAssignable = function.shouldParametersBeAssignable(c),
-                        kind = IrParameterKind.ExtensionReceiver,
-                    )
+                if (receiver != null) {
+                    this += receiver.convertWithOffsets { startOffset, endOffset ->
+                        val name = (function as? FirAnonymousFunction)?.label?.name?.let {
+                            val suffix = it.takeIf(Name::isValidIdentifier) ?: $$"$receiver"
+                            Name.identifier($$"$this$$$suffix")
+                        } ?: SpecialNames.THIS
+                        declareThisReceiverParameter(
+                            thisType = receiver.typeRef.toIrType(typeOrigin),
+                            thisOrigin = IrDeclarationOrigin.DEFINED,
+                            startOffset = startOffset,
+                            endOffset = endOffset,
+                            name = name,
+                            explicitReceiver = receiver,
+                            isAssignable = function.shouldParametersBeAssignable(c),
+                            kind = IrParameterKind.ExtensionReceiver,
+                        )
+                    }
                 }
             }
 
@@ -759,8 +780,10 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
 
                 if (!skipDefaultParameter && defaultValue != null) {
                     this.defaultValue = when {
-                        forcedDefaultValueConversion && defaultValue !is FirExpressionStub ->
-                            defaultValue.asCompileTimeIrInitializerForAnnotationParameter()
+                        forcedDefaultValueConversion && defaultValue !is FirExpressionStub -> {
+                            val valueToConvert = valueParameter.evaluatedInitializer?.unwrapOr<FirExpression> {} ?: defaultValue
+                            valueToConvert.asCompileTimeIrInitializerForAnnotationParameter()
+                        }
                         useStubForDefaultValueStub || defaultValue !is FirExpressionStub ->
                             factory.createExpressionBody(
                                 IrErrorExpressionImpl(
@@ -894,7 +917,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
 
     fun createIrReplSnippet(snippet: FirReplSnippet, symbol: IrReplSnippetSymbol): IrReplSnippet =
         snippet.convertWithOffsets { startOffset, endOffset ->
-            IrReplSnippetImpl(startOffset, endOffset, IrFactoryImpl, snippet.name, symbol).also { irSnippet ->
+            IrReplSnippetImpl(startOffset, endOffset, IrFactoryImpl, snippet.snippetClass.name, symbol).also { irSnippet ->
                 irSnippet.metadata = FirMetadataSource.ReplSnippet(snippet)
             }
         }

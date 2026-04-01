@@ -1,5 +1,0 @@
-source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
-
-assertBuildLogHasLineThatContains("Executing scripts in maven build files is deprecated");
-assertBuildLogHasLine("[INFO] BUILD FAILURE");
-assertBuildLogHasLineThatContains("Unresolved reference: compileErrorHere");

@@ -1,4 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-78111
 
 class FooImpl<T : Any>(var value: T?) : Foo<T> {
     override fun update(transformer: (T?) -> T?) {

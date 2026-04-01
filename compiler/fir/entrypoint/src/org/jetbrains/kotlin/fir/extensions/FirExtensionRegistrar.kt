@@ -1,31 +1,25 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.extensions
 
-import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.analysis.diagnostics.diagnosticRendererFactory
+import org.jetbrains.kotlin.fir.analysis.diagnostics.registeredDiagnosticFactoriesStorage
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.backend.Fir2IrReplSnippetConfiguratorExtension
 import org.jetbrains.kotlin.fir.backend.Fir2IrScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.FirReplSnippetConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
 import org.jetbrains.kotlin.fir.serialization.FirMetadataSerializerPlugin
 import kotlin.reflect.KClass
 
 abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
     companion object {
-        fun getInstances(project: Project): List<FirExtensionRegistrar> {
-            @Suppress("UNCHECKED_CAST")
-            return FirExtensionRegistrarAdapter.getInstances(project) as List<FirExtensionRegistrar>
-        }
-
         internal val AVAILABLE_EXTENSIONS = listOf(
             FirStatusTransformerExtension::class,
             FirDeclarationGenerationExtension::class,
@@ -41,7 +35,6 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             Fir2IrScriptConfiguratorExtension::class,
             Fir2IrReplSnippetConfiguratorExtension::class,
             FirReplSnippetConfiguratorExtension::class,
-            FirReplSnippetResolveExtension::class,
             FirFunctionTypeKindExtension::class,
             @OptIn(FirExtensionApiInternals::class)
             FirMetadataSerializerPlugin::class,
@@ -128,11 +121,6 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
         @JvmName("plusReplSnippetConfiguratorExtension")
         operator fun (FirReplSnippetConfiguratorExtension.Factory).unaryPlus() {
             registerExtension(FirReplSnippetConfiguratorExtension::class, this)
-        }
-
-        @JvmName("plusReplSnippetResolveExtension")
-        operator fun (FirReplSnippetResolveExtension.Factory).unaryPlus() {
-            registerExtension(FirReplSnippetResolveExtension::class, this)
         }
 
         @JvmName("plusFunctionTypeKindExtension")
@@ -222,11 +210,6 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
         @JvmName("plusReplSnippetConfiguratorExtension")
         operator fun ((FirSession) -> FirReplSnippetConfiguratorExtension).unaryPlus() {
             FirReplSnippetConfiguratorExtension.Factory { this.invoke(it) }.unaryPlus()
-        }
-
-        @JvmName("plusReplSnippetResolveExtension")
-        operator fun ((FirSession) -> FirReplSnippetResolveExtension).unaryPlus() {
-            FirReplSnippetResolveExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
         @JvmName("plusFunctionTypeKindExtension")
@@ -338,5 +321,8 @@ fun FirExtensionService.registerExtensions(registeredExtensions: BunchOfRegister
         session.register(it.componentClass, it)
     }
     session.registeredPluginAnnotations.initialize()
-    session.diagnosticRendererFactory.registerFactories(registeredExtensions.diagnosticsContainers.map { it.getRendererFactory() })
+    if (session.kind == FirSession.Kind.Source) {
+        session.registeredDiagnosticFactoriesStorage.registerDiagnosticContainers(registeredExtensions.diagnosticsContainers)
+    }
 }
+

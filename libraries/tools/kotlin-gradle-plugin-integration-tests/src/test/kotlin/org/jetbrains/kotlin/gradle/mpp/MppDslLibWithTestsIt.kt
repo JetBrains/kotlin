@@ -16,7 +16,7 @@ class MppDslLibWithTestsIt : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+        get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-with-tests")
@@ -55,16 +55,20 @@ class MppDslLibWithTestsIt : KGPBaseTest() {
             val expectedKotlinOutputFiles = listOf(
                 mainClassesDir.resolve("com/example/lib/CommonKt.class"),
                 mainClassesDir.resolve("com/example/lib/MainKt.class"),
-                mainClassesDir.resolve("META-INF/new-mpp-lib-with-tests.kotlin_module"),
+                mainClassesDir.resolve("META-INF/com.example_new-mpp-lib-with-tests.kotlin_module"),
 
                 testClassesDir.resolve("com/example/lib/TestCommonCode.class"),
                 testClassesDir.resolve("com/example/lib/TestWithoutJava.class"),
-                testClassesDir.resolve("META-INF/new-mpp-lib-with-tests_test.kotlin_module"),
+                testClassesDir.resolve("META-INF/com.example_new-mpp-lib-with-tests_test.kotlin_module"),
             )
 
             expectedKotlinOutputFiles.forEach { assertFileExists(it) }
 
-            val expectedTestResults = projectPath.resolve("TEST-all.xml")
+            val expectedTestResults = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) {
+                projectPath.resolve("TEST-all.xml")
+            } else {
+                projectPath.resolve("Gradle93-TEST-all.xml")
+            }
 
             val currentTarget = MPPNativeTargets.current
             expectedTestResults.replaceText("<target>", currentTarget)

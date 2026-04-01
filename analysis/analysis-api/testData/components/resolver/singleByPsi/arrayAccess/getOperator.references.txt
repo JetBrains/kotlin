@@ -2,5 +2,6 @@ KtArrayAccessExpression(53,57): '1[2]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) operator fun kotlin.Int.get(index: kotlin.Int): kotlin.Int

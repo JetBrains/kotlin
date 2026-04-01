@@ -1,13 +1,14 @@
-// JVM_ABI_K1_K2_DIFF: KT-68087
 // WITH_STDLIB
-
-import kotlin.coroutines.*
-
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 typealias Handler = suspend (String) -> Unit
 
 suspend inline fun foo(handler: Handler)  {
     handler("OK")
 }
+
+// FILE: main.kt
+import kotlin.coroutines.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(Continuation(EmptyCoroutineContext) {

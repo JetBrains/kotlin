@@ -11,6 +11,7 @@ import org.gradle.api.initialization.ConfigurableIncludedBuild
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
@@ -231,8 +232,14 @@ fun TestProject.addPublishedProjectToRepositories(
 fun TestProject.include(
     subproject: TestProject,
     name: String,
+    useSymlink: Boolean = true,
 ) {
-    Files.createSymbolicLink(projectPath.resolve(name), subproject.projectPath)
+    val targetPath = projectPath.resolve(name)
+    if (useSymlink) {
+        Files.createSymbolicLink(targetPath, subproject.projectPath)
+    } else {
+        subproject.projectPath.toFile().copyRecursively(targetPath.toFile())
+    }
     settingsBuildScriptInjection {
         settings.include(":${name}")
     }
@@ -251,7 +258,12 @@ fun TestProject.includeBuild(
     }
 }
 
-fun TestProject.dumpKlibMetadataSignatures(klib: File): String {
+
+fun TestProject.dumpKlibMetadata(klib: File) = dumpKlib(klib, "dump-metadata")
+
+fun TestProject.dumpKlibMetadataSignatures(klib: File) = dumpKlib(klib, "dump-metadata-signatures")
+
+private fun TestProject.dumpKlib(klib: File, dumpMethod: String): String {
     val dumpName = "dump_${UUID.randomUUID().toString().replace("-", "_")}"
     val outputFile = projectPath.resolve(dumpName).toFile()
     outputFile.createNewFile()
@@ -281,7 +293,7 @@ fun TestProject.dumpKlibMetadataSignatures(klib: File): String {
                             PrintStream(it),
                             System.err,
                             arrayOf(
-                                "dump-metadata-signatures", klib.path,
+                                dumpMethod, klib.path,
                                 "-test-mode", "true",
                             )
                         ) as Int

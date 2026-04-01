@@ -1,0 +1,13 @@
+---false=true
+
+dbg(
+    key = greeting != null && greeting.length == 5,
+          |        |
+          null     false
+
+    value = name == null || name.length == 5
+            |    |
+            null true
+
+)
+---

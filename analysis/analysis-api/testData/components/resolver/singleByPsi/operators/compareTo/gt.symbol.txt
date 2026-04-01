@@ -1,0 +1,5 @@
+KtOperationReferenceExpression(114,115): '>'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.compareTo(<dispatch receiver>: MyClass, value: MyClass): kotlin.Int
+    ]

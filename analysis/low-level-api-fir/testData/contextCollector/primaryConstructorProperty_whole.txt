@@ -15,6 +15,7 @@ Tower Data Context:
         Scope: FirNestedClassifierScopeImpl
             Classifiers:
                 FirRegularClassSymbol public final? class NestedClass : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public final class Foo<TypeParameter> : R|kotlin/Any|
     Element 7
         Scope: FirMemberTypeParameterScope
             Classifiers:

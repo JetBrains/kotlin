@@ -1,4 +1,4 @@
 KtArrayAccessExpression(119,123): 'a[2]'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: a[2]>

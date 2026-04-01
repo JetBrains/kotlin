@@ -1,0 +1,9 @@
+KtForExpression(23,37): 'for(i in f) {}'
+  KtForLoopInReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun Int.iterator(): Any>
+    symbols:
+      (in ROOT) operator fun kotlin.Int.iterator(): kotlin.Any

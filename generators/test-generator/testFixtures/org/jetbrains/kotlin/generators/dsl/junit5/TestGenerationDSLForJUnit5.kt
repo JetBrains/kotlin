@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.generators.InconsistencyChecker
 import org.jetbrains.kotlin.generators.allowGenerationOnTeamCity
 import org.jetbrains.kotlin.generators.dsl.TestGroupSuite
 import org.jetbrains.kotlin.generators.dsl.forEachTestClassParallel
+import org.jetbrains.kotlin.generators.model.TestInfraRevision
+import org.jetbrains.kotlin.generators.skipTestAllFilesCheck
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 fun generateTestGroupSuiteWithJUnit5(
@@ -21,6 +23,7 @@ fun generateTestGroupSuiteWithJUnit5(
     generateTestGroupSuiteWithJUnit5(
         dryRun = InconsistencyChecker.hasDryRunArg(args),
         allowGenerationOnTeamCity = args.allowGenerationOnTeamCity(),
+        skipTestAllFilesCheck = args.skipTestAllFilesCheck(),
         mainClassName,
         init
     )
@@ -29,11 +32,12 @@ fun generateTestGroupSuiteWithJUnit5(
 fun generateTestGroupSuiteWithJUnit5(
     dryRun: Boolean = false,
     allowGenerationOnTeamCity: Boolean = false,
+    skipTestAllFilesCheck: Boolean = false,
     // See above
     mainClassName: String? = TestGeneratorUtil.getMainClassName(),
     init: TestGroupSuite.() -> Unit,
 ) {
-    val suite = TestGroupSuite(TestGroupSuite.Mode.JUnit5).apply(init)
+    val suite = TestGroupSuite(TestInfraRevision.StandardJUnit5, skipTestAllFilesCheck).apply(init)
     suite.forEachTestClassParallel { testClass ->
         val (changed, testSourceFilePath) = TestGeneratorForJUnit5
             .generateAndSave(testClass, dryRun, allowGenerationOnTeamCity, mainClassName)

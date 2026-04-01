@@ -1,0 +1,5 @@
+KtOperationReferenceExpression(150,151): '='
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyList.set(<dispatch receiver>: MyList, index: kotlin.Int, value: kotlin.String): kotlin.Unit
+    ]

@@ -54,8 +54,11 @@ grant {
     // org.jetbrains.kotlin.cli.klib.ZipTest
     permission java.nio.file.LinkPermission "symbolic";
 
+    {{extra_permissions}}
+
     {{native}}
 
+    {{js}}
     {{wasm}}
 
     // Temp directory
@@ -70,6 +73,7 @@ grant {
     // JDK
     {{jdk}}
     {{java_library_paths}}
+    {{flight_recorder}}
 
     // Allow access to declared input directories
     {{inputs}}

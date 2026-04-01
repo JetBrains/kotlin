@@ -18,7 +18,6 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.junit.Test
 
-// TODO(b/282189431): run this test with K2
 class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
     @Test
     fun testBasicMpp() {
@@ -53,17 +52,9 @@ class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
             actual @Composable fun Test() {}
         """,
             """
-        final class JvmKt%Test%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
-          OUTERCLASS JvmKt Test (Landroidx/compose/runtime/Composer;I)V
-          final static INNERCLASS JvmKt%Test%1 null null
-          final synthetic I %%changed
-          <init>(I)V
-          public final invoke(Landroidx/compose/runtime/Composer;I)V
-          public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-        }
         public final class JvmKt {
-          final static INNERCLASS JvmKt%Test%1 null null
           public final static Test(Landroidx/compose/runtime/Composer;I)V
+          private final static Test%lambda%0(ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
         }
         """
         )
@@ -85,19 +76,9 @@ class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
                 actual fun One(param: Int) { }
             """,
             """
-                final class JvmKt%One%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
-                  OUTERCLASS JvmKt One (ILandroidx/compose/runtime/Composer;II)V
-                  final static INNERCLASS JvmKt%One%1 null null
-                  final synthetic I %param
-                  final synthetic I %%changed
-                  final synthetic I %%default
-                  <init>(III)V
-                  public final invoke(Landroidx/compose/runtime/Composer;I)V
-                  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-                }
                 public final class JvmKt {
-                  final static INNERCLASS JvmKt%One%1 null null
                   public final static One(ILandroidx/compose/runtime/Composer;II)V
+                  private final static One%lambda%0(IIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
                 }
             """.trimIndent()
         )

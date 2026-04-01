@@ -6,7 +6,7 @@ FILE: delegationInInterface.kt
 
     }
     public abstract interface B : R|A| {
-        private final field $$delegate_0: R|A| = <Unresolved name: a>#
+        private final field $$delegate_0: R|A| = R|B|this@R|/B|.R|/B.a<Inapplicable(INAPPLICABLE): /B.a>#|
 
         public abstract val a: R|A|
             public get(): R|A|

@@ -16,7 +16,7 @@ interface KotlinContextInterface {
 }
 
 // FILE: test.kt
-<!CONFLICTING_INHERITED_JVM_DECLARATIONS, CONFLICTING_INHERITED_JVM_DECLARATIONS!>interface Intersection : KotlinContextInterface, JavaInterface<!>
+<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>interface Intersection : KotlinContextInterface, JavaInterface<!>
 
 interface IntersectionWithOverride : KotlinContextInterface, JavaInterface {
     context(a: String)

@@ -26,7 +26,7 @@ fun ConeTypeProjection.createArrayType(nullable: Boolean = false, createPrimitiv
             val primitiveArrayId =
                 StandardClassIds.primitiveArrayTypeByElementType[classId] ?: StandardClassIds.unsignedArrayTypeByElementType[classId]
             if (primitiveArrayId != null) {
-                return primitiveArrayId.constructClassLikeType(emptyArray(), nullable)
+                return primitiveArrayId.constructClassLikeType(isMarkedNullable = nullable)
             }
         }
     }

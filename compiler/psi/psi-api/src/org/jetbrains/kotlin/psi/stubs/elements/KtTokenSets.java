@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.psi.stubs.elements;
 
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.KtImplementationDetail;
 
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 
@@ -15,17 +14,14 @@ public interface KtTokenSets {
     TokenSet DECLARATION_TYPES =
             TokenSet.create(CLASS, OBJECT_DECLARATION, FUN, PROPERTY, TYPEALIAS, CLASS_INITIALIZER, SECONDARY_CONSTRUCTOR, ENUM_ENTRY);
 
+    TokenSet DECLARATION_AND_COMPANION_BLOCK_TYPES =
+            TokenSet.orSet(DECLARATION_TYPES, TokenSet.create(COMPANION_BLOCK));
+
     TokenSet SUPER_TYPE_LIST_ENTRIES = TokenSet.create(DELEGATED_SUPER_TYPE_ENTRY, SUPER_TYPE_CALL_ENTRY, SUPER_TYPE_ENTRY);
 
     TokenSet TYPE_ELEMENT_TYPES = TokenSet.create(USER_TYPE, NULLABLE_TYPE, FUNCTION_TYPE, DYNAMIC_TYPE, INTERSECTION_TYPE);
 
     TokenSet INSIDE_DIRECTIVE_EXPRESSIONS = TokenSet.create(REFERENCE_EXPRESSION, DOT_QUALIFIED_EXPRESSION);
-
-    /**
-     * TokenSet containing all expression types that can be a child of [KtDotQualifiedExpression].
-     */
-    @KtImplementationDetail
-    TokenSet INSIDE_DOT_QUALIFIED_EXPRESSION = TokenSet.create(REFERENCE_EXPRESSION, CALL_EXPRESSION, DOT_QUALIFIED_EXPRESSION);
 
     // typeArguments? valueArguments : typeArguments : arrayAccess
     TokenSet POSTFIX_OPERATIONS = TokenSet.create(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS, KtTokens.EXCLEXCL, KtTokens.DOT, KtTokens.SAFE_ACCESS);

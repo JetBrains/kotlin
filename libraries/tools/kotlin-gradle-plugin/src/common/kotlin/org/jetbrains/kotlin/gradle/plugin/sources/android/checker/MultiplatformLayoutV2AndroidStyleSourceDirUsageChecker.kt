@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.toolingDiagnosticsContext
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSetLayout
@@ -34,7 +35,7 @@ internal object MultiplatformLayoutV2AndroidStyleSourceDirUsageChecker : KotlinA
                 val projectRoot = target.project.rootDir
                 val kotlinStyleSourceDirToUse = target.project.file("src/${kotlinSourceSet.name}/kotlin")
                 diagnosticsCollector.report(
-                    target.project,
+                    target.project.toolingDiagnosticsContext,
                     KotlinToolingDiagnostics.AndroidStyleSourceDirUsageWarning(
                         androidStyleSourceDir.relativeTo(projectRoot).toString(),
                         kotlinStyleSourceDirToUse.relativeTo(projectRoot).toString(),

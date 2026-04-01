@@ -83,21 +83,20 @@ KtWhenExpression(168,206): 'when (f) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(174,175): 'f'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = f
-          receiverType = null
-          returnType = first.First
-          symbol = f: first.First
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = f
+        receiverType = null
+        returnType = first.First
+        symbol = f: first.First
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -108,21 +107,20 @@ KtWhenConditionWithExpression(183,186): 'ONE'
   NO_CANDIDATES
 
 KtNameReferenceExpression(183,186): 'ONE'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = ONE
-          receiverType = null
-          returnType = second.Second
-          symbol = val ONE: second.Second
-          contextParameters = []
-          callableId = second/ONE
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = ONE
+        receiverType = null
+        returnType = second.Second
+        symbol = val ONE: second.Second
+        contextParameters = []
+        callableId = second/ONE
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -163,21 +161,20 @@ KtWhenExpression(229,270): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(235,236): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = second.Second
-          symbol = s: second.Second
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = second.Second
+        symbol = s: second.Second
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -188,21 +185,20 @@ KtWhenConditionWithExpression(244,249): 'THREE'
   NO_CANDIDATES
 
 KtNameReferenceExpression(244,249): 'THREE'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = THREE
-          receiverType = null
-          returnType = first.First
-          symbol = val THREE: first.First
-          contextParameters = []
-          callableId = first/THREE
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = THREE
+        receiverType = null
+        returnType = first.First
+        symbol = val THREE: first.First
+        contextParameters = []
+        callableId = first/THREE
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

@@ -36,7 +36,7 @@ abstract class AbstractExpectActualIncrementalCompilationIT : KGPBaseTest() {
             "expect-actual-fun-or-class-ic",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build("assemble")
 
@@ -67,7 +67,7 @@ abstract class AbstractExpectActualIncrementalCompilationIT : KGPBaseTest() {
             "expect-actual-fun-or-class-ic",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build("assemble")
 
@@ -96,7 +96,7 @@ abstract class AbstractExpectActualIncrementalCompilationIT : KGPBaseTest() {
             "expect-actual-fun-or-class-ic",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build("assemble")
 

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi;
@@ -51,20 +40,58 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
     }
 
     /**
-     * Experimental context parameter API.
+     * Returns the context parameter list for this modifier list, if present.
+     *
+     * <p><b>Example:</b></p>
+     * <pre>{@code
+     * context(c: Context)
+     * fun foo() {}
+     * }</pre>
+     *
+     * @return the context parameter list, or {@code null} if this modifier list has no context parameters
+     *
+     * @see KtContextParameterList
      */
     @Nullable
     @SuppressWarnings("deprecation") // KT-78356
-    public KtContextReceiverList getContextReceiverList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.CONTEXT_RECEIVER_LIST);
+    public KtContextParameterList getContextParameterList() {
+        return getStubOrPsiChild(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
     }
 
     /**
-     * Experimental context parameter API.
+     * Returns the context receiver list for this modifier list, if present.
+     *
+     * @return the context receiver list, or {@code null} if this modifier list has no context receivers
+     * @deprecated Use {@link #getContextParameterList()} instead. This method is obsolete and exists for compatibility reasons only.
+     */
+    @Deprecated
+    @Nullable
+    public KtContextReceiverList getContextReceiverList() {
+        return (KtContextReceiverList) getContextParameterList();
+    }
+
+    /**
+     * Returns the list of all {@link KtContextParameterList} declared in this modifier list.
+     * <p>
+     * This method is indented only for handling error cases since valid code cannot have more than one context parameter list.
+     * <p>
+     * Prefer {@link #getContextParameterList()} where it is possible.
      */
     @NotNull
+    public List<KtContextParameterList> getContextParameterLists() {
+        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
+    }
+
+    /**
+     * Returns the list of all {@link KtContextParameterList} declared in this modifier list.
+     *
+     * @deprecated Use {@link #getContextParameterLists()} instead. This method is obsolete and exists for compatibility reasons only.
+     */
+    @NotNull
+    @Deprecated
+    @SuppressWarnings("unchecked")
     public List<KtContextReceiverList> getContextReceiverLists() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CONTEXT_RECEIVER_LIST);
+        return (List<KtContextReceiverList>)(List<?>) getContextParameterLists();
     }
 
     @Override

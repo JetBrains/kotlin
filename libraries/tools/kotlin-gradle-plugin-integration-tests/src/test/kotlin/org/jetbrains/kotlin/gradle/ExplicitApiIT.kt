@@ -111,9 +111,7 @@ class ExplicitApiIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 logLevel = LogLevel.DEBUG,
-                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-            )
+            ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
         ) {
             buildGradle.appendText(
                 //language=groovy

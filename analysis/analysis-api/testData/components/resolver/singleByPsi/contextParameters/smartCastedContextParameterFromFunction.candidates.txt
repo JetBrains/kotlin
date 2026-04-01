@@ -1,23 +1,22 @@
 KtCallExpression(96,101): 'foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = p
-            isSafeNavigation = false
-            type = T
-          type = it(A & T & Any)
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /A.foo(<dispatch receiver>: A): kotlin.Unit
-          valueParameters = []
-          contextParameters = []
-          callableId = /A.foo
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = p
+          isSafeNavigation = false
+          type = T
+        type = it(A & T & Any)
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /A.foo(<dispatch receiver>: A): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = /A.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = true

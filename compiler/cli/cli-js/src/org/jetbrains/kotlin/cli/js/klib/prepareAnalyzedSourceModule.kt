@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
 import org.jetbrains.kotlin.psi.KtFile
 
-@Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.WARNING)
+@Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
 fun prepareAnalyzedSourceModule(
     project: Project,
     files: List<KtFile>,
@@ -31,7 +31,7 @@ fun prepareAnalyzedSourceModule(
         klibs = klibs,
     )
     return sourceModule.apply {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         runAnalysis(analyzer, analyzerFacade)
     }
 }

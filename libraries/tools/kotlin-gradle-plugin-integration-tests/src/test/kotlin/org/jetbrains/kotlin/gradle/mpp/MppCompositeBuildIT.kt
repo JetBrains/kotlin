@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.*
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.util.*
@@ -205,6 +206,9 @@ class MppCompositeBuildIT : KGPBaseTest() {
                 assertTasksExecuted(":jvmTest")
                 assertTasksExecuted(":jsTest")
             }
+
+            // Workaround for Junit 'Failed to delete temp directory' on Windows OS
+            build("clean")
         }
     }
 
@@ -550,6 +554,8 @@ class MppCompositeBuildIT : KGPBaseTest() {
     }
 
     @TestMetadata("mpp-composite-build/sample0")
+    // The archives configuration has been deprecated for artifact declaration since Gradle 9.1.0
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_9_0)
     @GradleTest
     fun `test included build of older version works correctly`(gradleVersion: GradleVersion) {
         val defaultKotlinNativeVersion = defaultBuildOptions.nativeOptions.version

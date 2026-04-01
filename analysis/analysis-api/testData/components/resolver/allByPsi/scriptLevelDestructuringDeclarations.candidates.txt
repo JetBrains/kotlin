@@ -74,9 +74,29 @@ KtDeclarationModifierList(101,126): '@Anno("a type $constant")'
   NO_CANDIDATES
 
 KtAnnotationEntry(101,126): '@Anno("a type $constant")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "a type $constant" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -85,32 +105,32 @@ KtAnnotationEntry(101,126): '@Anno("a type $constant")'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(102,106): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "a type $constant" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -119,26 +139,6 @@ KtConstructorCalleeExpression(102,106): 'Anno'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(102,106): 'Anno'
@@ -166,21 +166,20 @@ KtSimpleNameStringTemplateEntry(115,124): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(116,124): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = constant
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val constant: kotlin.String
-          contextParameters = []
-          callableId = util/constant
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = constant
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val constant: kotlin.String
+        contextParameters = []
+        callableId = util/constant
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -206,9 +205,29 @@ KtDeclarationModifierList(132,164): '@Anno("a nested type $constant")'
   NO_CANDIDATES
 
 KtAnnotationEntry(132,164): '@Anno("a nested type $constant")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "a nested type $constant" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -217,32 +236,32 @@ KtAnnotationEntry(132,164): '@Anno("a nested type $constant")'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(133,137): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "a nested type $constant" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -251,26 +270,6 @@ KtConstructorCalleeExpression(133,137): 'Anno'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(133,137): 'Anno'
@@ -298,21 +297,20 @@ KtSimpleNameStringTemplateEntry(153,162): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(154,162): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = constant
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val constant: kotlin.String
-          contextParameters = []
-          callableId = util/constant
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = constant
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val constant: kotlin.String
+        contextParameters = []
+        callableId = util/constant
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -335,9 +333,29 @@ KtDeclarationModifierList(176,215): '@Anno("a nested nested type $constant")'
   NO_CANDIDATES
 
 KtAnnotationEntry(176,215): '@Anno("a nested nested type $constant")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "a nested nested type $constant" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -346,32 +364,32 @@ KtAnnotationEntry(176,215): '@Anno("a nested nested type $constant")'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(177,181): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "a nested nested type $constant" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -380,26 +398,6 @@ KtConstructorCalleeExpression(177,181): 'Anno'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(177,181): 'Anno'
@@ -427,21 +425,20 @@ KtSimpleNameStringTemplateEntry(204,213): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(205,213): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = constant
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val constant: kotlin.String
-          contextParameters = []
-          callableId = util/constant
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = constant
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val constant: kotlin.String
+        contextParameters = []
+        callableId = util/constant
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -461,9 +458,29 @@ KtDeclarationModifierList(234,259): '@Anno("b type $constant")'
   NO_CANDIDATES
 
 KtAnnotationEntry(234,259): '@Anno("b type $constant")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "b type $constant" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -472,32 +489,32 @@ KtAnnotationEntry(234,259): '@Anno("b type $constant")'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(235,239): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "b type $constant" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -506,26 +523,6 @@ KtConstructorCalleeExpression(235,239): 'Anno'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(235,239): 'Anno'
@@ -553,21 +550,20 @@ KtSimpleNameStringTemplateEntry(248,257): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(249,257): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = constant
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val constant: kotlin.String
-          contextParameters = []
-          callableId = util/constant
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = constant
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val constant: kotlin.String
+        contextParameters = []
+        callableId = util/constant
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -593,9 +589,29 @@ KtDeclarationModifierList(266,298): '@Anno("b nested type $constant")'
   NO_CANDIDATES
 
 KtAnnotationEntry(266,298): '@Anno("b nested type $constant")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "b nested type $constant" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -604,32 +620,32 @@ KtAnnotationEntry(266,298): '@Anno("b nested type $constant")'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(267,271): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "b nested type $constant" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -638,26 +654,6 @@ KtConstructorCalleeExpression(267,271): 'Anno'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(267,271): 'Anno'
@@ -685,21 +681,20 @@ KtSimpleNameStringTemplateEntry(287,296): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(288,296): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = constant
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val constant: kotlin.String
-          contextParameters = []
-          callableId = util/constant
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = constant
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val constant: kotlin.String
+        contextParameters = []
+        callableId = util/constant
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -722,9 +717,29 @@ KtDeclarationModifierList(304,343): '@Anno("b nested nested type $constant")'
   NO_CANDIDATES
 
 KtAnnotationEntry(304,343): '@Anno("b nested nested type $constant")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "b nested nested type $constant" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -733,32 +748,32 @@ KtAnnotationEntry(304,343): '@Anno("b nested nested type $constant")'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(305,309): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "b nested nested type $constant" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -767,26 +782,6 @@ KtConstructorCalleeExpression(305,309): 'Anno'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(305,309): 'Anno'
@@ -814,21 +809,20 @@ KtSimpleNameStringTemplateEntry(332,341): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(333,341): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = constant
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val constant: kotlin.String
-          contextParameters = []
-          callableId = util/constant
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = constant
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val constant: kotlin.String
+        contextParameters = []
+        callableId = util/constant
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -857,9 +851,29 @@ KtDeclarationModifierList(376,398): '@Anno("destr 1 $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(376,398): '@Anno("destr 1 $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "destr 1 $prop" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -868,32 +882,32 @@ KtAnnotationEntry(376,398): '@Anno("destr 1 $prop")'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(377,381): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "destr 1 $prop" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -902,26 +916,6 @@ KtConstructorCalleeExpression(377,381): 'Anno'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(377,381): 'Anno'
@@ -949,34 +943,71 @@ KtSimpleNameStringTemplateEntry(391,396): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(392,396): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val prop: kotlin.String
-          contextParameters = []
-          callableId = util/prop
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop: kotlin.String
+        contextParameters = []
+        callableId = util/prop
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtDestructuringDeclarationEntry(404,422): '@Anno("a $prop") a'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = @Anno("a $prop") a
+        isSafeNavigation = false
+        type = util.Pair
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+        symbol = util/Pair.component1(<dispatch receiver>: util.Pair): @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+        valueParameters = []
+        contextParameters = []
+        callableId = util/Pair.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtDeclarationModifierList(404,420): '@Anno("a $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(404,420): '@Anno("a $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "a $prop" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -985,32 +1016,32 @@ KtAnnotationEntry(404,420): '@Anno("a $prop")'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(405,409): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "a $prop" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -1019,26 +1050,6 @@ KtConstructorCalleeExpression(405,409): 'Anno'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(405,409): 'Anno'
@@ -1066,34 +1077,71 @@ KtSimpleNameStringTemplateEntry(413,418): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(414,418): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val prop: kotlin.String
-          contextParameters = []
-          callableId = util/prop
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop: kotlin.String
+        contextParameters = []
+        callableId = util/prop
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtDestructuringDeclarationEntry(424,442): '@Anno("b $prop") b'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = @Anno("b $prop") b
+        isSafeNavigation = false
+        type = util.Pair
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+        symbol = util/Pair.component2(<dispatch receiver>: util.Pair): @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+        valueParameters = []
+        contextParameters = []
+        callableId = util/Pair.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtDeclarationModifierList(424,440): '@Anno("b $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(424,440): '@Anno("b $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "b $prop" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -1102,32 +1150,32 @@ KtAnnotationEntry(424,440): '@Anno("b $prop")'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(425,429): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "b $prop" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -1136,26 +1184,6 @@ KtConstructorCalleeExpression(425,429): 'Anno'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(425,429): 'Anno'
@@ -1183,120 +1211,117 @@ KtSimpleNameStringTemplateEntry(433,438): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(434,438): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val prop: kotlin.String
-          contextParameters = []
-          callableId = util/prop
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop: kotlin.String
+        contextParameters = []
+        callableId = util/prop
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtCallExpression(446,462): 'Pair(null, null)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Pair
+        symbol = <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?): util.Pair
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+            symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+            symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         null -> (KaVariableSignature:
           name = a
           receiverType = null
-          returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-          symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+          returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+          symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
           contextParameters = []
           callableId = null),
         null -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-          symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+          returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+          symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Pair
-          symbol = <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-              symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-              symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(446,450): 'Pair'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Pair
+        symbol = <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?): util.Pair
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+            symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+            symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         null -> (KaVariableSignature:
           name = a
           receiverType = null
-          returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-          symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+          returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+          symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
           contextParameters = []
           callableId = null),
         null -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-          symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+          returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+          symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Pair
-          symbol = <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-              symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-              symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(450,462): '(null, null)'
@@ -1321,9 +1346,29 @@ KtDeclarationModifierList(464,486): '@Anno("destr 1 $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(464,486): '@Anno("destr 1 $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "destr 1 $prop" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -1332,32 +1377,32 @@ KtAnnotationEntry(464,486): '@Anno("destr 1 $prop")'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(465,469): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "destr 1 $prop" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -1366,26 +1411,6 @@ KtConstructorCalleeExpression(465,469): 'Anno'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(465,469): 'Anno'
@@ -1413,34 +1438,71 @@ KtSimpleNameStringTemplateEntry(479,484): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(480,484): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val prop: kotlin.String
-          contextParameters = []
-          callableId = util/prop
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop: kotlin.String
+        contextParameters = []
+        callableId = util/prop
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtDestructuringDeclarationEntry(492,510): '@Anno("c $prop") c'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = @Anno("c $prop") c
+        isSafeNavigation = false
+        type = util.Pair
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+        symbol = util/Pair.component1(<dispatch receiver>: util.Pair): @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+        valueParameters = []
+        contextParameters = []
+        callableId = util/Pair.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtDeclarationModifierList(492,508): '@Anno("c $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(492,508): '@Anno("c $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "c $prop" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -1449,32 +1511,32 @@ KtAnnotationEntry(492,508): '@Anno("c $prop")'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(493,497): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "c $prop" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -1483,26 +1545,6 @@ KtConstructorCalleeExpression(493,497): 'Anno'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(493,497): 'Anno'
@@ -1530,34 +1572,71 @@ KtSimpleNameStringTemplateEntry(501,506): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(502,506): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val prop: kotlin.String
-          contextParameters = []
-          callableId = util/prop
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop: kotlin.String
+        contextParameters = []
+        callableId = util/prop
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtDestructuringDeclarationEntry(512,530): '@Anno("d $prop") d'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = @Anno("d $prop") d
+        isSafeNavigation = false
+        type = util.Pair
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+        symbol = util/Pair.component2(<dispatch receiver>: util.Pair): @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+        valueParameters = []
+        contextParameters = []
+        callableId = util/Pair.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtDeclarationModifierList(512,528): '@Anno("d $prop")'
   NO_CANDIDATES
 
 KtAnnotationEntry(512,528): '@Anno("d $prop")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "d $prop" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -1566,32 +1645,32 @@ KtAnnotationEntry(512,528): '@Anno("d $prop")'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(513,517): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Anno
+        symbol = <constructor>(str: kotlin.String): util.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "d $prop" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -1600,26 +1679,6 @@ KtConstructorCalleeExpression(513,517): 'Anno'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Anno
-          symbol = <constructor>(str: kotlin.String): util.Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(513,517): 'Anno'
@@ -1647,120 +1706,117 @@ KtSimpleNameStringTemplateEntry(521,526): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(522,526): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val prop: kotlin.String
-          contextParameters = []
-          callableId = util/prop
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop: kotlin.String
+        contextParameters = []
+        callableId = util/prop
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtCallExpression(534,550): 'Pair(null, null)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Pair
+        symbol = <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?): util.Pair
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+            symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+            symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         null -> (KaVariableSignature:
           name = a
           receiverType = null
-          returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-          symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+          returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+          symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
           contextParameters = []
           callableId = null),
         null -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-          symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+          returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+          symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Pair
-          symbol = <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-              symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-              symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(534,538): 'Pair'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = util.Pair
+        symbol = <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?): util.Pair
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+            symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+            symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         null -> (KaVariableSignature:
           name = a
           receiverType = null
-          returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-          symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+          returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+          symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
           contextParameters = []
           callableId = null),
         null -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-          symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+          returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+          symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = util.Pair
-          symbol = <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-              symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-              symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(538,550): '(null, null)'

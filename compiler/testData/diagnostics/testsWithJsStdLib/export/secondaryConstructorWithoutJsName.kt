@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // OPT_IN: kotlin.js.ExperimentalJsExport
-// RENDER_DIAGNOSTICS_MESSAGES
+// RENDER_DIAGNOSTIC_ARGUMENTS
 
 package foo
 

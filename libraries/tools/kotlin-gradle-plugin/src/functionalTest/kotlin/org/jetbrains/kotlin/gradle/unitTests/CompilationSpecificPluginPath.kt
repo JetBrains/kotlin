@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.*
 
 internal class CompilationSpecificPluginPath {

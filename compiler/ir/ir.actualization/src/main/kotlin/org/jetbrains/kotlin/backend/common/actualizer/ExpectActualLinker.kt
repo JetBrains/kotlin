@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldFakeOverrideSymbol
@@ -215,6 +217,31 @@ internal open class ActualizerVisitor(
             it.actualizeAnnotations()
         }
 
+    override fun visitAnnotation(expression: IrAnnotation): IrAnnotation {
+        val constructorSymbol = symbolRemapper.getReferencedConstructor(expression.symbol)
+
+        return IrAnnotationImpl(
+            expression.startOffset,
+            expression.endOffset,
+            expression.type.remapType(),
+            constructorSymbol,
+            expression.typeArguments.size,
+            expression.constructorTypeArgumentsCount,
+            expression.origin,
+        ).apply {
+            copyRemappedTypeArgumentsFrom(expression)
+            transformValueArguments(expression)
+            processAttributes(expression)
+
+            // This is a hack to allow actualizing annotation constructors without parameters with constructors with default arguments.
+            // Without it, attempting to call such a constructor in common code will result in either a backend exception or in linkage error.
+            // See KT-67488 for details.
+            if (constructorSymbol.isBound) {
+                arguments.setSize(constructorSymbol.owner.parameters.size)
+            }
+        }
+    }
+
     override fun visitConstructorCall(expression: IrConstructorCall): IrConstructorCall {
         val constructorSymbol = symbolRemapper.getReferencedConstructor(expression.symbol)
 
@@ -234,6 +261,7 @@ internal open class ActualizerVisitor(
             // This is a hack to allow actualizing annotation constructors without parameters with constructors with default arguments.
             // Without it, attempting to call such a constructor in common code will result in either a backend exception or in linkage error.
             // See KT-67488 for details.
+            // TODO: Check this condition after KT-74200 fix
             if (constructorSymbol.isBound) {
                 arguments.setSize(constructorSymbol.owner.parameters.size)
             }

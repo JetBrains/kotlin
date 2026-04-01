@@ -62,6 +62,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA_SCHEMA_DECLARATION_VISIBILITY
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.ERROR
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_EXTENSION_PROPERTY_SHADOWED
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA_SCHEMA_LOCAL_DECLARATION
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.flatten
 import org.jetbrains.kotlinx.dataframe.plugin.pluginDataFrameSchema
@@ -94,6 +95,7 @@ object FirDataFrameErrors : KtDiagnosticsContainer() {
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR by error1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val DATAFRAME_EXTENSION_PROPERTY_SHADOWED by warning1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val DATA_SCHEMA_LOCAL_DECLARATION by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = DataFrameDiagnosticMessages
 }
@@ -108,6 +110,7 @@ object DataFrameDiagnosticMessages : BaseDiagnosticRendererFactory() {
         map.put(DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR, "{0}", TO_STRING)
         map.put(DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE, "{0}", TO_STRING)
         map.put(DATAFRAME_EXTENSION_PROPERTY_SHADOWED, "{0}", TO_STRING)
+        map.put(DATA_SCHEMA_LOCAL_DECLARATION, "{0}", TO_STRING)
     }
 }
 
@@ -155,14 +158,14 @@ private class Checker(
         }
         val targetProjection = expression.typeArguments.getOrNull(0) as? FirTypeProjectionWithVariance ?: return
         val targetType = targetProjection.typeRef.coneType as? ConeClassLikeType ?: return
-        val targetSymbol = targetType.toSymbol(session)
+        val targetSymbol = targetType.toSymbol()
         if (targetSymbol != null && !session.predicateBasedProvider.matches(VALID_CAST_TARGET_PREDICATE, targetSymbol)) {
             val text = "Annotate ${targetType.renderReadable()} with @DataSchema to use generated properties"
             reporter.reportOn(expression.source, CAST_TARGET_WARNING, text, context)
         }
         val coneType = expression.explicitReceiver?.resolvedType
         if (coneType != null) {
-            val sourceType = coneType.fullyExpandedType(session).typeArguments.getOrNull(0)?.type as? ConeClassLikeType
+            val sourceType = coneType.fullyExpandedType().typeArguments.getOrNull(0)?.type as? ConeClassLikeType
                 ?: return
             val source = pluginDataFrameSchema(sourceType)
             if (source.columns().isEmpty()) return
@@ -178,12 +181,12 @@ private class Checker(
                     if (source !is SimpleDataColumn || target.column !is SimpleDataColumn) {
                         continue
                     }
-                    if (source.type.type().isSubtypeOf(target.column.type.type(), session)) {
+                    if (source.type.coneType.isSubtypeOf(target.column.type.coneType, session)) {
                         true
                     } else {
                         missingColumns += "${target.path.path} ${target.column.name}: ${
-                            source.type.type().renderReadable()
-                        } is not subtype of ${target.column.type.type()}"
+                            source.type.coneType.renderReadable()
+                        } is not subtype of ${target.column.type.coneType}"
                         false
                     }
                 } else {
@@ -205,7 +208,15 @@ internal object DataSchemaDeclarationChecker : FirRegularClassChecker(mppKind = 
     override fun check(declaration: FirRegularClass) {
         val annotated = declaration.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID, context.session) ||
                 declaration.hasAnnotation(Names.DATA_SCHEMA_SOURCE_CLASS_ID, context.session)
-        if (annotated && declaration.effectiveVisibility !in ALLOWED_DECLARATION_VISIBILITY) {
+        if (!annotated) return
+        if (declaration.isLocal) {
+            reporter.reportOn(
+                declaration.source,
+                DATA_SCHEMA_LOCAL_DECLARATION,
+                "@DataSchema declaration cannot be local. Move it outside function body. This is required so that plugin-generated extension properties can refer to this @DataSchema",
+                context
+            )
+        } else if (declaration.effectiveVisibility !in ALLOWED_DECLARATION_VISIBILITY) {
             val visibilityOptions = ALLOWED_DECLARATION_VISIBILITY.joinToString(", ")
             reporter.reportOn(
                 declaration.source,

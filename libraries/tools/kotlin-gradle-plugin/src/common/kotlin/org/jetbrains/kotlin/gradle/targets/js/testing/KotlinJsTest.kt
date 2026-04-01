@@ -9,7 +9,6 @@ import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
@@ -34,24 +33,9 @@ internal constructor(
     @Internal
     override var compilation: KotlinJsIrCompilation,
     private val objects: ObjectFactory,
-    private val providers: ProviderFactory,
     execOps: ExecOperations,
 ) : KotlinTest(execOps),
     RequiresNpmDependencies {
-
-    @Deprecated(
-        "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
-        level = DeprecationLevel.ERROR,
-    )
-    @Suppress("UNUSED_PARAMETER", "UNREACHABLE_CODE")
-    constructor(
-        compilation: KotlinJsIrCompilation,
-    ) : this(
-        compilation = throw UnsupportedOperationException(),
-        objects = throw UnsupportedOperationException(),
-        providers = throw UnsupportedOperationException(),
-        execOps = throw UnsupportedOperationException(),
-    )
 
     @Input
     var environment = mutableMapOf<String, String>()
@@ -134,7 +118,7 @@ internal constructor(
     fun useMocha() = useMocha {}
     fun useMocha(body: KotlinMocha.() -> Unit) =
         if (compilation.wasmTarget == null) {
-            use(KotlinMocha(compilation, path, objects, providers), body)
+            use(KotlinMocha(compilation, path), body)
         } else {
             logger.warn("Mocha test framework for Wasm target is not supported. For KotlinWasmNode used")
             testFramework
@@ -149,7 +133,7 @@ internal constructor(
     fun useKarma() = useKarma {}
     fun useKarma(body: KotlinKarma.() -> Unit): KotlinKarma =
         use(
-            KotlinKarma(compilation, path, objects, providers),
+            KotlinKarma(compilation, path, objects),
             body
         )
 

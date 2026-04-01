@@ -1,29 +1,25 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 open class MethodOrderTest : CodegenTestCase() {
+    override val useFir: Boolean
+        get() = true
+
+    override val firParser: FirParser
+        get() = FirParser.LightTree
+
     fun testDelegatedMethod() {
         doTest(
             """
@@ -48,7 +44,7 @@ open class MethodOrderTest : CodegenTestCase() {
     }
 
     protected open fun delegatedMethodExpectation(): List<String> =
-        listOf("<init>()V", "f0()V", "f1()V", "f2()V", "f4()V", "f5()V", "f3()V")
+        listOf("<init>()V", "f3()V", "f0()V", "f4()V", "f2()V", "f1()V", "f5()V")
 
     fun testAnonymousObjectClosureOrdering() {
         doTest(

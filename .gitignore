@@ -34,7 +34,6 @@ build/
 .idea/modules
 .idea/runConfigurations/JPS_*.xml
 .idea/runConfigurations/_JPS_*.xml
-.idea/runConfigurations/PILL_*.xml
 .idea/runConfigurations/_FP_*.xml
 .idea/runConfigurations/_MT_*.xml
 .idea/libraries
@@ -49,6 +48,8 @@ build/
 .idea/misc.xml
 .idea/protoeditor.xml
 .idea/uiDesigner.xml
+.idea/copilot.data.migration.*.xml
+.idea/junie.xml
 node_modules/
 .rpt2_cache/
 local.properties
@@ -62,3 +63,7 @@ kotlin-ide/
 .teamcity/
 .npmrc
 /.idea/AndroidProjectSystem.xml
+**/.junie/memory/
+.claude/local.md
+.claude/CLAUDE.md
+.claude/settings.local.json

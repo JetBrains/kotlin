@@ -1,9 +1,0 @@
-MODULE main
-	CLASS OneDefault.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(Ljava/lang/String;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(s: kotlin/String /* = ... */)
-					K2
-						(s: kotlin/String = "Fail")

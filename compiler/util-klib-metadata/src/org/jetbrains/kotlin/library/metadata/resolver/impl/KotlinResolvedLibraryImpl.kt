@@ -1,33 +1,13 @@
 package org.jetbrains.kotlin.library.metadata.resolver.impl
 
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.components.metadata
-import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 
 class KotlinResolvedLibraryImpl(override val library: KotlinLibrary) : KotlinResolvedLibrary {
-
-    private val _resolvedDependencies = mutableListOf<KotlinResolvedLibrary>()
-    private val _emptyPackages by lazy { parseModuleHeader(library.metadata.moduleHeaderData).emptyPackageList }
-
     override val resolvedDependencies: List<KotlinResolvedLibrary>
-        get() = _resolvedDependencies
+        field = mutableListOf<KotlinResolvedLibrary>()
 
-    internal fun addDependency(resolvedLibrary: KotlinResolvedLibrary) = _resolvedDependencies.add(resolvedLibrary)
+    internal fun addDependency(resolvedLibrary: KotlinResolvedLibrary) = resolvedDependencies.add(resolvedLibrary)
 
-    override var isNeededForLink: Boolean = false
-        private set
-
-    override val isDefault: Boolean
-        get() = library.isDefault
-
-    override fun markNeededForLink(packageFqName: String) {
-        if (!isNeededForLink // fast path
-            && !_emptyPackages.contains(packageFqName)
-        ) {
-            isNeededForLink = true
-        }
-    }
-
-    override fun toString() = "library=$library, dependsOn=${_resolvedDependencies.joinToString { it.library.toString() }}"
+    override fun toString() = "library=$library, dependsOn=${resolvedDependencies.joinToString { it.library.toString() }}"
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 @file:JsModule("foo")
 package foo
 

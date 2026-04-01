@@ -1,0 +1,203 @@
+FILE: booleanOperations.kt
+    public final fun <T> R|T|.id(): R|T| {
+        ^id this@R|/id|
+    }
+    public final const [EvaluatedValue=Boolean(true)] val trueVal: R|kotlin/Boolean| = Boolean(true)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val falseVal: R|kotlin/Boolean| = Boolean(false)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val not1: R|kotlin/Boolean| = R|/trueVal|.R|kotlin/Boolean.not|()
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val not2: R|kotlin/Boolean| = R|/falseVal|.R|kotlin/Boolean.not|()
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val and1: R|kotlin/Boolean| = R|/trueVal|.R|kotlin/Boolean.and|(R|/trueVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val and2: R|kotlin/Boolean| = R|/trueVal|.R|kotlin/Boolean.and|(R|/falseVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val and3: R|kotlin/Boolean| = R|/falseVal|.R|kotlin/Boolean.and|(R|/trueVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val and4: R|kotlin/Boolean| = R|/falseVal|.R|kotlin/Boolean.and|(R|/falseVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val or1: R|kotlin/Boolean| = R|/trueVal|.R|kotlin/Boolean.or|(R|/trueVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val or2: R|kotlin/Boolean| = R|/trueVal|.R|kotlin/Boolean.or|(R|/falseVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val or3: R|kotlin/Boolean| = R|/falseVal|.R|kotlin/Boolean.or|(R|/trueVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val or4: R|kotlin/Boolean| = R|/falseVal|.R|kotlin/Boolean.or|(R|/falseVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val xor1: R|kotlin/Boolean| = R|/trueVal|.R|kotlin/Boolean.xor|(R|/trueVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val xor2: R|kotlin/Boolean| = R|/trueVal|.R|kotlin/Boolean.xor|(R|/falseVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val xor3: R|kotlin/Boolean| = R|/falseVal|.R|kotlin/Boolean.xor|(R|/trueVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val xor4: R|kotlin/Boolean| = R|/falseVal|.R|kotlin/Boolean.xor|(R|/falseVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Int(0)] val compareTo1: R|kotlin/Int| = R|/trueVal|.R|kotlin/Boolean.compareTo|(R|/trueVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(1)] val compareTo2: R|kotlin/Int| = R|/trueVal|.R|kotlin/Boolean.compareTo|(R|/falseVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(-1)] val compareTo3: R|kotlin/Int| = R|/falseVal|.R|kotlin/Boolean.compareTo|(R|/trueVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(0)] val compareTo4: R|kotlin/Int| = R|/falseVal|.R|kotlin/Boolean.compareTo|(R|/falseVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Boolean(true)] val equals1: R|kotlin/Boolean| = ==(R|/trueVal|, R|/trueVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equals2: R|kotlin/Boolean| = ==(R|/trueVal|, R|/falseVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equals3: R|kotlin/Boolean| = ==(R|/falseVal|, R|/trueVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val equals4: R|kotlin/Boolean| = ==(R|/falseVal|, R|/falseVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=String(true)] val toString1: R|kotlin/String| = R|/trueVal|.R|kotlin/Boolean.toString|()
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(false)] val toString2: R|kotlin/String| = R|/falseVal|.R|kotlin/Boolean.toString|()
+        public get(): R|kotlin/String|
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|/not1|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 1.1)
+            }
+        }
+
+        when () {
+            !=(R|/not2|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 1.2)
+            }
+        }
+
+        when () {
+            !=(R|/and1|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 2.1)
+            }
+        }
+
+        when () {
+            !=(R|/and2|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 2.2)
+            }
+        }
+
+        when () {
+            !=(R|/and3|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 2.3)
+            }
+        }
+
+        when () {
+            !=(R|/and4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 2.4)
+            }
+        }
+
+        when () {
+            !=(R|/or1|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 3.1)
+            }
+        }
+
+        when () {
+            !=(R|/or2|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 3.2)
+            }
+        }
+
+        when () {
+            !=(R|/or3|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 3.3)
+            }
+        }
+
+        when () {
+            !=(R|/or4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 3.4)
+            }
+        }
+
+        when () {
+            !=(R|/xor1|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 4.1)
+            }
+        }
+
+        when () {
+            !=(R|/xor2|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 4.2)
+            }
+        }
+
+        when () {
+            !=(R|/xor3|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 4.3)
+            }
+        }
+
+        when () {
+            !=(R|/xor4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 4.4)
+            }
+        }
+
+        when () {
+            !=(R|/compareTo1|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
+                ^box String(Fail 5.1)
+            }
+        }
+
+        when () {
+            !=(R|/compareTo2|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
+                ^box String(Fail 5.2)
+            }
+        }
+
+        when () {
+            !=(R|/compareTo3|.R|/id|<R|kotlin/Int|>(), Int(-1)) ->  {
+                ^box String(Fail 5.3)
+            }
+        }
+
+        when () {
+            !=(R|/compareTo4|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
+                ^box String(Fail 5.4)
+            }
+        }
+
+        when () {
+            !=(R|/equals1|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 6.1)
+            }
+        }
+
+        when () {
+            !=(R|/equals2|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 6.2)
+            }
+        }
+
+        when () {
+            !=(R|/equals3|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 6.3)
+            }
+        }
+
+        when () {
+            !=(R|/equals4|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 6.4)
+            }
+        }
+
+        when () {
+            !=(R|/toString1|.R|/id|<R|kotlin/String|>(), String(true)) ->  {
+                ^box String(Fail 7.1)
+            }
+        }
+
+        when () {
+            !=(R|/toString2|.R|/id|<R|kotlin/String|>(), String(false)) ->  {
+                ^box String(Fail 7.2)
+            }
+        }
+
+        ^box String(OK)
+    }

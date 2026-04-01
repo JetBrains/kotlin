@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -527,9 +527,24 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object ScriptBaseClass : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
 
     /**
+     * For repl base class.
+     */
+    object ReplBaseClass : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
+
+    /**
+     * For repl eval function.
+     */
+    object ReplEvalFunction : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
+
+    /**
      * When a lambda is converted to a SAM type, the expression is wrapped in an extra node
      */
     object SamConversion : KtFakeSourceElementKind()
+
+    /**
+     * When a value of one function type is converted to another function type, the expression is wrapped in an extra node
+     */
+    object FunctionTypeConversion : KtFakeSourceElementKind()
 
     /**
      * For synthetic functions created for SAM constructors.
@@ -550,6 +565,12 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      * For plugin-generated things
      */
     object PluginGenerated : KtFakeSourceElementKind()
+
+    /**
+     * To store diagnostic for erroneously resolved `arrayOf` which is being transformed to array literal.
+     * Note that this may happen both with original `arrayOf` and with synthetic `arrayOf` itself created to resolve array literal.
+     */
+    object ErrorExpressionForTransformedArrayOf : KtFakeSourceElementKind()
 
     /**
      * To store some diagnostic for erroneously resolved top-level lambda
@@ -573,14 +594,21 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object QualifierForContextSensitiveResolution : KtFakeSourceElementKind()
 
     /**
-     * When resolving a collection literal, for the explicit companion object receiver added to the call.
+     * When resolving a collection literal, a collection package qualifier or the explicit companion object added to the call as the explicit receiver.
      */
-    object CompanionObjectForOperatorOfCall : KtFakeSourceElementKind()
+    object DesugaredReceiverForOperatorOfCall : KtFakeSourceElementKind()
 
     /**
-     * For the function call to operator `of` generated instead of a collection literal.
+     * When resolving a collection literal, this is used as a source for the generated callee reference.
      */
-    object OperatorOfCall : KtFakeSourceElementKind()
+    object CalleeReferenceForOperatorOfCall : KtFakeSourceElementKind()
+
+    /**
+     * NB: IDE-only
+     * For the property access expression used as a context-sensitive alternative.
+     */
+    object ContextSensitiveAlternative : KtFakeSourceElementKind()
+    object ReferenceForContextSensitiveAlternative : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {

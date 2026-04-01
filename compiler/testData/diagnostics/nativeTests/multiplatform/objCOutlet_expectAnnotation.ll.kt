@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LL_FIR_DIVERGENCE
 // Checkers are run with Common session in Analysis API, so they can't see actualized declarations
 // LL_FIR_DIVERGENCE
@@ -20,19 +21,19 @@ expect annotation class MyObjcOutlet()
 
 @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 class VarProperty : NSAssertionHandler() {
-    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
+    <!PROPERTY_MUST_BE_VAR!>@OptIn(kotlinx.cinterop.BetaInteropApi::class)
     @MyObjcOutlet
-    val x: NSObject get() = this
+    val x: NSObject get() = this<!>
 
     @OptIn(kotlinx.cinterop.BetaInteropApi::class)
     @MyObjcOutlet
-    var y: String
+    var y: <!MUST_BE_OBJC_OBJECT_TYPE!>String<!>
         get() = "y"
         set(value: String) { }
 
     @OptIn(kotlinx.cinterop.BetaInteropApi::class)
     @MyObjcOutlet
-    var NSObject.x: NSObject
+    var <!MUST_NOT_HAVE_EXTENSION_RECEIVER!>NSObject<!>.x: NSObject
         get() = this
         set(value: NSObject) { }
 

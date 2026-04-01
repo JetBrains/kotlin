@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -49,7 +49,6 @@ private const val DO_NOT_ANALYZE_NOTIFICATION = "This file was created by KtPsiF
 
 var KtFile.doNotAnalyze: String? by UserDataProperty(Key.create("DO_NOT_ANALYZE"))
 var KtFile.analysisContext: PsiElement? by UserDataProperty(Key.create("ANALYSIS_CONTEXT"))
-
 
 /**
  * @param markGenerated This needs to be set to true if the `KtPsiFactory` is going to be used for creating elements that are going
@@ -283,6 +282,18 @@ class KtPsiFactory private constructor(
         val file = PsiFileFactory.getInstance(project).createFileFromText(fileName, KotlinFileType.INSTANCE, text, time, true) as KtFile
         file.analysisContext = this@KtPsiFactory.context
         return file
+    }
+
+    /**
+     * Creates a REPL snippet [KtScript] from the specified text content.
+     */
+    @KtExperimentalApi
+    @OptIn(KtNonPublicApi::class)
+    fun createReplSnippet(@NonNls text: String): KtScript {
+        val file = doCreateFile("snippet.repl.kts", text)
+        val script = file.script!!
+        script.markAsReplSnippet()
+        return script
     }
 
     fun createProperty(

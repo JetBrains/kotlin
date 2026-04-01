@@ -306,6 +306,10 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
             unitStats.dynamicStats?.forEach { (parentPhaseType, name, time) ->
                 addTimeMetricNs(CustomBuildTimeMetric.createIfDoesNotExistAndReturn(name, parentPhaseType.toGradleBuildTime()), time.nanos)
             }
+
+            unitStats.klibElementStats?.forEach { (path, size) ->
+                addMetric(KlibSizeMetric.createIfDoesNotExistAndReturn(path), size)
+            }
         } catch (e: Exception) {
             errorMessageCollector.report(FusMetricRetrievalException("Failed to parse metrics from file ${jsonFile.absolutePath}", e), location = null)
         }

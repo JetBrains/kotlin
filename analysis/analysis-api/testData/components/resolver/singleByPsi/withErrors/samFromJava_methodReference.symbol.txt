@@ -1,0 +1,5 @@
+KtDotQualifiedExpression(137,160): 'handler.act(::callback)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/pkg/MyHandler.act(<dispatch receiver>: test.pkg.MyHandler, actor: test.pkg.MyInterface!): kotlin.Unit
+    ]

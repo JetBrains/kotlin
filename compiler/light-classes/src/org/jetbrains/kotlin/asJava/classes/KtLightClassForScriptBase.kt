@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtScript
-import javax.swing.Icon
 
 abstract class KtLightClassForScriptBase(
     override val script: KtScript
@@ -91,9 +90,6 @@ abstract class KtLightClassForScriptBase(
     override fun isEquivalentTo(another: PsiElement?): Boolean =
         equals(another) ||
                 (another is KtLightClassForScriptBase && fqName == another.fqName)
-
-    override fun getElementIcon(flags: Int): Icon? =
-        throw UnsupportedOperationException("This should be done by KotlinIconProvider")
 
     override fun getLBrace(): PsiElement? = null
 

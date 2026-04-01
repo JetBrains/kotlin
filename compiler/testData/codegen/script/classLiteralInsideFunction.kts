@@ -1,5 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-63960, KT-63963
-
 package script.long.name.inside.packag
 
 interface I {

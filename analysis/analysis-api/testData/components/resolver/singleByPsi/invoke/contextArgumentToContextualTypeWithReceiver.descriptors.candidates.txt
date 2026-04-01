@@ -1,0 +1,32 @@
+KtCallExpression(118,125): 'block()'
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = block
+        isSafeNavigation = false
+        type = @R|kotlin.ContextFunctionTypeParams|(count = Int(1))  kotlin.Function2<kotlin.String, kotlin.Int, kotlin.Unit>
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = regularReceiver
+        isSafeNavigation = false
+        type = kotlin.Int
+      signature = KaFunctionSignature:
+        receiverType = kotlin.String
+        returnType = kotlin.Unit
+        symbol = kotlin/Function2.invoke(<extension receiver>: P1, <dispatch receiver>: kotlin.Function2<P1, P2, R>, p2: P2): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p2
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = p2: P2
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function2.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'p2'>
+    isInBestCandidates = true

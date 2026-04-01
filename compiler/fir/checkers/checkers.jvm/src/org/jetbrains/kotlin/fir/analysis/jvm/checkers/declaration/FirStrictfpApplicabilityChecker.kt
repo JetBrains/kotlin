@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds.STRICTFP_ANNOTATION_CLASS_ID
 
 object FirStrictfpApplicabilityChecker : FirClassChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
         val annotation = declaration.getAnnotationByClassId(STRICTFP_ANNOTATION_CLASS_ID, context.session) ?: return

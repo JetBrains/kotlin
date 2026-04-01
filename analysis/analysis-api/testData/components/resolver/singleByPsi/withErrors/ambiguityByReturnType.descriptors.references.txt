@@ -2,6 +2,10 @@ KtNameReferenceExpression(208,213): 'sumOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
+    public inline fun <T> Iterable<TypeVariable(T)>.sumOf(selector: (TypeVariable(T)) -> Int): Int defined in kotlin.collections
+    public inline fun <T> Iterable<TypeVariable(T)>.sumOf(selector: (TypeVariable(T)) -> UInt): UInt defined in kotlin.collections>
     symbols:
       0: (in kotlin.collections) inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> kotlin.Int): kotlin.Int
       1: (in kotlin.collections) inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> kotlin.UInt): kotlin.UInt
@@ -9,5 +13,6 @@ KtNameReferenceExpression(208,213): 'sumOf'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

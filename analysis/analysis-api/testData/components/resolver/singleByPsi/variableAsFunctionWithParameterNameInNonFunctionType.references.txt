@@ -2,5 +2,6 @@ KtNameReferenceExpression(157,161): 'call'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun call(a: kotlin.Int, b: kotlin.String)

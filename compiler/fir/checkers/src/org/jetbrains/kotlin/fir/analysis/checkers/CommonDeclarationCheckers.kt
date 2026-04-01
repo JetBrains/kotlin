@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.fir.analysis.cfa.FirCallsEffectAnalyzer
 import org.jetbrains.kotlin.fir.analysis.cfa.FirPropertyInitializationAnalyzer
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.crv.FirReturnValueAnnotationsChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.crv.FirReturnValueOverrideChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.crv.FirUnusedReturnValueChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.*
 
 object CommonDeclarationCheckers : DeclarationCheckers() {
@@ -35,6 +38,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirContextParametersDeclarationChecker,
         FirUnusedReturnValueChecker,
         FirReturnValueAnnotationsChecker,
+        FirIllegalCompanionBlockMemberChecker,
     )
 
     override val classLikeCheckers: Set<FirClassLikeChecker> = setOf(
@@ -49,6 +53,9 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirExtensionShadowedByMemberChecker.ForExpectDeclaration,
         FirReturnValueOverrideChecker,
         FirImplicitReturnTypeAnnotationMissingDependencyChecker,
+        FirCoroutineContextAsContextParameterDeclarationChecker,
+        FirCompanionExtensionChecker,
+        FirCompanionBlockMemberChecker,
     )
 
     override val functionCheckers: Set<FirFunctionChecker> = setOf(
@@ -127,11 +134,13 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirMultipleDefaultsInheritedFromSupertypesChecker.Regular,
         FirMultipleDefaultsInheritedFromSupertypesChecker.ForExpectClass,
         FirPropertyInitializationChecker,
+        FirCompanionBlockChecker,
     )
 
     override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
         FirAnnotationClassDeclarationChecker,
         FirOptInAnnotationClassChecker,
+        FirOperatorOfChecker,
         FirCommonConstructorDelegationIssuesChecker,
         FirDelegationSuperCallInEnumConstructorChecker,
         FirDelegationInExpectClassSyntaxChecker,

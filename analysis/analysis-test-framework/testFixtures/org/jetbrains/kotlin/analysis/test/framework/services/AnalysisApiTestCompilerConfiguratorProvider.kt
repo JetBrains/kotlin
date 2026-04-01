@@ -12,16 +12,11 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.Standa
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.CompilationStage
-import org.jetbrains.kotlin.test.services.CompilerConfigurationProvider
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.createCompilerConfiguration
+import org.jetbrains.kotlin.test.services.*
 
 class AnalysisApiTestCompilerConfiguratorProvider(
     testServices: TestServices,
@@ -52,7 +47,7 @@ class AnalysisApiTestCompilerConfiguratorProvider(
 
         return { scope ->
             JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply {
-                addRoots(allProjectBinaryRoots, configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+                addRoots(allProjectBinaryRoots, configuration)
             }
         }
     }

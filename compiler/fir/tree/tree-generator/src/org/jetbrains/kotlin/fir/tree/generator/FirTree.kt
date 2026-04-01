@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -359,6 +359,13 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("kind", constKindType, withReplace = true)
         +field("value", anyType, nullable = true)
         +field("prefix", string, nullable = true)
+
+        kDoc = """
+            Represents a literal expression in FIR, such as a plain string, number (signed or unsigned), boolean, char, or null.
+            
+            The [value] doesn't describe the type of expression that is stored. It is possible that unsigned number is represented as signed.
+            Only the [kind] field describes the type of expression that is stored. For that reason [kind] and [coneTypeOrNull] should be in sync.
+        """.trimIndent()
     }
 
     val functionCall: Element by element(Expression) {
@@ -433,6 +440,7 @@ object FirTree : AbstractFirTreeBuilder() {
     val equalityOperatorCall: Element by element(Expression) {
         parent(expression)
         parent(call)
+        parent(resolvable)
 
         +field("operation", operationType)
     }
@@ -495,6 +503,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +listField("superTypeRefs", typeRef, withReplace = true, withTransform = true)
         +declarations {
             withTransform = true
+            withReplace = true
         }
         +annotations
     }
@@ -946,6 +955,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +listField(import, withTransform = true)
         +declarations {
             withTransform = true
+            withReplace = true
         }
         +field("name", string)
         +field("sourceFile", sourceFileType, nullable = true)
@@ -978,15 +988,57 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val replSnippet: Element by element(Declaration) {
         parent(declaration)
-        parent(controlFlowGraphOwner)
+        +FieldSets.name {
+            kDoc = """
+                The name of the REPL snippet, used to derive the name of the generated [snippetClass].
+            """.trimIndent()
+        }
 
-        +FieldSets.name
         +declaredSymbol(replSnippetSymbolType)
 
         +field("source", sourceElementType, nullable = false)
         +listField("receivers", scriptReceiverParameter, useMutableOrEmpty = true, withTransform = true)
-        +field("body", block, nullable = false, withTransform = true, withReplace = true)
-        +field("resultTypeRef", typeRef, withReplace = true, withTransform = true)
+        +field("snippetClass", regularClass, withTransform = true)
+        +referencedSymbol("evalFunctionSymbol", namedFunctionSymbolType) {
+            withBindThis = false
+        }
+    }
+
+    val replDeclarationReference: Element by element(Expression) {
+        parent(statement)
+
+        +referencedSymbol("symbol", firBasedSymbolType.withArgs(TypeRef.Star)) {
+            withBindThis = false
+            isMutable = false
+        }
+    }
+
+    val replExpressionReference: Element by element(Expression) {
+        parent(expression)
+
+        +field("expressionRef", referenceToSimpleExpressionType, isChild = false)
+    }
+
+    val replPropertyInitializer: Element by element(Expression) {
+        parent(statement)
+
+        +referencedSymbol("propertySymbol", propertySymbolType) {
+            withBindThis = false
+            isMutable = false
+        }
+
+        +field("initializer", expression, withReplace = true, withTransform = true)
+    }
+
+    val replPropertyDelegate: Element by element(Expression) {
+        parent(statement)
+
+        +referencedSymbol("propertySymbol", propertySymbolType) {
+            withBindThis = false
+            isMutable = false
+        }
+
+        +field("delegate", expression, withReplace = true, withTransform = true)
     }
 
     val packageDirective: Element by element(Other) {
@@ -1013,6 +1065,23 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val annotation: Element by element(Expression) {
+        kDoc = """
+            A very general representation of an annotation in Kotlin, like `@Ann(1, 2)`.
+            
+            Notable properties:
+            - [argumentMapping] — the map "name to expression" for annotation arguments
+            - [typeArguments] — annotation type arguments with projection (in/out) if needed
+            - [annotationTypeRef] — type reference bound to this annotation (maybe used e.g. to find a corresponding [FirRegularClass] for the annotation)
+            - [useSiteTarget] — annotation use-site target like GET (`@get:Ann`) or PARAMETER (`@param:Ann`), if any;
+            normally annotation should be moved to corresponding element during raw FIR building phase or, in non-obvious cases,
+            during type resolving phase. Sometimes, e.g. for [AnnotationUseSiteTarget.ALL] or for constructor properties annotation,
+            it's copied to multiple elements. Targets [AnnotationUseSiteTarget.FIELD] and [AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD]
+            are indistinguishable this way, as both occupy a backing field.
+
+            Note: a declaration of an annotation class, like `annotation class Ann`, is represented by [FirRegularClass].
+             
+            See also a very similar [FirAnnotationCall]. 
+        """.trimIndent()
         parent(expression)
 
         +field("useSiteTarget", annotationUseSiteTargetType, nullable = true, withReplace = true)
@@ -1024,6 +1093,31 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val annotationCall: Element by element(Expression) {
+        kDoc = """
+            An extended representation of an annotation in Kotlin. See more general [FirAnnotation].
+            
+            [FirAnnotationCall] is a [FirCall], so it differs from [FirAnnotation] as it includes more detailed description,
+            despite representing generally the same `@Ann(1, 2)` or something similar.
+            [FirAnnotation] is a more light-weight, so it's used when providing [FirCall] properties is problematic,
+            e.g. in serialization, in Java interop, or in plugins.
+            [FirAnnotationCall] is used mainly for source-based annotation that require resolve.
+                      
+            Notable inherited properties from [FirAnnotation]:
+            - [argumentMapping] — the map "name to expression" for annotation arguments
+            - [typeArguments] — annotation type arguments with projection (in/out) if needed
+            - [annotationTypeRef] — type reference bound to this annotation (maybe used e.g. to find a corresponding [FirRegularClass] for the annotation)
+            - [useSiteTarget] — annotation use-site target like GET (`@get:Ann`) or PARAMETER (`@param:Ann`), if any;
+            normally annotation should be moved to corresponding element during raw FIR building phase or, in non-obvious cases,
+            during type resolving phase. Sometimes, e.g. for [AnnotationUseSiteTarget.ALL] or for constructor properties annotation,
+            it's copied to multiple elements. Targets [AnnotationUseSiteTarget.FIELD] and [AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD]
+            are indistinguishable this way, as both occupy a backing field.
+            
+            Notable inherited properties from [FirCall]:
+            - [argumentList] — list of annotation arguments to be resolved. After resolve, they are represented as [FirResolvedArgumentList].
+            - [calleeReference] — reference to an annotation class symbol, either unresolved [FirSimpleNamedReference] or resolved [FirResolvedNamedReference]
+
+            Note: a declaration of an annotation class, like `annotation class Ann`, is represented by [FirRegularClass].
+        """.trimIndent()
         parent(annotation)
         parent(call)
         parent(resolvable)
@@ -1111,10 +1205,38 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +field("calleeReference", namedReference, withReplace = true, withTransform = true)
         +field("hasQuestionMarkAtLHS", boolean, withReplace = true)
+        +field("errorArgumentList", argumentList, nullable = true, withReplace = true, withTransform = true) {
+            kDoc = """
+                The erroneous argument list that may be present after the callable reference.
+                This syntax is invalid (`::foo(args)`).
+            """.trimIndent()
+        }
+    }
+
+    val qualifierWithContextSensitiveAlternative: Element by element(Expression) {
+        isSealed = true
+        +field("contextSensitiveAlternative", propertyAccessExpression, nullable = true, withReplace = true) {
+            optInAnnotation = firIdeOnlyAnnotation
+            kDoc = """
+                |For resolved qualifier, it contains either null or a simple name property access which would be used for checking
+                |if context-sensitive resolution might be used instead of the owner qualifier. 
+                |For example, if the owner is `MyEnum.X`, then contextSensitiveAlternative would be just `X`.
+                |
+                |Only used in ideMode to find out if the property access can be replaced with a simple name expression
+                |via context-sensitive resolution, so the reference shortener/inspections might use this information.
+                |
+                |Even in ideMode, it's only initialized if there is a reason to assume that it might be the case of CSR, e.g., 
+                |it should be left `null` for ContextIndependent resolution mode.
+            """.trimMargin()
+        }
     }
 
     val propertyAccessExpression: Element by element(Expression) {
         parent(qualifiedAccessExpression)
+        parent(qualifierWithContextSensitiveAlternative)
+
+        customParentInVisitor = qualifiedAccessExpression
+
         +field("calleeReference", namedReference, withReplace = true, withTransform = true)
     }
 
@@ -1202,15 +1324,18 @@ object FirTree : AbstractFirTreeBuilder() {
             """.trimMargin()
     }
 
-    val samConversionExpression: Element by element(Expression) {
+    val functionTypeConversionExpression: Element by element(Expression) {
         parent(expression)
 
         +field("expression", expression)
-        +field("usesFunctionKindConversion", boolean)
+        +field("kind", functionConversionKindType)
     }
 
     val resolvedQualifier: Element by element(Expression) {
+        parent(qualifierWithContextSensitiveAlternative)
         parent(expression)
+
+        customParentInVisitor = expression
 
         +field("packageFqName", fqNameType)
         +field("relativeClassFqName", fqNameType, nullable = true)
@@ -1218,12 +1343,13 @@ object FirTree : AbstractFirTreeBuilder() {
         +referencedSymbol("symbol", classLikeSymbolType, nullable = true)
         +field("explicitParent", resolvedQualifier, nullable = true)
         +field("isNullableLHSForCallableReference", boolean, withReplace = true)
+        +field("resolvedLHSTypeForCallableReferenceOrNull", coneKotlinTypeType, nullable = true, withReplace = true)
         +field("resolvedToCompanionObject", boolean, withReplace = true)
         +field("canBeValue", boolean, withReplace = true) {
             kDoc = "If true, the qualifier is resolved to an object or companion object and can be used as an expression."
         }
         +field("isFullyQualified", boolean)
-        +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true)
+        +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true, withReplace = true)
         +field("resolvedSymbolOrigin", resolvedSymbolOrigin, nullable = true, withReplace = true)
         +typeArguments {
             withTransform = true

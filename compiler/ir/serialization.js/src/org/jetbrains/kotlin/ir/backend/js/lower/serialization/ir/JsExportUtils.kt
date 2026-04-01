@@ -17,31 +17,27 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
-internal fun IrAnnotationContainer.isExportedDeclaration(): Boolean {
-    return annotations.hasAnnotation(JsStandardClassIds.Annotations.JsExport.asSingleFqName()) && !isExportIgnoreDeclaration()
+internal fun IrAnnotationContainer.isJsExportDeclaration(): Boolean {
+    return annotations.hasAnnotation(JsStandardClassIds.Annotations.JsExport.asSingleFqName()) && !isJsExportIgnoreDeclaration()
 }
 
-internal fun IrAnnotationContainer.isExportIgnoreDeclaration(): Boolean {
+internal fun IrAnnotationContainer.isJsExportIgnoreDeclaration(): Boolean {
     return annotations.hasAnnotation(JsStandardClassIds.Annotations.JsExportIgnore.asSingleFqName())
 }
 
-private val IrDeclarationWithName.exportedName: String
+private val IrDeclarationWithName.exportedJsExportName: String
     get() = getAnnotation(JsStandardClassIds.Annotations.JsName.asSingleFqName())?.getSingleConstStringArgument() ?: name.toString()
 
-private fun IrConstructorCall.getSingleConstStringArgument() =
+internal fun IrConstructorCall.getSingleConstStringArgument() =
     (arguments[0] as IrConst).value as String
 
-fun IrModuleFragment.collectExportedNames(): Map<IrFile, Map<IrDeclarationWithName, String>> {
-    return files.associateWith { irFile ->
-        val isFileExported = irFile.annotations.hasAnnotation(JsStandardClassIds.Annotations.JsExport.asSingleFqName())
+fun IrModuleFragment.collectJsExportNames(): Map<IrFile, Map<IrDeclarationWithName, String>> =
+    files.associateWith { irFile ->
+        val isFileJsExported = irFile.annotations.hasAnnotation(JsStandardClassIds.Annotations.JsExport.asSingleFqName())
 
-        val exportedDeclarations = irFile.declarations.asSequence()
+        irFile.declarations.asSequence()
             .filterIsInstance<IrDeclarationWithName>()
-            .filter { if (isFileExported) !it.isExportIgnoreDeclaration() else it.isExportedDeclaration() }
+            .filter { if (isFileJsExported) !it.isJsExportIgnoreDeclaration() else it.isJsExportDeclaration() }
             .filter { !it.isEffectivelyExternal() && !it.isExpect }
-            .map {
-                it to it.exportedName
-            }.toMap()
-        exportedDeclarations
+            .associateWith { it.exportedJsExportName }
     }
-}

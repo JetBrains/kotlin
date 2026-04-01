@@ -4,8 +4,8 @@ FILE: expectNestedClassMembers.kt
             public? final? expect fun function(): R|kotlin/Unit|
 
             public? final? expect var property: Any
-                public? get(): Any
-                public? set(value: Any): R|kotlin/Unit|
+                public? [ContainingClassKey=Nested] get(): Any
+                public? [ContainingClassKey=Nested] set(value: Any): R|kotlin/Unit|
 
         }
 

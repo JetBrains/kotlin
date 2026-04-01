@@ -1,0 +1,40 @@
+FILE: sequenceVsIterable.kt
+    public final fun fooInt(x: R|kotlin/sequences/Sequence<kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun fooInt(x: R|kotlin/collections/Iterable<kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun testFooInt(): R|kotlin/Unit| {
+        <Ambiguity: fooInt, [/fooInt, /fooInt]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>())
+        <Ambiguity: fooInt, [/fooInt, /fooInt]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>(String(!)))
+        <Ambiguity: fooInt, [/fooInt, /fooInt]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42)))
+        <Ambiguity: fooInt, [/fooInt, /fooInt]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(vararg(Int(42), String(!))))
+        <Ambiguity: fooInt, [/fooInt, /fooInt]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3))))
+    }
+    public final fun <T> fooOneGeneric(x: R|kotlin/sequences/Sequence<T>|): R|kotlin/Unit| {
+    }
+    public final fun fooOneGeneric(x: R|kotlin/collections/Iterable<kotlin/String>|): R|kotlin/Unit| {
+    }
+    public final fun testFooOneGeneric(): R|kotlin/Unit| {
+        R|/fooOneGeneric|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>())
+        R|/fooOneGeneric|<R|kotlin/Int|>(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/Int|>(Int(42)))
+        R|/fooOneGeneric|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>(String(!)))
+        R|/fooOneGeneric|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(vararg(Int(42), String(!))))
+    }
+    public final fun <T> fooBothGeneric(x: R|kotlin/sequences/Sequence<T>|): R|kotlin/Unit| {
+    }
+    public final fun <T> fooBothGeneric(x: R|kotlin/collections/Iterable<T>|): R|kotlin/Unit| {
+    }
+    public final fun testFooBothGeneric(): R|kotlin/Unit| {
+        <Ambiguity: fooBothGeneric, [/fooBothGeneric, /fooBothGeneric]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>())
+        <Ambiguity: fooBothGeneric, [/fooBothGeneric, /fooBothGeneric]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String?|>(vararg(Null(null), String(whatever))))
+    }
+    public final fun <T> fooOtherGeneric(x: R|kotlin/collections/Iterable<T>|): R|kotlin/Unit| {
+    }
+    public final fun fooOtherGeneric(x: R|kotlin/sequences/Sequence<kotlin/String>|): R|kotlin/Unit| {
+    }
+    public final fun testFooOtherGeneric(): R|kotlin/Unit| {
+        R|/fooOtherGeneric|(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/String|>())
+        R|/fooOtherGeneric|(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/String|>(String(!)))
+        R|/fooOtherGeneric|<R|kotlin/Int|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42)))
+        R|/fooOtherGeneric|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(vararg(Int(42), String(!))))
+    }

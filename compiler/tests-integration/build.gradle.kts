@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
 }
@@ -36,6 +35,8 @@ dependencies {
     testFixturesApi(testFixtures(project(":generators:test-generator")))
     testFixturesApi(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
     testFixturesApi(project(":kotlin-scripting-compiler"))
+    testFixturesImplementation(project(":compiler:cli-jvm:javac-integration"))
+    testImplementation(project(":compiler:cli-jvm:javac-integration"))
 
     otherCompilerModules.forEach {
         testCompileOnly(project(it))

@@ -1,0 +1,5 @@
+KtOperationReferenceExpression(97,98): '>'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /compareTo(<extension receiver>: T, int: kotlin.Int): kotlin.Int
+    ]

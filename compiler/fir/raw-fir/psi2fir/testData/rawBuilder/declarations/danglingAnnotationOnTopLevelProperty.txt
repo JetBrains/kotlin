@@ -1,8 +1,10 @@
 FILE: danglingAnnotationOnTopLevelProperty.kt
     public final? annotation class Ann : R|kotlin/Annotation| {
-        public? [ContainingClassKey=Ann] constructor(): R|Ann| {
+        @Ann() public? [ContainingClassKey=Ann] constructor([CorrespondingProperty=/Ann.x] x: Int = IntegerLiteral(42)): R|Ann| {
             super<R|kotlin/Any|>()
         }
 
+        public? final? [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ContainingClassKey=Ann] get(): Int
+
     }
-    @Ann(ERROR_EXPR(Argument is absent)) <DANGLING MODIFIER: Top level declaration expected>

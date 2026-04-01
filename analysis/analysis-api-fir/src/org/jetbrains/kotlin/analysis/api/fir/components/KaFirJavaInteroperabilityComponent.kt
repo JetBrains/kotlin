@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
@@ -67,6 +68,7 @@ import org.jetbrains.kotlin.fir.types.jvm.buildJavaTypeRef
 import org.jetbrains.kotlin.light.classes.symbol.annotations.annotateByKtType
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeParameterImpl
@@ -342,9 +344,41 @@ internal class KaFirJavaInteroperabilityComponent(
                 } else {
                     val name = name?.let(Name::identifier) ?: return null
                     combinedMemberScope.callables(name).firstOrNull { it.psi == this@callableSymbol }
+                        ?: findJavaAccessorMethodBySyntheticProperty(this@callableSymbol, name, combinedMemberScope)
                 }
             }
         }
+
+    /**
+     * Finds a [KaCallableSymbol] for a Java accessor method that implements a Kotlin property.
+     *
+     * When a Java class implements a Kotlin interface property via getFoo/setFoo methods,
+     * these methods are represented as a [KaSyntheticJavaPropertySymbol] in the scope.
+     * This function retrieves the underlying getter/setter symbol for such cases.
+     */
+    context(_: KaFirSession)
+    private fun findJavaAccessorMethodBySyntheticProperty(psiMember: PsiMember, name: Name, scope: KaScope): KaCallableSymbol? {
+        val nameAsString = name.asString()
+        val isGetter = JvmAbi.isGetterName(nameAsString)
+        val isSetter = JvmAbi.isSetterName(nameAsString)
+        if (!isGetter && !isSetter) return null
+
+        val propertyNames = getPropertyNamesCandidatesByAccessorName(name)
+        for (propertyName in propertyNames) {
+            for (callable in scope.callables(propertyName)) {
+                val property = callable as? KaSyntheticJavaPropertySymbol ?: continue
+
+                if (isGetter && property.javaGetterSymbol.psi == psiMember) {
+                    return property.javaGetterSymbol
+                }
+                if (isSetter && property.javaSetterSymbol?.psi == psiMember) {
+                    return property.javaSetterSymbol
+                }
+            }
+        }
+
+        return null
+    }
 
     override val KaCallableSymbol.containingJvmClassName: String?
         get() = withValidityAssertion {
@@ -414,10 +448,12 @@ internal class KaFirJavaInteroperabilityComponent(
         if (property.backingField?.symbol?.hasAnnotation(JvmStandardClassIds.Annotations.JvmField, analysisSession.firSession) == true) {
             return property.name
         }
-        return Name.identifier(getJvmNameAsString(property, isSetter))
+
+        val nameString = getJvmNameAsString(property, isSetter) ?: return SpecialNames.NO_NAME_PROVIDED
+        return Name.identifier(nameString)
     }
 
-    private fun getJvmNameAsString(property: FirProperty, isSetter: Boolean): String {
+    private fun getJvmNameAsString(property: FirProperty, isSetter: Boolean): String? {
         val useSiteTarget = if (isSetter) AnnotationUseSiteTarget.PROPERTY_SETTER else AnnotationUseSiteTarget.PROPERTY_GETTER
         val jvmNameFromProperty = property.getJvmNameFromAnnotation(analysisSession.firSession, useSiteTarget)
         if (jvmNameFromProperty != null) {
@@ -430,7 +466,7 @@ internal class KaFirJavaInteroperabilityComponent(
             return jvmNameFromAccessor
         }
 
-        val identifier = property.name.identifier
+        val identifier = property.name.takeUnless { it.isSpecial }?.identifier ?: return null
         return if (isSetter) JvmAbi.setterName(identifier) else JvmAbi.getterName(identifier)
     }
 }
@@ -488,7 +524,7 @@ private fun ConeKotlinType.needLocalTypeApproximation(
     session: FirSession,
     useSitePosition: PsiElement,
 ): Boolean {
-    if (!shouldApproximateAnonymousTypesOfNonLocalDeclaration(visibilityForApproximation, isInlineFunction)) return false
+    if (!shouldApproximateLocalTypesOfNonLocalDeclaration(visibilityForApproximation, isInlineFunction)) return false
     val localTypes: List<ConeKotlinType> = if (isLocal(session)) listOf(this) else {
         typeArguments.mapNotNull {
             if (it is ConeKotlinTypeProjection && it.type.isLocal(session)) {

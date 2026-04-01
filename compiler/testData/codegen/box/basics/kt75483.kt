@@ -1,8 +1,3 @@
-/*
- * Copyright 2010-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
- */
-
 // IGNORE_BACKEND_K2: WASM_JS, WASM_WASI
 
 interface FeatureFlag<OptionType : Any> {

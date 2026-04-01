@@ -1,12 +1,11 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // FIR_IDENTICAL
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextParameters
 interface I<T: Number>
 
 fun I<<!UPPER_BOUND_VIOLATED!>String<!>>.foo() {}
 
-context(I<<!UPPER_BOUND_VIOLATED!>String<!>>)
+context(_: I<<!UPPER_BOUND_VIOLATED!>String<!>>)
 fun bar() {}
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,

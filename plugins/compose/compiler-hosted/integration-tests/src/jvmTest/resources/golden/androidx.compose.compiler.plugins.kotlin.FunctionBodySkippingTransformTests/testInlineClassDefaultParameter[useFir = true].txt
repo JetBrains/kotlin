@@ -7,6 +7,12 @@ import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
 
 
+inline class Color(val value: Int) {
+    companion object {
+        val Unset = Color(0)
+    }
+}
+
 @Composable
 fun A(text: String) {
     B(text)
@@ -22,6 +28,31 @@ fun B(text: String, color: Color = Color.Unset) {
 // Transformed IR
 // ------------------------------------------
 
+class Color(val value: Int) {
+  object Companion {
+    val Unset: Color = Color(0)
+  }
+  override fun toString(): String {
+    return "Color(value=%{<this>.value})"
+  }
+  override fun hashCode(): Int {
+    return <this>.value.hashCode()
+  }
+  override fun equals(other: Any?): Boolean {
+    when {
+      other !is Boolean -> {
+        return false
+      }
+    }
+    val tmp0_other_with_cast = other as Color
+    when {
+      <this>.value != tmp0_other_with_cast.value -> {
+        return false
+      }
+    }
+    return true
+  }
+}
 @Composable
 fun A(text: String, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)

@@ -19,7 +19,7 @@ class MppDslWasmIT : KGPBaseTest() {
             projectName = "new-mpp-wasm-js",
             gradleVersion = gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             buildGradleKts.replaceText("<JsEngine>", "d8")
             build("build") {
@@ -58,7 +58,9 @@ class MppDslWasmIT : KGPBaseTest() {
                 assertTasksAreNotInTaskGraph(":compileTestDevelopmentExecutableKotlinWasmJsOptimize")
                 assertTasksFailed(":wasmJs${name}Test")
                 assertTestResults(
-                    projectPath.resolve("TEST-${engine}.xml"),
+                    projectPath.resolve(
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) "TEST-${engine}.xml" else "Gradle93-TEST-${engine}.xml"
+                    ),
                     "wasmJs${name}Test"
                 )
             }

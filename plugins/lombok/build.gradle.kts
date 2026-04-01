@@ -2,9 +2,9 @@ description = "Lombok compiler plugin"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -21,24 +21,10 @@ dependencies {
 
     testFixturesApi(commonDependency("org.projectlombok:lombok"))
 
-    testFixturesApi(project(":compiler:util"))
-    testFixturesApi(project(":compiler:backend"))
-    testFixturesApi(project(":compiler:ir.backend.common"))
-    testFixturesApi(project(":compiler:backend.jvm"))
-    testFixturesApi(project(":compiler:cli"))
-
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(libs.junit.jupiter.api)
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
-    // FIR dependencies
-    testFixturesApi(project(":compiler:fir:checkers"))
-    testFixturesApi(project(":compiler:fir:checkers:checkers.jvm"))
-    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
-
-    testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     testFixturesApi(libs.junit4)
@@ -53,18 +39,15 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        dependsOn(":dist")
-        workingDir = rootDir
-
+    testTask(
+        jUnitMode = JUnitMode.JUnit5,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)
+    ) {
         val testRuntimeClasspathFiles: FileCollection = configurations.testRuntimeClasspath.get()
         doFirst {
             testRuntimeClasspathFiles
@@ -75,9 +58,15 @@ projectTests {
         }
     }
 
-    testGenerator("org.jetbrains.kotlin.lombok.TestGeneratorKt")
+    testGenerator("org.jetbrains.kotlin.lombok.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
+    withTestJar()
+
+    testData(project(":kotlin-lombok-compiler-plugin").isolated, "testData")
 }
 
 publish()

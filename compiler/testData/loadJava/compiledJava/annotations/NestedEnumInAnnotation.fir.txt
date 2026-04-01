@@ -11,7 +11,7 @@ public final annotation class Api : R|kotlin/Annotation| {
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<test/Api.Status>|
-            public get(): R|kotlin/enums/EnumEntries<test/Api.Status>|
+            public static get(): R|kotlin/enums/EnumEntries<test/Api.Status>|
 
     }
 }

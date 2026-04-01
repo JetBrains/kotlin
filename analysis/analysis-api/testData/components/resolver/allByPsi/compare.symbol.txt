@@ -1,0 +1,230 @@
+KtFile: 'compare.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(0,162): 'fun usage() {'
+  null
+
+KtParameterList(9,11): '()'
+  null
+
+KtBlockExpression(12,162): '{'
+  null
+
+KtBinaryExpression(18,23): '1 > 2'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
+
+KtConstantExpression(18,19): '1'
+  null
+
+KtOperationReferenceExpression(20,21): '>'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
+
+KtConstantExpression(22,23): '2'
+  null
+
+KtBinaryExpression(28,46): '1.compareTo(2) > 0'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
+
+KtDotQualifiedExpression(28,42): '1.compareTo(2)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
+
+KtConstantExpression(28,29): '1'
+  null
+
+KtCallExpression(30,42): 'compareTo(2)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
+
+KtNameReferenceExpression(30,39): 'compareTo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
+
+KtValueArgumentList(39,42): '(2)'
+  null
+
+KtValueArgument(40,41): '2'
+  null
+
+KtConstantExpression(40,41): '2'
+  null
+
+KtOperationReferenceExpression(43,44): '>'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
+
+KtConstantExpression(45,46): '0'
+  null
+
+KtBinaryExpression(52,61): '"3" < "4"'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String.compareTo(<dispatch receiver>: kotlin.String, other: kotlin.String): kotlin.Int
+    ]
+
+KtStringTemplateExpression(52,55): '"3"'
+  null
+
+KtLiteralStringTemplateEntry(53,54): '3'
+  null
+
+KtOperationReferenceExpression(56,57): '<'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String.compareTo(<dispatch receiver>: kotlin.String, other: kotlin.String): kotlin.Int
+    ]
+
+KtStringTemplateExpression(58,61): '"4"'
+  null
+
+KtLiteralStringTemplateEntry(59,60): '4'
+  null
+
+KtProperty(66,80): 'val number = 5'
+  null
+
+KtConstantExpression(79,80): '5'
+  null
+
+KtProperty(85,108): 'val myClass = MyClass()'
+  null
+
+KtCallExpression(99,108): 'MyClass()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
+
+KtNameReferenceExpression(99,106): 'MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
+
+KtValueArgumentList(106,108): '()'
+  null
+
+KtBinaryExpression(113,130): 'myClass >= number'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
+    ]
+
+KtNameReferenceExpression(113,120): 'myClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val myClass: MyClass
+    ]
+
+KtOperationReferenceExpression(121,123): '>='
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
+    ]
+
+KtNameReferenceExpression(124,130): 'number'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val number: kotlin.Int
+    ]
+
+KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
+    ]
+
+KtNameReferenceExpression(135,142): 'myClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val myClass: MyClass
+    ]
+
+KtCallExpression(143,160): 'compareTo(number)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
+    ]
+
+KtNameReferenceExpression(143,152): 'compareTo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
+    ]
+
+KtValueArgumentList(152,160): '(number)'
+  null
+
+KtValueArgument(153,159): 'number'
+  null
+
+KtNameReferenceExpression(153,159): 'number'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val number: kotlin.Int
+    ]
+
+KtClass(164,225): 'class MyClass {'
+  null
+
+KtClassBody(178,225): '{'
+  null
+
+KtNamedFunction(184,223): 'operator fun compareTo(i: Int): Int = i'
+  null
+
+KtDeclarationModifierList(184,192): 'operator'
+  null
+
+KtParameterList(206,214): '(i: Int)'
+  null
+
+KtParameter(207,213): 'i: Int'
+  null
+
+KtTypeReference(210,213): 'Int'
+  null
+
+KtUserType(210,213): 'Int'
+  null
+
+KtNameReferenceExpression(210,213): 'Int'
+  null
+
+KtTypeReference(216,219): 'Int'
+  null
+
+KtUserType(216,219): 'Int'
+  null
+
+KtNameReferenceExpression(216,219): 'Int'
+  null
+
+KtNameReferenceExpression(222,223): 'i'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]

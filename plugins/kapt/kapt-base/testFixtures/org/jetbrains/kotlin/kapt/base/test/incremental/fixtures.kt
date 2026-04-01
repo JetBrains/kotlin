@@ -40,7 +40,10 @@ fun runAnnotationProcessing(
                 null,
                 fileManager,
                 null,
-                listOf("-proc:only", "-s", generatedSources.absolutePath, "-d", generatedSources.absolutePath, "-cp", classpath.joinToString(separator = File.pathSeparator)),
+                listOf(
+                    "-proc:only", "-s", generatedSources.absolutePath, "-d", generatedSources.absolutePath,
+                    "-cp", classpath.joinToString(separator = File.pathSeparator),
+                ),
                 null,
                 javaSrcs
             ) as JavacTaskImpl
@@ -90,11 +93,11 @@ open class SimpleProcessor(private val wrongOrigin: Boolean = false, private val
     override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
         if (annotations.isEmpty()) return false
 
-        roundEnv.getElementsAnnotatedWith(annotations.single()).forEach {
-            it as TypeElement
+        roundEnv.getElementsAnnotatedWith(annotations.single()).forEach { element ->
+            element as TypeElement
 
-            val generatedName = "${it.qualifiedName}Generated$generatedSuffix"
-            filer.createSourceFile(generatedName, it.takeUnless { wrongOrigin }).openWriter().use { it.write("") }
+            val generatedName = "${element.qualifiedName}Generated$generatedSuffix"
+            filer.createSourceFile(generatedName, element.takeUnless { wrongOrigin }).openWriter().use { it.write("") }
         }
 
         return false
@@ -116,19 +119,20 @@ class SimpleCreatingClassFilesAndResources : SimpleProcessor() {
         super.process(annotations, roundEnv)
 
         if (annotations.isEmpty()) return false
-        roundEnv.getElementsAnnotatedWith(annotations.single()).forEach {
-            it as TypeElement
+        roundEnv.getElementsAnnotatedWith(annotations.single()).forEach { element ->
+            element as TypeElement
 
-            val generatedName = "${it.qualifiedName}Generated"
-            filer.createClassFile("${generatedName}Class", it).openWriter().use { it.write("") }
-            filer.createResource(StandardLocation.SOURCE_OUTPUT, "test", "${it.simpleName}GeneratedResource", it).openWriter().use { it.write("") }
+            val generatedName = "${element.qualifiedName}Generated"
+            filer.createClassFile("${generatedName}Class", element).openWriter().use { it.write("") }
+            filer.createResource(StandardLocation.SOURCE_OUTPUT, "test", "${element.simpleName}GeneratedResource", element)
+                .openWriter().use { it.write("") }
         }
 
         return false
     }
 }
 
-class SimpleGeneratingIfTypeDoesNotExist: SimpleProcessor() {
+class SimpleGeneratingIfTypeDoesNotExist : SimpleProcessor() {
     override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
         if (annotations.isEmpty()) return false
 
@@ -156,10 +160,10 @@ open class ReportTwoOriginElements : SimpleProcessor() {
     override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
         if (annotations.isEmpty()) return false
 
-        roundEnv.getElementsAnnotatedWith(annotations.single()).forEach {
-            it as TypeElement
+        roundEnv.getElementsAnnotatedWith(annotations.single()).forEach { element ->
+            element as TypeElement
             // Report 2 elements from the same file as originating
-            filer.createSourceFile("${it.qualifiedName}Generated", it, it).openWriter().use { it.write("") }
+            filer.createSourceFile("${element.qualifiedName}Generated", element, element).openWriter().use { it.write("") }
         }
 
         return false

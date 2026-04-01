@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartSet
-import java.util.*
+import java.util.Stack
 
 private typealias Context = ConstraintSystemCompletionContext
 private typealias ResolvedAtomProvider = (TypeVariableMarker) -> Any?
@@ -556,6 +557,7 @@ class PostponedArgumentInputTypesResolver(
         }
     }
 
+    @K1Deprecation
     context(c: Context)
     fun fixNextReadyVariableForParameterTypeIfNeeded(
         argument: PostponedResolvedAtomMarker,
@@ -564,14 +566,38 @@ class PostponedArgumentInputTypesResolver(
         dependencyProvider: TypeVariableDependencyInformationProvider,
         resolvedAtomProvider: ResolvedAtomProvider,
     ): Boolean {
-        val expectedType = argument.expectedFunctionType() ?: return false
-
         return fixNextReadyVariableForParameterType(
-            expectedType,
-            postponedArguments,
-            topLevelType,
-            dependencyProvider,
             resolvedAtomProvider,
+            findNextReadyVariableForParameterType(
+                argument,
+                postponedArguments,
+                topLevelType,
+                dependencyProvider,
+            ),
+        )
+    }
+
+    context(c: Context)
+    fun findNextReadyVariableForParameterType(
+        argument: PostponedResolvedAtomMarker,
+        postponedArguments: List<PostponedResolvedAtomMarker>,
+        topLevelType: KotlinTypeMarker,
+        dependencyProvider: TypeVariableDependencyInformationProvider,
+    ): VariableFixationFinder.VariableForFixation? {
+        val expectedType = argument.expectedFunctionType() ?: return null
+
+        if (c.lexicographicVariableReadinessCalculation) {
+            if (argument is LambdaWithTypeVariableAsExpectedTypeMarker) return null
+
+            if (argument is PostponedCallableReferenceMarker && !argument.needsResolution) return null
+        }
+
+        return findNextVariableForParameterType(
+            if (!c.lexicographicVariableReadinessCalculation)
+                expectedType.extractArgumentsForFunctionTypeOrSubtype()
+            else
+                argument.inputTypes,
+            dependencyProvider, postponedArguments, topLevelType,
         )
     }
 
@@ -581,16 +607,12 @@ class PostponedArgumentInputTypesResolver(
         return expectedType?.takeIf { it.isFunctionOrKFunctionWithAnySuspendability() }
     }
 
+    @K1Deprecation
     context(c: Context)
     private fun fixNextReadyVariableForParameterType(
-        type: KotlinTypeMarker,
-        postponedArguments: List<PostponedResolvedAtomMarker>,
-        topLevelType: KotlinTypeMarker,
-        dependencyProvider: TypeVariableDependencyInformationProvider,
         resolvedAtomByTypeVariableProvider: ResolvedAtomProvider,
+        variableForFixation: VariableFixationFinder.VariableForFixation?,
     ): Boolean = with(resolutionTypeSystemContext) {
-        val variableForFixation = findNextVariableForParameterType(type, dependencyProvider, postponedArguments, topLevelType)
-
         if (variableForFixation == null || !variableForFixation.isReady)
             return false
 
@@ -613,13 +635,13 @@ class PostponedArgumentInputTypesResolver(
 
     context(c: Context)
     private fun findNextVariableForParameterType(
-        type: KotlinTypeMarker,
+        types: Collection<KotlinTypeMarker>,
         dependencyProvider: TypeVariableDependencyInformationProvider,
         postponedArguments: List<PostponedResolvedAtomMarker>,
         topLevelType: KotlinTypeMarker,
     ): VariableFixationFinder.VariableForFixation? {
         val outerTypeVariables = c.outerTypeVariables.orEmpty()
-        val relatedVariables = type.extractArgumentsForFunctionTypeOrSubtype()
+        val relatedVariables = types
             .flatMap { it.getAllDeeplyRelatedTypeVariables(dependencyProvider) }
             .filter { it !in outerTypeVariables }
 

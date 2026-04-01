@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import kotlin.io.path.name
 
-class BuiltinsDecompilerTest : AbstractAnalysisApiExecutionTest("analysis/stubs/testData/builtins/customData") {
+class BuiltinsDecompilerTest : AbstractAnalysisApiExecutionTest("testData/builtins/customData") {
     override val configurator: AnalysisApiTestConfigurator = object : AnalysisApiFirBinaryTestConfigurator() {
         override val testModuleFactory: KtTestModuleFactory = object : KtTestModuleFactory {
             override fun createModule(

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
+import org.jetbrains.kotlin.ir.builders.irAnnotation
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -62,6 +63,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
@@ -85,7 +87,7 @@ fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     }
 }
 
-private fun IrDeclaration.getJvmNameFromJvmExposeBoxedAnnotation(): String? {
+fun IrDeclaration.getJvmNameFromJvmExposeBoxedAnnotation(): String? {
     val value = getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)?.arguments[0] as? IrConst ?: return null
     return if (value.value == "") null else value.value as? String
 }
@@ -269,6 +271,8 @@ private fun IrDeclaration.isFunctionWhichCanBeExposed(isPropagatedOrImplicit: Bo
     if (this !is IrFunction || origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER) return false
     // No sense in exposing suspend functions - they cannot be called from Java in normal way anyway
     if (isSuspend) return false
+    // Ditto for suspend lambda methods
+    if (parentClassOrNull?.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA) return false
     // Cannot expose open or abstract - @JvmName problem
     if (isOverridable) return false
     if (parameters.any { it.type.isInlineClassType() }) return true
@@ -285,7 +289,7 @@ val IrDeclaration.isStaticValueClassReplacement: Boolean
 
 // On the IR backend we represent raw types as star projected types with a special synthetic annotation.
 // See `TypeTranslator.translateTypeAnnotations`.
-private fun JvmBackendContext.makeRawTypeAnnotation() = generatorExtensions.generateRawTypeAnnotationCall()!!
+private fun JvmBackendContext.makeRawTypeAnnotation() = generatorExtensions.generateRawTypeAnnotation()!!
 
 fun IrClass.rawType(context: JvmBackendContext): IrType =
     defaultType.addAnnotations(listOf(context.makeRawTypeAnnotation()))
@@ -595,4 +599,14 @@ private fun IrFunction.singleCallOrNull(): IrCall? = when (body) {
 fun IrFunction.isBodyBridgeCallTo(target: IrSimpleFunction?): Boolean {
     val callee: IrSimpleFunction = singleCallOrNull()?.symbol?.owner ?: return false
     return callee == target || (callee.origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR && callee.isBodyBridgeCallTo(target))
+}
+
+context(irBuilder: JvmIrBuilder)
+fun IrMutableAnnotationContainer.addJavaLangDeprecatedAnnotation() = copyAnnotationsAndAddJavaLangDeprecated(this)
+
+context(irBuilder: JvmIrBuilder)
+fun IrMutableAnnotationContainer.copyAnnotationsAndAddJavaLangDeprecated(source: IrAnnotationContainer) {
+    isJavaLangDeprecatedOnlyAddedByCompiler = !source.annotations.hasAnnotation(DeprecationResolver.JAVA_DEPRECATED)
+    annotations = filterOutAnnotations(DeprecationResolver.JAVA_DEPRECATED, source.annotations) +
+            irBuilder.irAnnotation(irBuilder.irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
 }

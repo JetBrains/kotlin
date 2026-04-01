@@ -2,5 +2,17 @@ KtConstructorDelegationReferenceExpression(115,119): 'this'
   KtConstructorDelegationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    constructor(p: Int): Sub:
+      Too many arguments for 'constructor(p: Int): Sub'.
+      Too many arguments for 'constructor(p: Int): Sub'.
+
+    constructor(i: Int, j: Int): Sub:
+      Too many arguments for 'constructor(i: Int, j: Int): Sub'.>
     symbols:
+      0: (in Sub) constructor(i: kotlin.Int, j: kotlin.Int)
+      1: (in Sub) constructor(p: kotlin.Int)
+    resolveToSymbols:
       Nothing (Unresolved reference)

@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 
 object FirSuperCallWithDefaultsChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         if (expression.explicitReceiverIsNotSuperReference()) return

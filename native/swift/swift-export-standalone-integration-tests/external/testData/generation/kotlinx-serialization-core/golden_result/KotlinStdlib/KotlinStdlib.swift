@@ -33,20 +33,20 @@ extension ExportedKotlinPackages.kotlin {
         public func _get(
             index: Swift.Int32
         ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-            return { switch kotlin_Array_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+            return { switch kotlin_Array_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
         }
         public func _set(
             index: Swift.Int32,
             value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Void {
-            return kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), index, value.map { it in it.__externalRCRef() } ?? nil)
+            return { kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), index, value.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
             return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_Array_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
         }
         public init(
             size: Swift.Int32,
-            `init`: @escaping (Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>
+            `init`: @escaping (Swift.Int32) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) {
             fatalError()
         }
@@ -54,7 +54,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public subscript(
             index: Swift.Int32
@@ -82,7 +82,7 @@ extension ExportedKotlinPackages.kotlin {
             index: Swift.Int32,
             value: Swift.Int32
         ) -> Swift.Void {
-            return kotlin_IntArray_set__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), index, value)
+            return { kotlin_IntArray_set__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), index, value); return () }()
         }
         public func iterator() -> ExportedKotlinPackages.kotlin.collections.IntIterator {
             return ExportedKotlinPackages.kotlin.collections.IntIterator.__createClassWrapper(externalRCRef: kotlin_IntArray_iterator(self.__externalRCRef()))
@@ -102,7 +102,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public subscript(
             index: Swift.Int32
@@ -126,7 +126,7 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -205,7 +205,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class Char: KotlinRuntime.KotlinBase {
@@ -296,7 +296,7 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -331,6 +331,39 @@ extension ExportedKotlinPackages.kotlin {
         ) -> Swift.Bool {
             this._compareTo(other: other) >= 0
         }
+        public func _plus(
+            other: Swift.Int32
+        ) -> Swift.Unicode.UTF16.CodeUnit {
+            return kotlin_Char_plus__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Char,
+            other: Swift.Int32
+        ) -> Swift.Unicode.UTF16.CodeUnit {
+            this._plus(other: other)
+        }
+        public func _minus(
+            other: Swift.Unicode.UTF16.CodeUnit
+        ) -> Swift.Int32 {
+            return kotlin_Char_minus__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Char,
+            other: Swift.Unicode.UTF16.CodeUnit
+        ) -> Swift.Int32 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int32
+        ) -> Swift.Unicode.UTF16.CodeUnit {
+            return kotlin_Char_minus__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Char,
+            other: Swift.Int32
+        ) -> Swift.Unicode.UTF16.CodeUnit {
+            this._minus(other: other)
+        }
         public func inc() -> Swift.Unicode.UTF16.CodeUnit {
             return kotlin_Char_inc(self.__externalRCRef())
         }
@@ -350,6 +383,9 @@ extension ExportedKotlinPackages.kotlin {
         @available(*, deprecated, message: "Conversion of Char to Number is deprecated. Use Char.code property instead.. Replacement: this.code.toByte()")
         public func toByte() -> Swift.Int8 {
             return kotlin_Char_toByte(self.__externalRCRef())
+        }
+        public func toChar() -> Swift.Unicode.UTF16.CodeUnit {
+            return kotlin_Char_toChar(self.__externalRCRef())
         }
         @available(*, deprecated, message: "Conversion of Char to Number is deprecated. Use Char.code property instead.. Replacement: this.code.toShort()")
         public func toShort() -> Swift.Int16 {
@@ -392,23 +428,23 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     open class Exception: ExportedKotlinPackages.kotlin.Throwable {
         public override init() {
             if Self.self != ExportedKotlinPackages.kotlin.Exception.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Exception ") }
             let __kt = kotlin_Exception_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         public override init(
             message: Swift.String?
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.Exception.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Exception ") }
             let __kt = kotlin_Exception_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil); return () }()
         }
         public override init(
             message: Swift.String?,
@@ -416,38 +452,38 @@ extension ExportedKotlinPackages.kotlin {
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.Exception.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Exception ") }
             let __kt = kotlin_Exception_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.Exception.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Exception ") }
             let __kt = kotlin_Exception_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     open class RuntimeException: ExportedKotlinPackages.kotlin.Exception {
         public override init() {
             if Self.self != ExportedKotlinPackages.kotlin.RuntimeException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.RuntimeException ") }
             let __kt = kotlin_RuntimeException_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         public override init(
             message: Swift.String?
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.RuntimeException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.RuntimeException ") }
             let __kt = kotlin_RuntimeException_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil); return () }()
         }
         public override init(
             message: Swift.String?,
@@ -455,38 +491,38 @@ extension ExportedKotlinPackages.kotlin {
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.RuntimeException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.RuntimeException ") }
             let __kt = kotlin_RuntimeException_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.RuntimeException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.RuntimeException ") }
             let __kt = kotlin_RuntimeException_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     open class IllegalArgumentException: ExportedKotlinPackages.kotlin.RuntimeException {
         public override init() {
             if Self.self != ExportedKotlinPackages.kotlin.IllegalArgumentException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.IllegalArgumentException ") }
             let __kt = kotlin_IllegalArgumentException_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         public override init(
             message: Swift.String?
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.IllegalArgumentException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.IllegalArgumentException ") }
             let __kt = kotlin_IllegalArgumentException_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil); return () }()
         }
         public override init(
             message: Swift.String?,
@@ -494,22 +530,22 @@ extension ExportedKotlinPackages.kotlin {
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.IllegalArgumentException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.IllegalArgumentException ") }
             let __kt = kotlin_IllegalArgumentException_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.IllegalArgumentException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.IllegalArgumentException ") }
             let __kt = kotlin_IllegalArgumentException_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class Byte: ExportedKotlinPackages.kotlin.Number {
@@ -543,7 +579,7 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -578,51 +614,545 @@ extension ExportedKotlinPackages.kotlin {
         ) -> Swift.Bool {
             this._compareTo(other: other) >= 0
         }
+        public func _compareTo(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Byte_compareTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            return kotlin_Byte_compareTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.Int64
+        ) -> Swift.Int32 {
+            return kotlin_Byte_compareTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.Float
+        ) -> Swift.Int32 {
+            return kotlin_Byte_compareTo__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Float
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Float
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Float
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Float
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.Double
+        ) -> Swift.Int32 {
+            return kotlin_Byte_compareTo__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Double
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Double
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Double
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Double
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _plus(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Byte_plus__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Byte_plus__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            return kotlin_Byte_plus__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            return kotlin_Byte_plus__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Byte_plus__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Byte_plus__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._plus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Byte_minus__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Byte_minus__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            return kotlin_Byte_minus__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            return kotlin_Byte_minus__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Byte_minus__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Byte_minus__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._minus(other: other)
+        }
+        public func _times(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Byte_times__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Byte_times__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            return kotlin_Byte_times__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            return kotlin_Byte_times__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Byte_times__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Byte_times__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._times(other: other)
+        }
+        public func _div(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Byte_div__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Byte_div__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            return kotlin_Byte_div__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            return kotlin_Byte_div__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Byte_div__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Byte_div__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._div(other: other)
+        }
+        public func _rem(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Byte_rem__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Byte_rem__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            return kotlin_Byte_rem__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            return kotlin_Byte_rem__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Byte_rem__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Byte_rem__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Byte,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._rem(other: other)
+        }
         public func inc() -> Swift.Int8 {
             return kotlin_Byte_inc(self.__externalRCRef())
         }
         public func dec() -> Swift.Int8 {
             return kotlin_Byte_dec(self.__externalRCRef())
         }
+        public func _unaryPlus() -> Swift.Int32 {
+            return kotlin_Byte_unaryPlus(self.__externalRCRef())
+        }
+        public static prefix func +(
+            this: ExportedKotlinPackages.kotlin.Byte
+        ) -> Swift.Int32 {
+            this._unaryPlus()
+        }
+        public func _unaryMinus() -> Swift.Int32 {
+            return kotlin_Byte_unaryMinus(self.__externalRCRef())
+        }
+        public static prefix func -(
+            this: ExportedKotlinPackages.kotlin.Byte
+        ) -> Swift.Int32 {
+            this._unaryMinus()
+        }
         public func rangeTo(
             other: Swift.Int8
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeTo(
             other: Swift.Int16
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeTo(
             other: Swift.Int32
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeTo(
             other: Swift.Int64
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return { let _ref = kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other); return kotlin_ranges_longRange_getStart_long_KotlinStdlib(_ref) ... kotlin_ranges_longRange_getEndInclusive_long_KotlinStdlib(_ref) }()
         }
         public func rangeUntil(
             other: Swift.Int8
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeUntil(
             other: Swift.Int16
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeUntil(
             other: Swift.Int32
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeUntil(
             other: Swift.Int64
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return { let _ref = kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other); return kotlin_ranges_longRange_getStart_long_KotlinStdlib(_ref) ... kotlin_ranges_longRange_getEndInclusive_long_KotlinStdlib(_ref) }()
+        }
+        public override func toByte() -> Swift.Int8 {
+            return kotlin_Byte_toByte(self.__externalRCRef())
         }
         @available(*, deprecated, message: "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.. Replacement: this.toInt().toChar()")
         public override func toChar() -> Swift.Unicode.UTF16.CodeUnit {
@@ -664,7 +1194,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class Short: ExportedKotlinPackages.kotlin.Number {
@@ -698,11 +1228,40 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
             }
+        }
+        public func _compareTo(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Short_compareTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
         }
         public func _compareTo(
             other: Swift.Int16
@@ -733,51 +1292,513 @@ extension ExportedKotlinPackages.kotlin {
         ) -> Swift.Bool {
             this._compareTo(other: other) >= 0
         }
+        public func _compareTo(
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            return kotlin_Short_compareTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.Int64
+        ) -> Swift.Int32 {
+            return kotlin_Short_compareTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.Float
+        ) -> Swift.Int32 {
+            return kotlin_Short_compareTo__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Float
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Float
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Float
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Float
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.Double
+        ) -> Swift.Int32 {
+            return kotlin_Short_compareTo__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Double
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Double
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Double
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Double
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _plus(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Short_plus__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Short_plus__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            return kotlin_Short_plus__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            return kotlin_Short_plus__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Short_plus__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Short_plus__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._plus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Short_minus__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Short_minus__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            return kotlin_Short_minus__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            return kotlin_Short_minus__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Short_minus__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Short_minus__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._minus(other: other)
+        }
+        public func _times(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Short_times__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Short_times__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            return kotlin_Short_times__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            return kotlin_Short_times__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Short_times__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Short_times__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._times(other: other)
+        }
+        public func _div(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Short_div__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Short_div__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            return kotlin_Short_div__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            return kotlin_Short_div__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Short_div__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Short_div__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._div(other: other)
+        }
+        public func _rem(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Short_rem__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Short_rem__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            return kotlin_Short_rem__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            return kotlin_Short_rem__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Short_rem__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Short_rem__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Short,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._rem(other: other)
+        }
         public func inc() -> Swift.Int16 {
             return kotlin_Short_inc(self.__externalRCRef())
         }
         public func dec() -> Swift.Int16 {
             return kotlin_Short_dec(self.__externalRCRef())
         }
+        public func _unaryPlus() -> Swift.Int32 {
+            return kotlin_Short_unaryPlus(self.__externalRCRef())
+        }
+        public static prefix func +(
+            this: ExportedKotlinPackages.kotlin.Short
+        ) -> Swift.Int32 {
+            this._unaryPlus()
+        }
+        public func _unaryMinus() -> Swift.Int32 {
+            return kotlin_Short_unaryMinus(self.__externalRCRef())
+        }
+        public static prefix func -(
+            this: ExportedKotlinPackages.kotlin.Short
+        ) -> Swift.Int32 {
+            this._unaryMinus()
+        }
         public func rangeTo(
             other: Swift.Int8
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Short_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Short_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeTo(
             other: Swift.Int16
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Short_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Short_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeTo(
             other: Swift.Int32
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Short_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Short_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeTo(
             other: Swift.Int64
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Short_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return { let _ref = kotlin_Short_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other); return kotlin_ranges_longRange_getStart_long_KotlinStdlib(_ref) ... kotlin_ranges_longRange_getEndInclusive_long_KotlinStdlib(_ref) }()
         }
         public func rangeUntil(
             other: Swift.Int8
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeUntil(
             other: Swift.Int16
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeUntil(
             other: Swift.Int32
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeUntil(
             other: Swift.Int64
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return { let _ref = kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other); return kotlin_ranges_longRange_getStart_long_KotlinStdlib(_ref) ... kotlin_ranges_longRange_getEndInclusive_long_KotlinStdlib(_ref) }()
         }
         public override func toByte() -> Swift.Int8 {
             return kotlin_Short_toByte(self.__externalRCRef())
@@ -785,6 +1806,9 @@ extension ExportedKotlinPackages.kotlin {
         @available(*, deprecated, message: "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.. Replacement: this.toInt().toChar()")
         public override func toChar() -> Swift.Unicode.UTF16.CodeUnit {
             return kotlin_Short_toChar(self.__externalRCRef())
+        }
+        public override func toShort() -> Swift.Int16 {
+            return kotlin_Short_toShort(self.__externalRCRef())
         }
         public override func toInt() -> Swift.Int32 {
             return kotlin_Short_toInt(self.__externalRCRef())
@@ -819,7 +1843,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class Int: ExportedKotlinPackages.kotlin.Number {
@@ -853,11 +1877,69 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
             }
+        }
+        public func _compareTo(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Int_compareTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Int_compareTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
         }
         public func _compareTo(
             other: Swift.Int32
@@ -888,6 +1970,115 @@ extension ExportedKotlinPackages.kotlin {
         ) -> Swift.Bool {
             this._compareTo(other: other) >= 0
         }
+        public func _compareTo(
+            other: Swift.Int64
+        ) -> Swift.Int32 {
+            return kotlin_Int_compareTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.Float
+        ) -> Swift.Int32 {
+            return kotlin_Int_compareTo__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Float
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Float
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Float
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Float
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.Double
+        ) -> Swift.Int32 {
+            return kotlin_Int_compareTo__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Double
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Double
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Double
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Double
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _plus(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Int_plus__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Int_plus__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            this._plus(other: other)
+        }
         public func _plus(
             other: Swift.Int32
         ) -> Swift.Int32 {
@@ -898,6 +2089,61 @@ extension ExportedKotlinPackages.kotlin {
             other: Swift.Int32
         ) -> Swift.Int32 {
             this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            return kotlin_Int_plus__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Int_plus__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Int_plus__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._plus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Int_minus__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Int_minus__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            this._minus(other: other)
         }
         public func _minus(
             other: Swift.Int32
@@ -910,6 +2156,61 @@ extension ExportedKotlinPackages.kotlin {
         ) -> Swift.Int32 {
             this._minus(other: other)
         }
+        public func _minus(
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            return kotlin_Int_minus__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Int_minus__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Int_minus__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._minus(other: other)
+        }
+        public func _times(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Int_times__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Int_times__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            this._times(other: other)
+        }
         public func _times(
             other: Swift.Int32
         ) -> Swift.Int32 {
@@ -920,6 +2221,61 @@ extension ExportedKotlinPackages.kotlin {
             other: Swift.Int32
         ) -> Swift.Int32 {
             this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            return kotlin_Int_times__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Int_times__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Int_times__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._times(other: other)
+        }
+        public func _div(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Int_div__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Int_div__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            this._div(other: other)
         }
         public func _div(
             other: Swift.Int32
@@ -932,6 +2288,61 @@ extension ExportedKotlinPackages.kotlin {
         ) -> Swift.Int32 {
             this._div(other: other)
         }
+        public func _div(
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            return kotlin_Int_div__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Int_div__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Int_div__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._div(other: other)
+        }
+        public func _rem(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Int_rem__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Int_rem__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            this._rem(other: other)
+        }
         public func _rem(
             other: Swift.Int32
         ) -> Swift.Int32 {
@@ -941,6 +2352,39 @@ extension ExportedKotlinPackages.kotlin {
             this: ExportedKotlinPackages.kotlin.Int,
             other: Swift.Int32
         ) -> Swift.Int32 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            return kotlin_Int_rem__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Int64
+        ) -> Swift.Int64 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Int_rem__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Int_rem__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Int,
+            other: Swift.Double
+        ) -> Swift.Double {
             this._rem(other: other)
         }
         public func inc() -> Swift.Int32 {
@@ -967,43 +2411,43 @@ extension ExportedKotlinPackages.kotlin {
         }
         public func rangeTo(
             other: Swift.Int8
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Int_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Int_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeTo(
             other: Swift.Int16
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Int_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Int_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeTo(
             other: Swift.Int32
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Int_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Int_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeTo(
             other: Swift.Int64
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Int_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return { let _ref = kotlin_Int_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other); return kotlin_ranges_longRange_getStart_long_KotlinStdlib(_ref) ... kotlin_ranges_longRange_getEndInclusive_long_KotlinStdlib(_ref) }()
         }
         public func rangeUntil(
             other: Swift.Int8
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeUntil(
             other: Swift.Int16
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeUntil(
             other: Swift.Int32
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return { let _ref = kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other); return kotlin_ranges_intRange_getStart_int_KotlinStdlib(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(_ref) }()
         }
         public func rangeUntil(
             other: Swift.Int64
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return { let _ref = kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other); return kotlin_ranges_longRange_getStart_long_KotlinStdlib(_ref) ... kotlin_ranges_longRange_getEndInclusive_long_KotlinStdlib(_ref) }()
         }
         public func shl(
             bitCount: Swift.Int32
@@ -1047,6 +2491,9 @@ extension ExportedKotlinPackages.kotlin {
         public override func toShort() -> Swift.Int16 {
             return kotlin_Int_toShort(self.__externalRCRef())
         }
+        public override func toInt() -> Swift.Int32 {
+            return kotlin_Int_toInt(self.__externalRCRef())
+        }
         public override func toLong() -> Swift.Int64 {
             return kotlin_Int_toLong(self.__externalRCRef())
         }
@@ -1077,7 +2524,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class Long: ExportedKotlinPackages.kotlin.Number {
@@ -1111,11 +2558,98 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
             }
+        }
+        public func _compareTo(
+            other: Swift.Int8
+        ) -> Swift.Int32 {
+            return kotlin_Long_compareTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.Int16
+        ) -> Swift.Int32 {
+            return kotlin_Long_compareTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.Int32
+        ) -> Swift.Int32 {
+            return kotlin_Long_compareTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
         }
         public func _compareTo(
             other: Swift.Int64
@@ -1146,6 +2680,97 @@ extension ExportedKotlinPackages.kotlin {
         ) -> Swift.Bool {
             this._compareTo(other: other) >= 0
         }
+        public func _compareTo(
+            other: Swift.Float
+        ) -> Swift.Int32 {
+            return kotlin_Long_compareTo__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Float
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Float
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Float
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Float
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.Double
+        ) -> Swift.Int32 {
+            return kotlin_Long_compareTo__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Double
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Double
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Double
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Double
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _plus(
+            other: Swift.Int8
+        ) -> Swift.Int64 {
+            return kotlin_Long_plus__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int8
+        ) -> Swift.Int64 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int16
+        ) -> Swift.Int64 {
+            return kotlin_Long_plus__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int16
+        ) -> Swift.Int64 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int32
+        ) -> Swift.Int64 {
+            return kotlin_Long_plus__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int32
+        ) -> Swift.Int64 {
+            this._plus(other: other)
+        }
         public func _plus(
             other: Swift.Int64
         ) -> Swift.Int64 {
@@ -1156,6 +2781,61 @@ extension ExportedKotlinPackages.kotlin {
             other: Swift.Int64
         ) -> Swift.Int64 {
             this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Long_plus__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Long_plus__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._plus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int8
+        ) -> Swift.Int64 {
+            return kotlin_Long_minus__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int8
+        ) -> Swift.Int64 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int16
+        ) -> Swift.Int64 {
+            return kotlin_Long_minus__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int16
+        ) -> Swift.Int64 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int32
+        ) -> Swift.Int64 {
+            return kotlin_Long_minus__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int32
+        ) -> Swift.Int64 {
+            this._minus(other: other)
         }
         public func _minus(
             other: Swift.Int64
@@ -1168,6 +2848,61 @@ extension ExportedKotlinPackages.kotlin {
         ) -> Swift.Int64 {
             this._minus(other: other)
         }
+        public func _minus(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Long_minus__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Long_minus__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._minus(other: other)
+        }
+        public func _times(
+            other: Swift.Int8
+        ) -> Swift.Int64 {
+            return kotlin_Long_times__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int8
+        ) -> Swift.Int64 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Int16
+        ) -> Swift.Int64 {
+            return kotlin_Long_times__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int16
+        ) -> Swift.Int64 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Int32
+        ) -> Swift.Int64 {
+            return kotlin_Long_times__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int32
+        ) -> Swift.Int64 {
+            this._times(other: other)
+        }
         public func _times(
             other: Swift.Int64
         ) -> Swift.Int64 {
@@ -1178,6 +2913,61 @@ extension ExportedKotlinPackages.kotlin {
             other: Swift.Int64
         ) -> Swift.Int64 {
             this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Long_times__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Long_times__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._times(other: other)
+        }
+        public func _div(
+            other: Swift.Int8
+        ) -> Swift.Int64 {
+            return kotlin_Long_div__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int8
+        ) -> Swift.Int64 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Int16
+        ) -> Swift.Int64 {
+            return kotlin_Long_div__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int16
+        ) -> Swift.Int64 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Int32
+        ) -> Swift.Int64 {
+            return kotlin_Long_div__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int32
+        ) -> Swift.Int64 {
+            this._div(other: other)
         }
         public func _div(
             other: Swift.Int64
@@ -1190,6 +2980,61 @@ extension ExportedKotlinPackages.kotlin {
         ) -> Swift.Int64 {
             this._div(other: other)
         }
+        public func _div(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Long_div__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Long_div__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._div(other: other)
+        }
+        public func _rem(
+            other: Swift.Int8
+        ) -> Swift.Int64 {
+            return kotlin_Long_rem__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int8
+        ) -> Swift.Int64 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Int16
+        ) -> Swift.Int64 {
+            return kotlin_Long_rem__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int16
+        ) -> Swift.Int64 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Int32
+        ) -> Swift.Int64 {
+            return kotlin_Long_rem__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Int32
+        ) -> Swift.Int64 {
+            this._rem(other: other)
+        }
         public func _rem(
             other: Swift.Int64
         ) -> Swift.Int64 {
@@ -1201,11 +3046,41 @@ extension ExportedKotlinPackages.kotlin {
         ) -> Swift.Int64 {
             this._rem(other: other)
         }
+        public func _rem(
+            other: Swift.Float
+        ) -> Swift.Float {
+            return kotlin_Long_rem__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Float
+        ) -> Swift.Float {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Long_rem__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Long,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._rem(other: other)
+        }
         public func inc() -> Swift.Int64 {
             return kotlin_Long_inc(self.__externalRCRef())
         }
         public func dec() -> Swift.Int64 {
             return kotlin_Long_dec(self.__externalRCRef())
+        }
+        public func _unaryPlus() -> Swift.Int64 {
+            return kotlin_Long_unaryPlus(self.__externalRCRef())
+        }
+        public static prefix func +(
+            this: ExportedKotlinPackages.kotlin.Long
+        ) -> Swift.Int64 {
+            this._unaryPlus()
         }
         public func _unaryMinus() -> Swift.Int64 {
             return kotlin_Long_unaryMinus(self.__externalRCRef())
@@ -1217,43 +3092,43 @@ extension ExportedKotlinPackages.kotlin {
         }
         public func rangeTo(
             other: Swift.Int8
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Long_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return { let _ref = kotlin_Long_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other); return kotlin_ranges_longRange_getStart_long_KotlinStdlib(_ref) ... kotlin_ranges_longRange_getEndInclusive_long_KotlinStdlib(_ref) }()
         }
         public func rangeTo(
             other: Swift.Int16
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Long_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return { let _ref = kotlin_Long_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other); return kotlin_ranges_longRange_getStart_long_KotlinStdlib(_ref) ... kotlin_ranges_longRange_getEndInclusive_long_KotlinStdlib(_ref) }()
         }
         public func rangeTo(
             other: Swift.Int32
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Long_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return { let _ref = kotlin_Long_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other); return kotlin_ranges_longRange_getStart_long_KotlinStdlib(_ref) ... kotlin_ranges_longRange_getEndInclusive_long_KotlinStdlib(_ref) }()
         }
         public func rangeTo(
             other: Swift.Int64
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Long_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return { let _ref = kotlin_Long_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other); return kotlin_ranges_longRange_getStart_long_KotlinStdlib(_ref) ... kotlin_ranges_longRange_getEndInclusive_long_KotlinStdlib(_ref) }()
         }
         public func rangeUntil(
             other: Swift.Int8
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return { let _ref = kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other); return kotlin_ranges_longRange_getStart_long_KotlinStdlib(_ref) ... kotlin_ranges_longRange_getEndInclusive_long_KotlinStdlib(_ref) }()
         }
         public func rangeUntil(
             other: Swift.Int16
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return { let _ref = kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other); return kotlin_ranges_longRange_getStart_long_KotlinStdlib(_ref) ... kotlin_ranges_longRange_getEndInclusive_long_KotlinStdlib(_ref) }()
         }
         public func rangeUntil(
             other: Swift.Int32
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return { let _ref = kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other); return kotlin_ranges_longRange_getStart_long_KotlinStdlib(_ref) ... kotlin_ranges_longRange_getEndInclusive_long_KotlinStdlib(_ref) }()
         }
         public func rangeUntil(
             other: Swift.Int64
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return { let _ref = kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other); return kotlin_ranges_longRange_getStart_long_KotlinStdlib(_ref) ... kotlin_ranges_longRange_getEndInclusive_long_KotlinStdlib(_ref) }()
         }
         public func shl(
             bitCount: Swift.Int32
@@ -1301,6 +3176,9 @@ extension ExportedKotlinPackages.kotlin {
         public override func toInt() -> Swift.Int32 {
             return kotlin_Long_toInt(self.__externalRCRef())
         }
+        public override func toLong() -> Swift.Int64 {
+            return kotlin_Long_toLong(self.__externalRCRef())
+        }
         public override func toFloat() -> Swift.Float {
             return kotlin_Long_toFloat(self.__externalRCRef())
         }
@@ -1328,7 +3206,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class Float: ExportedKotlinPackages.kotlin.Number {
@@ -1377,7 +3255,7 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -1558,6 +3436,50 @@ extension ExportedKotlinPackages.kotlin {
             this._compareTo(other: other) >= 0
         }
         public func _plus(
+            other: Swift.Int8
+        ) -> Swift.Float {
+            return kotlin_Float_plus__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int8
+        ) -> Swift.Float {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int16
+        ) -> Swift.Float {
+            return kotlin_Float_plus__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int16
+        ) -> Swift.Float {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int32
+        ) -> Swift.Float {
+            return kotlin_Float_plus__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int32
+        ) -> Swift.Float {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int64
+        ) -> Swift.Float {
+            return kotlin_Float_plus__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int64
+        ) -> Swift.Float {
+            this._plus(other: other)
+        }
+        public func _plus(
             other: Swift.Float
         ) -> Swift.Float {
             return kotlin_Float_plus__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
@@ -1567,6 +3489,61 @@ extension ExportedKotlinPackages.kotlin {
             other: Swift.Float
         ) -> Swift.Float {
             this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Float_plus__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._plus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int8
+        ) -> Swift.Float {
+            return kotlin_Float_minus__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int8
+        ) -> Swift.Float {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int16
+        ) -> Swift.Float {
+            return kotlin_Float_minus__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int16
+        ) -> Swift.Float {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int32
+        ) -> Swift.Float {
+            return kotlin_Float_minus__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int32
+        ) -> Swift.Float {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int64
+        ) -> Swift.Float {
+            return kotlin_Float_minus__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int64
+        ) -> Swift.Float {
+            this._minus(other: other)
         }
         public func _minus(
             other: Swift.Float
@@ -1579,6 +3556,61 @@ extension ExportedKotlinPackages.kotlin {
         ) -> Swift.Float {
             this._minus(other: other)
         }
+        public func _minus(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Float_minus__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._minus(other: other)
+        }
+        public func _times(
+            other: Swift.Int8
+        ) -> Swift.Float {
+            return kotlin_Float_times__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int8
+        ) -> Swift.Float {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Int16
+        ) -> Swift.Float {
+            return kotlin_Float_times__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int16
+        ) -> Swift.Float {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Int32
+        ) -> Swift.Float {
+            return kotlin_Float_times__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int32
+        ) -> Swift.Float {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Int64
+        ) -> Swift.Float {
+            return kotlin_Float_times__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int64
+        ) -> Swift.Float {
+            this._times(other: other)
+        }
         public func _times(
             other: Swift.Float
         ) -> Swift.Float {
@@ -1589,6 +3621,61 @@ extension ExportedKotlinPackages.kotlin {
             other: Swift.Float
         ) -> Swift.Float {
             this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Float_times__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._times(other: other)
+        }
+        public func _div(
+            other: Swift.Int8
+        ) -> Swift.Float {
+            return kotlin_Float_div__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int8
+        ) -> Swift.Float {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Int16
+        ) -> Swift.Float {
+            return kotlin_Float_div__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int16
+        ) -> Swift.Float {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Int32
+        ) -> Swift.Float {
+            return kotlin_Float_div__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int32
+        ) -> Swift.Float {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Int64
+        ) -> Swift.Float {
+            return kotlin_Float_div__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int64
+        ) -> Swift.Float {
+            this._div(other: other)
         }
         public func _div(
             other: Swift.Float
@@ -1601,6 +3688,61 @@ extension ExportedKotlinPackages.kotlin {
         ) -> Swift.Float {
             this._div(other: other)
         }
+        public func _div(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Float_div__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Double
+        ) -> Swift.Double {
+            this._div(other: other)
+        }
+        public func _rem(
+            other: Swift.Int8
+        ) -> Swift.Float {
+            return kotlin_Float_rem__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int8
+        ) -> Swift.Float {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Int16
+        ) -> Swift.Float {
+            return kotlin_Float_rem__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int16
+        ) -> Swift.Float {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Int32
+        ) -> Swift.Float {
+            return kotlin_Float_rem__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int32
+        ) -> Swift.Float {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Int64
+        ) -> Swift.Float {
+            return kotlin_Float_rem__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Int64
+        ) -> Swift.Float {
+            this._rem(other: other)
+        }
         public func _rem(
             other: Swift.Float
         ) -> Swift.Float {
@@ -1610,6 +3752,17 @@ extension ExportedKotlinPackages.kotlin {
             this: ExportedKotlinPackages.kotlin.Float,
             other: Swift.Float
         ) -> Swift.Float {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Double
+        ) -> Swift.Double {
+            return kotlin_Float_rem__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Float,
+            other: Swift.Double
+        ) -> Swift.Double {
             this._rem(other: other)
         }
         public func inc() -> Swift.Float {
@@ -1652,6 +3805,9 @@ extension ExportedKotlinPackages.kotlin {
         public override func toLong() -> Swift.Int64 {
             return kotlin_Float_toLong(self.__externalRCRef())
         }
+        public override func toFloat() -> Swift.Float {
+            return kotlin_Float_toFloat(self.__externalRCRef())
+        }
         public override func toDouble() -> Swift.Double {
             return kotlin_Float_toDouble(self.__externalRCRef())
         }
@@ -1676,7 +3832,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class Double: ExportedKotlinPackages.kotlin.Number {
@@ -1725,7 +3881,7 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -1906,6 +4062,61 @@ extension ExportedKotlinPackages.kotlin {
             this._compareTo(other: other) >= 0
         }
         public func _plus(
+            other: Swift.Int8
+        ) -> Swift.Double {
+            return kotlin_Double_plus__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int8
+        ) -> Swift.Double {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int16
+        ) -> Swift.Double {
+            return kotlin_Double_plus__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int16
+        ) -> Swift.Double {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int32
+        ) -> Swift.Double {
+            return kotlin_Double_plus__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int32
+        ) -> Swift.Double {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int64
+        ) -> Swift.Double {
+            return kotlin_Double_plus__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int64
+        ) -> Swift.Double {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Float
+        ) -> Swift.Double {
+            return kotlin_Double_plus__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Float
+        ) -> Swift.Double {
+            this._plus(other: other)
+        }
+        public func _plus(
             other: Swift.Double
         ) -> Swift.Double {
             return kotlin_Double_plus__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
@@ -1915,6 +4126,61 @@ extension ExportedKotlinPackages.kotlin {
             other: Swift.Double
         ) -> Swift.Double {
             this._plus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int8
+        ) -> Swift.Double {
+            return kotlin_Double_minus__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int8
+        ) -> Swift.Double {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int16
+        ) -> Swift.Double {
+            return kotlin_Double_minus__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int16
+        ) -> Swift.Double {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int32
+        ) -> Swift.Double {
+            return kotlin_Double_minus__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int32
+        ) -> Swift.Double {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Int64
+        ) -> Swift.Double {
+            return kotlin_Double_minus__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int64
+        ) -> Swift.Double {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.Float
+        ) -> Swift.Double {
+            return kotlin_Double_minus__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Float
+        ) -> Swift.Double {
+            this._minus(other: other)
         }
         public func _minus(
             other: Swift.Double
@@ -1928,6 +4194,61 @@ extension ExportedKotlinPackages.kotlin {
             this._minus(other: other)
         }
         public func _times(
+            other: Swift.Int8
+        ) -> Swift.Double {
+            return kotlin_Double_times__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int8
+        ) -> Swift.Double {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Int16
+        ) -> Swift.Double {
+            return kotlin_Double_times__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int16
+        ) -> Swift.Double {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Int32
+        ) -> Swift.Double {
+            return kotlin_Double_times__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int32
+        ) -> Swift.Double {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Int64
+        ) -> Swift.Double {
+            return kotlin_Double_times__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int64
+        ) -> Swift.Double {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.Float
+        ) -> Swift.Double {
+            return kotlin_Double_times__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Float
+        ) -> Swift.Double {
+            this._times(other: other)
+        }
+        public func _times(
             other: Swift.Double
         ) -> Swift.Double {
             return kotlin_Double_times__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
@@ -1939,6 +4260,61 @@ extension ExportedKotlinPackages.kotlin {
             this._times(other: other)
         }
         public func _div(
+            other: Swift.Int8
+        ) -> Swift.Double {
+            return kotlin_Double_div__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int8
+        ) -> Swift.Double {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Int16
+        ) -> Swift.Double {
+            return kotlin_Double_div__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int16
+        ) -> Swift.Double {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Int32
+        ) -> Swift.Double {
+            return kotlin_Double_div__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int32
+        ) -> Swift.Double {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Int64
+        ) -> Swift.Double {
+            return kotlin_Double_div__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int64
+        ) -> Swift.Double {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.Float
+        ) -> Swift.Double {
+            return kotlin_Double_div__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Float
+        ) -> Swift.Double {
+            this._div(other: other)
+        }
+        public func _div(
             other: Swift.Double
         ) -> Swift.Double {
             return kotlin_Double_div__TypesOfArguments__Swift_Double__(self.__externalRCRef(), other)
@@ -1948,6 +4324,61 @@ extension ExportedKotlinPackages.kotlin {
             other: Swift.Double
         ) -> Swift.Double {
             this._div(other: other)
+        }
+        public func _rem(
+            other: Swift.Int8
+        ) -> Swift.Double {
+            return kotlin_Double_rem__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int8
+        ) -> Swift.Double {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Int16
+        ) -> Swift.Double {
+            return kotlin_Double_rem__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int16
+        ) -> Swift.Double {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Int32
+        ) -> Swift.Double {
+            return kotlin_Double_rem__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int32
+        ) -> Swift.Double {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Int64
+        ) -> Swift.Double {
+            return kotlin_Double_rem__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Int64
+        ) -> Swift.Double {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.Float
+        ) -> Swift.Double {
+            return kotlin_Double_rem__TypesOfArguments__Swift_Float__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.Double,
+            other: Swift.Float
+        ) -> Swift.Double {
+            this._rem(other: other)
         }
         public func _rem(
             other: Swift.Double
@@ -2003,6 +4434,9 @@ extension ExportedKotlinPackages.kotlin {
         public override func toFloat() -> Swift.Float {
             return kotlin_Double_toFloat(self.__externalRCRef())
         }
+        public override func toDouble() -> Swift.Double {
+            return kotlin_Double_toDouble(self.__externalRCRef())
+        }
         public func toString() -> Swift.String {
             return kotlin_Double_toString(self.__externalRCRef())
         }
@@ -2024,7 +4458,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class String: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin._CharSequence {
@@ -2038,7 +4472,7 @@ extension ExportedKotlinPackages.kotlin {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -2120,14 +4554,14 @@ extension ExportedKotlinPackages.kotlin {
         public init() {
             if Self.self != ExportedKotlinPackages.kotlin.String.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.String ") }
             let __kt = kotlin_String_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_String_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_String_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public subscript(
             index: Swift.Int32
@@ -2152,7 +4586,7 @@ extension ExportedKotlinPackages.kotlin {
             return ExportedKotlinPackages.kotlin.Array.__createClassWrapper(externalRCRef: kotlin_Throwable_getStackTrace(self.__externalRCRef()))
         }
         public final func printStackTrace() -> Swift.Void {
-            return kotlin_Throwable_printStackTrace(self.__externalRCRef())
+            return { kotlin_Throwable_printStackTrace(self.__externalRCRef()); return () }()
         }
         open func toString() -> Swift.String {
             return kotlin_Throwable_toString(self.__externalRCRef())
@@ -2163,36 +4597,2060 @@ extension ExportedKotlinPackages.kotlin {
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.Throwable.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Throwable ") }
             let __kt = kotlin_Throwable_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public init(
             message: Swift.String?
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.Throwable.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Throwable ") }
             let __kt = kotlin_Throwable_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil); return () }()
         }
         public init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.Throwable.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Throwable ") }
             let __kt = kotlin_Throwable_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public init() {
             if Self.self != ExportedKotlinPackages.kotlin.Throwable.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.Throwable ") }
             let __kt = kotlin_Throwable_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+    public final class UByte: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
+            public var MIN_VALUE: Swift.UInt8 {
+                get {
+                    return kotlin_UByte_Companion_MIN_VALUE_get(self.__externalRCRef())
+                }
+            }
+            public var MAX_VALUE: Swift.UInt8 {
+                get {
+                    return kotlin_UByte_Companion_MAX_VALUE_get(self.__externalRCRef())
+                }
+            }
+            public var SIZE_BYTES: Swift.Int32 {
+                get {
+                    return kotlin_UByte_Companion_SIZE_BYTES_get(self.__externalRCRef())
+                }
+            }
+            public var SIZE_BITS: Swift.Int32 {
+                get {
+                    return kotlin_UByte_Companion_SIZE_BITS_get(self.__externalRCRef())
+                }
+            }
+            public static var shared: ExportedKotlinPackages.kotlin.UByte.Companion {
+                get {
+                    return ExportedKotlinPackages.kotlin.UByte.Companion.__createClassWrapper(externalRCRef: kotlin_UByte_Companion_get())
+                }
+            }
+            package override init(
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                options: KotlinRuntime.KotlinBaseConstructionOptions
+            ) {
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+            }
+            private init() {
+                fatalError()
+            }
+        }
+        public func _compareTo(
+            other: Swift.UInt8
+        ) -> Swift.Int32 {
+            return kotlin_UByte_compareTo__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.UInt16
+        ) -> Swift.Int32 {
+            return kotlin_UByte_compareTo__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.UInt32
+        ) -> Swift.Int32 {
+            return kotlin_UByte_compareTo__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.UInt64
+        ) -> Swift.Int32 {
+            return kotlin_UByte_compareTo__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _plus(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_plus__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_plus__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_plus__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UByte_plus__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._plus(other: other)
+        }
+        public func _minus(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_minus__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_minus__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_minus__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UByte_minus__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._minus(other: other)
+        }
+        public func _times(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_times__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_times__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_times__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UByte_times__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._times(other: other)
+        }
+        public func _div(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_div__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_div__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_div__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UByte_div__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._div(other: other)
+        }
+        public func _rem(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_rem__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_rem__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_rem__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UByte_rem__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._rem(other: other)
+        }
+        public func floorDiv(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_floorDiv__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public func floorDiv(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_floorDiv__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public func floorDiv(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_floorDiv__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public func floorDiv(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UByte_floorDiv__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public func mod(
+            other: Swift.UInt8
+        ) -> Swift.UInt8 {
+            return kotlin_UByte_mod__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public func mod(
+            other: Swift.UInt16
+        ) -> Swift.UInt16 {
+            return kotlin_UByte_mod__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public func mod(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UByte_mod__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public func mod(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UByte_mod__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public func inc() -> Swift.UInt8 {
+            return kotlin_UByte_inc(self.__externalRCRef())
+        }
+        public func dec() -> Swift.UInt8 {
+            return kotlin_UByte_dec(self.__externalRCRef())
+        }
+        public func rangeTo(
+            other: Swift.UInt8
+        ) -> ExportedKotlinPackages.kotlin.ranges.UIntRange {
+            return ExportedKotlinPackages.kotlin.ranges.UIntRange.__createClassWrapper(externalRCRef: kotlin_UByte_rangeTo__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other))
+        }
+        public func rangeUntil(
+            other: Swift.UInt8
+        ) -> ExportedKotlinPackages.kotlin.ranges.UIntRange {
+            return ExportedKotlinPackages.kotlin.ranges.UIntRange.__createClassWrapper(externalRCRef: kotlin_UByte_rangeUntil__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other))
+        }
+        public func and(
+            other: Swift.UInt8
+        ) -> Swift.UInt8 {
+            return kotlin_UByte_and__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public func or(
+            other: Swift.UInt8
+        ) -> Swift.UInt8 {
+            return kotlin_UByte_or__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public func xor(
+            other: Swift.UInt8
+        ) -> Swift.UInt8 {
+            return kotlin_UByte_xor__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public func inv() -> Swift.UInt8 {
+            return kotlin_UByte_inv(self.__externalRCRef())
+        }
+        public func toByte() -> Swift.Int8 {
+            return kotlin_UByte_toByte(self.__externalRCRef())
+        }
+        public func toShort() -> Swift.Int16 {
+            return kotlin_UByte_toShort(self.__externalRCRef())
+        }
+        public func toInt() -> Swift.Int32 {
+            return kotlin_UByte_toInt(self.__externalRCRef())
+        }
+        public func toLong() -> Swift.Int64 {
+            return kotlin_UByte_toLong(self.__externalRCRef())
+        }
+        public func toUByte() -> Swift.UInt8 {
+            return kotlin_UByte_toUByte(self.__externalRCRef())
+        }
+        public func toUShort() -> Swift.UInt16 {
+            return kotlin_UByte_toUShort(self.__externalRCRef())
+        }
+        public func toUInt() -> Swift.UInt32 {
+            return kotlin_UByte_toUInt(self.__externalRCRef())
+        }
+        public func toULong() -> Swift.UInt64 {
+            return kotlin_UByte_toULong(self.__externalRCRef())
+        }
+        public func toFloat() -> Swift.Float {
+            return kotlin_UByte_toFloat(self.__externalRCRef())
+        }
+        public func toDouble() -> Swift.Double {
+            return kotlin_UByte_toDouble(self.__externalRCRef())
+        }
+        public func toString() -> Swift.String {
+            return kotlin_UByte_toString(self.__externalRCRef())
+        }
+        public func equals(
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            return kotlin_UByte_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        }
+        public static func ==(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            this.equals(other: other)
+        }
+        public func hashCode() -> Swift.Int32 {
+            return kotlin_UByte_hashCode(self.__externalRCRef())
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+    public final class UInt: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
+            public var MIN_VALUE: Swift.UInt32 {
+                get {
+                    return kotlin_UInt_Companion_MIN_VALUE_get(self.__externalRCRef())
+                }
+            }
+            public var MAX_VALUE: Swift.UInt32 {
+                get {
+                    return kotlin_UInt_Companion_MAX_VALUE_get(self.__externalRCRef())
+                }
+            }
+            public var SIZE_BYTES: Swift.Int32 {
+                get {
+                    return kotlin_UInt_Companion_SIZE_BYTES_get(self.__externalRCRef())
+                }
+            }
+            public var SIZE_BITS: Swift.Int32 {
+                get {
+                    return kotlin_UInt_Companion_SIZE_BITS_get(self.__externalRCRef())
+                }
+            }
+            public static var shared: ExportedKotlinPackages.kotlin.UInt.Companion {
+                get {
+                    return ExportedKotlinPackages.kotlin.UInt.Companion.__createClassWrapper(externalRCRef: kotlin_UInt_Companion_get())
+                }
+            }
+            package override init(
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                options: KotlinRuntime.KotlinBaseConstructionOptions
+            ) {
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+            }
+            private init() {
+                fatalError()
+            }
+        }
+        public func _compareTo(
+            other: Swift.UInt8
+        ) -> Swift.Int32 {
+            return kotlin_UInt_compareTo__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.UInt16
+        ) -> Swift.Int32 {
+            return kotlin_UInt_compareTo__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.UInt32
+        ) -> Swift.Int32 {
+            return kotlin_UInt_compareTo__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.UInt64
+        ) -> Swift.Int32 {
+            return kotlin_UInt_compareTo__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _plus(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_plus__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_plus__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_plus__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UInt_plus__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._plus(other: other)
+        }
+        public func _minus(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_minus__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_minus__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_minus__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UInt_minus__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._minus(other: other)
+        }
+        public func _times(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_times__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_times__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_times__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UInt_times__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._times(other: other)
+        }
+        public func _div(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_div__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_div__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_div__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UInt_div__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._div(other: other)
+        }
+        public func _rem(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_rem__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_rem__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_rem__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UInt_rem__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._rem(other: other)
+        }
+        public func floorDiv(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_floorDiv__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public func floorDiv(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_floorDiv__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public func floorDiv(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_floorDiv__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public func floorDiv(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UInt_floorDiv__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public func mod(
+            other: Swift.UInt8
+        ) -> Swift.UInt8 {
+            return kotlin_UInt_mod__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public func mod(
+            other: Swift.UInt16
+        ) -> Swift.UInt16 {
+            return kotlin_UInt_mod__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public func mod(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_mod__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public func mod(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UInt_mod__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public func inc() -> Swift.UInt32 {
+            return kotlin_UInt_inc(self.__externalRCRef())
+        }
+        public func dec() -> Swift.UInt32 {
+            return kotlin_UInt_dec(self.__externalRCRef())
+        }
+        public func rangeTo(
+            other: Swift.UInt32
+        ) -> ExportedKotlinPackages.kotlin.ranges.UIntRange {
+            return ExportedKotlinPackages.kotlin.ranges.UIntRange.__createClassWrapper(externalRCRef: kotlin_UInt_rangeTo__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other))
+        }
+        public func rangeUntil(
+            other: Swift.UInt32
+        ) -> ExportedKotlinPackages.kotlin.ranges.UIntRange {
+            return ExportedKotlinPackages.kotlin.ranges.UIntRange.__createClassWrapper(externalRCRef: kotlin_UInt_rangeUntil__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other))
+        }
+        public func shl(
+            bitCount: Swift.Int32
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_shl__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), bitCount)
+        }
+        public func shr(
+            bitCount: Swift.Int32
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_shr__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), bitCount)
+        }
+        public func and(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_and__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public func or(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_or__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public func xor(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UInt_xor__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public func inv() -> Swift.UInt32 {
+            return kotlin_UInt_inv(self.__externalRCRef())
+        }
+        public func toByte() -> Swift.Int8 {
+            return kotlin_UInt_toByte(self.__externalRCRef())
+        }
+        public func toShort() -> Swift.Int16 {
+            return kotlin_UInt_toShort(self.__externalRCRef())
+        }
+        public func toInt() -> Swift.Int32 {
+            return kotlin_UInt_toInt(self.__externalRCRef())
+        }
+        public func toLong() -> Swift.Int64 {
+            return kotlin_UInt_toLong(self.__externalRCRef())
+        }
+        public func toUByte() -> Swift.UInt8 {
+            return kotlin_UInt_toUByte(self.__externalRCRef())
+        }
+        public func toUShort() -> Swift.UInt16 {
+            return kotlin_UInt_toUShort(self.__externalRCRef())
+        }
+        public func toUInt() -> Swift.UInt32 {
+            return kotlin_UInt_toUInt(self.__externalRCRef())
+        }
+        public func toULong() -> Swift.UInt64 {
+            return kotlin_UInt_toULong(self.__externalRCRef())
+        }
+        public func toFloat() -> Swift.Float {
+            return kotlin_UInt_toFloat(self.__externalRCRef())
+        }
+        public func toDouble() -> Swift.Double {
+            return kotlin_UInt_toDouble(self.__externalRCRef())
+        }
+        public func toString() -> Swift.String {
+            return kotlin_UInt_toString(self.__externalRCRef())
+        }
+        public func equals(
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            return kotlin_UInt_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        }
+        public static func ==(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            this.equals(other: other)
+        }
+        public func hashCode() -> Swift.Int32 {
+            return kotlin_UInt_hashCode(self.__externalRCRef())
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+    public final class ULong: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
+            public var MIN_VALUE: Swift.UInt64 {
+                get {
+                    return kotlin_ULong_Companion_MIN_VALUE_get(self.__externalRCRef())
+                }
+            }
+            public var MAX_VALUE: Swift.UInt64 {
+                get {
+                    return kotlin_ULong_Companion_MAX_VALUE_get(self.__externalRCRef())
+                }
+            }
+            public var SIZE_BYTES: Swift.Int32 {
+                get {
+                    return kotlin_ULong_Companion_SIZE_BYTES_get(self.__externalRCRef())
+                }
+            }
+            public var SIZE_BITS: Swift.Int32 {
+                get {
+                    return kotlin_ULong_Companion_SIZE_BITS_get(self.__externalRCRef())
+                }
+            }
+            public static var shared: ExportedKotlinPackages.kotlin.ULong.Companion {
+                get {
+                    return ExportedKotlinPackages.kotlin.ULong.Companion.__createClassWrapper(externalRCRef: kotlin_ULong_Companion_get())
+                }
+            }
+            package override init(
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                options: KotlinRuntime.KotlinBaseConstructionOptions
+            ) {
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+            }
+            private init() {
+                fatalError()
+            }
+        }
+        public func _compareTo(
+            other: Swift.UInt8
+        ) -> Swift.Int32 {
+            return kotlin_ULong_compareTo__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.UInt16
+        ) -> Swift.Int32 {
+            return kotlin_ULong_compareTo__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.UInt32
+        ) -> Swift.Int32 {
+            return kotlin_ULong_compareTo__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.UInt64
+        ) -> Swift.Int32 {
+            return kotlin_ULong_compareTo__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _plus(
+            other: Swift.UInt8
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_plus__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt8
+        ) -> Swift.UInt64 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.UInt16
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_plus__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt16
+        ) -> Swift.UInt64 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.UInt32
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_plus__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt32
+        ) -> Swift.UInt64 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_plus__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._plus(other: other)
+        }
+        public func _minus(
+            other: Swift.UInt8
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_minus__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt8
+        ) -> Swift.UInt64 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.UInt16
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_minus__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt16
+        ) -> Swift.UInt64 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.UInt32
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_minus__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt32
+        ) -> Swift.UInt64 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_minus__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._minus(other: other)
+        }
+        public func _times(
+            other: Swift.UInt8
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_times__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt8
+        ) -> Swift.UInt64 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.UInt16
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_times__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt16
+        ) -> Swift.UInt64 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.UInt32
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_times__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt32
+        ) -> Swift.UInt64 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_times__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._times(other: other)
+        }
+        public func _div(
+            other: Swift.UInt8
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_div__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt8
+        ) -> Swift.UInt64 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.UInt16
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_div__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt16
+        ) -> Swift.UInt64 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.UInt32
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_div__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt32
+        ) -> Swift.UInt64 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_div__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._div(other: other)
+        }
+        public func _rem(
+            other: Swift.UInt8
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_rem__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt8
+        ) -> Swift.UInt64 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.UInt16
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_rem__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt16
+        ) -> Swift.UInt64 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.UInt32
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_rem__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt32
+        ) -> Swift.UInt64 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_rem__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._rem(other: other)
+        }
+        public func floorDiv(
+            other: Swift.UInt8
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_floorDiv__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public func floorDiv(
+            other: Swift.UInt16
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_floorDiv__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public func floorDiv(
+            other: Swift.UInt32
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_floorDiv__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public func floorDiv(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_floorDiv__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public func mod(
+            other: Swift.UInt8
+        ) -> Swift.UInt8 {
+            return kotlin_ULong_mod__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public func mod(
+            other: Swift.UInt16
+        ) -> Swift.UInt16 {
+            return kotlin_ULong_mod__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public func mod(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_ULong_mod__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public func mod(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_mod__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public func inc() -> Swift.UInt64 {
+            return kotlin_ULong_inc(self.__externalRCRef())
+        }
+        public func dec() -> Swift.UInt64 {
+            return kotlin_ULong_dec(self.__externalRCRef())
+        }
+        public func rangeTo(
+            other: Swift.UInt64
+        ) -> ExportedKotlinPackages.kotlin.ranges.ULongRange {
+            return ExportedKotlinPackages.kotlin.ranges.ULongRange.__createClassWrapper(externalRCRef: kotlin_ULong_rangeTo__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other))
+        }
+        public func rangeUntil(
+            other: Swift.UInt64
+        ) -> ExportedKotlinPackages.kotlin.ranges.ULongRange {
+            return ExportedKotlinPackages.kotlin.ranges.ULongRange.__createClassWrapper(externalRCRef: kotlin_ULong_rangeUntil__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other))
+        }
+        public func shl(
+            bitCount: Swift.Int32
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_shl__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), bitCount)
+        }
+        public func shr(
+            bitCount: Swift.Int32
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_shr__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), bitCount)
+        }
+        public func and(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_and__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public func or(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_or__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public func xor(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_ULong_xor__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public func inv() -> Swift.UInt64 {
+            return kotlin_ULong_inv(self.__externalRCRef())
+        }
+        public func toByte() -> Swift.Int8 {
+            return kotlin_ULong_toByte(self.__externalRCRef())
+        }
+        public func toShort() -> Swift.Int16 {
+            return kotlin_ULong_toShort(self.__externalRCRef())
+        }
+        public func toInt() -> Swift.Int32 {
+            return kotlin_ULong_toInt(self.__externalRCRef())
+        }
+        public func toLong() -> Swift.Int64 {
+            return kotlin_ULong_toLong(self.__externalRCRef())
+        }
+        public func toUByte() -> Swift.UInt8 {
+            return kotlin_ULong_toUByte(self.__externalRCRef())
+        }
+        public func toUShort() -> Swift.UInt16 {
+            return kotlin_ULong_toUShort(self.__externalRCRef())
+        }
+        public func toUInt() -> Swift.UInt32 {
+            return kotlin_ULong_toUInt(self.__externalRCRef())
+        }
+        public func toULong() -> Swift.UInt64 {
+            return kotlin_ULong_toULong(self.__externalRCRef())
+        }
+        public func toFloat() -> Swift.Float {
+            return kotlin_ULong_toFloat(self.__externalRCRef())
+        }
+        public func toDouble() -> Swift.Double {
+            return kotlin_ULong_toDouble(self.__externalRCRef())
+        }
+        public func toString() -> Swift.String {
+            return kotlin_ULong_toString(self.__externalRCRef())
+        }
+        public func equals(
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            return kotlin_ULong_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        }
+        public static func ==(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            this.equals(other: other)
+        }
+        public func hashCode() -> Swift.Int32 {
+            return kotlin_ULong_hashCode(self.__externalRCRef())
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+    public final class UShort: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
+            public var MIN_VALUE: Swift.UInt16 {
+                get {
+                    return kotlin_UShort_Companion_MIN_VALUE_get(self.__externalRCRef())
+                }
+            }
+            public var MAX_VALUE: Swift.UInt16 {
+                get {
+                    return kotlin_UShort_Companion_MAX_VALUE_get(self.__externalRCRef())
+                }
+            }
+            public var SIZE_BYTES: Swift.Int32 {
+                get {
+                    return kotlin_UShort_Companion_SIZE_BYTES_get(self.__externalRCRef())
+                }
+            }
+            public var SIZE_BITS: Swift.Int32 {
+                get {
+                    return kotlin_UShort_Companion_SIZE_BITS_get(self.__externalRCRef())
+                }
+            }
+            public static var shared: ExportedKotlinPackages.kotlin.UShort.Companion {
+                get {
+                    return ExportedKotlinPackages.kotlin.UShort.Companion.__createClassWrapper(externalRCRef: kotlin_UShort_Companion_get())
+                }
+            }
+            package override init(
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                options: KotlinRuntime.KotlinBaseConstructionOptions
+            ) {
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+            }
+            private init() {
+                fatalError()
+            }
+        }
+        public func _compareTo(
+            other: Swift.UInt8
+        ) -> Swift.Int32 {
+            return kotlin_UShort_compareTo__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt8
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.UInt16
+        ) -> Swift.Int32 {
+            return kotlin_UShort_compareTo__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt16
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.UInt32
+        ) -> Swift.Int32 {
+            return kotlin_UShort_compareTo__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt32
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _compareTo(
+            other: Swift.UInt64
+        ) -> Swift.Int32 {
+            return kotlin_UShort_compareTo__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt64
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func _plus(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_plus__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_plus__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_plus__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UShort_plus__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._plus(other: other)
+        }
+        public func _minus(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_minus__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_minus__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_minus__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            this._minus(other: other)
+        }
+        public func _minus(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UShort_minus__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._minus(other: other)
+        }
+        public func _times(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_times__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_times__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_times__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            this._times(other: other)
+        }
+        public func _times(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UShort_times__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._times(other: other)
+        }
+        public func _div(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_div__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_div__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_div__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            this._div(other: other)
+        }
+        public func _div(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UShort_div__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._div(other: other)
+        }
+        public func _rem(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_rem__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_rem__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_rem__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            this._rem(other: other)
+        }
+        public func _rem(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UShort_rem__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public static func %(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            this._rem(other: other)
+        }
+        public func floorDiv(
+            other: Swift.UInt8
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_floorDiv__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public func floorDiv(
+            other: Swift.UInt16
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_floorDiv__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public func floorDiv(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_floorDiv__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public func floorDiv(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UShort_floorDiv__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public func mod(
+            other: Swift.UInt8
+        ) -> Swift.UInt8 {
+            return kotlin_UShort_mod__TypesOfArguments__Swift_UInt8__(self.__externalRCRef(), other)
+        }
+        public func mod(
+            other: Swift.UInt16
+        ) -> Swift.UInt16 {
+            return kotlin_UShort_mod__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public func mod(
+            other: Swift.UInt32
+        ) -> Swift.UInt32 {
+            return kotlin_UShort_mod__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), other)
+        }
+        public func mod(
+            other: Swift.UInt64
+        ) -> Swift.UInt64 {
+            return kotlin_UShort_mod__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), other)
+        }
+        public func inc() -> Swift.UInt16 {
+            return kotlin_UShort_inc(self.__externalRCRef())
+        }
+        public func dec() -> Swift.UInt16 {
+            return kotlin_UShort_dec(self.__externalRCRef())
+        }
+        public func rangeTo(
+            other: Swift.UInt16
+        ) -> ExportedKotlinPackages.kotlin.ranges.UIntRange {
+            return ExportedKotlinPackages.kotlin.ranges.UIntRange.__createClassWrapper(externalRCRef: kotlin_UShort_rangeTo__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other))
+        }
+        public func rangeUntil(
+            other: Swift.UInt16
+        ) -> ExportedKotlinPackages.kotlin.ranges.UIntRange {
+            return ExportedKotlinPackages.kotlin.ranges.UIntRange.__createClassWrapper(externalRCRef: kotlin_UShort_rangeUntil__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other))
+        }
+        public func and(
+            other: Swift.UInt16
+        ) -> Swift.UInt16 {
+            return kotlin_UShort_and__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public func or(
+            other: Swift.UInt16
+        ) -> Swift.UInt16 {
+            return kotlin_UShort_or__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public func xor(
+            other: Swift.UInt16
+        ) -> Swift.UInt16 {
+            return kotlin_UShort_xor__TypesOfArguments__Swift_UInt16__(self.__externalRCRef(), other)
+        }
+        public func inv() -> Swift.UInt16 {
+            return kotlin_UShort_inv(self.__externalRCRef())
+        }
+        public func toByte() -> Swift.Int8 {
+            return kotlin_UShort_toByte(self.__externalRCRef())
+        }
+        public func toShort() -> Swift.Int16 {
+            return kotlin_UShort_toShort(self.__externalRCRef())
+        }
+        public func toInt() -> Swift.Int32 {
+            return kotlin_UShort_toInt(self.__externalRCRef())
+        }
+        public func toLong() -> Swift.Int64 {
+            return kotlin_UShort_toLong(self.__externalRCRef())
+        }
+        public func toUByte() -> Swift.UInt8 {
+            return kotlin_UShort_toUByte(self.__externalRCRef())
+        }
+        public func toUShort() -> Swift.UInt16 {
+            return kotlin_UShort_toUShort(self.__externalRCRef())
+        }
+        public func toUInt() -> Swift.UInt32 {
+            return kotlin_UShort_toUInt(self.__externalRCRef())
+        }
+        public func toULong() -> Swift.UInt64 {
+            return kotlin_UShort_toULong(self.__externalRCRef())
+        }
+        public func toFloat() -> Swift.Float {
+            return kotlin_UShort_toFloat(self.__externalRCRef())
+        }
+        public func toDouble() -> Swift.Double {
+            return kotlin_UShort_toDouble(self.__externalRCRef())
+        }
+        public func toString() -> Swift.String {
+            return kotlin_UShort_toString(self.__externalRCRef())
+        }
+        public func equals(
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            return kotlin_UShort_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        }
+        public static func ==(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            this.equals(other: other)
+        }
+        public func hashCode() -> Swift.Int32 {
+            return kotlin_UShort_hashCode(self.__externalRCRef())
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     open class Number: KotlinRuntime.KotlinBase {
@@ -2229,7 +6687,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
 }
@@ -2261,7 +6719,7 @@ extension ExportedKotlinPackages.kotlin.collections {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     open class CharIterator: KotlinRuntime.KotlinBase {
@@ -2278,24 +6736,498 @@ extension ExportedKotlinPackages.kotlin.collections {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    open class LongIterator: KotlinRuntime.KotlinBase {
-        public final func next() -> Swift.Int64 {
-            return kotlin_collections_LongIterator_next(self.__externalRCRef())
+}
+extension ExportedKotlinPackages.kotlin.time {
+    public enum DurationUnit: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
+        case NANOSECONDS
+        case MICROSECONDS
+        case MILLISECONDS
+        case SECONDS
+        case MINUTES
+        case HOURS
+        case DAYS
+        public var description: Swift.String {
+            get {
+                switch self {
+                case .NANOSECONDS: "NANOSECONDS"
+                case .MICROSECONDS: "MICROSECONDS"
+                case .MILLISECONDS: "MILLISECONDS"
+                case .SECONDS: "SECONDS"
+                case .MINUTES: "MINUTES"
+                case .HOURS: "HOURS"
+                case .DAYS: "DAYS"
+                default: fatalError()
+                }
+            }
         }
-        open func nextLong() -> Swift.Int64 {
-            return kotlin_collections_LongIterator_nextLong(self.__externalRCRef())
+        public var rawValue: Swift.Int32 {
+            get {
+                switch self {
+                case .NANOSECONDS: 0
+                case .MICROSECONDS: 1
+                case .MILLISECONDS: 2
+                case .SECONDS: 3
+                case .MINUTES: 4
+                case .HOURS: 5
+                case .DAYS: 6
+                default: fatalError()
+                }
+            }
         }
-        package init() {
-            fatalError()
+        public init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            switch kotlin_time_DurationUnit_ordinal(__externalRCRefUnsafe) {
+            case 0: self = .NANOSECONDS
+            case 1: self = .MICROSECONDS
+            case 2: self = .MILLISECONDS
+            case 3: self = .SECONDS
+            case 4: self = .MINUTES
+            case 5: self = .HOURS
+            case 6: self = .DAYS
+            default: fatalError()
+            }
+        }
+        public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+            return switch self {
+            case .NANOSECONDS: kotlin_time_DurationUnit_NANOSECONDS()
+            case .MICROSECONDS: kotlin_time_DurationUnit_MICROSECONDS()
+            case .MILLISECONDS: kotlin_time_DurationUnit_MILLISECONDS()
+            case .SECONDS: kotlin_time_DurationUnit_SECONDS()
+            case .MINUTES: kotlin_time_DurationUnit_MINUTES()
+            case .HOURS: kotlin_time_DurationUnit_HOURS()
+            case .DAYS: kotlin_time_DurationUnit_DAYS()
+            default: fatalError()
+            }
+        }
+        public init?(
+            _ description: Swift.String
+        ) {
+            switch description {
+            case "NANOSECONDS": self = .NANOSECONDS
+            case "MICROSECONDS": self = .MICROSECONDS
+            case "MILLISECONDS": self = .MILLISECONDS
+            case "SECONDS": self = .SECONDS
+            case "MINUTES": self = .MINUTES
+            case "HOURS": self = .HOURS
+            case "DAYS": self = .DAYS
+            default: return nil
+            }
+        }
+        public init?(
+            rawValue: Swift.Int32
+        ) {
+            guard 0..<7 ~= rawValue else { return nil }
+            self = DurationUnit.allCases[Int(rawValue)]
+        }
+    }
+    public final class Duration: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
+            public var ZERO: ExportedKotlinPackages.kotlin.time.Duration {
+                get {
+                    return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_ZERO_get(self.__externalRCRef()))
+                }
+            }
+            public var INFINITE: ExportedKotlinPackages.kotlin.time.Duration {
+                get {
+                    return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_INFINITE_get(self.__externalRCRef()))
+                }
+            }
+            public static var shared: ExportedKotlinPackages.kotlin.time.Duration.Companion {
+                get {
+                    return ExportedKotlinPackages.kotlin.time.Duration.Companion.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_get())
+                }
+            }
+            public func convert(
+                value: Swift.Double,
+                sourceUnit: ExportedKotlinPackages.kotlin.time.DurationUnit,
+                targetUnit: ExportedKotlinPackages.kotlin.time.DurationUnit
+            ) -> Swift.Double {
+                return kotlin_time_Duration_Companion_convert__TypesOfArguments__Swift_Double_ExportedKotlinPackages_kotlin_time_DurationUnit_ExportedKotlinPackages_kotlin_time_DurationUnit__(self.__externalRCRef(), value, sourceUnit.__externalRCRef(), targetUnit.__externalRCRef())
+            }
+            public func parse(
+                value: Swift.String
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_parse__TypesOfArguments__Swift_String__(self.__externalRCRef(), value))
+            }
+            public func parseIsoString(
+                value: Swift.String
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_parseIsoString__TypesOfArguments__Swift_String__(self.__externalRCRef(), value))
+            }
+            public func parseOrNull(
+                value: Swift.String
+            ) -> ExportedKotlinPackages.kotlin.time.Duration? {
+                return { switch kotlin_time_Duration_Companion_parseOrNull__TypesOfArguments__Swift_String__(self.__externalRCRef(), value) { case nil: .none; case let res: ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: res); } }()
+            }
+            public func parseIsoStringOrNull(
+                value: Swift.String
+            ) -> ExportedKotlinPackages.kotlin.time.Duration? {
+                return { switch kotlin_time_Duration_Companion_parseIsoStringOrNull__TypesOfArguments__Swift_String__(self.__externalRCRef(), value) { case nil: .none; case let res: ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: res); } }()
+            }
+            public func getNanoseconds(
+                _ receiver: Swift.Int32
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+            }
+            public func getNanoseconds(
+                _ receiver: Swift.Int64
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+            }
+            public func getNanoseconds(
+                _ receiver: Swift.Double
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+            }
+            public func getMicroseconds(
+                _ receiver: Swift.Int32
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_microseconds_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+            }
+            public func getMicroseconds(
+                _ receiver: Swift.Int64
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_microseconds_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+            }
+            public func getMicroseconds(
+                _ receiver: Swift.Double
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_microseconds_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+            }
+            public func getMilliseconds(
+                _ receiver: Swift.Int32
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_milliseconds_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+            }
+            public func getMilliseconds(
+                _ receiver: Swift.Int64
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_milliseconds_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+            }
+            public func getMilliseconds(
+                _ receiver: Swift.Double
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_milliseconds_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+            }
+            public func getSeconds(
+                _ receiver: Swift.Int32
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_seconds_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+            }
+            public func getSeconds(
+                _ receiver: Swift.Int64
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_seconds_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+            }
+            public func getSeconds(
+                _ receiver: Swift.Double
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_seconds_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+            }
+            public func getMinutes(
+                _ receiver: Swift.Int32
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_minutes_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+            }
+            public func getMinutes(
+                _ receiver: Swift.Int64
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_minutes_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+            }
+            public func getMinutes(
+                _ receiver: Swift.Double
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_minutes_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+            }
+            public func getHours(
+                _ receiver: Swift.Int32
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_hours_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+            }
+            public func getHours(
+                _ receiver: Swift.Int64
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_hours_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+            }
+            public func getHours(
+                _ receiver: Swift.Double
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_hours_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+            }
+            public func getDays(
+                _ receiver: Swift.Int32
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_days_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+            }
+            public func getDays(
+                _ receiver: Swift.Int64
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_days_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+            }
+            public func getDays(
+                _ receiver: Swift.Double
+            ) -> ExportedKotlinPackages.kotlin.time.Duration {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_days_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+            }
+            package override init(
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                options: KotlinRuntime.KotlinBaseConstructionOptions
+            ) {
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+            }
+            private init() {
+                fatalError()
+            }
+        }
+        public var absoluteValue: ExportedKotlinPackages.kotlin.time.Duration {
+            get {
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_absoluteValue_get(self.__externalRCRef()))
+            }
+        }
+        public var inWholeDays: Swift.Int64 {
+            get {
+                return kotlin_time_Duration_inWholeDays_get(self.__externalRCRef())
+            }
+        }
+        public var inWholeHours: Swift.Int64 {
+            get {
+                return kotlin_time_Duration_inWholeHours_get(self.__externalRCRef())
+            }
+        }
+        public var inWholeMinutes: Swift.Int64 {
+            get {
+                return kotlin_time_Duration_inWholeMinutes_get(self.__externalRCRef())
+            }
+        }
+        public var inWholeSeconds: Swift.Int64 {
+            get {
+                return kotlin_time_Duration_inWholeSeconds_get(self.__externalRCRef())
+            }
+        }
+        public var inWholeMilliseconds: Swift.Int64 {
+            get {
+                return kotlin_time_Duration_inWholeMilliseconds_get(self.__externalRCRef())
+            }
+        }
+        public var inWholeMicroseconds: Swift.Int64 {
+            get {
+                return kotlin_time_Duration_inWholeMicroseconds_get(self.__externalRCRef())
+            }
+        }
+        public var inWholeNanoseconds: Swift.Int64 {
+            get {
+                return kotlin_time_Duration_inWholeNanoseconds_get(self.__externalRCRef())
+            }
+        }
+        public func _unaryMinus() -> ExportedKotlinPackages.kotlin.time.Duration {
+            return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_unaryMinus(self.__externalRCRef()))
+        }
+        public static prefix func -(
+            this: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            this._unaryMinus()
+        }
+        public func _plus(
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_plus__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(self.__externalRCRef(), other.__externalRCRef()))
+        }
+        public static func +(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            this._plus(other: other)
+        }
+        public func _minus(
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_minus__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(self.__externalRCRef(), other.__externalRCRef()))
+        }
+        public static func -(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            this._minus(other: other)
+        }
+        public func _times(
+            scale: Swift.Int32
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_times__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), scale))
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            scale: Swift.Int32
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            this._times(scale: scale)
+        }
+        public func _times(
+            scale: Swift.Double
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_times__TypesOfArguments__Swift_Double__(self.__externalRCRef(), scale))
+        }
+        public static func *(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            scale: Swift.Double
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            this._times(scale: scale)
+        }
+        public func _div(
+            scale: Swift.Int32
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_div__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), scale))
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            scale: Swift.Int32
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            this._div(scale: scale)
+        }
+        public func _div(
+            scale: Swift.Double
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_div__TypesOfArguments__Swift_Double__(self.__externalRCRef(), scale))
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            scale: Swift.Double
+        ) -> ExportedKotlinPackages.kotlin.time.Duration {
+            this._div(scale: scale)
+        }
+        public func _div(
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> Swift.Double {
+            return kotlin_time_Duration_div__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(self.__externalRCRef(), other.__externalRCRef())
+        }
+        public static func /(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> Swift.Double {
+            this._div(other: other)
+        }
+        public func isNegative() -> Swift.Bool {
+            return kotlin_time_Duration_isNegative(self.__externalRCRef())
+        }
+        public func isPositive() -> Swift.Bool {
+            return kotlin_time_Duration_isPositive(self.__externalRCRef())
+        }
+        public func isInfinite() -> Swift.Bool {
+            return kotlin_time_Duration_isInfinite(self.__externalRCRef())
+        }
+        public func isFinite() -> Swift.Bool {
+            return kotlin_time_Duration_isFinite(self.__externalRCRef())
+        }
+        public func _compareTo(
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> Swift.Int32 {
+            return kotlin_time_Duration_compareTo__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(self.__externalRCRef(), other.__externalRCRef())
+        }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            other: ExportedKotlinPackages.kotlin.time.Duration
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public func toComponents(
+            action: @escaping (Swift.Int64, Swift.Int32, Swift.Int32, Swift.Int32, Swift.Int32) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            return { switch kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), {
+                let originalBlock = action
+                return { (arg0: Swift.Int64, arg1: Swift.Int32, arg2: Swift.Int32, arg3: Swift.Int32, arg4: Swift.Int32) in return originalBlock(arg0, arg1, arg2, arg3, arg4).map { it in it.__externalRCRef() } ?? nil }
+            }()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        }
+        public func toComponents(
+            action: @escaping (Swift.Int64, Swift.Int32, Swift.Int32, Swift.Int32) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            return { switch kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), {
+                let originalBlock = action
+                return { (arg0: Swift.Int64, arg1: Swift.Int32, arg2: Swift.Int32, arg3: Swift.Int32) in return originalBlock(arg0, arg1, arg2, arg3).map { it in it.__externalRCRef() } ?? nil }
+            }()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        }
+        public func toComponents(
+            action: @escaping (Swift.Int64, Swift.Int32, Swift.Int32) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            return { switch kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), {
+                let originalBlock = action
+                return { (arg0: Swift.Int64, arg1: Swift.Int32, arg2: Swift.Int32) in return originalBlock(arg0, arg1, arg2).map { it in it.__externalRCRef() } ?? nil }
+            }()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        }
+        public func toComponents(
+            action: @escaping (Swift.Int64, Swift.Int32) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            return { switch kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), {
+                let originalBlock = action
+                return { (arg0: Swift.Int64, arg1: Swift.Int32) in return originalBlock(arg0, arg1).map { it in it.__externalRCRef() } ?? nil }
+            }()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        }
+        public func toDouble(
+            unit: ExportedKotlinPackages.kotlin.time.DurationUnit
+        ) -> Swift.Double {
+            return kotlin_time_Duration_toDouble__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit__(self.__externalRCRef(), unit.__externalRCRef())
+        }
+        public func toLong(
+            unit: ExportedKotlinPackages.kotlin.time.DurationUnit
+        ) -> Swift.Int64 {
+            return kotlin_time_Duration_toLong__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit__(self.__externalRCRef(), unit.__externalRCRef())
+        }
+        public func toInt(
+            unit: ExportedKotlinPackages.kotlin.time.DurationUnit
+        ) -> Swift.Int32 {
+            return kotlin_time_Duration_toInt__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit__(self.__externalRCRef(), unit.__externalRCRef())
+        }
+        public func toString() -> Swift.String {
+            return kotlin_time_Duration_toString(self.__externalRCRef())
+        }
+        public func toString(
+            unit: ExportedKotlinPackages.kotlin.time.DurationUnit,
+            decimals: Swift.Int32
+        ) -> Swift.String {
+            return kotlin_time_Duration_toString__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit_Swift_Int32__(self.__externalRCRef(), unit.__externalRCRef(), decimals)
+        }
+        public func toIsoString() -> Swift.String {
+            return kotlin_time_Duration_toIsoString(self.__externalRCRef())
+        }
+        public func equals(
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            return kotlin_time_Duration_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        }
+        public static func ==(
+            this: ExportedKotlinPackages.kotlin.time.Duration,
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            this.equals(other: other)
+        }
+        public func hashCode() -> Swift.Int32 {
+            return kotlin_time_Duration_hashCode(self.__externalRCRef())
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
 }
@@ -2331,7 +7263,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -2390,184 +7322,184 @@ extension ExportedKotlinPackages.kotlin.ranges {
         ) {
             if Self.self != ExportedKotlinPackages.kotlin.ranges.CharRange.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.ranges.CharRange ") }
             let __kt = kotlin_ranges_CharRange_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_ranges_CharRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Unicode_UTF16_CodeUnit_Swift_Unicode_UTF16_CodeUnit__(__kt, start, endInclusive)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_ranges_CharRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Unicode_UTF16_CodeUnit_Swift_Unicode_UTF16_CodeUnit__(__kt, start, endInclusive); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    public final class IntRange: ExportedKotlinPackages.kotlin.ranges.IntProgression {
+    public final class UIntRange: ExportedKotlinPackages.kotlin.ranges.UIntProgression {
         public final class Companion: KotlinRuntime.KotlinBase {
-            public var EMPTY: ExportedKotlinPackages.kotlin.ranges.IntRange {
+            public var EMPTY: ExportedKotlinPackages.kotlin.ranges.UIntRange {
                 get {
-                    return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_ranges_IntRange_Companion_EMPTY_get(self.__externalRCRef()))
+                    return ExportedKotlinPackages.kotlin.ranges.UIntRange.__createClassWrapper(externalRCRef: kotlin_ranges_UIntRange_Companion_EMPTY_get(self.__externalRCRef()))
                 }
             }
-            public static var shared: ExportedKotlinPackages.kotlin.ranges.IntRange.Companion {
+            public static var shared: ExportedKotlinPackages.kotlin.ranges.UIntRange.Companion {
                 get {
-                    return ExportedKotlinPackages.kotlin.ranges.IntRange.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_IntRange_Companion_get())
+                    return ExportedKotlinPackages.kotlin.ranges.UIntRange.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_UIntRange_Companion_get())
                 }
             }
             package override init(
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
             }
         }
-        public var start: Swift.Int32 {
+        public var start: Swift.UInt32 {
             get {
-                return kotlin_ranges_IntRange_start_get(self.__externalRCRef())
+                return kotlin_ranges_UIntRange_start_get(self.__externalRCRef())
             }
         }
-        public var endInclusive: Swift.Int32 {
+        public var endInclusive: Swift.UInt32 {
             get {
-                return kotlin_ranges_IntRange_endInclusive_get(self.__externalRCRef())
+                return kotlin_ranges_UIntRange_endInclusive_get(self.__externalRCRef())
             }
         }
-        @available(*, deprecated, message: "Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
-        public var endExclusive: Swift.Int32 {
+        @available(*, deprecated, message: "Can throw an exception when it's impossible to represent the value with UInt type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
+        public var endExclusive: Swift.UInt32 {
             get {
-                return kotlin_ranges_IntRange_endExclusive_get(self.__externalRCRef())
+                return kotlin_ranges_UIntRange_endExclusive_get(self.__externalRCRef())
             }
         }
         public func contains(
-            value: Swift.Int32
+            value: Swift.UInt32
         ) -> Swift.Bool {
-            return kotlin_ranges_IntRange_contains__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), value)
+            return kotlin_ranges_UIntRange_contains__TypesOfArguments__Swift_UInt32__(self.__externalRCRef(), value)
         }
         public static func ~=(
-            this: ExportedKotlinPackages.kotlin.ranges.IntRange,
-            value: Swift.Int32
+            this: ExportedKotlinPackages.kotlin.ranges.UIntRange,
+            value: Swift.UInt32
         ) -> Swift.Bool {
             this.contains(value: value)
         }
         public override func isEmpty() -> Swift.Bool {
-            return kotlin_ranges_IntRange_isEmpty(self.__externalRCRef())
+            return kotlin_ranges_UIntRange_isEmpty(self.__externalRCRef())
         }
         public override func equals(
             other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_ranges_IntRange_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_ranges_UIntRange_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
         }
         public static func ==(
-            this: ExportedKotlinPackages.kotlin.ranges.IntRange,
+            this: ExportedKotlinPackages.kotlin.ranges.UIntRange,
             other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
         public override func hashCode() -> Swift.Int32 {
-            return kotlin_ranges_IntRange_hashCode(self.__externalRCRef())
+            return kotlin_ranges_UIntRange_hashCode(self.__externalRCRef())
         }
         public override func toString() -> Swift.String {
-            return kotlin_ranges_IntRange_toString(self.__externalRCRef())
+            return kotlin_ranges_UIntRange_toString(self.__externalRCRef())
         }
         public init(
-            start: Swift.Int32,
-            endInclusive: Swift.Int32
+            start: Swift.UInt32,
+            endInclusive: Swift.UInt32
         ) {
-            if Self.self != ExportedKotlinPackages.kotlin.ranges.IntRange.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.ranges.IntRange ") }
-            let __kt = kotlin_ranges_IntRange_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_ranges_IntRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_Int32__(__kt, start, endInclusive)
+            if Self.self != ExportedKotlinPackages.kotlin.ranges.UIntRange.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.ranges.UIntRange ") }
+            let __kt = kotlin_ranges_UIntRange_init_allocate()
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_ranges_UIntRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_UInt32_Swift_UInt32__(__kt, start, endInclusive); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    public final class LongRange: ExportedKotlinPackages.kotlin.ranges.LongProgression {
+    public final class ULongRange: ExportedKotlinPackages.kotlin.ranges.ULongProgression {
         public final class Companion: KotlinRuntime.KotlinBase {
-            public var EMPTY: ExportedKotlinPackages.kotlin.ranges.LongRange {
+            public var EMPTY: ExportedKotlinPackages.kotlin.ranges.ULongRange {
                 get {
-                    return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_ranges_LongRange_Companion_EMPTY_get(self.__externalRCRef()))
+                    return ExportedKotlinPackages.kotlin.ranges.ULongRange.__createClassWrapper(externalRCRef: kotlin_ranges_ULongRange_Companion_EMPTY_get(self.__externalRCRef()))
                 }
             }
-            public static var shared: ExportedKotlinPackages.kotlin.ranges.LongRange.Companion {
+            public static var shared: ExportedKotlinPackages.kotlin.ranges.ULongRange.Companion {
                 get {
-                    return ExportedKotlinPackages.kotlin.ranges.LongRange.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_LongRange_Companion_get())
+                    return ExportedKotlinPackages.kotlin.ranges.ULongRange.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_ULongRange_Companion_get())
                 }
             }
             package override init(
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
             }
         }
-        public var start: Swift.Int64 {
+        public var start: Swift.UInt64 {
             get {
-                return kotlin_ranges_LongRange_start_get(self.__externalRCRef())
+                return kotlin_ranges_ULongRange_start_get(self.__externalRCRef())
             }
         }
-        public var endInclusive: Swift.Int64 {
+        public var endInclusive: Swift.UInt64 {
             get {
-                return kotlin_ranges_LongRange_endInclusive_get(self.__externalRCRef())
+                return kotlin_ranges_ULongRange_endInclusive_get(self.__externalRCRef())
             }
         }
-        @available(*, deprecated, message: "Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
-        public var endExclusive: Swift.Int64 {
+        @available(*, deprecated, message: "Can throw an exception when it's impossible to represent the value with ULong type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
+        public var endExclusive: Swift.UInt64 {
             get {
-                return kotlin_ranges_LongRange_endExclusive_get(self.__externalRCRef())
+                return kotlin_ranges_ULongRange_endExclusive_get(self.__externalRCRef())
             }
         }
         public func contains(
-            value: Swift.Int64
+            value: Swift.UInt64
         ) -> Swift.Bool {
-            return kotlin_ranges_LongRange_contains__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), value)
+            return kotlin_ranges_ULongRange_contains__TypesOfArguments__Swift_UInt64__(self.__externalRCRef(), value)
         }
         public static func ~=(
-            this: ExportedKotlinPackages.kotlin.ranges.LongRange,
-            value: Swift.Int64
+            this: ExportedKotlinPackages.kotlin.ranges.ULongRange,
+            value: Swift.UInt64
         ) -> Swift.Bool {
             this.contains(value: value)
         }
         public override func isEmpty() -> Swift.Bool {
-            return kotlin_ranges_LongRange_isEmpty(self.__externalRCRef())
+            return kotlin_ranges_ULongRange_isEmpty(self.__externalRCRef())
         }
         public override func equals(
             other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_ranges_LongRange_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_ranges_ULongRange_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
         }
         public static func ==(
-            this: ExportedKotlinPackages.kotlin.ranges.LongRange,
+            this: ExportedKotlinPackages.kotlin.ranges.ULongRange,
             other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
         public override func hashCode() -> Swift.Int32 {
-            return kotlin_ranges_LongRange_hashCode(self.__externalRCRef())
+            return kotlin_ranges_ULongRange_hashCode(self.__externalRCRef())
         }
         public override func toString() -> Swift.String {
-            return kotlin_ranges_LongRange_toString(self.__externalRCRef())
+            return kotlin_ranges_ULongRange_toString(self.__externalRCRef())
         }
         public init(
-            start: Swift.Int64,
-            endInclusive: Swift.Int64
+            start: Swift.UInt64,
+            endInclusive: Swift.UInt64
         ) {
-            if Self.self != ExportedKotlinPackages.kotlin.ranges.LongRange.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.ranges.LongRange ") }
-            let __kt = kotlin_ranges_LongRange_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_ranges_LongRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int64__(__kt, start, endInclusive)
+            if Self.self != ExportedKotlinPackages.kotlin.ranges.ULongRange.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.ranges.ULongRange ") }
+            let __kt = kotlin_ranges_ULongRange_init_allocate()
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_ranges_ULongRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_UInt64_Swift_UInt64__(__kt, start, endInclusive); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     open class CharProgression: KotlinRuntime.KotlinBase {
@@ -2588,7 +7520,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
@@ -2636,145 +7568,145 @@ extension ExportedKotlinPackages.kotlin.ranges {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    open class IntProgression: KotlinRuntime.KotlinBase {
+    open class UIntProgression: KotlinRuntime.KotlinBase {
         public final class Companion: KotlinRuntime.KotlinBase {
-            public static var shared: ExportedKotlinPackages.kotlin.ranges.IntProgression.Companion {
+            public static var shared: ExportedKotlinPackages.kotlin.ranges.UIntProgression.Companion {
                 get {
-                    return ExportedKotlinPackages.kotlin.ranges.IntProgression.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_IntProgression_Companion_get())
+                    return ExportedKotlinPackages.kotlin.ranges.UIntProgression.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_UIntProgression_Companion_get())
                 }
             }
             public func fromClosedRange(
-                rangeStart: Swift.Int32,
-                rangeEnd: Swift.Int32,
+                rangeStart: Swift.UInt32,
+                rangeEnd: Swift.UInt32,
                 step: Swift.Int32
-            ) -> ExportedKotlinPackages.kotlin.ranges.IntProgression {
-                return ExportedKotlinPackages.kotlin.ranges.IntProgression.__createClassWrapper(externalRCRef: kotlin_ranges_IntProgression_Companion_fromClosedRange__TypesOfArguments__Swift_Int32_Swift_Int32_Swift_Int32__(self.__externalRCRef(), rangeStart, rangeEnd, step))
+            ) -> ExportedKotlinPackages.kotlin.ranges.UIntProgression {
+                return ExportedKotlinPackages.kotlin.ranges.UIntProgression.__createClassWrapper(externalRCRef: kotlin_ranges_UIntProgression_Companion_fromClosedRange__TypesOfArguments__Swift_UInt32_Swift_UInt32_Swift_Int32__(self.__externalRCRef(), rangeStart, rangeEnd, step))
             }
             package override init(
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
             }
         }
-        public final var first: Swift.Int32 {
+        public final var first: Swift.UInt32 {
             get {
-                return kotlin_ranges_IntProgression_first_get(self.__externalRCRef())
+                return kotlin_ranges_UIntProgression_first_get(self.__externalRCRef())
             }
         }
-        public final var last: Swift.Int32 {
+        public final var last: Swift.UInt32 {
             get {
-                return kotlin_ranges_IntProgression_last_get(self.__externalRCRef())
+                return kotlin_ranges_UIntProgression_last_get(self.__externalRCRef())
             }
         }
         public final var step: Swift.Int32 {
             get {
-                return kotlin_ranges_IntProgression_step_get(self.__externalRCRef())
+                return kotlin_ranges_UIntProgression_step_get(self.__externalRCRef())
             }
         }
-        open func iterator() -> ExportedKotlinPackages.kotlin.collections.IntIterator {
-            return ExportedKotlinPackages.kotlin.collections.IntIterator.__createClassWrapper(externalRCRef: kotlin_ranges_IntProgression_iterator(self.__externalRCRef()))
+        public final func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_ranges_UIntProgression_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
         }
         open func isEmpty() -> Swift.Bool {
-            return kotlin_ranges_IntProgression_isEmpty(self.__externalRCRef())
+            return kotlin_ranges_UIntProgression_isEmpty(self.__externalRCRef())
         }
         open func equals(
             other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_ranges_IntProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_ranges_UIntProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
         }
         public static func ==(
-            this: ExportedKotlinPackages.kotlin.ranges.IntProgression,
+            this: ExportedKotlinPackages.kotlin.ranges.UIntProgression,
             other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
         open func hashCode() -> Swift.Int32 {
-            return kotlin_ranges_IntProgression_hashCode(self.__externalRCRef())
+            return kotlin_ranges_UIntProgression_hashCode(self.__externalRCRef())
         }
         open func toString() -> Swift.String {
-            return kotlin_ranges_IntProgression_toString(self.__externalRCRef())
+            return kotlin_ranges_UIntProgression_toString(self.__externalRCRef())
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    open class LongProgression: KotlinRuntime.KotlinBase {
+    open class ULongProgression: KotlinRuntime.KotlinBase {
         public final class Companion: KotlinRuntime.KotlinBase {
-            public static var shared: ExportedKotlinPackages.kotlin.ranges.LongProgression.Companion {
+            public static var shared: ExportedKotlinPackages.kotlin.ranges.ULongProgression.Companion {
                 get {
-                    return ExportedKotlinPackages.kotlin.ranges.LongProgression.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_LongProgression_Companion_get())
+                    return ExportedKotlinPackages.kotlin.ranges.ULongProgression.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_ULongProgression_Companion_get())
                 }
             }
             public func fromClosedRange(
-                rangeStart: Swift.Int64,
-                rangeEnd: Swift.Int64,
+                rangeStart: Swift.UInt64,
+                rangeEnd: Swift.UInt64,
                 step: Swift.Int64
-            ) -> ExportedKotlinPackages.kotlin.ranges.LongProgression {
-                return ExportedKotlinPackages.kotlin.ranges.LongProgression.__createClassWrapper(externalRCRef: kotlin_ranges_LongProgression_Companion_fromClosedRange__TypesOfArguments__Swift_Int64_Swift_Int64_Swift_Int64__(self.__externalRCRef(), rangeStart, rangeEnd, step))
+            ) -> ExportedKotlinPackages.kotlin.ranges.ULongProgression {
+                return ExportedKotlinPackages.kotlin.ranges.ULongProgression.__createClassWrapper(externalRCRef: kotlin_ranges_ULongProgression_Companion_fromClosedRange__TypesOfArguments__Swift_UInt64_Swift_UInt64_Swift_Int64__(self.__externalRCRef(), rangeStart, rangeEnd, step))
             }
             package override init(
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             private init() {
                 fatalError()
             }
         }
-        public final var first: Swift.Int64 {
+        public final var first: Swift.UInt64 {
             get {
-                return kotlin_ranges_LongProgression_first_get(self.__externalRCRef())
+                return kotlin_ranges_ULongProgression_first_get(self.__externalRCRef())
             }
         }
-        public final var last: Swift.Int64 {
+        public final var last: Swift.UInt64 {
             get {
-                return kotlin_ranges_LongProgression_last_get(self.__externalRCRef())
+                return kotlin_ranges_ULongProgression_last_get(self.__externalRCRef())
             }
         }
         public final var step: Swift.Int64 {
             get {
-                return kotlin_ranges_LongProgression_step_get(self.__externalRCRef())
+                return kotlin_ranges_ULongProgression_step_get(self.__externalRCRef())
             }
         }
-        open func iterator() -> ExportedKotlinPackages.kotlin.collections.LongIterator {
-            return ExportedKotlinPackages.kotlin.collections.LongIterator.__createClassWrapper(externalRCRef: kotlin_ranges_LongProgression_iterator(self.__externalRCRef()))
+        public final func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_ranges_ULongProgression_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
         }
         open func isEmpty() -> Swift.Bool {
-            return kotlin_ranges_LongProgression_isEmpty(self.__externalRCRef())
+            return kotlin_ranges_ULongProgression_isEmpty(self.__externalRCRef())
         }
         open func equals(
             other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_ranges_LongProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_ranges_ULongProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
         }
         public static func ==(
-            this: ExportedKotlinPackages.kotlin.ranges.LongProgression,
+            this: ExportedKotlinPackages.kotlin.ranges.ULongProgression,
             other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
         open func hashCode() -> Swift.Int32 {
-            return kotlin_ranges_LongProgression_hashCode(self.__externalRCRef())
+            return kotlin_ranges_ULongProgression_hashCode(self.__externalRCRef())
         }
         open func toString() -> Swift.String {
-            return kotlin_ranges_LongProgression_toString(self.__externalRCRef())
+            return kotlin_ranges_ULongProgression_toString(self.__externalRCRef())
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
 }
@@ -2809,7 +7741,7 @@ extension ExportedKotlinPackages.kotlin.CharSequence {
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
     public func hasNext() -> Swift.Bool {
         return kotlin_collections_Iterator_hasNext(self.__externalRCRef())

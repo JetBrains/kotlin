@@ -36,12 +36,6 @@ import java.io.File
 abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryCompilationTest() {
     private val testSuiteDir = File("native/native.tests/testData/framework")
 
-    @BeforeEach
-    fun turnOffAllExecutionTests() {
-        // TODO: KT-81345 Temporary turned off Swift Export execution tests
-        Assumptions.assumeTrue(false)
-    }
-
     override fun runCompiledTest(
         testPathFull: File,
         testCase: TestCase,

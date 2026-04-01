@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.platform
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
+
 /**
  * An **engine service** as defined by the Platform Interface (see the README).
  *
@@ -20,4 +22,5 @@ package org.jetbrains.kotlin.analysis.api.platform
  * by a platform. Furthermore, engine services are always prefixed with `Ka`, in contrast to platform components which are prefixed with
  * `Kotlin`.
  */
+@KaPlatformInterface
 public interface KaEngineService

@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.isSet
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeImplicitPropertyTypeMakesBehaviorOrderDependant
 
 object FirImplicitPropertyTypeMakesBehaviorOrderDependantChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
@@ -18,11 +20,11 @@ object FirImplicitPropertyTypeMakesBehaviorOrderDependantChecker : FirFunctionCa
     override fun check(expression: FirFunctionCall) {
         expression.nonFatalDiagnostics.forEach {
             if (it is ConeImplicitPropertyTypeMakesBehaviorOrderDependant) {
-                reporter.reportOn(
-                    expression.source,
-                    FirErrors.IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT,
-                    it.property,
-                )
+                val factory = if (AnalysisFlags.ideMode.isSet())
+                    FirErrors.IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT_ERROR
+                else
+                    FirErrors.IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT
+                reporter.reportOn(expression.source, factory, it.property)
             }
         }
     }

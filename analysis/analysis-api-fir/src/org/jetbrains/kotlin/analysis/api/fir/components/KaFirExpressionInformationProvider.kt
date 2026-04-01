@@ -11,15 +11,14 @@ import org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
-import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
-import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessComputer
+import org.jetbrains.kotlin.fir.withSession
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
@@ -29,20 +28,15 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 internal class KaFirExpressionInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSessionComponent<KaFirSession>(), KaExpressionInformationProvider, KaFirSessionComponent {
+    @Deprecated("The API is obsolete. Use `resolveSymbol()` instead.", replaceWith = ReplaceWith("resolveSymbol()"))
     override val KtReturnExpression.targetSymbol: KaCallableSymbol?
-        get() = withPsiValidityAssertion {
-            val fir = getOrBuildFirSafe<FirReturnExpression>(resolutionFacade) ?: return null
-            val firTargetSymbol = fir.target.labeledElement
-            if (firTargetSymbol is FirErrorFunction) return null
-            return firSymbolBuilder.callableBuilder.buildCallableSymbol(firTargetSymbol.symbol)
-        }
+        get() = with(analysisSession) { resolveSymbol() }
 
     override fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> = withPsiValidityAssertion {
         val firWhenExpression = getOrBuildFirSafe<FirWhenExpression>(analysisSession.resolutionFacade) ?: return emptyList()
-        return FirWhenExhaustivenessComputer.computeAllMissingCases(
-            analysisSession.resolutionFacade.useSiteFirSession,
-            firWhenExpression
-        )
+        return withSession(analysisSession.resolutionFacade.useSiteFirSession) {
+            FirWhenExhaustivenessComputer.computeAllMissingCases(firWhenExpression)
+        }
     }
 
     override val KtExpression.isUsedAsExpression: Boolean
@@ -210,6 +204,14 @@ internal class KaFirExpressionInformationProvider(
 
         is KtWhenEntryGuard ->
             parent.getExpression() == child
+
+        // Contract effects don't use their expression
+        is KtContractEffect ->
+            false
+
+        // Contract effect lists don't use children as expressions
+        is KtContractEffectList ->
+            false
 
         !is KtExpression ->
             errorWithAttachment("Unhandled Non-KtExpression parent of KtExpression: ${parent::class}") {
@@ -431,7 +433,7 @@ private fun doesDoubleColonUseLHS(lhs: PsiElement): Boolean {
  * in which the `f` in 2) is regarded as used and `f` in 1) is not.
  */
 private fun KaSession.doesCallExpressionUseCallee(callee: PsiElement): Boolean {
-    return callee !is KtReferenceExpression || isSimpleVariableAccessCall(callee)
+    return callee !is KtReferenceExpression || isVariableAccessCall(callee)
 }
 
 /**
@@ -462,10 +464,10 @@ private fun KaSession.doesNamedFunctionUseBody(namedFunction: KtNamedFunction, b
 }
 
 
-private fun KaSession.isSimpleVariableAccessCall(reference: KtReferenceExpression): Boolean =
+private fun KaSession.isVariableAccessCall(reference: KtReferenceExpression): Boolean =
     when (val resolution = reference.resolveToCall()) {
         is KaSuccessCallInfo ->
-            resolution.call is KaSimpleVariableAccessCall
+            resolution.call is KaVariableAccessCall
         else ->
             false
     }

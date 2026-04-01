@@ -124,6 +124,7 @@ abstract class KotlinCompile @Inject constructor(
 
         @get:OutputDirectory
         @get:Optional // Set if useClasspathSnapshot == true
+        @Deprecated("The classpathSnapshotDir parameter is no longer required. Scheduled for removal in Kotlin 2.5.")
         abstract val classpathSnapshotDir: DirectoryProperty
     }
 
@@ -132,7 +133,6 @@ abstract class KotlinCompile @Inject constructor(
             sources,
             javaSources,
             scriptSources,
-            androidLayoutResources,
             commonSourceSet,
             classpathSnapshotProperties.classpathSnapshot
         )
@@ -276,7 +276,7 @@ abstract class KotlinCompile @Inject constructor(
                 listOfNotNull(
                     pluginClasspath, kotlinPluginData?.orNull?.classpath
                 ).reduce(FileCollection::plus).toPathsArray()
-            }
+            } ?: emptyArray()
         }
 
         dependencyClasspath { args ->
@@ -460,7 +460,7 @@ abstract class KotlinCompile @Inject constructor(
             )
         } else null
 
-        @Suppress("ConvertArgumentToSet")
+        @Suppress("DEPRECATION")
         val environment = GradleCompilerEnvironment(
             defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,
             // In the incremental compiler, outputFiles will be cleaned on rebuild. However, because classpathSnapshotDir is not included in
@@ -540,22 +540,6 @@ abstract class KotlinCompile @Inject constructor(
                 .matching(::javaFilesPatternFilter)
         )
 
-    @get:Internal
-    internal val androidLayoutResourceFiles = objectFactory.fileCollection()
-
-    /**
-     * This input is used by android-extensions plugin
-     */
-    @get:Incremental
-    @get:InputFiles
-    @get:IgnoreEmptyDirectories
-    @get:NormalizeLineEndings
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    internal open val androidLayoutResources: FileCollection = androidLayoutResourceFiles
-        .asFileTree
-        .matching { patternFilterable ->
-            patternFilterable.include("xml".fileExtensionCasePermutations().map { "**/*.$it" })
-        }
 
     // override setSource to track Java and script sources as well
     override fun source(vararg sources: Any) {
@@ -581,7 +565,7 @@ abstract class KotlinCompile @Inject constructor(
     }
 
     private fun getClasspathChanges(inputChanges: InputChanges): ClasspathChanges {
-
+        @Suppress("DEPRECATION")
         val classpathSnapshotFiles = ClasspathSnapshotFiles(
             classpathSnapshotProperties.classpathSnapshot.files.toList(),
             classpathSnapshotProperties.classpathSnapshotDir.get().asFile

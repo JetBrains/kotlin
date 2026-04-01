@@ -1,16 +1,12 @@
 @file:Suppress("unused")
 @file:JvmName("AddEmbeddedRuntime")
 
-import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.ArchiveOperations
-import org.gradle.api.file.CopySourceSpec
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.support.serviceOf
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import java.io.File
-import java.util.concurrent.Callable
 
 @JvmOverloads
 fun Jar.addEmbeddedRuntime(embeddedConfigurationName: String = "embedded") {
@@ -33,6 +29,10 @@ fun Jar.addEmbeddedRuntime(embeddedConfigurationName: String = "embedded") {
                     dependency
                 }
             }
+        }
+        val version = project.version.toString()
+        rename { filename ->
+            if (filename.endsWith(".klib")) filename.removeSuffix(".klib").removeSuffix("-$version") + ".klib" else filename
         }
     }
 }

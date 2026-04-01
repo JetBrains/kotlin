@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.SYNC_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.removingTrailingNewline
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -524,7 +525,7 @@ class CocoaPodsIT : KGPBaseTest() {
             build("syncFramework", buildOptions = buildOptions) {
                 // Check that an output framework is a dynamic framework
                 val framework = projectPath.resolve("build/cocoapods/framework/$frameworkName.framework/$frameworkName")
-                assertProcessRunResult(runProcess(listOf("file", framework.absolutePathString()), projectPath.toFile())) {
+                runProcess(listOf("file", framework.absolutePathString()), projectPath.toFile()).assertProcessRunResult {
                     assertTrue(isSuccessful)
                     assertTrue(output.contains("universal binary with 2 architectures"))
                     assertTrue(output.contains("(for architecture x86_64)"))
@@ -930,6 +931,8 @@ class CocoaPodsIT : KGPBaseTest() {
     }
 
     @DisplayName("Configuration cache works in a complex scenario")
+    // FIXME: KT-84980 - remove this min version
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun testConfigurationCacheWorksInAComplexScenario(gradleVersion: GradleVersion) {
         val buildOptions = defaultBuildOptions.copy(
@@ -1121,6 +1124,55 @@ class CocoaPodsIT : KGPBaseTest() {
                 "-Pkotlin.apple.deprecated.allowUsingEmbedAndSignWithCocoaPodsDependencies=true"
             ) {
                 assertNoDiagnostic(CocoapodsPluginDiagnostics.EmbedAndSignUsedWithPodDependencies)
+            }
+        }
+    }
+
+    @DisplayName("KT-74901 : Check that all podBuild tasks are up-to-date")
+    @GradleTest
+    fun testPodBuildTasksUpToDate(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            environmentVariables = EnvironmentalVariables(
+                "CONFIGURATION" to "debug",
+                "SDK_NAME" to "iphoneos123",
+                "ARCHS" to "arm64",
+                "TARGET_BUILD_DIR" to tempDir.absolutePathString(),
+                "FRAMEWORKS_FOLDER_PATH" to "frameworks",
+                "BUILT_PRODUCTS_DIR" to tempDir.absolutePathString(),
+            )
+        ) {
+            buildGradleKts.addKotlinBlock("iosArm64()")
+            buildGradleKts.addCocoapodsBlock(
+                """
+                    ios.deploymentTarget = "15.0"
+                    
+                    pod("AFNetworking", version="4.0.1")            
+                    pod("SDWebImage", version="5.21.5")
+                    pod("Reachability", version="3.7.6")
+                    pod("Sentry", version="9.3.0", headers="Sentry.h")
+            
+                    pod("Intercom") {
+                        version = "19.1.1"
+                        extraOpts += listOf("-compiler-option", "-fmodules")
+                    }
+                """.trimIndent()
+            )
+
+            build(":iosArm64Binaries") {
+                assertTasksExecuted(":podBuildAFNetworkingIos")
+                assertTasksExecuted(":podBuildIntercomIos")
+                assertTasksExecuted(":podBuildReachabilityIos")
+                assertTasksExecuted(":podBuildSDWebImageIos")
+                assertTasksExecuted(":podBuildSentryIos")
+            }
+
+            build(":iosArm64Binaries") {
+                assertTasksUpToDate(":podBuildAFNetworkingIos")
+                assertTasksUpToDate(":podBuildIntercomIos")
+                assertTasksUpToDate(":podBuildReachabilityIos")
+                assertTasksUpToDate(":podBuildSDWebImageIos")
+                assertTasksUpToDate(":podBuildSentryIos")
             }
         }
     }

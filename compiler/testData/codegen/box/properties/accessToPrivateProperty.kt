@@ -1,4 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-63854, KT-76258
 
 class A {
     private var foo = 1
@@ -51,4 +50,3 @@ fun box(): String {
     D().foo()
     return "OK"
 }
-

@@ -1,5 +1,7 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 import kotlin.coroutines.*
 
 interface Scope
@@ -34,8 +36,6 @@ class Cache {
 class Info(val str: String)
 
 typealias ID = String
-
-private val Info.id get() = ""
 
 inline fun expectAnyFailure(failureMessage: String? = null, action: () -> Unit) {
     expectFailure<Throwable>(failureMessage) {
@@ -97,6 +97,11 @@ fun fail(message: String) {
 }
 
 fun assertTrue(message: String, value: Boolean) {}
+
+// FILE: main.kt
+import kotlin.coroutines.*
+
+private val Info.id get() = ""
 
 class Test {
     private val i1 = Info("1")

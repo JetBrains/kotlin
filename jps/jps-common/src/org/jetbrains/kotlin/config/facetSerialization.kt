@@ -228,7 +228,7 @@ fun deserializeFacetSettings(element: Element): KotlinFacetSettings {
 }
 
 fun CommonCompilerArguments.convertPathsToSystemIndependent() {
-    pluginClasspaths?.forEachIndexed { index, s -> pluginClasspaths!![index] = FileUtilRt.toSystemIndependentName(s) }
+    pluginClasspaths.forEachIndexed { index, s -> pluginClasspaths[index] = FileUtilRt.toSystemIndependentName(s) }
 
     when (this) {
         is K2JVMCompilerArguments -> {
@@ -236,7 +236,7 @@ fun CommonCompilerArguments.convertPathsToSystemIndependent() {
             classpath = classpath?.let(FileUtilRt::toSystemIndependentName)
             jdkHome = jdkHome?.let(FileUtilRt::toSystemIndependentName)
             kotlinHome = kotlinHome?.let(FileUtilRt::toSystemIndependentName)
-            friendPaths?.forEachIndexed { index, s -> friendPaths!![index] = FileUtilRt.toSystemIndependentName(s) }
+            friendPaths.forEachIndexed { index, s -> friendPaths[index] = FileUtilRt.toSystemIndependentName(s) }
         }
 
         is K2JSCompilerArguments -> {
@@ -437,7 +437,7 @@ fun TargetPlatform.serializeComponentPlatforms(): String {
     val componentPlatformNames = componentPlatforms.mapTo(ArrayList()) { it.serializeToString() }
 
     // workaround for old Kotlin IDE plugins, KT-38634
-    if (componentPlatforms.any { it is NativePlatform })
+    if (componentPlatforms.any { it is org.jetbrains.kotlin.platform.konan.NativePlatform })
         componentPlatformNames.add(NativePlatformUnspecifiedTarget.legacySerializeToString())
 
     return componentPlatformNames.sorted().joinToString("/")

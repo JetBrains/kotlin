@@ -33,10 +33,10 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_DAN
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_API_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_RETURN_TYPES_MODE
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.HEADER_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.HEADER_MODE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.fir.*
@@ -49,8 +49,10 @@ import org.jetbrains.kotlin.test.runners.DuplicateFileNameChecker
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
+import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
 import org.jetbrains.kotlin.test.services.fir.LatestLanguageVersionMetaConfigurator
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
@@ -65,6 +67,7 @@ fun TestConfigurationBuilder.configureDiagnosticTest(parser: FirParser) {
     configureFirParser(parser)
 
     useAdditionalService(::LibraryProvider)
+    useMetaTestConfigurators(::FirSpecificParserSuppressor)
 }
 
 /**
@@ -132,6 +135,7 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
 
     useConfigurators(
         ::CommonEnvironmentConfigurator,
+        ::JvmForeignAnnotationsConfigurator,
         ::JvmEnvironmentConfigurator,
         ::ScriptingEnvironmentConfigurator,
     )
@@ -150,7 +154,7 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     configureCommonDiagnosticTestPaths(testDataConsistencyHandler)
 }
 
-fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.setupHandlersForDiagnosticTest() {
+fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<FirOutputArtifact, FrontendKinds.FIR>.setupHandlersForDiagnosticTest() {
     useHandlers(
         ::FirDiagnosticsHandler,
         ::FirDumpHandler,
@@ -192,7 +196,8 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
     forTestsMatching(
         "compiler/testData/diagnostics/testsWithStdLib/*" or
                 "compiler/fir/analysis-tests/testData/resolveWithStdlib/*" or
-                "compiler/testData/diagnostics/tests/unsignedTypes/*"
+                "compiler/testData/diagnostics/tests/unsignedTypes/*" or
+                "compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/*"
     ) {
         defaultDirectives {
             +WITH_STDLIB

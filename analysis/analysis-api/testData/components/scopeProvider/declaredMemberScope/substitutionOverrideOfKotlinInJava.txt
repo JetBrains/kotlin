@@ -62,6 +62,7 @@ KaSyntheticJavaPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: true
     isOverride: false
@@ -117,10 +118,8 @@ KaSyntheticJavaPropertySymbol:
   getContainingJvmClassName: JavaC
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getProp
   javaSetterName: null
-  setterDeprecationStatus: null
   importableFqName: null
 
 KaConstructorSymbol:
@@ -133,6 +132,7 @@ KaConstructorSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   isPrimary: false
   location: CLASS
   modality: FINAL
@@ -156,6 +156,7 @@ KaConstructorSymbol:
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true

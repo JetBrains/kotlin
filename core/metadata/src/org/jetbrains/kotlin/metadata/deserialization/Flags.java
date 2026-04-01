@@ -18,7 +18,13 @@ public class Flags {
     public static final BooleanFlagField DEFINITELY_NOT_NULL_TYPE = FlagField.booleanAfter(SUSPEND_TYPE);
 
     // Common for declarations
-
+    /**
+     * Indicates that the corresponding declaration has at least one annotation.
+     * <p>
+     * This flag is useful for reading Kotlin metadata on JVM efficiently. On JVM, most of the annotations are written not to the Kotlin
+     * metadata, but directly to the corresponding declarations in the class file. This flag can be used as an optimization to avoid
+     * reading annotations from the class file (which can be slow) in case when a class has no annotations.
+     */
     public static final BooleanFlagField HAS_ANNOTATIONS = FlagField.booleanFirst();
     public static final FlagField<ProtoBuf.Visibility> VISIBILITY = FlagField.after(HAS_ANNOTATIONS, ProtoBuf.Visibility.values());
     public static final FlagField<ProtoBuf.Modality> MODALITY = FlagField.after(VISIBILITY, ProtoBuf.Modality.values());
@@ -55,6 +61,7 @@ public class Flags {
     public static final BooleanFlagField IS_EXPECT_FUNCTION = FlagField.booleanAfter(IS_SUSPEND);
     public static final BooleanFlagField IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES = FlagField.booleanAfter(IS_EXPECT_FUNCTION);
     public static final FlagField<ProtoBuf.ReturnValueStatus> RETURN_VALUE_STATUS_FUNCTION = FlagField.after(IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES, ProtoBuf.ReturnValueStatus.values());
+    public static final BooleanFlagField IS_STATIC_FUNCTION = FlagField.booleanAfter(RETURN_VALUE_STATUS_FUNCTION);
 
     // Properties
 
@@ -68,6 +75,7 @@ public class Flags {
     public static final BooleanFlagField IS_DELEGATED = FlagField.booleanAfter(IS_EXTERNAL_PROPERTY);
     public static final BooleanFlagField IS_EXPECT_PROPERTY = FlagField.booleanAfter(IS_DELEGATED);
     public static final FlagField<ProtoBuf.ReturnValueStatus> RETURN_VALUE_STATUS_PROPERTY = FlagField.after(IS_EXPECT_PROPERTY, ProtoBuf.ReturnValueStatus.values());
+    public static final BooleanFlagField IS_STATIC_PROPERTY = FlagField.booleanAfter(RETURN_VALUE_STATUS_PROPERTY);
 
     // Parameters
 
@@ -149,6 +157,7 @@ public class Flags {
             boolean isSuspend,
             boolean isExpect,
             boolean hasStableParameterNames,
+            boolean isStatic,
             ProtoBuf.ReturnValueStatus returnValueStatus
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
@@ -164,6 +173,7 @@ public class Flags {
                | IS_EXPECT_FUNCTION.toFlags(isExpect)
                | IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES.toFlags(!hasStableParameterNames)
                | RETURN_VALUE_STATUS_FUNCTION.toFlags(returnValueStatus)
+               | IS_STATIC_FUNCTION.toFlags(isStatic)
                 ;
     }
 
@@ -181,6 +191,7 @@ public class Flags {
             boolean isExternal,
             boolean isDelegated,
             boolean isExpect,
+            boolean isStatic,
             ProtoBuf.ReturnValueStatus returnValueStatus
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
@@ -197,6 +208,7 @@ public class Flags {
                | IS_DELEGATED.toFlags(isDelegated)
                | IS_EXPECT_PROPERTY.toFlags(isExpect)
                | RETURN_VALUE_STATUS_PROPERTY.toFlags(returnValueStatus)
+               | IS_STATIC_PROPERTY.toFlags(isStatic)
                 ;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.ProjectScope.getLibrariesScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -63,7 +65,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val project = testServices.compilerConfigurationProvider.getProject(testModule)
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(testModule)
         val libraryList = createLibraryListForJvm("repl", configuration, emptyList())
-        val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
+        val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
         val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(testModule)
         val librariesSearchScope = PsiBasedProjectFileSearchScope(getLibrariesScope(project))
 
@@ -130,6 +132,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         }
     }
 
+    @OptIn(KtNonPublicApi::class)
     private fun analyzeImpl(module: TestModule, moduleData: FirModuleData): FirOutputPartForDependsOnModule {
         val firParser = module.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER)
 
@@ -142,6 +145,9 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         PsiElementFinder.EP.getPoint(project).unregisterFinders<JavaElementFinder>()
 
         val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project)
+        for (ktFile in ktFiles.values) {
+            ktFile.script?.markAsReplSnippet()
+        }
 
         val moduleBasedSession = FirJvmSessionFactory.createSourceSession(
             moduleData = moduleData,

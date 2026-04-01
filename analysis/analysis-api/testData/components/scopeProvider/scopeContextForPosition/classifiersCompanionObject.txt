@@ -65,6 +65,8 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
+          isNotDefault: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -89,6 +91,7 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isInline: false
           isNotDefault: false
           isOverride: false
@@ -170,6 +173,7 @@ scopes:
             isCrossinline: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
             isVal: true
@@ -261,6 +265,7 @@ scopes:
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isPrimary: true
         location: CLASS
         modality: FINAL
@@ -443,6 +448,7 @@ scopes:
             isCrossinline: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
             isVal: true
@@ -534,6 +540,7 @@ scopes:
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isPrimary: true
         location: CLASS
         modality: FINAL
@@ -620,4 +627,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 10
-

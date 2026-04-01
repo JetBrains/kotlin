@@ -27,7 +27,7 @@ FILE: constructorVsSyntheticValuesPrioritized.fir.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<SomeClass>|
-            public get(): R|kotlin/enums/EnumEntries<SomeClass>|
+            public static get(): R|kotlin/enums/EnumEntries<SomeClass>|
 
     }
     public final val resultEntries: R|kotlin/enums/EnumEntries<SomeClass>| = Q|SomeClass|.R|/SomeClass.entries*s|

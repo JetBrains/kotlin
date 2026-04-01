@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrExpressionBodyI
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.InlineFunctionUseSiteChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUsageChecker
+import org.jetbrains.kotlin.ir.validation.checkers.expression.IrTypeOperatorRedundancyChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrValueAccessScopeChecker
 import org.jetbrains.kotlin.ir.validation.checkers.symbol.IrVisibilityChecker
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
@@ -66,6 +67,10 @@ class KlibIrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Co
                     }
             }
             .withCheckers(IrExpressionBodyInFunctionChecker)
+            .withoutCheckers(IrVisibilityChecker.Strict)
+            .applyIf(context.configuration.enableIrVisibilityChecks) {
+                withCheckers(IrVisibilityChecker.Relaxed)
+            }
 }
 
 class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringContext>(
@@ -76,7 +81,7 @@ class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringConte
         get() = IrValidatorConfig(checkTreeConsistency = true)
             .withBasicChecks()
             .applyIf(context.configuration.enableIrVisibilityChecks) {
-                withCheckers(IrVisibilityChecker.Strict)
+                withCheckers(IrVisibilityChecker.Relaxed)
             }
             .applyIf(context.configuration.enableIrNestedOffsetsChecks) {
                 withCheckers(IrNestedOffsetRangeChecker)
@@ -106,6 +111,7 @@ class IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase<Context : Lower
                 withVarargChecks()
             }
             .withInlineFunctionCallsiteCheck(checkInlineFunctionCallSites)
+            .withCheckers(IrTypeOperatorRedundancyChecker)
 }
 
 class IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase<Context : LoweringContext>(
@@ -114,8 +120,8 @@ class IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase<Context : Loweri
 ) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig()
-    // Enable after KT-81470 fix
-//            .withInlineFunctionCallsiteCheck(checkInlineFunctionCallSites)
+            .withCheckers(IrTypeOperatorRedundancyChecker)
+            .withInlineFunctionCallsiteCheck(checkInlineFunctionCallSites)
 }
 
 open class IrValidationAfterLoweringPhase<Context : LoweringContext>(context: Context) : IrValidationPhase<Context>(context) {

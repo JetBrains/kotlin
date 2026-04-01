@@ -1,0 +1,5 @@
+KtNameReferenceExpression(589,592): 'bar'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pkg/Foo.bar(): kotlin.Unit
+    ]

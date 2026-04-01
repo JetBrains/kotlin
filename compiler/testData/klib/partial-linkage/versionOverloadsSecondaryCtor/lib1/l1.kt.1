@@ -1,0 +1,18 @@
+@file:OptIn(ExperimentalVersionOverloading::class)
+
+class C {
+    val a: Int
+    val b: String
+    val c: Boolean
+    constructor(
+        a: Int = 1,
+        @IntroducedAt("1") b: String = "B",
+        @IntroducedAt("2") c: Boolean = false
+    ) {
+        this.a = a
+        this.b = b
+        this.c = c
+    }
+    constructor(flag: Boolean) : this(2)
+    fun foo(): String = "a=$a,b=$b,c=$c"
+}

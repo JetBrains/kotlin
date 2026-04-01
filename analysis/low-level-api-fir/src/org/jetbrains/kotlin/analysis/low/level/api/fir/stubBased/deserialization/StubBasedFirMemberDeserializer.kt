@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasBackingFieldAttr
 import org.jetbrains.kotlin.fir.declarations.utils.isDelegatedPropertyAttr
 import org.jetbrains.kotlin.fir.declarations.utils.isDeserializedPropertyFromAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
+import org.jetbrains.kotlin.fir.deserialization.applyKDoc
 import org.jetbrains.kotlin.fir.deserialization.toLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
+import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
@@ -269,7 +271,7 @@ internal class StubBasedFirMemberDeserializer(
                 replaceAnnotations(c.annotationDeserializer.loadAnnotations(getter))
             }
 
-            replaceDeprecationsProvider(getDeprecationsProvider(c.session))
+            replaceDeprecationsProvider(getDeprecationsProviderForStubAccessor(c.session))
             containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
         }
     }
@@ -338,7 +340,7 @@ internal class StubBasedFirMemberDeserializer(
                 replaceAnnotations(c.annotationDeserializer.loadAnnotations(setter))
             }
 
-            replaceDeprecationsProvider(getDeprecationsProvider(c.session))
+            replaceDeprecationsProvider(getDeprecationsProviderForStubAccessor(c.session))
             containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
         }
     }
@@ -360,8 +362,10 @@ internal class StubBasedFirMemberDeserializer(
             }
 
         val propertyModality = property.modality
-
         val isVar = property.isVar
+
+        val propertyStub: KotlinPropertyStubImpl = property.compiledStub
+
         return buildProperty {
             source = KtRealPsiSourceElement(property)
             moduleData = c.moduleData
@@ -436,19 +440,20 @@ internal class StubBasedFirMemberDeserializer(
             this.containerSource = c.containerSource
             this.initializer = c.annotationDeserializer.loadConstant(
                 property,
-                isUnsigned = returnTypeRef.coneType.isUnsignedType,
+                type = returnTypeRef.coneType,
                 isFromAnnotation,
             )
 
-            property.contextReceiverList?.contextReceivers()?.mapTo(contextParameters) {
+            property.contextReceivers.mapTo(contextParameters) {
                 local.memberDeserializer.loadContextReceiver(it, symbol)
             }
 
-            property.contextReceiverList?.contextParameters()?.mapTo(contextParameters) {
+            property.contextParameters.mapTo(contextParameters) {
                 local.memberDeserializer.loadContextParameter(it, symbol)
             }
+
+            applyKDoc(propertyStub.kdocText)
         }.apply {
-            val propertyStub: KotlinPropertyStubImpl = property.compiledStub
             propertyStub.hasBackingField?.let { hasBackingField ->
                 @OptIn(FirImplementationDetail::class)
                 hasBackingFieldAttr = hasBackingField
@@ -585,13 +590,15 @@ internal class StubBasedFirMemberDeserializer(
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
             this.containerSource = c.containerSource
 
-            function.contextReceiverList?.contextReceivers()?.mapTo(contextParameters) {
+            function.contextReceivers.mapTo(contextParameters) {
                 local.memberDeserializer.loadContextReceiver(it, symbol)
             }
 
-            function.contextReceiverList?.contextParameters()?.mapTo(contextParameters) {
+            function.contextParameters.mapTo(contextParameters) {
                 local.memberDeserializer.loadContextParameter(it, symbol)
             }
+
+            applyKDoc(function.compiledStub.kdocText)
         }.apply {
             setLazyPublishedVisibility(c.session)
             loadContracts(local)
@@ -667,6 +674,14 @@ internal class StubBasedFirMemberDeserializer(
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
 
             contextParameters.addAll(local.memberDeserializer.createContextReceiversForClass(classOrObject, symbol))
+
+            val constructorStub: KotlinConstructorStub<*> = when (constructor) {
+                is KtPrimaryConstructor -> constructor.compiledStub
+                is KtSecondaryConstructor -> constructor.compiledStub
+                else -> error("Unexpected constructor kind: ${constructor::class.qualifiedName}")
+            }
+
+            applyKDoc(constructorStub.kdocText)
         }.build().apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
             setLazyPublishedVisibility(c.session)

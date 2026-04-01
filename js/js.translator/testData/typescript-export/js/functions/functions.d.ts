@@ -18,7 +18,16 @@ declare namespace JS_TESTS {
     }
     namespace foo {
         function sum(x: number, y: number): number;
+        function varargByte(x: Int8Array): number;
+        function varargShort(x: Int16Array): number;
         function varargInt(x: Int32Array): number;
+        function varargFloat(x: Float32Array): number;
+        function varargDouble(x: Float64Array): number;
+        function varargBoolean(x: any /*BooleanArray*/): number;
+        function varargChar(x: any /*CharArray*/): number;
+        function varargUByte(x: any/* kotlin.UByteArray */): number;
+        function varargUShort(x: any/* kotlin.UShortArray */): number;
+        function varargUInt(x: any/* kotlin.UIntArray */): number;
         function varargNullableInt(x: Array<Nullable<number>>): number;
         function varargWithOtherParameters(x: string, y: Array<string>, z: string): number;
         function varargWithComplexType(x: Array<(p0: Array<Int32Array>) => Array<Int32Array>>): number;
@@ -59,6 +68,6 @@ declare namespace JS_TESTS {
         function concatWithContextParameters(scope1: foo.Scope1, scope2: foo.Scope2): string;
         function concatWithExtensionAndContextParameter(scope1: foo.Scope1, _this_: foo.Scope2): string;
         function getWithExtension(_this_: foo.Scope1): string;
-        function context<A, B, R>(a: A, b: B, block: (p0: A, p1: B) => R): R;
+        function allParameters<A, B, C, D, R>(a: A, b: B, c: C, d: D, block: (p0: A, p1: B, p2: C, d: D) => R): R;
     }
 }

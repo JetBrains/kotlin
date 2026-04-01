@@ -1578,7 +1578,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=V]
       FUN[fqName=kotlin.collections.MutableMap.remove, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
-        MODIFIER_LIST[public open MustUseReturnValue]
+        MODIFIER_LIST[public open IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
             valueArguments: [ version -> "1.1" ]
             CONSTRUCTOR_CALLEE
@@ -1597,6 +1597,14 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=internal]
                   REFERENCE_EXPRESSION[referencedName=PlatformDependent]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
+            valueArguments: [ ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=key]
             TYPE_REFERENCE

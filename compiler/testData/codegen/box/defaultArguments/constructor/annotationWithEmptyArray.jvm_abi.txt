@@ -1,9 +1,0 @@
-MODULE main
-	CLASS Anno.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(Lkotlin/Array;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(x: kotlin/Array<kotlin/String> /* = ... */)
-					K2
-						(x: kotlin/Array<kotlin/String> = [])

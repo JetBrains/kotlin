@@ -381,4 +381,60 @@ class SwiftExportDslIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("embedSwiftExport executes normally when kotlinx.coroutines enabled")
+    @GradleTest
+    fun testSwiftExportCoroutines(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        project(
+            "empty",
+            gradleVersion
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                with(project) {
+                    applyMultiplatform {
+                        iosArm64()
+                        with(swiftExport) { }
+
+                        sourceSets.commonMain {
+                            compileSource(
+                                """
+                                package org.foo
+                                import kotlinx.coroutines.*
+                                suspend fun iosSuspendFunction(): Int = 5
+                                """.trimIndent()
+                            )
+                            dependencies {
+                                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+                            }
+                        }
+                    }
+                }
+            }
+
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
+                assertNotNull(buildProductsDir)
+
+                assertOutputDoesNotContain("Coroutine support is enabled, but no `kotlinx-coroutines-core` module was found in path. Please add kotlinx-coroutines as a dependency to your project, or disable coroutines support to silence this warning.")
+
+                val sharedSwiftPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/Shared/Shared.swift")
+                assertContains(
+                    sharedSwiftPath.readText(),
+                    "public static func iosSuspendFunction() async throws -> Swift.Int32"
+                )
+            }
+        }
+    }
 }

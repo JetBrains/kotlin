@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,9 +9,10 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.patchDesignationPathIfNeeded
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder.Companion.collectDesignationPath
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder.Companion.declarationTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder
-import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.containingClassId
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.ifEmpty
 
@@ -64,7 +65,7 @@ internal class FirElementFinder : FirSessionComponent {
             nonLocalDeclaration: KtDeclaration,
         ): FirDesignation? = collectDesignationPath(
             firFile = firFile,
-            containerClassId = nonLocalDeclaration.containingClassOrObject?.getClassId(),
+            containerClassId = @OptIn(KtExperimentalApi::class) nonLocalDeclaration.containingClassId,
             targetDeclarationName = FirFileStructureNode.mappingNameByPsi(nonLocalDeclaration),
             expectedDeclarationAcceptor = { it.psi == nonLocalDeclaration },
         )
@@ -120,12 +121,12 @@ internal class FirElementFinder : FirSessionComponent {
                 }
             }
 
-            val additionalPathPrefix = firFile.declarations
+            val nonClassPrefix = firFile.declarations
                 .singleOrNull()
-                .takeIf { it is FirScript }
+                ?.takeIf(FirDeclaration::isScriptOrReplSnippet)
                 ?.let(FirFileStructureNode::mappingName)
 
-            val pathSegments = listOfNotNull(additionalPathPrefix) + containerClassId?.relativeClassName?.pathSegments().orEmpty()
+            val pathSegments = listOfNotNull(nonClassPrefix) + containerClassId?.relativeClassName?.pathSegments().orEmpty()
             val resultPath = ArrayList<FirDeclaration>(pathSegments.size + 1)
             resultPath += firFile
 
@@ -150,6 +151,9 @@ internal class FirElementFinder : FirSessionComponent {
         FirFileStructureNode.build(firFile)
     }
 }
+
+private val FirDeclaration.isScriptOrReplSnippet: Boolean
+    get() = this is FirScript || this is FirReplSnippet
 
 private val FirSession.firElementFinder: FirElementFinder by FirSession.sessionComponentAccessor()
 
@@ -286,9 +290,9 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
                 resultPath.removeLast()
             }
 
-            // A corner case for scripts as they always present in [pathSegments] even if it is a target,
+            // A corner case for scripts/snippets as they always present in [pathSegments] even if it is a target,
             // so it should be checked
-            if (pathIndex != 0 || structures.singleOrNull()?.element !is FirScript) {
+            if (pathIndex != 0 || structures.singleOrNull()?.element?.isScriptOrReplSnippet != true) {
                 return null
             }
         }
@@ -322,6 +326,11 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
                 }
             )
 
+            is FirReplSnippet -> Container(
+                element = element,
+                elements = convertDeclarations(listOf(element.snippetClass))
+            )
+
             is FirRegularClass -> Container(
                 element = element,
                 elements = convertDeclarations(element.declarations),
@@ -347,6 +356,7 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
          */
         fun mappingName(declaration: FirDeclaration): Name = when (declaration) {
             is FirScript -> declaration.name
+            is FirReplSnippet -> declaration.name
             is FirRegularClass -> declaration.name
             is FirNamedFunction -> declaration.name
             is FirVariable -> declaration.name
@@ -361,7 +371,6 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
             is FirPropertyAccessor,
             is FirAnonymousObject,
             is FirReceiverParameter,
-            is FirReplSnippet,
             is FirTypeParameter,
                 -> errorWithFirSpecificEntries("Unexpected declaration ${declaration::class.simpleName}", fir = declaration)
         }
@@ -380,7 +389,16 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
             is KtClassInitializer -> SpecialNames.ANONYMOUS
             is KtCodeFragment -> SpecialNames.NO_NAME_PROVIDED
             is KtClassOrObject, is KtTypeAlias, is KtNamedFunction, is KtProperty -> declaration.nameAsSafeName
-            is KtScript -> AbstractRawFirBuilder.firScriptName(declaration.containingKtFile.name)
+            is KtScript -> {
+                val fileName = declaration.containingKtFile.name
+                @OptIn(KtExperimentalApi::class)
+                if (declaration.isReplSnippet) {
+                    AbstractRawFirBuilder.firSnippetName(fileName)
+                } else {
+                    AbstractRawFirBuilder.firScriptName(fileName)
+                }
+            }
+
             else -> null
         }
     }

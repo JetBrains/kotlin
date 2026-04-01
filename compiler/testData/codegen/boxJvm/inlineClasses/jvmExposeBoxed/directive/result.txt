@@ -1,0 +1,20 @@
+@kotlin.Metadata
+public final class BoxKt {
+    // source: 'Box.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final inner class kotlin/Result$Companion
+}
+
+@kotlin.Metadata
+public final class ExposedResult {
+    // source: 'Test.kt'
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method consume(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.String
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method consume(@org.jetbrains.annotations.NotNull p0: kotlin.Result): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method consume1(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.String
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method consume1(@org.jetbrains.annotations.NotNull p0: kotlin.Result): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method consumeExpression(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.String
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method consumeExpression(@org.jetbrains.annotations.NotNull p0: kotlin.Result): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method consumeSetValue(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.String
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method consumeSetValue(@org.jetbrains.annotations.NotNull p0: kotlin.Result): java.lang.String
+}

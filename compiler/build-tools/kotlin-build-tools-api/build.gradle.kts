@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("project-tests-convention")
 }
@@ -18,6 +17,7 @@ dependencies {
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(kotlin("stdlib", coreDepsVersion))
     testImplementation(project(":compiler:build-tools:kotlin-build-tools-jdk-utils"))
 }

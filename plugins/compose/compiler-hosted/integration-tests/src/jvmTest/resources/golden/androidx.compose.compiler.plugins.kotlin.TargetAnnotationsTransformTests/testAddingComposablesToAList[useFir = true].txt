@@ -15,7 +15,7 @@ class Scope {
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 1)
+@StabilityInferred(parameters = 0)
 class Scope {
   val list: IntervalList<@[ExtensionFunctionType] Function2<Scope, Int, Function2<Composer, Int, Unit>>> = IntervalList()
   fun item(content: @[ExtensionFunctionType] Function3<Scope, Composer, Int, Unit>) {
@@ -26,7 +26,7 @@ class Scope {
           if (isTraceInProgress()) {
             traceEventStart(<>, %changed, -1, <>)
           }
-          content(%this%add, %composer, 0)
+          content(%this%add, %composer, IntervalList.%stable)
           if (isTraceInProgress()) {
             traceEventEnd()
           }
@@ -36,5 +36,8 @@ class Scope {
       }
     }
   }
-  static val %stable: Int = 0
+  val %stable: Int = IntervalList.%stable
+    get() {
+      return field
+    }
 }

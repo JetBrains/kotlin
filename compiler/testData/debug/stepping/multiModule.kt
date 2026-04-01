@@ -1,4 +1,4 @@
-
+// WASM_FAILS_IN_MULTI_MODULE_MODE
 // MODULE: lib
 // FILE: a.kt
 
@@ -23,6 +23,14 @@ fun box() {
 // test.kt:16 box
 // b.kt:9 b
 // test.kt:16 box
+// test.kt:17 box
+
+// EXPECTATIONS NATIVE
+// test.kt:15 box
+// a.kt:5 a
+// test.kt:15 box
+// test.kt:16 box
+// b.kt:9 b
 // test.kt:17 box
 
 // EXPECTATIONS JS_IR

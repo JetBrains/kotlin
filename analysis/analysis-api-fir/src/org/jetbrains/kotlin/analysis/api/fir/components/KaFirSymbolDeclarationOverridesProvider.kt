@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.analysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -57,6 +58,38 @@ internal fun <T : KaCallableSymbol> getDirectlyOverriddenSymbols(callableSymbol:
     return overriddenElement
         .map { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(it) }
         .asSequence()
+}
+
+context(relationProvider: KaFirSymbolRelationProvider)
+internal fun getAllOverriddenAccessorSymbols(accessorSymbol: KaPropertyAccessorSymbol): Sequence<KaCallableSymbol> =
+    getOverriddenAccessorSymbols(accessorSymbol) { propertySymbol ->
+        with(analysisSession) { propertySymbol.allOverriddenSymbols }
+    }
+
+context(relationProvider: KaFirSymbolRelationProvider)
+internal fun getDirectlyOverriddenAccessorSymbols(accessorSymbol: KaPropertyAccessorSymbol): Sequence<KaCallableSymbol> =
+    getOverriddenAccessorSymbols(accessorSymbol) { propertySymbol ->
+        with(analysisSession) { propertySymbol.directlyOverriddenSymbols }
+    }
+
+context(relationProvider: KaFirSymbolRelationProvider)
+internal fun getIntersectionOverriddenAccessorSymbols(accessorSymbol: KaPropertyAccessorSymbol): List<KaCallableSymbol> =
+    getOverriddenAccessorSymbols(accessorSymbol) { propertySymbol ->
+        with(analysisSession) { propertySymbol.intersectionOverriddenSymbols.asSequence() }
+    }.toList()
+
+context(relationProvider: KaFirSymbolRelationProvider)
+private inline fun getOverriddenAccessorSymbols(
+    accessorSymbol: KaPropertyAccessorSymbol,
+    overriddenProperties: (KaPropertySymbol) -> Sequence<KaCallableSymbol>,
+): Sequence<KaCallableSymbol> {
+    val propertySymbol = with(analysisSession) { accessorSymbol.containingDeclaration } as? KaPropertySymbol ?: return emptySequence()
+    val overriddenProperties = overriddenProperties(propertySymbol)
+    return if (accessorSymbol is KaPropertyGetterSymbol) {
+        overriddenProperties
+    } else {
+        overriddenProperties.takeWhile { it is KaPropertySymbol && it.setter != null }
+    }
 }
 
 private fun FirTypeScope.processCallableByName(declaration: FirDeclaration) = when (declaration) {
@@ -214,10 +247,11 @@ private fun FirBasedSymbol<*>.getIntersectionOverriddenSymbols(useSiteSession: F
         "Required FirCallableSymbol but ${this::class} found"
     }
     return when (this) {
-        is FirIntersectionCallableSymbol -> getNonSubsumedOverriddenSymbols(
-            useSiteSession,
-            analysisSession.getScopeSessionFor(useSiteSession)
-        )
+        is FirIntersectionCallableSymbol -> {
+            with(SessionHolderImpl(useSiteSession, analysisSession.getScopeSessionFor(useSiteSession))) {
+                getNonSubsumedOverriddenSymbols()
+            }
+        }
         else -> listOf(this)
     }
 }

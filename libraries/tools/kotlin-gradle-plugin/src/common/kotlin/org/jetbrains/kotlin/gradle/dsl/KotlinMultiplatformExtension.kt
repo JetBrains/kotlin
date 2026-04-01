@@ -19,11 +19,14 @@ import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConv
 import org.jetbrains.kotlin.gradle.internal.syncCommonMultiplatformOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.redundantDependsOnEdgesTracker
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.swiftPMImportIdeModelProvider
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
@@ -37,9 +40,10 @@ import javax.inject.Inject
 
 internal fun ExtensionContainer.KotlinMultiplatformExtension(
     objectFactory: ObjectFactory,
+    project: Project,
 ): KotlinMultiplatformExtension {
     val targetsContainer = objectFactory.newInstance<DefaultKotlinTargetsContainer>()
-    val presetsContainer = objectFactory.DefaultKotlinTargetContainerWithPresetFunctions(targetsContainer.targets)
+    val presetsContainer = objectFactory.DefaultKotlinTargetContainerWithPresetFunctions(targetsContainer.targets, project)
     return create(
         KOTLIN_PROJECT_EXTENSION_NAME,
         KotlinMultiplatformExtension::class.java,
@@ -55,7 +59,7 @@ internal constructor(
     project: Project,
     private val targetsContainer: KotlinTargetsContainer,
     internal val presetFunctions: DefaultKotlinTargetContainerWithPresetFunctions = project.objects
-        .DefaultKotlinTargetContainerWithPresetFunctions(targetsContainer.targets),
+        .DefaultKotlinTargetContainerWithPresetFunctions(targetsContainer.targets, project),
 ) : KotlinTargetsContainer by targetsContainer,
     KotlinProjectExtension(project),
     KotlinTargetContainerWithPresetFunctions by presetFunctions,
@@ -88,6 +92,7 @@ internal constructor(
             presetFunctions.presets.getByName(
                 "js"
             ) as InternalKotlinTargetPreset<KotlinJsTargetDsl>,
+            project,
             configure
         )
     }
@@ -100,6 +105,7 @@ internal constructor(
         presetFunctions.configureOrCreate(
             name,
             presetFunctions.presets.getByName("wasmJs") as KotlinWasmTargetPreset,
+            project,
             configure
         )
 
@@ -111,6 +117,7 @@ internal constructor(
         presetFunctions.configureOrCreate(
             name,
             presetFunctions.presets.getByName("wasmWasi") as KotlinWasmTargetPreset,
+            project,
             configure
         )
 
@@ -134,12 +141,6 @@ internal constructor(
             }
         }
     }
-
-    @Deprecated(
-        "Because only the IR compiler is left, it's no longer necessary to know about the compiler type in properties. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    override val compilerTypeFromProperties: KotlinJsCompilerType? = null
 
     internal suspend fun awaitTargets(): NamedDomainObjectCollection<KotlinTarget> {
         AfterFinaliseDsl.await()
@@ -275,6 +276,10 @@ internal constructor(
             .also {
                 syncCommonMultiplatformOptions(it)
             }
+
+    // This getter is consumed during KMP import in KotlinMPPGradleModelBuilder
+    internal val swiftPMImportIdeModel
+        get() = if (!project.kotlinPropertiesProvider.disableSwiftPMImport) project.swiftPMImportIdeModelProvider().get() else null
 }
 
 private const val targetsExtensionDeprecationMessage =
@@ -309,6 +314,7 @@ private fun KotlinTarget.isProducedFromPreset(kotlinTargetPreset: InternalKotlin
 internal fun <T : KotlinTarget> DefaultKotlinTargetContainerWithPresetFunctions.configureOrCreate(
     targetName: String,
     targetPreset: InternalKotlinTargetPreset<T>,
+    project: Project,
     configure: T.() -> Unit = {},
 ): T {
     val existingTarget = targets.findByName(targetName)
@@ -327,6 +333,17 @@ internal fun <T : KotlinTarget> DefaultKotlinTargetContainerWithPresetFunctions.
         }
 
         else -> {
+            if (targetName == "android" &&
+                targets.findByName(targetName) != null &&
+                project.plugins.hasPlugin("com.android.kotlin.multiplatform.library")) {
+                // FATAL
+                project.reportDiagnosticOncePerBuild(
+                    KotlinToolingDiagnostics.KMPAndroidTargetIsIncompatibleWithTheNewAgpKMPPlugin(
+                        IllegalStateException("Invalid KMP 'androidTarget' target instantiation")
+                    )
+                )
+            }
+
             // FIXME: KT-71529 - check if this diagnostic is actually reachable and cover with tests or remove
             throw InvalidUserCodeException(
                 "The target '$targetName' already exists, but it was not created with the '${targetPreset.name}' preset. " +

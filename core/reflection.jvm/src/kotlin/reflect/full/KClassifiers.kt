@@ -54,7 +54,7 @@ internal fun KClassifier.createTypeImpl(
     mutableCollectionClass: KClass<*>? = null,
 ): KType {
     if (useK1Implementation) {
-        return createK1KType(arguments, nullable)
+        return createK1KType(arguments, nullable, mutableCollectionClass)
     }
 
     val parameters = (this as? KClass<*>)?.allTypeParameters().orEmpty()

@@ -1,4 +1,3 @@
-import java.io.File
 pluginManagement {
     includeBuild("../../../repo/gradle-settings-conventions")
 

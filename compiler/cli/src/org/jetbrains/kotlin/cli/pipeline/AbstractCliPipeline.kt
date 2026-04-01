@@ -10,11 +10,14 @@ import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
@@ -24,7 +27,6 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.util.CompilerType
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.forEachStringMeasurement
-import java.io.File
 
 abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
     fun execute(
@@ -66,18 +68,23 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
 
         return try {
             val code = runPhasedPipeline(argumentsInput)
-            performanceManager.notifyCompilationFinished()
-            if (arguments.reportPerf) {
-                messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: " + performanceManager.getTargetInfo())
-                performanceManager.forEachStringMeasurement {
-                    messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: $it", null)
+            // In the case of one-stage compilation, the performance manager is shared between
+            // 2 pipelines: src -> klib (this one) and klib -> binary (subsequent).
+            // In this case we are not yet finished with the performance measurement and will finalize it
+            // after the subsequent pipeline finishes.
+            if (!isNativeOneStage) {
+                performanceManager.notifyCompilationFinished()
+                if (arguments.reportPerf) {
+                    messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: " + performanceManager.getTargetInfo())
+                    performanceManager.forEachStringMeasurement {
+                        messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: $it", null)
+                    }
+                }
+
+                if (arguments.dumpPerf != null) {
+                    performanceManager.dumpPerformanceReport(arguments.dumpPerf!!)
                 }
             }
-
-            if (arguments.dumpPerf != null) {
-                performanceManager.dumpPerformanceReport(arguments.dumpPerf!!)
-            }
-
             if (messageCollector.hasErrors()) ExitCode.COMPILATION_ERROR else code
         } catch (_: CompilationErrorException) {
             ExitCode.COMPILATION_ERROR
@@ -99,10 +106,7 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
 
         val phaseConfig = PhaseConfig()
         val context = PipelineContext(
-            input.messageCollector,
-            input.diagnosticCollector,
             input.performanceManager,
-            renderDiagnosticInternalName = input.arguments.renderInternalDiagnosticNames,
             kaptMode = isKaptMode(input.arguments)
         )
         return try {
@@ -120,7 +124,8 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
              * There might be a case when the pipeline is not executed fully, but it's not considered as a compilation error:
              *   if `-version` flag was passed
              */
-            if (e.definitelyCompilationError || input.messageCollector.hasErrors() || input.diagnosticCollector.hasErrors) {
+            val configuration = input.configuration
+            if (e.definitelyCompilationError || CheckDiagnosticCollector.checkHasErrors(configuration)) {
                 ExitCode.COMPILATION_ERROR
             } else {
                 ExitCode.OK
@@ -128,7 +133,11 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
         } catch (_: SuccessfulPipelineExecutionException) {
             ExitCode.OK
         } finally {
-            CheckCompilationErrors.CheckDiagnosticCollector.reportDiagnosticsToMessageCollector(context)
+            val configuration = input.configuration
+            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
+                configuration.diagnosticsCollector, configuration.messageCollector,
+                configuration.renderDiagnosticInternalName
+            )
         }
     }
 
@@ -145,4 +154,9 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
     }
 
     protected open fun isKaptMode(arguments: A): Boolean = false
+
+    /**
+     * In Native CLI there is a one-stage compilation mode, which is used when producing a binary from sources directly.
+     */
+    protected open val isNativeOneStage = false
 }

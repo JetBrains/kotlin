@@ -1,30 +1,30 @@
 FILE: positionalDestructuringScript.kts
     SCRIPT: <script-positionalDestructuringScript.kts>
 
-        public final? class Tuple : R|kotlin/Any| {
-            public? constructor(first: String, second: Int): R|Tuple| {
+        public final? [ContainingScriptKey=FirScriptSymbol <script-positionalDestructuringScript.kts>, ScriptTopLevelDeclaration=true] class Tuple : R|kotlin/Any| {
+            public? [ContainingClassKey=Tuple] constructor([CorrespondingProperty=/Tuple.first] first: String, [CorrespondingProperty=/Tuple.second] second: Int): R|Tuple| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? val first: String = R|<local>/first|
-                public? get(): String
+            public? final? [IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+                public? [ContainingClassKey=Tuple] get(): String
 
-            public? final? val second: Int = R|<local>/second|
-                public? get(): Int
+            public? final? [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+                public? [ContainingClassKey=Tuple] get(): Int
 
         }
 
-        lval <destruct>: <implicit> = LAZY_EXPRESSION
-        public final val a: <implicit> = LAZY_EXPRESSION
+        [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val a: <implicit> = LAZY_EXPRESSION
             public get(): <implicit>
 
-        public? final? var second: <implicit>
+        public? final? [ScriptTopLevelDeclaration=true] var second: <implicit>
             public? get(): <implicit>
             public? set(value: <implicit>): R|kotlin/Unit|
 
-        lval <destruct>: <implicit> = LAZY_EXPRESSION
-        public final val first: <implicit> = LAZY_EXPRESSION
+        [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val first: <implicit> = LAZY_EXPRESSION
             public get(): <implicit>
 
-        public final val b: <implicit> = LAZY_EXPRESSION
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val b: <implicit> = LAZY_EXPRESSION
             public get(): <implicit>

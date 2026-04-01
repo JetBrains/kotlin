@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.ExpectForActualMatchingData
 import org.jetbrains.kotlin.fir.declarations.expectForActual
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
@@ -22,9 +23,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.mpp.CallableSymbolMarker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 object FirExpectActualResolver {
     fun findExpectForActual(
@@ -35,8 +38,10 @@ object FirExpectActualResolver {
         with(context) {
             val result: Map<ExpectActualMatchingCompatibility, List<FirBasedSymbol<*>>> = when (actualSymbol) {
                 is FirCallableSymbol<*> -> {
-                    val callableId = actualSymbol.callableId
-                    val classId = callableId!!.classId
+                    val callableId = actualSymbol.callableId ?: errorWithAttachment("Symbol without callableId passed to expect/actual resolver") {
+                            withFirSymbolEntry("symbol", actualSymbol)
+                        }
+                    val classId = callableId.classId
                     var actualContainingClass: FirRegularClassSymbol? = null
                     var expectContainingClass: FirRegularClassSymbol? = null
                     val candidates = when {
@@ -66,7 +71,11 @@ object FirExpectActualResolver {
                                     scope.processFunctionsByName(callableId.callableName) { add(it) }
                                     scope.processPropertiesByName(callableId.callableName) { add(it) }
                                 }
-                                .filter { expectSymbol -> expectSymbol.isExpect && expectSymbol.moduleData in transitiveDependsOn }
+                                .filter { expectSymbol ->
+                                    expectSymbol.isExpect &&
+                                            expectSymbol.moduleData in transitiveDependsOn &&
+                                            expectSymbol.isCompanionExtension == actualSymbol.isCompanionExtension
+                                }
                                 .filterContainedInTheFirstWaveOfDependsOnDominatorTree(graphStartingNode = actualSymbol.moduleData)
                         }
                     }

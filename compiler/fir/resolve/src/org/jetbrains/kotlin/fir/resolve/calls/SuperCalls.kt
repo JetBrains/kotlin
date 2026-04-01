@@ -127,8 +127,6 @@ private inline fun BodyResolveComponents.resolveSupertypesByMembers(
 private fun BodyResolveComponents.getFunctionMembers(type: ConeKotlinType, name: Name): Collection<FirCallableDeclaration> =
     buildList {
         type.scope(
-            useSiteSession = session,
-            scopeSession = scopeSession,
             callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         )?.processFunctionsByName(name) { add(it.fir) }
@@ -137,8 +135,6 @@ private fun BodyResolveComponents.getFunctionMembers(type: ConeKotlinType, name:
 private fun BodyResolveComponents.getPropertyMembers(type: ConeKotlinType, name: Name): Collection<FirCallableDeclaration> =
     buildList {
         type.scope(
-            useSiteSession = session,
-            scopeSession = scopeSession,
             callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         )?.processPropertiesByName(name) { add(it.fir) }

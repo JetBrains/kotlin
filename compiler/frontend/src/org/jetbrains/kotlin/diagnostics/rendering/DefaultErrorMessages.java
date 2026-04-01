@@ -784,6 +784,7 @@ public class DefaultErrorMessages {
         MAP.put(DIVISION_BY_ZERO, "Division by zero");
         MAP.put(INTEGER_OVERFLOW, "This operation has led to an overflow");
         MAP.put(INT_LITERAL_OUT_OF_RANGE, "The value is out of range");
+        MAP.put(INT_LITERAL_WITH_LEADING_ZEROS, "Leading zeros are not allowed in integer literals.");
         MAP.put(WRONG_LONG_SUFFIX, "Use 'L' instead of 'l'");
         MAP.put(FLOAT_LITERAL_OUT_OF_RANGE, "The value is out of range");
         MAP.put(FLOAT_LITERAL_CONFORMS_INFINITY, "Floating point number conforms to infinity");

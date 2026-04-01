@@ -266,10 +266,6 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             default("resolvePhase", "FirResolvePhase.DECLARATIONS")
         }
 
-        builder(enumEntry) {
-            withCopy()
-        }
-
         builder(typeOperatorCall) {
             parents += callBuilder
             default("argumentList") {
@@ -402,6 +398,11 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             additionalImports(stubReferenceType)
         }
 
+        builder(equalityOperatorCall) {
+            default("calleeReference", "FirStubReference")
+            additionalImports(stubReferenceType)
+        }
+
         builder(anonymousInitializer) {
             parents += declarationBuilder
             default("symbol", "FirAnonymousInitializerSymbol()")
@@ -468,7 +469,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         noBuilder(literalExpression)
 
-        builder(samConversionExpression) {
+        builder(functionTypeConversionExpression) {
             withCopy()
         }
 

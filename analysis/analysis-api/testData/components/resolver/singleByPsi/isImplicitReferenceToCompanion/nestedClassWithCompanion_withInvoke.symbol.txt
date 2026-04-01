@@ -1,0 +1,5 @@
+KtNameReferenceExpression(137,143): 'Nested'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /AA.Nested.Companion
+    ]

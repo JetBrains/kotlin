@@ -2,6 +2,8 @@ KtNameReferenceExpression(112,115): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<AMBIGUOUS_CONTEXT_ARGUMENT: Multiple potential context arguments for 'string: String' in scope.>
     symbols:
       (in ROOT) context(string@kotlin.String)
       val foo: kotlin.Boolean

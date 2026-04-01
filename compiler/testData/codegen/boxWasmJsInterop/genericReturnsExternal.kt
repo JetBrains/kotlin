@@ -1,4 +1,4 @@
-// TARGET_BACKEND: WASM
+// WITH_STDLIB
 
 external interface EI
 

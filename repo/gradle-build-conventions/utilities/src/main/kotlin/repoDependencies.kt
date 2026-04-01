@@ -10,12 +10,14 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.file.FileCollection
 import org.gradle.internal.jvm.Jvm
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import java.io.File
+import java.net.URI
 
 private val Project.isEAPIntellij get() = rootProject.extra["versions.intellijSdk"].toString().contains("-EAP-")
 private val Project.isNightlyIntellij get() = rootProject.extra["versions.intellijSdk"].toString().endsWith("SNAPSHOT") && !isEAPIntellij
@@ -91,24 +93,20 @@ private fun Project.jdkVariantsOfBootstrapStdlib(variant: Int): Any {
  */
 @JvmOverloads
 fun Project.kotlinTest(suffix: String? = null, classifier: String? = null): Any {
-    return if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        kotlinDep(listOfNotNull("test", suffix?.lowercase()).joinToString("-"), bootstrapKotlinVersion, classifier)
-    } else {
-        val elementsType = when (classifier) {
-            null -> "Runtime"
-            "sources" -> "Sources"
-            else -> error("Unsupported kotlin-test classifier: $classifier")
-        }
-        val configuration = when (suffix?.lowercase()) {
-            null -> classifier?.let { "jvm${elementsType}Elements" }
-            "junit" -> "jvmJUnit${elementsType}Elements"
-            "junit5" -> "jvmJUnit5${elementsType}Elements"
-            "testng" -> "jvmTestNG${elementsType}Elements"
-            "js" -> "js${elementsType}Elements"
-            else -> error("Unsupported kotlin-test flavor: $suffix")
-        }
-        dependencies.project(":kotlin-test", configuration)
+    val elementsType = when (classifier) {
+        null -> "Runtime"
+        "sources" -> "Sources"
+        else -> error("Unsupported kotlin-test classifier: $classifier")
     }
+    val configuration = when (suffix?.lowercase()) {
+        null -> classifier?.let { "jvm${elementsType}Elements" }
+        "junit" -> "jvmJUnit${elementsType}Elements"
+        "junit5" -> "jvmJUnit5${elementsType}Elements"
+        "testng" -> "jvmTestNG${elementsType}Elements"
+        "js" -> "js${elementsType}Elements"
+        else -> error("Unsupported kotlin-test flavor: $suffix")
+    }
+    return dependencies.project(":kotlin-test", configuration)
 }
 
 fun DependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")
@@ -236,11 +234,7 @@ fun Project.firstFromJavaHomeThatExists(
             logger.warn("Cannot find file by paths: ${paths.toList()} in $jdkHome")
     }
 
-fun Project.toolsJarApi(): Any =
-    if (kotlinBuildProperties.isInJpsBuildIdeaSync)
-        toolsJar()
-    else
-        dependencies.project(":dependencies:tools-jar-api")
+fun Project.toolsJarApi(): ProjectDependency = dependencies.project(":dependencies:tools-jar-api")
 
 fun Project.toolsJar(): FileCollection = files(
     getToolchainLauncherFor(DEFAULT_JVM_TOOLCHAIN)
@@ -254,4 +248,56 @@ val compilerManifestClassPath
 
 object EmbeddedComponents {
     const val CONFIGURATION_NAME = "embedded"
+}
+
+fun RepositoryHandler.githubTag(ghUser: String, repo: String, revisionPrefix: String = "v", groupAlias: String? = null) {
+    exclusiveContent {
+        forRepository {
+            ivy {
+                name = "Github Tag: $ghUser/$repo"
+                url = URI("https://github.com/$ghUser/$repo/archive/refs/tags/")
+                patternLayout {
+                    artifact("$revisionPrefix[revision].[ext]")
+                }
+                metadataSources { artifact() }
+            }
+        }
+        filter {
+            includeModule(groupAlias ?: ghUser, repo)
+        }
+    }
+}
+fun RepositoryHandler.githubRelease(ghUser: String, repo: String, revisionPrefix: String = "v", groupAlias: String? = null) {
+    exclusiveContent {
+        forRepository {
+            ivy {
+                name = "Github Release: $ghUser/$repo"
+                url = URI("https://github.com/$ghUser/$repo/releases/download/")
+                patternLayout {
+                    artifact("$revisionPrefix[revision]/[artifact](-$revisionPrefix[revision])(-[classifier]).[ext]")
+                }
+                metadataSources { artifact() }
+            }
+        }
+        filter {
+            includeModule(groupAlias ?: ghUser, repo)
+        }
+    }
+}
+fun RepositoryHandler.githubCommit(ghUser: String, repo: String, groupAlias: String? = null) {
+    exclusiveContent {
+        forRepository {
+            ivy {
+                name = "Github Commit: $ghUser/$repo"
+                url = URI("https://github.com/$ghUser/$repo/zipball/")
+                patternLayout {
+                    artifact("[revision]")
+                }
+                metadataSources { artifact() }
+            }
+        }
+        filter {
+            includeModule(groupAlias ?: ghUser, repo)
+        }
+    }
 }

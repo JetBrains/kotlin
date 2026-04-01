@@ -6,6 +6,11 @@ and documentation standards.
 For information about the Kotlin Analysis API itself, check the [Analysis API documentation](https://kotl.in/analysis-api).  
 For information about evolving existing APIs, see the [API Evolution Guide](api-evolution.md).
 
+> [!NOTE]
+> These guidelines apply to both **Analysis API** (`Ka*` types) and **Kotlin PSI** (`Kt*` types).
+> While examples primarily use Analysis API, the same principles govern PSI development.
+> PSI-specific considerations are noted where they differ.
+
 ## Important Disclaimer
 
 Not all existing parts of the Analysis API strictly follow every guideline in this document.
@@ -311,9 +316,22 @@ If an interface or class isn't intended to be subclassed by clients, make this e
 interface KaSession
 ```
 
-On the other hand, if you expect users to create subtypes of your class or interface,
-mark the declaration with `@KaExtensibleApi` annotation and provide detailed instructions on not only how to use
-each of the members, but also how to implement them correctly.
+#### Use `@KaSpi` for Extendable Types
+
+If you expect users to create subtypes of your class or interface,
+mark the declaration with `@KaSpi` annotation and provide detailed instructions on not only how to use
+each of the members, as well as how to implement them correctly.
+
+Use `@KaSpiExtensionPoint` annotation to explicitly mark members of the SPI that are designed only for extension, not for direct use.
+
+`ExtensionPointName` can be used to inject client implementations. Implementation notes:
+
+- The KDoc of the SPI should mention the extension point name (the name that is used to register the EP)
+- `@KaSpiExtensionPoint` should be used to annotate all members of the extension point class
+
+**Do not mix API and SPI (Service Provider Interface) in one type**. It is better to have a clear separation
+between types that are supposed to be used by clients and types that are supposed to be used by the Analysis API platform itself.
+This would help prevent the potential evolution of API/SPI from introducing breaking changes.
 
 #### Check Whether Your Entity Needs to be a `KaLifetimeOwner`
 
@@ -752,6 +770,18 @@ inline fun <R> analyze(
 Be prepared for suspension! Unless the lambda parameter of an inline function is marked with `crossinline`, or a lambda runs inside a
 synchronized block, a suspend call may happen inside the passed lambda, and your function body may never be fully executed.
 
+### Java-Kotlin Interoperability (PSI)
+
+The PSI module contains both Java and Kotlin files. Converting Java to Kotlin is not always straightforward and in some cases even impossible:
+
+-  **`@JvmName` unavailable in interfaces** — in some cases it is impossible to convert Java methods to Kotlin properties in a binary-compatible way since `@JvmName` cannot be used to fix potential clashes. 
+-  **Platform type handling** — IntelliJ Platform APIs use Java types extensively; Kotlin's null-safety interop requires careful handling.
+    - The classic example is `PsiElement.getParent()` returning `PsiElement!`. After conversion to Kotlin it becomes either `PsiElement?` or `PsiElement` – both of them are breaking changes.
+      A workaround is to delegate the implementation to a Java method and keep the return type implicit.
+- **Binary compatibility** — PSI classes are widely used; the binary and source compatibility must be preserved as much as possible.
+
+Consult with PSI maintainers before converting Java classes to Kotlin.
+
 ### Component Architecture
 
 Components group related functionality, providing APIs through the `KaSession`:
@@ -820,13 +850,13 @@ Use meaningful names that reflect the domain or are just more pleasant to see, r
 Avoid random variable names like `a`, `x`, or `temp`.
 The often-used `Foo` placeholder may be acceptable when discussing declarations in general terms.
 
-```kotlin
+````kotlin
 /**
  * The function symbol for the original Java getter method.
  *
  * #### Example:
  *
- * `​`​`
+ * ```
  * public class JavaClass {
  *     private int field;
  *
@@ -834,12 +864,12 @@ The often-used `Foo` placeholder may be acceptable when discussing declarations 
  *         return field;
  *     }
  * }
- * `​`​`
+ * ```
  *
  * In the synthetic property for `field`, [javaGetterSymbol] is the function symbol for `getField`.
  */
 val javaGetterSymbol: KaNamedFunctionSymbol
-```
+````
 
 ### Structure documentation comments
 
@@ -932,6 +962,11 @@ After adding or modifying APIs:
 1. Update the documentation website at https://github.com/Kotlin/analysis-api
 2. Update migration guides if deprecating existing APIs
 
+#### Java Files in PSI
+
+For Java files in the PSI module, apply the same documentation principles using JavaDoc syntax.
+Use `@param`, `@return`, and `@see` tags as the JavaDoc equivalents of KDoc's parameter documentation.
+
 #### Mark K1-Specific Limitations
 
 If your API isn't implemented for K1, make it clear:
@@ -970,6 +1005,14 @@ Always refer to the K1 compiler and the K1 implementation simply as "K1".
 Avoid adjectives such as "legacy", "classic", "old" or similar.
 
 ## Naming Conventions
+
+### Use Common Prefixes for Top-Level Class-Like Declarations
+
+| API          | Prefix | Examples                                     |
+|--------------|--------|----------------------------------------------|
+| Analysis API | `Ka`   | `KaSession`, `KaSymbol`, `KaType`            |
+| Kotlin PSI   | `Kt`   | `KtElement`, `KtExpression`, `KtDeclaration` |
+| KDoc PSI     | `KDoc` | `KDocTag`, `KDocSection`                     |
 
 ### Use Common Property and Parameter Names
 
@@ -1160,7 +1203,12 @@ Use established single-word forms for compound terms commonly used in the progra
 The Analysis API serves various projects with different stability requirements.
 To prevent accidental usage of unstable APIs or usage-tailored functionality, the Analysis API uses a set of opt-in annotations.
 
-Note that the binary compatibility checker doesn't propagate opt-in annotations from outer classes.
+#### Placement
+
+Opt-in requirements are propagated through the lexical scope to nested declarations. Hence, it is generally sufficient to annotate the 
+top-level declaration.
+
+However, note that the binary compatibility checker does not propagate opt-in annotations from outer classes.
 If the outer class is annotated, add the same opt-in annotation to all nested classes as well.
 
 ### Experimental API Markers
@@ -1175,6 +1223,8 @@ If the outer class is annotated, add the same opt-in annotation to all nested cl
     - Marks APIs intended for Analysis API implementations and platforms.
       These APIs define contracts between the core API and platform implementations, are neither stable nor intended for end-user
       consumption.
+    - All public endpoints in the `analysis-api-platform-interface` module should be annotated with this marker according to the placement
+      rules above. This ensures that clients have to opt in when they accidentally or automatically depend on the platform interface. 
 
 ### Internal API Markers
 

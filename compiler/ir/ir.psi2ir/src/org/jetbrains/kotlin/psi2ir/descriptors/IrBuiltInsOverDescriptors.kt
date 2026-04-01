@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -30,12 +30,10 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 @ObsoleteDescriptorBasedAPI
 @OptIn(InternalSymbolFinderAPI::class)
@@ -155,7 +153,7 @@ class IrBuiltInsOverDescriptors(
             }
 
             if (isIntrinsicConst) {
-                operator.annotations += IrConstructorCallImpl.fromSymbolDescriptor(
+                operator.annotations += IrAnnotationImpl.fromSymbolDescriptor(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, intrinsicConstType, intrinsicConstConstructor.symbol
                 )
             }
@@ -547,42 +545,6 @@ class IrBuiltInsOverDescriptors(
 
     override val enumClass = builtIns.enum.toIrSymbol()
 
-    override val extensionToString: IrSimpleFunctionSymbol = symbolFinder
-        .findFunctions(CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, OperatorNameConventions.TO_STRING))
-        .first {
-            val descriptor = it.descriptor
-            descriptor is SimpleFunctionDescriptor && descriptor.dispatchReceiverParameter == null &&
-                    descriptor.extensionReceiverParameter != null &&
-                    KotlinBuiltIns.isNullableAny(descriptor.extensionReceiverParameter!!.type) && descriptor.valueParameters.isEmpty()
-        }
-
-    override val memberToString: IrSimpleFunctionSymbol = symbolFinder
-        .findFunctions(CallableId(builtIns.any.classId!!, OperatorNameConventions.TO_STRING))
-        .single {
-            val descriptor = it.descriptor
-            descriptor is SimpleFunctionDescriptor && descriptor.valueParameters.isEmpty()
-        }
-
-    override val extensionStringPlus: IrSimpleFunctionSymbol = symbolFinder
-        .findFunctions(CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, OperatorNameConventions.PLUS))
-        .first {
-            val descriptor = it.descriptor
-            descriptor is SimpleFunctionDescriptor && descriptor.dispatchReceiverParameter == null &&
-                    descriptor.extensionReceiverParameter != null &&
-                    KotlinBuiltIns.isStringOrNullableString(descriptor.extensionReceiverParameter!!.type) &&
-                    descriptor.valueParameters.size == 1 &&
-                    KotlinBuiltIns.isNullableAny(descriptor.valueParameters.first().type)
-        }
-
-    override val memberStringPlus: IrSimpleFunctionSymbol = symbolFinder
-        .findFunctions(CallableId(builtIns.string.classId!!, OperatorNameConventions.PLUS))
-        .single {
-            val descriptor = it.descriptor
-            descriptor is SimpleFunctionDescriptor &&
-                    descriptor.valueParameters.size == 1 &&
-                    KotlinBuiltIns.isNullableAny(descriptor.valueParameters.first().type)
-        }
-
     override fun functionN(arity: Int): IrClass = functionFactory.functionN(arity)
     override fun kFunctionN(arity: Int): IrClass = functionFactory.kFunctionN(arity)
     override fun suspendFunctionN(arity: Int): IrClass = functionFactory.suspendFunctionN(arity)
@@ -601,7 +563,7 @@ class SymbolFinderOverDescriptors(private val builtIns: KotlinBuiltIns, private 
         builtIns.builtInsModule.getPackage(FqName.fromSegments(listOf(*packageNameSegments))).memberScope
 
     private fun getClassDescriptor(classId: ClassId) : ClassDescriptor? {
-        val parentClassId = classId.parentClassId
+        val parentClassId = classId.outerClassId
         return if (parentClassId == null) {
             builtIns.builtInsModule
                 .getPackage(classId.packageFqName)

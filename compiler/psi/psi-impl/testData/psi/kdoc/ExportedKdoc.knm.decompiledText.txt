@@ -1,0 +1,32 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public val topLevelProp: kotlin.Int /* compiled code */
+    public final get() { /* compiled code */ }
+
+public fun bar(number: kotlin.Int): kotlin.Unit { /* compiled code */ }
+
+public typealias MyString = kotlin.String
+
+public final class Foo public constructor(value: kotlin.String) {
+    public companion object {
+    }
+
+    public constructor(value: kotlin.Int) { /* compiled code */ }
+
+    public final val value: kotlin.String /* compiled code */
+
+    public final val prop: kotlin.String /* compiled code */
+
+    public final fun foo(): kotlin.Unit { /* compiled code */ }
+}
+
+public final annotation class Anno public constructor() : kotlin.Annotation {
+}
+
+public final enum class Direction private constructor() : kotlin.Enum<Direction> {
+    SOUTH;
+}
+
+public object Obj {
+}

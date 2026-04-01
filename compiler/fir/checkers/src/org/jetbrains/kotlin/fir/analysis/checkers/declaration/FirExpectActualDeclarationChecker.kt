@@ -35,7 +35,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (declaration !is FirMemberDeclaration) return
-        if (!LanguageFeature.MultiPlatformProjects.isEnabled()) {
+        if (LanguageFeature.MultiPlatformProjects.isDisabled()) {
             if ((declaration.isExpect || declaration.isActual) && containsExpectOrActualModifier(declaration) &&
                 declaration.source?.kind?.shouldSkipErrorTypeReporting == false
             ) {
@@ -382,6 +382,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
     //  - annotation constructors, because annotation classes can only have one constructor
     //  - value class primary constructors, because value class must have primary constructor
     //  - value parameter inside primary constructor of inline class, because inline class must have one value parameter
+    //  - enum entries and generated enum members entries, values and valueOf
     private fun requireActualModifier(
         declaration: FirBasedSymbol<*>,
         actualContainingClass: FirRegularClassSymbol,
@@ -390,10 +391,12 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         val source = declaration.source
         check(source != null) { "expect-actual matching is only possible for code with sources" }
         return source.kind != KtFakeSourceElementKind.ImplicitConstructor &&
+                source.kind != KtFakeSourceElementKind.EnumGeneratedDeclaration &&
                 declaration.origin != FirDeclarationOrigin.Synthetic.DataClassMember &&
                 !declaration.isAnnotationConstructor(platformSession) &&
                 !declaration.isPrimaryConstructorOfInlineOrValueClass(platformSession) &&
-                !isUnderlyingPropertyOfInlineClass(declaration, actualContainingClass, platformSession)
+                !isUnderlyingPropertyOfInlineClass(declaration, actualContainingClass, platformSession) &&
+                declaration !is FirEnumEntrySymbol
     }
 
     // Ideally, this function shouldn't exist KT-63751

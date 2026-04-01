@@ -1,0 +1,4 @@
+KT element: KtNamedFunction
+Resolve target: deeplyNestedMemberScript.kts -> <script-deeplyNestedMemberScript.kts> -> Outer -> Middle -> deepFun
+FIR:
+  public? final? fun deepFun(): R|kotlin/Unit| { LAZY_BLOCK }

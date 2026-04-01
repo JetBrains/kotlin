@@ -20,12 +20,13 @@ class CleanDataTaskIT : KGPBaseTest() {
             "cleanTask",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build("testCleanTask")
         }
     }
 
+    @Suppress("DEPRECATION")
     @DisplayName("Check web clean data tasks are deprecated")
     @GradleTest
     @MppGradlePluginTests

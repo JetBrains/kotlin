@@ -41,3 +41,18 @@ public annotation class ExperimentalContextReceivers
 )
 @MustBeDocumented
 public annotation class ExperimentalAnnotationsInMetadata
+
+
+/**
+ * Marks an API related to the experimental feature "unused return value checker" [KT-12719](https://youtrack.jetbrains.com/issue/KT-12719),
+ * enabled by the compiler flag `-Xreturn-value-checker`.
+ *
+ * This feature uses kotlin metadata to store information whether the return value of a function should be checked for usage.
+ * See [KmFunction.returnValueStatus] and [ReturnValueStatus] for details.
+ */
+@RequiresOptIn(
+    "This API is related to the experimental feature \"unused return value checker\" (see KT-12719).",
+    RequiresOptIn.Level.WARNING,
+)
+@MustBeDocumented
+public annotation class ExperimentalMustUseStatus

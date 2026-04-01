@@ -2,5 +2,6 @@ KtNameReferenceExpression(75,78): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.pckg) fun bar()

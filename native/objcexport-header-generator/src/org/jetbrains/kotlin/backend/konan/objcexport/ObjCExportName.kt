@@ -22,6 +22,8 @@ interface ObjCExportFunctionName : ObjCExportName
 
 interface ObjCExportFileName : ObjCExportName
 
+interface ObjCExportNSEnumTypeName : ObjCExportName
+
 fun ObjCExportClassOrProtocolName(
     swiftName: String,
     objCName: String,
@@ -62,6 +64,14 @@ fun ObjCExportFileName(
     objCName = objCName
 )
 
+fun ObjCExportNSEnumTypeName(
+    swiftName: String,
+    objCName: String,
+): ObjCExportNSEnumTypeName = ObjCExportNSEnumTypeNameImpl(
+    swiftName = swiftName,
+    objCName = objCName
+)
+
 private data class ObjCExportPropertyNameImpl(
     override val swiftName: String,
     override val objCName: String,
@@ -77,6 +87,10 @@ private data class ObjCExportFileNameImpl(
     override val objCName: String,
 ) : ObjCExportFileName
 
+private data class ObjCExportNSEnumTypeNameImpl(
+    override val swiftName: String,
+    override val objCName: String,
+) : ObjCExportNSEnumTypeName
 
 fun ObjCExportClassOrProtocolName.toNameAttributes(): List<String> = listOfNotNull(
     binaryName.takeIf { it != objCName }?.let { objcRuntimeNameAttribute(it) },

@@ -1,6 +1,5 @@
 // test.BaseClass
 // WITH_FIR_TEST_COMPILER_PLUGIN
-// IGNORE_LIBRARY_EXCEPTIONS: KT-58535
 // FILE: main.kt
 package test
 

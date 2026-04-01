@@ -1,4 +1,4 @@
-// DO_NOT_CHECK_SYMBOL_RESTORE_K1
+// DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
 // callable: one/foo
 // LANGUAGE: +ContextParameters
 // KT-75318

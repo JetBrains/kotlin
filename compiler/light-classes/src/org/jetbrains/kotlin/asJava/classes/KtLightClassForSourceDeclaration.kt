@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,10 +16,10 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
-import javax.swing.Icon
 
 abstract class KtLightClassForSourceDeclaration(
     protected val classOrObject: KtClassOrObject,
@@ -58,9 +58,6 @@ abstract class KtLightClassForSourceDeclaration(
         kotlinOrigin.isEquivalentTo(another) ||
                 equals(another) ||
                 (qualifiedName != null && another is KtLightClassForSourceDeclaration && qualifiedName == another.qualifiedName)
-
-    override fun getElementIcon(flags: Int): Icon? =
-        throw UnsupportedOperationException("This should be done by KotlinIconProvider")
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

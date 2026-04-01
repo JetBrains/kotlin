@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.swiftexport.standalone.test;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -18,8 +18,12 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/swift/swift-export-standalone-integration-tests/simple/testData/generation")
 @TestDataPath("$PROJECT_ROOT")
-@UseStandardTestCaseGroupProvider()
+@UseExtTestCaseGroupProvider()
 public class SwiftExportWithResultValidationTest extends AbstractSwiftExportWithResultValidationTest {
+  private void run(String fileName) {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/" + fileName);
+  }
+
   @Test
   public void testAllFilesPresentInGeneration() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone-integration-tests/simple/testData/generation"), Pattern.compile("^([^.]+)$"), null, false);
@@ -194,6 +198,12 @@ public class SwiftExportWithResultValidationTest extends AbstractSwiftExportWith
   }
 
   @Test
+  @TestMetadata("ranges")
+  public void testRanges() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/ranges/");
+  }
+
+  @Test
   @TestMetadata("set")
   public void testSet() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/set/");
@@ -233,6 +243,12 @@ public class SwiftExportWithResultValidationTest extends AbstractSwiftExportWith
   @TestMetadata("vararg")
   public void testVararg() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/vararg/");
+  }
+
+  @Test
+  @TestMetadata("vararg_with_package_flattening")
+  public void testVararg_with_package_flattening() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/vararg_with_package_flattening/");
   }
 
   @Test

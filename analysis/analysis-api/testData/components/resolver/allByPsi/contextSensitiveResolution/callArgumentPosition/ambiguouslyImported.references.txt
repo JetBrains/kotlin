@@ -2,34 +2,47 @@ KtNameReferenceExpression(38,39): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package b
 
 KtNameReferenceExpression(47,49): 'a1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package a1
 
 KtNameReferenceExpression(59,61): 'a2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package a2
 
 KtNameReferenceExpression(111,117): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in b) enum class MyEnum
 
 KtCallExpression(140,146): 'foo(X)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -37,6 +50,7 @@ KtNameReferenceExpression(140,143): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in b) fun foo(a: b.MyEnum)
 
@@ -44,6 +58,10 @@ KtNameReferenceExpression(144,145): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    val X: MyEnum
+    val X: MyEnum>
     symbols:
       0: (in a1) val X: b.MyEnum
       1: (in a2) val X: b.MyEnum
@@ -52,6 +70,7 @@ KtCallExpression(151,157): 'foo(Y)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -59,6 +78,7 @@ KtNameReferenceExpression(151,154): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in b) fun foo(a: b.MyEnum)
 
@@ -66,6 +86,10 @@ KtNameReferenceExpression(155,156): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    val Y: String
+    val Y: String>
     symbols:
       0: (in a1) val Y: kotlin.String
       1: (in a2) val Y: kotlin.String
@@ -74,6 +98,7 @@ KtCallExpression(162,168): 'foo(Z)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -81,6 +106,7 @@ KtNameReferenceExpression(162,165): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in b) fun foo(a: b.MyEnum)
 
@@ -88,5 +114,6 @@ KtNameReferenceExpression(166,167): 'Z'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in b.MyEnum) Z

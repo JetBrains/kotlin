@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-72664
 
 import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
@@ -23,3 +24,5 @@ fun test_bad() {
         <!NO_VALUE_FOR_PARAMETER!>g = <!DEBUG_INFO_EXPRESSION_TYPE("some.MyInlineableFunction0<kotlin.Unit>")!>{}<!>,
     )<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral */

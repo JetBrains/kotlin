@@ -3,6 +3,8 @@
 // TODO: remove the test when KT-66906 will be resolved
 // WITH_STDLIB
 // WITH_COROUTINES
+
+// FILE: lib.kt
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
@@ -23,6 +25,7 @@ inline fun run(block: () -> Unit) {
     block()
 }
 
+// FILE: main.kt
 fun box(): String {
     var result = ""
     run {

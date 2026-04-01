@@ -7,6 +7,9 @@ import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
 
 
+val normInt = 345
+val stableTopLevelProp: Modifier = Modifier
+
 // all of these should result in 0b0110
 @Composable fun A() {
     val x = 123
@@ -37,6 +40,8 @@ import androidx.compose.runtime.ReadOnlyComposable
 // Transformed IR
 // ------------------------------------------
 
+val normInt: Int = 345
+val stableTopLevelProp: Modifier = Companion
 @Composable
 fun A(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)

@@ -9,24 +9,19 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileWithId
+import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
-import org.jetbrains.kotlin.psi.KtFile
 
 /**
  * [KaBaseResolutionScope] is not intended to be created manually. It's the responsibility of [KaResolutionScopeProvider][org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider].
  * Please use [Companion.forModule] instead.
- *
- * @param analyzableModules The set of modules whose declarations can be analyzed from the [useSiteModule], including the use-site module
- *  itself.
  */
 internal class KaBaseResolutionScope(
     private val useSiteModule: KaModule,
     private val searchScope: GlobalSearchScope,
-    private val analyzableModules: Set<KaModule>,
 ) : KaResolutionScope() {
     /**
      * Caches the [VirtualFile] IDs that were last seen by the resolution scope. The cache only stores virtual file IDs that are contained
@@ -56,10 +51,14 @@ internal class KaBaseResolutionScope(
 
     override fun contains(file: VirtualFile): Boolean {
         // As noted above, we don't want to use the virtual file cache for index accesses.
-        return searchScope.contains(file) || isAccessibleDanglingFile(file)
+        return searchScope.contains(file)
     }
 
     override fun contains(element: PsiElement): Boolean {
+        if (element is PsiDirectory) {
+            return cachedSearchScopeContains(element.virtualFile)
+        }
+
         /**
          * We check the *virtual file* here instead of calling [org.jetbrains.kotlin.psi.psiUtil.contains] on the search scope directly.
          * This is because `psiUtil.contains` queries the search scope with the element's *original file*, so search scope membership of any
@@ -69,7 +68,7 @@ internal class KaBaseResolutionScope(
          */
         val psiFile = element.containingFile
         val virtualFile = psiFile.viewProvider.virtualFile
-        return cachedSearchScopeContains(virtualFile) || isAccessibleDanglingFile(psiFile)
+        return cachedSearchScopeContains(virtualFile)
     }
 
     private fun cachedSearchScopeContains(virtualFile: VirtualFile): Boolean {
@@ -99,21 +98,6 @@ internal class KaBaseResolutionScope(
             return isContained
         }
     }
-
-    private fun isAccessibleDanglingFile(psiFile: PsiFile): Boolean {
-        val ktFile = psiFile as? KtFile ?: return false
-        if (!ktFile.isDangling) {
-            return false
-        }
-        val module = ktFile.contextModule ?: KaModuleProvider.getModule(useSiteModule.project, ktFile, useSiteModule)
-        return module.isAccessibleFromUseSiteModule()
-    }
-
-    private fun isAccessibleDanglingFile(virtualFile: VirtualFile): Boolean {
-        return virtualFile.analysisContextModule?.isAccessibleFromUseSiteModule() == true
-    }
-
-    private fun KaModule.isAccessibleFromUseSiteModule(): Boolean = this in analyzableModules
 
     override val underlyingSearchScope: GlobalSearchScope
         get() = searchScope

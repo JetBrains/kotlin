@@ -14,12 +14,13 @@ import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.api.variant.ScopedArtifacts
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.Directory
-import org.gradle.api.file.RegularFile
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.file.*
+import org.gradle.api.logging.LogLevel
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.register
@@ -27,12 +28,14 @@ import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import java.io.File
 import java.security.MessageDigest
 import java.util.Locale.getDefault
 import java.util.zip.ZipFile
 import javax.inject.Inject
-
 
 internal fun Project.configureComposeMappingFile(
     enabled: Property<Boolean>
@@ -76,13 +79,22 @@ internal fun Project.configureComposeMappingFile(
                     ProduceMappingFileTask::projectDirectories
                 )
 
-            val mergeTaskProvider = tasks.register<MergeMappingFileTask>("merge${name}ComposeMapping") {
-                composeMapping.set(produceTask.map { it.outputFile.get() })
+            val mergeTaskName = "merge${name}ComposeMapping"
+            val agpCopiesR8Output =
+                @OptIn(InternalKotlinGradlePluginApi::class)
+                AndroidGradlePluginVersion.currentOrNull.let {
+                    it != null && it.major >= 9 && it.minor >= 1
+                }
+            val mergeTaskProvider = if (agpCopiesR8Output) {
+                tasks.register<MergeMappingFileTask>(mergeTaskName)
+            } else {
+                tasks.register<MergeMappingFileTask.WithR8Outputs>(mergeTaskName)
             }
+            mergeTaskProvider.configure { it.composeMapping.set(produceTask.map { it.outputFile.get() }) }
 
             variant.artifacts
                 .use(mergeTaskProvider)
-                .wiredWithFiles(MergeMappingFileTask::originalFile, MergeMappingFileTask::output)
+                .wiredWithFiles(MergeMappingFileTask::r8MappingFile, MergeMappingFileTask::output)
                 .toTransform(uncheckedCast(SingleArtifact.OBFUSCATION_MAPPING_FILE))
         }
     }
@@ -100,16 +112,22 @@ private fun String.capitalize(): String =
     replaceFirstChar { if (it.isLowerCase()) it.titlecase(getDefault()) else it.toString() }
 
 @CacheableTask
-internal abstract class ProduceMappingFileTask : DefaultTask() {
+internal abstract class ProduceMappingFileTask @Inject constructor(
+    objects: ObjectFactory
+) : DefaultTask() {
     @get:OutputFile
     abstract val outputFile: RegularFileProperty
 
     @get:OutputFile
     abstract val errorFile: RegularFileProperty
 
+    @get:Internal
+    abstract val projectDirectories: ListProperty<Directory>
+
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val projectDirectories: ListProperty<Directory>
+    val projectClasses: FileTree =
+        objects.fileCollection().from(projectDirectories).asFileTree.matching { it.include("**/*.class") }
 
     @get:Classpath
     abstract val projectJars: ListProperty<RegularFile>
@@ -130,7 +148,7 @@ internal abstract class ProduceMappingFileTask : DefaultTask() {
         }
 
         workQueue.submit(Action::class.java) {
-            it.projectFiles.from(projectDirectories.get())
+            it.projectFiles.from(projectClasses)
             it.projectJars.from(projectJars.get())
             it.output.set(outputFile)
             it.errorOutput.set(errorFile)
@@ -145,11 +163,26 @@ internal abstract class ProduceMappingFileTask : DefaultTask() {
             val errorOutput: RegularFileProperty
         }
 
+        class LogLine(
+            val message: String,
+            val level: LogLevel
+        )
+
         override fun execute() {
-            val errors = mutableListOf<String>()
+            val errors = mutableListOf<LogLine>()
             val mapping = ComposeMapping(object : ErrorReporter {
-                override fun reportError(e: Throwable) {
-                    errors.add(e.message.orEmpty())
+                override fun reportAnalysisError(e: Throwable) {
+                    if (e.message != null) {
+                        errors.add(LogLine(e.message.orEmpty(), LogLevel.WARN))
+                    }
+                }
+
+                override fun reportClassReadError(fileName: String, e: Throwable) {
+                    if (e.message != null) {
+                        errors.add(
+                            LogLine("Failed to read class $fileName. ${e.message.orEmpty()}", LogLevel.INFO)
+                        )
+                    }
                 }
             })
 
@@ -160,7 +193,7 @@ internal abstract class ProduceMappingFileTask : DefaultTask() {
                             val bytes = zipFile.getInputStream(entry).use {
                                 it.readBytes()
                             }
-                            mapping.append(bytes)
+                            mapping.append(entry.name, bytes)
                         }
                     }
                 }
@@ -168,10 +201,8 @@ internal abstract class ProduceMappingFileTask : DefaultTask() {
 
 
             parameters.projectFiles.forEach { file ->
-                if (file.name.endsWith(".class")) {
-                    val bytes = file.readBytes()
-                    mapping.append(bytes)
-                }
+                val bytes = file.readBytes()
+                mapping.append(file.name, bytes)
             }
 
             parameters.output.get().asFile.apply {
@@ -182,8 +213,10 @@ internal abstract class ProduceMappingFileTask : DefaultTask() {
 
             parameters.errorOutput.get().asFile.apply {
                 bufferedWriter().use { writer ->
-                    errors.forEach {
-                        writer.appendLine(it)
+                    errors.forEach { line ->
+                        writer.append(line.level.name)
+                        writer.append(": ")
+                        writer.appendLine(line.message)
                     }
                 }
             }
@@ -205,12 +238,29 @@ internal abstract class ReportMappingErrorsTask : DefaultTask() {
         file.useLines {
             it.forEach { line ->
                 if (line.isEmpty()) return@forEach
-                logger.warn(
-                    "warning: Failed to collect Compose mapping ($line). Please report to Google through " +
-                            "https://goo.gle/compose-feedback"
-                )
+
+                if (line.startsWith(WARN_PREFIX)) {
+                    val message = line.removePrefix(WARN_PREFIX)
+                    logger.warn(
+                        "warning: Failed to collect Compose stack trace mapping ($message). Please report to Google through " +
+                                "https://goo.gle/compose-feedback"
+                    )
+                } else if (line.startsWith(INFO_PREFIX)) {
+                    val message = line.removePrefix(INFO_PREFIX)
+                    logger.info("Compose mapping: $message.")
+                } else {
+                    logger.warn(
+                        "warning: Unknown error output while collecting Compose stack trace mapping: $line"
+                    )
+                }
+
             }
         }
+    }
+
+    companion object {
+        private val WARN_PREFIX = "${LogLevel.WARN.name}: "
+        private val INFO_PREFIX = "${LogLevel.INFO.name}: "
     }
 }
 
@@ -220,7 +270,7 @@ internal abstract class MergeMappingFileTask : DefaultTask() {
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val originalFile: RegularFileProperty
+    abstract val r8MappingFile: RegularFileProperty
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -230,20 +280,20 @@ internal abstract class MergeMappingFileTask : DefaultTask() {
     abstract val output: RegularFileProperty
 
     @TaskAction
-    fun taskAction() {
+    open fun taskAction() {
         /*
          * Read the proguard file generated by R8, calculate the new SHA-256 hash for the header, and append Compose mapping.
          */
         val newHeader = buildHeader()
 
+        val originalFile = r8MappingFile.get().asFile
+
         val outputFile = output.get().asFile
-        outputFile.parentFile.mkdirs()
 
         outputFile.bufferedWriter().use { writer ->
             writer.append(newHeader)
 
             var skippingHeader = true
-            val originalFile = originalFile.get().asFile
             originalFile.forEachLine {
                 if (skippingHeader && it.startsWith("#")) {
                     return@forEachLine
@@ -261,7 +311,7 @@ internal abstract class MergeMappingFileTask : DefaultTask() {
     }
 
     private fun buildHeader(): String {
-        val mapping = originalFile.get().asFile
+        val mapping = r8MappingFile.get().asFile
 
         val digest = MessageDigest.getInstance("SHA-256")
 
@@ -304,5 +354,38 @@ internal abstract class MergeMappingFileTask : DefaultTask() {
             "%02x".format(it)
         }
         return headerString.replace("<SHA-256>".toRegex(), sha256String)
+    }
+
+    // Workaround for https://issuetracker.google.com/469745905 that is only required until AGP 9.1
+    // Before that, R8 output files are produced next to the R8 mapping file instead of the output folder.
+    @CacheableTask
+    abstract class WithR8Outputs @Inject constructor(
+        objects: ObjectFactory,
+        providers: ProviderFactory
+    ) : MergeMappingFileTask() {
+        @get:InputFiles
+        @get:PathSensitive(PathSensitivity.RELATIVE)
+        val r8Outputs: FileCollection = objects.fileCollection()
+            .from(r8MappingFile.asFile.map { it.parentFile })
+            .asFileTree
+
+        @get:OutputDirectory
+        val outputDir: Provider<File> = providers.provider { output.get().asFile.parentFile }
+
+        @TaskAction
+        override fun taskAction() {
+            val originalFile = r8MappingFile.get().asFile
+            val outputDir = outputDir.get()
+
+            outputDir.deleteRecursively()
+            outputDir.mkdirs()
+
+            super.taskAction()
+
+            r8Outputs.forEach {
+                if (it == originalFile) return@forEach
+                it.copyTo(File(outputDir, it.name))
+            }
+        }
     }
 }

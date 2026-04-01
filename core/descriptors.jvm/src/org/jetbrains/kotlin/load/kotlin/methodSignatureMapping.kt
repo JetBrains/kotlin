@@ -127,7 +127,7 @@ sealed class JvmType {
     }
 }
 
-private object JvmTypeFactoryImpl : JvmTypeFactory<JvmType> {
+object JvmTypeFactoryImpl : JvmTypeFactory<JvmType> {
     override fun boxType(possiblyPrimitiveType: JvmType) =
         when {
             possiblyPrimitiveType is JvmType.Primitive && possiblyPrimitiveType.jvmPrimitiveType != null ->
@@ -185,7 +185,7 @@ private object JvmTypeFactoryImpl : JvmTypeFactory<JvmType> {
 
 }
 
-internal object TypeMappingConfigurationImpl : TypeMappingConfiguration<JvmType> {
+object TypeMappingConfigurationImpl : TypeMappingConfiguration<JvmType> {
     override fun commonSupertype(types: Collection<KotlinType>): KotlinType {
         throw AssertionError("There should be no intersection type in existing descriptors, but found: " + types.joinToString())
     }

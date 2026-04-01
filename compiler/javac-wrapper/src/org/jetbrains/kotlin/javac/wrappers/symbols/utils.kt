@@ -36,6 +36,9 @@ internal val Element.isStatic: Boolean
 internal val Element.isFinal: Boolean
     get() = modifiers.contains(Modifier.FINAL)
 
+internal val Element.isNative: Boolean
+    get() = modifiers.contains(Modifier.NATIVE)
+
 internal fun Element.getVisibility(): Visibility = modifiers.getVisibility()
 
 internal fun Set<Modifier>.getVisibility(): Visibility =

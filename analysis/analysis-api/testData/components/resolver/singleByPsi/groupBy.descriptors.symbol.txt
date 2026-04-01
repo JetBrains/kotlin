@@ -1,0 +1,5 @@
+KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> value }) { (idx, _) -> idx }'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/groupBy(<extension receiver>: kotlin.collections.Iterable<T>, keySelector: kotlin.Function1<T, K>, valueTransform: kotlin.Function1<T, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
+    ]

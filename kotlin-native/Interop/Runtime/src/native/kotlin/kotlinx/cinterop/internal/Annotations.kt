@@ -1,6 +1,7 @@
 
 package kotlinx.cinterop.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.internal.InternalForKotlinNative
 
 @InternalForKotlinNative
@@ -27,6 +28,23 @@ public annotation class CStruct(val spelling: String) {
 
     @Retention(AnnotationRetention.BINARY)
     public annotation class VarType(val size: Long, val align: Int)
+}
+
+/**
+ * Indicates that the annotated property getter or setter accesses a C global with the provided linkage name.
+ */
+@InternalForKotlinNative
+@Target(AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(AnnotationRetention.BINARY)
+public annotation class CGlobalAccess(val name: String) {
+
+    /**
+     * For a @[CGlobalAccess] property getter, indicates that it returns not a value of that global,
+     * but a pointer to the global.
+     */
+    @Target(AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+    @Retention(AnnotationRetention.BINARY)
+    public annotation class Pointer
 }
 
 @Target(
@@ -122,6 +140,7 @@ public annotation class CEnumVarTypeSize(val size: Int)
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal annotation class CToKotlinBridge(val language: String, val declaration: String)
 
 /**
@@ -130,4 +149,5 @@ internal annotation class CToKotlinBridge(val language: String, val declaration:
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal annotation class KotlinToCBridge(val language: String, val impl: String, val library: String)

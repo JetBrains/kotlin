@@ -50,4 +50,5 @@ class MembersPositionComparator<T>(val classSource: KotlinPosition?, val memberD
         return m1.descriptor.compareTo(m2.descriptor)
     }
 }
+
 class MemberData(val name: String, val descriptor: String, val position: KotlinPosition?)

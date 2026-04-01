@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 
 /**
@@ -97,5 +98,23 @@ internal class KtElementTestSymbolTargetResolver(project: Project) : TestSymbolT
         requireSpecificOwner<KtCallableDeclaration>(target, owner)
 
         return owner.valueParameters.find { it.name == target.name.asString() }
+    }
+
+    override fun resolveGetterTarget(target: GetterTarget, owner: KtElement): KtElement? {
+        requireSpecificOwner<KtProperty>(target, owner)
+        return owner.getter
+    }
+
+    override fun resolveSetterTarget(target: SetterTarget, owner: KtElement): KtElement? {
+        requireSpecificOwner<KtProperty>(target, owner)
+        return owner.setter
+    }
+
+    override fun resolveFieldTarget(target: FieldTarget): KtElement? {
+        val callables = resolveCallableTarget(CallableTarget(target.callableId))
+        return callables
+            .filterIsInstance<KtProperty>()
+            .singleOrNull()
+            ?.fieldDeclaration
     }
 }

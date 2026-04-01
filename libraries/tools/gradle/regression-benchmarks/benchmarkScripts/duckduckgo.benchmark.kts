@@ -5,7 +5,7 @@
     name = "duckduckgo",
     gitUrl = "https://github.com/duckduckgo/Android.git",
     gitCommitSha = "0c100be84e7e91a6c053afd84cece44747bb64fb",
-    stableKotlinVersion = "2.2.21-RC2",
+    stableKotlinVersion = "2.3.0",
 )
 
 import java.io.File
@@ -23,6 +23,12 @@ val repoPatch = {
         "duckduckgo-3.patch" to File("benchmarkScripts/files/duckduckgo-ksp2.patch")
             .readText()
             .run { replace("<kotlin_version>", currentKotlinVersion) }
+            .byteInputStream(),
+        "duckduckgo-4.patch" to File("benchmarkScripts/files/duckduckgo-4.patch")
+            .readText()
+            .byteInputStream(),
+        "duckduckgo-5.patch" to File("benchmarkScripts/files/duckduckgo-android-8.5.2.patch")
+            .readText()
             .byteInputStream(),
     )
 }

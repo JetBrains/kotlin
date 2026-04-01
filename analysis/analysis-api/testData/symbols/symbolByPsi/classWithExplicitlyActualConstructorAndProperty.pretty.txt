@@ -1,11 +1,11 @@
-actual annotation class Aactual constructor(name: kotlin.String) {
+actual annotation class A actual constructor(name: kotlin.String) {
   actual val name: kotlin.String
 }
 
-actual inline class Bactual constructor(name: kotlin.String) {
+actual inline class B actual constructor(name: kotlin.String) {
   actual val name: kotlin.String
 }
 
-actual inline class Cactual constructor(s: kotlin.String) {
+actual inline class C actual constructor(s: kotlin.String) {
   actual val s: kotlin.String
 }

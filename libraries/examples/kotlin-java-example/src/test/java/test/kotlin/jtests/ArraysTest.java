@@ -1,6 +1,6 @@
 package test.kotlin.jtests;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 import kotlin.*;
 import kotlin.jvm.functions.Function1;
 
@@ -9,12 +9,14 @@ import java.util.List;
 
 import static kotlin.collections.CollectionsKt.*;
 import static kotlin.collections.ArraysKt.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Lets try using the Kotlin standard library from Java code
  */
-public class ArraysTest extends TestCase {
+public class ArraysTest {
 
+    @Test
     public void testArrays() throws Exception {
         String[] array = {"foo", "bar", "x"};
 

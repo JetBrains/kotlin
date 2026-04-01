@@ -3,6 +3,7 @@
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
+// WITH_STDLIB
 // FILE: primitives.kt
 
 package foo
@@ -23,6 +24,9 @@ val _string: String = "ZZZ"
 val _boolean: Boolean = true
 
 @JsExport
+val _char: Char = 'ё'
+
+@JsExport
 val _byte: Byte = 1.toByte()
 @JsExport
 val _short: Short = 1.toShort()
@@ -32,7 +36,13 @@ val _int: Int = 1
 val _float: Float = 1.0f
 @JsExport
 val _double: Double = 1.0
-// TODO: Char and Long
+
+@JsExport
+val _ubyte: UByte = UByte.MAX_VALUE
+@JsExport
+val _ushort: UShort = UShort.MAX_VALUE
+@JsExport
+val _uint: UInt = UInt.MAX_VALUE
 
 @JsExport
 val _byte_array: ByteArray = byteArrayOf()
@@ -44,6 +54,17 @@ val _int_array: IntArray = intArrayOf()
 val _float_array: FloatArray = floatArrayOf()
 @JsExport
 val _double_array: DoubleArray = doubleArrayOf()
+@JsExport
+val _boolean_array: BooleanArray = booleanArrayOf()
+@JsExport
+val _char_array: CharArray = charArrayOf()
+
+@JsExport
+val _ubyte_array: UByteArray = ubyteArrayOf(_ubyte)
+@JsExport
+val _ushort_array: UShortArray = ushortArrayOf(_ushort)
+@JsExport
+val _uint_array: UIntArray = uintArrayOf(_uint)
 
 @JsExport
 val _array_byte: Array<Byte> = emptyArray()
@@ -63,6 +84,13 @@ val _array_boolean: Array<Boolean> = emptyArray()
 val _array_array_string: Array<Array<String>> = arrayOf(emptyArray())
 @JsExport
 val _array_array_int_array: Array<Array<IntArray>> = arrayOf(arrayOf(intArrayOf()))
+
+@JsExport
+val _array_ubyte: Array<UByte> = emptyArray()
+@JsExport
+val _array_ushort: Array<UShort> = emptyArray()
+@JsExport
+val _array_uint: Array<UInt> = emptyArray()
 
 @JsExport
 val _fun_unit: () -> Unit = { }
@@ -121,7 +149,22 @@ val _n_array_n_int: Array<Int?>? = emptyArray()
 val _array_n_array_string: Array<Array<String>?> = arrayOf(arrayOf(":)"))
 
 @JsExport
-val _fun_n_int_unit: (Int?) -> Unit = { x -> }
+val _fun_n_int_unit: (int: Int?) -> Unit = { x -> }
+
+@JsExport
+val _fun_n_int_unit_class: Function1<@ParameterName("int") Int?, Unit> = { x -> }
+
+@JsExport
+val _kfun_n_int_unit: kotlin.reflect.KFunction1<Int?, Unit> = _fun_n_int_unit_class::invoke
+
+@JsExport
+val _fun_n_int_unit_suspend: suspend (int: Int?) -> Unit = { x -> }
+
+@JsExport
+val _fun_n_int_unit_suspend_class: kotlin.coroutines.SuspendFunction1<@ParameterName("int") Int?, Unit> = { x -> }
+
+@JsExport
+val _kfun_n_int_unit_suspend: kotlin.reflect.KSuspendFunction1<Int?, Unit> = _fun_n_int_unit_suspend::invoke
 
 @JsExport
 val _fun_n_boolean_n_int_n_string_n_intarray: (Boolean?, Int?, String?) -> IntArray? =

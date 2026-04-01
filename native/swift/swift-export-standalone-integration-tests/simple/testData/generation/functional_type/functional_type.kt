@@ -3,12 +3,13 @@
 // EXPORT_TO_SWIFT
 // FILE: simple.kt
 
-fun foo_sus(): suspend ()->Unit = TODO()
 fun foo_1(): ()->Unit = TODO()
 
 fun foo_consume_simple(block: ()->Unit): Unit = TODO()
 
-fun foo_consume_recursive(block: (()->Unit)->(()->Unit)): Unit = TODO()
+fun foo_consume_producing(block: ()->(()->Unit)): Unit = TODO()
+fun foo_consume_consuming(block: ((UInt, UInt)-> IntRange)->Unit): Unit = TODO()
+fun foo_consume_consuming_2(block: ((UInt, UInt)-> IntRange)->Unit): Unit = TODO()
 
 var closure_property: () -> Unit = {}
 
@@ -24,6 +25,7 @@ fun consume_block_with_string_id(block: (String) -> String): String = TODO()
 
 fun consume_block_with_uint_id(block: (UInt) -> UInt): UInt = TODO()
 fun consume_block_with_byte_id(block: (Byte) -> Byte): Byte = TODO()
+fun produce_block_with_byte_byte(): (Byte, Byte, Byte)-> Byte = TODO()
 // todo: crashes konan backend: Internal compiler error: doesn't correspond to any C type: kotlin.Unit
 // at convertBlockPtrToKotlinFunction<(Unit)->Byte>(block)
 // fun consume_block_with_Unit_id(block: (Unit) -> Byte): Byte = TODO()
@@ -42,9 +44,9 @@ fun consume_block_with_byte_id(block: (Byte) -> Byte): Byte = TODO()
 // FILE: optional_closure.kt
 
 fun consume_opt_closure(arg: (()->Unit)?): Unit = TODO()
-fun produce_opt_closure(arg: Unit): (()->Unit)? = TODO()
+fun produce_opt_closure(arg: Unit): (()->String)? = TODO()
 fun consume_producing_opt_closure(arg: (()->(()->Unit)?)?): Unit = TODO()
-fun consume_consuming_opt_closure(arg: (((()->Unit)?)->Unit)?): Unit = TODO()
+fun consume_consuming_opt_closure(arg: (((()->String)?)->Unit)?): Unit = TODO()
 
 // MODULE: functional_types
 // EXPORT_TO_SWIFT
@@ -91,9 +93,13 @@ fun fooList(i: List<Int>.()->Unit): Unit = TODO()
 // EXPORT_TO_SWIFT
 // FILE: typealias_to_closure.kt
 
-typealias Closure = () -> Unit
+typealias Closure = (Int, Int) -> Unit
 
 fun typealias_demo(input: Closure): Closure = TODO()
+
+typealias CallbackWithInnerClosure = ((() -> Int)) -> Int
+
+fun foo_flow_with_callback(callback: CallbackWithInnerClosure): CallbackWithInnerClosure = TODO()
 
 // MODULE: data
 // EXPORT_TO_SWIFT
@@ -101,3 +107,25 @@ fun typealias_demo(input: Closure): Closure = TODO()
 
 class Foo
 class Bar
+
+// MODULE: inline
+// EXPORT_TO_SWIFT
+// FILE: inline.kt
+
+inline fun foo(inlined: () -> Unit): Unit = TODO()
+
+inline fun bar(inlined: () -> Unit, noinline notInlined: () -> Unit): Unit = TODO()
+
+// MODULE: unit_param
+// EXPORT_TO_SWIFT
+// FILE: unit_param.kt
+
+fun foo(): (Unit) -> Unit = TODO()
+
+fun fooIn(block: (Unit) -> Unit): Unit = TODO()
+
+fun bar(): (String, Unit) -> Unit = TODO()
+
+fun barIn(block: (String, Unit) -> Unit): Unit = TODO()
+
+fun baz(): ((String, Unit) -> Unit) -> Unit = TODO()

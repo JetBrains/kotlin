@@ -2,6 +2,10 @@ KtNameReferenceExpression(191,199): 'function'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun <T1, O1> function(a: O1, b: (Int) -> Boolean, c: T1): Unit
+    fun <T2, O2> function(a: O2, b: (String) -> Boolean, c: T2): Unit>
     symbols:
       0: (in ROOT) fun <T1, O1> function(a: O1, b: (kotlin.Int) -> kotlin.Boolean, c: T1)
       1: (in ROOT) fun <T2, O2> function(a: O2, b: (kotlin.String) -> kotlin.Boolean, c: T2)

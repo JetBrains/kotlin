@@ -18,7 +18,6 @@ package kotlinx.cinterop
 
 import org.jetbrains.kotlin.utils.NativeMemoryAllocator
 import org.jetbrains.kotlin.utils.ThreadSafeDisposableHelper
-import sun.misc.Unsafe
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.LongConsumer
 import kotlin.reflect.KClass
@@ -104,10 +103,17 @@ internal val jvmCallbacksDisposeHelper = ThreadSafeDisposableHelper(
         }
 )
 
-inline fun <R> usingJvmCInteropCallbacks(block: () -> R) = jvmCallbacksDisposeHelper.usingDisposable(block)
+inline fun <R> usingJvmCInteropCallbacks(konanHome: String? = null, block: () -> R): R {
+    loadKonanLibrary("callbacks", konanHome)
+    return jvmCallbacksDisposeHelper.usingDisposable(block)
+}
 
 object JvmCInteropCallbacks {
-    fun init() = jvmCallbacksDisposeHelper.create()
+    fun init() {
+        loadKonanLibrary("callbacks")
+        jvmCallbacksDisposeHelper.create()
+    }
+
     fun dispose() = jvmCallbacksDisposeHelper.dispose()
 }
 
@@ -425,8 +431,6 @@ private class CEnumType(private val rawValueCType: CType<Any>) : CType<CEnum>(ra
 private typealias FfiClosureImpl = LongConsumer
 private typealias UserData = FfiClosureImpl
 
-private val topLevelInitializer = loadKonanLibrary("callbacks")
-
 
 /**
  * Reference to `ffi_type` struct instance.
@@ -516,17 +520,12 @@ private fun ffiCreateClosure(ffiCif: ffi_cif, impl: FfiClosureImpl): NativePtr {
             -1L -> throw Error("libffi error occurred")
         }
 
-        caches.addClosure(unsafe.getLong(ffiClosure.rawPtr))
+        caches.addClosure(nativeMemUtils.getLong(ffiClosure))
 
         return res
     } finally {
         nativeHeap.free(ffiClosure)
     }
-}
-
-private val unsafe = with(Unsafe::class.java.getDeclaredField("theUnsafe")) {
-    isAccessible = true
-    return@with this.get(null) as Unsafe
 }
 
 private external fun newGlobalRef(any: Any): Long

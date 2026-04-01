@@ -160,7 +160,7 @@ private fun mul64Lossy(a: ULong, b: ULong): ULong {
 //This is partially implementation of parser. The issue with it is incorrect even rounding so the result number
 //could slightly different from other backends. True implementation needs Big Integer
 //Original implementation https://github.com/mono/corert/blob/master/src/System.Private.CoreLib/src/System/Number.CoreRT.cs
-internal fun numberToDouble(signed: Boolean, numberScale: Int, number: String): Double {
+internal fun numberToDouble(signed: Boolean, numberScale: Long, number: String): Double {
     var srcIndex = 0
     val total = number.length
     var remaining = total
@@ -172,7 +172,7 @@ internal fun numberToDouble(signed: Boolean, numberScale: Int, number: String): 
     }
 
     if (remaining == 0) {
-        return if(signed) -0.0 else 0.0
+        return if (signed) -0.0 else 0.0
     }
 
     var count: Int = minOf(remaining, 9)
@@ -191,15 +191,16 @@ internal fun numberToDouble(signed: Boolean, numberScale: Int, number: String): 
     }
 
     val scale = numberScale - (total - remaining)
-    val absScale: Int = abs(scale)
-    if (absScale >= 22 * 16) {
+    val limit = 22 * 16 - 1
+    if (scale !in -limit..limit) {
         // overflow / underflow
-        return if (scale > 0) {
-            if(signed) Double.NEGATIVE_INFINITY else Double.POSITIVE_INFINITY
+        return if (scale > 0L) {
+            if (signed) Double.NEGATIVE_INFINITY else Double.POSITIVE_INFINITY
         } else {
-            if(signed) -0.0 else 0.0
+            if (signed) -0.0 else 0.0
         }
     }
+    val absScale: Int = abs(scale.toInt())
 
     var exp = 64
 
@@ -215,9 +216,9 @@ internal fun numberToDouble(signed: Boolean, numberScale: Int, number: String): 
     if (index != 0) {
         val multexp: Int = s_Pow10ExponentTable[index - 1].toInt()
         // the exponents are shared between the inverted and regular table
-        exp += if(scale < 0) (-multexp + 1) else multexp
+        exp += if (scale < 0L) (-multexp + 1) else multexp
 
-        val multVal: ULong = s_Pow10MantissaTable[index + (if (scale < 0) 15 else 0) - 1]
+        val multVal: ULong = s_Pow10MantissaTable[index + (if (scale < 0L) 15 else 0) - 1]
 
         resultValue = mul64Lossy(resultValue, multVal)
         // normalize
@@ -231,9 +232,9 @@ internal fun numberToDouble(signed: Boolean, numberScale: Int, number: String): 
     if (index != 0) {
         val multexp: Int = s_Pow10By16ExponentTable[index - 1].toInt()
         // the exponents are shared between the inverted and regular table
-        exp += if (scale < 0) (-multexp + 1) else multexp
+        exp += if (scale < 0L) (-multexp + 1) else multexp
 
-        val multVal: ULong = s_Pow10By16MantissaTable[index + (if (scale < 0) 21 else 0) - 1]
+        val multVal: ULong = s_Pow10By16MantissaTable[index + (if (scale < 0L) 21 else 0) - 1]
         resultValue = mul64Lossy(resultValue, multVal)
         // normalize
         if ((resultValue and 0x80000000_00000000UL) == 0UL) {

@@ -23,12 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.AbstractCallCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -275,6 +270,11 @@ sealed class ConeContractDescriptionError : ConeDiagnostic {
         override val reason: String
             get() = "instance check for erased type"
     }
+
+    class RequiresLanguageFeature(val featureName: String) : ConeContractDescriptionError() {
+        override val reason: String
+            get() = "requires language feature '$featureName' to be enabled"
+    }
 }
 
 class ConeIllegalAnnotationError(val name: Name) : ConeDiagnostic {
@@ -288,13 +288,19 @@ sealed interface ConeUnmatchedTypeArgumentsError : ConeDiagnosticWithSymbol<FirC
 class ConeWrongNumberOfTypeArgumentsError(
     override val desiredCount: Int,
     override val symbol: FirClassLikeSymbol<*>,
-    source: KtSourceElement
+    source: KtSourceElement,
+    /**
+     * Right now, in LHS of callable reference, both diagnostic with this flag and without it can be encountered.
+     * If it is present, [org.jetbrains.kotlin.config.LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS] is checked
+     * to determine whether it is error or deprecation warning. Additionally, source positionings for errors with this flag and without it
+     * are different.
+     *
+     * In case [org.jetbrains.kotlin.config.LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS] is on, only
+     * diagnostics *with* this flag are left in LHSs.
+     */
+    val isDeprecationErrorForCallableReferenceLHS: Boolean = false,
 ) : ConeDiagnosticWithSource(source), ConeUnmatchedTypeArgumentsError {
     override val reason: String get() = "Wrong number of type arguments"
-}
-
-class ConeTypeArgumentsNotAllowedOnPackageError(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
-    override val reason: String get() = "Type arguments are not allowed for packages"
 }
 
 class ConeTypeArgumentsForOuterClass(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
@@ -458,4 +464,12 @@ object ConePostponedInferenceDiagnostic : ConeDiagnostic {
 class ConeImplicitPropertyTypeMakesBehaviorOrderDependant(val property: FirPropertySymbol) : ConeDiagnostic {
     override val reason: String
         get() = "The resolution result with the property ${property.callableId} depends on the declaration order."
+}
+
+/**
+ * It should be used just as a hint for IDE shortener or an inspection, but not a compiler diagnostic
+ */
+object ContextSensitiveResolutionMightBeUsed : ConeDiagnostic {
+    override val reason: String
+        get() = "Context-sensitive resolution might be used"
 }

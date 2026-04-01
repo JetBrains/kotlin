@@ -1,0 +1,13 @@
+IGNORE_BACKEND: NATIVE, JS_IR, JS_IR_ES6, WASM
+// ^^^KT-85018:
+//      NATIVE: Runtime crash:  EXC_BAD_ACCESS / KERN_INVALID_ADDRESS
+//      JS: Runtime crash: Test unexpectedly failed with exception: TypeError: this.newFun_9c8ej8_k$ is not a function
+//      WASM: Backend failure: Cannot find class implementation of method [newFun() -> kotlin.String] in class ExtendsAddedInternalAbstractFun
+
+MODULES: lib1, lib2, main
+
+STEP 0:
+    libs: lib1, lib2
+
+STEP 1:
+    libs: lib1, main

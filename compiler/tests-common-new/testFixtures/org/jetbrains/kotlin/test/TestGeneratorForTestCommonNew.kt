@@ -30,6 +30,23 @@ fun main(args: Array<String>) {
     val inlineScopesNewFormatToOld = listOf("inlineScopes/newFormatToOld")
 
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
+        testGroup(testsRoot, testDataRoot = "compiler/testData/codegen") {
+            testClass<AbstractIrBlackBoxCodegenTest> {
+                model("box", excludeDirs = k2BoxTestDir)
+                model("boxJvm", excludeDirs = k2BoxTestDir)
+            }
+
+            testClass<AbstractDirectivesValidatorTest> {
+                model("box")
+                model("boxJvm")
+            }
+
+            testClass<AbstractFirBlackBoxCodegenTestWithInlineScopes> {
+                model("box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
+                model("boxJvm", excludeDirs = k1BoxTestDir + excludedScriptDirs)
+            }
+        }
+
         testGroup(testsRoot, testDataRoot = "compiler/testData") {
             testClass<AbstractDiagnosticTest> {
                 model("diagnostics/tests", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
@@ -85,26 +102,6 @@ fun main(args: Array<String>) {
                 model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
             }
 
-            testClass<AbstractIrBlackBoxCodegenTest> {
-                model("codegen/box", excludeDirs = k2BoxTestDir)
-            }
-
-
-            // We split JVM ABI tests into two parts, to avoid creation of a huge file, unable to analyze by IntelliJ with default settings
-            testClass<AbstractJvmAbiConsistencyTest>("JvmAbiConsistencyTestBoxGenerated") {
-                model("codegen/box", excludeDirs = listOf("multiplatform"))
-            }
-
-            testClass<AbstractJvmAbiConsistencyTest>("JvmAbiConsistencyTestRestGenerated") {
-                model("codegen/boxInline")
-                model("codegen/boxModernJdk")
-                model("codegen/bytecodeText")
-                model("codegen/bytecodeListing")
-                model("codegen/composeLike")
-                model("codegen/composeLikeBytecodeText")
-                model("codegen/script", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
-            }
-
             testClass<AbstractIrSteppingTest> {
                 model("debug/stepping")
             }
@@ -141,10 +138,6 @@ fun main(args: Array<String>) {
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest> {
-                model("codegen/boxInline")
-            }
-
             testClass<AbstractIrBytecodeListingTest> {
                 model("codegen/bytecodeListing")
             }
@@ -153,23 +146,7 @@ fun main(args: Array<String>) {
                 model("codegen/asmLike")
             }
 
-            testClass<AbstractJvmIrInterpreterAfterFirPsi2IrTest> {
-                model("ir/interpreter", excludeDirs = listOf("helpers"))
-            }
-
-            testClass<AbstractJvmIrInterpreterAfterPsi2IrTest> {
-                model("ir/interpreter", excludeDirs = listOf("helpers"))
-            }
-
-            testClass<AbstractClassicJvmIntegrationDiagnosticTest> {
-                model("diagnostics/jvmIntegration", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
-            }
-
             // ------------- Inline scopes tests duplication -------------
-
-            testClass<AbstractFirBlackBoxCodegenTestWithInlineScopes> {
-                model("codegen/box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
-            }
 
             testClass<AbstractFirBytecodeTextTestWithInlineScopes> {
                 model("codegen/bytecodeText")
@@ -185,11 +162,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirBlackBoxInlineCodegenTestWithInlineScopes> {
                 model("codegen/boxInline", excludeDirs = k2BoxTestDir)
-            }
-
-            testClass<AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestWithInlineScopes> {
-                model("codegen/box")
-                model("codegen/boxInline")
             }
 
             testClass<AbstractFirBlackBoxCodegenTestWithInlineScopes>("FirBlackBoxModernJdkCodegenTestGeneratedWithInlineScopes") {

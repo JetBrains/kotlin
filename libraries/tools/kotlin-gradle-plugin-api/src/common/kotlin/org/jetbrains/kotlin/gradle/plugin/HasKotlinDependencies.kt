@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Action
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.logging.Logger
 
 /**
  * Contains all the configurable Kotlin dependencies for a Kotlin DSL entity, like an instance of `KotlinSourceSet`.
@@ -68,25 +67,4 @@ interface HasKotlinDependencies {
      * This Gradle configuration is not meant to be resolved.
      */
     val runtimeOnlyConfigurationName: String
-}
-
-// Kept in this file to not break API binary compatibility
-/**
- * @suppress
- */
-@Deprecated(
-    message = "Do not use in your build script",
-    level = DeprecationLevel.ERROR
-)
-fun warnNpmGenerateExternals(logger: Logger) {
-    logger.warn(
-        """
-        |
-        |==========
-        |Please note, Dukat integration in Gradle plugin does not work now.
-        |It is in redesigning process.
-        |==========
-        |
-        """.trimMargin()
-    )
 }

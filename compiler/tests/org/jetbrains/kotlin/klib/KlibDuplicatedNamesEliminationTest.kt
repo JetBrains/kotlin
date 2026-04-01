@@ -9,16 +9,15 @@ import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqu
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.duplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
-import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 
 // TODO (KT-76785): Handling of duplicated names in KLIBs is a workaround that needs to be removed in the future.
@@ -38,7 +37,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.libraryFile.path })
 
         for (strategy in DuplicatedUniqueNameStrategy.entries) {
-            val compilerConfiguration = CompilerConfiguration().apply {
+            val compilerConfiguration = CompilerConfiguration.create().apply {
                 this.duplicatedUniqueNameStrategy = strategy
                 this.messageCollector = object : MessageCollectorImpl() {
                     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
@@ -66,7 +65,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.libraryFile.path })
 
         val messageCollector = MessageCollectorImpl()
-        val compilerConfiguration = CompilerConfiguration().apply {
+        val compilerConfiguration = CompilerConfiguration.create().apply {
             this.duplicatedUniqueNameStrategy = DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING
             this.messageCollector = messageCollector
         }
@@ -102,7 +101,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.libraryFile.path })
 
         val messageCollector = MessageCollectorImpl()
-        val compilerConfiguration = CompilerConfiguration().apply {
+        val compilerConfiguration = CompilerConfiguration.create().apply {
             this.duplicatedUniqueNameStrategy = DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING
             this.messageCollector = messageCollector
         }
@@ -143,7 +142,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.libraryFile.path })
 
         val messageCollector = MessageCollectorImpl()
-        val compilerConfiguration = CompilerConfiguration().apply {
+        val compilerConfiguration = CompilerConfiguration.create().apply {
             this.duplicatedUniqueNameStrategy = DuplicatedUniqueNameStrategy.DENY
             this.messageCollector = messageCollector
         }
@@ -174,17 +173,13 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         assertFalse("KLIB should not exist before compilation: $klibDir", klibDir.exists())
 
         // Write a fake library with the required unique name.
-        buildKotlinLibrary(
-            linkDependencies = emptyList(),
-            metadata = SerializedMetadata(byteArrayOf(), emptyList(), emptyList()),
-            ir = null,
-            versions = KotlinLibraryVersioning(null, null, null, KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS),
-            output = klibDir.path,
-            moduleName = uniqueName,
-            nopack = true,
-            manifestProperties = null,
-            builtInsPlatform = BuiltInsPlatform.COMMON, // Does not matter.
-        )
+        KlibWriter {
+            manifest {
+                moduleName(uniqueName)
+                versions(KotlinLibraryVersioning(null, null, null))
+                platformAndTargets(BuiltInsPlatform.COMMON) // Does not matter.
+            }
+        }.writeTo(klibDir.path)
 
         assertTrue("KLIB should exist after compilation: $klibDir", klibDir.isDirectory)
 

@@ -1,0 +1,16 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// ISSUE: KT-63596
+// LATEST_LV_DIFFERENCE
+
+fun e(block: () -> String): String = ""
+fun e(block: () -> Unit): Int = 0
+fun c(block: (x: Int) -> String): String = ""
+fun c(block: (x: Int) -> Unit): Int = 0
+
+fun test() {
+    e {}
+    c {}
+}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, stringLiteral */

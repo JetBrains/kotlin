@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.getByType
 import org.jetbrains.kotlin.util.assertDoesNotThrow
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.fail

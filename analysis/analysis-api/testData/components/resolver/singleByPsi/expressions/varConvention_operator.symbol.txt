@@ -1,0 +1,5 @@
+KtOperationReferenceExpression(33,35): '+='
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]

@@ -161,7 +161,10 @@ class TestImpl : TestBetween {
     }
     %composer.endReplaceGroup()
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @Composable
 fun CallWithDefaults(test: Test, testBetween: TestBetween, testImpl: TestImpl, %composer: Composer?, %changed: Int) {

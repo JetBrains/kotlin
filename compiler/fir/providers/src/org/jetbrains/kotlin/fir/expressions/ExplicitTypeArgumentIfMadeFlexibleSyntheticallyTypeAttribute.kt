@@ -14,7 +14,7 @@ import kotlin.reflect.KClass
 /**
  * This attribute is expected to decode original non-flexible type arguments if they were lost
  * after [org.jetbrains.kotlin.fir.resolve.calls.CreateFreshTypeVariableSubstitutorStage.getTypePreservingFlexibilityWrtTypeVariable]
- * TODO: Get rid of this class once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
+ * TODO: Get rid of this class once [LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible] cannot be disabled
  */
 data class ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
     val coneType: ConeKotlinType,

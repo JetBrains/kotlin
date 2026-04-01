@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.test.configuration
 
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.HandlersStepBuilder
+import org.jetbrains.kotlin.test.TestStepBuilder
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrSourceRangesDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
@@ -41,7 +41,7 @@ fun TestConfigurationBuilder.setupDefaultDirectivesForIrTextTest() {
     }
 }
 
-fun HandlersStepBuilder<IrBackendInput, BackendKinds.IrBackend>.setupIrTextDumpHandlers() {
+fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<IrBackendInput, BackendKinds.IrBackend>.setupIrTextDumpHandlers() {
     useHandlers(
         ::IrTextDumpHandler,
         ::IrTreeVerifierHandler,

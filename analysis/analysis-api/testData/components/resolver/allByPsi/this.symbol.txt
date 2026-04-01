@@ -1,0 +1,1452 @@
+KtFile: 'this.kt'
+  null
+
+KtPackageDirective(0,11): 'package one'
+  null
+
+KtNameReferenceExpression(8,11): 'one'
+  null
+
+KtImportList(11,11): ''
+  null
+
+KtClass(13,1226): 'class MyClass {'
+  null
+
+KtClassBody(27,1226): '{'
+  null
+
+KtNamedFunction(33,45): 'fun foo() {}'
+  null
+
+KtParameterList(40,42): '()'
+  null
+
+KtBlockExpression(43,45): '{}'
+  null
+
+KtClassInitializer(51,123): 'init {'
+  null
+
+KtBlockExpression(56,123): '{'
+  null
+
+KtCallExpression(66,71): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(66,69): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtValueArgumentList(69,71): '()'
+  null
+
+KtDotQualifiedExpression(80,90): 'this.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtThisExpression(80,84): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
+
+KtNameReferenceExpression(80,84): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
+
+KtCallExpression(85,90): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(85,88): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtValueArgumentList(88,90): '()'
+  null
+
+KtDotQualifiedExpression(99,117): 'this@MyClass.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtThisExpression(99,111): 'this@MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
+
+KtNameReferenceExpression(99,103): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
+
+KtContainerNode(103,111): '@MyClass'
+  null
+
+KtLabelReferenceExpression(103,111): '@MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
+
+KtCallExpression(112,117): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(112,115): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtValueArgumentList(115,117): '()'
+  null
+
+KtClass(129,1224): 'inner class InnerOuter {'
+  null
+
+KtDeclarationModifierList(129,134): 'inner'
+  null
+
+KtClassBody(152,1224): '{'
+  null
+
+KtNamedFunction(162,174): 'fun foo() {}'
+  null
+
+KtParameterList(169,171): '()'
+  null
+
+KtBlockExpression(172,174): '{}'
+  null
+
+KtClassInitializer(184,306): 'init {'
+  null
+
+KtBlockExpression(189,306): '{'
+  null
+
+KtCallExpression(203,208): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(203,206): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
+
+KtValueArgumentList(206,208): '()'
+  null
+
+KtDotQualifiedExpression(221,231): 'this.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
+
+KtThisExpression(221,225): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
+
+KtNameReferenceExpression(221,225): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
+
+KtCallExpression(226,231): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(226,229): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
+
+KtValueArgumentList(229,231): '()'
+  null
+
+KtDotQualifiedExpression(244,265): 'this@InnerOuter.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
+
+KtThisExpression(244,259): 'this@InnerOuter'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
+
+KtNameReferenceExpression(244,248): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
+
+KtContainerNode(248,259): '@InnerOuter'
+  null
+
+KtLabelReferenceExpression(248,259): '@InnerOuter'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
+
+KtCallExpression(260,265): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(260,263): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
+
+KtValueArgumentList(263,265): '()'
+  null
+
+KtDotQualifiedExpression(278,296): 'this@MyClass.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtThisExpression(278,290): 'this@MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
+
+KtNameReferenceExpression(278,282): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
+
+KtContainerNode(282,290): '@MyClass'
+  null
+
+KtLabelReferenceExpression(282,290): '@MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
+
+KtCallExpression(291,296): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(291,294): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtValueArgumentList(294,296): '()'
+  null
+
+KtClass(316,1218): 'inner class InnerNested {'
+  null
+
+KtDeclarationModifierList(316,321): 'inner'
+  null
+
+KtClassBody(340,1218): '{'
+  null
+
+KtNamedFunction(354,366): 'fun foo() {}'
+  null
+
+KtParameterList(361,363): '()'
+  null
+
+KtBlockExpression(364,366): '{}'
+  null
+
+KtClassInitializer(380,1208): 'init {'
+  null
+
+KtBlockExpression(385,1208): '{'
+  null
+
+KtCallExpression(403,408): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(403,406): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtValueArgumentList(406,408): '()'
+  null
+
+KtDotQualifiedExpression(425,435): 'this.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtThisExpression(425,429): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested
+    ]
+
+KtNameReferenceExpression(425,429): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested
+    ]
+
+KtCallExpression(430,435): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(430,433): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtValueArgumentList(433,435): '()'
+  null
+
+KtDotQualifiedExpression(452,474): 'this@InnerNested.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtThisExpression(452,468): 'this@InnerNested'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested
+    ]
+
+KtNameReferenceExpression(452,456): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested
+    ]
+
+KtContainerNode(456,468): '@InnerNested'
+  null
+
+KtLabelReferenceExpression(456,468): '@InnerNested'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested
+    ]
+
+KtCallExpression(469,474): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(469,472): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtValueArgumentList(472,474): '()'
+  null
+
+KtDotQualifiedExpression(491,512): 'this@InnerOuter.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
+
+KtThisExpression(491,506): 'this@InnerOuter'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
+
+KtNameReferenceExpression(491,495): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
+
+KtContainerNode(495,506): '@InnerOuter'
+  null
+
+KtLabelReferenceExpression(495,506): '@InnerOuter'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
+
+KtCallExpression(507,512): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(507,510): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
+
+KtValueArgumentList(510,512): '()'
+  null
+
+KtDotQualifiedExpression(529,547): 'this@MyClass.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtThisExpression(529,541): 'this@MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
+
+KtNameReferenceExpression(529,533): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
+
+KtContainerNode(533,541): '@MyClass'
+  null
+
+KtLabelReferenceExpression(533,541): '@MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
+
+KtCallExpression(542,547): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(542,545): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtValueArgumentList(545,547): '()'
+  null
+
+KtProperty(565,839): 'val f = anon@ fun MyClass.(s: String) {'
+  null
+
+KtLabeledExpression(573,839): 'anon@ fun MyClass.(s: String) {'
+  null
+
+KtContainerNode(573,578): 'anon@'
+  null
+
+KtLabelReferenceExpression(573,578): 'anon@'
+  null
+
+KtNamedFunction(579,839): 'fun MyClass.(s: String) {'
+  null
+
+KtTypeReference(583,590): 'MyClass'
+  null
+
+KtUserType(583,590): 'MyClass'
+  null
+
+KtNameReferenceExpression(583,590): 'MyClass'
+  null
+
+KtParameterList(591,602): '(s: String)'
+  null
+
+KtParameter(592,601): 's: String'
+  null
+
+KtTypeReference(595,601): 'String'
+  null
+
+KtUserType(595,601): 'String'
+  null
+
+KtNameReferenceExpression(595,601): 'String'
+  null
+
+KtBlockExpression(603,839): '{'
+  null
+
+KtCallExpression(625,630): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(625,628): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtValueArgumentList(628,630): '()'
+  null
+
+KtDotQualifiedExpression(651,661): 'this.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtThisExpression(651,655): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass
+        visibility: PUBLIC
+    ]
+
+KtNameReferenceExpression(651,655): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass
+        visibility: PUBLIC
+    ]
+
+KtCallExpression(656,661): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(656,659): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtValueArgumentList(659,661): '()'
+  null
+
+KtDotQualifiedExpression(682,697): 'this@anon.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtThisExpression(682,691): 'this@anon'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass
+        visibility: PUBLIC
+    ]
+
+KtNameReferenceExpression(682,686): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass
+        visibility: PUBLIC
+    ]
+
+KtContainerNode(686,691): '@anon'
+  null
+
+KtLabelReferenceExpression(686,691): '@anon'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass
+        visibility: PUBLIC
+    ]
+
+KtCallExpression(692,697): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(692,695): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtValueArgumentList(695,697): '()'
+  null
+
+KtDotQualifiedExpression(718,740): 'this@InnerNested.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtThisExpression(718,734): 'this@InnerNested'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested
+    ]
+
+KtNameReferenceExpression(718,722): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested
+    ]
+
+KtContainerNode(722,734): '@InnerNested'
+  null
+
+KtLabelReferenceExpression(722,734): '@InnerNested'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested
+    ]
+
+KtCallExpression(735,740): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(735,738): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtValueArgumentList(738,740): '()'
+  null
+
+KtDotQualifiedExpression(761,782): 'this@InnerOuter.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
+
+KtThisExpression(761,776): 'this@InnerOuter'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
+
+KtNameReferenceExpression(761,765): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
+
+KtContainerNode(765,776): '@InnerOuter'
+  null
+
+KtLabelReferenceExpression(765,776): '@InnerOuter'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
+
+KtCallExpression(777,782): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(777,780): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
+
+KtValueArgumentList(780,782): '()'
+  null
+
+KtDotQualifiedExpression(803,821): 'this@MyClass.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtThisExpression(803,815): 'this@MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
+
+KtNameReferenceExpression(803,807): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
+
+KtContainerNode(807,815): '@MyClass'
+  null
+
+KtLabelReferenceExpression(807,815): '@MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
+
+KtCallExpression(816,821): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(816,819): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtValueArgumentList(819,821): '()'
+  null
+
+KtCallExpression(857,1107): 'myWith { t ->'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/myWith(<extension receiver>: T, body: T.(T) -> kotlin.Unit): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(857,863): 'myWith'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/myWith(<extension receiver>: T, body: T.(T) -> kotlin.Unit): kotlin.Unit
+    ]
+
+KtLambdaArgument(864,1107): '{ t ->'
+  null
+
+KtLambdaExpression(864,1107): '{ t ->'
+  null
+
+KtFunctionLiteral(864,1107): '{ t ->'
+  null
+
+KtParameterList(866,867): 't'
+  null
+
+KtParameter(866,867): 't'
+  null
+
+KtBlockExpression(891,1089): 'foo()'
+  null
+
+KtCallExpression(891,896): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(891,894): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtValueArgumentList(894,896): '()'
+  null
+
+KtDotQualifiedExpression(917,927): 'this.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtThisExpression(917,921): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: PUBLIC
+    ]
+
+KtNameReferenceExpression(917,921): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: PUBLIC
+    ]
+
+KtCallExpression(922,927): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(922,925): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtValueArgumentList(925,927): '()'
+  null
+
+KtDotQualifiedExpression(948,965): 'this@myWith.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtThisExpression(948,959): 'this@myWith'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: PUBLIC
+    ]
+
+KtNameReferenceExpression(948,952): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: PUBLIC
+    ]
+
+KtContainerNode(952,959): '@myWith'
+  null
+
+KtLabelReferenceExpression(952,959): '@myWith'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: PUBLIC
+    ]
+
+KtCallExpression(960,965): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(960,963): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtValueArgumentList(963,965): '()'
+  null
+
+KtDotQualifiedExpression(986,1008): 'this@InnerNested.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtThisExpression(986,1002): 'this@InnerNested'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested
+    ]
+
+KtNameReferenceExpression(986,990): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested
+    ]
+
+KtContainerNode(990,1002): '@InnerNested'
+  null
+
+KtLabelReferenceExpression(990,1002): '@InnerNested'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested
+    ]
+
+KtCallExpression(1003,1008): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(1003,1006): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtValueArgumentList(1006,1008): '()'
+  null
+
+KtDotQualifiedExpression(1029,1050): 'this@InnerOuter.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
+
+KtThisExpression(1029,1044): 'this@InnerOuter'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
+
+KtNameReferenceExpression(1029,1033): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
+
+KtContainerNode(1033,1044): '@InnerOuter'
+  null
+
+KtLabelReferenceExpression(1033,1044): '@InnerOuter'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
+
+KtCallExpression(1045,1050): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(1045,1048): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
+
+KtValueArgumentList(1048,1050): '()'
+  null
+
+KtDotQualifiedExpression(1071,1089): 'this@MyClass.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtThisExpression(1071,1083): 'this@MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
+
+KtNameReferenceExpression(1071,1075): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
+
+KtContainerNode(1075,1083): '@MyClass'
+  null
+
+KtLabelReferenceExpression(1075,1083): '@MyClass'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
+
+KtCallExpression(1084,1089): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(1084,1087): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
+
+KtValueArgumentList(1087,1089): '()'
+  null
+
+KtCallExpression(1125,1194): 'myWith label@{'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/myWith(<extension receiver>: T, body: T.(T) -> kotlin.Unit): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(1125,1131): 'myWith'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/myWith(<extension receiver>: T, body: T.(T) -> kotlin.Unit): kotlin.Unit
+    ]
+
+KtLambdaArgument(1132,1194): 'label@{'
+  null
+
+KtLabeledExpression(1132,1194): 'label@{'
+  null
+
+KtContainerNode(1132,1138): 'label@'
+  null
+
+KtLabelReferenceExpression(1132,1138): 'label@'
+  null
+
+KtLambdaExpression(1138,1194): '{'
+  null
+
+KtFunctionLiteral(1138,1194): '{'
+  null
+
+KtBlockExpression(1160,1176): 'this@label.foo()'
+  null
+
+KtDotQualifiedExpression(1160,1176): 'this@label.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtThisExpression(1160,1170): 'this@label'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: PUBLIC
+    ]
+
+KtNameReferenceExpression(1160,1164): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: PUBLIC
+    ]
+
+KtContainerNode(1164,1170): '@label'
+  null
+
+KtLabelReferenceExpression(1164,1170): '@label'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: PUBLIC
+    ]
+
+KtCallExpression(1171,1176): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(1171,1174): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
+
+KtValueArgumentList(1174,1176): '()'
+  null
+
+KtNamedFunction(1228,1284): 'fun <T> T.myWith(body: T.(T) -> Unit) {'
+  null
+
+KtTypeParameterList(1232,1235): '<T>'
+  null
+
+KtTypeParameter(1233,1234): 'T'
+  null
+
+KtTypeReference(1236,1237): 'T'
+  null
+
+KtUserType(1236,1237): 'T'
+  null
+
+KtNameReferenceExpression(1236,1237): 'T'
+  null
+
+KtParameterList(1244,1265): '(body: T.(T) -> Unit)'
+  null
+
+KtParameter(1245,1264): 'body: T.(T) -> Unit'
+  null
+
+KtTypeReference(1251,1264): 'T.(T) -> Unit'
+  null
+
+KtFunctionType(1251,1264): 'T.(T) -> Unit'
+  null
+
+KtFunctionTypeReceiver(1251,1252): 'T'
+  null
+
+KtTypeReference(1251,1252): 'T'
+  null
+
+KtUserType(1251,1252): 'T'
+  null
+
+KtNameReferenceExpression(1251,1252): 'T'
+  null
+
+KtParameterList(1253,1256): '(T)'
+  null
+
+KtParameter(1254,1255): 'T'
+  null
+
+KtTypeReference(1254,1255): 'T'
+  null
+
+KtUserType(1254,1255): 'T'
+  null
+
+KtNameReferenceExpression(1254,1255): 'T'
+  null
+
+KtTypeReference(1260,1264): 'Unit'
+  null
+
+KtUserType(1260,1264): 'Unit'
+  null
+
+KtNameReferenceExpression(1260,1264): 'Unit'
+  null
+
+KtBlockExpression(1266,1284): '{'
+  null
+
+KtCallExpression(1272,1282): 'body(this)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function2.invoke(<dispatch receiver>: (P1, P2) -> R, p1: P1, p2: P2): R
+    ]
+
+KtNameReferenceExpression(1272,1276): 'body'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      body: T.(T) -> kotlin.Unit
+    ]
+
+KtValueArgumentList(1276,1282): '(this)'
+  null
+
+KtValueArgument(1277,1281): 'this'
+  null
+
+KtThisExpression(1277,1281): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(one/myWith)
+        receiverParameter: null
+        returnType: KaTypeParameterType:
+          annotations: []
+          type: T
+        visibility: PUBLIC
+    ]
+
+KtNameReferenceExpression(1277,1281): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(one/myWith)
+        receiverParameter: null
+        returnType: KaTypeParameterType:
+          annotations: []
+          type: T
+        visibility: PUBLIC
+    ]

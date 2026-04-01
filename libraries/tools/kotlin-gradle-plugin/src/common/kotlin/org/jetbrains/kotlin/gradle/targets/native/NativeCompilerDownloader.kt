@@ -46,14 +46,14 @@ class NativeCompilerDownloader(
         internal const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"
         internal const val KOTLIN_GROUP_ID = "org.jetbrains.kotlin"
 
-        internal fun getCompilerDependencyNotation(project: Project): Map<String, String> {
-            return mapOf(
-                "group" to KOTLIN_GROUP_ID,
-                "name" to getDependencyName(project),
-                "version" to getCompilerVersion(project),
-                "classifier" to simpleOsName,
-                "ext" to archiveExtension
-            )
+        internal fun getCompilerDependencyNotation(project: Project): String {
+            val group = KOTLIN_GROUP_ID
+            val name = getDependencyName(project)
+            val version = getCompilerVersion(project)
+            val classifier = simpleOsName
+            val ext = archiveExtension
+
+            return "$group:$name:$version:$classifier@$ext"
         }
 
         internal fun getCompilerDirectory(
@@ -163,13 +163,10 @@ class NativeCompilerDownloader(
         val compilerDependency = if (downloadFromMaven.get()) {
             project.dependencies.create(getCompilerDependencyNotation(project))
         } else {
-            project.dependencies.create(
-                mapOf(
-                    "name" to "${getDependencyName(project)}-$simpleOsName",
-                    "version" to getCompilerVersion(project),
-                    "ext" to archiveExtension
-                )
-            )
+            val name = "${getDependencyName(project)}-$simpleOsName"
+            val version = getCompilerVersion(project)
+            val ext = archiveExtension
+            project.dependencies.create(":$name:$version@$ext")
         }
 
         val configuration = project.configurations.detachedResolvable(compilerDependency)

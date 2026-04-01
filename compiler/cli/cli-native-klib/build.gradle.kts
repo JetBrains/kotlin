@@ -11,6 +11,7 @@ dependencies {
     api(project(":compiler:ir.serialization.common"))
     api(project(":kotlin-util-klib-metadata"))
     api(project(":native:kotlin-native-utils"))
+    implementation(project(":native:native.config"))
     implementation(project(":compiler:compiler.version"))
     implementation(project(":compiler:config"))
     implementation(project(":compiler:fir:fir2ir"))
@@ -31,12 +32,13 @@ dependencies {
     implementation(project(":compiler:ir.serialization.native"))
     implementation(project(":core:compiler.common.native"))
     implementation(project(":compiler:cli"))
-    implementation(project(":compiler:cli-common"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:util"))
     implementation(project(":compiler:fir:fir-native"))
     implementation(project(":compiler:ir.objcinterop"))
+    implementation(project(":compiler:ir.inline"))
     implementation(project(":native:frontend.native"))
 }
 
 optInToUnsafeDuringIrConstructionAPI()
+optInToK1Deprecation()

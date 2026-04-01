@@ -55,14 +55,14 @@ public final class test/Bar : java/lang/Object, android/os/Parcelable {
 
     public void <init>(test.Foo foo)
 
-    public int describeContents()
+    public final int describeContents()
 
     public final test.Foo getFoo()
 
-    public void writeToParcel(android.os.Parcel out, int flags) {
+    public final void writeToParcel(android.os.Parcel dest, int flags) {
         LABEL (L0)
           ALOAD (1)
-          LDC (out)
+          LDC (dest)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (0)
           GETFIELD (test/Bar, foo, Ltest/Foo;)
@@ -82,6 +82,7 @@ public final class test/Bar : java/lang/Object, android/os/Parcelable {
           ILOAD (2)
           INVOKEVIRTUAL (test/Foo, writeToParcel, (Landroid/os/Parcel;I)V)
         LABEL (L2)
+        LINENUMBER (13)
           RETURN
         LABEL (L3)
     }
@@ -136,21 +137,23 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
 
     public void <init>(test.Bar bar)
 
-    public int describeContents()
+    public final int describeContents()
 
     public final test.Bar getBar()
 
-    public void writeToParcel(android.os.Parcel out, int flags) {
+    public final void writeToParcel(android.os.Parcel dest, int flags) {
         LABEL (L0)
           ALOAD (1)
-          LDC (out)
+          LDC (dest)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (0)
           GETFIELD (test/Foo, bar, Ltest/Bar;)
           ALOAD (1)
           ILOAD (2)
           INVOKEVIRTUAL (test/Bar, writeToParcel, (Landroid/os/Parcel;I)V)
-          RETURN
         LABEL (L1)
+        LINENUMBER (10)
+          RETURN
+        LABEL (L2)
     }
 }

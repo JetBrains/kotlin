@@ -3,6 +3,8 @@ public enum kotlin {
     }
     public enum ranges {
     }
+    public enum time {
+    }
 }
 public enum kotlinx {
     public enum serialization {

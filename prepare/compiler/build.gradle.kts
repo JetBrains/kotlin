@@ -31,19 +31,6 @@ val compilerVersion by configurations.creating
 
 val builtinsMetadata by configurations.creating
 
-// JPS build assumes fat jar is built from embedded configuration,
-// but we can't use it in gradle build since slightly more complex processing is required like stripping metadata & services from some jars
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    val embedded by configurations
-    embedded.apply {
-        extendsFrom(fatJarContents)
-        extendsFrom(fatJarContentsStripMetadata)
-        extendsFrom(fatJarContentsStripServices)
-        extendsFrom(fatJarContentsStripVersions)
-        extendsFrom(compilerVersion)
-    }
-}
-
 val api by configurations
 val proguardLibraries by configurations.creating {
     extendsFrom(api)
@@ -112,7 +99,8 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-scripting-compiler-impl",
     ":kotlin-scripting-jvm",
     ":libraries:tools:mutability-annotations-compat",
-    ":plugins:jvm-abi-gen"
+    ":plugins:jvm-abi-gen",
+    ":kotlin-jklib-compiler"
 )
 
 val distCompilerPluginProjects = listOf(
@@ -149,6 +137,7 @@ dependencies {
     api(project(":kotlin-script-runtime"))
     api(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     api(libs.kotlinx.coroutines.core)
+    api(project(":compiler:build-tools:kotlin-build-tools-api"))
 
     proguardLibraries(project(":kotlin-annotations-jvm"))
 
@@ -162,20 +151,17 @@ dependencies {
 
     libraries(kotlinStdlib("jdk8"))
     librariesKotlinTest(kotlinTest("junit"))
-    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        libraries(kotlinStdlib(classifier = "distJsJar"))
-        libraries(kotlinStdlib(classifier = "distJsKlib"))
-    }
+    libraries(kotlinStdlib(classifier = "distJsJar"))
+    libraries(kotlinStdlib(classifier = "distJsKlib"))
+    libraries(kotlinStdlib(classifier = "distWasmJsKlib"))
 
     librariesStripVersion(libs.kotlinx.coroutines.core) { isTransitive = false }
 
     distLibraryProjects.forEach {
         libraries(project(it)) { isTransitive = false }
     }
-    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        distCompilerPluginProjects.forEach {
-            compilerPlugins(project(it)) { isTransitive = false }
-        }
+    distCompilerPluginProjects.forEach {
+        compilerPlugins(project(it)) { isTransitive = false }
     }
     distCompilerPluginProjectsCompat.forEach {
         compilerPluginsCompat(
@@ -195,19 +181,14 @@ dependencies {
     sources(kotlinStdlib("jdk7", classifier = "sources"))
     sources(kotlinStdlib("jdk8", classifier = "sources"))
 
-    if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        sources(kotlinStdlib(classifier = "sources"))
-        sources("org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion:sources")
-    } else {
-        sources(project(":kotlin-stdlib", configuration = "distSources"))
-        sources(project(":kotlin-stdlib", configuration = "distJsSourcesJar"))
-        sources(project(":kotlin-reflect", configuration = "sources"))
+    sources(project(":kotlin-stdlib", configuration = "distSources"))
+    sources(project(":kotlin-stdlib", configuration = "distJsSourcesJar"))
+    sources(project(":kotlin-reflect", configuration = "sources"))
 
-        distStdlibMinimalForTests(project(":kotlin-stdlib-jvm-minimal-for-test"))
+    distStdlibMinimalForTests(project(":kotlin-stdlib-jvm-minimal-for-test"))
 
-        distCommonContents(project(":kotlin-stdlib", configuration = "commonMainMetadataElements"))
-        distCommonContents(project(":kotlin-stdlib", configuration = "metadataSourcesElements"))
-    }
+    distCommonContents(project(":kotlin-stdlib", configuration = "commonMainMetadataElements"))
+    distCommonContents(project(":kotlin-stdlib", configuration = "metadataSourcesElements"))
 
     distMavenContents(kotlinStdlib(classifier = "sources"))
 
@@ -228,6 +209,7 @@ dependencies {
     fatJarContents(commonDependency("org.lz4:lz4-java")) { isTransitive = false }
     fatJarContents(libs.intellij.asm) { isTransitive = false }
     fatJarContents(libs.guava) { isTransitive = false }
+    fatJarContents(libs.guava.failureaccess) { isTransitive = false }
     //Gson is needed for kotlin-build-statistics. Build statistics could be enabled for JPS and Gradle builds. Gson will come from inteliij or KGP.
     proguardLibraries(commonDependency("com.google.code.gson:gson")) { isTransitive = false }
 
@@ -468,7 +450,7 @@ val distMaven = distTask<Sync>("distMaven") {
     from(distMavenContents)
 }
 
-distTask<Copy>("dist") {
+val dist = distTask<Copy>("dist") {
     destinationDir = File(distDir)
 
     dependsOn(distKotlinc)
@@ -491,4 +473,9 @@ inline fun <reified T : AbstractCopyTask> Project.distTask(
     rename(quote("-$version"), "")
     rename(quote("-$bootstrapKotlinVersion"), "")
     block()
+}
+
+artifacts {
+    val distElements = configurations.create("distElements")
+    add(distElements.name, dist)
 }

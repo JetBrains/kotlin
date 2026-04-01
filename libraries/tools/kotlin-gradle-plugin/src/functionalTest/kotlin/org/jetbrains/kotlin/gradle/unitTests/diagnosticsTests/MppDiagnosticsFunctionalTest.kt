@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.util.androidLibrary
 import org.jetbrains.kotlin.gradle.util.checkDiagnosticsWithMppProject
 import org.jetbrains.kotlin.gradle.util.kotlin
-import org.junit.Test
+import kotlin.test.Test
 
 class MppDiagnosticsFunctionalTest {
 
@@ -48,7 +48,8 @@ class MppDiagnosticsFunctionalTest {
             kotlin {
                 presetFunctions.configureOrCreate(
                     KotlinJvmWithJavaTargetPreset.PRESET_NAME,
-                    KotlinJvmWithJavaTargetPreset(project)
+                    KotlinJvmWithJavaTargetPreset(project),
+                    project,
                 )
             }
         }

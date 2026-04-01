@@ -36,7 +36,7 @@ interface HeaderGenerator {
 
         val explicitMethodFamily: Boolean = false,
 
-        val objcExportBlockExplicitParameterNames: Boolean = true,
+        val objcExportBlockExplicitParameterNames: Boolean = false,
     )
 
 

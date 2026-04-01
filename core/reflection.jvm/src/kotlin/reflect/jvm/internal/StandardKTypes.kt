@@ -7,13 +7,18 @@ package kotlin.reflect.jvm.internal
 
 import java.io.Serializable
 import kotlin.reflect.KType
+import kotlin.reflect.jvm.internal.types.SimpleKType
 import kotlin.reflect.typeOf
 
 internal object StandardKTypes {
     val ANY: KType = typeOf<Any>()
     val NULLABLE_ANY: KType = typeOf<Any?>()
-    val UNIT: KType = typeOf<Unit>()
 
     val CLONEABLE: KType = typeOf<Cloneable>()
     val SERIALIZABLE: KType = typeOf<Serializable>()
+
+    val UNIT_RETURN_TYPE: KType = SimpleKType(
+        Unit::class, arguments = emptyList(), isMarkedNullable = false, annotations = emptyList(), abbreviation = null,
+        isDefinitelyNotNullType = false, isNothingType = false, isSuspendFunctionType = false, mutableCollectionClass = null,
+    ) { Void.TYPE }
 }

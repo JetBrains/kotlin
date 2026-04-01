@@ -78,7 +78,7 @@ class KlibMetadataMonolithicSerializer(
         val header = serializeHeader(moduleDescriptor, fragmentNames, emptyPackages)
 
         val libraryAsByteArray = header.toByteArray()
-        return SerializedMetadata(libraryAsByteArray, fragments, fragmentNames)
+        return SerializedMetadata(libraryAsByteArray, fragments, fragmentNames, metadataVersion.toArray())
     }
 
     // For platform libraries we get HUGE files.

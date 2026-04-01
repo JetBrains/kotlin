@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,7 +22,7 @@ class KtTypeAliasElementType(debugName: String) :
     override fun createStub(psi: KtTypeAlias, parentStub: StubElement<*>): KotlinTypeAliasStubImpl {
         val name = StringRef.fromString(psi.name)
         val fqName = StringRef.fromString(psi.safeFqNameForLazyResolve()?.asString())
-        val classId = StubUtils.createNestedClassId(parentStub, psi)
+        val classId = StubUtils.createClassId(parentStub, psi)
         val isTopLevel = psi.isTopLevel()
         return KotlinTypeAliasStubImpl(parentStub, name, fqName, classId, isTopLevel)
     }

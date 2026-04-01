@@ -176,7 +176,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
     internal fun defaultCacheKindForTarget(konanTarget: KonanTarget) =
         parameters.konanPropertiesBuildService.map { it.defaultCacheKindForTarget(konanTarget) }
 
-    private inner class DependencyExtractor : ArchiveExtractor {
+    internal inner class DependencyExtractor : ArchiveExtractor {
 
         override fun extract(archive: File, targetDirectory: File, archiveType: ArchiveType) {
             when (archiveType) {

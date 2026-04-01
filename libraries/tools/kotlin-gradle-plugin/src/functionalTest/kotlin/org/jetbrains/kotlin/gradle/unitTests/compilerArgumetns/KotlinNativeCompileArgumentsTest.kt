@@ -82,7 +82,7 @@ class KotlinNativeCompileArgumentsTest {
         project.evaluate()
 
         val commonMainCompileTask = linuxX64Target.compilations.main.compileTaskProvider.get()
-        assertNull(commonMainCompileTask.createCompilerArguments(lenient).libraries)
+        assertEmpty(commonMainCompileTask.createCompilerArguments(lenient).libraries, "-library expected to be empty")
         assertFails { commonMainCompileTask.createCompilerArguments(default) }
     }
 
@@ -103,7 +103,7 @@ class KotlinNativeCompileArgumentsTest {
 
         val arguments = linuxX64Target.compilations.main.compileTaskProvider.get().createCompilerArguments(lenient)
         assertEquals(
-            listOf("my.OptIn", "my.other.OptIn"), arguments.optIn?.toList()
+            listOf("my.OptIn", "my.other.OptIn"), arguments.optIn.toList()
         )
     }
 
@@ -131,23 +131,23 @@ class KotlinNativeCompileArgumentsTest {
         val sharedNativeCompileTask = sharedNativeCompilation.compileTaskProvider.get() as KotlinNativeCompile
         val arguments = sharedNativeCompileTask.createCompilerArguments(lenient)
 
-        assertNull(
-            arguments.fragments?.toList(),
+        assertEmpty(
+            arguments.fragments,
             "Expected 'fragments' to *not* be set: Metadata compilations shall use -Xcommon-sources and provide klib dependencies"
         )
 
-        assertNull(
-            arguments.fragmentSources?.toList(),
+        assertEmpty(
+            arguments.fragmentSources,
             "Expected 'fragmentSources' to *not* be set: Metadata compilations shall use -Xcommon-sources and provide klib dependencies"
         )
 
-        assertNull(
-            arguments.fragmentRefines?.toList(),
+        assertEmpty(
+            arguments.fragmentRefines,
             "Expected 'fragmentRefines' to *not* be set: Metadata compilations shall use -Xcommon-sources and provide klib dependencies"
         )
 
         assertEquals(
-            listOf(commonMainSourceFile), arguments.commonSources?.toList().orEmpty().map(::File)
+            listOf(commonMainSourceFile), arguments.commonSources.toList().map(::File)
         )
 
         assertTrue(
@@ -180,28 +180,28 @@ class KotlinNativeCompileArgumentsTest {
         project.evaluate()
 
         val nativeCompilation = kotlin.linuxX64().compilations.main
-        val sharedNativeCompileTask = nativeCompilation.compileTaskProvider.get() as KotlinNativeCompile
+        val sharedNativeCompileTask = nativeCompilation.compileTaskProvider.get()
         val arguments = sharedNativeCompileTask.createCompilerArguments(lenient)
 
-        assertNull(
-            arguments.commonSources?.toList(),
+        assertEmpty(
+            arguments.commonSources,
             "Expected 'commonSources' to not be set: Native Platform compilations shall use -Xfragment{x} arguments"
         )
 
         assertEquals(
             setOf("commonMain", "linuxX64Main"),
-            arguments.fragments?.toSet(),
+            arguments.fragments.toSet(),
             "Expected 'fragments' to *not* be set: Metadata compilations shall use -Xcommon-sources and provide klib dependencies"
         )
 
         assertEquals(
             listOf("linuxX64Main:${linuxX64SourceFile.absolutePath}"),
-            arguments.fragmentSources?.toList(),
+            arguments.fragmentSources.toList(),
         )
 
         assertEquals(
             listOf("linuxX64Main:commonMain"),
-            arguments.fragmentRefines?.toList(),
+            arguments.fragmentRefines.toList(),
         )
 
 
@@ -284,4 +284,8 @@ class KotlinNativeCompileArgumentsTest {
         linkLinuxArm64.createCompilerArguments(default).libraries.assertFilePathsDontContain("linux_arm64")
         linkLinuxArm64.createCompilerArguments(default).libraries.assertFilePathsDontContain("nativeDependencies")
     }
+}
+
+private fun assertEmpty(array: Array<String>, message: String) {
+    assert(array.isEmpty()) { message }
 }

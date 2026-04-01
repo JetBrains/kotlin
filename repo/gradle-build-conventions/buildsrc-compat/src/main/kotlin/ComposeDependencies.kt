@@ -17,7 +17,7 @@ private fun Project.composeStableVersion() = libsVersionCatalog.findVersion("com
 private fun Project.composeSnapshotVersion() = composeSnapshotVersionCatalog.findVersion("snapshot.version").get().requiredVersion
 
 val Project.androidXMavenLocalPath: String?
-    get() = kotlinBuildProperties.getOrNull("compose.aosp.root")?.toString()
+    get() = kotlinBuildProperties.stringProperty("compose.aosp.root").orNull
 
 fun RepositoryHandler.androidXMavenLocal(androidXMavenLocalPath: String?) {
     if (androidXMavenLocalPath != null) {

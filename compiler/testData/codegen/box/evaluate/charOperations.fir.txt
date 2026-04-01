@@ -1,0 +1,281 @@
+FILE: charOperations.kt
+    public final fun <T> R|T|.id(): R|T| {
+        ^id this@R|/id|
+    }
+    public final const [EvaluatedValue=Char(1)] val oneVal: R|kotlin/Char| = Char(1)
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Char(2)] val twoVal: R|kotlin/Char| = Char(2)
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Char(3)] val threeVal: R|kotlin/Char| = Char(3)
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Char(4)] val fourVal: R|kotlin/Char| = Char(4)
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Int(5)] val intVal: R|kotlin/Int| = Int(5)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(-1)] val compareTo1: R|kotlin/Int| = R|/oneVal|.R|kotlin/Char.compareTo|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(0)] val compareTo2: R|kotlin/Int| = R|/twoVal|.R|kotlin/Char.compareTo|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(1)] val compareTo3: R|kotlin/Int| = R|/threeVal|.R|kotlin/Char.compareTo|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(1)] val compareTo4: R|kotlin/Int| = R|/fourVal|.R|kotlin/Char.compareTo|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Char(6)] val plus1: R|kotlin/Char| = R|/oneVal|.R|kotlin/Char.plus|(R|/intVal|)
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Char(7)] val plus2: R|kotlin/Char| = R|/twoVal|.R|kotlin/Char.plus|(R|/intVal|)
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Char(8)] val plus3: R|kotlin/Char| = R|/threeVal|.R|kotlin/Char.plus|(R|/intVal|)
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Char(9)] val plus4: R|kotlin/Char| = R|/fourVal|.R|kotlin/Char.plus|(R|/intVal|)
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Int(-1)] val minusChar1: R|kotlin/Int| = R|/oneVal|.R|kotlin/Char.minus|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(0)] val minusChar2: R|kotlin/Int| = R|/twoVal|.R|kotlin/Char.minus|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(1)] val minusChar3: R|kotlin/Int| = R|/threeVal|.R|kotlin/Char.minus|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(2)] val minusChar4: R|kotlin/Int| = R|/fourVal|.R|kotlin/Char.minus|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Char(,)] val minusInt1: R|kotlin/Char| = R|/oneVal|.R|kotlin/Char.minus|(R|/intVal|)
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Char(-)] val minusInt2: R|kotlin/Char| = R|/twoVal|.R|kotlin/Char.minus|(R|/intVal|)
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Char(.)] val minusInt3: R|kotlin/Char| = R|/threeVal|.R|kotlin/Char.minus|(R|/intVal|)
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Char(/)] val minusInt4: R|kotlin/Char| = R|/fourVal|.R|kotlin/Char.minus|(R|/intVal|)
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Byte(49)] val convert1: R|kotlin/Byte| = R|/oneVal|.R|kotlin/Char.toByte|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Char(1)] val convert2: R|kotlin/Char| = R|/oneVal|.R|kotlin/Char.toChar|()
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Short(49)] val convert3: R|kotlin/Short| = R|/oneVal|.R|kotlin/Char.toShort|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Int(49)] val convert4: R|kotlin/Int| = R|/oneVal|.R|kotlin/Char.toInt|()
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Long(49)] val convert5: R|kotlin/Long| = R|/oneVal|.R|kotlin/Char.toLong|()
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Float(49.0)] val convert6: R|kotlin/Float| = R|/oneVal|.R|kotlin/Char.toFloat|()
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Double(49.0)] val convert7: R|kotlin/Double| = R|/oneVal|.R|kotlin/Char.toDouble|()
+        public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=Boolean(false)] val equals1: R|kotlin/Boolean| = ==(R|/oneVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val equals2: R|kotlin/Boolean| = ==(R|/twoVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equals3: R|kotlin/Boolean| = ==(R|/threeVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equals4: R|kotlin/Boolean| = ==(R|/fourVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=String(1)] val toString1: R|kotlin/String| = R|/oneVal|.R|kotlin/Char.toString|()
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(2)] val toString2: R|kotlin/String| = R|/twoVal|.R|kotlin/Char.toString|()
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=Int(49)] val code1: R|kotlin/Int| = R|/oneVal|.R|kotlin/code|
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(50)] val code2: R|kotlin/Int| = R|/twoVal|.R|kotlin/code|
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(51)] val code3: R|kotlin/Int| = R|/threeVal|.R|kotlin/code|
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(52)] val code4: R|kotlin/Int| = R|/fourVal|.R|kotlin/code|
+        public get(): R|kotlin/Int|
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|/compareTo1|.R|/id|<R|kotlin/Int|>(), Int(-1)) ->  {
+                ^box String(Fail 1.1)
+            }
+        }
+
+        when () {
+            !=(R|/compareTo2|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
+                ^box String(Fail 1.2)
+            }
+        }
+
+        when () {
+            !=(R|/compareTo3|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
+                ^box String(Fail 1.3)
+            }
+        }
+
+        when () {
+            !=(R|/compareTo4|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
+                ^box String(Fail 1.4)
+            }
+        }
+
+        when () {
+            !=(R|/plus1|.R|/id|<R|kotlin/Char|>(), Char(6)) ->  {
+                ^box String(Fail 2.1)
+            }
+        }
+
+        when () {
+            !=(R|/plus2|.R|/id|<R|kotlin/Char|>(), Char(7)) ->  {
+                ^box String(Fail 2.2)
+            }
+        }
+
+        when () {
+            !=(R|/plus3|.R|/id|<R|kotlin/Char|>(), Char(8)) ->  {
+                ^box String(Fail 2.3)
+            }
+        }
+
+        when () {
+            !=(R|/plus4|.R|/id|<R|kotlin/Char|>(), Char(9)) ->  {
+                ^box String(Fail 2.4)
+            }
+        }
+
+        when () {
+            !=(R|/minusChar1|.R|/id|<R|kotlin/Int|>(), Int(-1)) ->  {
+                ^box String(Fail 3.1)
+            }
+        }
+
+        when () {
+            !=(R|/minusChar2|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
+                ^box String(Fail 3.2)
+            }
+        }
+
+        when () {
+            !=(R|/minusChar3|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
+                ^box String(Fail 3.3)
+            }
+        }
+
+        when () {
+            !=(R|/minusChar4|.R|/id|<R|kotlin/Int|>(), Int(2)) ->  {
+                ^box String(Fail 3.4)
+            }
+        }
+
+        when () {
+            !=(R|/minusInt1|.R|/id|<R|kotlin/Char|>(), Char(,)) ->  {
+                ^box String(Fail 4.1)
+            }
+        }
+
+        when () {
+            !=(R|/minusInt2|.R|/id|<R|kotlin/Char|>(), Char(-)) ->  {
+                ^box String(Fail 4.2)
+            }
+        }
+
+        when () {
+            !=(R|/minusInt3|.R|/id|<R|kotlin/Char|>(), Char(.)) ->  {
+                ^box String(Fail 4.3)
+            }
+        }
+
+        when () {
+            !=(R|/minusInt4|.R|/id|<R|kotlin/Char|>(), Char(/)) ->  {
+                ^box String(Fail 4.4)
+            }
+        }
+
+        when () {
+            !=(R|/convert1|.R|/id|<R|kotlin/Byte|>(), Int(49).R|kotlin/Int.toByte|()) ->  {
+                ^box String(Fail 5.1)
+            }
+        }
+
+        when () {
+            !=(R|/convert2|.R|/id|<R|kotlin/Char|>(), Char(1)) ->  {
+                ^box String(Fail 5.2)
+            }
+        }
+
+        when () {
+            !=(R|/convert3|.R|/id|<R|kotlin/Short|>(), Int(49).R|kotlin/Int.toShort|()) ->  {
+                ^box String(Fail 5.3)
+            }
+        }
+
+        when () {
+            !=(R|/convert4|.R|/id|<R|kotlin/Int|>(), Int(49)) ->  {
+                ^box String(Fail 5.4)
+            }
+        }
+
+        when () {
+            !=(R|/convert5|.R|/id|<R|kotlin/Long|>(), Long(49)) ->  {
+                ^box String(Fail 5.5)
+            }
+        }
+
+        when () {
+            !=(R|/convert6|.R|/id|<R|kotlin/Float|>(), Float(49.0)) ->  {
+                ^box String(Fail 5.6)
+            }
+        }
+
+        when () {
+            !=(R|/convert7|.R|/id|<R|kotlin/Double|>(), Double(49.0)) ->  {
+                ^box String(Fail 5.7)
+            }
+        }
+
+        when () {
+            !=(R|/equals1|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 6.1)
+            }
+        }
+
+        when () {
+            !=(R|/equals2|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 6.2)
+            }
+        }
+
+        when () {
+            !=(R|/equals3|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 6.3)
+            }
+        }
+
+        when () {
+            !=(R|/equals4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 6.4)
+            }
+        }
+
+        when () {
+            !=(R|/toString1|.R|/id|<R|kotlin/String|>(), String(1)) ->  {
+                ^box String(Fail 7.1)
+            }
+        }
+
+        when () {
+            !=(R|/toString2|.R|/id|<R|kotlin/String|>(), String(2)) ->  {
+                ^box String(Fail 7.2)
+            }
+        }
+
+        when () {
+            !=(R|/code1|.R|/id|<R|kotlin/Int|>(), Int(49)) ->  {
+                ^box String(Fail 8.1)
+            }
+        }
+
+        when () {
+            !=(R|/code2|.R|/id|<R|kotlin/Int|>(), Int(50)) ->  {
+                ^box String(Fail 8.2)
+            }
+        }
+
+        when () {
+            !=(R|/code3|.R|/id|<R|kotlin/Int|>(), Int(51)) ->  {
+                ^box String(Fail 8.3)
+            }
+        }
+
+        when () {
+            !=(R|/code4|.R|/id|<R|kotlin/Int|>(), Int(52)) ->  {
+                ^box String(Fail 8.4)
+            }
+        }
+
+        ^box String(OK)
+    }

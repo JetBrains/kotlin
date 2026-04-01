@@ -1,0 +1,12 @@
+test1: ---
+assert(1 * 2 == 4)
+         |   |
+         2   false
+---
+test2: ---
+assert(a * b)
+       | | |
+       | | 2
+       | false
+       false
+---

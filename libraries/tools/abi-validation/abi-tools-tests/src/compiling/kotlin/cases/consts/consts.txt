@@ -1,0 +1,14 @@
+public final class cases/consts/WithInternalCompanion {
+}
+
+public final class cases/consts/WithPrivateCompanion {
+}
+
+public final class cases/consts/WithPublishedCompanion {
+	public static final field Companion Lcases/consts/WithPublishedCompanion$Companion;
+	public static final field z I
+}
+
+public final class cases/consts/WithPublishedCompanion$Companion {
+}
+

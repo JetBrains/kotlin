@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
+@KaPlatformInterface
 public abstract class KotlinModuleDependentsProviderBase : KotlinModuleDependentsProvider {
     override fun getTransitiveDependents(module: KaModule): Set<KaModule> = computeTransitiveDependents(module)
 

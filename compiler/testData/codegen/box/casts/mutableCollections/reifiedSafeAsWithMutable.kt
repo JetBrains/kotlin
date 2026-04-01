@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// JVM_ABI_K1_K2_DIFF: KT-69522
 
 // FILE: lib.kt
 class Itr : Iterator<String> by ArrayList<String>().iterator()

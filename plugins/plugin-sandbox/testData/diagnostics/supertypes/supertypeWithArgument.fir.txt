@@ -7,7 +7,7 @@ FILE: supertypeWithArgument.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/SupertypeWithTypeArgument|(kClass = <getClass>(Q|kotlin/String|)) public final class TopLevelType : R|kotlin/Any|, R|foo/InterfaceWithArgument<kotlin/String>| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/SupertypeWithTypeArgument|(kClass = <getClass>(Q|kotlin/String|) [evaluated = <getClass>(Q|kotlin/String|)]) public final class TopLevelType : R|kotlin/Any|, R|foo/InterfaceWithArgument<kotlin/String>| {
         public constructor(): R|foo/TopLevelType| {
             super<R|kotlin/Any|>()
         }
@@ -37,14 +37,14 @@ FILE: supertypeWithArgument.kt
             super<R|foo/Base|>()
         }
 
-        @R|org/jetbrains/kotlin/plugin/sandbox/SupertypeWithTypeArgument|(kClass = <getClass>(Q|foo/Base.Nested|)) public final class TypeFromSupertype : R|kotlin/Any|, R|foo/InterfaceWithArgument<foo/Base.Nested>| {
+        @R|org/jetbrains/kotlin/plugin/sandbox/SupertypeWithTypeArgument|(kClass = <getClass>(Q|foo/Base.Nested|) [evaluated = <getClass>(Q|foo/Base.Nested|)]) public final class TypeFromSupertype : R|kotlin/Any|, R|foo/InterfaceWithArgument<foo/Base.Nested>| {
             public constructor(): R|foo/Derived.TypeFromSupertype| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        @R|org/jetbrains/kotlin/plugin/sandbox/SupertypeWithTypeArgument|(kClass = <getClass>(Q|foo/Nested|)) public final class QualifiedType : R|kotlin/Any|, R|foo/InterfaceWithArgument<foo/Nested>| {
+        @R|org/jetbrains/kotlin/plugin/sandbox/SupertypeWithTypeArgument|(kClass = <getClass>(Q|foo/Nested|) [evaluated = <getClass>(Q|foo/Nested|)]) public final class QualifiedType : R|kotlin/Any|, R|foo/InterfaceWithArgument<foo/Nested>| {
             public constructor(): R|foo/Derived.QualifiedType| {
                 super<R|kotlin/Any|>()
             }
@@ -52,7 +52,7 @@ FILE: supertypeWithArgument.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/SupertypeWithTypeArgument|(kClass = <getClass>(<Unresolved name: UnresolvedClass>#)) public final class UnresolvedType : R|kotlin/Any|, R|foo/InterfaceWithArgument<ERROR CLASS: Symbol not found for UnresolvedClass>| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/SupertypeWithTypeArgument|(kClass = <getClass>(<Unresolved name: UnresolvedClass>#) [evaluated = <getClass>(<Unresolved name: UnresolvedClass>#)]) public final class UnresolvedType : R|kotlin/Any|, R|foo/InterfaceWithArgument<ERROR CLASS: Symbol not found for UnresolvedClass>| {
         public constructor(): R|foo/UnresolvedType| {
             super<R|kotlin/Any|>()
         }

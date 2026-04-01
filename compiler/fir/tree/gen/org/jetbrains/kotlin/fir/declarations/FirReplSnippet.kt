@@ -12,10 +12,8 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
@@ -23,18 +21,20 @@ import org.jetbrains.kotlin.name.Name
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.replSnippet]
  */
-abstract class FirReplSnippet : FirDeclaration(), FirControlFlowGraphOwner {
+abstract class FirReplSnippet : FirDeclaration() {
     abstract override val annotations: List<FirAnnotation>
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
-    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
+    /**
+     * The name of the REPL snippet, used to derive the name of the generated [snippetClass].
+     */
     abstract val name: Name
     abstract override val symbol: FirReplSnippetSymbol
     abstract override val source: KtSourceElement
     abstract val receivers: List<FirScriptReceiverParameter>
-    abstract val body: FirBlock
-    abstract val resultTypeRef: FirTypeRef
+    abstract val snippetClass: FirRegularClass
+    abstract val evalFunctionSymbol: FirNamedFunctionSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitReplSnippet(this, data)
@@ -45,17 +45,9 @@ abstract class FirReplSnippet : FirDeclaration(), FirControlFlowGraphOwner {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
-
-    abstract fun replaceBody(newBody: FirBlock)
-
-    abstract fun replaceResultTypeRef(newResultTypeRef: FirTypeRef)
-
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirReplSnippet
 
     abstract fun <D> transformReceivers(transformer: FirTransformer<D>, data: D): FirReplSnippet
 
-    abstract fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirReplSnippet
-
-    abstract fun <D> transformResultTypeRef(transformer: FirTransformer<D>, data: D): FirReplSnippet
+    abstract fun <D> transformSnippetClass(transformer: FirTransformer<D>, data: D): FirReplSnippet
 }

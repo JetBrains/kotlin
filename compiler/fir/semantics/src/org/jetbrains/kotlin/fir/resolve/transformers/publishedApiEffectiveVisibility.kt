@@ -115,7 +115,7 @@ fun FirMemberDeclaration.setLazyPublishedVisibility(hasPublishedApi: Boolean, pa
     lazyPublishedApiEffectiveVisibility = lazy {
         val containingClassLookupTag = (when {
             parentProperty != null -> parentProperty.symbol.callableId?.classId
-            this is FirClassLikeDeclaration -> classId.parentClassId
+            this is FirClassLikeDeclaration -> classId.outerClassId
             this is FirCallableDeclaration -> symbol.callableId?.classId
             else -> null
         })?.toLookupTag()

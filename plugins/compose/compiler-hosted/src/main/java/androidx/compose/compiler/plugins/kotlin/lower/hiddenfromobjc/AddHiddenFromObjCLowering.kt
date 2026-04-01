@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -93,7 +93,7 @@ class AddHiddenFromObjCLowering(
     }
 
     private fun IrFunction.isSyntheticFun(): Boolean =
-        origin == IrDeclarationOrigin.FAKE_OVERRIDE || startOffset < 0 || endOffset < 0
+        origin == IrDeclarationOrigin.FAKE_OVERRIDE
 
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
@@ -134,7 +134,7 @@ class AddHiddenFromObjCLowering(
         if (!hasFirDeclaration()) {
             return
         }
-        val annotation = IrConstructorCallImpl.fromSymbolOwner(
+        val annotation = IrAnnotationImpl.fromSymbolOwner(
             type = hiddenFromObjCAnnotation.defaultType,
             constructorSymbol = hiddenFromObjCAnnotation.constructors.first()
         )

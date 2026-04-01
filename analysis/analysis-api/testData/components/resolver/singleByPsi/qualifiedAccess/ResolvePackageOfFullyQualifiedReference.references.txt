@@ -2,5 +2,8 @@ KtNameReferenceExpression(114,117): 'baz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in foo.bar.baz) class AA
+    resolveToSymbols:
       package foo.bar.baz

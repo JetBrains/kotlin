@@ -6,30 +6,25 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.config
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.report
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.analysis.diagnostics.CliFrontendDiagnostics
+import org.jetbrains.kotlin.fir.isDisabled
 
 object FirContextParametersLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecker() {
     val DIAGNOSTIC_MESSAGE: String = """
         Experimental context receivers are superseded by context parameters.
-        Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
+        Remove the '-Xcontext-receivers' compiler argument and migrate to the new syntax.
 
         See the context parameters proposal for more details: https://kotl.in/context-parameters""".trimIndent()
 
     context(context: CheckerContext)
-    override fun check(reporter: BaseDiagnosticsCollector.RawReporter) {
-        if (!LanguageFeature.ContextReceivers.isEnabled()) {
+    override fun check(reporter: DiagnosticReporter) {
+        if (LanguageFeature.ContextReceivers.isDisabled()) {
             return
         }
 
-        if (LanguageFeature.ContextParameters.isEnabled()) {
-            reporter.reportError(
-                "Experimental language features for context receivers and context parameters cannot be enabled at the same time. " +
-                        "Remove the '-Xcontext-receivers' compiler argument."
-            )
-        } else {
-            reporter.reportError(DIAGNOSTIC_MESSAGE)
-        }
+        reporter.report(CliFrontendDiagnostics.CONTEXT_PARAMETERS_ARE_DEPRECATED, DIAGNOSTIC_MESSAGE)
     }
 }

@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.backend.konan.cgen
 
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
-import org.jetbrains.kotlin.backend.konan.ir.isAny
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.superClasses
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
@@ -37,6 +36,7 @@ private val cCall = RuntimeNames.cCall
 fun IrFunction.isCFunctionOrGlobalAccessor(): Boolean =
         annotations.hasAnnotation(RuntimeNames.cCall)
                 || annotations.hasAnnotation(RuntimeNames.cCallDirect)
+                || this.isCGlobalAccess()
 
 fun IrDeclaration.hasCCallAnnotation(name: String): Boolean =
         this.annotations.hasAnnotation(cCall.child(Name.identifier(name)))
@@ -81,28 +81,28 @@ fun IrType.isObjCReferenceType(target: KonanTarget, irBuiltIns: IrBuiltIns): Boo
     }
 }
 
-fun IrType.isCPointer(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCPointer
-fun IrType.isCValue(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCValue
-fun IrType.isCValuesRef(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCValuesRef
+fun IrType.isCPointer(symbols: PreSerializationNativeSymbols): Boolean = this.classOrNull == symbols.interopCPointer
+fun IrType.isCValue(symbols: PreSerializationNativeSymbols): Boolean = this.classOrNull == symbols.interopCValue
+fun IrType.isCValuesRef(symbols: PreSerializationNativeSymbols): Boolean = this.classOrNull == symbols.interopCValuesRef
 
-fun IrType.isNativePointed(symbols: KonanSymbols): Boolean = isSubtypeOfClass(symbols.nativePointed)
+fun IrType.isNativePointed(symbols: PreSerializationNativeSymbols): Boolean = isSubtypeOfClass(symbols.nativePointed)
 
 fun IrType.isCStructFieldTypeStoredInMemoryDirectly(): Boolean = isPrimitiveType() || isUnsigned() || isVector()
 
-fun IrType.isCStructFieldSupportedReferenceType(symbols: KonanSymbols): Boolean =
+fun IrType.isCStructFieldSupportedReferenceType(irBuiltIns: IrBuiltIns): Boolean =
         isObjCObjectType()
                 || getClass()?.isAny() == true
                 || isStringClassType()
-                || classOrNull == symbols.list
-                || classOrNull == symbols.mutableList
-                || classOrNull == symbols.set
-                || classOrNull == symbols.map
+                || classOrNull == irBuiltIns.listClass
+                || classOrNull == irBuiltIns.mutableListClass
+                || classOrNull == irBuiltIns.setClass
+                || classOrNull == irBuiltIns.mapClass
 
 /**
  * Check given function is a getter or setter
  * for `value` property of CEnumVar subclass.
  */
-fun IrFunction.isCEnumVarValueAccessor(symbols: KonanSymbols): Boolean {
+fun IrFunction.isCEnumVarValueAccessor(symbols: PreSerializationNativeSymbols): Boolean {
     val parent = parent as? IrClass ?: return false
     return if (symbols.interopCEnumVar in parent.superClasses && isPropertyAccessor) {
         (propertyIfAccessor as IrProperty).name.asString() == "value"
@@ -123,3 +123,6 @@ fun cBoolType(target: KonanTarget): CType? = when (target.family) {
     Family.IOS, Family.TVOS, Family.WATCHOS -> CTypes.C99Bool
     else -> CTypes.signedChar
 }
+
+fun IrFunction.isCGlobalAccess(): Boolean =
+    this.hasAnnotation(RuntimeNames.cGlobalAccess)

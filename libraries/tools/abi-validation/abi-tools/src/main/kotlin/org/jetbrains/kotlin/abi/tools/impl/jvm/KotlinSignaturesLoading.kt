@@ -46,21 +46,33 @@ internal fun Sequence<InputStream>.loadApiFromJvmClasses(): List<ClassBinarySign
                     .map { it.buildFieldSignature(mVisibility, this, classNodeMap) }
                     .filter { it.field.isEffectivelyPublic(classAccess, mVisibility) }
                     .filter {
-                        /*
-                         * Filter out 'public static final Companion' field that doesn't constitute public API.
-                         * For that we first check if field corresponds to the 'Companion' class and then
-                         * if companion is effectively public by itself, so the 'Companion' field has the same visibility.
-                         */
-                        val companionClass = when (it) {
-                            is BasicFieldBinarySignature -> return@filter true
-                            is CompanionFieldBinarySignature -> it.companion
+                        when (it) {
+                            is BasicFieldBinarySignature -> {
+                                // locate a companion
+                                val companionClass = it.companion ?: return@filter true
+                                // find a visibility for the companion
+                                val visibility = visibilityMap[companionClass.name] ?: return@filter true
+                                // check field is actually defined in the companion
+                                visibility.findMember(it.field.jvmMember) ?: return@filter true
+                                // check the companion is effectively public
+                                companionClass.isEffectivelyPublic(visibility)
+                            }
+                            is CompanionFieldBinarySignature -> {
+                                /*
+                                 * Filter out 'public static final Companion' field that doesn't constitute public API.
+                                 * For that we first check if field corresponds to the 'Companion' class and then
+                                 * if companion is effectively public by itself, so the 'Companion' field has the same visibility.
+                                 */
+                                val companionClass = it.companion
+                                val visibility = visibilityMap[companionClass.name] ?: return@filter true
+                                companionClass.isEffectivelyPublic(visibility)
+                            }
                         }
-                        val visibility = visibilityMap[companionClass.name] ?: return@filter true
-                        companionClass.isEffectivelyPublic(visibility)
+
                     }.map { it.field }
 
                 // NB: this 'map' is O(methods + properties * methods) which may accidentally be quadratic
-                val methodSignatures = methods.map { it.buildMethodSignature(mVisibility, this) }
+                val methodSignatures = methods.map { it.buildMethodSignature(mVisibility, this, classNodeMap) }
                     .filter { it.isEffectivelyPublic(classAccess, mVisibility) }
 
                 /**
@@ -95,7 +107,7 @@ private sealed class FieldBinarySignatureWrapper(val field: FieldBinarySignature
 /**
  * Wraps a regular field's binary signature.
  */
-private class BasicFieldBinarySignature(field: FieldBinarySignature) : FieldBinarySignatureWrapper(field)
+private class BasicFieldBinarySignature(field: FieldBinarySignature, val companion: ClassNode?) : FieldBinarySignatureWrapper(field)
 
 /**
  * Wraps a binary signature for a field referencing a companion object.
@@ -114,6 +126,7 @@ private fun FieldNode.buildFieldSignature(
     foundAnnotations.addAll(ownerClass.methods.annotationsFor(annotationHolders?.method))
 
     var companionClass: ClassNode? = null
+    var companionClassCandidate: ClassNode? = null
     if (isCompanionField(ownerClass.kotlinMetadata)) {
         /*
          * If the field was generated to hold the reference to a companion class's instance,
@@ -127,7 +140,7 @@ private fun FieldNode.buildFieldSignature(
         foundAnnotations.addAll(companionClass?.visibleAnnotations.orEmpty())
         foundAnnotations.addAll(companionClass?.invisibleAnnotations.orEmpty())
     } else if (isStatic(access) && isFinal(access)) {
-        val companionClassCandidate = ownerClass.companionName(ownerClass.kotlinMetadata)?.let {
+        companionClassCandidate = ownerClass.companionName(ownerClass.kotlinMetadata)?.let {
             classes[it]
         }
 
@@ -151,7 +164,7 @@ private fun FieldNode.buildFieldSignature(
     return if (companionClass != null) {
         CompanionFieldBinarySignature(fieldSignature, companionClass)
     } else {
-        BasicFieldBinarySignature(fieldSignature)
+        BasicFieldBinarySignature(fieldSignature, companionClassCandidate)
     }
 }
 
@@ -183,18 +196,24 @@ private fun ClassNode.qualifiedClassName(metadata: KotlinClassMetadata?): Pair<S
 
 private fun MethodNode.buildMethodSignature(
     ownerVisibility: ClassVisibility?,
-    ownerClass: ClassNode
+    ownerClass: ClassNode,
+    classNodes: Map<String, ClassNode>
 ): MethodBinarySignature {
     /**
      * For getters/setters, pull the annotations from the property
      * This is either on the field if any or in a '$annotations' synthetic function.
      */
-    val annotationHolders =
-        ownerVisibility?.members?.get(JvmMethodSignature(name, desc))?.propertyAnnotation
+    val annotationHolders = ownerVisibility?.findMember(JvmMethodSignature(name, desc))?.propertyAnnotation
     val foundAnnotations = ArrayList<AnnotationNode>()
     if (annotationHolders != null) {
         foundAnnotations += ownerClass.fields.annotationsFor(annotationHolders.field)
         foundAnnotations += ownerClass.methods.annotationsFor(annotationHolders.method)
+
+        for (part in ownerVisibility.partVisibilities) {
+            val partClass = classNodes[part.name] ?: continue
+            foundAnnotations += partClass.fields.annotationsFor(annotationHolders.field)
+            foundAnnotations += partClass.methods.annotationsFor(annotationHolders.method)
+        }
     }
 
     /**

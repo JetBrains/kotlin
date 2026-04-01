@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics.native
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeature.ProhibitInvalidCharsInNativeIdentifiers
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.Severity.ERROR
 import org.jetbrains.kotlin.diagnostics.Severity.WARNING
@@ -41,7 +39,7 @@ object FirNativeErrors : KtDiagnosticsContainer() {
     val INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL: KtDiagnosticFactory0 = KtDiagnosticFactory0("INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val INAPPLICABLE_THREAD_LOCAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("INAPPLICABLE_THREAD_LOCAL", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL: KtDiagnosticFactory0 = KtDiagnosticFactory0("INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val INVALID_CHARACTERS_NATIVE: KtDiagnosticFactoryForDeprecation1<String> = KtDiagnosticFactoryForDeprecation1("INVALID_CHARACTERS_NATIVE", ProhibitInvalidCharsInNativeIdentifiers, SourceElementPositioningStrategies.NAME_IDENTIFIER, PsiElement::class, getRendererFactory())
+    val INVALID_CHARACTERS_NATIVE_ERROR: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INVALID_CHARACTERS_NATIVE_ERROR", ERROR, SourceElementPositioningStrategies.NAME_IDENTIFIER, PsiElement::class, getRendererFactory())
     val REDUNDANT_SWIFT_REFINEMENT: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_SWIFT_REFINEMENT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE: KtDiagnosticFactory2<FirBasedSymbol<*>, Collection<FirRegularClassSymbol>> = KtDiagnosticFactory2("INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val INAPPLICABLE_OBJC_NAME: KtDiagnosticFactory0 = KtDiagnosticFactory0("INAPPLICABLE_OBJC_NAME", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
@@ -72,6 +70,13 @@ object FirNativeErrors : KtDiagnosticsContainer() {
     val INAPPLICABLE_OBJC_OVERRIDE: KtDiagnosticFactory0 = KtDiagnosticFactory0("INAPPLICABLE_OBJC_OVERRIDE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val NATIVE_SPECIFIC_ATOMIC: KtDiagnosticFactory1<Name> = KtDiagnosticFactory1("NATIVE_SPECIFIC_ATOMIC", WARNING, SourceElementPositioningStrategies.DEFAULT, KtTypeReference::class, getRendererFactory())
     val IDENTITY_HASH_CODE_ON_VALUE_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("IDENTITY_HASH_CODE_ON_VALUE_TYPE", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED", ERROR, SourceElementPositioningStrategies.OVERRIDE_MODIFIER, KtElement::class, getRendererFactory())
+    val CALLABLE_REFERENCES_TO_VARIADIC_C_FUNCTIONS_ARE_NOT_SUPPORTED: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("CALLABLE_REFERENCES_TO_VARIADIC_C_FUNCTIONS_ARE_NOT_SUPPORTED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val CALLABLE_REFERENCES_TO_VARIADIC_OBJECTIVE_C_METHODS_ARE_NOT_SUPPORTED: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("CALLABLE_REFERENCES_TO_VARIADIC_OBJECTIVE_C_METHODS_ARE_NOT_SUPPORTED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS: KtDiagnosticFactory0 = KtDiagnosticFactory0("STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val VARIADIC_OBJC_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF: KtDiagnosticFactory0 = KtDiagnosticFactory0("VARIADIC_OBJC_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val VARIADIC_C_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF: KtDiagnosticFactory0 = KtDiagnosticFactory0("VARIADIC_C_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirNativeErrorsDefaultMessages
 }

@@ -8,6 +8,10 @@ import androidx.compose.runtime.remember
 
 import androidx.compose.runtime.NonRestartableComposable
 
+class KnownStable
+class KnownUnstable(var x: Int)
+interface Uncertain
+
 @Composable
 @NonRestartableComposable
 fun test1(x: KnownStable) {
@@ -28,6 +32,21 @@ fun test3(x: Uncertain) {
 // Transformed IR
 // ------------------------------------------
 
+@StabilityInferred(parameters = 1)
+class KnownStable {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
+@StabilityInferred(parameters = 0)
+class KnownUnstable(var x: Int) {
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
+interface Uncertain
 @Composable
 @NonRestartableComposable
 fun test1(x: KnownStable, %composer: Composer?, %changed: Int) {

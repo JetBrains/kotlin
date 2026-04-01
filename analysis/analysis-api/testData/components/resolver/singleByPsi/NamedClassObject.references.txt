@@ -2,5 +2,6 @@ KtNameReferenceExpression(120,125): 'Named'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in a.A) companion object Named

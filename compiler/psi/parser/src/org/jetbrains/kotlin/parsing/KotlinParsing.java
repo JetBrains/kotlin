@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.parsing;
@@ -89,7 +78,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private static final TokenSet PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET = TokenSet.orSet(PROPERTY_NAME_FOLLOW_SET, PARAMETER_NAME_RECOVERY_SET);
     private static final TokenSet PROPERTY_NAME_FOLLOW_FUNCTION_OR_PROPERTY_RECOVERY_SET = TokenSet.orSet(PROPERTY_NAME_FOLLOW_SET, LBRACE_RBRACE_SET, TOP_LEVEL_DECLARATION_FIRST);
     private static final TokenSet IDENTIFIER_EQ_COLON_SEMICOLON_SET = TokenSet.create(IDENTIFIER, EQ, COLON, SEMICOLON);
-    private static final TokenSet COMMA_RPAR_COLON_EQ_SET = TokenSet.create(COMMA, RPAR, COLON, EQ);
+    private static final TokenSet COMMA_RPAR_RBRACKET_COLON_EQ_SET = TokenSet.create(COMMA, RPAR, RBRACKET, COLON, EQ);
     private static final TokenSet ACCESSOR_FIRST_OR_PROPERTY_END =
             TokenSet.orSet(MODIFIER_KEYWORDS, TokenSet.create(AT, GET_KEYWORD, SET_KEYWORD, FIELD_KEYWORD, EOL_OR_SEMICOLON, RBRACE));
     private static final TokenSet RPAR_IDENTIFIER_COLON_LBRACE_EQ_SET = TokenSet.create(RPAR, IDENTIFIER, COLON, LBRACE, EQ);
@@ -726,7 +715,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             noError = valueParameterLoop(inFunctionType, CONTEXT_PARAMETERS_FOLLOW_SET, () -> parseValueParameterOrTypeRef(inFunctionType));
         }
 
-        valueParameterOrTypeRefList.done(CONTEXT_RECEIVER_LIST);
+        valueParameterOrTypeRefList.done(CONTEXT_PARAMETER_LIST);
         return noError;
     }
 
@@ -974,10 +963,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         parseTypeArgumentList();
 
-        boolean whitespaceAfterAnnotation = WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(-1));
-        boolean shouldBeParsedNextAsFunctionalType = at(LPAR) && whitespaceAfterAnnotation && mode.withSignificantWhitespaceBeforeArguments;
-
-        if (at(LPAR) && !shouldBeParsedNextAsFunctionalType) {
+        if (at(LPAR) &&
+            !VAL_VAR.contains(lookahead(1)) &&
+            !(WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(-1)) && mode.withSignificantWhitespaceBeforeArguments)
+        ) {
             myExpressionParsing.parseValueArgumentList();
 
             /*
@@ -1313,10 +1302,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
         PsiBuilder.Marker decl = mark();
 
+        boolean isCompanionBlock = at(COMPANION_KEYWORD) && lookahead(1) == LBRACE;
+
         ModifierDetector detector = new ModifierDetector();
         parseModifierList(detector, TokenSet.EMPTY, /* localDeclaration = */false);
 
-        IElementType declType = parseMemberDeclarationRest(detector);
+        IElementType declType = isCompanionBlock ? parseCompanionBlock() : parseMemberDeclarationRest(detector);
 
         if (declType == null) {
             errorWithRecovery("Expecting member declaration", TokenSet.EMPTY);
@@ -1356,6 +1347,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
             declType = FUN;
         }
         return declType;
+    }
+
+    private IElementType parseCompanionBlock() {
+        parseClassBody();
+        return COMPANION_BLOCK;
     }
 
     /*
@@ -1654,7 +1650,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                         errorWithRecovery("Expecting val keyword", recoverySet);
                     }
                 } else {
-                    parseModifierList(COMMA_RPAR_COLON_EQ_SET);
+                    parseModifierList(COMMA_RPAR_RBRACKET_COLON_EQ_SET);
                 }
 
                 expect(IDENTIFIER, "Expecting a name", recoverySet);
@@ -2652,11 +2648,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         if (!at(RPAR) && !atSet(recoverySet)) {
             while (true) {
                 int offsetBefore = myBuilder.getCurrentOffset();
-                if (at(COMMA)) {
-                    errorAndAdvance("Expecting a parameter declaration");
-                    noError = false;
-                }
-                else if (at(RPAR)) {
+                if (at(RPAR)) {
                     break;
                 }
 
@@ -2724,20 +2716,21 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private boolean parseFunctionParameterRest(boolean typeRequired) {
         boolean noErrors = true;
 
-        // Recovery for the case 'fun foo(Array<String>) {}'
-        // Recovery for the case 'fun foo(: Int) {}'
-        if ((at(IDENTIFIER) && lookahead(1) == LT) || at(COLON)) {
+        if (at(COMMA) || at(RPAR)) {
+            error("Expecting a parameter declaration");
+            noErrors = false;
+        } else if (at(IDENTIFIER) && lookahead(1) == LT) {
+            // Recovery for the case 'fun foo(Array<String>) {}'
             error("Parameter name expected");
-            if (at(COLON)) {
-                // We keep noErrors == true so that unnamed parameters starting with ":" are not rolled back during parsing of functional types
-                advance(); // COLON
-            }
-            else {
-                noErrors = false;
-            }
+            noErrors = false;
             parseTypeRef();
-        }
-        else {
+        } else if (at(COLON)) {
+            // Recovery for the case 'fun foo(: Int) {}'
+            error("Parameter name expected");
+            // We keep noErrors == true so that unnamed parameters starting with ":" are not rolled back during parsing of functional types
+            advance(); // COLON
+            parseTypeRef();
+        } else {
             expect(IDENTIFIER, "Parameter name expected", PARAMETER_NAME_RECOVERY_SET);
 
             if (at(COLON)) {

@@ -36,7 +36,7 @@ internal class LLFirPhaseVerifier(testServices: TestServices) : FirAnalysisHandl
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         val visitor = Visitor()
-        for (firFile in info.mainFirFiles.values) {
+        for (firFile in info.mainFirFilesByTestFile.values) {
             firFile.accept(visitor)
         }
 

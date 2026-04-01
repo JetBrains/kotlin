@@ -1,0 +1,17 @@
+FILE: Main.kt
+    @FILE:R|kotlin/jvm/JvmName|(name = String(OtherKt) [evaluated = String(OtherKt)])
+    package one.two
+
+    public final const [EvaluatedValue=Int(1)] val FOO: R|kotlin/Int| = Int(1)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(3)] val BAZ: R|kotlin/Int| = Q|one/two/Bar|.R|one/two/Bar.BAR*s|.R|kotlin/Int.plus|(Int(1))
+        public get(): R|kotlin/Int|
+    public final class Child : R|one/two/Bar| {
+        public [ContainingClassKey=Child] constructor(): R|one/two/Child| {
+            super<R|one/two/Bar|>()
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

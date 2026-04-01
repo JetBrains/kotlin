@@ -1,4 +1,5 @@
 // TARGET_BACKEND: WASM
+// ^^ The test is specific for Wasm environment without Exception Handling proposal support
 // DISABLE_WASM_EXCEPTION_HANDLING
 // MODULE: main
 // FILE: foo.kt

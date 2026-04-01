@@ -3,21 +3,23 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.DontIncludeResour
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("generated-sources")
+    id("test-inputs-check")
 }
 
 dependencies {
     api(project(":compiler:build-tools:kotlin-build-tools-api"))
     implementation(kotlinStdlib())
     compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:cli-jvm"))
     compileOnly(project(":compiler:cli-js"))
+    compileOnly(project(":compiler:cli-metadata"))
     compileOnly(project(":kotlin-build-common"))
     compileOnly(project(":daemon-common"))
     compileOnly(project(":kotlin-daemon-client"))
     compileOnly(project(":compiler:incremental-compilation-impl"))
     compileOnly(project(":kotlin-compiler-runner-unshaded"))
-    compileOnly(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
+    implementation(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
     compileOnly(intellijCore())
     compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
@@ -28,6 +30,18 @@ dependencies {
     embedded(project(":kotlin-scripting-compiler-impl-embeddable")) { isTransitive = false }
     embedded(project(":kotlin-scripting-common")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
+
+    // dependencies for ABI validation
+    compileOnly(project(":libraries:tools:abi-validation:abi-tools-api"))
+    embedded(project(":libraries:tools:abi-validation:abi-tools-api")) { isTransitive = false }
+    embedded(project(":libraries:tools:abi-validation:abi-tools")) { isTransitive = false }
+    embedded(project(":kotlin-metadata-jvm")) { isTransitive = false }
+    embedded(libs.diff.utils) { isTransitive = false }
+
+
+    testCompileOnly(project(":compiler:cli"))
+    testCompileOnly(intellijPlatformUtil())
+    testImplementation(kotlinTest("junit"))
 }
 
 publish()
@@ -64,7 +78,6 @@ kotlin {
 generatedSourcesTask(
     taskName = "generateBtaArguments",
     generatorProject = ":compiler:build-tools:kotlin-build-tools-options-generator",
-    generatorRoot = "compiler/build-tools/kotlin-build-tools-options-generator/src",
     generatorMainClass = "org.jetbrains.kotlin.buildtools.options.generator.MainKt",
     argsProvider = { generationRoot ->
         listOf(

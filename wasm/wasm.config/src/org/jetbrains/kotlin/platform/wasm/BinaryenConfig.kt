@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.platform.wasm
 
 object BinaryenConfig {
-    val binaryenArgs = listOf(
+    private val binaryenCommonArgs = listOf(
         // Proposals
         "--enable-gc",
         "--enable-reference-types",
@@ -15,7 +15,6 @@ object BinaryenConfig {
 
         // Other options
         "--enable-nontrapping-float-to-int",
-        "--closed-world",
 
         // Optimizations:
         // Note the order and repetition of the next options matter.
@@ -26,9 +25,14 @@ object BinaryenConfig {
         //
         "--no-inline=kotlin.wasm.internal.throwValue",
         "--no-inline=kotlin.wasm.internal.getKotlinException",
+        "--no-inline=kotlin.wasm.internal.jsToKotlinStringAdapter",
         "--inline-functions-with-loops",
         "--traps-never-happen",
         "--fast-math",
+    )
+
+    val binaryenArgs = binaryenCommonArgs + listOf(
+        "--closed-world",
         // without "--type-merging" it produces increases the size
         "--type-ssa",
         "-O3",
@@ -39,5 +43,11 @@ object BinaryenConfig {
         "--type-merging",
         "-O3",
         "-Oz",
+    )
+
+    val binaryenMultimoduleArgs = binaryenCommonArgs + listOf(
+        "-O3",
+        "-O3",
+        "-O3",
     )
 }

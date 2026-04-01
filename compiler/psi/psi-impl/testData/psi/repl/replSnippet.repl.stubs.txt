@@ -1,0 +1,30 @@
+FILE[kind=Script[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  SCRIPT[fqName=ReplSnippet_repl, fqName=ReplSnippet_repl, isReplSnippet=true, name=ReplSnippet_repl]
+    CLASS[classId=/ReplSnippet_repl.B, fqName=ReplSnippet_repl.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
+      CLASS_BODY
+        FUN[fqName=ReplSnippet_repl.B.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
+          VALUE_PARAMETER_LIST
+        PROPERTY[fqName=ReplSnippet_repl.B.foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=foo]
+        OBJECT_DECLARATION[classId=/ReplSnippet_repl.B.Nested, fqName=ReplSnippet_repl.B.Nested, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Nested, superNames=[]]
+          CLASS_BODY
+            FUN[fqName=ReplSnippet_repl.B.Nested.member, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=member]
+              VALUE_PARAMETER_LIST
+            CLASS_INITIALIZER
+            PROPERTY[fqName=ReplSnippet_repl.B.Nested.member, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=member]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=String]
+              PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
+                VALUE_PARAMETER_LIST
+    FUN[fqName=ReplSnippet_repl.topLevel, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=topLevel]
+      VALUE_PARAMETER_LIST
+    SCRIPT_INITIALIZER
+      CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=LocalClass, superNames=[]]
+        CLASS_BODY
+          FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=localMember]
+            VALUE_PARAMETER_LIST
+    PROPERTY[fqName=ReplSnippet_repl.topLevelVar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=topLevelVar]
+    SCRIPT_INITIALIZER
+    SCRIPT_INITIALIZER

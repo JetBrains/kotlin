@@ -1,0 +1,5 @@
+KtSafeQualifiedExpression(51,58): 'a?.y(1)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.y(<dispatch receiver>: A, a: kotlin.Int): kotlin.Unit
+    ]

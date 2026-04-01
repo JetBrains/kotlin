@@ -40,13 +40,6 @@ abstract class YarnSetupTask @Inject constructor(
     }
 
     companion object {
-        @Deprecated(
-            "Use yarnSetupTaskProvider from corresponding YarnRootExtension or WasmYarnRootExtension instead. " +
-                    "Scheduled for removal in Kotlin 2.4.",
-            level = DeprecationLevel.ERROR
-        )
-        const val NAME: String = "kotlinYarnSetup"
-
         @InternalKotlinGradlePluginApi
         const val BASE_NAME: String = "yarnSetup"
     }

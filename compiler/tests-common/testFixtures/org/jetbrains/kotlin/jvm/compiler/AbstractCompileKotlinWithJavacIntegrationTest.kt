@@ -21,6 +21,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.javac.registerJavac
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -84,7 +85,7 @@ abstract class AbstractCompileKotlinWithJavacIntegrationTest : TestCaseWithTmpdi
         environment.configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, out)
         environment.registerJavac(emptyList(), bootClasspath = listOf(KtTestUtil.findMockJdkRtJar()))
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val analysisResult = JvmResolveUtil.analyze(environment)
         val packageView = analysisResult.moduleDescriptor.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME)
         assertFalse("Nothing found in package ${LoadDescriptorUtil.TEST_PACKAGE_FQNAME}", packageView.isEmpty())

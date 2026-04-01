@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import kotlin.native.ref.*
 
 class C(val x: Int) {

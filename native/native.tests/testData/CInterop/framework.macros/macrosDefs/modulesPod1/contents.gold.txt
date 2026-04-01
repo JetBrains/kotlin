@@ -13,8 +13,10 @@ library {
         public final get
 
       public final var myVar: kotlin/Double
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "myVar")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_myVar_getter")
         public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "myVar")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_myVar_setter")
         public final /* non-default */ external set(value: kotlin/Double)
     }

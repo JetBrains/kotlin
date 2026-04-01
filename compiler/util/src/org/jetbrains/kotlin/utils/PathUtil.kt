@@ -28,6 +28,9 @@ object PathUtil {
     const val JS_LIB_JAR_NAME = "$JS_LIB_NAME.jar"
 
     const val JS_LIB_10_JAR_NAME = "kotlin-jslib.jar"
+
+    const val WASM_JS_LIB_NAME = "kotlin-stdlib-wasm-js"
+
     const val ALLOPEN_PLUGIN_NAME = "allopen-compiler-plugin"
     const val ALLOPEN_PLUGIN_JAR_NAME = "$ALLOPEN_PLUGIN_NAME.jar"
     const val NOARG_PLUGIN_NAME = "noarg-compiler-plugin"
@@ -37,7 +40,6 @@ object PathUtil {
     const val SERIALIZATION_PLUGIN_NAME = "kotlinx-serialization-compiler-plugin"
     const val SERIALIZATION_PLUGIN_JAR_NAME = "$SERIALIZATION_PLUGIN_NAME.jar"
     const val LOMBOK_PLUGIN_NAME = "lombok-compiler-plugin"
-    const val ANDROID_EXTENSIONS_RUNTIME_PLUGIN_JAR_NAME = "android-extensions-runtime.jar"
     const val PARCELIZE_RUNTIME_PLUGIN_JAR_NAME = "parcelize-runtime.jar"
     const val JS_LIB_SRC_JAR_NAME = "kotlin-stdlib-js-sources.jar"
 

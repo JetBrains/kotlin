@@ -1,9 +1,9 @@
-// IGNORE_BACKEND: WASM_JS, WASM_WASI
+// IGNORE_BACKEND: WASM_JS, WASM_WASI, JS_IR_ES6
 // WASM_MUTE_REASON: IGNORED_IN_JS
 // WITH_COROUTINES
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 import helpers.*
 import kotlin.coroutines.*

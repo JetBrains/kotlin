@@ -53,16 +53,11 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.KOTLIN_TO_JAVA_ANNOTATION_TARGETS
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-val FirSession.javaElementFinder: FirJavaElementFinder? by FirSession.nullableSessionComponentAccessor<FirJavaElementFinder>()
-
-private typealias PropertyEvaluator = (FirProperty) -> String?
-
 class FirJavaElementFinder(
     private val session: FirSession,
     project: Project
 ) : PsiElementFinder(), KotlinFinderMarker, FirSessionComponent {
     private val psiManager = PsiManager.getInstance(project)
-    var propertyEvaluator: PropertyEvaluator? = null
 
     private val firProviders: List<FirProvider> = buildList {
         add(session.firProvider)
@@ -220,11 +215,7 @@ class FirJavaElementFinder(
 
         val psiField = object : StubBase<PsiField>(classStub, JavaStubElementTypes.FIELD), PsiFieldStub, NotEvaluatedConstAware {
             private val lazyInitializerText by lazy {
-                if (propertyEvaluator == null) {
-                    transformJavaFieldAndGetResultAsString(firProperty)
-                } else {
-                    propertyEvaluator?.invoke(firProperty)
-                }
+                transformJavaFieldAndGetResultAsString(firProperty)
             }
 
             // Null result means that the evaluator encountered an error during evaluation.
@@ -259,7 +250,7 @@ class FirJavaElementFinder(
             override fun isEnumConstant(): Boolean = false
 
             override fun isNotYetComputed(): Boolean {
-                return propertyEvaluator == null
+                return true
             }
         }
 
@@ -275,24 +266,25 @@ private fun FirRegularClass.resolveSupertypesOnAir(session: FirSession): List<Fi
 }
 
 private fun FirSession.collectAllDependentSourceSessions(): List<FirSession> {
-    val result = mutableListOf<FirSession>()
+    val result = LinkedHashSet<FirSession>()
     collectAllDependentSourceSessionsTo(result)
-    return result
+    return result.toList()
 }
 
-private fun FirSession.collectAllDependentSourceSessionsTo(destination: MutableList<FirSession>) {
+private fun FirSession.collectAllDependentSourceSessionsTo(destination: MutableSet<FirSession>) {
     val moduleData = moduleData
     collectAllDependentSourceSessionsTo(destination, moduleData.dependencies)
     collectAllDependentSourceSessionsTo(destination, moduleData.friendDependencies)
     collectAllDependentSourceSessionsTo(destination, moduleData.dependsOnDependencies)
 }
 
-private fun collectAllDependentSourceSessionsTo(destination: MutableList<FirSession>, dependencies: Collection<FirModuleData>) {
+private fun collectAllDependentSourceSessionsTo(destination: MutableSet<FirSession>, dependencies: Collection<FirModuleData>) {
     for (dependency in dependencies) {
         val dependencySession = dependency.session
         if (dependencySession.kind != FirSession.Kind.Source) continue
-        destination += dependencySession
-        dependencySession.collectAllDependentSourceSessionsTo(destination)
+        if (destination.add(dependencySession)) {
+            dependencySession.collectAllDependentSourceSessionsTo(destination)
+        }
     }
 }
 

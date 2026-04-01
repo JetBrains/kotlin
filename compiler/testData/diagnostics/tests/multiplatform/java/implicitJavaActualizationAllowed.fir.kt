@@ -5,7 +5,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-import <!DEPRECATION_ERROR!>kotlin.jvm.ImplicitlyActualizedByJvmDeclaration<!>
+import kotlin.jvm.ImplicitlyActualizedByJvmDeclaration
 
 @OptIn(ExperimentalMultiplatform::class)
 @<!DEPRECATION_ERROR!>ImplicitlyActualizedByJvmDeclaration<!>

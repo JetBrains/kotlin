@@ -8,15 +8,19 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.constructorFactory
-import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.originalConstructor
-import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
+import org.jetbrains.kotlin.ir.backend.js.utils.hasStrictSignature
+import org.jetbrains.kotlin.ir.backend.js.utils.jsConstructorReference
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -25,10 +29,13 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
+import org.jetbrains.kotlin.utils.memoryOptimizedFilterNot
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
+import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
 val ES6_CONSTRUCTOR_REPLACEMENT by IrDeclarationOriginImpl.Regular
 val ES6_SYNTHETIC_EXPORT_CONSTRUCTOR by IrDeclarationOriginImpl.Regular
@@ -69,6 +76,7 @@ private fun IrCall.setFactoryFunctionArguments(dispatchReceiver: IrExpression, o
 /**
  * Lowers synthetic primary constructor declarations to support ES classes.
  */
+@PhasePrerequisites(ES6AddBoxParameterToConstructorsLowering::class)
 class ES6SyntheticPrimaryConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
@@ -143,6 +151,7 @@ class ES6SyntheticPrimaryConstructorLowering(val context: JsIrBackendContext) : 
 /**
  * Lowers constructor declarations to support ES classes.
  */
+@PhasePrerequisites(ES6SyntheticPrimaryConstructorLowering::class)
 class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
@@ -210,12 +219,10 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
     private fun IrConstructor.generateCreateFunction(): IrSimpleFunction {
         val constructor = this
         val irClass = parentAsClass
-        val type = irClass.defaultType
         val constructorName = "new_${irClass.constructorPostfix}"
 
         return context.irFactory.buildFun {
             name = Name.identifier(constructorName)
-            returnType = type
             visibility = constructor.visibility
             modality = Modality.FINAL
             isInline = constructor.isInline
@@ -227,8 +234,11 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         }.also { factory ->
             factory.parent = irClass
             factory.copyTypeParametersFrom(irClass)
-            factory.parameters = listOf(irClass.thisReceiver!!.copyTo(factory))
-            factory.copyParametersFrom(constructor)
+            val substitutionMap = makeTypeParameterSubstitutionMap(irClass, factory)
+            val thisReceiver = irClass.thisReceiver!!
+            factory.parameters = listOf(thisReceiver.copyTo(factory, type = thisReceiver.type.substitute(substitutionMap)))
+            factory.copyParametersFrom(constructor, substitutionMap)
+            factory.returnType = irClass.defaultType.substitute(substitutionMap)
             factory.annotations = annotations
 
             if (irClass.isExported(context) && constructor.isPrimary) {
@@ -371,6 +381,6 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
     private fun IrDeclaration.excludeFromExport() {
         val jsExportIgnoreClass = context.symbols.jsExportIgnoreAnnotationSymbol.owner
         val jsExportIgnoreCtor = jsExportIgnoreClass.primaryConstructor ?: return
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsExportIgnoreCtor.symbol)
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsExportIgnoreCtor.symbol)
     }
 }

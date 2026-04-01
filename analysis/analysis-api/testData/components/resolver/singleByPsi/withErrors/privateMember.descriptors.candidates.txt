@@ -1,22 +1,21 @@
 KtDotQualifiedExpression(59,66): 'a.foo()'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = a
-          isSafeNavigation = false
-          type = A
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /A.foo(<dispatch receiver>: A): kotlin.Unit
-          valueParameters = []
-          contextParameters = []
-          callableId = /A.foo
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /A.foo(<dispatch receiver>: A): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = /A.foo
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'foo': it is private in 'A'>
     isInBestCandidates = true

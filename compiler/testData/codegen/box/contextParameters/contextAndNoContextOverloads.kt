@@ -1,4 +1,4 @@
-// LANGUAGE: +ContextParameters
+// LANGUAGE: +ContextParameters +ExplicitContextArguments
 // IGNORE_BACKEND_K1: ANY
 // ISSUE: KT-52002
 
@@ -21,6 +21,6 @@ class ClassBoth : Interface {
 fun box(): String {
     val scope = Scope("")
     val c = ClassBoth()
-    val result = c.foo() + with(scope) { c.foo() }
+    val result = c.foo() + c.foo(scope = scope)
     return result
 }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.libraryProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
@@ -36,7 +37,7 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
                     File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, mode) + ".js.map")
                 if (!sourceMapFile.exists()) continue
 
-                val dependencies = JsEnvironmentConfigurator.getDependencyModulesFor(module, testServices)
+                val dependencies = testServices.klibEnvironmentConfigurator.getDependencyModulesFor(module, testServices)
                 SourceMap.replaceSources(sourceMapFile) { path ->
                     tryToMapTestFile(allTestFiles, path)
                         ?: tryToMapLibrarySourceFile(dependencies, path)
@@ -65,22 +66,14 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
                 continue
             }
 
-            val sourceRoot: File = libraryFile // libraries/stdlib/{js-ir-minimal-for-test|js-ir}/build/classes/kotlin/js/main
-                .parentFile                    // libraries/stdlib/{js-ir-minimal-for-test|js-ir}/build/classes/kotlin/js/
-                ?.parentFile                   // libraries/stdlib/{js-ir-minimal-for-test|js-ir}/build/classes/kotlin/
-                ?.parentFile                   // libraries/stdlib/{js-ir-minimal-for-test|js-ir}/build/classes/
-                ?.parentFile                   // libraries/stdlib/{js-ir-minimal-for-test|js-ir}/build/
-                ?.parentFile                   // libraries/stdlib/{js-ir-minimal-for-test|js-ir}/
-                ?: continue
+            // find an embracing `build` folder from either
+            // - libraries/stdlib/{js-ir-minimal-for-test|js-ir}/build/classes/kotlin/js/main
+            // - libraries/stdlib/build/libs/kotlin-stdlib-js-<version>.klib
+            val buildFolder = generateSequence(libraryFile) { it.parentFile }
+                .firstOrNull { it.name == "build" }
+            val sourceRoot: File = buildFolder?.parentFile ?: continue
 
-            val searchPaths = listOf(sourceRoot, sourceRoot.resolve("build"))
-
-            for (searchPath in searchPaths) {
-                val resolved = searchPath.resolve(sourceMapPath)
-                if (resolved.exists()) {
-                    return resolved.absolutePath
-                }
-            }
+            return sourceRoot.absolutePath
         }
         return null
     }

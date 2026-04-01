@@ -68,16 +68,18 @@ class JvmBinaryAnnotationDeserializer(
     }
 
     override fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<FirAnnotation> {
-        // Note that HAS_ANNOTATIONS flag has incorrect value for inline classes in the old syntax (`inline class ...`).
-        // For inline classes in the old syntax, JVM backend adds a `@JvmInline` annotation, but HAS_ANNOTATIONS flag is still false.
-        // So, we disable the optimization that avoids loading annotations, for inline classes.
         loadAnnotationsFromMetadataGuarded(
             session,
-            classProto.flags.takeUnless(Flags.IS_VALUE_CLASS::get),
             classProto.annotationList,
             nameResolver,
             LanguageFeature.AnnotationsInMetadata,
         )?.let { return it }
+
+        // Note that HAS_ANNOTATIONS flag has incorrect value for inline classes in the old syntax (`inline class ...`).
+        // For inline classes in the old syntax, JVM backend adds a `@JvmInline` annotation, but HAS_ANNOTATIONS flag is still false.
+        // So, we disable the optimization that avoids loading annotations, for inline classes.
+        val flags = classProto.flags.takeUnless(Flags.IS_VALUE_CLASS::get)
+        if (flags != null && noAnnotationsInBytecode(flags)) return emptyList()
 
         val annotations = mutableListOf<FirAnnotation>()
         kotlinBinaryClass.loadClassAnnotations(
@@ -96,13 +98,13 @@ class JvmBinaryAnnotationDeserializer(
         aliasProto: ProtoBuf.TypeAlias,
         nameResolver: NameResolver,
     ): List<FirAnnotation> =
-        loadAnnotationsFromMetadata(session, aliasProto.flags, aliasProto.annotationList, nameResolver)
+        loadAnnotationsFromMetadata(session, aliasProto.annotationList, nameResolver)
 
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> =
-        loadAnnotationsFromMetadata(session, null, typeProto.annotationList, nameResolver)
+        loadAnnotationsFromMetadata(session, typeProto.annotationList, nameResolver)
 
     override fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> =
-        loadAnnotationsFromMetadata(session, null, typeParameterProto.annotationList, nameResolver)
+        loadAnnotationsFromMetadata(session, typeParameterProto.annotationList, nameResolver)
 
     override fun loadConstructorAnnotations(
         containerSource: DeserializedContainerSource?,
@@ -112,11 +114,12 @@ class JvmBinaryAnnotationDeserializer(
     ): List<FirAnnotation> {
         loadAnnotationsFromMetadataGuarded(
             session,
-            constructorProto.flags,
             constructorProto.annotationList,
             nameResolver,
             LanguageFeature.AnnotationsInMetadata,
         )?.let { return it }
+
+        if (noAnnotationsInBytecode(constructorProto.flags)) return emptyList()
 
         val signature = getCallableSignature(constructorProto, nameResolver, typeTable) ?: return emptyList()
         return findJvmBinaryClassAndLoadMemberAnnotations(signature)
@@ -130,11 +133,12 @@ class JvmBinaryAnnotationDeserializer(
     ): List<FirAnnotation> {
         loadAnnotationsFromMetadataGuarded(
             session,
-            functionProto.flags,
             functionProto.annotationList,
             nameResolver,
             LanguageFeature.AnnotationsInMetadata
         )?.let { return it }
+
+        if (noAnnotationsInBytecode(functionProto.flags)) return emptyList()
 
         val signature = getCallableSignature(functionProto, nameResolver, typeTable) ?: return emptyList()
         return findJvmBinaryClassAndLoadMemberAnnotations(signature)
@@ -149,12 +153,13 @@ class JvmBinaryAnnotationDeserializer(
     ): List<FirAnnotation> {
         loadAnnotationsFromMetadataGuarded(
             session,
-            propertyProto.flags,
             propertyProto.annotationList,
             nameResolver,
             LanguageFeature.AnnotationsInMetadata,
             AnnotationUseSiteTarget.PROPERTY,
         )?.let { return it }
+
+        if (noAnnotationsInBytecode(propertyProto.flags)) return emptyList()
 
         val signature = getPropertySignature(propertyProto, nameResolver, typeTable, synthetic = true) ?: return emptyList()
         val classIsInterface = containingClassProto?.let { Flags.CLASS_KIND.get(it.flags) == ProtoBuf.Class.Kind.INTERFACE } ?: false
@@ -190,12 +195,13 @@ class JvmBinaryAnnotationDeserializer(
 
         loadAnnotationsFromMetadataGuarded(
             session,
-            propertyProto.flags,
             propertyProto.backingFieldAnnotationList,
             nameResolver,
             LanguageFeature.AnnotationsInMetadata,
             AnnotationUseSiteTarget.FIELD,
         )?.let { return it }
+
+        if (noAnnotationsInBytecode(propertyProto.flags)) return emptyList()
 
         return findJvmBinaryClassAndLoadMemberAnnotations(signature).map {
             buildAnnotation {
@@ -219,12 +225,13 @@ class JvmBinaryAnnotationDeserializer(
 
         loadAnnotationsFromMetadataGuarded(
             session,
-            propertyProto.flags,
             propertyProto.delegateFieldAnnotationList,
             nameResolver,
             LanguageFeature.AnnotationsInMetadata,
             AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD,
         )?.let { return it }
+
+        if (noAnnotationsInBytecode(propertyProto.flags)) return emptyList()
 
         return findJvmBinaryClassAndLoadMemberAnnotations(signature).map {
             buildAnnotation {
@@ -244,11 +251,12 @@ class JvmBinaryAnnotationDeserializer(
     ): List<FirAnnotation> {
         loadAnnotationsFromMetadataGuarded(
             session,
-            getterFlags,
             propertyProto.getterAnnotationList,
             nameResolver,
             LanguageFeature.AnnotationsInMetadata,
         )?.let { return it }
+
+        if (noAnnotationsInBytecode(getterFlags)) return emptyList()
 
         val signature = getCallableSignature(propertyProto, nameResolver, typeTable, CallableKind.PROPERTY_GETTER) ?: return emptyList()
         return findJvmBinaryClassAndLoadMemberAnnotations(signature)
@@ -263,11 +271,12 @@ class JvmBinaryAnnotationDeserializer(
     ): List<FirAnnotation> {
         loadAnnotationsFromMetadataGuarded(
             session,
-            setterFlags,
             propertyProto.setterAnnotationList,
             nameResolver,
             LanguageFeature.AnnotationsInMetadata,
         )?.let { return it }
+
+        if (noAnnotationsInBytecode(setterFlags)) return emptyList()
 
         val signature = getCallableSignature(propertyProto, nameResolver, typeTable, CallableKind.PROPERTY_SETTER) ?: return emptyList()
         return findJvmBinaryClassAndLoadMemberAnnotations(signature)
@@ -285,11 +294,12 @@ class JvmBinaryAnnotationDeserializer(
     ): List<FirAnnotation> {
         loadAnnotationsFromMetadataGuarded(
             session,
-            valueParameterProto.flags,
             valueParameterProto.annotationList,
             nameResolver,
             LanguageFeature.AnnotationsInMetadata,
         )?.let { return it }
+
+        if (noAnnotationsInBytecode(valueParameterProto.flags)) return emptyList()
 
         val methodSignature = getCallableSignature(callableProto, nameResolver, typeTable, kind) ?: return emptyList()
         val index = parameterIndex + computeJvmParameterIndexShift(classProto, callableProto)
@@ -304,7 +314,6 @@ class JvmBinaryAnnotationDeserializer(
     ): List<FirAnnotation> {
         loadAnnotationsFromMetadataGuarded(
             session,
-            flags = null,
             enumEntryProto.annotationList,
             nameResolver,
             LanguageFeature.AnnotationsInMetadata,
@@ -328,7 +337,6 @@ class JvmBinaryAnnotationDeserializer(
             is ProtoBuf.Function ->
                 loadAnnotationsFromMetadataGuarded(
                     session,
-                    flags = null,
                     callableProto.extensionReceiverAnnotationList,
                     nameResolver,
                     LanguageFeature.AnnotationsInMetadata,
@@ -336,7 +344,6 @@ class JvmBinaryAnnotationDeserializer(
             is ProtoBuf.Property ->
                 loadAnnotationsFromMetadataGuarded(
                     session,
-                    flags = null,
                     callableProto.extensionReceiverAnnotationList,
                     nameResolver,
                     LanguageFeature.AnnotationsInMetadata,
@@ -365,6 +372,9 @@ class JvmBinaryAnnotationDeserializer(
 
     private val ConstantValueKind.isSignedNumber: Boolean
         get() = this is ConstantValueKind.Byte || this is ConstantValueKind.Short || this is ConstantValueKind.Int || this is ConstantValueKind.Long
+
+    private fun noAnnotationsInBytecode(flags: Int): Boolean =
+        !Flags.HAS_ANNOTATIONS.get(flags)
 
     private fun computeJvmParameterIndexShift(classProto: ProtoBuf.Class?, message: MessageLite): Int {
         return when (message) {

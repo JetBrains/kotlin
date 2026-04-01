@@ -44,7 +44,7 @@ KtNameReferenceExpression(58,61): 'Bar'
   null
 
 KtNameReferenceExpression(62,65): 'Baz'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Baz>
 
@@ -79,7 +79,7 @@ KtNameReferenceExpression(108,111): 'Bar'
   null
 
 KtNameReferenceExpression(112,115): 'Baz'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Baz>
 
@@ -135,10 +135,32 @@ KtProperty(157,208): 'val prop = take {'
   null
 
 KtCallExpression(168,208): 'take {'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+              symbol = action: kotlin.Function1<T, kotlin.Unit>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /take
+        typeArgumentsMapping = {
+          T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
           {
               lambdaParam: Foo.Bar.Baz ->
           } -> (KaVariableSignature:
@@ -148,38 +170,37 @@ KtCallExpression(168,208): 'take {'
             symbol = action: kotlin.Function1<T, kotlin.Unit>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = action
-                receiverType = null
-                returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
-                symbol = action: kotlin.Function1<T, kotlin.Unit>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /take
-        typeArgumentsMapping = {
-          T -> (ERROR_TYPE)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>
 
 KtNameReferenceExpression(168,172): 'take'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+              symbol = action: kotlin.Function1<T, kotlin.Unit>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /take
+        typeArgumentsMapping = {
+          T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
           {
               lambdaParam: Foo.Bar.Baz ->
           } -> (KaVariableSignature:
@@ -189,29 +210,6 @@ KtNameReferenceExpression(168,172): 'take'
             symbol = action: kotlin.Function1<T, kotlin.Unit>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = action
-                receiverType = null
-                returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
-                symbol = action: kotlin.Function1<T, kotlin.Unit>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /take
-        typeArgumentsMapping = {
-          T -> (ERROR_TYPE)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>
@@ -250,7 +248,7 @@ KtNameReferenceExpression(196,199): 'Bar'
   null
 
 KtNameReferenceExpression(200,203): 'Baz'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Baz>
 

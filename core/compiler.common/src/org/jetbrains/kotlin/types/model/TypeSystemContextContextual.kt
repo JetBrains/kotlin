@@ -331,6 +331,10 @@ context(c: TypeSystemContext)
 fun TypeConstructorMarker.isArrayConstructor(): Boolean = with(c) { isArrayConstructor() }
 
 context(c: TypeSystemContext)
+fun KotlinTypeMarker.withNewTypeSince(languageFeature: Any, newType: KotlinTypeMarker): KotlinTypeMarker =
+    with(c) { withNewTypeSince(languageFeature, newType) }
+
+context(c: TypeSystemContext)
 fun RigidTypeMarker.isSingleClassifierType(): Boolean = with(c) { isSingleClassifierType() }
 
 context(c: TypeSystemContext)

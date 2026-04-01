@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irImplicitCoercionToUnit
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.optimizations.STATEMENT_ORIGIN_NO_CAST_NEEDED
+import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -34,40 +36,63 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  */
 internal class GenericCallsReturnTypeEraser(val context: Context) : BodyLoweringPass {
     private val reinterpret = context.symbols.reinterpret.owner
+    private val createUninitializedInstance = context.symbols.createUninitializedInstance.owner
+    private val anyType = context.irBuiltIns.anyType
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val irBuilder = context.createIrBuilder(container.symbol)
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
-                if (expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT)
+                val argument = expression.argument
+                if (expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT && argument is IrCall) {
                     // Do not add cast if the return value isn't used.
-                    expression.argument.transformChildrenVoid(this)
-                else
+                    handleCall(argument, insertCast = false).also {
+                        check(it == argument) // Should just modify the return type of the call.
+                    }
+                } else {
                     expression.transformChildrenVoid(this)
+                }
+
                 return expression
             }
 
             override fun visitCall(expression: IrCall): IrExpression {
+                return handleCall(expression, insertCast = true)
+            }
+
+            fun handleCall(expression: IrCall, insertCast: Boolean): IrExpression {
                 expression.transformChildrenVoid(this)
 
                 val callee = expression.target
-                if (callee == reinterpret) return expression // It's handled specially in codegen - no cast is needed.
+                return when (callee) {
+                    reinterpret -> expression // It's handled specially in codegen - no cast is needed.
 
-                val returnType = callee.returnType
-                val actualType = if (returnType.classifierOrNull is IrTypeParameterSymbol)
-                    returnType.eraseTypeParameters()
-                else returnType
-                val expectedType = expression.type
-                if (actualType != expectedType) {
-                    expression.type = actualType
-                    return when {
-                        expectedType.isUnit() -> irBuilder.at(expression).irImplicitCoercionToUnit(expression)
-                        expectedType.isNothing() -> expression
-                        else -> irBuilder.at(expression).irImplicitCast(expression, expectedType)
+                    createUninitializedInstance -> { // Mark the callsite that no cast is needed.
+                        val constructedType = expression.type
+                        expression.type = anyType
+                        irBuilder.at(expression).irBlock(origin = STATEMENT_ORIGIN_NO_CAST_NEEDED) {
+                            +irImplicitCast(expression, constructedType)
+                        }
+                    }
+
+                    else -> {
+                        val returnType = callee.returnType
+                        val actualType = if (returnType.classifierOrNull is IrTypeParameterSymbol)
+                            returnType.eraseTypeParameters()
+                        else returnType
+                        val expectedType = expression.type
+                        if (actualType == expectedType)
+                            expression
+                        else {
+                            expression.type = actualType
+                            when {
+                                !insertCast || expectedType.isNothing() -> expression
+                                expectedType.isUnit() -> irBuilder.at(expression).irImplicitCoercionToUnit(expression)
+                                else -> irBuilder.at(expression).irImplicitCast(expression, expectedType)
+                            }
+                        }
                     }
                 }
-
-                return expression
             }
         })
     }

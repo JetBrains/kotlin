@@ -150,7 +150,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>?>?
       annotations:
-        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String), level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:WARNING' type=kotlin.DeprecationLevel)
+        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String), level = DeprecationLevel.WARNING)
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>? declared in java.util.HashSet
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedSet.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedSet.toArray?>? declared in java.util.SequencedSet
@@ -326,7 +326,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>?>?
       annotations:
-        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String), level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:WARNING' type=kotlin.DeprecationLevel)
+        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String), level = DeprecationLevel.WARNING)
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>? declared in java.util.HashSet
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedSet.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedSet.toArray?>? declared in java.util.SequencedSet

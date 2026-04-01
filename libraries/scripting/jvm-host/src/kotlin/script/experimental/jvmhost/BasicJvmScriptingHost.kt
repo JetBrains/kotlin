@@ -27,6 +27,20 @@ open class BasicJvmScriptingHost(
             createJvmScriptDefinitionFromTemplate<T>(baseHostConfiguration, compilation, evaluation)
         return eval(script, definition.compilationConfiguration, definition.evaluationConfiguration)
     }
+
+    companion object {
+        fun createLegacy(
+            baseHostConfiguration: ScriptingHostConfiguration? = null,
+            compiler: JvmScriptCompiler = JvmScriptCompiler.createLegacy(baseHostConfiguration.withDefaultsFrom(defaultJvmScriptingHostConfiguration)),
+            evaluator: ScriptEvaluator = BasicJvmScriptEvaluator()
+        ): BasicJvmScriptingHost {
+            return BasicJvmScriptingHost(
+                baseHostConfiguration = baseHostConfiguration,
+                compiler = compiler,
+                evaluator = evaluator
+            )
+        }
+    }
 }
 
 

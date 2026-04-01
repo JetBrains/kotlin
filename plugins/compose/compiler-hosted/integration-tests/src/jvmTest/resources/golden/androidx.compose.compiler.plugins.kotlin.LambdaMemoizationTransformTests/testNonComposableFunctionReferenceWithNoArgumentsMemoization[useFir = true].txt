@@ -20,7 +20,10 @@ fun Something() {
 @StabilityInferred(parameters = 1)
 class Stable {
   fun qux() { }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @Composable
 fun Something(%composer: Composer?, %changed: Int) {

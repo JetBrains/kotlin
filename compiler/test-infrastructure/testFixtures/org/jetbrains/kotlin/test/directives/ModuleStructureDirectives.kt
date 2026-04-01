@@ -28,4 +28,6 @@ object ModuleStructureDirectives : SimpleDirectivesContainer() {
             Declares (next) snippet with auto-incremented number
         """.trimIndent()
     )
+
+    val ESCAPE_MODULE_NAME by directive("Add a unique prefix to the module name based on the test coordinates")
 }

@@ -1,0 +1,5 @@
+KtNameReferenceExpression(76,83): 'MyAlias'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): {test.MyAlias=} test.MyClass
+    ]

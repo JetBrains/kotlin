@@ -18,124 +18,23 @@ package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
-import org.jetbrains.kotlin.konan.file.ZipFileSystemInPlaceAccessor
-import org.jetbrains.kotlin.konan.properties.Properties
-import org.jetbrains.kotlin.konan.properties.loadProperties
-import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.util.DummyLogger
-import org.jetbrains.kotlin.util.Logger
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.loader.KlibLoader
 
-class BaseKotlinLibraryImpl(
-    val access: BaseLibraryAccess<KotlinLibraryLayout>,
-    override val isDefault: Boolean
-) : BaseKotlinLibrary {
-    override val libraryFile get() = access.klib
-    override val libraryName: String by lazy { access.inPlace { it.libraryName } }
-
-    override val componentList: List<String> by lazy {
-        access.inPlace { layout ->
-            val listFiles = layout.libFile.listFiles
-            listFiles
-                .filter { it.isDirectory }
-                .filter { it.listFiles.map { it.name }.contains(KLIB_MANIFEST_FILE_NAME) }
-                .map { it.name }
-        }
-    }
-
-    override fun toString() = "$libraryName[default=$isDefault]"
-
-    override val manifestProperties: Properties by lazy {
-        access.inPlace { it.manifestFile.loadProperties() }
-    }
-
-    override val versions: KotlinLibraryVersioning by lazy {
-        manifestProperties.readKonanLibraryVersioning()
-    }
-}
-
-class KotlinLibraryImpl(
-    override val location: File,
-    zipFileSystemAccessor: ZipFileSystemAccessor,
-    val base: BaseKotlinLibraryImpl,
-) : KotlinLibrary,
-    BaseKotlinLibrary by base {
-
-    private val components = KlibComponentsCache(
-        layoutReaderFactory = KlibLayoutReaderFactory(
-            klibFile = location,
-            zipFileSystemAccessor = zipFileSystemAccessor
-        )
-    )
-
-    override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC, *>) = components.getComponent(kind)
-
-    override fun toString(): String = buildString {
-        append("name ")
-        append(base.libraryName)
-        append(", ")
-        append("file: ")
-        append(base.libraryFile.path)
-        append(", ")
-        append("version: ")
-        append(base.versions)
-        interopFlag?.let { append(", interop: $it") }
-        irProviderName?.let { append(", IR provider: $it") }
-        nativeTargets.takeIf { it.isNotEmpty() }?.joinTo(this, ", ", ", native targets: {", "}")
-        append(')')
-    }
-}
-
-fun createKotlinLibrary(
-    libraryFile: File,
-    component: String,
-    isDefault: Boolean = false,
-    zipAccessor: ZipFileSystemAccessor? = null,
-): KotlinLibrary {
-    val nonNullZipFileSystemAccessor = zipAccessor ?: ZipFileSystemInPlaceAccessor
-
-    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component, nonNullZipFileSystemAccessor)
-    val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
-
-    return KotlinLibraryImpl(libraryFile, nonNullZipFileSystemAccessor, base)
-}
-
+@Deprecated(
+    "Preserved for binary compatibility with existing versions of the kotlinx-benchmarks Gradle plugin. See KT-82882." +
+            "\nPlease use KlibLoader.load() instead.",
+    replaceWith = ReplaceWith("KlibLoader.load()", imports = ["org.jetbrains.kotlin.library.loader.KlibLoader"]),
+    level = DeprecationLevel.ERROR
+)
 fun createKotlinLibraryComponents(
     libraryFile: File,
-    isDefault: Boolean = true,
+    /* ignored*/ isDefault: Boolean = false,
     zipAccessor: ZipFileSystemAccessor? = null,
 ): List<KotlinLibrary> {
-    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, null, zipAccessor)
-    val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
-    return base.componentList.map {
-        createKotlinLibrary(libraryFile, it, isDefault, zipAccessor = zipAccessor)
-    }
+    if (isDefault) repeat(0) { Unit }
+    return KlibLoader {
+        libraryPaths(libraryFile.path)
+        zipAccessor?.let(::zipFileSystemAccessor)
+    }.load().librariesStdlibFirst
 }
-
-fun isKotlinLibrary(libraryFile: File): Boolean = try {
-    val libraryPath = libraryFile.absolutePath
-
-    /**
-     * Important: Try to resolve it as a "lenient" library. This will allow to probe a library
-     * without logging any errors to [DummyLogger] and without any side effects such as throwing an
-     * exception from [SingleKlibComponentResolver.resolve] if the library is not found.
-     */
-    SingleKlibComponentResolver(
-        klibFile = libraryPath,
-        logger = object : Logger {
-            override fun log(message: String) = Unit // don't log
-            override fun error(message: String) = Unit // don't log
-            override fun warning(message: String) = Unit // don't log
-
-            @Deprecated(Logger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(Logger.FATAL_REPLACEMENT))
-            override fun fatal(message: String): Nothing = kotlin.error("This function should not be called")
-        },
-        knownIrProviders = emptyList()
-    ).resolve(
-        LenientUnresolvedLibrary(libraryPath)
-    ) != null
-} catch (e: Throwable) {
-    false
-}
-
-fun isKotlinLibrary(libraryFile: java.io.File): Boolean =
-    isKotlinLibrary(File(libraryFile.absolutePath))

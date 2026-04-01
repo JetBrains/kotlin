@@ -1,0 +1,15 @@
+KaType: Foo<kotlin.CharSequence>
+PsiType: @org.jetbrains.annotations.NotNull() Foo<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence>
+
+Compilation result:
+@kotlin.Metadata
+public final class<null>  DeclarationSiteCovariantFunctionParameterTypeKt {
+    // source: 'declarationSiteCovariantFunctionParameterType.kt'
+    public final static <(LFoo<+Ljava/lang/CharSequence;>;)V> method test(@org.jetbrains.annotations.NotNull p0: Foo): void
+}
+
+@kotlin.Metadata
+public final class<<T:Ljava/lang/Object;>Ljava/lang/Object;>  Foo {
+    // source: 'declarationSiteCovariantFunctionParameterType.kt'
+    public <null> method <init>(): void
+}

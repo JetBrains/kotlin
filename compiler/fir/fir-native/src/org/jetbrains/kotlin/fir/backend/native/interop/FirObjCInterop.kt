@@ -18,10 +18,15 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 
+private val cCallClassId = ClassId(FqName("kotlinx.cinterop.internal"), Name.identifier("CCall"))
+private val cCallDirectClassId = ClassId(FqName("kotlinx.cinterop.internal"), Name.identifier("CCall.Direct"))
+private val cGlobalAccessClassId = ClassId(FqName("kotlinx.cinterop.internal"), Name.identifier("CGlobalAccess"))
 
 fun FirFunctionSymbol<*>.getObjCMethodInfoFromOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): ObjCMethodInfo? {
     decodeObjCMethodAnnotation(session)?.let {
@@ -104,7 +109,7 @@ internal fun FirFunction.isObjCClassMethod(session: FirSession) =
 /**
  * mimics ConstructorDescriptor.isObjCConstructor()
  */
-internal fun FirConstructorSymbol.isObjCConstructor(session: FirSession) =
+fun FirConstructorSymbol.isObjCConstructor(session: FirSession): Boolean =
     this.resolvedAnnotationsWithClassIds.hasAnnotation(NativeStandardInteropNames.objCConstructorClassId, session)
 
 /**
@@ -144,4 +149,34 @@ fun FirClassSymbol<*>.isKotlinObjCClass(session: FirSession): Boolean = isObjCCl
 fun FirTypeRef.isObjCObjectType(session: FirSession): Boolean {
     val symbol = firClassLike(session)?.symbol
     return symbol is FirClassSymbol && symbol.isObjCClass(session)
+}
+
+fun FirFunctionSymbol<*>.isCFunctionOrGlobalAccessor(session: FirSession): Boolean {
+    return hasAnnotation(cCallClassId, session) ||
+            hasAnnotation(cCallDirectClassId, session) ||
+            hasAnnotation(cGlobalAccessClassId, session)
+}
+
+fun FirFunctionSymbol<*>.isVariadicObjCMethod(session: FirSession): Boolean =
+    valueParameterSymbols.any { it.isVararg } && isObjCMethod(session)
+
+fun FirFunctionSymbol<*>.isObjCMethod(session: FirSession): Boolean {
+    if (this is FirConstructorSymbol && isObjCConstructor(session)) {
+        val initMethod = getObjCInitMethod(session)
+        return initMethod != null && initMethod.decodeObjCMethodAnnotation(session) != null
+    }
+
+    if (this is FirNamedFunctionSymbol) {
+        // Check for @ObjCFactory
+        if (hasAnnotation(NativeStandardInteropNames.objCFactoryClassId, session)) {
+            return true
+        }
+
+        // Check for external ObjC method
+        if (decodeObjCMethodAnnotation(session) != null) {
+            return true
+        }
+    }
+
+    return false
 }

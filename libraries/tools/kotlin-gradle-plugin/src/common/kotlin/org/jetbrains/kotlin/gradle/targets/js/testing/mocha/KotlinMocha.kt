@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.testing.mocha
 
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
-import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -23,8 +20,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework.Companion.CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework.Companion.createTestExecutionSpecDeprecated
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -36,24 +31,7 @@ class KotlinMocha internal constructor(
     @Transient
     override val compilation: KotlinJsIrCompilation,
     private val basePath: String,
-    private val objects: ObjectFactory,
-    private val providers: ProviderFactory,
-) :
-    KotlinJsTestFramework {
-
-    @Deprecated(
-        "Manually creating instances of this class is deprecated. Scheduled for removal in Kotlin 2.4.",
-        level = DeprecationLevel.ERROR
-    )
-    constructor(
-        compilation: KotlinJsIrCompilation,
-        basePath: String,
-    ) : this(
-        compilation = compilation,
-        basePath = basePath,
-        objects = compilation.target.project.objects,
-        providers = compilation.target.project.providers,
-    )
+) : KotlinJsTestFramework {
 
     @Transient
     private val project: Project = compilation.target.project
@@ -166,26 +144,6 @@ class KotlinMocha internal constructor(
     private fun cliArg(cli: String, value: String?): List<String> {
         return value?.let { listOf(cli, it) } ?: emptyList()
     }
-
-    @Deprecated(
-        CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG,
-        ReplaceWith("createTestExecutionSpec(task, launchOpts, nodeJsArgs, debug)"),
-        DeprecationLevel.ERROR
-    )
-    override fun createTestExecutionSpec(
-        task: KotlinJsTest,
-        forkOptions: ProcessForkOptions,
-        nodeJsArgs: MutableList<String>,
-        debug: Boolean,
-    ): TCServiceMessagesTestExecutionSpec =
-        createTestExecutionSpecDeprecated(
-            task = task,
-            forkOptions = forkOptions,
-            nodeJsArgs = nodeJsArgs,
-            debug = debug,
-            objects = objects,
-            providers = providers,
-        )
 
     companion object {
         private const val DEFAULT_TIMEOUT = "2s"

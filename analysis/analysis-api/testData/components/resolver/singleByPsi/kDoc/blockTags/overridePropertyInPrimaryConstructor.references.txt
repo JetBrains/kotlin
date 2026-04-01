@@ -1,0 +1,26 @@
+<caret_1>:
+  KDocName(41,43): 'xx'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in B) override val xx: kotlin.Int
+
+<caret_2>:
+  KDocName(56,58): 'xx'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        xx: kotlin.Int
+
+<caret_3>:
+  KDocName(74,76): 'xx'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in B) override val xx: kotlin.Int

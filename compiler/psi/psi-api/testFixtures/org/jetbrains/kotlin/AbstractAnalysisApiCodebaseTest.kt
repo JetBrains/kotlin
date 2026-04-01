@@ -12,9 +12,11 @@ import com.intellij.psi.*
 import com.intellij.psi.util.childrenOfType
 import org.jetbrains.kotlin.AbstractAnalysisApiCodebaseTest.SourceDirectory
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createProjectEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -33,10 +35,9 @@ import java.io.File
 abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : KtUsefulTestCase() {
     protected fun doTest() {
         val environment = createProjectEnvironment(
-            CompilerConfiguration(),
+            CompilerConfiguration.create(),
             testRootDisposable,
             EnvironmentConfigFiles.JVM_CONFIG_FILES,
-            MessageCollector.NONE
         )
         val psiManager = PsiManager.getInstance(environment.project)
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)

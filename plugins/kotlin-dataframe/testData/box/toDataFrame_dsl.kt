@@ -18,7 +18,7 @@ class Record(val r: String)
 
 class PreservedRecord(val i: Int)
 
-class S(
+class KotlinRecord(
     val str: String,
     val s1: Int,
     val s2: Ss,
@@ -35,7 +35,7 @@ class S(
 
 fun box(): String {
     val res = listOf(
-        S(
+        KotlinRecord(
             "123",
             321,
             Ss(12, AnotherRecord(3.0)),
@@ -63,7 +63,7 @@ fun box(): String {
     res.number.print()
     res.numberFloat.print()
     res.ll.print()
-    res.nullableNumber
+    res.compareSchemas(strict = true)
 
     val preservedRecord: DataColumn<PreservedRecord> = res.preservedRecord
     val anotherRecord: DataColumn<AnotherRecord> = res.s2.preservedProperty

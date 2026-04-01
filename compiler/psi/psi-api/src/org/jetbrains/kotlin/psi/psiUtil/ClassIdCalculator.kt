@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,17 +7,14 @@ package org.jetbrains.kotlin.psi.psiUtil
 
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.utils.*
 
 internal object ClassIdCalculator {
     fun calculateClassId(declaration: KtClassLikeDeclaration): ClassId? {
         var ktFile: KtFile? = null
-        val containingClasses = mutableListOf<KtClassLikeDeclaration>()
+        val containingClassNames = mutableListOf<String>()
 
         for (element in declaration.parentsWithSelf) {
             when (element) {
@@ -26,18 +23,23 @@ internal object ClassIdCalculator {
                 is KtObjectLiteralExpression,
                 is KtCodeFragment,
                 is PsiErrorElement,
-                -> {
+                    -> {
                     return null
                 }
                 is KtClassLikeDeclaration -> {
-                    containingClasses += element
+                    containingClassNames += element.name ?: SpecialNames.NO_NAME_PROVIDED.asString()
                 }
                 is KtFile -> {
                     ktFile = element
                     break
                 }
                 is KtScript -> {
-                    // Skip script parent
+                    @OptIn(KtExperimentalApi::class)
+                    if (element.isReplSnippet) {
+                        containingClassNames += element.name
+                    } else {
+                        // Skip script parent
+                    }
                 }
                 is KtDeclaration -> {
                     // Local declarations don't have a 'ClassId'
@@ -47,12 +49,7 @@ internal object ClassIdCalculator {
         }
 
         if (ktFile == null) return null
-        val relativeClassName = FqName.fromSegments(
-            containingClasses.asReversed().map { containingClass ->
-                containingClass.name ?: SpecialNames.NO_NAME_PROVIDED.asString()
-            }
-        )
-
+        val relativeClassName = FqName.fromSegments(containingClassNames.asReversed())
         return ClassId(ktFile.packageFqName, relativeClassName, isLocal = false)
     }
 

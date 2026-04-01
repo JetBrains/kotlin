@@ -27,7 +27,7 @@ fun A(y: Any, %composer: Composer?, %changed: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     used(y)
-    A(Wrapper(Foo()), %composer, Wrapper.%stable)
+    A(Wrapper(Foo()), %composer, Wrapper.%stable or Foo.%stable)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

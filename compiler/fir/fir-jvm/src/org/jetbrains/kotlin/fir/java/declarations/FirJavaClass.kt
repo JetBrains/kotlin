@@ -118,7 +118,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         }.ifEmpty {
             listOf(
                 buildResolvedTypeRef {
-                    coneType = StandardClassIds.Any.constructClassLikeType(emptyArray(), isMarkedNullable = false)
+                    coneType = StandardClassIds.Any.constructClassLikeType()
                 }
             )
         }
@@ -241,6 +241,10 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
         shouldNotBeCalled(::replaceStatus, ::status)
+    }
+
+    override fun replaceDeclarations(newDeclarations: List<FirDeclaration>) {
+        shouldNotBeCalled(::replaceDeclarations, ::declarations)
     }
 }
 

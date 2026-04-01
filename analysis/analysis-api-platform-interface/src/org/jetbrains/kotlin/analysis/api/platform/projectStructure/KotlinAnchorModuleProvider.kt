@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
  * compiler depends on the IJ platform, but this dependency is not represented as JARs in the monorepo, but rather by certain monorepo
  * source modules, which are made visible to the Kotlin compiler library sources as dependencies via an anchor module.
  */
+@KaPlatformInterface
 public interface KotlinAnchorModuleProvider : KotlinOptionalPlatformComponent {
     public fun getAnchorModule(libraryModule: KaLibraryModule): KaSourceModule?
 
@@ -34,6 +36,7 @@ public interface KotlinAnchorModuleProvider : KotlinOptionalPlatformComponent {
      */
     public fun getAllAnchorModulesIfComputed(): Collection<KaSourceModule>?
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinAnchorModuleProvider? = project.serviceOrNull()
     }

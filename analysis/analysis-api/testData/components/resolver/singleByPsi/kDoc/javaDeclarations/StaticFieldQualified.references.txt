@@ -2,5 +2,6 @@ KDocName(54,75): 'JavaClass.staticField'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in dependency.JavaClass) val staticField: kotlin.Int

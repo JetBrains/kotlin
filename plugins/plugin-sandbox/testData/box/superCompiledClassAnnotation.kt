@@ -17,6 +17,7 @@ public abstract class Base_ShouldBeOpen {
 }
 
 // MODULE: main(lib)
+// FILE: main.kt
 open class BaseImpl : Base_ShouldBeOpen() {
     fun baseImplMethod_ShouldBeOpen() {}
 }

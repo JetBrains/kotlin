@@ -1,3 +1,0 @@
-fun invoker(~gen~gen : () -> Int) : Int {
-    return `gen`gen() // Says it cannot resolve 'gen' here
-}

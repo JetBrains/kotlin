@@ -8,7 +8,6 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.ir.IrAnnotation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -123,7 +122,6 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
         visitDeclaredReplSnippet(declaration, declaration.symbol)
         declaration.stateObject?.let { visitReferencedClass(declaration, it) }
         declaration.targetClass?.let { visitReferencedClass(declaration, it) }
-        declaration.returnType?.let { visitTypeRecursively(declaration, it) }
         visitDeclaration(declaration)
     }
 
@@ -200,8 +198,8 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
         visitFunctionAccess(expression)
     }
 
-    override fun visitAnnotation(element: IrAnnotation) {
-        visitConstructorCall(element)
+    override fun visitAnnotation(expression: IrAnnotation) {
+        visitConstructorCall(expression)
     }
 
     override fun visitSingletonReference(expression: IrGetSingletonValue) {

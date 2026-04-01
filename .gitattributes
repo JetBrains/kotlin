@@ -11,3 +11,4 @@ compiler/cli/bin/*.bat eol=crlf
 gradlew.bat eol=crlf
 compiler/testData/** eol=auto
 *.jpg filter=lfs diff=lfs merge=lfs -text
+libraries/mvnw.cmd eol=crlf

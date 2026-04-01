@@ -1,0 +1,5 @@
+KtCallExpression(45,63): 'Foo<String>("str")'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(x: T): Foo<T>
+    ]

@@ -1,0 +1,5 @@
+KtConstructorCalleeExpression(37,38): 'A'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(x: kotlin.Int): A
+    ]

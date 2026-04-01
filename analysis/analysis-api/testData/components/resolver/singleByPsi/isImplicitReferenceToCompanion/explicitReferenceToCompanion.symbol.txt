@@ -1,0 +1,5 @@
+KtNameReferenceExpression(83,92): 'Companion'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /AA.Companion
+    ]

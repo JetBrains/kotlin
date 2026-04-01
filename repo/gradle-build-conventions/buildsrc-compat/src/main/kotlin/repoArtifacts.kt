@@ -83,7 +83,7 @@ fun Project.setPublishableArtifact(
 ) {
     addArtifact("runtimeElements", jarTask)
     addArtifact("apiElements", jarTask)
-    addArtifact("archives", jarTask)
+    tasks.named("assemble").configure { dependsOn(jarTask) }
 }
 
 fun removeJarTaskArtifact(
@@ -120,7 +120,7 @@ fun Project.runtimeJarWithRelocation(body: ShadowJar.() -> Unit = {}): TaskProvi
 
     val shadowJarTask = tasks.register<ShadowJar>("shadowJar") {
         archiveClassifier.set("shadow")
-        configurations = configurations + listOf(project.configurations["embedded"])
+        configurations.add(project.configurations["embedded"])
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         body()
     }
@@ -134,7 +134,7 @@ fun Project.runtimeJarWithRelocation(body: ShadowJar.() -> Unit = {}): TaskProvi
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 
-    project.addArtifact("archives", runtimeJarTask, runtimeJarTask)
+    tasks.named("assemble").configure { dependsOn(runtimeJarTask) }
     project.addArtifact("runtimeElements", runtimeJarTask, runtimeJarTask)
     project.addArtifact("apiElements", runtimeJarTask, runtimeJarTask)
 
@@ -146,13 +146,13 @@ fun Project.runtimeJar(task: TaskProvider<ShadowJar>, body: ShadowJar.() -> Unit
     noDefaultJar()
 
     task.configure {
-        configurations = configurations + listOf(project.configurations["embedded"])
+        configurations.add(project.configurations["embedded"])
         setupPublicJar(project.extensions.getByType<BasePluginExtension>().archivesName.get())
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         body()
     }
 
-    project.addArtifact("archives", task, task)
+    tasks.named("assemble").configure { dependsOn(task) }
     project.addArtifact("runtimeElements", task, task)
     project.addArtifact("apiElements", task, task)
 
@@ -175,7 +175,7 @@ fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
         body()
     }
 
-    addArtifact("archives", sourcesJar)
+    tasks.named("assemble").configure { dependsOn(sourcesJar) }
     addArtifact("sources", sourcesJar)
 
     configurePublishedComponent {
@@ -237,7 +237,7 @@ fun Project.javadocJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
         body()
     }
 
-    addArtifact("archives", javadocTask)
+    tasks.named("assemble").configure { dependsOn(javadocTask) }
 
     configurePublishedComponent {
         addVariantsFromConfiguration(configurations[JAVADOC_ELEMENTS_CONFIGURATION_NAME]) { }
@@ -299,7 +299,11 @@ fun Project.idePluginDependency(block: () -> Unit) {
     }
 }
 
-fun Project.publishJarsForIde(projects: List<String>, libraryDependencies: List<String> = emptyList()) {
+fun Project.publishJarsForIde(
+    projects: List<String>,
+    libraryDependencies: List<String> = emptyList(),
+    jarTaskConfiguration: Jar.() -> Unit = {},
+) {
     val projectsUsedInIntelliJKotlinPlugin: Array<String> by rootProject.extra
 
     for (projectName in projects) {
@@ -309,7 +313,7 @@ fun Project.publishJarsForIde(projects: List<String>, libraryDependencies: List<
     }
 
     idePluginDependency {
-        publishProjectJars(projects, libraryDependencies)
+        publishProjectJars(projects, libraryDependencies, jarTaskConfiguration)
     }
     configurations.all {
         // Don't allow `ideaIC` from compiler to leak into Kotlin plugin modules. Compiler and
@@ -369,7 +373,11 @@ fun Project.publishTestJarsForIde(
     }
 }
 
-fun Project.publishProjectJars(projects: List<String>, libraryDependencies: List<String> = emptyList()) {
+fun Project.publishProjectJars(
+    projects: List<String>,
+    libraryDependencies: List<String> = emptyList(),
+    jarTaskConfiguration: Jar.() -> Unit = {},
+) {
     apply<JavaPlugin>()
 
     val fatJarContents by configurations.creating
@@ -390,10 +398,12 @@ fun Project.publishProjectJars(projects: List<String>, libraryDependencies: List
 
     jar.apply {
         dependsOn(fatJarContents)
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         val archiveOperations = project.serviceOf<ArchiveOperations>()
         from {
             fatJarContents.map(archiveOperations::zipTree)
         }
+        jarTaskConfiguration()
     }
 
     sourcesJar {

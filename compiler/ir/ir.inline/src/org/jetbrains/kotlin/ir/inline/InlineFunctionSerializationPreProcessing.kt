@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.ir.util.originalOfPreparedInlineFunctionCopy
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
+@PhasePrerequisites(FunctionInlining::class)
 class InlineFunctionSerializationPreProcessing(
     private val crossModuleFunctionInliner: FunctionInlining?,
 ) : IrVisitorVoid(), ModuleLoweringPass {

@@ -137,7 +137,7 @@ KtBinaryExpression(372,390): 'Option1 ?: Option2'
   null
 
 KtNameReferenceExpression(372,379): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -145,7 +145,7 @@ KtOperationReferenceExpression(380,382): '?:'
   null
 
 KtNameReferenceExpression(383,390): 'Option2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option2>
 
@@ -168,7 +168,7 @@ KtBinaryExpression(414,432): 'Option1 ?: Option2'
   null
 
 KtNameReferenceExpression(414,421): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -176,7 +176,7 @@ KtOperationReferenceExpression(422,424): '?:'
   null
 
 KtNameReferenceExpression(425,432): 'Option2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option2>
 
@@ -196,7 +196,7 @@ KtBinaryExpression(455,474): 'enumProp ?: Option2'
   null
 
 KtNameReferenceExpression(455,463): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -204,7 +204,7 @@ KtOperationReferenceExpression(464,466): '?:'
   null
 
 KtNameReferenceExpression(467,474): 'Option2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option2>
 
@@ -224,7 +224,7 @@ KtBinaryExpression(497,519): 'enumProp ?: stringProp'
   null
 
 KtNameReferenceExpression(497,505): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -232,7 +232,7 @@ KtOperationReferenceExpression(506,508): '?:'
   null
 
 KtNameReferenceExpression(509,519): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
@@ -252,7 +252,7 @@ KtBinaryExpression(542,564): 'stringProp ?: enumProp'
   null
 
 KtNameReferenceExpression(542,552): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
@@ -260,7 +260,7 @@ KtOperationReferenceExpression(553,555): '?:'
   null
 
 KtNameReferenceExpression(556,564): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -280,12 +280,12 @@ KtBinaryExpression(587,610): 'getOption() ?: enumProp'
   null
 
 KtCallExpression(587,598): 'getOption()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getOption>
 
 KtNameReferenceExpression(587,596): 'getOption'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getOption>
 
@@ -296,15 +296,37 @@ KtOperationReferenceExpression(599,601): '?:'
   null
 
 KtNameReferenceExpression(602,610): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
 KtCallExpression(616,651): 'receive<MyEnum>(Option1 ?: Option2)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+        typeArgumentsMapping = {
+          T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
           Option1 ?: Option2 -> (KaVariableSignature:
             name = e
             receiverType = null
@@ -312,38 +334,37 @@ KtCallExpression(616,651): 'receive<MyEnum>(Option1 ?: Option2)'
             symbol = e: T
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receive(e: T): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = e
-                receiverType = null
-                returnType = ERROR_TYPE
-                symbol = e: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receive
-        typeArgumentsMapping = {
-          T -> (ERROR_TYPE)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(616,623): 'receive'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+        typeArgumentsMapping = {
+          T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
           Option1 ?: Option2 -> (KaVariableSignature:
             name = e
             receiverType = null
@@ -351,29 +372,6 @@ KtNameReferenceExpression(616,623): 'receive'
             symbol = e: T
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receive(e: T): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = e
-                receiverType = null
-                returnType = ERROR_TYPE
-                symbol = e: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receive
-        typeArgumentsMapping = {
-          T -> (ERROR_TYPE)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
@@ -403,7 +401,7 @@ KtBinaryExpression(632,650): 'Option1 ?: Option2'
   null
 
 KtNameReferenceExpression(632,639): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -411,15 +409,37 @@ KtOperationReferenceExpression(640,642): '?:'
   null
 
 KtNameReferenceExpression(643,650): 'Option2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option2>
 
 KtCallExpression(656,695): 'receive<MyEnum>(enumProp ?: stringProp)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+        typeArgumentsMapping = {
+          T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
           enumProp ?: stringProp -> (KaVariableSignature:
             name = e
             receiverType = null
@@ -427,38 +447,37 @@ KtCallExpression(656,695): 'receive<MyEnum>(enumProp ?: stringProp)'
             symbol = e: T
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receive(e: T): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = e
-                receiverType = null
-                returnType = ERROR_TYPE
-                symbol = e: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receive
-        typeArgumentsMapping = {
-          T -> (ERROR_TYPE)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(656,663): 'receive'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+        typeArgumentsMapping = {
+          T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
           enumProp ?: stringProp -> (KaVariableSignature:
             name = e
             receiverType = null
@@ -466,29 +485,6 @@ KtNameReferenceExpression(656,663): 'receive'
             symbol = e: T
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receive(e: T): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = e
-                receiverType = null
-                returnType = ERROR_TYPE
-                symbol = e: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receive
-        typeArgumentsMapping = {
-          T -> (ERROR_TYPE)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
@@ -518,7 +514,7 @@ KtBinaryExpression(672,694): 'enumProp ?: stringProp'
   null
 
 KtNameReferenceExpression(672,680): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -526,15 +522,37 @@ KtOperationReferenceExpression(681,683): '?:'
   null
 
 KtNameReferenceExpression(684,694): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
 KtCallExpression(700,740): 'receive<MyEnum>(enumProp ?: getOption())'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+        typeArgumentsMapping = {
+          T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
           enumProp ?: getOption() -> (KaVariableSignature:
             name = e
             receiverType = null
@@ -542,38 +560,37 @@ KtCallExpression(700,740): 'receive<MyEnum>(enumProp ?: getOption())'
             symbol = e: T
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receive(e: T): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = e
-                receiverType = null
-                returnType = ERROR_TYPE
-                symbol = e: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receive
-        typeArgumentsMapping = {
-          T -> (ERROR_TYPE)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(700,707): 'receive'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+        typeArgumentsMapping = {
+          T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
           enumProp ?: getOption() -> (KaVariableSignature:
             name = e
             receiverType = null
@@ -581,29 +598,6 @@ KtNameReferenceExpression(700,707): 'receive'
             symbol = e: T
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receive(e: T): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = e
-                receiverType = null
-                returnType = ERROR_TYPE
-                symbol = e: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receive
-        typeArgumentsMapping = {
-          T -> (ERROR_TYPE)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
@@ -633,7 +627,7 @@ KtBinaryExpression(716,739): 'enumProp ?: getOption()'
   null
 
 KtNameReferenceExpression(716,724): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -641,12 +635,12 @@ KtOperationReferenceExpression(725,727): '?:'
   null
 
 KtCallExpression(728,739): 'getOption()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getOption>
 
 KtNameReferenceExpression(728,737): 'getOption'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getOption>
 

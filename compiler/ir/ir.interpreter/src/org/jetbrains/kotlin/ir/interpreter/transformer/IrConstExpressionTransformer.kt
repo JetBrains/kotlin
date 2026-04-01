@@ -115,12 +115,4 @@ internal abstract class IrConstExpressionTransformer(
 
         return IrStringConcatenationImpl(expression.startOffset, expression.endOffset, expression.type, folded)
     }
-
-    override fun visitVararg(expression: IrVararg, data: Data): IrExpression {
-        return super.visitVararg(expression, data).also {
-            if (data.inAnnotationConstructor && context.canBeInterpreted(expression)) {
-                context.saveInConstTracker(expression)
-            }
-        }
-    }
 }

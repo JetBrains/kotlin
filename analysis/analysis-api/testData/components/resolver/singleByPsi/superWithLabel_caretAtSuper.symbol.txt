@@ -1,0 +1,5 @@
+KtNameReferenceExpression(71,76): 'super'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]

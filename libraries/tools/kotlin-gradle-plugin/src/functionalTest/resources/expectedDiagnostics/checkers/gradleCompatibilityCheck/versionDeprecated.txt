@@ -1,0 +1,8 @@
+[DeprecatedGradleVersionWarning | WARNING] Deprecated Gradle Version
+The used Gradle version (Gradle 8.13) is deprecated and will not be supported in future Kotlin Gradle Plugin releases.
+The minimum supported Gradle version will become Gradle 8.14.4 in Kotlin 2.5.0.
+
+This warning can be suppressed in 'gradle.properties':
+    kotlin.suppressGradlePluginWarnings=DeprecatedGradleVersionWarning
+
+Please update the Gradle version to at least Gradle 8.14.4.

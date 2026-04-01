@@ -1,3 +1,5 @@
+import org.gradle.plugin.compatibility.compatibility
+
 plugins {
     id("gradle-plugin-common-configuration")
 }
@@ -15,6 +17,12 @@ gradlePlugin {
             displayName = "Kotlin Sam-with-receiver compiler plugin"
             description = displayName
             implementationClass = "org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverGradleSubplugin"
+
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
     }
 }

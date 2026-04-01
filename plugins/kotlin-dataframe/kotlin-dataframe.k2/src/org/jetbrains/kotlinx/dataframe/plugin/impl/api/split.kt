@@ -11,11 +11,10 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.api.*
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.pluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 data class SplitApproximation(
     val df: PluginDataFrameSchema,
@@ -34,8 +33,8 @@ class Split0 : AbstractInterpreter<SplitApproximation>() {
 data class SplitWithTransformApproximation(
     val df: PluginDataFrameSchema,
     val columns: ColumnsResolver,
-    val targetType: TypeApproximation,
-    val default: TypeApproximation?,
+    val targetType: ColumnType,
+    val default: ColumnType?,
 )
 
 class ByIterable : AbstractInterpreter<SplitWithTransformApproximation>() {
@@ -48,7 +47,7 @@ class ByIterable : AbstractInterpreter<SplitWithTransformApproximation>() {
     }
 }
 
-class SplitDefault() : AbstractInterpreter<SplitWithTransformApproximation>() {
+class SplitDefault : AbstractInterpreter<SplitWithTransformApproximation>() {
     val Arguments.receiver: SplitApproximation by arg()
     val Arguments.typeArg2 by type()
     val Arguments.value by type()
@@ -118,13 +117,13 @@ abstract class SplitWithTransformAbstractOperation : AbstractSchemaModificationI
     val Arguments.names: List<String> by arg()
     val Arguments.extraNamesGenerator by ignore()
 
-    abstract fun SplitWithTransform<ConeTypesAdapter, Any, Marker>.operation(names: List<String>): DataFrame<ConeTypesAdapter>
+    abstract fun SplitWithTransform<ConeTypesAdapter, Any, ColumnType>.operation(names: List<String>): DataFrame<ConeTypesAdapter>
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df.split(receiver.columns) {
             val default = receiver.default
-            val nullable = default == null || default.type.isMarkedNullable
-            val type = receiver.targetType.type.withNullability(nullable = nullable, session.typeContext).wrap()
+            val nullable = default == null || default.coneType.isMarkedNullable
+            val type = receiver.targetType.coneType.withNullability(nullable = nullable, session.typeContext).wrap()
             List(names.size) { type }
         }
             .operation(names)
@@ -134,22 +133,22 @@ abstract class SplitWithTransformAbstractOperation : AbstractSchemaModificationI
 
 fun PluginDataFrameSchema.split(
     columns: ColumnsResolver,
-    targetType: () -> List<Marker>
-): SplitWithTransform<ConeTypesAdapter, Any, Marker> {
+    targetType: () -> List<ColumnType>
+): SplitWithTransform<ConeTypesAdapter, Any, ColumnType> {
     val resolvedColumns = columns.resolve(this)
     if (resolvedColumns.size != 1) error("Compiler plugin only supports split of 1 column, but was $resolvedColumns")
 
-    return asDataFrame().split { columns }.by { targetType() }
+    return asDataFrame(impliedColumnsResolver = columns).split { columns }.by { targetType() }
 }
 
 class SplitWithTransformInto0 : SplitWithTransformAbstractOperation() {
-    override fun SplitWithTransform<ConeTypesAdapter, Any, Marker>.operation(names: List<String>): DataFrame<ConeTypesAdapter> {
+    override fun SplitWithTransform<ConeTypesAdapter, Any, ColumnType>.operation(names: List<String>): DataFrame<ConeTypesAdapter> {
         return into(names)
     }
 }
 
 class SplitWithTransformInward0 : SplitWithTransformAbstractOperation() {
-    override fun SplitWithTransform<ConeTypesAdapter, Any, Marker>.operation(names: List<String>): DataFrame<ConeTypesAdapter> {
+    override fun SplitWithTransform<ConeTypesAdapter, Any, ColumnType>.operation(names: List<String>): DataFrame<ConeTypesAdapter> {
         return inward(names)
     }
 }
@@ -160,8 +159,8 @@ class SplitInplace : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df
-            .convert(receiver.columns) {
-                createListType(typeArg2.type).wrap()
+            .convertAsColumn(receiver.columns) {
+                simpleColumnOf("", createListType(typeArg2.coneType))
             }
     }
 }
@@ -172,8 +171,8 @@ class SplitWithTransformInplace : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df
-            .convert(receiver.columns) {
-                createListType(typeArg2.type).wrap()
+            .convertAsColumn(receiver.columns) {
+                simpleColumnOf("", createListType(typeArg2.coneType))
             }
     }
 }
@@ -192,10 +191,10 @@ class SplitWithTransformIntoRows : AbstractSchemaModificationInterpreter() {
     val Arguments.dropEmpty: Boolean by arg(defaultValue = Present(true))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.convert(receiver.columns) {
-            val targetProjection = arrayOf(receiver.targetType.type.toTypeProjection(Variance.INVARIANT))
-            StandardClassIds.List.createConeType(session, targetProjection).wrap()
-        }.explodeImpl(dropEmpty, receiver.columns.resolve(receiver.df))
+        return receiver.df.convertAsColumn(receiver.columns) {
+            val targetProjection = arrayOf(receiver.targetType.coneType.toTypeProjection(Variance.INVARIANT))
+            simpleColumnOf("", StandardClassIds.List.createConeType(session, targetProjection))
+        }.explodeImpl(dropEmpty, receiver.columns)
     }
 }
 
@@ -204,7 +203,7 @@ class SplitIntoRows : AbstractSchemaModificationInterpreter() {
     val Arguments.dropEmpty: Boolean by arg(defaultValue = Present(true))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.explodeImpl(dropEmpty, receiver.columns.resolve(receiver.df))
+        return receiver.df.explodeImpl(dropEmpty, receiver.columns)
     }
 }
 
@@ -213,7 +212,7 @@ class SplitAnyFrameRows : AbstractSchemaModificationInterpreter() {
     val Arguments.dropEmpty: Boolean by arg(defaultValue = Present(true))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.explodeImpl(dropEmpty, receiver.columns.resolve(receiver.df))
+        return receiver.df.explodeImpl(dropEmpty, receiver.columns)
     }
 }
 
@@ -234,19 +233,19 @@ abstract class SplitPair : AbstractSchemaModificationInterpreter() {
     }
 
     context(arguments: Arguments)
-    abstract fun SplitWithTransform<ConeTypesAdapter, Any, Marker>.operation(): DataFrame<ConeTypesAdapter>
+    abstract fun SplitWithTransform<ConeTypesAdapter, Any, ColumnType>.operation(): DataFrame<ConeTypesAdapter>
 }
 
 class SplitPairInto : SplitPair() {
     context(arguments: Arguments)
-    override fun SplitWithTransform<ConeTypesAdapter, Any, Marker>.operation(): DataFrame<ConeTypesAdapter> {
+    override fun SplitWithTransform<ConeTypesAdapter, Any, ColumnType>.operation(): DataFrame<ConeTypesAdapter> {
         return into(arguments.firstCol, arguments.secondCol)
     }
 }
 
 class SplitPairInward : SplitPair() {
     context(arguments: Arguments)
-    override fun SplitWithTransform<ConeTypesAdapter, Any, Marker>.operation(): DataFrame<ConeTypesAdapter> {
+    override fun SplitWithTransform<ConeTypesAdapter, Any, ColumnType>.operation(): DataFrame<ConeTypesAdapter> {
         return inward(arguments.firstCol, arguments.secondCol)
     }
 }
@@ -256,15 +255,15 @@ class SplitAnyFrameIntoColumns : AbstractSchemaModificationInterpreter() {
     val Arguments.typeArg1 by type()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val schemaArgument = typeArg1.type.typeArguments.getOrNull(0) ?: return PluginDataFrameSchema.EMPTY
+        val schemaArgument = typeArg1.coneType.typeArguments.getOrNull(0) ?: return PluginDataFrameSchema.EMPTY
         val columns = pluginDataFrameSchema(schemaArgument)
             .columns()
             .map { implode(it) }
 
-        return receiver.df.asDataFrame()
-            .convert { receiver.columns.single() }
-            .asColumn { SimpleColumnGroup(it.name(), columns).asDataColumn() }
-            .toPluginDataFrameSchema()
+        return receiver.df.modify {
+            convert { receiver.columns.single() }
+                .asColumn { SimpleColumnGroup(it.name(), columns).asDataColumn() }
+        }
     }
 }
 
@@ -281,7 +280,7 @@ abstract class SplitIterableAbstractOperation : AbstractSchemaModificationInterp
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         // any empty list introduces null to all "split" columns, so they must be nullable
-        val targetType = (typeArg1.type.typeArguments.getOrNull(0) as? ConeKotlinTypeProjection)?.type?.withNullability(
+        val targetType = (typeArg1.coneType.typeArguments.getOrNull(0) as? ConeKotlinTypeProjection)?.type?.withNullability(
             nullable = true,
             session.typeContext
         )?.wrap()
@@ -295,19 +294,19 @@ abstract class SplitIterableAbstractOperation : AbstractSchemaModificationInterp
     }
 
     context(arguments: Arguments)
-    abstract fun SplitWithTransform<ConeTypesAdapter, Any, Marker>.operation(): DataFrame<ConeTypesAdapter>
+    abstract fun SplitWithTransform<ConeTypesAdapter, Any, ColumnType>.operation(): DataFrame<ConeTypesAdapter>
 }
 
 class SplitIterableInto : SplitIterableAbstractOperation() {
     context(arguments: Arguments)
-    override fun SplitWithTransform<ConeTypesAdapter, Any, Marker>.operation(): DataFrame<ConeTypesAdapter> {
+    override fun SplitWithTransform<ConeTypesAdapter, Any, ColumnType>.operation(): DataFrame<ConeTypesAdapter> {
         return into(arguments.names)
     }
 }
 
 class SplitIterableInward : SplitIterableAbstractOperation() {
     context(arguments: Arguments)
-    override fun SplitWithTransform<ConeTypesAdapter, Any, Marker>.operation(): DataFrame<ConeTypesAdapter> {
+    override fun SplitWithTransform<ConeTypesAdapter, Any, ColumnType>.operation(): DataFrame<ConeTypesAdapter> {
         return inward(arguments.names)
     }
 }

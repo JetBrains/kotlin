@@ -7,7 +7,7 @@ compiler/testData/cli/jvm/diagnosticTests/instanceAccessBeforeSuperCall.kt:2:51:
 compiler/testData/cli/jvm/diagnosticTests/instanceAccessBeforeSuperCall.kt:2:74: error: cannot access '<this>' before the instance has been initialized.
     constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
                                                                          ^^^^^
-compiler/testData/cli/jvm/diagnosticTests/instanceAccessBeforeSuperCall.kt:7:20: error: 'this' is not defined in this context.
+compiler/testData/cli/jvm/diagnosticTests/instanceAccessBeforeSuperCall.kt:7:20: error: cannot access '<this>' before the instance has been initialized.
 class B(other: B = this)
                    ^^^^
 compiler/testData/cli/jvm/diagnosticTests/instanceAccessBeforeSuperCall.kt:10:32: error: argument type mismatch: actual type is '() -> ??? (Unknown lambda return type)', but 'Int' was expected.

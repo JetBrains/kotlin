@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.isDisabled
 
 object FirExpectActualClassifiersAreInBetaChecker : FirClassLikeChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClassLikeDeclaration) {
-        if (!LanguageFeature.MultiPlatformProjects.isEnabled()) return
+        if (LanguageFeature.MultiPlatformProjects.isDisabled()) return
         if (context.languageVersionSettings.areExpectActualClassesStable) return
 
         if (declaration.isExpect || declaration.isActual) {

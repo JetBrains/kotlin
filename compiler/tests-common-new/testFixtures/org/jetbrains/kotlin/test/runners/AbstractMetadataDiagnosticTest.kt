@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.METADATA_ONLY_COMPILATION
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_DOUBLE_CHECKING_COMMON_DIAGNOSTICS
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.frontend.fir.FirCliMetadataFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliMetadataSerializerFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
@@ -31,6 +32,8 @@ abstract class AbstractMetadataDiagnosticTest : AbstractKotlinCompilerTest() {
         defaultDirectives {
             FIR_PARSER with FirParser.LightTree
             +METADATA_ONLY_COMPILATION
+            +WITH_STDLIB
+            LANGUAGE with "+MultiPlatformProjects"
         }
 
         useConfigurators(

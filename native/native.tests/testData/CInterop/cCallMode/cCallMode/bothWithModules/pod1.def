@@ -1,2 +1,8 @@
 modules = CInteropLib
 language = Objective-C
+---
+void functionDeclaredInDefFile(void);
+static void functionDefinedInDefFile(void) {}
+
+extern int globalDeclaredInDefFile;
+static int globalDefinedInDefFile = 1;

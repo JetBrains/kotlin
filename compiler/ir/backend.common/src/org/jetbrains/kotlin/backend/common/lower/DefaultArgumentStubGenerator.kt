@@ -54,7 +54,7 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
         return null
     }
 
-    protected open fun IrFunction.resolveAnnotations(): List<IrConstructorCall> = copyAnnotations()
+    protected open fun IrFunction.resolveAnnotations(): List<IrAnnotation> = copyAnnotations()
 
     protected open fun IrFunction.generateDefaultStubBody(originalDeclaration: IrFunction): IrBody {
         val newIrFunction = this
@@ -471,7 +471,7 @@ open class DefaultParameterCleaner(
 /**
  * Patch overrides for fake override dispatch functions. Should be used in case `forceSetOverrideSymbols = false`.
  */
-class DefaultParameterPatchOverridenSymbolsLowering(
+open class DefaultParameterPatchOverridenSymbolsLowering(
     val context: CommonBackendContext
 ) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {

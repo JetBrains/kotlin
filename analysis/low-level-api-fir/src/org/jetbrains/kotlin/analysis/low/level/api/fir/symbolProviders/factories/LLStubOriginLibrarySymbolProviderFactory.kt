@@ -48,7 +48,7 @@ internal object LLStubOriginLibrarySymbolProviderFactory : LLLibrarySymbolProvid
                     scope,
                 )
             )
-            add(LLFirJavaSymbolProvider(session, scope))
+            add(LLFirJavaSymbolProvider(session, firJavaFacade, scope))
         }
     }
 

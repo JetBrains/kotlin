@@ -1,12 +1,22 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("generated-sources")
 }
 
 dependencies {
     api(project(":compiler:fir:checkers"))
-
+    api(project(":native:base"))
+    api(project(":compiler:fir:cones"))
+    api(project(":compiler:fir:providers"))
+    api(project(":compiler:fir:tree"))
+    api(project(":compiler:frontend.common"))
+    api(project(":core:compiler.common"))
+    api(project(":core:util.runtime"))
+    api(project(":kotlin-stdlib"))
+    implementation(project(":compiler:fir:diagnostic-renderers"))
+    implementation(project(":compiler:fir:semantics"))
+    implementation(project(":compiler:frontend.common-psi"))
+    implementation(project(":compiler:util"))
     /*
      * We can't remove this dependency until we use
      *   diagnostics framework from FE 1.0

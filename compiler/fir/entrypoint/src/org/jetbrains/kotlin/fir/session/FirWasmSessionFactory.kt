@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformSpecificCastChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformSpecificEqualityChecker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.analysis.wasm.checkers.FirWasmJsCastChecker
+import org.jetbrains.kotlin.fir.analysis.wasm.checkers.FirWasmJsEqualityChecker
 import org.jetbrains.kotlin.fir.checkers.registerWasmJsCheckers
 import org.jetbrains.kotlin.fir.checkers.registerWasmWasiCheckers
 import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
@@ -23,6 +27,12 @@ sealed class FirWasmSessionFactory : AbstractFirKlibSessionFactory<Nothing?>() {
         override val defaultImportsProvider: DefaultImportsProvider
             get() = WasmJsDefaultImportsProvider
 
+        override fun FirSession.registerWasmComponents() {
+            registerCommonWasmComponents()
+            register(FirPlatformSpecificCastChecker::class, FirWasmJsCastChecker)
+            register(FirPlatformSpecificEqualityChecker::class, FirWasmJsEqualityChecker)
+        }
+
         override fun FirSessionConfigurator.registerPlatformCheckers() {
             registerWasmJsCheckers()
         }
@@ -31,6 +41,10 @@ sealed class FirWasmSessionFactory : AbstractFirKlibSessionFactory<Nothing?>() {
     object WasmWasi : FirWasmSessionFactory() {
         override val defaultImportsProvider: DefaultImportsProvider
             get() = WasmWasiDefaultImportsProvider
+
+        override fun FirSession.registerWasmComponents() {
+            registerCommonWasmComponents()
+        }
 
         override fun FirSessionConfigurator.registerPlatformCheckers() {
             registerWasmWasiCheckers()
@@ -68,8 +82,9 @@ sealed class FirWasmSessionFactory : AbstractFirKlibSessionFactory<Nothing?>() {
         registerWasmComponents()
     }
 
-    @OptIn(SessionConfiguration::class)
-    fun FirSession.registerWasmComponents() {
+    abstract fun FirSession.registerWasmComponents()
+
+    protected fun FirSession.registerCommonWasmComponents() {
         register(FirEnumEntriesSupport(this))
         register(FirDefaultImportsProviderHolder.of(defaultImportsProvider))
     }

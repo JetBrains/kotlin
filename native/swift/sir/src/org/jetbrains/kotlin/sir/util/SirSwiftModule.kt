@@ -40,10 +40,13 @@ object SirSwiftModule : SirModule() {
     val never = struct("Never")
     val anyHashable = struct("AnyHashable")
     val string = struct("String")
+    var error = protocol("Error")
 
     val array = struct("Array")
     val set = struct("Set")
     val dictionary = struct("Dictionary")
+    val range = struct("Range")
+    val closedRange = struct("ClosedRange")
 
     private val unicode = enumStub("Unicode")
     private val utf16 = unicode.enumStub("UTF16")
@@ -57,6 +60,14 @@ object SirSwiftModule : SirModule() {
     val caseIterable = protocol("CaseIterable")
     val losslessStringConvertible = protocol("LosslessStringConvertible")
     val rawRepresentable = protocol("RawRepresentable")
+}
+
+object SirSwiftConcurrencyModule : SirModule() { // Some swift standard library definitions are actually re-exported from other modules
+    override val name: String get() = "_Concurrency"
+    override val imports: MutableList<SirImport> = mutableListOf()
+    override val declarations: MutableList<SirDeclaration> = mutableListOf()
+
+    val asyncSequence = protocol("AsyncSequence")
 }
 
 private fun SirMutableDeclarationContainer.struct(typeName: String) = addChild {

@@ -2,14 +2,13 @@ description = "Compiler runner + daemon client unshaded"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("gradle-plugin-published-compiler-dependency-configuration")
 }
 
 dependencies {
     implementation(project(":kotlin-daemon-client"))
 
-    compileOnly(project(":compiler:cli-common"))
+    compileOnly(project(":compiler:cli-base"))
     compileOnly(project(":kotlin-preloader"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":daemon-common"))

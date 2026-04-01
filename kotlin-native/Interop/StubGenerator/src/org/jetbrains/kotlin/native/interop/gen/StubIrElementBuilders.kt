@@ -534,8 +534,10 @@ internal abstract class FunctionalStubBuilder(
     }
 
     protected fun buildFunctionAnnotations(func: FunctionDecl, stubName: String = func.name) =
-            cCall(
-                    direct = { AnnotationStub.CCall.Direct(func.binaryName) },
+            cCallModeAnnotations(
+                    name = func.name,
+                    directAccess = func.directAccess,
+                    direct = { symbolName -> listOf(AnnotationStub.CCall.Direct(symbolName)) },
                     indirect = { AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${stubName}") }
             )
 
@@ -593,21 +595,6 @@ internal abstract class FunctionalStubBuilder(
     // We take this approach as generic 'const short*' shall not be used as String.
     private fun representCFunctionParameterAsWString(function: FunctionDecl, type: Type) = type.isAliasOf(platformWStringTypes)
             && !noStringConversion.contains(function.name)
-}
-
-private inline fun StubElementBuilder.cCall(
-        direct: () -> AnnotationStub.CCall.Direct,
-        indirect: () -> AnnotationStub.CCall.Symbol,
-): List<AnnotationStub> = buildList {
-    val cCallMode = context.configuration.cCallMode
-
-    if (cCallMode != CCallMode.INDIRECT) {
-        add(direct())
-    }
-
-    if (cCallMode != CCallMode.DIRECT) {
-        add(indirect())
-    }
 }
 
 internal class FunctionStubBuilder(
@@ -680,11 +667,16 @@ internal class GlobalStubBuilder(
                     }
                 }
                 KotlinPlatform.NATIVE -> {
-                    val annotation = indirectCCallOrUnavailable {
-                        AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter")
-                    }
-                    PropertyAccessor.Getter.ExternalGetter(listOf(annotation)).also {
-                        context.wrapperComponentsBuilder.getterToWrapperInfo[it] = WrapperGenerationInfo(global)
+                    val annotations = cCallOrGlobalAccess(
+                            isPointer = true,
+                            indirect = {
+                                AnnotationStub.CCall.Symbol(
+                                        "${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter"
+                                )
+                            }
+                    )
+                    PropertyAccessor.Getter.ExternalGetter(annotations).also {
+                        addWrapperGenerationInfo(it)
                     }
                 }
             }
@@ -701,11 +693,14 @@ internal class GlobalStubBuilder(
                             }
                         }
                         KotlinPlatform.NATIVE -> {
-                            val annotation = indirectCCallOrUnavailable {
-                                AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter")
-                            }
-                            PropertyAccessor.Getter.ExternalGetter(listOf(annotation)).also {
-                                context.wrapperComponentsBuilder.getterToWrapperInfo[it] = WrapperGenerationInfo(global)
+                            val annotations = cCallOrGlobalAccess(
+                                    isPointer = false,
+                                    indirect = {
+                                        AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter")
+                                    }
+                            )
+                            PropertyAccessor.Getter.ExternalGetter(annotations).also {
+                                addWrapperGenerationInfo(it)
                             }
                         }
                     }
@@ -720,11 +715,14 @@ internal class GlobalStubBuilder(
                                 }
                             }
                             KotlinPlatform.NATIVE -> {
-                                val annotation = indirectCCallOrUnavailable {
-                                    AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_setter")
-                                }
-                                PropertyAccessor.Setter.ExternalSetter(listOf(annotation)).also {
-                                    context.wrapperComponentsBuilder.setterToWrapperInfo[it] = WrapperGenerationInfo(global)
+                                val annotations = cCallOrGlobalAccess(
+                                        isPointer = false,
+                                        indirect = {
+                                            AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_setter")
+                                        }
+                                )
+                                PropertyAccessor.Setter.ExternalSetter(annotations).also {
+                                    addWrapperGenerationInfo(it)
                                 }
                             }
                         }
@@ -738,11 +736,14 @@ internal class GlobalStubBuilder(
                             PropertyAccessor.Getter.InterpretPointed(global.fullName, kotlinType.toStubIrType())
                         }
                         GenerationMode.METADATA -> {
-                            val annotation = indirectCCallOrUnavailable {
-                                AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter")
-                            }
-                            PropertyAccessor.Getter.ExternalGetter(listOf(annotation)).also {
-                                context.wrapperComponentsBuilder.getterToWrapperInfo[it] = WrapperGenerationInfo(global, passViaPointer = true)
+                            val annotations = cCallOrGlobalAccess(
+                                    isPointer = true,
+                                    indirect = {
+                                        AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter")
+                                    }
+                            )
+                            PropertyAccessor.Getter.ExternalGetter(annotations).also {
+                                addWrapperGenerationInfo(it, passViaPointer = true)
                             }
                         }
                     }
@@ -753,19 +754,88 @@ internal class GlobalStubBuilder(
         return listOf(PropertyStub(global.name, kotlinType.toStubIrType(), kind, origin = origin))
     }
 
-    private fun indirectCCallOrUnavailable(indirect: () -> AnnotationStub.CCall.Symbol): AnnotationStub =
-            if (context.configuration.cCallMode != CCallMode.DIRECT) {
-                indirect()
-            } else {
-                // The trick here is that we generate a symbol name that can't be resolved into anything.
-                // So, if such a declaration is used, the linkage will fail with this string as a message.
-                // This serves two purposes:
-                // 1. Such problems are reported not during compilation but during linkage,
-                //    along with other linkage failures caused by `-Xccall-mode direct`
-                //    (e.g. usages of header-defined functions), allowing a user to collect more problems at once.
-                // 2. If such a declaration is used in unreachable code, it doesn't make the compilation fail.
-                AnnotationStub.CCall.Direct("${global.name} unsupported: https://youtrack.jetbrains.com/issue/KT-79742")
+    private fun cCallOrGlobalAccess(
+            isPointer: Boolean,
+            indirect: () -> AnnotationStub.CCall.Symbol
+    ): List<AnnotationStub> = cCallModeAnnotations(
+            name = global.name,
+            directAccess = global.directAccess,
+            direct = { symbolName: String ->
+                buildList {
+                    add(AnnotationStub.CGlobalAccess.Symbol(symbolName))
+                    if (isPointer) {
+                        add(AnnotationStub.CGlobalAccess.Pointer)
+                    }
+                }
+            },
+            indirect = indirect
+    )
+
+    private fun addWrapperGenerationInfo(
+            getter: PropertyAccessor.Getter.ExternalGetter,
+            passViaPointer: Boolean = false
+    ) {
+        context.wrapperComponentsBuilder.getterToWrapperInfo[getter] =
+                wrapperGenerationInfo(getter, passViaPointer = passViaPointer) ?: return
+    }
+
+    private fun addWrapperGenerationInfo(
+            setter: PropertyAccessor.Setter.ExternalSetter
+    ) {
+        context.wrapperComponentsBuilder.setterToWrapperInfo[setter] =
+                wrapperGenerationInfo(setter, passViaPointer = false) ?: return
+    }
+
+    private fun wrapperGenerationInfo(
+            accessor: PropertyAccessor,
+            passViaPointer: Boolean
+    ): WrapperGenerationInfo? = if (accessor.annotations.any { it is AnnotationStub.CCall.Symbol }) {
+        WrapperGenerationInfo(global, passViaPointer = passViaPointer)
+    } else {
+        null
+    }
+}
+
+private fun StubElementBuilder.cCallModeAnnotations(
+        name: String,
+        directAccess: DirectAccess,
+        direct: (symbolName: String) -> List<AnnotationStub>,
+        indirect: () -> AnnotationStub.CCall.Symbol
+): List<AnnotationStub> = buildList {
+    val cCallMode = context.configuration.cCallMode
+    if (cCallMode != CCallMode.INDIRECT) {
+        when (directAccess) {
+            is DirectAccess.Symbol -> {
+                val directAnnotations = direct(directAccess.name)
+                check(directAnnotations.isNotEmpty()) { "Got no direct access annotations for $name" }
+                addAll(directAnnotations)
             }
+            is DirectAccess.Unavailable -> {
+                if (cCallMode == CCallMode.DIRECT) {
+                    // The declaration is not supported in the requested direct mode.
+                    // Mark it accordingly.
+                    //
+                    // The trick here is that we generate a symbol name that can't be resolved into anything.
+                    // So, if such a declaration is used, the linkage will fail with this string as a message.
+                    // This serves two purposes:
+                    // 1. Such problems are reported not during compilation but during linkage,
+                    //    along with other linkage failures caused by `-Xccall-mode direct`
+                    //    (e.g. usages of header-defined functions), allowing a user to collect more problems at once.
+                    // 2. If such a declaration is used in unreachable code, it doesn't make the compilation fail.
+                    add(AnnotationStub.CCall.Direct("$name unsupported: ${directAccess.reason}"))
+                    // Note: the link leads to the issue about non-constant macros (that are also handled with this code).
+                    // That's fine, because it is the only case that reaches this code for now.
+                }
+                // TODO: KT-79757 add @LimitedCompatibility(directAccess.reason)
+            }
+        }
+    }
+
+    if (cCallMode != CCallMode.DIRECT) {
+        add(indirect())
+    }
+
+    check(this.isNotEmpty()) { "The generated annotation list is empty for $name" }
 }
 
 internal class TypedefStubBuilder(

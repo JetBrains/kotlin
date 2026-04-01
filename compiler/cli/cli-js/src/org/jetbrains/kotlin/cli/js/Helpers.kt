@@ -1,33 +1,24 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.js
 
 import com.intellij.util.ExceptionUtil
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArguments
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
-import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageUtil
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.moduleName
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.utils.join
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.io.File
 import java.io.IOException
 import kotlin.math.min
-
-fun checkKotlinPackageUsageForPsi(configuration: CompilerConfiguration, files: Collection<KtFile>): Boolean =
-    org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi(configuration, files)
 
 val K2JSCompilerArguments.targetVersion: EcmaVersion?
     get() {
@@ -38,17 +29,17 @@ val K2JSCompilerArguments.targetVersion: EcmaVersion?
         }
     }
 
-val K2JSCompilerArguments.granularity: JsGenerationGranularity
-    get() = when {
-        this.irPerFile -> JsGenerationGranularity.PER_FILE
-        this.irPerModule -> JsGenerationGranularity.PER_MODULE
+val CommonJsAndWasmCompilerArguments.granularity: JsGenerationGranularity
+    get() = when (this) {
+        is K2JSCompilerArguments if this.irPerFile -> JsGenerationGranularity.PER_FILE
+        is K2JSCompilerArguments if this.irPerModule -> JsGenerationGranularity.PER_MODULE
         else -> JsGenerationGranularity.WHOLE_PROGRAM
     }
 
-val K2JSCompilerArguments.dtsStrategy: TsCompilationStrategy
+val CommonJsAndWasmCompilerArguments.dtsStrategy: TsCompilationStrategy
     get() = when {
         !this.generateDts -> TsCompilationStrategy.NONE
-        this.irPerFile -> TsCompilationStrategy.EACH_FILE
+        this is K2JSCompilerArguments && this.irPerFile -> TsCompilationStrategy.EACH_FILE
         else -> TsCompilationStrategy.MERGED
     }
 
@@ -83,8 +74,8 @@ private fun String.splitByPathSeparator(): List<String> {
 }
 
 internal fun calculateSourceMapSourceRoot(
-    messageCollector: MessageCollector,
-    arguments: K2JSCompilerArguments,
+    configuration: CompilerConfiguration,
+    arguments: CommonJsAndWasmCompilerArguments,
 ): String {
     var commonPath: File? = null
     val pathToRoot = mutableListOf<File>()
@@ -123,38 +114,17 @@ internal fun calculateSourceMapSourceRoot(
         }
     } catch (e: IOException) {
         val text = ExceptionUtil.getThrowableText(e)
-        messageCollector.report(ERROR, "IO error occurred calculating source root:\n$text", location = null)
+        configuration.report(CliDiagnostics.IO_ERROR, "IO error occurred calculating source root:\n$text")
         return "."
     }
 
     return commonPath?.path ?: "."
 }
 
-internal fun reportCompiledSourcesList(messageCollector: MessageCollector, sourceFiles: List<KtFile>) {
-    val fileNames = sourceFiles.map { file ->
-        val virtualFile = file.virtualFile
-        if (virtualFile != null) {
-            MessageUtil.virtualFileToPath(virtualFile)
-        } else {
-            file.name + " (no virtual file)"
-        }
-    }
-    messageCollector.report(LOGGING, "Compiling source files: " + join(fileNames, ", "), null)
-}
-
-internal fun reportCollectedDiagnostics(
-    compilerConfiguration: CompilerConfiguration,
-    diagnosticsReporter: BaseDiagnosticsCollector,
-    messageCollector: MessageCollector
-) {
-    val renderName = compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderName)
-}
-
 internal val CompilerConfiguration.platformChecker: KlibPlatformChecker
     get() = if (wasmCompilation) KlibPlatformChecker.Wasm(wasmTarget.alias) else KlibPlatformChecker.JS
 
-internal fun initializeFinalArtifactConfiguration(configuration: CompilerConfiguration, arguments: K2JSCompilerArguments) {
+internal fun initializeFinalArtifactConfiguration(configuration: CompilerConfiguration, arguments: CommonJsAndWasmCompilerArguments) {
     configuration.artifactConfiguration = WebArtifactConfiguration(
         moduleKind = configuration.moduleKind ?: return,
         moduleName = configuration.moduleName ?: return,

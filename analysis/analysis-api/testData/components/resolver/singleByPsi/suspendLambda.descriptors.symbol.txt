@@ -1,0 +1,5 @@
+KtNameReferenceExpression(78,85): 'suspend'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/suspend(block: kotlin.coroutines.SuspendFunction0<R>): kotlin.coroutines.SuspendFunction0<R>
+    ]

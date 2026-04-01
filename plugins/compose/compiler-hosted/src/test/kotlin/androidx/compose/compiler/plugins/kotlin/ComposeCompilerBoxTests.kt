@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTe
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler.Directives.COMPILER_ARGUMENTS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
-import org.jetbrains.kotlin.js.test.fir.AbstractJsTest
+import org.jetbrains.kotlin.js.test.runners.AbstractJsTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
@@ -84,6 +84,7 @@ open class AbstractJsLightTreePluginBlackBoxCodegenForComposeTest : AbstractJsTe
 
 fun TestConfigurationBuilder.composeCompilerPluginConfiguration() {
     defaultDirectives {
+        COMPILER_ARGUMENTS with "-Xverify-ir=error"
         COMPILER_ARGUMENTS with flagToEnableComposeCompilerPlugin()
     }
 

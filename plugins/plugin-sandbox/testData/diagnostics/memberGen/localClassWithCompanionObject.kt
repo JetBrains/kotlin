@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import org.jetbrains.kotlin.plugin.sandbox.CompanionWithFoo
 
 fun context() {
@@ -18,3 +19,5 @@ fun context() {
         takeInt(SomeClass.Nested.Companion.foo())
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass, localFunction, nestedClass */

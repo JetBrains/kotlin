@@ -12,9 +12,25 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
+import org.jetbrains.kotlin.konan.config.cacheDirectories
+import org.jetbrains.kotlin.konan.config.cachedLibraries
+import org.jetbrains.kotlin.konan.config.checkDependencies
+import org.jetbrains.kotlin.konan.config.filesToCache
+import org.jetbrains.kotlin.konan.config.generateTestRunner
+import org.jetbrains.kotlin.konan.config.konanFriendLibraries
+import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
+import org.jetbrains.kotlin.konan.config.konanLibraries
+import org.jetbrains.kotlin.konan.config.konanLibraryToAddToCache
+import org.jetbrains.kotlin.konan.config.konanNoDefaultLibs
+import org.jetbrains.kotlin.konan.config.konanNoEndorsedLibs
+import org.jetbrains.kotlin.konan.config.konanNoStdlib
+import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
+import org.jetbrains.kotlin.konan.config.makePerFileCache
+import org.jetbrains.kotlin.konan.config.testDumpOutputPath
+import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
@@ -25,6 +41,7 @@ import java.io.IOException
 import java.nio.channels.ClosedByInterruptException
 import java.nio.file.*
 import kotlin.random.Random
+import org.jetbrains.kotlin.backend.common.legacyKlibReverseTopoSort
 
 internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String, KotlinLibrary>): List<KotlinLibrary> {
     val allDependencies = mutableSetOf<KotlinLibrary>()
@@ -45,20 +62,20 @@ internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String
 
 // TODO: deleteRecursively might throw an exception!
 class CacheBuilder(
-        val konanConfig: KonanConfig,
+        val config: NativeSecondStageCompilationConfig,
         val compilationSpawner: CompilationSpawner
 ) {
-    private val configuration = konanConfig.configuration
-    private val autoCacheableFrom = configuration.get(KonanConfigKeys.AUTO_CACHEABLE_FROM)!!.map { File(it) }
-    private val icEnabled = configuration.get(CommonConfigurationKeys.INCREMENTAL_COMPILATION)!!
-    private val includedLibraries = configuration.get(KonanConfigKeys.INCLUDED_LIBRARIES).orEmpty().toSet()
-    private val generateTestRunner = configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER)
+    private val configuration = config.configuration
+    private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!.map { File(it) }
+    private val icEnabled = configuration[CommonConfigurationKeys.INCREMENTAL_COMPILATION]!!
+    private val includedLibraries = configuration.konanIncludedLibraries.toSet()
+    private val generateTestRunner = configuration.getNotNull(NativeConfigurationKeys.GENERATE_TEST_RUNNER)
 
-    fun needToBuild() = konanConfig.ignoreCacheReason == null
-            && (konanConfig.isFinalBinary || konanConfig.produce.isFullCache)
+    fun needToBuild() = config.ignoreCacheReason == null
+            && (config.isFinalBinary || config.produce.isFullCache)
             && (autoCacheableFrom.isNotEmpty() || icEnabled)
 
-    private val allLibraries by lazy { konanConfig.resolvedLibraries.getFullList(TopologicalLibraryOrder) }
+    private val allLibraries by lazy { config.resolvedLibraries.getFullList().legacyKlibReverseTopoSort() }
     private val uniqueNameToLibrary by lazy { allLibraries.associateBy { it.uniqueName } }
     private val uniqueNameToHash = mutableMapOf<String, FingerprintHash>()
 
@@ -95,11 +112,11 @@ class CacheBuilder(
 
         allLibraries.forEach { library ->
             // For MinGW target avoid compiling caches for anything except stdlib.
-            if (konanConfig.target == KonanTarget.MINGW_X64 && !library.isNativeStdlib) {
+            if (config.target == KonanTarget.MINGW_X64 && !library.isNativeStdlib) {
                 return@forEach
             }
-            val isSubjectOfIC = !library.isDefault && !library.isExternal && !library.isNativeStdlib
-            val cache = konanConfig.cachedLibraries.getLibraryCache(library, allowIncomplete = isSubjectOfIC)
+            val isSubjectOfIC = !library.isFromKotlinNativeDistribution && !library.isExternal && !library.isNativeStdlib
+            val cache = config.cachedLibraries.getLibraryCache(library, allowIncomplete = isSubjectOfIC)
             cache?.let {
                 caches[library] = it
                 cacheRootDirectories[library] = it.rootDirectory
@@ -180,11 +197,11 @@ class CacheBuilder(
 
         configuration.report(CompilerMessageSeverity.LOGGING, "IC analysis results")
         configuration.report(CompilerMessageSeverity.LOGGING, "    CACHED:")
-        icedLibraries.filter { caches[it] != null }.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        ${it.libraryName}") }
+        icedLibraries.filter { caches[it] != null }.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        ${it.location}") }
         configuration.report(CompilerMessageSeverity.LOGGING, "    CLEAN BUILD:")
-        icedLibraries.filter { caches[it] == null }.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        ${it.libraryName}") }
+        icedLibraries.filter { caches[it] == null }.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        ${it.location}") }
         configuration.report(CompilerMessageSeverity.LOGGING, "    FULL REBUILD:")
-        icedLibraries.filter { it in needFullRebuild }.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        ${it.libraryName}") }
+        icedLibraries.filter { it in needFullRebuild }.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        ${it.location}") }
         configuration.report(CompilerMessageSeverity.LOGGING, "    ADDED FILES:")
         addedFiles.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        $it") }
         configuration.report(CompilerMessageSeverity.LOGGING, "    REMOVED FILES:")
@@ -243,22 +260,22 @@ class CacheBuilder(
         val dependencyCaches = dependencies.map {
             cacheRootDirectories[it] ?: run {
                 configuration.report(CompilerMessageSeverity.LOGGING,
-                        "SKIPPING ${library.libraryName} as some of the dependencies aren't cached")
+                        "SKIPPING ${library.location} as some of the dependencies aren't cached")
                 return
             }
         }
 
-        configuration.report(CompilerMessageSeverity.LOGGING, "CACHING ${library.libraryName}")
+        configuration.report(CompilerMessageSeverity.LOGGING, "CACHING ${library.location}")
         filesToCache.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "    $it") }
 
         // Produce monolithic caches for external libraries for now.
         val makePerFileCache = !isExternal && !library.isCInteropLibrary()
 
         val libraryCacheDirectory = when {
-            library.isDefault || library.isNativeStdlib -> konanConfig.systemCacheDirectory
+            library.isFromKotlinNativeDistribution || library.isNativeStdlib -> config.systemCacheDirectory
             isExternal -> CachedLibraries.computeLibraryCacheDirectory(
-                    konanConfig.autoCacheDirectory, library, uniqueNameToLibrary, uniqueNameToHash)
-            else -> konanConfig.incrementalCacheDirectory!!
+                    config.autoCacheDirectory, library, uniqueNameToLibrary, uniqueNameToHash)
+            else -> config.incrementalCacheDirectory!!
         }
         val libraryCache = libraryCacheDirectory.child(
                 if (makePerFileCache)
@@ -408,19 +425,19 @@ class CacheBuilder(
                     ?: run {
                         @Suppress("IncorrectFormatting") val extraUserInfo =
                                 """
-                                    Failed to build cache for ${library.libraryName}.
+                                    Failed to build cache for ${library.location}.
                                     As a workaround, please try to disable ${
                                         if (makePerFileCache)
                                             "incremental compilation (kotlin.incremental.native=false)"
                                         else
-                                            "compiler caches (kotlin.native.cacheKind=none)"
+                                            "compiler caches (https://kotl.in/disable-native-cache)"
                                     }
 
                                     Also, consider filing an issue with full Gradle log here: https://kotl.in/issue
                                     """.trimIndent()
                         "$extraUserInfo\n\n${t.message}\n\n${t.stackTraceToString()}"
                     }
-            konanConfig.configuration.reportCompilationError(message)
+            config.configuration.reportCompilationError(message)
         }
     }
 
@@ -432,38 +449,39 @@ class CacheBuilder(
             makePerFileCache: Boolean,
             filesToCache: List<String>,
     ) {
-        compilationSpawner.spawn(konanConfig.additionalCacheFlags /* TODO: Some way to put them directly to CompilerConfiguration? */) {
+        compilationSpawner.spawn(config.additionalCacheFlags /* TODO: Some way to put them directly to CompilerConfiguration? */) {
             val libraryPath = library.libraryFile.absolutePath
-            val libraries = dependencies.filter { !it.isDefault }.map { it.libraryFile.absolutePath }
+            val libraries = dependencies.filter { !it.isFromKotlinNativeDistribution }.map { it.libraryFile.absolutePath }
             val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.libraryFile.absolutePath to it.second }
             configuration.report(CompilerMessageSeverity.LOGGING,
-                    "-p static_cache -Xadd-cache=${library.libraryName} \\\n" +
+                    "-p static_cache -Xadd-cache=${library.location} \\\n" +
                             libraries.joinToString("\n") { "-library $it \\" } + "\n" +
                             cachedLibraries.entries.joinToString("\n") { "-Xcached-library=${it.key},${it.value} \\" } + "\n" +
                             "-Xcache-directory=${libraryCacheDirectory.absolutePath}\n"
             )
 
-            setupCommonOptionsForCaches(konanConfig)
-            put(KonanConfigKeys.PRODUCE, CompilerOutputKind.STATIC_CACHE)
+            setupCommonOptionsForCaches(config)
+            konanProducedArtifactKind = CompilerOutputKind.STATIC_CACHE
             // CHECK_DEPENDENCIES is computed based on outputKind, which is overwritten in the line above
             // So we have to change CHECK_DEPENDENCIES accordingly, otherwise they might not be downloaded (see KT-67547)
-            put(KonanConfigKeys.CHECK_DEPENDENCIES, true)
-            put(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE, libraryPath)
-            put(KonanConfigKeys.NODEFAULTLIBS, true)
-            put(KonanConfigKeys.NOENDORSEDLIBS, true)
-            put(KonanConfigKeys.NOSTDLIB, true)
-            put(KonanConfigKeys.LIBRARY_FILES, libraries)
-            if (generateTestRunner != TestRunnerKind.NONE && libraryPath in includedLibraries) {
-                put(KonanConfigKeys.FRIEND_MODULES, konanConfig.friendModuleFiles.map { it.absolutePath })
-                put(KonanConfigKeys.GENERATE_TEST_RUNNER, generateTestRunner)
-                put(KonanConfigKeys.INCLUDED_LIBRARIES, listOf(libraryPath))
-                configuration.get(KonanConfigKeys.TEST_DUMP_OUTPUT_PATH)?.let { put(KonanConfigKeys.TEST_DUMP_OUTPUT_PATH, it) }
+            checkDependencies = true
+            konanLibraryToAddToCache = libraryPath
+            konanNoDefaultLibs = true
+            konanNoEndorsedLibs = true
+            konanNoStdlib = true
+            konanLibraries = libraries
+            val generateTestRunner = this@CacheBuilder.generateTestRunner
+            if (generateTestRunner != TestRunnerKind.NONE && libraryPath in this@CacheBuilder.includedLibraries) {
+                konanFriendLibraries = config.friendModuleFiles.map { it.absolutePath }
+                this.generateTestRunner = generateTestRunner
+                konanIncludedLibraries = listOf(libraryPath)
+                configuration.testDumpOutputPath?.let { testDumpOutputPath = it }
             }
-            put(KonanConfigKeys.CACHED_LIBRARIES, cachedLibraries)
-            put(KonanConfigKeys.CACHE_DIRECTORIES, listOf(libraryCacheDirectory.absolutePath))
-            put(KonanConfigKeys.MAKE_PER_FILE_CACHE, makePerFileCache)
+            this.cachedLibraries = cachedLibraries
+            cacheDirectories = listOf(libraryCacheDirectory.absolutePath)
+            this.makePerFileCache = makePerFileCache
             if (filesToCache.isNotEmpty())
-                put(KonanConfigKeys.FILES_TO_CACHE, filesToCache)
+                this.filesToCache = filesToCache
         }
     }
 }

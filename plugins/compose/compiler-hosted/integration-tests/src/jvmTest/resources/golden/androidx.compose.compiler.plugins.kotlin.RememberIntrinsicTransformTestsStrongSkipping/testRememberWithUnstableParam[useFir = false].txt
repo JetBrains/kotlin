@@ -4,9 +4,11 @@
 
 import androidx.compose.runtime.*
 
-@Composable fun Test(param: String, unstable: List<*>) {
+class Unstable(var x: Int)
+
+@Composable fun Test(param: String, unstable: Unstable) {
     remember(unstable) {
-        unstable[0]
+        println(unstable)
     }
 }
 
@@ -14,8 +16,15 @@ import androidx.compose.runtime.*
 // Transformed IR
 // ------------------------------------------
 
+@StabilityInferred(parameters = 0)
+class Unstable(var x: Int) {
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
 @Composable
-fun Test(param: String, unstable: List<*>, %composer: Composer?, %changed: Int) {
+fun Test(param: String, unstable: Unstable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<rememb...>:Test.kt")
   val %dirty = %changed
@@ -27,11 +36,10 @@ fun Test(param: String, unstable: List<*>, %composer: Composer?, %changed: Int) 
       traceEventStart(<>, %dirty, -1, <>)
     }
     sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-    val tmp0_group = %composer.cache(%composer.changed(unstable)) {
-      unstable[0]
+    %composer.cache(%composer.changed(unstable)) {
+      println(unstable)
     }
     sourceInformationMarkerEnd(%composer)
-    tmp0_group
     if (isTraceInProgress()) {
       traceEventEnd()
     }

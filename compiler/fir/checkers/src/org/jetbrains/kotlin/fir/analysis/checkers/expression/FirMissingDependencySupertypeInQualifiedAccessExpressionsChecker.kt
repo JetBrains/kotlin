@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkMissingDependencySuperTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.getOwnerLookupTag
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -31,10 +32,10 @@ object FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker : FirQua
 
         val symbol = expression.calleeReference.toResolvedCallableSymbol()
         if (symbol == null) {
-            val receiverType = expression.explicitReceiver
-                ?.resolvedType
-                ?.unwrapToSimpleTypeUsingLowerBound()
-                ?.fullyExpandedType()
+            val explicitReceiver = expression.explicitReceiver
+            val resolvedType = (explicitReceiver as? FirResolvedQualifier)?.resolvedLHSTypeForCallableReferenceOrNull
+                ?: explicitReceiver?.resolvedType
+            val receiverType = resolvedType?.unwrapToSimpleTypeUsingLowerBound()?.fullyExpandedType()
 
             checkMissingDependencySuperTypes(receiverType, source)
             return

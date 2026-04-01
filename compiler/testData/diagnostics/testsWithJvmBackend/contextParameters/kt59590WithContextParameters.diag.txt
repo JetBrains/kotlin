@@ -1,0 +1,9 @@
+/kt59590WithContextParameters.kt:9:1: error: Platform declaration clash: The following declarations have the same JVM signature (INSTANCELO;):
+    context(O) val INSTANCE: O? defined in O
+    val INSTANCE: O defined in O
+
+/kt59590WithContextParameters.kt:10:5: error: Property with context parameters cannot be initialized because it has no backing field.
+
+/kt59590WithContextParameters.kt:12:5: error: Platform declaration clash: The following declarations have the same JVM signature (INSTANCELO;):
+    context(O) val INSTANCE: O? defined in O
+    val INSTANCE: O defined in O

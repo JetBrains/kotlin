@@ -1,0 +1,5 @@
+KtCollectionLiteralExpression(206,256): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+    ]

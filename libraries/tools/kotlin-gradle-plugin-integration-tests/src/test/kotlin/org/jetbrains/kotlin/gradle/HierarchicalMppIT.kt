@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.friendSourceDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.getOrFail
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.regularSourceDependency
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.kotlinStdlibDependencies
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.unresolvedDependenciesDiagnosticMatcher
 import org.jetbrains.kotlin.gradle.internals.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromJson
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.ModuleDependencyIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetMetadataLayout
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
-import org.jetbrains.kotlin.gradle.util.kotlinStdlibDependencies
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
 import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
@@ -45,9 +45,8 @@ import kotlin.test.fail
 open class HierarchicalMppIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
-        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
         get() = super.defaultBuildOptions
-            .copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+            .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     private val String.withPrefix get() = "hierarchical-mpp-published-modules/$this"
 
@@ -115,7 +114,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
                 it["commonMain"].assertMatches(
                     kotlinStdlibDependencies,
                     unresolvedDependenciesDiagnosticMatcher(dependencyName = "com.example.thirdparty:third-party-lib"),
-                    binaryCoordinates("com.example.thirdparty:third-party-lib:commonMain:1.0"),
                 )
                 it["jvmAndJsMain"].assertMatches(
                     kotlinStdlibDependencies,
@@ -301,41 +299,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
                     transformedArtifacts().toSortedSet()
                 )
             }
-        }
-    }
-
-    @GradleTest
-    @DisplayName("Works with published JS library")
-    fun testHmppWithPublishedJsIrDependency(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
-        publishThirdPartyLib(
-            projectName = "hierarchical-mpp-with-js-published-modules/third-party-lib",
-            gradleVersion = gradleVersion,
-            localRepoDir = tempDir
-        )
-
-        with(
-            nativeProject(
-                "hierarchical-mpp-with-js-published-modules/my-lib-foo",
-                gradleVersion,
-                localRepoDir = tempDir,
-                buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions())
-            )
-        ) {
-            build("publish", "assemble")
-        }
-    }
-
-    @GradleTest
-    @DisplayName("Works with project dependency on JS library")
-    fun testHmppWithProjectJsIrDependency(gradleVersion: GradleVersion) {
-        with(
-            nativeProject(
-                projectName = "hierarchical-mpp-with-js-project-dependency",
-                gradleVersion = gradleVersion,
-                buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions())
-            )
-        ) {
-            build("assemble")
         }
     }
 

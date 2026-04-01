@@ -10,6 +10,12 @@ inline fun anonymousFun(): () -> Unit {
     }
 }
 
+private inline fun anonymousFunWithPrivate(): () -> Unit {
+    return fun() {
+        numbers[0] = 1
+    }
+}
+
 public inline fun anonymousLambda(): () -> Unit {
     return {
         numbers<!NO_SET_METHOD!>[0]<!> = 1
@@ -17,4 +23,4 @@ public inline fun anonymousLambda(): () -> Unit {
 }
 
 /* GENERATED_FIR_TAGS: anonymousFunction, assignment, explicitBackingField, functionDeclaration, functionalType, inline,
-integerLiteral, lambdaLiteral, propertyDeclaration */
+integerLiteral, lambdaLiteral, propertyDeclaration, smartcast */

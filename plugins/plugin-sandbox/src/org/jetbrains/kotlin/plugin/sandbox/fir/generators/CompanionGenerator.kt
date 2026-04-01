@@ -29,22 +29,26 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
         private val FOO_NAME = Name.identifier("foo")
     }
 
-    override fun generateNestedClassLikeDeclaration(owner: FirClassSymbol<*>, name: Name, context: NestedClassGenerationContext): FirClassLikeSymbol<*>? {
+    override fun generateNestedClassLikeDeclaration(
+        owner: FirClassSymbol<*>, name: Name, context: NestedClassGenerationContext,
+    ): FirClassLikeSymbol<*>? {
         if (name != SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) return null
-        return createCompanionObject(owner, Key).symbol
+        return createCompanionObject(owner, CompanionGeneratorKey).symbol
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val owner = context?.owner ?: return emptyList()
         val ownerKey = (owner.origin as? FirDeclarationOrigin.Plugin)?.key ?: return emptyList()
-        if (ownerKey != Key) return emptyList()
+        if (ownerKey != CompanionGeneratorKey) return emptyList()
         if (callableId.callableName != FOO_NAME) return emptyList()
-        val function = createMemberFunction(owner, Key, callableId.callableName, session.builtinTypes.intType.coneType)
+        val function = createMemberFunction(owner, CompanionGeneratorKey, callableId.callableName, session.builtinTypes.intType.coneType) {
+            withGeneratedDefaultBody()
+        }
         return listOf(function.symbol)
     }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        val constructor = createDefaultPrivateConstructor(context.owner, Key)
+        val constructor = createDefaultPrivateConstructor(context.owner, CompanionGeneratorKey)
         return listOf(constructor.symbol)
     }
 
@@ -54,7 +58,7 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
         val classId = classSymbol.classId
         if (!classId.isNestedClass || classId.shortClassName != SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) return emptySet()
         val origin = classSymbol.origin as? FirDeclarationOrigin.Plugin
-        return if (origin?.key == Key) {
+        return if (origin?.key == CompanionGeneratorKey) {
             setOf(FOO_NAME, SpecialNames.INIT)
         } else {
             setOf(FOO_NAME)
@@ -69,11 +73,7 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
         }
     }
 
-    object Key : GeneratedDeclarationKey() {
-        override fun toString(): String {
-            return "CompanionGeneratorKey"
-        }
-    }
+    data object CompanionGeneratorKey : GeneratedDeclarationKey()
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(PREDICATE)

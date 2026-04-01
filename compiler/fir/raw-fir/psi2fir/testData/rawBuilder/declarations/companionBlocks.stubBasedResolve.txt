@@ -1,0 +1,80 @@
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] companionBlocks.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirCompanionBlockDataKey=[valid=4 nested=1]] class C : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun member1(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] init { LAZY_BLOCK }
+
+        public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] val bar: <implicit> = LAZY_EXPRESSION
+            public static [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] get(): <implicit>
+
+        public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] val baz: <implicit>
+            public static [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+        public final [ResolvedTo(CONTRACTS)] val member2: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] get(): <implicit>
+
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C] fun qux(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|C.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [FirIllegalCompanionBlockMemberKey=true] class Nested : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] constructor(): R|C.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [FirIllegalCompanionBlockMemberKey=true] typealias TA = R|kotlin/Int|
+
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C, FirIllegalCompanionBlockMemberKey=true] constructor(): R|C| { LAZY_BLOCK }
+
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirIllegalCompanionBlockMemberKey=true] init { LAZY_BLOCK }
+
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C] fun doubleNestedFun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] val doubleNestedProp: <implicit> = LAZY_EXPRESSION
+            public static [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] get(): <implicit>
+
+        public final [ResolvedTo(BODY_RESOLVE)] [FirIllegalCompanionBlockMemberKey=true] class DoubleNestedNested : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DoubleNestedNested] constructor(): R|C.DoubleNestedNested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [FirIllegalCompanionBlockMemberKey=true] typealias DoubleNestedTA = R|kotlin/Int|
+
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C, FirIllegalCompanionBlockMemberKey=true] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] x: R|kotlin/Int|): R|C| { LAZY_BLOCK }
+
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirIllegalCompanionBlockMemberKey=true] init { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] enum class E : R|kotlin/Enum<E>| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] constructor(): R|E| {
+            super<R|kotlin/Enum<E>|>()
+        }
+
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=E] enum entry Entry: R|E| = LAZY_EXPRESSION
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] fun values(): R|kotlin/Array<E>| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|E| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<E>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<E>|
+
+    }
+    public final [ResolvedTo(CONTRACTS)] val o: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(CONTRACTS)] get(): <implicit>

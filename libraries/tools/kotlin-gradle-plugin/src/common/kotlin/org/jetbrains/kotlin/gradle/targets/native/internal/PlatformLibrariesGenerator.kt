@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
-import org.jetbrains.kotlin.gradle.tasks.CacheBuilder
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeVersionValueSource
 import org.jetbrains.kotlin.gradle.tasks.addArg
 import org.jetbrains.kotlin.gradle.utils.lifecycleWithDuration
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
@@ -112,13 +112,24 @@ internal class PlatformLibrariesGenerator(
             return true
         }
 
-        val cacheDirectory = CacheBuilder.getRootCacheDirectory(
+        val cacheDirectory = getRootCacheDirectory(
             konanHome, konanTarget, true, konanCacheKind.get()
         )
         return presentDefs.toPlatformLibNames().all {
-            cacheDirectory.resolve(CacheBuilder.getCacheFileName(it, konanCacheKind.get())).listFilesOrEmpty().isNotEmpty()
+            cacheDirectory.resolve(getCacheFileName(it, konanCacheKind.get())).listFilesOrEmpty().isNotEmpty()
         }
     }
+
+    private fun getRootCacheDirectory(konanHome: File, target: KonanTarget, debuggable: Boolean, cacheKind: NativeCacheKind): File {
+        require(cacheKind != NativeCacheKind.NONE) { "Unsupported cache kind: ${NativeCacheKind.NONE}" }
+        val optionsAwareCacheName = "$target${if (debuggable) "-g" else ""}$cacheKind"
+        return konanHome.resolve("klib/cache/$optionsAwareCacheName")
+    }
+
+    private fun getCacheFileName(baseName: String, cacheKind: NativeCacheKind): String =
+        cacheKind.outputKind?.let {
+            "${baseName}-cache"
+        } ?: error("No output for kind $cacheKind")
 
     /**
      * We store directories where platform libraries were detected/generated earlier
@@ -148,7 +159,7 @@ internal class PlatformLibrariesGenerator(
             args.addArg("-cache-kind", konanCacheKind.get().produce!!)
             args.addArg(
                 "-cache-directory",
-                CacheBuilder.getRootCacheDirectory(
+                getRootCacheDirectory(
                     actualNativeHomeDirectory.get(),
                     konanTarget,
                     true,
@@ -207,10 +218,7 @@ internal class PlatformLibrariesGenerator(
             }
         }
 
-        logger.lifecycle(generationMessage)
-        logger.lifecycleWithDuration("$generationMessage finished,") {
-            runGenerationTool()
-        }
+        generatePlatformLibs(generationMessage)
 
         val librariesAreActuallyGenerated = checkLibrariesInDistribution()
         assert(librariesAreActuallyGenerated) { "Some platform libraries were not generated" }
@@ -222,6 +230,19 @@ internal class PlatformLibrariesGenerator(
         assert(librariesAreActuallyCached) { "Some platform libraries were not precompiled" }
         if (librariesAreActuallyCached) {
             alreadyProcessed.setCached(platformLibsDirectory, konanCacheKind.get())
+        }
+    }
+
+    private fun generatePlatformLibs(generationMessage: String) {
+        val lock = commonizerLockForDirectory.getOrPut(platformLibsDirectory) {
+            NativeDistributionCommonizerLock(platformLibsDirectory) { message -> NativeVersionValueSource.Companion.logger.info("Kotlin Native Platform Libraries: $message") }
+        }
+
+        lock.withLock {
+            logger.lifecycle(generationMessage)
+            logger.lifecycleWithDuration("$generationMessage finished,") {
+                runGenerationTool()
+            }
         }
     }
 
@@ -270,5 +291,7 @@ internal class PlatformLibrariesGenerator(
         fun registerRequiredServiceIfAbsent(project: Project): Provider<GeneratedPlatformLibrariesService> {
             return project.gradle.registerClassLoaderScopedBuildService(GeneratedPlatformLibrariesService::class)
         }
+
+        private val commonizerLockForDirectory = ConcurrentHashMap<File, NativeDistributionCommonizerLock>()
     }
 }

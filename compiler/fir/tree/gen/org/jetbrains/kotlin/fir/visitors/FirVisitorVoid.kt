@@ -723,6 +723,38 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(replSnippet)
     }
 
+    final override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: Nothing?) {
+        visitReplDeclarationReference(replDeclarationReference)
+    }
+
+    open fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference) {
+        visitElement(replDeclarationReference)
+    }
+
+    final override fun visitReplExpressionReference(replExpressionReference: FirReplExpressionReference, data: Nothing?) {
+        visitReplExpressionReference(replExpressionReference)
+    }
+
+    open fun visitReplExpressionReference(replExpressionReference: FirReplExpressionReference) {
+        visitElement(replExpressionReference)
+    }
+
+    final override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: Nothing?) {
+        visitReplPropertyInitializer(replPropertyInitializer)
+    }
+
+    open fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer) {
+        visitElement(replPropertyInitializer)
+    }
+
+    final override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: Nothing?) {
+        visitReplPropertyDelegate(replPropertyDelegate)
+    }
+
+    open fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate) {
+        visitElement(replPropertyDelegate)
+    }
+
     final override fun visitPackageDirective(packageDirective: FirPackageDirective, data: Nothing?) {
         visitPackageDirective(packageDirective)
     }
@@ -835,6 +867,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(callableReferenceAccess)
     }
 
+    final override fun visitQualifierWithContextSensitiveAlternative(qualifierWithContextSensitiveAlternative: FirQualifierWithContextSensitiveAlternative, data: Nothing?) {
+        visitQualifierWithContextSensitiveAlternative(qualifierWithContextSensitiveAlternative)
+    }
+
+    open fun visitQualifierWithContextSensitiveAlternative(qualifierWithContextSensitiveAlternative: FirQualifierWithContextSensitiveAlternative) {
+        visitElement(qualifierWithContextSensitiveAlternative)
+    }
+
     final override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Nothing?) {
         visitPropertyAccessExpression(propertyAccessExpression)
     }
@@ -883,12 +923,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(varargArgumentsExpression)
     }
 
-    final override fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression, data: Nothing?) {
-        visitSamConversionExpression(samConversionExpression)
+    final override fun visitFunctionTypeConversionExpression(functionTypeConversionExpression: FirFunctionTypeConversionExpression, data: Nothing?) {
+        visitFunctionTypeConversionExpression(functionTypeConversionExpression)
     }
 
-    open fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression) {
-        visitElement(samConversionExpression)
+    open fun visitFunctionTypeConversionExpression(functionTypeConversionExpression: FirFunctionTypeConversionExpression) {
+        visitElement(functionTypeConversionExpression)
     }
 
     final override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: Nothing?) {

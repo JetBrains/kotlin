@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.util.useCompilerVersion
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.appendText
@@ -68,7 +69,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                 id("kotlin-dsl")
             }
 
-            overrideOldGradleBoundLanguageVersionsWith19()
+            overrideOldGradleBoundLanguageVersionsWith21()
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
             checkJvmDefaultReplacement(
@@ -101,11 +102,9 @@ internal class JvmDefaultIT : KGPBaseTest() {
                 """.trimIndent()
             )
             buildScriptInjection {
-                project.applyJvm {
-                    compilerVersion.value("2.2.0-RC")
-                }
+                useCompilerVersion("2.2.0-RC")
             }
-            overrideOldGradleBoundLanguageVersionsWith19()
+            overrideOldGradleBoundLanguageVersionsWith21()
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
             build(":compileKotlin") {
@@ -132,7 +131,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            overrideOldGradleBoundLanguageVersionsWith19()
+            overrideOldGradleBoundLanguageVersionsWith21()
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
             checkJvmDefaultReplacement(
@@ -165,7 +164,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                     }
                 }
             }
-            overrideOldGradleBoundLanguageVersionsWith19()
+            overrideOldGradleBoundLanguageVersionsWith21()
 
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
@@ -193,24 +192,15 @@ internal class JvmDefaultIT : KGPBaseTest() {
     )
 
     // Gradle versions 8.* and before use either LV 1.4 or 1.8, but they both are currently disabled
-    private fun TestProject.overrideOldGradleBoundLanguageVersionsWith19() {
+    private fun TestProject.overrideOldGradleBoundLanguageVersionsWith21() {
         buildScriptInjection {
             project.afterEvaluate {
                 project.afterEvaluate {
                     project.tasks.named("compileKotlin", KotlinJvmCompile::class.java) {
                         @Suppress("DEPRECATION")
                         it.compilerOptions {
-                            // Note: with LV 2.0 here, the test notOverrideKotlinDslPluginOnUsingBtaWithOlderCompilerVersion
-                            // fails on Gradle 8.14 with CNFE: KtDiagnosticsContainer
-                            // Probably some conflict arises between compiler version 2.2.0-RC used in the test
-                            // and current master (KtDiagnosticsContainer was introduced in 2.2.0-Beta1 timeframe)
-                            // Error disappears if we comment the last line in FirAssignmentPluginExtensionRegistrar
-                            // With LV 1.9, this class isn't actual at all.
-                            // This is a very specific case that is caused by usage of KGP 2.3 but with Kotlin compiler 2.2 through BTA.
-                            // The problem is that compiler plugins are not yet aligned with the version of compiler configured for BTA,
-                            // so it's compiler 2.2 + assignment compiler plugin 2.3. See KT-68107.
-                            languageVersion.set(KotlinVersion.KOTLIN_1_9)
-                            apiVersion.set(KotlinVersion.KOTLIN_1_9)
+                            languageVersion.set(KotlinVersion.KOTLIN_2_1)
+                            apiVersion.set(KotlinVersion.KOTLIN_2_1)
                         }
                     }
                 }

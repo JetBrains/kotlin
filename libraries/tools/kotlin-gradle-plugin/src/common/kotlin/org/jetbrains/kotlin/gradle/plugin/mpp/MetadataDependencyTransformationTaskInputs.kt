@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.gradle.utils.currentBuild
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
+/**
+ * FIXME: KT-84222 Remove this class, and move inputs to [GranularMetadataTransformation.Params]
+ */
 internal class MetadataDependencyTransformationTaskInputs(
     project: Project,
     kotlinSourceSet: KotlinSourceSet,
@@ -136,10 +139,9 @@ internal class MetadataDependencyTransformationTaskInputs(
             it.name to project.configurations.getByName(it.compileDependencyConfigurationName)
                 .allDependencies
                 .map { dependency ->
-                    if (dependency is ProjectDependency && keepProjectDependencies) {
-                        dependency.compatAccessor(project).dependencyProject().path
-                    } else {
-                        "${dependency.name}:${dependency.group}:${dependency.version}"
+                    when (dependency) {
+                        is ProjectDependency -> dependency.compatAccessor(project).dependencyProject().path
+                        else -> "${dependency.name}:${dependency.group}:${dependency.version}"
                     }
                 }
                 .toSet()

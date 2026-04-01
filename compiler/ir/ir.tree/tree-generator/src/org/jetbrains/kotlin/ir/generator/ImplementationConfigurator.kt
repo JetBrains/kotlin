@@ -137,8 +137,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(replSnippet) {
             implementation.putImplementationOptInInConstructor = false
-            defaultNull("returnType", "stateObject", "targetClass")
-            isLateinit("receiverParameters", "body")
+            defaultNull("stateObject", "targetClass")
+            isLateinit("receiverParameters")
             default("origin", "REPL_SNIPPET_ORIGIN")
             default("declarationsFromOtherSnippets", "ArrayList()")
             default("variablesFromOtherSnippets", "ArrayList()")
@@ -382,6 +382,15 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(enumConstructorCall) {
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+
+            recordTargetShapeOnSymbolChange()
+        }
+
+        impl(annotation) {
             implementation.generationCallback = {
                 println()
                 println("companion object")

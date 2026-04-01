@@ -35,9 +35,6 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
             expectedTasks += listOf(
                 ":lib:cinteropMyCinteropIosX64",
                 ":lib:compileKotlinIosX64",
-                ":lib:assembleMyframeDebugFrameworkIosArm64",
-                ":lib:assembleMyfatframeDebugFatFramework",
-                ":lib:assembleLibDebugXCFramework",
                 ":lib:compileTestKotlinIosX64",
                 ":lib:linkDebugTestIosX64",
                 ":lib:transformCommonMainDependenciesMetadata",

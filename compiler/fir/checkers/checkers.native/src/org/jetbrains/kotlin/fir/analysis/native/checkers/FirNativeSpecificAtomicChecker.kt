@@ -50,7 +50,7 @@ object FirNativeSpecificAtomicChecker : FirCallableDeclarationChecker(MppChecker
     ) {
         val classId = typeRef.coneType.fullyExpandedClassId(context.session) ?: return
         if (classId.packageFqName != CONCURRENT_PACKAGE) return
-        if (classId.parentClassId != null) return
+        if (classId.outerClassId != null) return
         val name = classId.shortClassName
         if (name !in CONCURRENT_NAME_SET) return
         reporter.reportOn(typeRef.source, FirNativeErrors.NATIVE_SPECIFIC_ATOMIC, name)

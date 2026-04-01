@@ -1,0 +1,12 @@
+@file:OptIn(ExperimentalVersionOverloading::class)
+
+class C {
+    inner class A(
+        val a: Int = 1,
+        @IntroducedAt("1") val b: String = "B",
+        @IntroducedAt("1") private val b1: String = "B1",
+        @IntroducedAt("2") val c: Int = 11,
+    ) {
+        fun foo(): String = "a=$a,b=$b,b1=$b1,c=$c"
+    }
+}

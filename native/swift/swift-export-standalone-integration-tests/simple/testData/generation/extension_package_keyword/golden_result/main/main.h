@@ -3,6 +3,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-void org_nonisolated_kotlin_internal_foo();
+_Bool org_nonisolated_kotlin_internal_foo();
 
 NS_ASSUME_NONNULL_END

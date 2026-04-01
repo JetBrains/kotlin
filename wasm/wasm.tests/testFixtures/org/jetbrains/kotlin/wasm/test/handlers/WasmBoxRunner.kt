@@ -9,16 +9,26 @@ import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
-internal class WasmBoxRunner(
-    testServices: TestServices
-) : WasmBoxRunnerBase(testServices) {
-    override val vmsToCheck: List<WasmVM> =
-        listOf(WasmVM.V8, WasmVM.SpiderMonkey, WasmVM.JavaScriptCore)
+internal fun WasmCompilerResult.writeTo(outputDir: File, outputFilenameBase: String, debugMode: DebugMode, mode: String = "") {
+    writeCompilationResult(this, outputDir, outputFilenameBase)
+    if (debugMode >= DebugMode.DEBUG) {
+        val outputPath = outputDir.absolutePath
+        println(" ------ $mode Wat  file://$outputPath/$outputFilenameBase.wat")
+        println(" ------ $mode Wasm file://$outputPath/$outputFilenameBase.wasm")
+        println(" ------ $mode JS   file://$outputPath/$outputFilenameBase.import-object.mjs")
+        println(" ------ $mode JS   file://$outputPath/$outputFilenameBase.mjs")
+    }
+}
+
+class WasmBoxRunner(
+    testServices: TestServices,
+    executeWithV8Only: Boolean = false,
+) : WasmBoxRunnerBase(testServices, executeWithV8Only) {
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
@@ -27,25 +37,20 @@ internal class WasmBoxRunner(
     }
 
     private fun runWasmCode() {
-        val artifacts = modulesToArtifact.values.single()
-        val outputDirBase = testServices.getWasmTestOutputDirectory()
+        val artifacts = modulesToArtifact.values.single() as BinaryArtifacts.Wasm.CompilationSets
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
 
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
         val testFileText = originalFile.readText()
         val failsIn = InTextDirectivesUtils.findListWithPrefixes(testFileText, "// WASM_FAILS_IN: ")
 
-        fun writeToFilesAndRunTest(mode: String, result: WasmCompilerResult): List<Throwable> {
-            val outputDir = File(outputDirBase, mode)
-
+        fun writeToFilesAndRunTest(mode: String, result: BinaryArtifacts.WasmCompilationSet): List<Throwable> {
+            val outputDir = testServices.getWasmTestOutputDirectoryForMode(mode)
             outputDir.mkdirs()
-            writeCompilationResult(result, outputDir, "index")
-            if (debugMode >= DebugMode.DEBUG) {
-                val outputPath = outputDir.absolutePath
-                println(" ------ $mode Wat  file://$outputPath/index.wat")
-                println(" ------ $mode Wasm file://$outputPath/index.wasm")
-                println(" ------ $mode JS   file://$outputPath/index.uninstantiated.mjs")
-                println(" ------ $mode JS   file://$outputPath/index.mjs")
+
+            result.compilerResult.writeTo(outputDir, WASM_BASE_FILE_NAME, debugMode, mode)
+            result.compilationDependencies.forEach {
+                it.compilerResult.writeTo(outputDir, it.compilerResult.baseFileName, debugMode, mode)
             }
 
             val filesToIgnoreInSizeChecks = mutableSetOf<File>()
@@ -64,10 +69,17 @@ internal class WasmBoxRunner(
             }
         }
 
-        val allExceptions =
-            writeToFilesAndRunTest("dev", artifacts.compilerResult) +
-                    writeToFilesAndRunTest("dce", artifacts.compilerResultWithDCE) +
-                    (artifacts.compilerResultWithOptimizer?.let { writeToFilesAndRunTest("optimized", it) } ?: emptyList())
+        val allExceptions = mutableListOf<Throwable>()
+
+        allExceptions.addAll(writeToFilesAndRunTest("dev", artifacts.compilation))
+
+        artifacts.dceCompilation?.let {
+            allExceptions.addAll(writeToFilesAndRunTest("dce", it))
+        }
+
+        artifacts.optimisedCompilation?.let {
+            allExceptions.addAll(writeToFilesAndRunTest("optimized", it))
+        }
 
         processExceptions(allExceptions)
     }

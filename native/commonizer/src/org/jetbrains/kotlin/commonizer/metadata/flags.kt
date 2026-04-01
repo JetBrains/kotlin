@@ -2,8 +2,6 @@
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION")
-
 package org.jetbrains.kotlin.commonizer.metadata
 
 import org.jetbrains.kotlin.commonizer.cir.*
@@ -15,7 +13,6 @@ import kotlin.metadata.ClassKind as KmClassKind
 import kotlin.metadata.Modality as KmModality
 
 internal fun KmFunction.modifiersFrom(cf: CirFunction, isExpect: Boolean) {
-    hasAnnotations = cf.hasAnnotations
     visibility = cf.kmVisibility
     modality = cf.kmModality
     kind = cf.kind.kmMemberKind
@@ -28,7 +25,6 @@ internal fun KmFunction.modifiersFrom(cf: CirFunction, isExpect: Boolean) {
 }
 
 internal fun KmProperty.modifiersFrom(cp: CirProperty, isExpect: Boolean) {
-    hasAnnotations = cp.hasAnnotations
     visibility = cp.kmVisibility
     modality = cp.kmModality
     kind = cp.kind.kmMemberKind
@@ -44,7 +40,6 @@ internal fun KmPropertyAccessorAttributes.modifiersFrom(
     cp: CirPropertyAccessor, visibilityHolder: CirHasVisibility,
     modalityHolder: CirHasModality,
 ) {
-    hasAnnotations = cp.hasAnnotations
     visibility = visibilityHolder.kmVisibility
     modality = modalityHolder.kmModality
     isNotDefault = !cp.isDefault
@@ -52,7 +47,6 @@ internal fun KmPropertyAccessorAttributes.modifiersFrom(
 }
 
 internal fun KmConstructor.modifiersFrom(cc: CirClassConstructor) {
-    hasAnnotations = cc.hasAnnotations
     visibility = cc.kmVisibility
     isSecondary = !cc.isPrimary
     hasNonStableParameterNames = !cc.hasStableParameterNames
@@ -67,14 +61,12 @@ internal fun CirType.applyTypeFlagsTo(type: KmType) {
 }
 
 internal fun KmValueParameter.modifiersFrom(cv: CirValueParameter) {
-    hasAnnotations = cv.hasAnnotations
     declaresDefaultValue = cv.declaresDefaultValue
     isCrossinline = cv.isCrossinline
     isNoinline = cv.isNoinline
 }
 
 internal fun KmClass.modifiersFrom(cc: CirClass, isExpect: Boolean) {
-    hasAnnotations = cc.hasAnnotations
     visibility = cc.kmVisibility
     modality = cc.kmModality
     kind = cc.kmClassKind
@@ -87,18 +79,8 @@ internal fun KmClass.modifiersFrom(cc: CirClass, isExpect: Boolean) {
 }
 
 internal fun KmTypeAlias.modifiersFrom(ct: CirTypeAlias) {
-    hasAnnotations = ct.hasAnnotations
     visibility = ct.kmVisibility
 }
-
-private inline val CirHasAnnotations.hasAnnotations: Boolean
-    get() = annotations.isNotEmpty()
-
-private inline val CirClass.hasAnnotations: Boolean
-    get() = annotations.isNotEmpty()
-
-private inline val CirProperty.hasAnnotations: Boolean
-    get() = annotations.isNotEmpty() || backingFieldAnnotations.isNotEmpty() || delegateFieldAnnotations.isNotEmpty()
 
 private inline val CirHasVisibility.kmVisibility: Visibility
     get() = when (visibility) {

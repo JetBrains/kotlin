@@ -8,9 +8,13 @@
 package foo
 
 @JsExport
+enum class Uninhabited
+
+@JsExport
 enum class TestEnumClass(val constructorParameter: String) {
     A("aConstructorParameter"),
-    B("bConstructorParameter");
+    B("bConstructorParameter"),
+    @JsName("CustomNamedEntry") C("cConstructorParameter");
 
     val foo = ordinal
 

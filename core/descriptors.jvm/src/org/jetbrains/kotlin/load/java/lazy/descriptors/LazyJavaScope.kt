@@ -186,6 +186,7 @@ abstract class LazyJavaScope(
                 emptyMap<CallableDescriptor.UserDataKey<ValueParameterDescriptor>, ValueParameterDescriptor>()
         )
 
+        functionDescriptorImpl.isExternal = method.isNative
         functionDescriptorImpl.setParameterNamesStatus(effectiveSignature.hasStableParameterNames, valueParameters.hasSynthesizedNames)
 
         if (effectiveSignature.errors.isNotEmpty()) {

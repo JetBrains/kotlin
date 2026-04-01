@@ -1,0 +1,4 @@
+KT element: KtNamedFunction
+Resolve target: deeplyNestedMemberRepl.repl.kts -> <snippet-deeplyNestedMemberRepl.repl.kts> -> DeeplyNestedMemberRepl_repl -> Outer -> Middle -> deepFun
+FIR:
+  public? final? fun deepFun(): R|kotlin/Unit| { LAZY_BLOCK }

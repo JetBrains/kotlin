@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.cli.arguments.generator
 
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
+import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
-import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
-import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
-import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
+import org.jetbrains.kotlin.arguments.dsl.base.Modifier
+import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -37,7 +37,10 @@ private fun generateLevel(genDir: File, levelName: String) {
 }
 
 private fun findLevelWithParent(name: String): Pair<KotlinCompilerArgumentsLevel, KotlinCompilerArgumentsLevel?> {
-    fun find(level: KotlinCompilerArgumentsLevel, parent: KotlinCompilerArgumentsLevel?): Pair<KotlinCompilerArgumentsLevel, KotlinCompilerArgumentsLevel?>? {
+    fun find(
+        level: KotlinCompilerArgumentsLevel,
+        parent: KotlinCompilerArgumentsLevel?,
+    ): Pair<KotlinCompilerArgumentsLevel, KotlinCompilerArgumentsLevel?>? {
         if (level.name == name) return level to parent
         return level.nestedLevels.firstNotNullOfOrNull { find(it, level) }
     }
@@ -88,7 +91,7 @@ val levelToClassNameMap = listOf(
         levelIsFinal = false,
     ),
     ArgumentsInfo(
-        levelName = CompilerArgumentsLevelNames.wasmArguments,
+        levelName = CompilerArgumentsLevelNames.legacyWasmArguments,
         className = "K2WasmCompilerArguments",
         levelIsFinal = false,
         originFileName = "WasmCompilerArguments",
@@ -110,6 +113,18 @@ val levelToClassNameMap = listOf(
         className = "K2MetadataCompilerArguments",
         levelIsFinal = true,
         originFileName = "MetadataCompilerArguments",
+    ),
+    ArgumentsInfo(
+        levelName = CompilerArgumentsLevelNames.commonJsAndWasmArguments,
+        className = "CommonJsAndWasmCompilerArguments",
+        levelIsFinal = false,
+        originFileName = "CommonJsAndWasmCompilerArguments",
+    ),
+    ArgumentsInfo(
+        levelName = CompilerArgumentsLevelNames.wasmArguments,
+        className = "KotlinWasmCompilerArguments",
+        levelIsFinal = true,
+        originFileName = "KotlinWasmCompilerArguments",
     ),
 ).associateBy { it.levelName }
 
@@ -141,7 +156,7 @@ private fun generateArgumentsClass(
 private fun SmartPrinter.generateArgumentsClass(
     level: KotlinCompilerArgumentsLevel,
     parent: KotlinCompilerArgumentsLevel?,
-    info: ArgumentsInfo
+    info: ArgumentsInfo,
 ) {
     println(COPYRIGHT)
     println("package org.jetbrains.kotlin.cli.common.arguments")
@@ -159,8 +174,18 @@ private fun SmartPrinter.generateArgumentsClass(
     println(GeneratorsFileUtil.GENERATED_MESSAGE_SUFFIX)
     println()
 
+    if (Modifier.DEPRECATED in level.modifiers) {
+        println("@Deprecated(\"This class was deprecated and will be removed soon.\", level = DeprecationLevel.WARNING)")
+    }
+    if (Modifier.DEPRECATED in (parent?.modifiers ?: emptySet())) {
+        println("@Suppress(\"DEPRECATION\")")
+    }
     if (!info.levelIsFinal) {
-        print("abstract ")
+        if (Modifier.SEALED in level.modifiers) {
+            print("sealed ")
+        } else {
+            print("abstract ")
+        }
     }
     print("class ${info.className}")
     val supertypes = when (parent) {
@@ -177,6 +202,7 @@ private fun SmartPrinter.generateArgumentsClass(
                 } && argument.releaseVersionsMetadata.removedVersion != null
             ) continue
             validateDeprecationConsistency(argument)
+            validateLanguageFeaturesConsistency(argument)
             generateGradleAnnotations(argument)
             generateArgumentAnnotation(argument, level)
             generateFeatureAnnotations(argument)
@@ -209,6 +235,9 @@ private fun KotlinCompilerArgumentsLevel.collectImports(info: ArgumentsInfo): Li
                 }
 
             }
+        }
+        if (arguments.any { arg -> arg.defaultValueInArgs.contains(File::class.simpleName!!) }) {
+            add(File::class.qualifiedName!!)
         }
     }
     return rawImports
@@ -274,6 +303,81 @@ private fun validateDeprecationConsistency(argument: KotlinCompilerArgument) {
     }
 }
 
+@OptIn(ExperimentalArgumentApi::class)
+private fun validateLanguageFeaturesConsistency(argument: KotlinCompilerArgument) {
+    if (argument.additionalAnnotations.none { it is Enables || it is Disables }) return
+    when (val argumentType = argument.argumentType) {
+        is BooleanType -> {
+            argumentType.defaultValue.current.let {
+                if (it != false) {
+                    error("Argument '${argument.name}' has Boolean type and changes language features. Expected default value is 'false', but actual is '$it'.")
+                }
+            }
+            for (additionalAnn in argument.additionalAnnotations) {
+                val ifValueIs = when (additionalAnn) {
+                    is Enables -> additionalAnn.ifValueIs
+                    is Disables -> additionalAnn.ifValueIs
+                    else -> null
+                }
+                if (ifValueIs?.isNotEmpty() == true) {
+                    error("Argument '${argument.name}' has Boolean type and changes language features. It's expected that 'ifValueIs' isn't set, but actually it's '$ifValueIs'.")
+                }
+            }
+        }
+        is StringType -> {
+            argumentType.defaultValue.current?.let {
+                error("Argument '${argument.name}' has String type and changes language features. Expected default value is 'null', but actual is '$it'")
+            }
+            for (additionalAnn in argument.additionalAnnotations) {
+                val ifValueIs = when (additionalAnn) {
+                    is Enables -> additionalAnn.ifValueIs
+                    is Disables -> additionalAnn.ifValueIs
+                    else -> null
+                }
+                if (ifValueIs?.isEmpty() == true) {
+                    error("Argument '${argument.name}' has String type and changes language features. It's expected that 'ifValueIs' isn't empty, but actually it's empty.")
+                }
+            }
+        }
+        is AnnotationDefaultTargetModeType -> {
+            argumentType.defaultValue.current?.let {
+                error("Argument '${argument.name}' has AnnotationDefaultTargetMode type and changes language features. Expected default value is 'null', but actual is '$it'")
+            }
+            for (additionalAnn in argument.additionalAnnotations) {
+                val ifValueIs = when (additionalAnn) {
+                    is Enables -> additionalAnn.ifValueIs
+                    is Disables -> additionalAnn.ifValueIs
+                    else -> null
+                }
+                if (ifValueIs?.isEmpty() == true) {
+                    error("Argument '${argument.name}' has AnnotationDefaultTargetMode type and changes language features. It's expected that 'ifValueIs' isn't empty, but actually it's empty.")
+                }
+            }
+        }
+        is NameBasedDestructuringModeType -> {
+            argumentType.defaultValue.current?.let {
+                error("Argument '${argument.name}' has NameBasedDestructuringMode type and changes language features. Expected default value is 'null', but actual is '$it'")
+            }
+            for (additionalAnn in argument.additionalAnnotations) {
+                val ifValueIs = when (additionalAnn) {
+                    is Enables -> additionalAnn.ifValueIs
+                    is Disables -> additionalAnn.ifValueIs
+                    else -> null
+                }
+                if (ifValueIs?.isEmpty() == true) {
+                    error("Argument '${argument.name}' has NameBasedDestructuringMode type and changes language features. It's expected that 'ifValueIs' isn't empty, but actually it's empty.")
+                }
+            }
+        }
+        else -> {
+            error(
+                "Unexpected type for argument '${argument.name}' that changes language features: ${argumentType::class.simpleName}. " +
+                        "Allowed types: ${BooleanType::class.simpleName}, ${StringType::class.simpleName}, ${AnnotationDefaultTargetModeType::class.simpleName}, ${NameBasedDestructuringModeType::class.simpleName}."
+            )
+        }
+    }
+}
+
 private fun SmartPrinter.generateGradleAnnotations(argument: KotlinCompilerArgument) {
     generateAdditionalAnnotations(argument, kind = AnnotationKind.Gradle)
 }
@@ -297,7 +401,7 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
             val optionalValue = if (ifValue.isNotBlank()) ", \"$ifValue\"" else ""
             println("@Enables(LanguageFeature.$featureName$optionalValue)")
         }
-        is Disables if kind == AnnotationKind.LanguageFeature-> {
+        is Disables if kind == AnnotationKind.LanguageFeature -> {
             val feature = annotation.feature
             val ifValue = annotation.ifValueIs
             val featureName = feature.name
@@ -331,19 +435,24 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
     }
 }
 
+@OptIn(ExperimentalArgumentApi::class)
 private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
     val name = argument.calculateName()
-    val type = when (val type = argument.valueType) {
+    val type = when (val type = argument.argumentType) {
         is BooleanType -> when (type.isNullable.current) {
             true -> "Boolean?"
             false -> "Boolean"
         }
-        is StringArrayType -> "Array<String>?"
+        is StringArrayType -> "Array<String>"
+        is StringListType -> "Array<String>"
+        is SearchPathType -> "String?"
+        is PathListType -> "Array<String>"
         else -> when (type.isNullable.current) {
             true -> "String?"
             false -> "String"
         }
     }
+
     println("var $name: $type = ${argument.defaultValueInArgs}")
     generateSetter(type, argument)
 }
@@ -417,13 +526,22 @@ private fun SmartPrinter.generateFreeArgsAndErrors() {
     println("@Transient")
     println("var errors: ArgumentParseErrors? = null")
     println()
+    println("@Transient")
+    println("var explicitArguments: Map<ArgumentField, List<Any>> = emptyMap()")
+    println()
 }
 
+@OptIn(ExperimentalArgumentApi::class)
 private val KotlinCompilerArgument.defaultValueInArgs: String
     get() {
-        @Suppress("UNCHECKED_CAST")
-        val valueType = valueType as KotlinArgumentValueType<Any>
-        return valueType.stringRepresentation(valueType.defaultValue.current) ?: "null"
+        return when (@Suppress("UNCHECKED_CAST") val valueType = argumentType as KotlinArgumentValueType<Any>) {
+            is StringArrayType -> "emptyArray()"
+            is StringListType if valueType.defaultValue.current.isNullOrEmpty() -> "emptyArray()"
+            is StringListType -> "arrayOf(${valueType.stringRepresentation(valueType.defaultValue.current)})"
+            is PathListType if valueType.defaultValue.current.isNullOrEmpty() -> "emptyArray()"
+            is PathListType -> "arrayOf(${valueType.stringRepresentation(valueType.defaultValue.current)})"
+            else -> valueType.stringRepresentation(valueType.defaultValue.current) ?: "null"
+        }
     }
 
 private const val tripleQuote = "\"\"\""

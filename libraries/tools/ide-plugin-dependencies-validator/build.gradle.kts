@@ -5,7 +5,6 @@ import kotlin.io.path.readLines
 plugins {
     application
     kotlin("jvm")
-    id("jps-compatible")
     id("project-tests-convention")
 }
 
@@ -25,6 +24,7 @@ dependencies {
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 projectTests {

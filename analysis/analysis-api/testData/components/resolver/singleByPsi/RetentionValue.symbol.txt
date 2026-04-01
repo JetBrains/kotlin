@@ -1,0 +1,5 @@
+KtNameReferenceExpression(31,37): 'SOURCE'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationRetention.SOURCE
+    ]

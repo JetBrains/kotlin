@@ -42,7 +42,7 @@ class JvmAtomicSymbols(
     private val javaLangClass: IrClassSymbol = createClass(javaLang, "Class", ClassKind.CLASS, Modality.FINAL)
 
     override val volatileAnnotationClass: IrClass
-        get() = context.referenceClass(ClassId(FqName("kotlin.jvm"), Name.identifier("Volatile")))?.owner
+        get() = context.finderForBuiltins().findClass(ClassId(FqName("kotlin.jvm"), Name.identifier("Volatile")))?.owner
             ?: error("kotlin.jvm.Volatile class is not found")
 
     // java.util.concurrent.atomic.AtomicIntegerFieldUpdater

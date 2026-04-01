@@ -733,8 +733,8 @@ internal class BenchmarkScriptConfigurator : RefineScriptCompilationConfiguratio
         context: ScriptConfigurationRefinementContext,
     ): ResultWithDiagnostics<ScriptCompilationConfiguration> {
         val benchmarkProject = context.collectedData
-            ?.get(ScriptCollectedData.foundAnnotations)
-            ?.find { it is BenchmarkProject } as? BenchmarkProject
+            ?.get(ScriptCollectedData.collectedAnnotations)
+            ?.find { it.annotation is BenchmarkProject }?.annotation as? BenchmarkProject
             ?: return run {
                 makeFailureResult("Script does not contain ${BenchmarkProject::name} annotation!")
             }

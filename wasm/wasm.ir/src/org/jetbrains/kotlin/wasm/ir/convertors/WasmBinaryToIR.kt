@@ -7,10 +7,39 @@
 
 package org.jetbrains.kotlin.wasm.ir.convertors
 
+import org.jetbrains.kotlin.utils.readSignedLeb128
+import org.jetbrains.kotlin.utils.readUnsignedLeb128
 import org.jetbrains.kotlin.wasm.ir.*
 import java.io.BufferedInputStream
 import java.nio.ByteBuffer
 
+private class FunctionHeapType(val index: Int) : WasmHeapType.Type.FunctionType()
+private class FunctionType(val index: Int) : WasmImmediate.TypeIdx()
+private class Function(val index: Int) : WasmImmediate.FuncIdx()
+private class Global(val index: Int) : WasmImmediate.GlobalIdx()
+private class Type(val index: Int) : WasmImmediate.TypeIdx()
+
+private class BinaryToIrResolver : DeclarationResolver() {
+    val functions: MutableList<WasmFunction> = mutableListOf()
+    val globalFields: MutableList<WasmGlobal> = mutableListOf()
+    val gcTypes: MutableList<WasmTypeDeclaration> = mutableListOf()
+    val functionTypes: MutableList<WasmFunctionType> = mutableListOf()
+
+    override fun resolve(type: WasmHeapType.Type): WasmTypeDeclaration =
+        functionTypes[(type as FunctionHeapType).index]
+
+    override fun resolve(type: WasmImmediate.TypeIdx): WasmTypeDeclaration = when(type) {
+        is FunctionType -> functionTypes[type.index]
+        is Type -> gcTypes[type.index]
+        else -> error("Unknown type:${type::class.simpleName}")
+    }
+
+    override fun resolve(global: WasmImmediate.GlobalIdx): WasmGlobal =
+        globalFields[(global as Global).index]
+
+    override fun resolve(function: WasmImmediate.FuncIdx): WasmFunction =
+        functions[(function as Function).index]
+}
 
 class WasmBinaryToIR(val b: MyByteReader) {
     val validVersion = 1u
@@ -95,10 +124,10 @@ class WasmBinaryToIR(val b: MyByteReader) {
                             val importPair = WasmImportDescriptor(readString(), WasmSymbol(readString()))
                             when (val kind = b.readByte().toInt()) {
                                 0 -> {
-                                    val type = functionTypes[b.readVarUInt32AsInt()]
+                                    val index = b.readVarUInt32AsInt()
                                     importedFunctions += WasmFunction.Imported(
                                         name = "",
-                                        type = WasmSymbol(type),
+                                        type = FunctionHeapType(index),
                                         importPair = importPair,
                                     ).also { importsInOrder.add(it) }
                                 }
@@ -138,11 +167,12 @@ class WasmBinaryToIR(val b: MyByteReader) {
                     // Function section
                     3 -> {
                         forEachVectorElement {
-                            val functionType = functionTypes[b.readVarUInt32AsInt()]
+                            val index = b.readVarUInt32AsInt()
+                            val functionType = functionTypes[index]
                             definedFunctions.add(
                                 WasmFunction.Defined(
                                     "",
-                                    WasmSymbol(functionType),
+                                    FunctionHeapType(index),
                                     locals = functionType.parameterTypes.mapIndexed { index, wasmType ->
                                         WasmLocal(index, "", wasmType, true)
                                     }.toMutableList()
@@ -328,7 +358,28 @@ class WasmBinaryToIR(val b: MyByteReader) {
             }
         }
 
+        val definedDeclarations = BinaryToIrResolver()
+        functionTypes.forEach { type ->
+            definedDeclarations.functionTypes.add(type)
+        }
+        gcTypes.forEach { type ->
+            definedDeclarations.gcTypes.add(type)
+        }
+        importedFunctions.forEach { function ->
+            definedDeclarations.functions.add(function)
+        }
+        definedFunctions.forEach { function ->
+            definedDeclarations.functions.add(function)
+        }
+        importedGlobals.forEach { global ->
+            definedDeclarations.globalFields.add(global)
+        }
+        globals.forEach { global ->
+            definedDeclarations.globalFields.add(global)
+        }
+
         return WasmModule(
+            resolver = definedDeclarations,
             recGroups = (functionTypes + gcTypes).map { listOf(it) },
             importsInOrder = importsInOrder,
             importedFunctions = importedFunctions,
@@ -362,7 +413,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
     private fun readTag(importPair: WasmImportDescriptor? = null): WasmTag {
         val attribute = b.readByte()
         check(attribute.toInt() == 0) { "as per spec" }
-        val type = functionTypes[b.readVarUInt32AsInt()]
+        val type = FunctionHeapType(b.readVarUInt32AsInt())
         return WasmTag(type, importPair)
     }
 
@@ -422,14 +473,14 @@ class WasmBinaryToIR(val b: MyByteReader) {
                     )
                 }
                 WasmImmediateKind.BLOCK_TYPE -> readBlockType()
-                WasmImmediateKind.FUNC_IDX -> WasmImmediate.FuncIdx(funByIdx(b.readVarUInt32AsInt()))
-                WasmImmediateKind.LOCAL_IDX -> WasmImmediate.LocalIdx(locals[b.readVarUInt32AsInt()])
-                WasmImmediateKind.GLOBAL_IDX -> WasmImmediate.GlobalIdx(globalByIdx(b.readVarUInt32AsInt()))
-                WasmImmediateKind.TYPE_IDX -> WasmImmediate.TypeIdx(functionTypes[b.readVarUInt32AsInt()])
+                WasmImmediateKind.FUNC_IDX -> Function(b.readVarUInt32AsInt())
+                WasmImmediateKind.LOCAL_IDX -> WasmImmediate.LocalIdx.get(locals[b.readVarUInt32AsInt()])
+                WasmImmediateKind.GLOBAL_IDX -> Global(b.readVarUInt32AsInt())
+                WasmImmediateKind.TYPE_IDX -> FunctionType(b.readVarUInt32AsInt())
                 WasmImmediateKind.MEMORY_IDX -> WasmImmediate.MemoryIdx(b.readVarUInt32AsInt())
                 WasmImmediateKind.DATA_IDX -> WasmImmediate.DataIdx(b.readVarUInt32AsInt())
                 WasmImmediateKind.TABLE_IDX -> WasmImmediate.TableIdx(b.readVarUInt32AsInt())
-                WasmImmediateKind.LABEL_IDX -> WasmImmediate.LabelIdx(b.readVarUInt32AsInt())
+                WasmImmediateKind.LABEL_IDX -> WasmImmediate.LabelIdx.get(b.readVarUInt32AsInt())
                 WasmImmediateKind.TAG_IDX -> WasmImmediate.TagIdx(b.readVarUInt32AsInt())
                 WasmImmediateKind.LABEL_IDX_VECTOR -> WasmImmediate.LabelIdxVector(mapVector { b.readVarUInt32AsInt() })
                 WasmImmediateKind.ELEM_IDX -> WasmImmediate.ElemIdx(elemByIdx(b.readVarUInt32AsInt()))
@@ -443,8 +494,14 @@ class WasmBinaryToIR(val b: MyByteReader) {
             }
         }
 
-        // We don't need location in Binary -> WasmIR, yet.
-        return WasmInstrWithoutLocation(op, immediates)
+        return when (immediates.size) {
+            0 -> wasmInstrWithoutLocation(op)
+            1 -> wasmInstrWithoutLocation(op, immediates[0])
+            2 -> wasmInstrWithoutLocation(op, immediates[0], immediates[1])
+            3 -> wasmInstrWithoutLocation(op, immediates[0], immediates[1], immediates[2])
+            4 -> wasmInstrWithoutLocation(op, immediates[0], immediates[1], immediates[2], immediates[3])
+            else -> error("Immediates count ${immediates.size} instructions not supported")
+        }
     }
 
     private fun readTypeDeclaration(): WasmTypeDeclaration {
@@ -651,70 +708,27 @@ abstract class ByteReader {
     }
 
 
-    fun readVarInt7() = readSignedLeb128().let {
+    fun readVarInt7() = readSignedLeb128(::readByte).let {
         if (it < Byte.MIN_VALUE.toLong() || it > Byte.MAX_VALUE.toLong()) error("InvalidLeb128Number")
         it.toByte()
     }
 
-    fun readVarInt32() = readSignedLeb128().let {
+    fun readVarInt32() = readSignedLeb128(::readByte).let {
         if (it < Int.MIN_VALUE.toLong() || it > Int.MAX_VALUE.toLong()) error("InvalidLeb128Number")
         it.toInt()
     }
 
-    fun readVarInt64() = readSignedLeb128(9)
+    fun readVarInt64() = readSignedLeb128(::readByte, 9)
 
-    fun readVarUInt1() = readUnsignedLeb128().let {
+    fun readVarUInt1() = readUnsignedLeb128(::readByte).let {
         if (it != 1u && it != 0u) error("InvalidLeb128Number")
         it == 1u
     }
 
-    fun readVarUInt7() = readUnsignedLeb128().let {
+    fun readVarUInt7() = readUnsignedLeb128(::readByte).let {
         if (it > 255u) error("InvalidLeb128Number")
         it.toShort()
     }
 
-    fun readVarUInt32() = readUnsignedLeb128()
-
-    protected fun readUnsignedLeb128(maxCount: Int = 4): UInt {
-        // Taken from Android source, Apache licensed
-        var result = 0u
-        var cur: UInt
-        var count = 0
-        do {
-            cur = readUByte().toUInt() and 0xffu
-            result = result or ((cur and 0x7fu) shl (count * 7))
-            count++
-        } while (cur and 0x80u == 0x80u && count <= maxCount)
-        if (cur and 0x80u == 0x80u) error("InvalidLeb128Number")
-        return result
-    }
-
-    private fun readSignedLeb128(maxCount: Int = 4): Long {
-        // Taken from Android source, Apache licensed
-        var result = 0L
-        var cur: Int
-        var count = 0
-        var signBits = -1L
-        do {
-            cur = readByte().toInt() and 0xff
-            result = result or ((cur and 0x7f).toLong() shl (count * 7))
-            signBits = signBits shl 7
-            count++
-        } while (cur and 0x80 == 0x80 && count <= maxCount)
-        if (cur and 0x80 == 0x80) error("InvalidLeb128Number")
-
-        // Check for 64 bit invalid, taken from Apache/MIT licensed:
-        //  https://github.com/paritytech/parity-wasm/blob/2650fc14c458c6a252c9dc43dd8e0b14b6d264ff/src/elements/primitives.rs#L351
-        // TODO: probably need 32 bit checks too, but meh, not in the suite
-        if (count > maxCount && maxCount == 9) {
-            if (cur and 0b0100_0000 == 0b0100_0000) {
-                if ((cur or 0b1000_0000).toByte() != (-1).toByte()) error("InvalidLeb128Number")
-            } else if (cur != 0) {
-                error("InvalidLeb128Number")
-            }
-        }
-
-        if ((signBits shr 1) and result != 0L) result = result or signBits
-        return result
-    }
+    fun readVarUInt32() = readUnsignedLeb128(::readByte)
 }

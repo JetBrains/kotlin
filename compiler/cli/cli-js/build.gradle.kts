@@ -1,12 +1,10 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("share-kotlin-wasm-custom-formatters")
 }
 
 dependencies {
     api(project(":compiler:util"))
-    api(project(":compiler:cli-common"))
     api(project(":compiler:cli"))
     api(project(":compiler:frontend"))
     api(project(":compiler:fir:fir-serialization"))

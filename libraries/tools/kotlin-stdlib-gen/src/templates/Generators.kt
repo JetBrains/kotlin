@@ -911,7 +911,7 @@ object Generators : TemplateGroupBase() {
             @param size the number of elements to take in each ${f.snapshotResult}, must be positive and can be greater than the number of elements in this ${f.collection}.
             """
         }
-        sample("samples.collections.Collections.Transformations.chunked")
+        sample("samples.text.Strings.chunkedSequence")
         returns("Sequence<String>")
 
         body(CharSequences) { "return chunkedSequence(size) { it.toString() }" }

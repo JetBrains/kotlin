@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi
@@ -20,12 +9,35 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
-import java.util.*
 
-interface KtQualifiedExpression : KtExpression {
+/**
+ * Represents a qualified expression, which accesses a member or extension
+ * on a receiver using the `.` or `?.` operator.
+ *
+ * [receiverExpression] is the left-hand side, [selectorExpression] is the right-hand side,
+ * and [operationSign] is the operator token (`.` or `?.`).
+ *
+ * ### Examples:
+ *
+ * ```kotlin
+ * val len = str.length
+ * //        ^________^
+ * ```
+ *
+ * ```kotlin
+ * val len = str?.length
+ * //        ^_________^
+ * ```
+ *
+ * @see KtDotQualifiedExpression
+ * @see KtSafeQualifiedExpression
+ */
+@OptIn(KtExperimentalApi::class)
+interface KtQualifiedExpression : KtExpression, KtResolvableCall {
     val receiverExpression: KtExpression
         @OptIn(KtPsiInconsistencyHandling::class)
         get() = receiverExpressionOrNull ?: errorWithAttachment("No receiver found in qualified expression") {
@@ -46,7 +58,7 @@ interface KtQualifiedExpression : KtExpression {
 
     val operationTokenNode: ASTNode
         get() = operationTokenNodeOrNull ?: error(
-            "No operation node for ${node.elementType}. Children: ${Arrays.toString(children)}"
+            "No operation node for ${node.elementType}. Children: ${children.contentToString()}"
         )
 
     private val operationTokenNodeOrNull: ASTNode?

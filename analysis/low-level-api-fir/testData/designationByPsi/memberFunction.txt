@@ -1,0 +1,4 @@
+KT element: KtNamedFunction
+Resolve target: memberFunction.kt -> MyClass -> memberFun
+FIR:
+  public? final? fun memberFun(): R|kotlin/Unit| { LAZY_BLOCK }

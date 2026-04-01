@@ -1,0 +1,70 @@
+public final class org/jetbrains/kotlin/config/JvmTarget : java/lang/Enum, org/jetbrains/kotlin/platform/TargetPlatformVersion {
+	public static final field Companion Lorg/jetbrains/kotlin/config/JvmTarget$Companion;
+	public static final field DEFAULT Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_10 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_11 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_12 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_13 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_14 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_15 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_16 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_17 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_18 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_19 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_1_6 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_1_8 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_20 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_21 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_22 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_23 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_24 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_25 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_26 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_9 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final fun fromString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/JvmTarget;
+	public fun getDescription ()Ljava/lang/String;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getMajorVersion ()I
+	public fun toString ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static fun values ()[Lorg/jetbrains/kotlin/config/JvmTarget;
+}
+
+public final class org/jetbrains/kotlin/config/JvmTarget$Companion {
+	public final fun fromString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/JvmTarget;
+	public final fun getDescription (I)Ljava/lang/String;
+	public final fun supportedValues ()Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/platform/jvm/JdkPlatform : org/jetbrains/kotlin/platform/jvm/JvmPlatform {
+	public fun <init> (Lorg/jetbrains/kotlin/config/JvmTarget;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getOldFashionedDescription ()Ljava/lang/String;
+	public fun getTargetPlatformVersion ()Lorg/jetbrains/kotlin/platform/TargetPlatformVersion;
+	public final fun getTargetVersion ()Lorg/jetbrains/kotlin/config/JvmTarget;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/platform/jvm/JvmPlatform : org/jetbrains/kotlin/platform/SimplePlatform {
+	public fun <init> ()V
+	public fun getOldFashionedDescription ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/platform/jvm/JvmPlatformKt {
+	public static final fun isJvm (Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+}
+
+public final class org/jetbrains/kotlin/platform/jvm/JvmPlatforms {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/platform/jvm/JvmPlatforms;
+	public final fun getAllJvmPlatforms ()Ljava/util/List;
+	public final fun getDefaultJvmPlatform ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
+	public final fun getJvm11 ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
+	public final fun getJvm17 ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
+	public final fun getJvm6 ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
+	public final fun getJvm8 ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
+	public final fun getUNSPECIFIED_SIMPLE_JVM_PLATFORM ()Lorg/jetbrains/kotlin/platform/jvm/JdkPlatform;
+	public final fun getUnspecifiedJvmPlatform ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
+	public final fun jvmPlatformByTargetVersion (Lorg/jetbrains/kotlin/config/JvmTarget;)Lorg/jetbrains/kotlin/platform/TargetPlatform;
+}
+

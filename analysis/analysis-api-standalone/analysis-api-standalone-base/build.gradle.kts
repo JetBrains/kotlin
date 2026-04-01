@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
@@ -11,6 +10,7 @@ dependencies {
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
     implementation(project(":analysis:decompiled:decompiler-native"))
+    implementation(libs.caffeine)
     api(project(":compiler:cli-base"))
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-impl-base"))

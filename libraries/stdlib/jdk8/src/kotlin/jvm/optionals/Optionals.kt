@@ -43,6 +43,7 @@ public inline fun <T> Optional<out T & Any>.getOrElse(defaultValue: () -> T): T 
  * @sample samples.optionals.Optionals.toCollection
  */
 @SinceKotlin("1.8")
+@IgnorableReturnValue
 public fun <T : Any, C : MutableCollection<in T>> Optional<T>.toCollection(destination: C): C {
     if (isPresent) {
         destination.add(get())

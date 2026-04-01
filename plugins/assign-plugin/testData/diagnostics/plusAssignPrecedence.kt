@@ -93,10 +93,10 @@ fun box(): String {
         StringPropertyWithPlusAndPlusAssign("O")
     )
 
-    task.valInput <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> "K"
-    task.varInput <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> "K"
+    task.valInput <!UNRESOLVED_REFERENCE!>+=<!> "K"
+    task.varInput <!UNRESOLVED_REFERENCE!>+=<!> "K"
 
-    <!VAL_REASSIGNMENT!>task.valInputWithPlus<!> += "K"
+    task.valInputWithPlus += "K"
 
     task.varInputWithPlusAndPlusAssign <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> "K"
 

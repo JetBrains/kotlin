@@ -42,7 +42,7 @@ void ThrowException(KRef exception) {
   ExceptionObjHolder::Throw(exception);
 }
 
-void HandleCurrentExceptionWhenLeavingKotlinCode() {
+void RUNTIME_NORETURN HandleCurrentExceptionWhenLeavingKotlinCode() {
   try {
       std::rethrow_exception(std::current_exception());
   } catch (ExceptionObjHolder& e) {

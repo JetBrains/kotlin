@@ -50,7 +50,7 @@ private fun makeDependencyAssignerForTarget(target: String, defFiles: List<File>
     val libraries = defFiles.parallelStream().map {
         it to buildNativeLibrary(
                 tool,
-                DefFile(it, tool.substitutions),
+                DefFile(it, tool.target),
                 cinteropArguments,
                 ImportsImpl(emptyMap())
         ).getHeaderPaths()

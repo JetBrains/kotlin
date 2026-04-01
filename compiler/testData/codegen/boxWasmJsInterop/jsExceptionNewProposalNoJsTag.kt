@@ -1,7 +1,7 @@
 // TARGET_BACKEND: WASM
+// ^^ For JS_IR and JS_IR_ES6, the test doesn't work since we don't expect that non Error could came to the catch block
 // USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 // WASM_NO_JS_TAG
-// WASM_FAILS_IN_SINGLE_MODULE_MODE
 
 fun throwSomeJsException(): Int = js("{ throw new TypeError('Test'); }")
 fun throwSomeJsPrimitive(): Int = js("{ throw 'Test'; }")

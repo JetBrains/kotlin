@@ -1,0 +1,10 @@
+KtNameReferenceExpression(15,16): 'I'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<NO_CONSTRUCTOR: This class does not have a constructor>
+    symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
+      (in ROOT) interface I

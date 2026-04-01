@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
+import org.jetbrains.kotlin.backend.common.lower.LAMBDA_EXTENSION_RECEIVER
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
@@ -368,27 +369,25 @@ class ExpressionCodegen(
             mv.visitLocalVariable("this", classCodegen.type.descriptor, null, startLabel, endLabel, 0)
         }
         for (parameter in irFunction.parameters) {
-            fun writeToLVT(useReceiverNaming: Boolean) = writeValueParameterInLocalVariableTable(parameter, startLabel, endLabel, useReceiverNaming)
+            fun writeToLVT(isReceiver: Boolean) = writeValueParameterInLocalVariableTable(parameter, startLabel, endLabel, isReceiver)
             when (parameter.kind) {
                 IrParameterKind.DispatchReceiver -> {}
-                IrParameterKind.Context -> writeToLVT(useReceiverNaming = false)
-                IrParameterKind.ExtensionReceiver -> writeToLVT(useReceiverNaming = !parameter.hasFixedName)
+                IrParameterKind.Context -> writeToLVT(isReceiver = parameter.origin == IrDeclarationOrigin.UNDERSCORE_PARAMETER)
+                IrParameterKind.ExtensionReceiver -> writeToLVT(isReceiver = true)
                 IrParameterKind.Regular -> when (parameter.origin) {
                     IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION, IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION -> {}
-                    else -> writeToLVT(useReceiverNaming = false)
+                    else -> writeToLVT(isReceiver = false)
                 }
             }
         }
     }
 
-    private fun writeValueParameterInLocalVariableTable(
-        param: IrValueParameter, startLabel: Label, endLabel: Label, useReceiverNaming: Boolean
-    ) {
+    private fun writeValueParameterInLocalVariableTable(param: IrValueParameter, startLabel: Label, endLabel: Label, isReceiver: Boolean) {
         if (!param.isVisibleInLVT) return
 
         // If the parameter is an extension receiver parameter or a captured extension receiver from enclosing,
         // then generate name accordingly.
-        val name = if (param.origin == BOUND_RECEIVER_PARAMETER || useReceiverNaming) {
+        val name = if (param.origin == BOUND_RECEIVER_PARAMETER || param.origin == LAMBDA_EXTENSION_RECEIVER || isReceiver) {
             getNameForReceiverParameter(irFunction.toIrBasedDescriptor(), context.config.languageVersionSettings)
         } else {
             param.name.asString()
@@ -446,7 +445,7 @@ class ExpressionCodegen(
     private val IrValueDeclaration.isVisibleInLVT: Boolean
         get() = origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE &&
                 origin != IrDeclarationOrigin.FOR_LOOP_ITERATOR &&
-                (origin != IrDeclarationOrigin.UNDERSCORE_PARAMETER || this is IrValueParameter && this.kind == IrParameterKind.Context) &&
+                origin != IrDeclarationOrigin.UNDERSCORE_PARAMETER &&
                 origin != IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER &&
                 origin != JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE &&
                 origin != JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_PARAMETER
@@ -559,6 +558,22 @@ class ExpressionCodegen(
 
         if (suspensionPointKind != SuspensionPointKind.NEVER) {
             addSuspendMarker(mv, isStartNotEnd = true, suspensionPointKind == SuspensionPointKind.NOT_INLINE)
+
+            if (expression.type.isUnit()) {
+                // Although we cannot be sure in type of `suspendCoroutineUninterceptedOrReturn<T>()` with non-inlined lambda due to
+                // the possibility of "unsafe" casts of the lambda types, we can ignore it for tail-call optimization aim, as unsafe
+                // casts can break it in any case (e.g. cast Continuation<Int> to Continuation<String> and call `resumeWith` with
+                // a wrong result type).
+                addBeforeSuspendUnitCallMarker(mv)
+            } else if (callee.isBuiltInSuspendCoroutineUninterceptedOrReturn() && expression.isGenericCallWithCallersSingleTypeParameter(irFunction)) {
+                // The code above adds "SuspendUnit" markers for suspension points from non-inlined calls
+                // and for directly inlined calls of `suspendCoroutineUninterceptedOrReturn()`, such as calls of `suspendCoroutine()`.
+                // In some cases we can detect that the suspension point return type (i.e. what is returned by
+                // `suspendCoroutineUninterceptedOrReturn`) matches the caller's type parameter and reuse it later in IrInlineCallGenerator
+                // to detect whether the actual return type is Unit or not. For such cases we add a special suspend marker here, that
+                // will be later either removed, kept, or replaced with the "SuspendUnit" marker.
+                addBeforeSuspendGenericCallMarker(mv)
+            }
         }
 
         callGenerator.genCall(callable, this, expression, isInsideCondition)
@@ -575,16 +590,31 @@ class ExpressionCodegen(
 
         callGenerator.afterCallEnd()
 
+
+        fun IrFunction.returnTypeMayBeInferred(): Boolean =
+            this is IrSimpleFunction && (returnType.isTypeParameter() || allOverridden().any { it.returnType.isTypeParameter() })
+
         return when {
-            (expression.type.isNothing() || expression.type.isUnit()) && irFunction.shouldContainSuspendMarkers() -> {
-                // NewInference allows casting `() -> T` to `() -> Unit`. A CHECKCAST here will fail.
-                // Also, if the callee is a suspend function with a suspending tail call, the next `resumeWith`
-                // will continue from here, but the value passed to it might not have been `Unit`. An exception
-                // is methods that do not pass through the state machine generating MethodVisitor, since getting
-                // COROUTINE_SUSPENDED here is still possible; luckily, all those methods are bridges.
+            expression.type.isUnit() &&
+                    irFunction.shouldContainSuspendMarkers() &&
+                    callee.suspendFunctionOriginal().returnTypeMayBeInferred() -> {
+                // In some cases of Unit functions with tail-call of another function, we shall overwrite the return value
+                //  with Unit because:
+                // 1. NewInference allows casting `() -> T` to `() -> Unit`, so we cannot trust return lambda types;
+                //    there is the same problem with other cases of generic return types.
+                // 2. In IR, the following cases are currently indistinguishable and are actually "RETURN CALL .." with no checks:
+                //  a) suspend fun foo(f: suspend () -> Unit) { f() }
+                //  b) suspend fun foo(f: suspend () -> Unit) { return f() }
+                // Note that in (2a) it would be incorrect to return non-Unit from `foo` or fail
+                // with CHECKCAST even if `f()` actually returned non-Unit value.
+                //
+                // This is especially important for calls of suspend functions, but is also used for other cases when Unit
+                // functions are generated to non-void bytecode methods. Note that `shouldContainSuspendMarkers()` and
+                // `suspendFunctionOriginal()` calls above work for non-suspend functions too.
+
+                // force POP+Unit instructions to overwrite the value retuned by the call
                 if (callable.asmMethod.returnType != Type.VOID_TYPE)
                     MaterialValue(this, callable.asmMethod.returnType, callable.returnType).discard()
-                // don't generate redundant UNIT/pop instructions
                 unitValue
             }
             callee.parentAsClass.isAnnotationClass && callable.asmMethod.returnType == AsmTypes.JAVA_CLASS_TYPE -> {
@@ -1072,7 +1102,7 @@ class ExpressionCodegen(
                 expression.argument.accept(this, data).materializeAt(context.irBuiltIns.anyNType)
                 val type = typeMapper.boxType(typeOperand)
                 if (typeOperand.isReifiedTypeParameter) {
-                    putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, ReifiedTypeInliner.OperationKind.IS)
+                    putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, OperationKind.IS)
                     mv.instanceOf(type)
                 } else {
                     TypeIntrinsics.instanceOf(mv, kotlinType, type)
@@ -1481,7 +1511,7 @@ class ExpressionCodegen(
                 val classType = classReference.classType
                 val classifier = classType.classifierOrNull
                 if (classifier is IrTypeParameterSymbol) {
-                    val success = putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
+                    val success = putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, OperationKind.JAVA_CLASS)
                     assert(success) {
                         "Non-reified type parameter under ::class should be rejected by type checker: ${classType.render()}"
                     }
@@ -1544,8 +1574,20 @@ class ExpressionCodegen(
             config.languageVersionSettings,
             config.unifiedNullChecks,
         )
-
-        return IrInlineCodegen(this, state, callee, signature, mappings, sourceCompiler, reifiedTypeInliner)
+        // TODO remove it after bootstrap compiler included adding INLINE_MARKER_BEFORE_SUSPEND_GENERIC_CALL
+        // additional "hack" to support TCO with Unit-returning `suspendCoroutine` calls - we know that the type of built-in
+        // `suspendCoroutine` is the same as the type of `suspendCoroutineUninterceptedOrReturn` called by it
+        val markInlinedSuspensionPointAsUnitReturning = callee.isBuiltInSuspendCoroutine() && element.type.isUnit()
+        return IrInlineCodegen(
+            this,
+            state,
+            callee,
+            signature,
+            mappings,
+            sourceCompiler,
+            reifiedTypeInliner,
+            markInlinedSuspensionPointAsUnitReturning
+        )
     }
 
     private fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker) {

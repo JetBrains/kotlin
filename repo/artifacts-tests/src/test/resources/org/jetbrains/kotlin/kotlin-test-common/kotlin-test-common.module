@@ -10,12 +10,12 @@
     },
     "createdBy": {
         "gradle": {
-            "version": "8.14"
+            "version": "9.4.1"
         }
     },
     "variants": [
         {
-            "name": "kotlinTestCommonElements",
+            "name": "legacyElements",
             "attributes": {
                 "org.gradle.category": "library"
             },

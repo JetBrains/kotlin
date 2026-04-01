@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.konan.test.diagnostics
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
-import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
-import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
+import org.jetbrains.kotlin.konan.test.Fir2IrCliNativeFacade
+import org.jetbrains.kotlin.konan.test.FirCliNativeFacade
+import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
+import org.jetbrains.kotlin.konan.test.NativePreSerializationLoweringCliFacade
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
@@ -20,30 +21,37 @@ import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
-import org.jetbrains.kotlin.test.directives.*
-import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
-import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
-import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
+import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
+import org.jetbrains.kotlin.test.cli.CliDirectives.CHECK_COMPILER_OUTPUT
 import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
+import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
+import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE
+import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.model.DependencyKind
+import org.jetbrains.kotlin.test.model.FrontendFacade
+import org.jetbrains.kotlin.test.model.FrontendKind
+import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
+import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
+import org.jetbrains.kotlin.test.services.TestPhase
 import org.junit.jupiter.api.Assumptions
 import java.io.File
 
 abstract class AbstractDiagnosticsNativeTestBase(
-    private val parser: FirParser
+    private val parser: FirParser,
 ) : AbstractKotlinCompilerTest() {
 
     val targetFrontend: FrontendKind<FirOutputArtifact>
         get() = FrontendKinds.FIR
 
     val frontend: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirFrontendFacade
+        get() = ::FirCliNativeFacade
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
@@ -51,7 +59,13 @@ abstract class AbstractDiagnosticsNativeTestBase(
             targetPlatform = NativePlatforms.unspecifiedNativePlatform
             dependencyKind = DependencyKind.Source
         }
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
+        defaultDirectives {
+            LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
+        }
+        useAfterAnalysisCheckers(
+            ::BlackBoxCodegenSuppressor,
+            ::PhasedPipelineChecker,
+        )
         baseNativeDiagnosticTestConfiguration(frontend)
 
         configureFirParser(parser)
@@ -87,16 +101,22 @@ abstract class AbstractNativeDiagnosticsWithBackendTestBase(parser: FirParser) :
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
 
+        forTestsMatching("compiler/testData/diagnostics/nativeTests/specialBackendChecks/*") {
+            defaultDirectives {
+                // it prevents compiler crash after an error diagnostic from SpecialBackendChecksTraversal by returning null from `processErrorFromCliPhase()`
+                +CHECK_COMPILER_OUTPUT
+            }
+        }
         globalDefaults {
             targetBackend = TargetBackend.NATIVE
         }
 
         useAdditionalService(::LibraryProvider)
 
-        facadeStep(::Fir2IrNativeResultsConverter)
-        facadeStep(::NativePreSerializationLoweringFacade)
+        facadeStep(::Fir2IrCliNativeFacade)
+        facadeStep(::NativePreSerializationLoweringCliFacade)
         loweredIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
-        facadeStep(::NativeKlibSerializerFacade)
+        facadeStep(::KlibSerializerNativeCliFacade)
 
         klibArtifactsHandlersStep {
             useHandlers(::KlibBackendDiagnosticsHandler)
@@ -115,9 +135,6 @@ abstract class AbstractNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase 
         }
     }
 }
-
-abstract class AbstractPsiNativeDiagnosticsTest : AbstractDiagnosticsNativeTestBase(FirParser.Psi)
-abstract class AbstractLightTreeNativeDiagnosticsTest : AbstractDiagnosticsNativeTestBase(FirParser.LightTree)
 
 abstract class AbstractPsiNativeDiagnosticsWithBackendTestBase : AbstractNativeDiagnosticsWithBackendTestBase(FirParser.Psi)
 abstract class AbstractLightTreeNativeDiagnosticsWithBackendTestBase : AbstractNativeDiagnosticsWithBackendTestBase(FirParser.LightTree)

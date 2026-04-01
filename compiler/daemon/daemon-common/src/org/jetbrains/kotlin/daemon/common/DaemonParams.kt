@@ -40,11 +40,13 @@ const val COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE: Long = 0L
 const val COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS: Long = 10000L // 10 secs
 const val COMPILE_DAEMON_TIMEOUT_INFINITE_MS: Long = 0L
 const val COMPILE_DAEMON_IS_READY_MESSAGE = "Kotlin compile daemon is ready"
+val DEFAULT_LOG_FILE_DIRECTORY = CompilerSystemProperties.TMP_DIR.safeValue
+const val DEFAULT_LOG_FILE_SIZE_LIMIT = 1 * MEGABYTE
+const val DEFAULT_LOG_FILE_COUNT_LIMIT = 3
 
 val COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH: String
     get() = CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.value ?: FileSystem.getRuntimeStateFilesPath(
-        "kotlin",
-        "daemon"
+        "kotlin", "daemon"
     )
 
 val CLASSPATH_ID_DIGEST = "MD5"
@@ -57,48 +59,68 @@ open class PropMapper<C, V, out P : KMutableProperty1<C, V>>(
     val fromString: (String) -> V,
     val toString: ((V) -> String?) = { it.toString() },
     val skipIf: ((V) -> Boolean) = { false },
-    val mergeDelimiter: String? = null
+    val mergeDelimiter: String? = null,
 ) {
-    open fun toArgs(prefix: String = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX): List<String> =
-        when {
-            skipIf(prop.get(dest)) -> listOf<String>()
-            mergeDelimiter != null -> listOf(listOfNotNull(prefix + names.first(), toString(prop.get(dest))).joinToString(mergeDelimiter))
-            else -> listOfNotNull(prefix + names.first(), toString(prop.get(dest)))
-        }
+    open fun toArgs(prefix: String = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX): List<String> = when {
+        skipIf(prop.get(dest)) -> listOf<String>()
+        mergeDelimiter != null -> listOf(listOfNotNull(prefix + names.first(), toString(prop.get(dest))).joinToString(mergeDelimiter))
+        else -> listOfNotNull(prefix + names.first(), toString(prop.get(dest)))
+    }
 
     open fun apply(s: String) = prop.set(dest, fromString(s))
 }
 
 
-class NullablePropMapper<C, V : Any?, out P : KMutableProperty1<C, V>>(dest: C,
-                                                                       prop: P,
-                                                                       names: List<String> = listOf(),
-                                                                       fromString: ((String) -> V),
-                                                                       toString: ((V) -> String?) = { it.toString() },
-                                                                       skipIf: ((V) -> Boolean) = { it == null },
-                                                                       mergeDelimiter: String? = null)
-: PropMapper<C, V, P>(dest = dest, prop = prop, names = if (names.any()) names else listOf(prop.name),
-                      fromString = fromString, toString = toString, skipIf = skipIf, mergeDelimiter = mergeDelimiter)
+class NullablePropMapper<C, V : Any?, out P : KMutableProperty1<C, V>>(
+    dest: C,
+    prop: P,
+    names: List<String> = listOf(),
+    fromString: ((String) -> V),
+    toString: ((V) -> String?) = { it.toString() },
+    skipIf: ((V) -> Boolean) = { it == null },
+    mergeDelimiter: String? = null,
+) : PropMapper<C, V, P>(
+    dest = dest,
+    prop = prop,
+    names = if (names.any()) names else listOf(prop.name),
+    fromString = fromString,
+    toString = toString,
+    skipIf = skipIf,
+    mergeDelimiter = mergeDelimiter
+)
 
 
-class StringPropMapper<C, out P : KMutableProperty1<C, String>>(dest: C,
-                                                                prop: P,
-                                                                names: List<String> = listOf(),
-                                                                fromString: ((String) -> String) = { it },
-                                                                toString: ((String) -> String?) = { it },
-                                                                skipIf: ((String) -> Boolean) = String::isEmpty,
-                                                                mergeDelimiter: String? = null)
-: PropMapper<C, String, P>(dest = dest, prop = prop, names = if (names.any()) names else listOf(prop.name),
-                           fromString = fromString, toString = toString, skipIf = skipIf, mergeDelimiter = mergeDelimiter)
+class StringPropMapper<C, out P : KMutableProperty1<C, String>>(
+    dest: C,
+    prop: P,
+    names: List<String> = listOf(),
+    fromString: ((String) -> String) = { it },
+    toString: ((String) -> String?) = { it },
+    skipIf: ((String) -> Boolean) = String::isEmpty,
+    mergeDelimiter: String? = null,
+) : PropMapper<C, String, P>(
+    dest = dest,
+    prop = prop,
+    names = if (names.any()) names else listOf(prop.name),
+    fromString = fromString,
+    toString = toString,
+    skipIf = skipIf,
+    mergeDelimiter = mergeDelimiter
+)
 
 
-class BoolPropMapper<C, out P : KMutableProperty1<C, Boolean>>(dest: C, prop: P, names: List<String> = listOf())
-: PropMapper<C, Boolean, P>(dest = dest, prop = prop, names = if (names.any()) names else listOf(prop.name),
-                            fromString = { true }, toString = { null }, skipIf = { !prop.get(dest) })
+class BoolPropMapper<C, out P : KMutableProperty1<C, Boolean>>(dest: C, prop: P, names: List<String> = listOf()) :
+    PropMapper<C, Boolean, P>(
+        dest = dest,
+        prop = prop,
+        names = if (names.any()) names else listOf(prop.name),
+        fromString = { true },
+        toString = { null },
+        skipIf = { !prop.get(dest) })
 
 
-class RestPropMapper<C, out P : KMutableProperty1<C, MutableCollection<String>>>(dest: C, prop: P)
-: PropMapper<C, MutableCollection<String>, P>(dest = dest, prop = prop, toString = { null }, fromString = { arrayListOf() }) {
+class RestPropMapper<C, out P : KMutableProperty1<C, MutableCollection<String>>>(dest: C, prop: P) :
+    PropMapper<C, MutableCollection<String>, P>(dest = dest, prop = prop, toString = { null }, fromString = { arrayListOf() }) {
     override fun toArgs(prefix: String): List<String> = prop.get(dest).map { prefix + it }
     override fun apply(s: String) = add(s)
     fun add(s: String) {
@@ -121,7 +143,11 @@ inline fun <T, R : Any> Iterable<T>.findWithTransform(mappingPredicate: (T) -> P
 // filter-like function, takes list of propmappers, bound to properties of concrete objects, iterates over receiver, extract matching values via appropriate
 // mappers into bound properties; if restParser is given, adds all non-matching elements to it, otherwise return them as an iterable
 // note bound properties mutation!
-fun Iterable<String>.filterExtractProps(propMappers: List<PropMapper<*, *, *>>, prefix: String, restParser: RestPropMapper<*, *>? = null): Iterable<String> {
+fun Iterable<String>.filterExtractProps(
+    propMappers: List<PropMapper<*, *, *>>,
+    prefix: String,
+    restParser: RestPropMapper<*, *>? = null,
+): Iterable<String> {
 
     val iter = iterator()
     val rest = arrayListOf<String>()
@@ -129,9 +155,7 @@ fun Iterable<String>.filterExtractProps(propMappers: List<PropMapper<*, *, *>>, 
     while (iter.hasNext()) {
         val param = iter.next()
         val (propMapper, matchingOption) = propMappers.findWithTransform { mapper ->
-            mapper.names
-                    .firstOrNull { param.startsWith(prefix + it) }
-                    .let { Pair(it != null, Pair(mapper, it)) }
+            mapper.names.firstOrNull { param.startsWith(prefix + it) }.let { Pair(it != null, Pair(mapper, it)) }
         } ?: Pair(null, null)
 
         when {
@@ -139,27 +163,22 @@ fun Iterable<String>.filterExtractProps(propMappers: List<PropMapper<*, *, *>>, 
                 val optionLength = prefix.length + matchingOption!!.length
                 when {
                     propMapper is BoolPropMapper<*, *> -> {
-                        if (param.length > optionLength)
-                            throw IllegalArgumentException("Invalid switch option '$param', expecting $prefix$matchingOption without arguments")
+                        if (param.length > optionLength) throw IllegalArgumentException("Invalid switch option '$param', expecting $prefix$matchingOption without arguments")
                         propMapper.apply("")
                     }
-                    param.length > optionLength ->
-                        if (param[optionLength] != '=') {
-                            if (propMapper.mergeDelimiter == null)
-                                throw IllegalArgumentException("Invalid option syntax '$param', expecting $prefix$matchingOption[= ]<arg>")
-                            propMapper.apply(param.substring(optionLength))
-                        }
-                        else {
-                            propMapper.apply(param.substring(optionLength + 1))
-                        }
+                    param.length > optionLength -> if (param[optionLength] != '=') {
+                        if (propMapper.mergeDelimiter == null) throw IllegalArgumentException("Invalid option syntax '$param', expecting $prefix$matchingOption[= ]<arg>")
+                        propMapper.apply(param.substring(optionLength))
+                    } else {
+                        propMapper.apply(param.substring(optionLength + 1))
+                    }
                     else -> {
                         if (!iter.hasNext()) throw IllegalArgumentException("Expecting argument for the option $prefix$matchingOption")
                         propMapper.apply(iter.next())
                     }
                 }
             }
-            restParser != null && param.startsWith(prefix) ->
-                restParser.add(param.removePrefix(prefix))
+            restParser != null && param.startsWith(prefix) -> restParser.add(param.removePrefix(prefix))
             else -> rest.add(param)
         }
     }
@@ -167,7 +186,7 @@ fun Iterable<String>.filterExtractProps(propMappers: List<PropMapper<*, *, *>>, 
 }
 
 
-fun String.trimQuotes() = trim('"','\'')
+fun String.trimQuotes() = trim('"', '\'')
 
 
 interface OptionsGroup : Serializable {
@@ -175,47 +194,106 @@ interface OptionsGroup : Serializable {
 }
 
 fun Iterable<String>.filterExtractProps(vararg groups: OptionsGroup, prefix: String): Iterable<String> =
-        filterExtractProps(groups.flatMap { it.mappers }, prefix)
+    filterExtractProps(groups.flatMap { it.mappers }, prefix)
 
 
 data class DaemonJVMOptions(
-        var maxMemory: String = "",
-        var maxMetaspaceSize: String = "",
-        var reservedCodeCacheSize: String = "320m",
-        var jvmParams: MutableCollection<String> = arrayListOf()
+    var maxMemory: String = "",
+    var maxMetaspaceSize: String = "",
+    var reservedCodeCacheSize: String = "320m",
+    var jvmParams: MutableCollection<String> = arrayListOf(),
 ) : OptionsGroup {
     override val mappers: List<PropMapper<*, *, *>>
-        get() = listOf(StringPropMapper(this, DaemonJVMOptions::maxMemory, listOf("Xmx"), mergeDelimiter = ""),
-                       StringPropMapper(this, DaemonJVMOptions::maxMetaspaceSize, listOf("XX:MaxMetaspaceSize"), mergeDelimiter = "="),
-                       StringPropMapper(this, DaemonJVMOptions::reservedCodeCacheSize, listOf("XX:ReservedCodeCacheSize"), mergeDelimiter = "="),
-                       restMapper)
+        get() = listOf(
+            StringPropMapper(this, DaemonJVMOptions::maxMemory, listOf("Xmx"), mergeDelimiter = ""),
+            StringPropMapper(this, DaemonJVMOptions::maxMetaspaceSize, listOf("XX:MaxMetaspaceSize"), mergeDelimiter = "="),
+            StringPropMapper(this, DaemonJVMOptions::reservedCodeCacheSize, listOf("XX:ReservedCodeCacheSize"), mergeDelimiter = "="),
+            restMapper
+        )
 
     val restMapper: RestPropMapper<*, *>
         get() = RestPropMapper(this, DaemonJVMOptions::jvmParams)
 }
 
-
-data class DaemonOptions(
-        var runFilesPath: String = COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH,
-        var autoshutdownMemoryThreshold: Long = COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE,
-        var autoshutdownIdleSeconds: Int = COMPILE_DAEMON_DEFAULT_IDLE_TIMEOUT_S,
-        var autoshutdownUnusedSeconds: Int = COMPILE_DAEMON_DEFAULT_UNUSED_TIMEOUT_S,
-        var shutdownDelayMilliseconds: Long = COMPILE_DAEMON_DEFAULT_SHUTDOWN_DELAY_MS,
-        var forceShutdownTimeoutMilliseconds: Long = COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS,
-        var verbose: Boolean = false,
-        var reportPerf: Boolean = false
+data class DaemonLogOptions(
+    var logsPath: String = DEFAULT_LOG_FILE_DIRECTORY,
+    var logsFileSizeLimit: Long = DEFAULT_LOG_FILE_SIZE_LIMIT,
+    var logsFileCountLimit: Int = DEFAULT_LOG_FILE_COUNT_LIMIT,
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
-        get() = listOf(PropMapper(this, DaemonOptions::runFilesPath, fromString = String::trimQuotes),
-                       PropMapper(this, DaemonOptions::autoshutdownMemoryThreshold, fromString = String::toLong, skipIf = { it == 0L }, mergeDelimiter = "="),
-                // TODO: implement "use default" value without specifying default, so if client and server uses different defaults, it should not lead to many params in the cmd line; use 0 for it and used different val for infinite
-                       PropMapper(this, DaemonOptions::autoshutdownIdleSeconds, fromString = String::toInt, skipIf = { it == 0 }, mergeDelimiter = "="),
-                       PropMapper(this, DaemonOptions::autoshutdownUnusedSeconds, fromString = String::toInt, skipIf = { it == COMPILE_DAEMON_DEFAULT_UNUSED_TIMEOUT_S }, mergeDelimiter = "="),
-                       PropMapper(this, DaemonOptions::shutdownDelayMilliseconds, fromString = String::toLong, skipIf = { it == COMPILE_DAEMON_DEFAULT_SHUTDOWN_DELAY_MS }, mergeDelimiter = "="),
-                       PropMapper(this, DaemonOptions::forceShutdownTimeoutMilliseconds, fromString = String::toLong, skipIf = { it == COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS }, mergeDelimiter = "="),
-                       BoolPropMapper(this, DaemonOptions::verbose),
-                       BoolPropMapper(this, DaemonOptions::reportPerf))
+        get() = listOf(
+            PropMapper(this, DaemonLogOptions::logsPath, fromString = String::trimQuotes),
+            PropMapper(
+                this,
+                DaemonLogOptions::logsFileSizeLimit,
+                fromString = String::toLong,
+                skipIf = { it == 0L },
+                mergeDelimiter = "="
+            ),
+            PropMapper(
+                this,
+                DaemonLogOptions::logsFileCountLimit,
+                fromString = String::toInt,
+                skipIf = { it == 0 },
+                mergeDelimiter = "="
+            ),
+        )
+}
+
+data class DaemonOptions(
+    var runFilesPath: String = COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH,
+    var autoshutdownMemoryThreshold: Long = COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE,
+    var autoshutdownIdleSeconds: Int = COMPILE_DAEMON_DEFAULT_IDLE_TIMEOUT_S,
+    var autoshutdownUnusedSeconds: Int = COMPILE_DAEMON_DEFAULT_UNUSED_TIMEOUT_S,
+    var shutdownDelayMilliseconds: Long = COMPILE_DAEMON_DEFAULT_SHUTDOWN_DELAY_MS,
+    var forceShutdownTimeoutMilliseconds: Long = COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS,
+    var verbose: Boolean = false,
+    var reportPerf: Boolean = false,
+) : OptionsGroup {
+
+    override val mappers: List<PropMapper<*, *, *>>
+        get() = listOf(
+            PropMapper(this, DaemonOptions::runFilesPath, fromString = String::trimQuotes),
+            PropMapper(
+                this,
+                DaemonOptions::autoshutdownMemoryThreshold,
+                fromString = String::toLong,
+                skipIf = { it == 0L },
+                mergeDelimiter = "="
+            ),
+            // TODO: implement "use default" value without specifying default, so if client and server uses different defaults, it should not lead to many params in the cmd line; use 0 for it and used different val for infinite
+            PropMapper(
+                this,
+                DaemonOptions::autoshutdownIdleSeconds,
+                fromString = String::toInt,
+                skipIf = { it == 0 },
+                mergeDelimiter = "="
+            ),
+            PropMapper(
+                this,
+                DaemonOptions::autoshutdownUnusedSeconds,
+                fromString = String::toInt,
+                skipIf = { it == COMPILE_DAEMON_DEFAULT_UNUSED_TIMEOUT_S },
+                mergeDelimiter = "="
+            ),
+            PropMapper(
+                this,
+                DaemonOptions::shutdownDelayMilliseconds,
+                fromString = String::toLong,
+                skipIf = { it == COMPILE_DAEMON_DEFAULT_SHUTDOWN_DELAY_MS },
+                mergeDelimiter = "="
+            ),
+            PropMapper(
+                this,
+                DaemonOptions::forceShutdownTimeoutMilliseconds,
+                fromString = String::toLong,
+                skipIf = { it == COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS },
+                mergeDelimiter = "="
+            ),
+            BoolPropMapper(this, DaemonOptions::verbose),
+            BoolPropMapper(this, DaemonOptions::reportPerf)
+        )
 }
 
 // TODO: consider implementing generic approach to it or may be replace getters with ones returning default if necessary
@@ -223,33 +301,33 @@ val DaemonOptions.runFilesPathOrDefault: String
     get() = if (runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else runFilesPath
 
 fun Iterable<String>.distinctStringsDigest(): ByteArray =
-        MessageDigest.getInstance(CLASSPATH_ID_DIGEST)
-                .digest(this.distinct().sorted().joinToString("").toByteArray())
+    MessageDigest.getInstance(CLASSPATH_ID_DIGEST).digest(this.distinct().sorted().joinToString("").toByteArray())
 
 fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".format(it) })
 
 
 data class CompilerId(
-        var compilerClasspath: List<String> = listOf(),
-        var compilerVersion: String = ""
+    var compilerClasspath: List<String> = listOf(),
+    var compilerVersion: String = "",
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
-        get() = listOf(PropMapper(this, CompilerId::compilerClasspath, toString = { it.joinToString(File.pathSeparator) }, fromString = { it.trimQuotes().split(File.pathSeparator) }),
-                       StringPropMapper(this, CompilerId::compilerVersion))
+        get() = listOf(
+            PropMapper(
+            this,
+            CompilerId::compilerClasspath,
+            toString = { it.joinToString(File.pathSeparator) },
+            fromString = { it.trimQuotes().split(File.pathSeparator) }), StringPropMapper(this, CompilerId::compilerVersion)
+        )
 
-    fun digest(): String = compilerClasspath
-        .map { File(it).absolutePath }
-        .distinctStringsDigest()
-        .toHexString()
+    fun digest(): String = compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
 
     companion object {
         @JvmStatic
         fun makeCompilerId(vararg paths: File): CompilerId = makeCompilerId(paths.asIterable())
 
         @JvmStatic
-        fun makeCompilerId(paths: Iterable<File>): CompilerId =
-                CompilerId(compilerClasspath = paths.map { it.absolutePath })
+        fun makeCompilerId(paths: Iterable<File>): CompilerId = CompilerId(compilerClasspath = paths.map { it.absolutePath })
     }
 }
 
@@ -262,25 +340,33 @@ data class InitialClientInformation(
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
-        get() = listOf(PropMapper(this, InitialClientInformation::aliveFlagFile, toString = { it?.absolutePath }, fromString = { File(it) }))
+        get() = listOf(
+            PropMapper(
+                this,
+                InitialClientInformation::aliveFlagFile,
+                toString = { it?.absolutePath },
+                fromString = { File(it) })
+        )
 }
 
 fun isDaemonEnabled(): Boolean = CompilerSystemProperties.COMPILE_DAEMON_ENABLED_PROPERTY.value != null
 
-fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
-                              vararg additionalParams: String,
-                              inheritMemoryLimits: Boolean,
-                              inheritOtherJvmOptions: Boolean,
-                              inheritAdditionalProperties: Boolean
+fun configureDaemonJVMOptions(
+    opts: DaemonJVMOptions,
+    vararg additionalParams: String,
+    inheritMemoryLimits: Boolean,
+    inheritOtherJvmOptions: Boolean,
+    inheritAdditionalProperties: Boolean,
 ): DaemonJVMOptions =
-        configureDaemonJVMOptions(opts, additionalParams.asIterable(), inheritMemoryLimits, inheritOtherJvmOptions, inheritAdditionalProperties)
+    configureDaemonJVMOptions(opts, additionalParams.asIterable(), inheritMemoryLimits, inheritOtherJvmOptions, inheritAdditionalProperties)
 
 // TODO: expose sources for testability and test properly
-fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
-                              additionalParams: Iterable<String>,
-                              inheritMemoryLimits: Boolean,
-                              inheritOtherJvmOptions: Boolean,
-                              inheritAdditionalProperties: Boolean
+fun configureDaemonJVMOptions(
+    opts: DaemonJVMOptions,
+    additionalParams: Iterable<String>,
+    inheritMemoryLimits: Boolean,
+    inheritOtherJvmOptions: Boolean,
+    inheritAdditionalProperties: Boolean,
 ): DaemonJVMOptions {
     // note: sequence matters, e.g. explicit override in COMPILE_DAEMON_JVM_OPTIONS_PROPERTY should be done after inputArguments processing
     if (inheritMemoryLimits || inheritOtherJvmOptions) {
@@ -300,20 +386,23 @@ fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
         if (inheritOtherJvmOptions) {
             opts.jvmParams.addAll(
                 otherArgs.filterNot {
-                    it.startsWith("agentlib") ||
-                            it.startsWith("D" + CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.property) ||
-                            it.startsWith("D" + CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.property) ||
-                            it.startsWith("D" + CompilerSystemProperties.COMPILE_DAEMON_JVM_OPTIONS_PROPERTY.property) ||
-                            it.startsWith("D" + CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.property)
+                    it.startsWith("agentlib") || it.startsWith("D" + CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.property) || it.startsWith(
+                        "D" + CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.property
+                    ) || it.startsWith("D" + CompilerSystemProperties.COMPILE_DAEMON_JVM_OPTIONS_PROPERTY.property) || it.startsWith("D" + CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.property)
                 })
         }
     }
     CompilerSystemProperties.COMPILE_DAEMON_JVM_OPTIONS_PROPERTY.value?.let {
         opts.jvmParams.addAll(
-                it.trimQuotes()
-                  .split("(?<!\\\\),".toRegex())  // using independent non-capturing group with negative lookahead zero length assertion to split only on non-escaped commas
-                  .map { it.replace("\\\\(.)".toRegex(), "$1") } // de-escaping characters escaped by backslash, straightforward, without exceptions
-                  .filterExtractProps(opts.mappers, "-", opts.restMapper))
+            it.trimQuotes()
+                                  .split("(?<!\\\\),".toRegex())  // using independent non-capturing group with negative lookahead zero length assertion to split only on non-escaped commas
+                                  .map {
+                                      it.replace(
+                                          "\\\\(.)".toRegex(),
+                                          "$1"
+                                      )
+                                  } // de-escaping characters escaped by backslash, straightforward, without exceptions
+                                  .filterExtractProps(opts.mappers, "-", opts.restMapper))
     }
 
     // assuming that from the conflicting options the last one is taken
@@ -337,23 +426,23 @@ fun configureDaemonJVMOptions(
     vararg additionalParams: String,
     inheritMemoryLimits: Boolean,
     inheritOtherJvmOptions: Boolean,
-    inheritAdditionalProperties: Boolean
-): DaemonJVMOptions =
-    configureDaemonJVMOptions(
-        DaemonJVMOptions(),
-        *additionalParams,
-        inheritMemoryLimits = inheritMemoryLimits,
-        inheritOtherJvmOptions = inheritOtherJvmOptions,
-        inheritAdditionalProperties = inheritAdditionalProperties,
-    )
+    inheritAdditionalProperties: Boolean,
+): DaemonJVMOptions = configureDaemonJVMOptions(
+    DaemonJVMOptions(),
+    *additionalParams,
+    inheritMemoryLimits = inheritMemoryLimits,
+    inheritOtherJvmOptions = inheritOtherJvmOptions,
+    inheritAdditionalProperties = inheritAdditionalProperties,
+)
 
 fun configureDaemonOptions(opts: DaemonOptions): DaemonOptions {
     CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.value?.let {
         val unrecognized = it.trimQuotes().split(",").filterExtractProps(opts.mappers, "")
-        if (unrecognized.any())
-            throw IllegalArgumentException(
-                    "Unrecognized daemon options passed via property ${CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.property}: " + unrecognized.joinToString(" ") +
-                    "\nSupported options: " + opts.mappers.joinToString(", ", transform = { it.names.first() }))
+        if (unrecognized.any()) throw IllegalArgumentException(
+            "Unrecognized daemon options passed via property ${CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.property}: " + unrecognized.joinToString(
+            " "
+        ) + "\nSupported options: " + opts.mappers.joinToString(", ", transform = { it.names.first() })
+        )
     }
     CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.value?.let { opts.verbose = true }
     CompilerSystemProperties.COMPILE_DAEMON_REPORT_PERF_PROPERTY.value?.let { opts.reportPerf = true }
@@ -366,28 +455,23 @@ fun configureDaemonOptions(): DaemonOptions = configureDaemonOptions(DaemonOptio
 
 private val humanizedMemorySizeRegex = "(\\d+)([kmg]?)".toRegex()
 
-private fun String.memToBytes(): Long? =
-        humanizedMemorySizeRegex
-            .matchEntire(this.trim().lowercase())
-            ?.groups?.let { match ->
-                match[1]?.value?.let {
-                    it.toLong() *
-                    when (match[2]?.value) {
-                        "k" -> 1 shl 10
-                        "m" -> 1 shl 20
-                        "g" -> 1 shl 30
-                        else -> 1
-                    }
-                }
+private fun String.memToBytes(): Long? = humanizedMemorySizeRegex.matchEntire(this.trim().lowercase())?.groups?.let { match ->
+        match[1]?.value?.let {
+            it.toLong() * when (match[2]?.value) {
+                "k" -> 1 shl 10
+                "m" -> 1 shl 20
+                "g" -> 1 shl 30
+                else -> 1
             }
+        }
+    }
 
 
 private val daemonJVMOptionsMemoryProps =
     listOf(DaemonJVMOptions::maxMemory, DaemonJVMOptions::maxMetaspaceSize, DaemonJVMOptions::reservedCodeCacheSize)
 
 infix fun DaemonJVMOptions.memorywiseFitsInto(other: DaemonJVMOptions): Boolean =
-        daemonJVMOptionsMemoryProps
-            .all { (it.get(this).memToBytes() ?: 0) <= (it.get(other).memToBytes() ?: 0) }
+    daemonJVMOptionsMemoryProps.all { (it.get(this).memToBytes() ?: 0) <= (it.get(other).memToBytes() ?: 0) }
 
 fun compareDaemonJVMOptionsMemory(left: DaemonJVMOptions, right: DaemonJVMOptions): Int {
     val props = daemonJVMOptionsMemoryProps.map { Pair(it.get(left).memToBytes() ?: 0, it.get(right).memToBytes() ?: 0) }
@@ -405,7 +489,11 @@ class DaemonJVMOptionsMemoryComparator : Comparator<DaemonJVMOptions> {
 
 
 fun DaemonJVMOptions.updateMemoryUpperBounds(other: DaemonJVMOptions): DaemonJVMOptions {
-    daemonJVMOptionsMemoryProps
-        .forEach { if ((it.get(this).memToBytes() ?: 0) < (it.get(other).memToBytes() ?: 0)) it.set(this, it.get(other)) }
+    daemonJVMOptionsMemoryProps.forEach {
+            if ((it.get(this).memToBytes() ?: 0) < (it.get(other).memToBytes() ?: 0)) it.set(
+                this,
+                it.get(other)
+            )
+        }
     return this
 }

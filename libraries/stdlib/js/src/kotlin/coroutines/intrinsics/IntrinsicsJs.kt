@@ -18,8 +18,9 @@ import kotlin.js.Promise
  * Because callable references translated with local classes,
  * necessary to call it in special way, not in synamic way
  */
-@Suppress("UNUSED_PARAMETER", "unused")
+@Suppress("UNUSED_PARAMETER")
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <T> (suspend () -> T).invokeSuspendSuperType(
     completion: Continuation<T>
 ): Any? {
@@ -31,8 +32,9 @@ internal fun <T> (suspend () -> T).invokeSuspendSuperType(
  * Because callable references translated with local classes,
  * necessary to call it in special way, not in synamic way
  */
-@Suppress("UNUSED_PARAMETER", "unused")
+@Suppress("UNUSED_PARAMETER")
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <R, T> (suspend R.() -> T).invokeSuspendSuperTypeWithReceiver(
     receiver: R,
     completion: Continuation<T>
@@ -45,8 +47,9 @@ internal fun <R, T> (suspend R.() -> T).invokeSuspendSuperTypeWithReceiver(
  * Because callable references translated with local classes,
  * necessary to call it in special way, not in synamic way
  */
-@Suppress("UNUSED_PARAMETER", "unused")
+@Suppress("UNUSED_PARAMETER")
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <R, P, T> (suspend R.(P) -> T).invokeSuspendSuperTypeWithReceiverAndParam(
     receiver: R,
     param: P,
@@ -74,6 +77,7 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 ): Any? = startCoroutineUninterceptedOrReturnNonGeneratorVersion(completion)
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturnNonGeneratorVersion(
     completion: Continuation<T>
 ): Any? {
@@ -107,6 +111,7 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
 ): Any? = startCoroutineUninterceptedOrReturnNonGeneratorVersion(receiver, completion)
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturnNonGeneratorVersion(
     receiver: R,
     completion: Continuation<T>
@@ -129,6 +134,7 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
 ): Any? = startCoroutineUninterceptedOrReturnNonGeneratorVersion(receiver, param, completion)
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturnNonGeneratorVersion(
     receiver: R,
     param: P,
@@ -234,7 +240,7 @@ internal inline fun <T> createCoroutineFromGeneratorFunction(
     crossinline generatorFunction: (Continuation<T>) -> dynamic,
 ): Continuation<Any?> {
     val continuation = GeneratorCoroutineImpl(completion.unsafeCast<Continuation<Any?>>())
-    continuation.addNewIterator(dummyGenerator(COROUTINE_SUSPENDED) { generatorFunction(continuation) })
+    continuation.generator = generatorFunction(continuation)
     return continuation
 }
 
@@ -244,11 +250,9 @@ internal inline fun <T> startCoroutineFromGeneratorFunction(
     crossinline generatorFunction: (Continuation<T>) -> dynamic,
 ): Any? {
     val continuation = GeneratorCoroutineImpl(completion.unsafeCast<Continuation<Any?>>())
-    continuation.isRunning = true
-    val result = generatorFunction(continuation)
-    continuation.isRunning = false
-    if (continuation.shouldResumeImmediately()) continuation.resume(result)
-    return result
+    val generator = generatorFunction(continuation)
+    continuation.generator = generator
+    return continuation.runGenerator()
 }
 
 @UsedFromCompilerGeneratedCode
@@ -332,27 +336,8 @@ internal suspend fun <T> await(promise: Promise<T>): T = suspendCoroutine { cont
     )
 }
 
+// TODO: remove after bootstrapping
 @UsedFromCompilerGeneratedCode
 internal fun suspendOrReturn(generator: (continuation: Continuation<Any?>) -> dynamic, continuation: Continuation<Any?>): Any? {
-    val generatorCoroutineImpl = if (continuation.asDynamic().constructor === GeneratorCoroutineImpl::class.js) {
-        continuation.unsafeCast<GeneratorCoroutineImpl>()
-    } else {
-        GeneratorCoroutineImpl(continuation)
-    }
-
-    val value = generator(generatorCoroutineImpl)
-
-    if (!isGeneratorSuspendStep(value)) return value
-
-    val iterator = value.unsafeCast<JsIterator<Any?>>()
-
-    generatorCoroutineImpl.addNewIterator(iterator)
-    try {
-        val iteratorStep = iterator.next()
-        if (iteratorStep.done) generatorCoroutineImpl.dropLastIterator()
-        return iteratorStep.value
-    } catch (e: Throwable) {
-        generatorCoroutineImpl.dropLastIterator()
-        throw e
-    }
+    TODO("SHOULD NOT BE USED")
 }

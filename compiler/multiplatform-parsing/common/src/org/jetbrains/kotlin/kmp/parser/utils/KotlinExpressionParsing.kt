@@ -781,7 +781,7 @@ internal open class KotlinExpressionParsing(
                 atWhenStart.done(declType)
                 atWhenStart.setCustomEdgeTokenBinders(PrecedingDocCommentsBinder, TrailingCommentsBinder)
             } else {
-                atWhenStart.drop()
+                atWhenStart.rollbackTo()
                 parseExpression()
             }
 

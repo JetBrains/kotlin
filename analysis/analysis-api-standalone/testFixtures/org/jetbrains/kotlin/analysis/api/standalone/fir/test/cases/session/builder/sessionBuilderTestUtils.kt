@@ -19,23 +19,19 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.NoPreloadingMockLibraryUtil
+import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.Assertions
 import java.io.InputStream
 import java.io.OutputStream
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.extension
 import kotlin.streams.asSequence
-
-internal fun testDataPath(path: String): Path {
-    return Paths.get("analysis/analysis-api-standalone/testData/sessionBuilder").resolve(path)
-}
 
 fun KtCallExpression.assertIsSuccessfulCallOf(
     callableId: CallableId,
@@ -72,8 +68,10 @@ internal fun compileCommonKlib(kLibSourcesRoot: Path): Path {
         ktFiles.mapTo(this) { it.absolutePathString() }
         add("-d")
         add(testKlib.absolutePathString())
+        add("-cp")
+        add(StandardLibrariesPathProviderForKotlinProject.commonStdlibForTests().absolutePath)
     }
-    MockLibraryUtil.runMetadataCompiler(arguments)
+    NoPreloadingMockLibraryUtil.runMetadataCompiler(arguments)
 
     return testKlib
 }
@@ -87,7 +85,7 @@ internal fun compileToJar(sourceRoot: Path): Path {
         add("-d")
         add(testJar.absolutePathString())
     }
-    MockLibraryUtil.runJvmCompiler(arguments)
+    NoPreloadingMockLibraryUtil.runJvmCompiler(arguments)
 
     return testJar
 }

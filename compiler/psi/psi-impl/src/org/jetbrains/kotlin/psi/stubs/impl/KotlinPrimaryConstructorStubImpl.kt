@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 class KotlinPrimaryConstructorStubImpl(
     parent: StubElement<*>?,
     private val containingClassName: StringRef?,
+    override val kdocText: String?,
 ) : KotlinStubBaseImpl<KtPrimaryConstructor>(parent, KtStubElementTypes.PRIMARY_CONSTRUCTOR),
     KotlinConstructorStub<KtPrimaryConstructor> {
     override val fqName: FqName? get() = null
@@ -33,5 +34,6 @@ class KotlinPrimaryConstructorStubImpl(
     override fun copyInto(newParent: StubElement<*>?): KotlinPrimaryConstructorStubImpl = KotlinPrimaryConstructorStubImpl(
         parent = newParent,
         containingClassName = containingClassName,
+        kdocText = kdocText,
     )
 }

@@ -1,0 +1,7 @@
+KDocName(80,82): 'pp'
+  KDocReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in <local>: A.foo) val pp: kotlin.Int

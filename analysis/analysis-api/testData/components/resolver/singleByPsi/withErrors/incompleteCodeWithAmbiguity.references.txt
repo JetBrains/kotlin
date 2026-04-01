@@ -2,5 +2,10 @@ KtNameReferenceExpression(89,92): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<OTHER_ERROR: Inapplicable candidate>
     symbols:
+      0: (in Foo) constructor <T>(len: kotlin.Int)
+      1: (in Foo) constructor <T>(s: kotlin.String)
+    resolveToSymbols:
       (in ROOT) class Foo<T>(len: kotlin.Int)

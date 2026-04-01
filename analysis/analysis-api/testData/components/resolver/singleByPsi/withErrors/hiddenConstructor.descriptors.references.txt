@@ -2,11 +2,16 @@ KtNameReferenceExpression(17,20): 'Obj'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<FUNCTION_EXPECTED: Expression 'Obj' of type 'Obj' cannot be invoked as a function. The function 'invoke()' is not found>
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) object Obj
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

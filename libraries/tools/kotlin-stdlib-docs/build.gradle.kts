@@ -177,6 +177,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceRoots.from("$kotlin_native_root/Interop/Runtime/src/native/kotlin")
                 sourceRoots.from("$kotlin_native_root/runtime/src/main/kotlin")
                 sourceRoots.from("$kotlin_stdlib_dir/native-wasm/src")
+                sourceRoots.from("$kotlin_stdlib_dir/native-wasm/wasi")
                 // We don't generate docs for the intermediate commonNonJvm source set, add them to the platform docs
                 sourceRoots.from("$kotlin_stdlib_dir/common-non-jvm/src/kotlin/coroutines/cancellation/CancellationException.kt")
                 sourceRoots.from("$kotlin_stdlib_dir/common-non-jvm/src/kotlin/reflect/AssociatedObjects.kt")
@@ -221,6 +222,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 displayName.set("Wasm-WASI")
                 dependsOn("common")
                 sourceRoots.from("$kotlin_stdlib_dir/native-wasm/src")
+                sourceRoots.from("$kotlin_stdlib_dir/native-wasm/wasi")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/src")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/builtins")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/internal")

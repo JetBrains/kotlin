@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("test-inputs-check")
     id("project-tests-convention")
 }
@@ -23,6 +22,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(testFixtures(project(":compiler:tests-common-new")))
+    testImplementation(testFixtures(project(":compiler:ir.tree")))
     testImplementation(project(":compiler:ir.backend.common"))
 }
 

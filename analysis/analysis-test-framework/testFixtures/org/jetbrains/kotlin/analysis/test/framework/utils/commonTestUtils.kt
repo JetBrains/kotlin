@@ -79,7 +79,7 @@ fun KtElement.renderLocationDescription(): String {
             ?: error("Expected a JAR file path for a virtual file in a JAR file system: ${virtualFile.path}")
     } else {
         virtualFile.name
-    }.stripOutSnapshotVersion()
+    }.let(::stripOutKotlinVersionFromFileName)
 
     return buildString {
         append("'$fileDescription'")
@@ -138,11 +138,45 @@ fun <T, R> Collection<T>.singleOrZeroValue(
     }
 }
 
-private val snapshotVersionRegex: Regex = """-2\.\d\.\d+-(\w+-\d+|SNAPSHOT)""".toRegex()
+private val snapshotVersionRegex: Regex = """-2\.\d\.\d+-(\w+-\d+|SNAPSHOT|RC\d*)""".toRegex()
 
 /**
  * Removes version suffix from kotlin libraries, like stdlib or kotlin-reflect:
- * kotlin-stdlib-2.3.255-SNAPSHOT -> kotlin-stdlib
- * kotlin-stdlib-2.3.0-dev-1234 -> kotlin-stdlib
+ * kotlin-stdlib-2.4.255-SNAPSHOT -> kotlin-stdlib
+ * kotlin-stdlib-2.4.0-dev-1234 -> kotlin-stdlib
+ * kotlin-stdlib-2.4.0-RC3 -> kotlin-stdlib
  */
 fun String.stripOutSnapshotVersion(): String = replace(snapshotVersionRegex, "")
+
+/**
+ * Removes the given Kotlin [version] suffix from the file name.
+ * The function only strips out the version once.
+ *
+ * The file extension is preserved.
+ * If the file extension isn't included ([fileName] is the base file name), no extension is added.
+ *
+ * kotlin-stdlib-2.3.0.jar -> kotlin-stdlib.jar
+ * kotlin-stdlib-2.3.255-SNAPSHOT.jar -> kotlin-stdlib.jar
+ * kotlin-stdlib-2.3.0-dev-1234.jar -> kotlin-stdlib.jar
+ * kotlin-stdlib-2.3.0-RC3.jar -> kotlin-stdlib.jar
+ */
+fun stripOutKotlinVersionFromFileName(fileName: String, version: KotlinVersion = KotlinVersion.CURRENT): String {
+    // E.g., kotlin-stdlib[[-2.3-SNAPSHOT]].jar
+    val kotlinVersionSuffixBase = "-$version"
+
+    val startIndex = fileName.indexOf(kotlinVersionSuffixBase)
+    if (startIndex < 0) {
+        return fileName
+    }
+
+    var endIndex = startIndex + kotlinVersionSuffixBase.length
+    while (endIndex < fileName.length) {
+        val ch = fileName[endIndex]
+        if (!ch.isLetterOrDigit() && ch != '-') {
+            break
+        }
+        endIndex++
+    }
+
+    return fileName.substring(0, startIndex) + fileName.substring(endIndex)
+}

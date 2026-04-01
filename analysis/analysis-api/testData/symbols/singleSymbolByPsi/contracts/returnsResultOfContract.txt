@@ -1,0 +1,230 @@
+KaNamedFunctionSymbol:
+  annotations: [
+    kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
+      psi: KtAnnotationEntry
+  ]
+  callableId: /myLet
+  compilerVisibility: Public
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: [
+    KaContractCallsInPlaceContractEffectDeclaration:
+      valueParameterReference:
+        KaContractExplicitParameterValue:
+          symbol:
+            KaValueParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              generatedPrimaryConstructorProperty: null
+              hasDeclaredDefaultValue: false
+              hasDefaultValue: false
+              isActual: false
+              isCrossinline: false
+              isExpect: false
+              isExtension: false
+              isExternal: false
+              isImplicitLambdaParameter: false
+              isNoinline: false
+              isVal: true
+              isVararg: false
+              location: LOCAL
+              modality: FINAL
+              name: block
+              origin: SOURCE
+              receiverParameter: null
+              returnType: KaFunctionType:
+                annotations: []
+                typeArguments: [
+                  KaTypeParameterType:
+                    annotations: []
+                    type: T
+                  KaTypeParameterType:
+                    annotations: []
+                    type: R
+                ]
+                type: (T) -> R
+              visibility: PUBLIC
+              getContainingFileSymbol: KaFileSymbol(returnsResultOfContract.kt)
+              getContainingJvmClassName: ReturnsResultOfContractKt
+              getContainingModule: KaSourceModule "Sources of main"
+              deprecationStatus: null
+              importableFqName: null
+      occurrencesRange: EXACTLY_ONCE
+    KaContractReturnsResultOfEffectDeclaration:
+      valueParameterReference:
+        KaContractExplicitParameterValue:
+          symbol:
+            KaValueParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              generatedPrimaryConstructorProperty: null
+              hasDeclaredDefaultValue: false
+              hasDefaultValue: false
+              isActual: false
+              isCrossinline: false
+              isExpect: false
+              isExtension: false
+              isExternal: false
+              isImplicitLambdaParameter: false
+              isNoinline: false
+              isVal: true
+              isVararg: false
+              location: LOCAL
+              modality: FINAL
+              name: block
+              origin: SOURCE
+              receiverParameter: null
+              returnType: KaFunctionType:
+                annotations: []
+                typeArguments: [
+                  KaTypeParameterType:
+                    annotations: []
+                    type: T
+                  KaTypeParameterType:
+                    annotations: []
+                    type: R
+                ]
+                type: (T) -> R
+              visibility: PUBLIC
+              getContainingFileSymbol: KaFileSymbol(returnsResultOfContract.kt)
+              getContainingJvmClassName: ReturnsResultOfContractKt
+              getContainingModule: KaSourceModule "Sources of main"
+              deprecationStatus: null
+              importableFqName: null
+  ]
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: true
+  isExternal: false
+  isInfix: false
+  isInline: true
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: myLet
+  origin: SOURCE
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isVal: true
+    location: LOCAL
+    modality: FINAL
+    name: <receiver>
+    origin: SOURCE
+    owningCallableSymbol: KaNamedFunctionSymbol(/myLet)
+    receiverParameter: null
+    returnType: KaTypeParameterType:
+      annotations: []
+      type: T
+    visibility: PUBLIC
+    getContainingFileSymbol: KaFileSymbol(returnsResultOfContract.kt)
+    getContainingJvmClassName: ReturnsResultOfContractKt
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecationStatus: null
+    importableFqName: null
+  returnType: KaTypeParameterType:
+    annotations: []
+    type: R
+  typeParameters: [
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(returnsResultOfContract.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+      importableFqName: null
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: R
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(returnsResultOfContract.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+      importableFqName: null
+  ]
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: block
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaFunctionType:
+        annotations: []
+        typeArguments: [
+          KaTypeParameterType:
+            annotations: []
+            type: T
+          KaTypeParameterType:
+            annotations: []
+            type: R
+        ]
+        type: (T) -> R
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(returnsResultOfContract.kt)
+      getContainingJvmClassName: ReturnsResultOfContractKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+      importableFqName: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(returnsResultOfContract.kt)
+  getContainingJvmClassName: ReturnsResultOfContractKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+  returnValueStatus: MustUse
+  importableFqName: myLet

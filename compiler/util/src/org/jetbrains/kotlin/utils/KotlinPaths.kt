@@ -51,8 +51,7 @@ interface KotlinPaths {
         get() = klib(Jar.JsStdLib)
 
     val wasmJsStdLibKlibPath: File
-        // TODO KT-78650: Include Wasm/stdlib into dist and replace this hardcode to something similar to how jsStdLibKlibPath is specified
-        get() = File("libraries/stdlib/build/classes/kotlin/wasmJs/main")
+        get() = klib(Jar.WasmStdLib)
 
     //    @Deprecated("Obsolete API", ReplaceWith("sourcesJar(KotlinPaths.Jars.JsStdLib)!!"))
     val jsStdLibSrcJarPath: File
@@ -93,6 +92,7 @@ interface KotlinPaths {
         ScriptRuntime(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_NAME),
         KotlinTest(PathUtil.KOTLIN_TEST_NAME),
         JsStdLib(PathUtil.JS_LIB_NAME),
+        WasmStdLib(PathUtil.WASM_JS_LIB_NAME),
         JsKotlinTest(PathUtil.KOTLIN_TEST_JS_NAME),
         AllOpenPlugin(PathUtil.ALLOPEN_PLUGIN_NAME),
         NoArgPlugin(PathUtil.NOARG_PLUGIN_NAME),

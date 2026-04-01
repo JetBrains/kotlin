@@ -1,0 +1,22 @@
+---
+assert((prefixValue + str.substring(0, 8)).length == 0)
+        |           | |   |                |      |
+        "Hello:"    | |   |                14     false
+                    | |   """
+                    | |   This
+                    | |    Is
+                    | |   """
+                    | """
+                    | This
+                    |  Is
+                    |   A
+                    |    Long
+                    |   Multiple
+                    |  Line
+                    | String
+                    | """
+                    """
+                    Hello:This
+                     Is
+                    """
+---

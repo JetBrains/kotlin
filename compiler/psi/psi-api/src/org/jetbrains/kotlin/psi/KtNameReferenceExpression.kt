@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,8 +14,20 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub
+import org.jetbrains.kotlin.resolution.KtResolvableCall
 
-class KtNameReferenceExpression : KtExpressionImplStub<KotlinNameReferenceExpressionStub>, KtSimpleNameExpression {
+/**
+ * Represents a simple name reference to a variable, function, or type.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * val x = foo
+ * //      ^_^
+ * ```
+ */
+@OptIn(KtExperimentalApi::class)
+class KtNameReferenceExpression : KtExpressionImplStub<KotlinNameReferenceExpressionStub>, KtSimpleNameExpression, KtResolvableCall {
     constructor(node: ASTNode) : super(node)
 
     constructor(stub: KotlinNameReferenceExpressionStub) : super(stub, KtStubBasedElementTypes.REFERENCE_EXPRESSION)

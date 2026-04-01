@@ -9,16 +9,16 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildErrorFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildErrorProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunctionCopy
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceLogger
 import org.jetbrains.kotlin.fir.resolve.isIntegerLiteralOrOperatorCall
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -41,6 +41,9 @@ class CandidateFactory private constructor(
 
     companion object {
         private fun buildBaseSystem(context: ResolutionContext, callInfo: CallInfo): ConstraintStorage {
+            callInfo.containingCandidateForCollectionLiteral?.let {
+                return buildBaseSystemForContainingCallAwareCases(context, it, callInfo)
+            }
             val system = context.inferenceComponents.createConstraintSystem()
             callInfo.argumentAtoms.forEach {
                 system.addSubsystemFromAtom(it)
@@ -57,13 +60,6 @@ class CandidateFactory private constructor(
             containingCall: Candidate,
         ): CandidateFactory =
             CandidateFactory(context, buildBaseSystemForContainingCallAwareCases(context, containingCall, null))
-
-        fun createForCollectionLiterals(
-            context: ResolutionContext,
-            containingCall: Candidate,
-            callInfo: CallInfo,
-        ): CandidateFactory =
-            CandidateFactory(context, buildBaseSystemForContainingCallAwareCases(context, containingCall, callInfo))
 
         private fun buildBaseSystemForContainingCallAwareCases(
             context: ResolutionContext,
@@ -172,15 +168,33 @@ class CandidateFactory private constructor(
             }
         }
 
-        if (dispatchReceiver.isInaccessibleFromStaticNestedClass()) {
+        if (dispatchReceiver.isInaccessibleAndInapplicable()) {
             result.addDiagnostic(dispatchReceiver.toInaccessibleReceiverDiagnostic())
         }
 
-        if (givenExtensionReceiver.isInaccessibleFromStaticNestedClass()) {
+        if (givenExtensionReceiver.isInaccessibleAndInapplicable()) {
             result.addDiagnostic(givenExtensionReceiver.toInaccessibleReceiverDiagnostic())
         }
 
+        if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.CompanionBlocksAndExtensions) &&
+            result.symbol.requiresCompanionBlockOrExtensionLf()
+        ) {
+            result.addDiagnostic(UnsupportedCompanionBlockOrExtensionCall)
+        }
+
         return result
+    }
+
+    private fun FirBasedSymbol<*>.requiresCompanionBlockOrExtensionLf(): Boolean {
+        if (this !is FirCallableSymbol) return false
+        if (isJavaOrEnhancement) return false
+        if (!isStatic) return false
+        // The only static Kotlin declarations that existed before were enum entries and Enum.entires/values/valueOf
+        if (this is FirEnumEntrySymbol) return false
+        (this.getContainingClassSymbol() as? FirClassSymbol)?.let { containingClassSymbol ->
+            if (this.fir.isGeneratedStaticEnumMember(containingClassSymbol.fir)) return false
+        }
+        return true
     }
 
     @OptIn(FirExtensionApiInternals::class)
@@ -227,7 +241,11 @@ class CandidateFactory private constructor(
 
     private fun FirBasedSymbol<*>.isRegularClassWithoutCompanion(session: FirSession): Boolean {
         val referencedClass = (this as? FirClassLikeSymbol<*>)?.fullyExpandedClass(session) ?: return false
-        return referencedClass.classKind != ClassKind.OBJECT && referencedClass.resolvedCompanionObjectSymbol == null
+        if (referencedClass.classKind == ClassKind.OBJECT) return false
+
+        val companionObject = referencedClass.resolvedCompanionObjectSymbol ?: return true
+        return session.languageVersionSettings.supportsFeature(LanguageFeature.SkipHiddenObjectsInResolution)
+                && companionObject.isDeprecationLevelHidden(session)
     }
 
     private fun FirBasedSymbol<*>.unwrapIntegerOperatorSymbolIfNeeded(callInfo: CallInfo): FirBasedSymbol<*> {
@@ -254,11 +272,13 @@ class CandidateFactory private constructor(
             is CallKind.VariableAccess -> createErrorPropertySymbol(diagnostic, callInfo.callSite.source)
             is CallKind.Function,
             is CallKind.DelegatingConstructorCall,
-            is CallKind.CallableReference
-            -> createErrorFunctionSymbol(diagnostic)
-            is CallKind.SyntheticSelect -> throw IllegalStateException()
-            is CallKind.SyntheticIdForCallableReferencesResolution -> throw IllegalStateException()
-            is CallKind.CustomForIde -> throw IllegalStateException()
+            is CallKind.CallableReference,
+            is CallKind.CollectionLiteral,
+                -> createErrorFunctionSymbol(diagnostic)
+            is CallKind.SyntheticSelect,
+            is CallKind.SyntheticIdForCallableReferencesResolution,
+            is CallKind.CustomForIde
+                -> throw IllegalStateException()
         }
         return Candidate(
             symbol,

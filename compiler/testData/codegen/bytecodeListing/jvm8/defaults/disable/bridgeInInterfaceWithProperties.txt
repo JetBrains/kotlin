@@ -26,7 +26,9 @@ public final class Test2$DefaultImpls {
 public interface Test2 {
     // source: 'bridgeInInterfaceWithProperties.kt'
     public abstract @org.jetbrains.annotations.NotNull method getTest(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public synthetic bridge method getTest(p0: java.lang.Object): java.lang.Object
     public abstract method setTest(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    public synthetic bridge method setTest(p0: java.lang.Object, p1: java.lang.Object): void
     public final inner class Test2$DefaultImpls
 }
 

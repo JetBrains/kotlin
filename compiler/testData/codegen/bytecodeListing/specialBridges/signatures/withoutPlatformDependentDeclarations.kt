@@ -1,5 +1,7 @@
 // Without platform dependent declarations we should see ordinary generic signatures everywhere.
 // WITH_SIGNATURES
+// LANGUAGE: +JvmEnhancedBridges
+
 interface I
 
 abstract class T1<K, V> : MutableMap<K, V> {

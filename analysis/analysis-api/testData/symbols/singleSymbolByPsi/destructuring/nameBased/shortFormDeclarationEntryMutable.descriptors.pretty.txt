@@ -1,0 +1,1 @@
+var first: ERROR(component1() return type)

@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isFromEnumClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirPropertyWithExplicitBackingFieldResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.resolve.tryAccessExplicitFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 
 object FirOptInUsageAccessChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -35,27 +35,28 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker(MppCheckerKind.Com
 
         if (expression.isLhsOfAssignment()) return
 
-        val resolvedSymbol = expression.toReference(context.session)?.toResolvedBaseSymbol() ?: return
+        val resolvedSymbol = when (expression) {
+            is FirThisReceiverExpression -> (expression.calleeReference.symbol as? FirReceiverParameterSymbol)?.resolvedType?.toClassLikeSymbol()
+            else -> expression.toReference(context.session)?.toResolvedBaseSymbol()
+        } ?: return
 
         with(FirOptInUsageBaseChecker) {
             when (expression) {
                 is FirVariableAssignment -> {
-                    val experimentalities = resolvedSymbol.loadExperimentalities(fromSetter = true, null) +
+                    val experimentalities = resolvedSymbol.loadExperimentalities(fromSetter = true) +
                             loadExperimentalitiesFromTypeArguments(emptyList())
                     reportNotAcceptedExperimentalities(experimentalities, expression.lValue)
                 }
                 is FirQualifiedAccessExpression -> {
-                    val dispatchReceiverType = expression.dispatchReceiver?.resolvedType?.fullyExpandedType()
-
-                    val experimentalities = resolvedSymbol.loadExperimentalities(fromSetter = false, dispatchReceiverType) +
+                    val experimentalities = resolvedSymbol.loadExperimentalities(fromSetter = false) +
                             loadExperimentalitiesFromTypeArguments(expression.typeArguments) +
-                            loadExperimentalitiesFromExplicitField(expression, dispatchReceiverType)
+                            loadExperimentalitiesFromExplicitField(expression)
                     val source = expression.source?.delegatedPropertySourceOrThis()
                     reportNotAcceptedExperimentalities(experimentalities, expression, source)
                 }
                 is FirDelegatedConstructorCall if resolvedSymbol is FirConstructorSymbol -> {
                     val experimentalities = if (resolvedSymbol.isFromEnumClass) {
-                        resolvedSymbol.loadExperimentalities(fromSetter = false, null)
+                        resolvedSymbol.loadExperimentalities(fromSetter = false)
                     } else {
                         // This is done to prevent double-reporting, as class experimentalities are reported in FirOptInUsageTypeRefChecker
                         resolvedSymbol.loadExperimentalitiesFromConstructor()
@@ -67,7 +68,7 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker(MppCheckerKind.Com
     }
 
     context(context: CheckerContext)
-    fun loadExperimentalitiesFromExplicitField(expression: FirStatement, dispatchReceiver: ConeKotlinType?): Set<Experimentality> {
+    fun loadExperimentalitiesFromExplicitField(expression: FirStatement): Set<Experimentality> {
         if (expression !is FirPropertyAccessExpression) return emptySet()
         val reference = expression.calleeReference as? FirPropertyWithExplicitBackingFieldResolvedNamedReference ?: return emptySet()
         val property = reference.toResolvedPropertySymbol()?.takeIf { it.hasExplicitBackingField } ?: return emptySet()
@@ -75,7 +76,7 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker(MppCheckerKind.Com
             ?: return emptySet()
 
         return when (property.backingFieldSymbol) {
-            field -> field.loadExperimentalities(fromSetter = false, dispatchReceiver)
+            field -> field.loadExperimentalities(fromSetter = false)
             else -> emptySet()
         }
     }

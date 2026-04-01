@@ -20,4 +20,33 @@ class TestInner(val a: String) {
             val concat: String = this@TestInner.a + this@Inner.a + this.a
         }
     }
+
+    open inner class OpenInnerWithPublicConstructor(val a: String) {
+        @JsName("fromNumber")
+        constructor(a: Int) : this(a.toString())
+
+        val concat: String = this@TestInner.a + this.a
+    }
+
+    open inner class OpenInnerWithProtectedConstructor protected constructor(val a: String) {
+        @JsName("fromNumber")
+        protected constructor(a: Int) : this(a.toString())
+
+        val concat: String = this@TestInner.a + this.a
+    }
+
+    abstract inner class AbstractInnerWithProtectedConstructor protected constructor(val a: String) {
+        abstract val concat: String
+    }
+
+    inner class SubclassOfAbstractInnerClass(a: String) : AbstractInnerWithProtectedConstructor(a) {
+        override val concat: String = this@TestInner.a + this.a
+    }
+
+    inner class SubclassOfOpenInnerClass(a: String): OpenInnerWithProtectedConstructor(a)
+
+    abstract inner class AbstractInnerWithSecondaryConstructor(val a: String) {
+        @JsName("fromNumber")
+        constructor(a: Int) : this(a.toString())
+    }
 }

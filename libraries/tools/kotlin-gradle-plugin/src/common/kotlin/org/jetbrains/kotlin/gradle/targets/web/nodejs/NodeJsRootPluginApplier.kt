@@ -26,9 +26,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmCachesSetup
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
-import org.jetbrains.kotlin.gradle.tasks.CleanDataTask.Companion.deprecationMessage
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
@@ -44,6 +41,7 @@ internal class NodeJsRootPluginApplier(
     private val lockFileDirectory: (projectDirectory: Directory) -> Directory,
     private val singleNodeJsPluginApply: (project: Project) -> BaseNodeJsEnvSpec,
     private val yarnPlugin: KClass<out Plugin<Project>>,
+    private val beforePackageManager: (project: Project) -> Unit = {},
     private val platformType: KotlinPlatformType,
 ) {
 
@@ -297,23 +295,26 @@ internal class NodeJsRootPluginApplier(
             listOf(npm.storePackageLockTaskProvider)
         ).disallowChanges()
 
+        @Suppress("DEPRECATION")
         project.tasks.register(
             platformDisambiguate.extensionName(
-                "node" + CleanDataTask.NAME_SUFFIX,
+                "node" + org.jetbrains.kotlin.gradle.tasks.CleanDataTask.NAME_SUFFIX,
                 prefix = null,
             ),
-            CleanDataTask::class.java
+            org.jetbrains.kotlin.gradle.tasks.CleanDataTask::class.java
         ) {
             it.doFirst {
-                it.logger.warn(deprecationMessage(it.path))
+                it.logger.warn(org.jetbrains.kotlin.gradle.tasks.CleanDataTask.Companion.deprecationMessage(it.path))
             }
 
             it.cleanableStoreProvider = nodeJs
                 .installationDirectory
-                .map { CleanableStore.Companion[it.asFile.path] }
+                .map { org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore.Companion[it.asFile.path] }
             it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             it.description = "Clean unused local node version"
         }
+
+        beforePackageManager(project)
 
         val propertiesProvider = PropertiesProvider.Companion(project)
 

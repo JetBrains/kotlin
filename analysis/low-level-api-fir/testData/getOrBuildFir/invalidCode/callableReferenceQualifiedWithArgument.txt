@@ -1,0 +1,27 @@
+KT element: KtValueArgument
+FIR element: FirAnonymousFunctionExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] callableReferenceQualifiedWithArgument.kt
+    public final [ResolvedTo(STATUS)] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val lam: R|() -> kotlin/String| = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+            ^ String(lam)
+        }
+
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=C] get(): R|() -> kotlin/String|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        Q|C|::R|/C.lam|([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        }
+        )
+    }

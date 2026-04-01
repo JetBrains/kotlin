@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -DEPRECATION
 @nativeInvoke
 fun String.foo(): Int

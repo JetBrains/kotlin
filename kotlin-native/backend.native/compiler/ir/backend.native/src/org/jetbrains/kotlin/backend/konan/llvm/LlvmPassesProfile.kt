@@ -64,7 +64,7 @@ internal inline fun <T> withLLVMPassesProfile(
         defer {
             LLVMKotlinDisposePassesProfile(profile)
         }
-        result to LlvmPassesProfile(profile!!, pipelineName)
+        result to profile?.let { LlvmPassesProfile(it, pipelineName) }
     }
 }
 

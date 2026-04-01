@@ -1,7 +1,27 @@
 KtNameReferenceExpression(49,56): 'JvmName'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.jvm.JvmName
+        symbol = <constructor>(name: kotlin.String): kotlin.jvm.JvmName
+        valueParameters = [
+          KaVariableSignature:
+            name = name
+            receiverType = null
+            returnType = kotlin.String
+            symbol = name: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         "" -> (KaVariableSignature:
           name = name
           receiverType = null
@@ -10,23 +30,3 @@ KtNameReferenceExpression(49,56): 'JvmName'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.jvm.JvmName
-          symbol = <constructor>(name: kotlin.String): kotlin.jvm.JvmName
-          valueParameters = [
-            KaVariableSignature:
-              name = name
-              receiverType = null
-              returnType = kotlin.String
-              symbol = name: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}

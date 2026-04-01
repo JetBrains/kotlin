@@ -29,21 +29,20 @@ KtWhenExpression(62,114): 'when (javaEnum) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(68,76): 'javaEnum'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = javaEnum
-          receiverType = null
-          returnType = JavaEnum
-          symbol = javaEnum: JavaEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = javaEnum
+        receiverType = null
+        returnType = JavaEnum
+        symbol = javaEnum: JavaEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

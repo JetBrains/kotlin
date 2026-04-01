@@ -7,52 +7,33 @@ package org.jetbrains.kotlin.parcelize.test.runners
 
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
-import org.jetbrains.kotlin.test.builders.classicFrontendStep
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFailingTestSuppressor
-import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
-import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
-import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
+import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 
 abstract class AbstractParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        globalDefaults {
-            frontend = FrontendKinds.ClassicFrontend
-            targetPlatform = JvmPlatforms.defaultJvmPlatform
-            dependencyKind = DependencyKind.Source
-        }
+        baseFirDiagnosticTestConfiguration()
+        enableLazyResolvePhaseChecking()
 
         defaultDirectives {
             +ENABLE_PARCELIZE
-            +USE_PSI_CLASS_FILES_READING
-            DIAGNOSTICS with "-UNUSED_PARAMETER"
+            +ENABLE_PLUGIN_PHASES
+            // Robolectric 4.16 (onward) with Android SDK 36 requires JDK 21
+            JDK_KIND with TestJdkKind.FULL_JDK_21
         }
 
-        enableMetaInfoHandler()
+        configureFirParser(FirParser.LightTree)
 
-        useConfigurators(
-            ::CommonEnvironmentConfigurator,
-            ::JvmEnvironmentConfigurator,
-            ::ParcelizeEnvironmentConfigurator
-        )
+        useConfigurators(::ParcelizeEnvironmentConfigurator)
 
-        classicFrontendStep()
-
-        classicFrontendHandlersStep {
-            useHandlers(::ClassicDiagnosticsHandler)
-        }
-
-        useAfterAnalysisCheckers(
-            ::FirTestDataConsistencyHandler,
-            ::ClassicFrontendFailingTestSuppressor
-        )
+        useAfterAnalysisCheckers(::FirFailingTestSuppressor)
     }
 }

@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class GenerateKeywordStrings {
-    public static final File DEST_FILE = new File("core/compiler.common/src/org/jetbrains/kotlin/renderer/KeywordStringsGenerated.java");
+    public static final File DEST_FILE = new File("core/names/src/org/jetbrains/kotlin/renderer/KeywordStringsGenerated.java");
 
     @NotNull
     public static String generate() throws IOException {

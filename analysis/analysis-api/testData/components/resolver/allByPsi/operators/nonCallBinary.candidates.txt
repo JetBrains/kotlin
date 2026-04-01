@@ -1,0 +1,266 @@
+KtFile: 'nonCallBinary.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtNamedFunction(0,247): 'fun test() {'
+  NO_CANDIDATES
+
+KtParameterList(8,10): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(11,247): '{'
+  NO_CANDIDATES
+
+KtProperty(17,35): 'val a: Any? = null'
+  NO_CANDIDATES
+
+KtTypeReference(24,28): 'Any?'
+  NO_CANDIDATES
+
+KtNullableType(24,28): 'Any?'
+  NO_CANDIDATES
+
+KtUserType(24,27): 'Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(24,27): 'Any'
+  NO_CANDIDATES
+
+KtConstantExpression(31,35): 'null'
+  NO_CANDIDATES
+
+KtProperty(40,55): 'val b: Any = ""'
+  NO_CANDIDATES
+
+KtTypeReference(47,50): 'Any'
+  NO_CANDIDATES
+
+KtUserType(47,50): 'Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(47,50): 'Any'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(53,55): '""'
+  NO_CANDIDATES
+
+KtBinaryExpression(74,80): 'a ?: b'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(74,75): 'a'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = val a: kotlin.Any?
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(76,78): '?:'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(79,80): 'b'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = val b: kotlin.Any
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(115,128): 'true && false'
+  NO_CANDIDATES
+
+KtConstantExpression(115,119): 'true'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(120,122): '&&'
+  NO_CANDIDATES
+
+KtConstantExpression(123,128): 'false'
+  NO_CANDIDATES
+
+KtBinaryExpression(133,146): 'true || false'
+  NO_CANDIDATES
+
+KtConstantExpression(133,137): 'true'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(138,140): '||'
+  NO_CANDIDATES
+
+KtConstantExpression(141,146): 'false'
+  NO_CANDIDATES
+
+KtBinaryExpression(177,184): 'a === b'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(177,178): 'a'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = val a: kotlin.Any?
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(179,182): '==='
+  NO_CANDIDATES
+
+KtNameReferenceExpression(183,184): 'b'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = val b: kotlin.Any
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(189,196): 'a !== b'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(189,190): 'a'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = val a: kotlin.Any?
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(191,194): '!=='
+  NO_CANDIDATES
+
+KtNameReferenceExpression(195,196): 'b'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = val b: kotlin.Any
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtProperty(226,235): 'var x = 1'
+  NO_CANDIDATES
+
+KtConstantExpression(234,235): '1'
+  NO_CANDIDATES
+
+KtBinaryExpression(240,245): 'x = 2'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = 2
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var x: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(240,241): 'x'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = 2
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var x: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(242,243): '='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = 2
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var x: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(244,245): '2'
+  NO_CANDIDATES

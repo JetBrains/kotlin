@@ -1,8 +1,8 @@
 FILE: AnnotatedErrorTypeRef.kt
     public final fun main(): R|kotlin/Unit| {
-        lval x: @R|kotlin/SinceKotlin|(version = String(2.0)) <ERROR TYPE REF: Incomplete code>
+        lval x: @R|kotlin/SinceKotlin|(version = String(2.0) [evaluated = String(2.0)]) <ERROR TYPE REF: Incomplete code>
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final annotation class Anno : R|kotlin/Annotation| {
         public constructor(): R|Anno| {
             super<R|kotlin/Any|>()
         }

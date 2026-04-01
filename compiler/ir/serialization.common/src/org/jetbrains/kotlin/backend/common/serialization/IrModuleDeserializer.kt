@@ -73,8 +73,7 @@ abstract class IrModuleDeserializer(private val _moduleDescriptor: ModuleDescrip
 
     open fun declareIrSymbol(symbol: IrSymbol) {
         val signature = symbol.signature
-        require(signature != null) { "Symbol is not public API: ${symbol.descriptor}" }
-        assert(symbol.hasDescriptor)
+        require(signature != null) { "Symbol is not public API" }
         deserializeIrSymbolOrFail(signature, symbol.kind())
     }
 
@@ -106,7 +105,7 @@ abstract class IrModuleDeserializer(private val _moduleDescriptor: ModuleDescrip
 
     abstract val kind: IrModuleDeserializerKind
 
-    open fun fileDeserializers(): Collection<IrFileDeserializer> = error("Unsupported")
+    open fun fileDeserializers(): Collection<IrFileDeserializer> = emptyList()
 
     val compatibilityMode: CompatibilityMode get() = CompatibilityMode(libraryAbiVersion)
 
@@ -236,7 +235,7 @@ class IrModuleDeserializerWithBuiltIns(
     }
 
     override val moduleFragment: IrModuleFragment get() = delegate.moduleFragment
-    override val moduleDependencies: Collection<IrModuleDeserializer> get() = delegate.moduleDependencies
+    override val moduleDependencies: Collection<IrModuleDeserializer> get() = emptyList()
     override val kind get() = delegate.kind
 
     override fun fileDeserializers(): Collection<IrFileDeserializer> {

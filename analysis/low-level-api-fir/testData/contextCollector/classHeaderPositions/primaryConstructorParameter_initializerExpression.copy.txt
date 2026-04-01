@@ -17,6 +17,8 @@ Tower Data Context:
                 FirRegularClassSymbol public final? class Nested : R|kotlin/Any|
         Static scope owner symbol: FirRegularClassSymbol public open class Base : R|kotlin/Any|
     Element 7
+        Static scope owner symbol: FirRegularClassSymbol public final class Child : R|test/Base|
+    Element 8
         Scope: FirLocalScope
             Properties:
                 FirValueParameterSymbol name: R|kotlin/String| = String(name)

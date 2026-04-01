@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.testOld.optimizer
 import org.jetbrains.kotlin.js.parser.CodePosition
 import org.jetbrains.kotlin.js.parser.ErrorReporter
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
@@ -49,14 +50,14 @@ abstract class BasicOptimizerTest(private var basePath: String) {
     protected fun box() {
         val methodName = testName.methodName
         val baseName = "${TEST_DATA_DIR_PATH}/js-optimizer/$basePath"
-        val unoptimizedName = "$baseName/$methodName.original.js"
-        val optimizedName = "$baseName/$methodName.optimized.js"
+        val unoptimizedName = ForTestCompileRuntime.transformTestDataPath("$baseName/$methodName.original.js")
+        val optimizedName = ForTestCompileRuntime.transformTestDataPath("$baseName/$methodName.optimized.js")
 
-        val unoptimizedCode = FileUtil.loadFile(File(unoptimizedName))
-        val optimizedCode = FileUtil.loadFile(File(optimizedName))
+        val unoptimizedCode = FileUtil.loadFile(unoptimizedName)
+        val optimizedCode = FileUtil.loadFile(optimizedName)
 
-        runScript(unoptimizedName, unoptimizedCode)
-        runScript(optimizedName, optimizedCode)
+        runScript(unoptimizedName.absolutePath, unoptimizedCode)
+        runScript(optimizedName.absolutePath, optimizedCode)
         checkOptimizer(unoptimizedCode, optimizedCode)
     }
 
@@ -89,7 +90,7 @@ abstract class BasicOptimizerTest(private var basePath: String) {
         for (stmt in ast) {
             object : RecursiveJsVisitor() {
                 override fun visitVars(x: JsVars) {
-                    x.synthetic = x.vars.any { isSyntheticId(it.name.ident) }
+                    x.synthetic = x.vars.flatMap { it.assignable.names }.any { isSyntheticId(it.ident) }
                     super.visitVars(x)
                 }
 

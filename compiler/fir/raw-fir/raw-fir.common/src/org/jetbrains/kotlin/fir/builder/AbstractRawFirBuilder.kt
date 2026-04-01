@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -55,6 +58,7 @@ import kotlin.contracts.contract
 abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val context: Context<T> = Context()) {
     companion object {
         fun firScriptName(fileName: String): Name = Name.special("<script-$fileName>")
+        fun firSnippetName(fileName: String): Name = Name.special("<snippet-$fileName>")
     }
 
     val baseModuleData: FirModuleData = baseSession.moduleData
@@ -222,6 +226,19 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
             context.containingReplSymbol = null
         }
     }
+
+    inline fun withCompanionBlock(block: () -> Unit) {
+        val oldValue = context.currentCompanionBlockOwnerOrNull
+        context.currentCompanionBlockOwnerOrNull = context.containerSymbolIfAny
+        try {
+            block()
+        } finally {
+            context.currentCompanionBlockOwnerOrNull = oldValue
+        }
+    }
+
+    val isDirectlyInsideCompanionBlock: Boolean
+        get() = context.currentCompanionBlockOwnerOrNull.let { it != null && it == context.containerSymbolIfAny }
 
     protected open fun addCapturedTypeParameters(
         status: Boolean,
@@ -446,7 +463,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         return when (type) {
             INTEGER_CONSTANT -> {
                 var diagnostic: DiagnosticKind = DiagnosticKind.IllegalConstExpression
-                val number: Long?
+                var number: Long?
 
                 val kind = when {
                     convertedText == null -> {
@@ -484,6 +501,11 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                         number = convertedText
                         ConstantValueKind.IntegerLiteral
                     }
+                }
+
+                if (hasLeadingZeros(text)) {
+                    diagnostic = DiagnosticKind.IntLiteralWithLeadingZeros
+                    number = null
                 }
 
                 buildConstOrErrorExpression(
@@ -545,6 +567,10 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                     withSourceElementEntry("literal", expression)
                 }
         }
+    }
+
+    private fun hasLeadingZeros(text: String): Boolean {
+        return text.length > 1 && text[0] == '0' && text[1].let { it.isDigit() || it == '_' }
     }
 
     protected fun ExceptionAttachmentBuilder.withSourceElementEntry(name: String, element: T?) {
@@ -1314,40 +1340,73 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         CONTEXT_PARAMETER(shouldExplicitParameterTypeBePresent = true, isAnnotationOwner = true),
     }
 
-    protected fun convertScriptOrSnippets(declaration: T, fileBuilder: FirFileBuilder): FirDeclaration {
-        val scriptSource = declaration.toFirSourceElement()
-        val sourceFile = fileBuilder.sourceFile!!
+    protected open fun isReplSnippet(script: T, sourceFile: KtSourceFile): Boolean {
+        val scriptSource = script.toFirSourceElement()
+        return baseSession.extensionService.replSnippetConfigurators.any {
+            it.isReplSnippetsSource(sourceFile, scriptSource)
+        }
+    }
 
-        val repSnippetConfigurator =
-            baseSession.extensionService.replSnippetConfigurators.filter {
+    /**
+     * Converts the [declaration] to a [FirScript] or [FirReplSnippet] depending on the [sourceFile].
+     *
+     * If [fileBuilder] is provided, it will be used to configure the file containing the script or snippet.
+     */
+    protected fun convertScriptOrSnippets(declaration: T, sourceFile: KtSourceFile, fileBuilder: FirFileBuilder?): FirDeclaration {
+        val scriptSource = declaration.toFirSourceElement()
+
+        return if (isReplSnippet(declaration, sourceFile)) {
+            val repSnippetConfigurator = baseSession.extensionService.replSnippetConfigurators.filter {
                 it.isReplSnippetsSource(sourceFile, scriptSource)
-            }.let {
+            }.let { snippetConfiguratorExtensions ->
                 requireWithAttachment(
-                    it.size <= 1,
+                    snippetConfiguratorExtensions.size <= 1,
                     message = { "More than one REPL snippet configurator is found for the file" },
                 ) {
                     withEntry("fileName", sourceFile.name)
-                    withEntry("configurators", it.joinToString { "${it::class.java.name}" })
+                    withEntry("configurators", snippetConfiguratorExtensions.joinToString { "${it::class.java.name}" })
                 }
-                it.firstOrNull()
+
+                snippetConfiguratorExtensions.firstOrNull()
             }
 
-        return if (repSnippetConfigurator != null) {
-            convertReplSnippet(declaration, scriptSource, sourceFile.name) {
-                with(repSnippetConfigurator) {
-                    configureContainingFile(fileBuilder)
-                    configure(fileBuilder.sourceFile, context)
-                }
-            }
+            convertReplSnippet(
+                script = declaration,
+                scriptSource = scriptSource,
+                fileName = sourceFile.name,
+                snippetSetup = {
+                    if (repSnippetConfigurator != null) {
+                        with(repSnippetConfigurator) {
+                            fileBuilder?.let { configureContainingFile(it) }
+                            configure(sourceFile, context)
+                        }
+                    }
+                },
+                functionBodySetup = {
+                    if (repSnippetConfigurator != null) {
+                        with(repSnippetConfigurator) {
+                            configureEvalBody(sourceFile, scriptSource, context)
+                        }
+                    }
+                },
+                statementsSetup = {
+                    if (repSnippetConfigurator != null) {
+                        with(repSnippetConfigurator) {
+                            configure(sourceFile, scriptSource, context)
+                        }
+                    }
+                },
+            )
         } else {
-            val scriptConfigurator =
-                baseSession.extensionService.scriptConfigurators.firstOrNull { it.accepts(fileBuilder.sourceFile, scriptSource) }
+            val scriptConfigurator = baseSession.extensionService.scriptConfigurators.firstOrNull {
+                it.accepts(sourceFile, scriptSource)
+            }
 
-            convertScript(declaration, scriptSource, fileBuilder.name) {
+            convertScript(declaration, scriptSource, sourceFile.name) {
                 if (scriptConfigurator != null) {
                     with(scriptConfigurator) {
-                        configureContainingFile(fileBuilder)
-                        configure(fileBuilder.sourceFile, context)
+                        fileBuilder?.let { configureContainingFile(it) }
+                        configure(sourceFile, context)
                     }
                 }
             }
@@ -1365,7 +1424,9 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         script: T,
         scriptSource: KtSourceElement,
         fileName: String,
-        setup: FirReplSnippetBuilder.() -> Unit,
+        snippetSetup: FirReplSnippetBuilder.() -> Unit,
+        functionBodySetup: FirBlockBuilder.() -> Unit,
+        statementsSetup: MutableList<FirElement>.() -> Unit,
     ): FirReplSnippet
 
     protected fun configureScriptDestructuringDeclarationEntry(declaration: FirVariable, container: FirVariable) {

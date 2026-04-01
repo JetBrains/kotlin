@@ -1,0 +1,5 @@
+KtCallableReferenceExpression(141,150): 'list::add'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList.add(<dispatch receiver>: kotlin.collections.MutableList<E>, element: E): kotlin.Boolean
+    ]

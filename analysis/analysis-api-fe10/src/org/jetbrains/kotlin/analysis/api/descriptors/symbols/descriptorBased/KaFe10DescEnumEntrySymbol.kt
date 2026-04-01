@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 internal class KaFe10DescEnumEntrySymbol(
     override val descriptor: ClassDescriptor,
@@ -42,6 +43,9 @@ internal class KaFe10DescEnumEntrySymbol(
 
     override val isExpect: Boolean
         get() = withValidityAssertion { descriptor.isExpect }
+
+    override val isExternal: Boolean
+        get() = withValidityAssertion { descriptor.isEffectivelyExternal() }
 
     override val returnType: KaType
         get() = withValidityAssertion { enumDescriptor.defaultType.toKtType(analysisContext) }

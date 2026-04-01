@@ -152,81 +152,15 @@ KtNameReferenceExpression(407,413): 'MyEnum'
   null
 
 KtPostfixExpression(416,425): 'Option1!!'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Option1 -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = MyEnum?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-          valueParameters = [
-            KaVariableSignature:
-              name = baseExpr
-              receiverType = null
-              returnType = MyEnum?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
-      }
+  null
 
 KtNameReferenceExpression(416,423): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
 KtOperationReferenceExpression(423,425): '!!'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Option1 -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = MyEnum?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-          valueParameters = [
-            KaVariableSignature:
-              name = baseExpr
-              receiverType = null
-              returnType = MyEnum?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
-      }
+  null
 
 KtProperty(430,458): 'var i20: MyEnum = enumProp!!'
   null
@@ -241,81 +175,15 @@ KtNameReferenceExpression(439,445): 'MyEnum'
   null
 
 KtPostfixExpression(448,458): 'enumProp!!'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        enumProp -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = MyEnum?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-          valueParameters = [
-            KaVariableSignature:
-              name = baseExpr
-              receiverType = null
-              returnType = MyEnum?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
-      }
+  null
 
 KtNameReferenceExpression(448,456): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
 KtOperationReferenceExpression(456,458): '!!'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        enumProp -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = MyEnum?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-          valueParameters = [
-            KaVariableSignature:
-              name = baseExpr
-              receiverType = null
-              returnType = MyEnum?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
-      }
+  null
 
 KtProperty(463,493): 'var i30: MyEnum = stringProp!!'
   null
@@ -330,87 +198,43 @@ KtNameReferenceExpression(472,478): 'MyEnum'
   null
 
 KtPostfixExpression(481,493): 'stringProp!!'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        stringProp -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = MyEnum?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-          valueParameters = [
-            KaVariableSignature:
-              name = baseExpr
-              receiverType = null
-              returnType = MyEnum?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
-      }
+  null
 
 KtNameReferenceExpression(481,491): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
 KtOperationReferenceExpression(491,493): '!!'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        stringProp -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = MyEnum?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+  null
+
+KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = MyEnum
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
-              name = baseExpr
+              name = e
               receiverType = null
-              returnType = MyEnum?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+              returnType = ERROR_TYPE
+              symbol = e: T
               contextParameters = []
               callableId = null
           ]
           contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
-      }
-
-KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
-  KaErrorCallInfo:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        argumentMapping = {
+          callableId = /receive
+        typeArgumentsMapping = {
+          T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
           Option1!! -> (KaVariableSignature:
             name = e
             receiverType = null
@@ -418,38 +242,37 @@ KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
             symbol = e: T
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receive(e: T): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = e
-                receiverType = null
-                returnType = ERROR_TYPE
-                symbol = e: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receive
-        typeArgumentsMapping = {
-          T -> (ERROR_TYPE)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(499,506): 'receive'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+        typeArgumentsMapping = {
+          T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
           Option1!! -> (KaVariableSignature:
             name = e
             receiverType = null
@@ -457,29 +280,6 @@ KtNameReferenceExpression(499,506): 'receive'
             symbol = e: T
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receive(e: T): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = e
-                receiverType = null
-                returnType = ERROR_TYPE
-                symbol = e: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receive
-        typeArgumentsMapping = {
-          T -> (ERROR_TYPE)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
@@ -506,93 +306,43 @@ KtValueArgument(515,524): 'Option1!!'
   null
 
 KtPostfixExpression(515,524): 'Option1!!'
-  KaErrorCallInfo:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          Option1 -> (KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = ERROR_TYPE?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = ERROR_TYPE
-            symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-            valueParameters = [
-              KaVariableSignature:
-                name = baseExpr
-                receiverType = null
-                returnType = ERROR_TYPE?
-                symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-        typeArgumentsMapping = {
-          <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
-        }
-    ]
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
+  null
 
 KtNameReferenceExpression(515,522): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
 KtOperationReferenceExpression(522,524): '!!'
-  KaErrorCallInfo:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          Option1 -> (KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = ERROR_TYPE?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = ERROR_TYPE
-            symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-            valueParameters = [
-              KaVariableSignature:
-                name = baseExpr
-                receiverType = null
-                returnType = ERROR_TYPE?
-                symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-        typeArgumentsMapping = {
-          <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
-        }
-    ]
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
+  null
 
 KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+        typeArgumentsMapping = {
+          T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
           enumProp!! -> (KaVariableSignature:
             name = e
             receiverType = null
@@ -600,38 +350,37 @@ KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
             symbol = e: T
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receive(e: T): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = e
-                receiverType = null
-                returnType = ERROR_TYPE
-                symbol = e: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receive
-        typeArgumentsMapping = {
-          T -> (ERROR_TYPE)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(530,537): 'receive'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+        typeArgumentsMapping = {
+          T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
           enumProp!! -> (KaVariableSignature:
             name = e
             receiverType = null
@@ -639,29 +388,6 @@ KtNameReferenceExpression(530,537): 'receive'
             symbol = e: T
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receive(e: T): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = e
-                receiverType = null
-                returnType = ERROR_TYPE
-                symbol = e: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receive
-        typeArgumentsMapping = {
-          T -> (ERROR_TYPE)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
@@ -688,93 +414,43 @@ KtValueArgument(546,556): 'enumProp!!'
   null
 
 KtPostfixExpression(546,556): 'enumProp!!'
-  KaErrorCallInfo:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          enumProp -> (KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = ERROR_TYPE?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = ERROR_TYPE
-            symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-            valueParameters = [
-              KaVariableSignature:
-                name = baseExpr
-                receiverType = null
-                returnType = ERROR_TYPE?
-                symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-        typeArgumentsMapping = {
-          <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
-        }
-    ]
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
+  null
 
 KtNameReferenceExpression(546,554): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
 KtOperationReferenceExpression(554,556): '!!'
-  KaErrorCallInfo:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          enumProp -> (KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = ERROR_TYPE?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = ERROR_TYPE
-            symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-            valueParameters = [
-              KaVariableSignature:
-                name = baseExpr
-                receiverType = null
-                returnType = ERROR_TYPE?
-                symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-        typeArgumentsMapping = {
-          <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
-        }
-    ]
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
+  null
 
 KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+        typeArgumentsMapping = {
+          T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
           stringProp!! -> (KaVariableSignature:
             name = e
             receiverType = null
@@ -782,38 +458,37 @@ KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
             symbol = e: T
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receive(e: T): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = e
-                receiverType = null
-                returnType = ERROR_TYPE
-                symbol = e: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receive
-        typeArgumentsMapping = {
-          T -> (ERROR_TYPE)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(562,569): 'receive'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+        typeArgumentsMapping = {
+          T -> (ERROR_TYPE)
+        }
+        valueArgumentMapping = {
           stringProp!! -> (KaVariableSignature:
             name = e
             receiverType = null
@@ -821,29 +496,6 @@ KtNameReferenceExpression(562,569): 'receive'
             symbol = e: T
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receive(e: T): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = e
-                receiverType = null
-                returnType = ERROR_TYPE
-                symbol = e: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receive
-        typeArgumentsMapping = {
-          T -> (ERROR_TYPE)
         }
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
@@ -870,84 +522,12 @@ KtValueArgument(578,590): 'stringProp!!'
   null
 
 KtPostfixExpression(578,590): 'stringProp!!'
-  KaErrorCallInfo:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          stringProp -> (KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = ERROR_TYPE?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = ERROR_TYPE
-            symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-            valueParameters = [
-              KaVariableSignature:
-                name = baseExpr
-                receiverType = null
-                returnType = ERROR_TYPE?
-                symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-        typeArgumentsMapping = {
-          <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
-        }
-    ]
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
+  null
 
 KtNameReferenceExpression(578,588): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
 KtOperationReferenceExpression(588,590): '!!'
-  KaErrorCallInfo:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        argumentMapping = {
-          stringProp -> (KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = ERROR_TYPE?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = ERROR_TYPE
-            symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-            valueParameters = [
-              KaVariableSignature:
-                name = baseExpr
-                receiverType = null
-                returnType = ERROR_TYPE?
-                symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-        typeArgumentsMapping = {
-          <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
-        }
-    ]
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
+  null

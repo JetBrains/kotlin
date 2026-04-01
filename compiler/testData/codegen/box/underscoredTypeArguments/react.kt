@@ -1,5 +1,5 @@
 // LANGUAGE: +PartiallySpecifiedTypeArguments
-
+// FILE: lib.kt
 interface RProps
 open class RComponent<K, T> : Component<K, T>
 interface RState
@@ -19,6 +19,7 @@ inline fun <P : RProps, reified C : Component<P, *>> child(
     noinline handler: RElementBuilder<P>.() -> Unit
 ): String = "OK"
 
+// FILE: main.kt
 fun box(): String {
     child<MyProps<RBuilder.(String) -> Unit>, _> {
 

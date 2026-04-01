@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.testbase.GradleAndroidTest
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
+import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.testbase.assertHasDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
@@ -20,6 +21,8 @@ import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.buildAndFail
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.compileStubSourceWithSourceSetName
+import org.jetbrains.kotlin.gradle.testbase.disableIsolatedProjectsBecauseOfJsAndWasmKT75899
+import org.jetbrains.kotlin.gradle.testbase.disableIsolatedProjectsForKmpDependenciesChecker
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.settingsBuildScriptInjection
@@ -31,8 +34,6 @@ import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.uklibs.includeBuild
 import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.gradle.uklibs.publishJava
-import org.jetbrains.kotlin.gradle.util.kotlinStdlibDependencies
-import org.jetbrains.kotlin.gradle.util.kotlinNativeDistributionDependencies
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
 import org.junit.jupiter.api.DisplayName
 
@@ -189,7 +190,10 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         agpVersion: String,
     ) {
-        val consumer = project("empty", gradleVersion, buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)) {
+        val buildOpions = defaultBuildOptions
+            .copy(androidVersion = agpVersion)
+            .disableIsolatedProjectsForKmpDependenciesChecker(gradleVersion)
+        val consumer = project("empty", gradleVersion, buildOpions) {
             val producer = project("empty", gradleVersion) {
                 plugins {
                     kotlin("multiplatform")
@@ -255,7 +259,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
         }.publish(
             deriveBuildOptions = {
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+                defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
             }
         )
 
@@ -286,7 +290,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
         consumer.build(
             "compileKotlinJs",
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
         ) {
             assertHasDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
             assertTasksExecuted(":checkKotlinGradlePluginConfigurationErrors")

@@ -1,0 +1,12 @@
+/companionObjectUnderRequiresOptIn_before.kt:35:31: error: this declaration needs opt-in. Its usage must be marked with '@ExperimentalForTest' or '@OptIn(ExperimentalForTest::class)'
+    val withMarkedCompanion = WithMarkedCompanion
+                              ^^^^^^^^^^^^^^^^^^^
+/companionObjectUnderRequiresOptIn_before.kt:36:27: error: this declaration needs opt-in. Its usage must be marked with '@ExperimentalForTest' or '@OptIn(ExperimentalForTest::class)'
+    val withMarkedOuter = WithMarkedOuter
+                          ^^^^^^^^^^^^^^^
+/companionObjectUnderRequiresOptIn_before.kt:38:37: error: this declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
+    val withExperimentalStdlibApi = WithExperimentalStdlib
+                                    ^^^^^^^^^^^^^^^^^^^^^^
+/companionObjectUnderRequiresOptIn_before.kt:39:43: error: this declaration needs opt-in. Its usage must be marked with '@ExperimentalForTest' or '@OptIn(ExperimentalForTest::class)'
+    val withMarkedCompanionViaTypealias = WithMarkedCompanionTypealias
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

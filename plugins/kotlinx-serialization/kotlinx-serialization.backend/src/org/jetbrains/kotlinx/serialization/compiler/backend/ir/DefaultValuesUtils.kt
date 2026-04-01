@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.deepCopyWithoutPatchingParents
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
@@ -86,6 +87,10 @@ fun createInitializerAdapter(
     paramGetReplacer: (ValueParameterDescriptor) -> IrExpression?,
     thisGetReplacer: Pair<IrValueSymbol, () -> IrExpression>? = null
 ): (IrExpressionBody) -> IrExpression {
+    val constructorParameters = irClass.primaryConstructor?.parameters
+        .orEmpty()
+        .mapTo(hashSetOf()) { it.symbol }
+
     val initializerTransformer = object : IrElementTransformerVoid() {
         // try to replace `get some value` expression
         override fun visitGetValue(expression: IrGetValue): IrExpression {
@@ -96,7 +101,7 @@ fun createInitializerAdapter(
             }
 
             val descriptor = symbol.descriptor
-            if (descriptor is ValueParameterDescriptor) {
+            if (descriptor is ValueParameterDescriptor && symbol in constructorParameters) {
                 // replace `get parameter value` expression
                 paramGetReplacer(descriptor)?.let { return it }
             }

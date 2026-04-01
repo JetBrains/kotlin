@@ -1,0 +1,7 @@
+ALL:
+  /C.foo.<no name>: Int
+  /D.foo.<no name>: Int
+DIRECT:
+  /C.foo.<no name>: Int
+  /D.foo.<no name>: Int
+INTERSECTION:

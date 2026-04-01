@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.isExperimentalMarker
+import org.jetbrains.kotlin.fir.analysis.checkers.resolvedCompanionSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.getContainingClassLookupTag
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
@@ -30,9 +33,15 @@ object FirOptInUsageQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
         expression: FirResolvedQualifier,
     ) {
         val symbol = expression.symbol ?: return
+        val companionObjectSymbol = expression.resolvedCompanionSymbol()
         with(FirOptInUsageBaseChecker) {
-            val experimentalities = symbol.loadExperimentalities(fromSetter = false, dispatchReceiverType = null)
-            reportNotAcceptedExperimentalities(experimentalities, expression)
+            val (hardExperimentalities, softExperimentalities) = symbol.loadExperimentalitiesForQualifier(companionObjectSymbol)
+            reportNotAcceptedExperimentalities(hardExperimentalities, expression)
+            reportNotAcceptedExperimentalities(
+                softExperimentalities,
+                expression,
+                reportErrorsAsDeprecationWarnings = LanguageFeature.ReportOptInUsageOnCompanionObjectAccesses.isDisabled(),
+            )
         }
     }
 

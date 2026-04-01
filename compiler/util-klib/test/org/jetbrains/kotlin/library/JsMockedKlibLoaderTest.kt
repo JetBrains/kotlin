@@ -19,5 +19,7 @@ class JsMockedKlibLoaderTest : AbstractMockedKlibLoaderTest(KOTLIN_JS_STDLIB_NAM
         get() = listOf(
             KlibPlatformChecker.Wasm(),
             KlibPlatformChecker.Native(),
+            KlibPlatformChecker.Native("ios_arm64"),
+            KlibPlatformChecker.NativeMetadata("ios_arm64"),
         )
 }

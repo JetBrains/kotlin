@@ -67,7 +67,7 @@ abstract class CompilationOutputs {
     fun deleteNonWrittenFiles(outputDir: File, writtenFiles: Set<File>) {
         Files.walk(outputDir.toPath())
             .parallel()
-            .map { it.toFile() }
+            .map { it.toFile().normalizedAbsoluteFile }
             .filter { it != outputDir && it !in writtenFiles }
             .forEach(File::delete)
     }

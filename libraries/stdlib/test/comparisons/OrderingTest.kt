@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -197,6 +197,26 @@ class OrderingTest {
         assertEquals(-0.0, minOf(0.0, -0.0))
         assertEquals(-0.0, minOf(-0.0, 0.0))
         assertEquals(-0.0, minOf(-0.0, 0.0, 0.0, -0.0))
+    }
+
+    @Test
+    fun compareValuesDistinguishesMinusZeroFromZero() {
+        assertTrue(compareValues(-0.0, 0.0) < 0)
+        assertTrue(compareValues(0.0, -0.0) > 0)
+        assertEquals(0, compareValues(-0.0, -0.0))
+        assertEquals(0, compareValues(0.0, 0.0))
+    }
+
+    @Test
+    fun nullsFirstDistinguishesMinusZeroFromZero() {
+        assertTrue(nullsFirst<Double>().compare(-0.0, 0.0) < 0)
+        assertTrue(nullsFirst<Double>().compare(0.0, -0.0) > 0)
+    }
+
+    @Test
+    fun nullsLastDistinguishesMinusZeroFromZero() {
+        assertTrue(nullsLast<Double>().compare(-0.0, 0.0) < 0)
+        assertTrue(nullsLast<Double>().compare(0.0, -0.0) > 0)
     }
 
     @Test

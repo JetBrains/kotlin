@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.targets.native
 
+import org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCacheApi
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.Serializable
 import java.net.URI
@@ -14,3 +16,6 @@ internal data class DisableNativeCacheSettings(
     val reason: String,
     val issueUrl: URI?,
 ) : Serializable
+
+@OptIn(KotlinNativeCacheApi::class)
+internal fun DisableCacheInKotlinVersion.toKotlinVersion() = KotlinToolingVersion(major, minor, patch, null)

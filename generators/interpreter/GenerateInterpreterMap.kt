@@ -8,15 +8,14 @@ package org.jetbrains.kotlin.generators.interpreter
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.IntrinsicConstEvaluation
 import org.jetbrains.kotlin.utils.Printer
 import kotlin.reflect.full.memberFunctions
 
@@ -268,14 +267,16 @@ private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
 private fun getUnsignedConversionOperationMap(): List<Operation> {
     val operationMap = mutableListOf<Operation>()
 
-    val fullList = listOf("toULong", "toUInt", "toUShort", "toUByte")
+    val fullList = with(OperatorNameConventions) {
+        listOf(TO_ULONG, TO_UINT, TO_USHORT, TO_UBYTE).map { it.asString() }
+    }
     val uintConversionExtensions = mapOf(
         "Long" to fullList,
         "Int" to fullList,
         "Short" to fullList,
         "Byte" to fullList,
-        "Double" to listOf("toULong", "toUInt"),
-        "Float" to listOf("toULong", "toUInt"),
+        "Double" to with(OperatorNameConventions) { listOf(TO_ULONG, TO_UINT).map { it.asString() } },
+        "Float" to with(OperatorNameConventions) { listOf(TO_ULONG, TO_UINT).map { it.asString() } },
     )
 
     for ((type, extensions) in uintConversionExtensions) {

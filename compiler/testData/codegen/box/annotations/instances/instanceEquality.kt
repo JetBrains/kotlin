@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// TARGET_BACKEND: JVM_IR, WASM
 // IGNORE_BACKEND_K1: ANY
 
 annotation class A1

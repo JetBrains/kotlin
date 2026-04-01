@@ -1,0 +1,15 @@
+<caret_1>:
+  KDocName(256,259): 'age'
+    NO_CANDIDATES
+
+<caret_2>:
+  KDocName(277,281): 'name'
+    NO_CANDIDATES
+
+<caret_3>:
+  KDocName(299,305): 'getAge'
+    NO_CANDIDATES
+
+<caret_4>:
+  KDocName(323,330): 'getName'
+    NO_CANDIDATES

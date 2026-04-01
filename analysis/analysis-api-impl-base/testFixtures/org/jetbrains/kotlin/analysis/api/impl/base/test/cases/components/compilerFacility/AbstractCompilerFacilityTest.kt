@@ -1,16 +1,16 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility
 
-import com.intellij.openapi.extensions.LoadingOrder
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
@@ -20,9 +20,13 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.BytecodeListingTextCollectingVisitor
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -71,27 +75,6 @@ abstract class AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest : Abstr
 }
 
 abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
-    private companion object {
-        private val ALLOWED_ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) {
-            listOf(
-                FirErrors.INVISIBLE_REFERENCE,
-                FirErrors.INVISIBLE_SETTER,
-                FirErrors.DEPRECATION_ERROR,
-                FirErrors.DIVISION_BY_ZERO,
-                FirErrors.OPT_IN_USAGE_ERROR,
-                FirErrors.OPT_IN_TO_INHERITANCE_ERROR,
-                FirErrors.OPT_IN_OVERRIDE_ERROR,
-                FirErrors.UNSAFE_CALL,
-                FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL,
-                FirErrors.UNSAFE_INFIX_CALL,
-                FirErrors.UNSAFE_OPERATOR_CALL,
-                FirErrors.ITERATOR_ON_NULLABLE,
-                FirErrors.UNEXPECTED_SAFE_CALL,
-                FirErrors.DSL_SCOPE_VIOLATION,
-            ).map { it.name }
-        }
-    }
-
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
         if (mainFile == null) {
             assert(mainModule.moduleKind == TestModuleKind.LibraryBinary)
@@ -106,6 +89,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         super.doTestByMainModuleAndOptionalMainFile(mainFile, mainModule, testServices)
     }
 
+    @OptIn(ExperimentalCompilerApi::class)
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val testFile = mainModule.testModule.files.single { it.name == mainFile.name }
 
@@ -113,10 +97,12 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         val irCollector = CollectingIrGenerationExtension(annotationToCheckCalls)
 
         val project = mainFile.project
-        project.extensionArea.getExtensionPoint(IrGenerationExtension.extensionPointName)
-            .registerExtension(irCollector, LoadingOrder.LAST, project)
+        with(CompilerPluginRegistrar.ExtensionStorage()) {
+            IrGenerationExtension.registerExtension(irCollector)
+            registerInProject(project)
+        }
 
-        val compilerConfiguration = CompilerConfiguration().apply {
+        val compilerConfiguration = CompilerConfiguration.create().apply {
             put(CommonConfigurationKeys.MODULE_NAME, mainModule.testModule.name)
             put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, mainModule.testModule.languageVersionSettings)
 
@@ -125,6 +111,10 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
 
             testFile.directives[Directives.CODE_FRAGMENT_METHOD_NAME].singleOrNull()
                 ?.let { put(CODE_FRAGMENT_METHOD_NAME, it) }
+
+            mainModule.testModule.directives[Directives.ACTUALIZATION]
+                .takeIf { it.isNotEmpty() }
+                ?.let { put(MODULE_ACTUALIZER, createModuleActualizer(it, testServices)) }
         }
 
         val callStack = mutableListOf<PsiElement>()
@@ -143,13 +133,12 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
             val target = KaCompilerTarget.Jvm(
                 isTestMode = true,
                 compiledClassHandler = null,
-                debuggerExtension = DebuggerExtension(callStack.asSequence())
+                debuggerExtension = KaDebuggerExtension(callStack.asSequence())
             )
-            val allowedErrorFilter: (KaDiagnostic) -> Boolean = { it.factoryName in ALLOWED_ERRORS }
 
             val exceptionExpected = mainModule.testModule.directives.contains(Directives.CODE_COMPILATION_EXCEPTION)
             val result = try {
-                compile(mainFile, compilerConfiguration, target, allowedErrorFilter)
+                compile(mainFile, compilerConfiguration, target, TestAllowedErrorFilter)
             } catch (e: Throwable) {
                 if (exceptionExpected && e is KaCodeCompilationException) {
                     e.cause?.message?.let { testServices.assertions.assertEqualsToTestOutputFile("CODE_COMPILATION_EXCEPTION:\n$it") }
@@ -163,7 +152,9 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
                 is KaCompilationResult.Failure -> result.errors.joinToString("\n") { dumpDiagnostic(it) }
                 is KaCompilationResult.Success -> dumpClassFiles(
                     result.output,
-                    mainModule.testModule.directives.contains(Directives.DUMP_CODE)
+                    dumpSignatures = false,
+                    dumpAnnotations = false,
+                    dumpCode = mainModule.testModule.directives.contains(Directives.DUMP_CODE),
                 )
             }
 
@@ -177,6 +168,34 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
                 testServices.assertions.assertEqualsToTestOutputFile(
                     irCollector.functionsWithAnnotationToCheckCalls.joinToString("\n"), extension = ".check_calls.txt"
                 )
+            }
+        }
+    }
+
+    private fun createModuleActualizer(
+        rawMapping: List<String>,
+        testServices: TestServices
+    ): KaCompilerFacilityModuleActualizer {
+        val mapping = rawMapping
+            .map { it.split("->", limit = 2) }
+            .associate { it[0].trim() to it[1].trim() }
+
+        val namesByModule = testServices.ktTestModuleStructure.mainModules.associate { it.ktModule to it.name }
+
+        for ((commonModule, implementationModule) in mapping) {
+            fun checkModuleExistence(moduleName: String) {
+                if (moduleName !in namesByModule.values) error("Unknown module $moduleName")
+            }
+
+            checkModuleExistence(commonModule)
+            checkModuleExistence(implementationModule)
+        }
+
+        return object : KaCompilerFacilityModuleActualizer {
+            override fun actualize(module: KaModule, target: KaCompilerTarget): KaModule? {
+                val moduleName = namesByModule[module] ?: error("Unknown module $module")
+                val actualizedModuleName = mapping[moduleName] ?: return null
+                return testServices.ktTestModuleStructure.getKtTestModule(actualizedModuleName).ktModule
             }
         }
     }
@@ -216,15 +235,6 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    private fun dumpClassFiles(outputFiles: List<KaCompiledFile>, dumpCode: Boolean): String {
-        val classReaders = outputFiles.filter { it.path.endsWith(".class", ignoreCase = true) }
-            .also { check(it.isNotEmpty()) }
-            .sortedBy { it.path }
-            .map { ClassReader(it.content) }
-
-        return dumpClassFromClassReaders(classReaders, dumpCode)
-    }
-
     private fun dumpClassesFromJar(jar: File): String {
         val jarFile = JarFile(jar)
         val entries = jarFile.entries()
@@ -237,34 +247,17 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
             }
         }.sortedBy { it.name }.map { jarFile.getInputStream(it) }
 
-        val result = dumpClassFromClassReaders(classInputStreamList.map { ClassReader(it) }, dumpCode = false)
+        val result = dumpClassFromClassReaders(
+            classInputStreamList.map { ClassReader(it) },
+            dumpSignatures = false,
+            dumpAnnotations = false,
+            dumpCode = false,
+        )
+
         classInputStreamList.forEach { it.close() }
         jarFile.close()
 
         return result
-    }
-
-    private fun dumpClassFromClassReaders(classReaders: List<ClassReader>, dumpCode: Boolean): String {
-        val classes = classReaders.map { classReader ->
-            ClassNode(Opcodes.API_VERSION).also { classReader.accept(it, if (dumpCode) 0 else ClassReader.SKIP_CODE) }
-        }
-
-        return classes.joinToString("\n\n") { node ->
-            if (dumpCode) {
-                val writer = StringWriter()
-                node.accept(TraceClassVisitor(PrintWriter(writer)))
-                writer.toString()
-            } else {
-                val visitor = BytecodeListingTextCollectingVisitor(
-                    BytecodeListingTextCollectingVisitor.Filter.EMPTY,
-                    withSignatures = false,
-                    withAnnotations = false,
-                    sortDeclarations = true
-                )
-                node.accept(visitor)
-                visitor.text
-            }
-        }
     }
 
     object Directives : SimpleDirectivesContainer() {
@@ -293,6 +286,10 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         val DUMP_CODE by directive(
             "Dump full bytecode instead of declarations listing"
         )
+
+        val ACTUALIZATION by stringDirective(
+            "Custom actualization mapping for common file compilation in the format of 'commonModuleName -> platformModuleName'"
+        )
     }
 }
 
@@ -301,6 +298,75 @@ private class CompilerFacilityEnvironmentConfigurator(testServices: TestServices
         if (module.directives.contains(AbstractCompilerFacilityTest.Directives.ATTACH_DUPLICATE_STDLIB)) {
             require(module.targetPlatform(testServices).isJvm())
             configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(ForTestCompileRuntime.minimalRuntimeJarForTests()))
+        }
+    }
+}
+
+internal object TestAllowedErrorFilter : (KaDiagnostic) -> Boolean {
+    private val ALLOWED_ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        listOf(
+            FirErrors.INVISIBLE_REFERENCE,
+            FirErrors.INVISIBLE_SETTER,
+            FirErrors.DEPRECATION_ERROR,
+            FirErrors.DIVISION_BY_ZERO,
+            FirErrors.TRIM_MARGIN_BLANK_PREFIX,
+            FirErrors.OPT_IN_USAGE_ERROR,
+            FirErrors.OPT_IN_TO_INHERITANCE_ERROR,
+            FirErrors.OPT_IN_OVERRIDE_ERROR,
+            FirErrors.UNSAFE_CALL,
+            FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL,
+            FirErrors.UNSAFE_INFIX_CALL,
+            FirErrors.UNSAFE_OPERATOR_CALL,
+            FirErrors.UNSAFE_CALLABLE_REFERENCE,
+            FirErrors.ITERATOR_ON_NULLABLE,
+            FirErrors.UNEXPECTED_SAFE_CALL,
+            FirErrors.DSL_SCOPE_VIOLATION,
+        ).map { it.name }
+    }
+
+    override fun invoke(diagnostic: KaDiagnostic): Boolean {
+        return diagnostic.factoryName in ALLOWED_ERRORS
+    }
+}
+
+internal fun dumpClassFiles(
+    outputFiles: List<KaCompiledFile>,
+    dumpSignatures: Boolean,
+    dumpAnnotations: Boolean,
+    dumpCode: Boolean,
+): String {
+    val classReaders = outputFiles.filter { it.path.endsWith(".class", ignoreCase = true) }
+        .also { check(it.isNotEmpty()) }
+        .sortedBy { it.path }
+        .map { ClassReader(it.content) }
+
+    return dumpClassFromClassReaders(classReaders, dumpSignatures, dumpAnnotations, dumpCode)
+}
+
+private fun dumpClassFromClassReaders(
+    classReaders: List<ClassReader>,
+    dumpSignatures: Boolean,
+    dumpAnnotations: Boolean,
+    dumpCode: Boolean,
+): String {
+    val classes = classReaders.map { classReader ->
+        ClassNode(Opcodes.API_VERSION).also { classReader.accept(it, if (dumpCode) 0 else ClassReader.SKIP_CODE) }
+    }
+
+    return classes.joinToString("\n\n") { node ->
+        if (dumpCode) {
+            val writer = StringWriter()
+            node.accept(TraceClassVisitor(PrintWriter(writer)))
+            writer.toString()
+        } else {
+            val visitor = BytecodeListingTextCollectingVisitor(
+                BytecodeListingTextCollectingVisitor.Filter.EMPTY,
+                withSignatures = dumpSignatures,
+                withAnnotations = dumpAnnotations,
+                sortDeclarations = true
+            )
+            node.accept(visitor)
+            visitor.text
         }
     }
 }

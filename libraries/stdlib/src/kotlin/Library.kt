@@ -28,57 +28,87 @@ public expect fun <reified T> arrayOfNulls(size: Int): Array<T?>
 
 /**
  * Returns an array containing the specified elements.
+ *
+ * @sample samples.collections.Arrays.Constructors.arrayOfSample
  */
 public expect inline fun <reified T> arrayOf(vararg elements: T): Array<T>
 
 /**
  * Returns an array containing the specified [Double] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.doubleArrayOfSample
  */
 public expect fun doubleArrayOf(vararg elements: Double): DoubleArray
 
 /**
  * Returns an array containing the specified [Float] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.floatArrayOfSample
  */
 public expect fun floatArrayOf(vararg elements: Float): FloatArray
 
 /**
  * Returns an array containing the specified [Long] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.longArrayOfSample
  */
 public expect fun longArrayOf(vararg elements: Long): LongArray
 
 /**
  * Returns an array containing the specified [Int] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.intArrayOfSample
  */
 public expect fun intArrayOf(vararg elements: Int): IntArray
 
 /**
  * Returns an array containing the specified characters.
+ *
+ * @sample samples.collections.Arrays.Constructors.charArrayOfSample
  */
 public expect fun charArrayOf(vararg elements: Char): CharArray
 
 /**
  * Returns an array containing the specified [Short] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.shortArrayOfSample
  */
 public expect fun shortArrayOf(vararg elements: Short): ShortArray
 
 /**
  * Returns an array containing the specified [Byte] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.byteArrayOfSample
  */
 public expect fun byteArrayOf(vararg elements: Byte): ByteArray
 
 /**
  * Returns an array containing the specified boolean values.
+ *
+ * @sample samples.collections.Arrays.Constructors.booleanArrayOfSample
  */
 public expect fun booleanArrayOf(vararg elements: Boolean): BooleanArray
 
 /**
- * Returns an array containing enum T entries.
+ * Returns an array containing enum entries of the enum type [T].
+ *
+ * The function returns a new instance of the array on every call.
+ * The array could be mutated, so working with it may also require defensive copying.
+ * Consider using [kotlin.enums.enumEntries] as a more efficient alternative
+ * returning an immutable list of enum entries.
+ *
+ * @see kotlin.enums.enumEntries
  */
 @SinceKotlin("1.1")
 public expect inline fun <reified T : Enum<T>> enumValues(): Array<T>
 
 /**
- * Returns an enum entry with specified name.
+ * Returns the enum entry of type [T] with the specified [name].
+ *
+ * The [name] must exactly match an existing enum constant of type [T] (case-sensitive).
+ *
+ * @throws IllegalArgumentException if no enum constant with the specified [name] exists in [T].
+ * @sample samples.misc.Enums.enumValueOfSample
  */
 @SinceKotlin("1.1")
 public expect inline fun <reified T : Enum<T>> enumValueOf(name: String): T

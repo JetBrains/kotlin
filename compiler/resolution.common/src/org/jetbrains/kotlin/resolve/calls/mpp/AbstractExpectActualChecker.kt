@@ -656,7 +656,7 @@ object AbstractExpectActualChecker {
 
     // ---------------------------------------- Utils ----------------------------------------
 
-    private inline fun <T, K> sizesAreEqualAndElementsNotEqualBy(first: List<T>, second: List<T>, selector: (T) -> K): Boolean {
+    internal inline fun <T, K> sizesAreEqualAndElementsNotEqualBy(first: List<T>, second: List<T>, selector: (T) -> K): Boolean {
         if (first.size != second.size) return false
         for (i in first.indices) {
             if (selector(first[i]) != selector(second[i])) return true

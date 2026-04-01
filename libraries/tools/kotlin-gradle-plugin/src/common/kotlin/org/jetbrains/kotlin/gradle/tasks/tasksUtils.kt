@@ -23,7 +23,6 @@ fun throwExceptionIfCompilationFailed(
         ExitCode.SCRIPT_EXECUTION_ERROR -> throw FailedCompilationException("Script execution error. See log for more details")
         ExitCode.OOM_ERROR -> throw OOMErrorException(executionStrategy)
         ExitCode.OK -> Unit
-        else -> throw IllegalStateException("Unexpected exit code: $exitCode")
     }
 }
 
@@ -32,8 +31,6 @@ internal const val kotlinDaemonOOMHelperMessage = "Not enough memory to run comp
 
 internal const val kotlinInProcessOOMHelperMessage = "Not enough memory to run compilation. " +
         " Try to increase it via 'gradle.properties':\norg.gradle.jvmargs=-Xmx<size>"
-
-internal const val kotlinOutOfProcessOOMHelperMessage = "Not enough memory to run compilation."
 
 private const val kotlinDaemonCrashedMessage =
     "Connection to the Kotlin daemon has been unexpectedly lost. This might be caused by the daemon being killed by another process or the operating system, or by JVM crash."
@@ -78,7 +75,6 @@ private fun OOMErrorException(executionStrategy: KotlinCompilerExecutionStrategy
     val exceptionMessage = when (executionStrategy) {
         KotlinCompilerExecutionStrategy.DAEMON -> kotlinDaemonOOMHelperMessage
         KotlinCompilerExecutionStrategy.IN_PROCESS -> kotlinInProcessOOMHelperMessage
-        KotlinCompilerExecutionStrategy.OUT_OF_PROCESS -> kotlinOutOfProcessOOMHelperMessage
     }
     return OOMErrorException(exceptionMessage)
 }

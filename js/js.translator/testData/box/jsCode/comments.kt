@@ -4,17 +4,26 @@
 // CHECK_COMMENT_EXISTS: text="Forth single line comment" multiline=false
 // CHECK_COMMENT_EXISTS: text="Multi line comment" multiline=true
 // CHECK_COMMENT_EXISTS: text="Single line comment inside function" multiline=false
+// CHECK_COMMENT_EXISTS: text="Single line comment inside anonymous function" multiline=false
 // CHECK_COMMENT_EXISTS: text="Multi line comment inside function" multiline=true
+// CHECK_COMMENT_EXISTS: text="Multi line comment inside anonymous function" multiline=true
 // CHECK_COMMENT_EXISTS: text="After call single line comment" multiline=false
 // CHECK_COMMENT_EXISTS: text="After call multi line comment" multiline=true
 // CHECK_COMMENT_EXISTS: text="The header multiline\ncomment" multiline=true
+// CHECK_COMMENT_EXISTS: text="The header multiline\ncomment before anonymous function" multiline=true
+// CHECK_COMMENT_EXISTS: text="The header multiline\ncomment before arrow function" multiline=true
+// CHECK_COMMENT_EXISTS: text="before regular function param" multiline=true
+// CHECK_COMMENT_EXISTS: text="after regular function param" multiline=true
+// CHECK_COMMENT_EXISTS: text="before anonymous function param" multiline=true
+// CHECK_COMMENT_EXISTS: text="after anonymous function param" multiline=true
+// CHECK_COMMENT_EXISTS: text="before arrow function param" multiline=true
+// CHECK_COMMENT_EXISTS: text="after arrow function param" multiline=true
+// CHECK_COMMENT_EXISTS: text="before single arrow function param" multiline=true
+// CHECK_COMMENT_EXISTS: text="after single arrow function param" multiline=true
 // CHECK_COMMENT_EXISTS: text="1Multi line comment\n" multiline=true
 // CHECK_COMMENT_EXISTS: text="2Multi line comment\n\n\n" multiline=true
 // CHECK_COMMENT_EXISTS: text="3Multi line\n\n\n\n\ncomment\n" multiline=true
 // CHECK_COMMENT_EXISTS: text="" multiline=true
-// CHECK_COMMENT_EXISTS: text="Multi line comment inside function" multiline=true
-// CHECK_COMMENT_EXISTS: text="After call single line comment" multiline=false
-// CHECK_COMMENT_EXISTS: text="After call multi line comment" multiline=true
 // CHECK_COMMENT_EXISTS: text="Before argument 1" multiline=true
 // CHECK_COMMENT_EXISTS: text="Before argument 2" multiline=true
 // CHECK_COMMENT_EXISTS: text="After argument 1" multiline=true
@@ -37,11 +46,24 @@ fun box(): String {
     js("""
         /* The header multiline
         comment */
-        function foo() {
+        function foo(/* before regular function param */ param /* after regular function param */) {
             // Single line comment inside function
             Object;
             /*Multi line comment inside function*/
         }
+
+        /* The header multiline
+        comment before anonymous function*/
+        var foo2 = function(/* before anonymous function param */ param /* after anonymous function param */) {
+            // Single line comment inside anonymous function
+            Object;
+            /*Multi line comment inside anonymous function*/
+        }
+
+        /* The header multiline
+        comment before arrow function*/
+        var foo3 = (/* before arrow function param */ param /* after arrow function param */) => Object;
+        var foo4 = /* before single arrow function param */ param /* after single arrow function param */ => Object;
         
         // Single line comment
         // Second single line comment

@@ -53,7 +53,8 @@ internal fun patchFilesAndAddTest(
             changePackage(newPackagePrefix, content, oldPackage, isJvmName),
             oldPackage.get(),
             isJvmName.get(),
-            getGeneratedClassName(File(fileName), content, newPackagePrefix, oldPackage.get())
+            getGeneratedClassName(File(fileName), content, newPackagePrefix, oldPackage.get()),
+            testFile.path,
         )
     }
     val packages =
@@ -128,7 +129,14 @@ private fun hasBoxMethod(text: String): Boolean {
     return text.contains("fun box()")
 }
 
-class TestClassInfo(val name: String, var content: String, val oldPackage: FqName, val isJvmName: Boolean, val newPackagePartClassId: FqName) {
+class TestClassInfo(
+    val name: String,
+    var content: String,
+    val oldPackage: FqName,
+    val isJvmName: Boolean,
+    val newPackagePartClassId: FqName,
+    val sourceTestDataPath: String,
+) {
     val newPackage = newPackagePartClassId.parent()
 }
 

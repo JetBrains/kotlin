@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
@@ -39,12 +38,10 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrFail
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.defaultValueForType
-import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.statements
@@ -55,7 +52,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import kotlin.collections.get
 
 class ComposeLikeConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
@@ -273,7 +269,7 @@ private class ComposeLikeDefaultArgumentRewriter(
     }
 
     private fun IrType.binaryOperator(name: Name, paramType: IrType): IrFunctionSymbol {
-        return context.referenceFunctions(CallableId(this.classOrFail.owner.classId!!, name))
+        return context.finderForBuiltins().findFunctions(CallableId(this.classOrFail.owner.classId!!, name))
             .single {
                 it.owner.hasShape(
                     dispatchReceiver = true,

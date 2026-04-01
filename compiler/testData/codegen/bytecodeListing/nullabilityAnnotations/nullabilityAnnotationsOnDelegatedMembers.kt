@@ -1,4 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-63955
 
 // FILE: nullabilityAnnotationsOnDelegatedMembers.kt
 class JImpl(j: J) : J by j

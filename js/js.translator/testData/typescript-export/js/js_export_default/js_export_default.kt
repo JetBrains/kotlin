@@ -4,9 +4,15 @@
 // MODULE: lib
 // MODULE_KIND: ES
 // ES_MODULES
+// TSC_MODULE: ESNext
 // FILE: js-export-default.kt
 
 package foo
+
+@JsExport
+fun getParent(): Parent {
+    return Parent
+}
 
 @JsExport.Default
 object Parent {
@@ -18,9 +24,4 @@ object Parent {
             }
         }
     }
-}
-
-@JsExport
-fun getParent(): Parent {
-    return Parent
 }

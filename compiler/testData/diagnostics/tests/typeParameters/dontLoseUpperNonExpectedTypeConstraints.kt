@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
+// DUMP_INFERENCE_LOGS: FIXATION, MARKDOWN
 
 open class Expression<K>
 
@@ -11,9 +12,9 @@ class ModOp<T : Number?, S : Number?>(
 
 class QueryParameter<A> : Expression<A>()
 
-fun <T, S : T?> Expression<in S>.wrap(value: T): QueryParameter<T> = null as QueryParameter<T>
+fun <K, R : K?> Expression<in R>.wrap(value: K): QueryParameter<K> = null as QueryParameter<K>
 
-fun <T : Number?, S : T> Expression<T>.rem(t: S): ModOp<T, S> = ModOp(this, wrap(t))
+fun <M : Number?, Z : M> Expression<M>.rem(t: Z): ModOp<M, Z> = ModOp(this, wrap(t))
 
 /* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, inProjection,
 intersectionType, nullableType, primaryConstructor, propertyDeclaration, thisExpression, typeConstraint, typeParameter */

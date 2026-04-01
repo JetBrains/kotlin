@@ -61,7 +61,7 @@ class OverriddenKotlinHomeCheckerTest {
             project.multiplatformExtension.linuxX64()
         }
 
-        project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project)
+        project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project.path)
             .assertNoDiagnostics(KotlinToolingDiagnostics.BrokenKotlinNativeBundleError)
     }
 

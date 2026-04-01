@@ -361,6 +361,11 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     }
 
     private operator fun MutableTypeStatement.plusAssign(other: TypeStatement) {
+        // See `Merging Type Statements` in `data-flow-based-exhaustiveness.md`.
+        // Specifically, "Upper Bounds" (for the simple cases without negative information)
+        // and "(Complex) Lower Bounds" (for the cases where we include negative types).
+        // In general, for an `and` over `TypeStatement`s, it's enough to simply gather all
+        // the information together as is.
         upperTypes += other.upperTypes
         lowerTypes += other.lowerTypes
     }
@@ -398,6 +403,10 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             unifiedUpperType.canBeNull(context.session) -> persistentSetOf()
             else -> persistentSetOf(context.anyType())
         }
+        // See `data-flow-based-exhaustiveness.md` for more details on what "excluded values" are,
+        // why they exist separately from `DfaType::Cone` and why `or`-ing `TypeStatement`s calculates
+        // some "intersected lower type" (on that specifically - `Lower Bounds` and `Complex Lower Bounds`,
+        // the `or` cases in both chapters).
         val newLowerTypes = setOfNotNull(statements.getIntersectedLowerType()?.let(DfaType::Cone)) + statements.getCommonExcludedValues()
         return if (newUpperTypes.isNotEmpty() || newLowerTypes.isNotEmpty()) {
             PersistentTypeStatement(variable, newUpperTypes, newLowerTypes.toPersistentSet())
@@ -424,6 +433,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             // Note that we do correctly handle the similar situation for upper bounds, but for them the use of
             // `commonSuperType()` isn't that critical (remember it's exactly the `commonSuperType` that requires
             // this whole mechanism with lower bounds for DFA-based exhaustiveness).
+            // See `Complex Lower Bounds` (the `or` case) in `data-flow-based-exhaustiveness.md` for more details.
 
             statement.lowerTypes.mapNotNull { (it as? DfaType.Cone)?.type }.takeIf { it.isNotEmpty() }
                 ?: listOf(context.nothingType())

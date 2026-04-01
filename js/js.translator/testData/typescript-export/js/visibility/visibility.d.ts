@@ -14,12 +14,25 @@ declare namespace JS_TESTS {
             const constructor: abstract new () => publicClass;
         }
     }
-    class Class {
+    abstract class AbstractClassWithProtected {
+        constructor();
+        protected abstract protectedAbstractFun(): number;
+        protected abstract get protectedAbstractVal(): number;
+    }
+    namespace AbstractClassWithProtected {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => AbstractClassWithProtected;
+        }
+    }
+    class Class extends AbstractClassWithProtected.$metadata$.constructor {
         constructor();
         protected get protectedVal(): number;
         protected protectedFun(): number;
         get publicVal(): number;
         publicFun(): number;
+        protected protectedAbstractFun(): number;
+        protected get protectedAbstractVal(): number;
     }
     namespace Class {
         /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -59,8 +72,7 @@ declare namespace JS_TESTS {
             }
         }
         class classWithProtectedConstructors {
-            protected constructor();
-            protected static createWithString(arg: string): Class.classWithProtectedConstructors;
+            private constructor();
         }
         namespace classWithProtectedConstructors {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -78,6 +90,47 @@ declare namespace JS_TESTS {
             }
         }
     }
+    class FinalClass extends AbstractClassWithProtected.$metadata$.constructor {
+        private constructor();
+        static fromString(s: string): FinalClass;
+        protected protectedAbstractFun(): number;
+        protected get protectedAbstractVal(): number;
+    }
+    namespace FinalClass {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => FinalClass;
+        }
+    }
+    class FinalClassWithPublicPrimaryProtectedSecondaryCtor {
+        constructor(s: string);
+    }
+    namespace FinalClassWithPublicPrimaryProtectedSecondaryCtor {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => FinalClassWithPublicPrimaryProtectedSecondaryCtor;
+        }
+    }
+    class FinalClassWithProtectedPrimaryPublicSecondaryCtor {
+        private constructor();
+        static fromInt(n: number): FinalClassWithProtectedPrimaryPublicSecondaryCtor;
+    }
+    namespace FinalClassWithProtectedPrimaryPublicSecondaryCtor {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => FinalClassWithProtectedPrimaryPublicSecondaryCtor;
+        }
+    }
+    class FinalClassWithOnlySecondaryCtorsMixedVisibility {
+        private constructor();
+        static fromString(s: string): FinalClassWithOnlySecondaryCtorsMixedVisibility;
+    }
+    namespace FinalClassWithOnlySecondaryCtorsMixedVisibility {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => FinalClassWithOnlySecondaryCtorsMixedVisibility;
+        }
+    }
     abstract class EnumClass {
         private constructor();
         static get EC1(): EnumClass & {
@@ -88,10 +141,10 @@ declare namespace JS_TESTS {
             get name(): "EC2";
             get ordinal(): 1;
         };
+        static values(): [typeof EnumClass.EC1, typeof EnumClass.EC2];
+        static valueOf(value: string): EnumClass;
         get name(): "EC1" | "EC2";
         get ordinal(): 0 | 1;
-        static values(): Array<EnumClass>;
-        static valueOf(value: string): EnumClass;
     }
     namespace EnumClass {
         /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

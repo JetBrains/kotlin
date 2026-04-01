@@ -29,8 +29,20 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Ignore failed test in single module mode",
     )
 
+    val WASM_FAILS_IN_MULTI_MODULE_MODE by directive(
+        description = "Ignore failed test in multi module mode",
+    )
+
+    val WASM_FAILS_IN_MULTI_MODULE_MODE_WINDOWS by directive(
+        description = "Ignore failed test in multi module mode on windows",
+    )
+
     val WASM_NO_JS_TAG by directive(
         description = "Don't use WebAssembly.JSTag for throwing and catching exceptions",
+    )
+
+    val WASM_INTERNAL_LOCAL_VARIABLE_PREFIX by stringDirective(
+        description = "Prefix to use for internally generated local variables",
     )
 
     val WASM_DISABLE_FQNAME_IN_KCLASS by directive(
@@ -46,6 +58,11 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     )
 
     val PATH_TO_ROOT_OUTPUT_DIR by stringDirective(
+        description = "Specify the path to output directory, where all artifacts will be stored",
+        applicability = DirectiveApplicability.Global
+    )
+
+    val PATH_TO_NODE_DIR by stringDirective(
         description = "Specify the path to output directory, where all artifacts will be stored",
         applicability = DirectiveApplicability.Global
     )

@@ -17,10 +17,9 @@ class DataFrameXs : AbstractSchemaModificationInterpreter() {
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val keyColumns = keyColumns?.let { it.resolve(receiver).map { it.path.toPath() } }
         val n = (keyValues as? FirVarargArgumentsExpression)?.arguments?.size ?: return PluginDataFrameSchema.EMPTY
-        return receiver
-            .asDataFrame()
-            .remove { keyColumns?.toColumnSet() ?: colsAtAnyDepth().filter { !it.isColumnGroup() }.take(n) }
-            .toPluginDataFrameSchema()
+        return receiver.modify {
+            remove { keyColumns?.toColumnSet() ?: colsAtAnyDepth().filter { !it.isColumnGroup() }.take(n) }
+        }
     }
 }
 
@@ -36,8 +35,8 @@ class GroupByXs : AbstractInterpreter<GroupBy>() {
         val toRemove = receiver.keys.asDataFrame()
             .getColumnsWithPaths { keyColumns?.toColumnSet() ?: colsAtAnyDepth().filter { !it.isColumnGroup() }.take(n) }
             .toColumnSet()
-        val updatedKeys = receiver.keys.asDataFrame().remove { toRemove }.toPluginDataFrameSchema()
-        val updatedGroups = receiver.groups.asDataFrame().remove { toRemove }.toPluginDataFrameSchema()
+        val updatedKeys = receiver.keys.modify { remove { toRemove } }
+        val updatedGroups = receiver.groups.modify { remove { toRemove } }
         return GroupBy(updatedKeys, updatedGroups)
     }
 }

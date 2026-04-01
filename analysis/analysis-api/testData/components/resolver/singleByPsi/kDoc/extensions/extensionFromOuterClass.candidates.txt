@@ -1,0 +1,23 @@
+<caret_1>:
+  KDocName(48,55): 'Int.foo'
+    NO_CANDIDATES
+
+<caret_2>:
+  KDocName(102,109): 'Int.foo'
+    NO_CANDIDATES
+
+<caret_3>:
+  KDocName(168,175): 'Int.foo'
+    NO_CANDIDATES
+
+<caret_4>:
+  KDocName(228,235): 'Int.foo'
+    NO_CANDIDATES
+
+<caret_5>:
+  KDocName(294,301): 'Int.foo'
+    NO_CANDIDATES
+
+<caret_6>:
+  KDocName(357,364): 'Int.foo'
+    NO_CANDIDATES

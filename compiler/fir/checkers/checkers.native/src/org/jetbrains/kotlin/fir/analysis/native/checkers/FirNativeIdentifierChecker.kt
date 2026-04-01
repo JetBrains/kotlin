@@ -23,6 +23,9 @@ object FirNativeIdentifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
         ':', '\\', '$', '&', '~', '*', '?', '#', '|', '§', '%', '@',
     )
 
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         val source = declaration.source
@@ -53,7 +56,7 @@ object FirNativeIdentifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
             }
 
             if (message != null) {
-                reporter.reportOn(source, FirNativeErrors.INVALID_CHARACTERS_NATIVE, message)
+                reporter.reportOn(source, FirNativeErrors.INVALID_CHARACTERS_NATIVE_ERROR, message)
             }
         }
     }

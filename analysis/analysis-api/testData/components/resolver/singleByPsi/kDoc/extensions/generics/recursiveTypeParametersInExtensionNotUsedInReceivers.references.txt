@@ -3,6 +3,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun <T : R, R : I, I : Recursive<T>> Base.foo(x: T, y: R, z: I): T
 
@@ -11,5 +12,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun <T : R, R : I, I : Recursive<T>> Base.foo(x: T, y: R, z: I): T

@@ -5,7 +5,7 @@ FILE: expectActual.kt
     public? final? expect val x: Int
         public? get(): Int
     public final? actual class MyClass : R|kotlin/Any| {
-        public? constructor(): R|MyClass| {
+        public? [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
 

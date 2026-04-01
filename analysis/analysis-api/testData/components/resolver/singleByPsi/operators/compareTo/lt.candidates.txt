@@ -1,7 +1,30 @@
 KtOperationReferenceExpression(114,115): '<'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /MyClass.compareTo(<dispatch receiver>: MyClass, value: MyClass): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = MyClass
+            symbol = value: MyClass
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyClass.compareTo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         m2 -> (KaVariableSignature:
           name = value
           receiverType = null
@@ -10,28 +33,4 @@ KtOperationReferenceExpression(114,115): '<'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = m
-          isSafeNavigation = false
-          type = MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = /MyClass.compareTo(<dispatch receiver>: MyClass, value: MyClass): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = MyClass
-              symbol = value: MyClass
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MyClass.compareTo
-      typeArgumentsMapping = {}
     isInBestCandidates = true

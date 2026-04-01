@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.utils.klibFileAnnotations
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
 import org.jetbrains.kotlin.fir.resolve.providers.FirCachedSymbolNamesProvider
@@ -35,6 +37,7 @@ class PackagePartsCacheData(
     val proto: ProtoBuf.Package,
     val context: FirDeserializationContext,
     val extra: Extra? = null,
+    val fileAnnotations: List<FirAnnotation> = emptyList(),
 ) {
     /**
      * Marker interface for 'extra' data that can be attached to a given [PackagePartsCacheData].
@@ -192,6 +195,8 @@ abstract class AbstractFirDeserializedSymbolProvider(
 
     // ------------------------ Deserialization methods ------------------------
 
+    protected val kdocDeserializer: FirKDocDeserializer = session.effectiveKdocDeserializer
+
     sealed class ClassMetadataFindResult {
         data class NoMetadata(
             val classPostProcessor: DeserializedClassPostProcessor
@@ -243,6 +248,9 @@ abstract class AbstractFirDeserializedSymbolProvider(
             val aliasProto = part.proto.getTypeAlias(ids.single())
             val postProcessor: DeserializedTypeAliasPostProcessor = {
                 part.context.memberDeserializer.loadTypeAlias(aliasProto, classId, kotlinScopeProvider, it)
+                if (part.fileAnnotations.isNotEmpty()) {
+                    it.fir.klibFileAnnotations = part.fileAnnotations
+                }
             }
             FirTypeAliasSymbol(classId) to postProcessor
         } ?: (null to null)
@@ -266,6 +274,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
                     session,
                     moduleData,
                     annotationDeserializer,
+                    kdocDeserializer,
                     result.flexibleTypeFactory,
                     kotlinScopeProvider,
                     serializerExtensionProtocol,
@@ -292,6 +301,9 @@ abstract class AbstractFirDeserializedSymbolProvider(
                     deserializationOrigin = defaultDeserializationOrigin
                 )
                 loadFunctionExtensions(part, proto, fir)
+                if (part.fileAnnotations.isNotEmpty()) {
+                    fir.klibFileAnnotations = part.fileAnnotations
+                }
                 fir.symbol
             }
         }
@@ -304,6 +316,9 @@ abstract class AbstractFirDeserializedSymbolProvider(
                 val proto = part.proto.getProperty(it)
                 val fir = part.context.memberDeserializer.loadProperty(proto)
                 loadPropertyExtensions(part, proto, fir)
+                if (part.fileAnnotations.isNotEmpty()) {
+                    fir.klibFileAnnotations = part.fileAnnotations
+                }
                 fir.symbol
             }
         }

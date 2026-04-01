@@ -1,0 +1,49 @@
+@FILE:R|test/MyFileAnnotationBinary|(value = String(world))
+@FILE:R|test/MyFileAnnotationRuntime|(value = String(!))
+public final val bar: R|kotlin/Int|
+    public get(): R|kotlin/Int|
+
+@FILE:R|test/MyFileAnnotationBinary|(value = String(world))
+@FILE:R|test/MyFileAnnotationRuntime|(value = String(!))
+public final fun foo(x: R|kotlin/Int|): R|kotlin/Int|
+
+@FILE:R|test/MyFileAnnotationBinary|(value = String(world))
+@FILE:R|test/MyFileAnnotationRuntime|(value = String(!))
+public final class A : R|kotlin/Any| {
+    public constructor(): R|test/A|
+
+}
+
+@FILE:R|test/MyFileAnnotationBinary|(value = String(world))
+@FILE:R|test/MyFileAnnotationRuntime|(value = String(!))
+public final typealias B = R|test/A|
+
+@FILE:R|test/MyFileAnnotationBinary|(value = String(world))
+@FILE:R|test/MyFileAnnotationRuntime|(value = String(!))
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.FILE)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) public final annotation class MyFileAnnotationBinary : R|kotlin/Annotation| {
+    public final val value: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public constructor(value: R|kotlin/String|): R|test/MyFileAnnotationBinary|
+
+}
+
+@FILE:R|test/MyFileAnnotationBinary|(value = String(world))
+@FILE:R|test/MyFileAnnotationRuntime|(value = String(!))
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.FILE)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.RUNTIME) public final annotation class MyFileAnnotationRuntime : R|kotlin/Annotation| {
+    public final val value: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public constructor(value: R|kotlin/String|): R|test/MyFileAnnotationRuntime|
+
+}
+
+@FILE:R|test/MyFileAnnotationBinary|(value = String(world))
+@FILE:R|test/MyFileAnnotationRuntime|(value = String(!))
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.FILE)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.SOURCE) public final annotation class MyFileAnnotationSource : R|kotlin/Annotation| {
+    public final val value: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public constructor(value: R|kotlin/String|): R|test/MyFileAnnotationSource|
+
+}

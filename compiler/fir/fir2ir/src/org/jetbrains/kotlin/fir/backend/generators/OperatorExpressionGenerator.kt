@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.ir.builders.primitiveOp1
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -313,9 +315,9 @@ internal class OperatorExpressionGenerator(
             return eraseImplicitCast()
         }
 
-        if (operandType == null) error("operandType should be non-null if targetType is non-null: ${this.render()}")
+        val operandClassId = operandType?.classId
+        if (operandClassId == null) error("operandType should be non-null if targetType is non-null: ${this.render()}")
 
-        val operandClassId = operandType.lookupTag.classId
         val targetClassId = targetType.lookupTag.classId
         if (operandClassId == targetClassId) return eraseImplicitCast()
         val operandFirClass = session.getRegularClassSymbolByClassId(operandClassId)
@@ -334,7 +336,7 @@ internal class OperatorExpressionGenerator(
         ).also {
             it.arguments[0] = irExpression
         }
-        return if (operandType.isMarkedNullable) {
+        return if (with(session.typeContext) { operandType.isNullableType() }) {
             val (receiverVariable, receiverVariableSymbol) =
                 conversionScope.createTemporaryVariableForSafeCallConstruction(irExpression)
 

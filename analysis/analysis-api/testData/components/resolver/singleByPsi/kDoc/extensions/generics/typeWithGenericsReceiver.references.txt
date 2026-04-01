@@ -3,6 +3,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in test) fun test.WithGenerics<kotlin.Int>.intExt()
 
@@ -11,5 +12,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in test) fun test.WithGenerics<kotlin.String>.stringExt()

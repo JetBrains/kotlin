@@ -1,0 +1,19 @@
+KT element: KtScript
+Resolve target: scriptWithResult.kts -> <script-scriptWithResult.kts>
+FIR:
+  SCRIPT: <script-scriptWithResult.kts>
+      <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+      lval args: R|kotlin/Array<kotlin/String>|
+
+      init { LAZY_BLOCK }
+
+      public final val $$result: <implicit> = when () {
+          Boolean(true) ->  {
+              IntegerLiteral(1)
+          }
+          else ->  {
+              String(str)
+          }
+      }
+
+          public get(): <implicit>

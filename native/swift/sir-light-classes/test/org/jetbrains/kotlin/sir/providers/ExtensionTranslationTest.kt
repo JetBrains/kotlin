@@ -30,7 +30,7 @@ class ExtensionTranslationTest : SirTranslationTest() {
             val fooFunction = it.functionsNamed("foo").single()
             val receiverParameter = fooFunction.extensionReceiverParameter
             assertNotNull(receiverParameter)
-            val sirProtocol = (receiverParameter.type as SirExistentialType).protocols.single()
+            val sirProtocol = (receiverParameter.type as SirExistentialType).protocols.single().first
             assertEquals(iface, sirProtocol)
         }
     }

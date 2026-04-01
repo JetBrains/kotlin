@@ -60,7 +60,7 @@ allprojects {
     repositories {
         mavenCentral()
         maven {
-            url project.bootstrapKotlinRepo
+            url = project.bootstrapKotlinRepo
         }
     }
 }
@@ -109,7 +109,12 @@ apply plugin: CompilationDatabasePlugin
 dependencies {
     commonSources project(path: ':kotlin-stdlib', configuration: 'metadataSourcesElements')
     commonSources project(path: ':kotlin-test', configuration: 'metadataSourcesElements')
+    compilationDatabase project(":kotlin-native:Interop:Runtime")
+    compilationDatabase project(":kotlin-native:libclangext")
+    compilationDatabase project(":kotlin-native:libllvmext")
+    compilationDatabase project(":kotlin-native:llvmDebugInfoC")
     compilationDatabase project(":kotlin-native:runtime")
+    compilationDatabase project(":kotlin-native:tools:minidump-analyzer")
     runtimeBitcode project(":kotlin-native:runtime")
     objcExportApi project(":kotlin-native:runtime")
     embeddableJar project(path: ':kotlin-native:prepare:kotlin-native-compiler-embeddable', configuration: 'runtimeElements')
@@ -163,6 +168,9 @@ tasks.register("distNativeSources", Zip) {
     }
     into('nativeWasmMain') {
         from(project(":kotlin-stdlib").file('native-wasm/src/'))
+    }
+    into('nativeWasmWasiMain') {
+        from(project(":kotlin-stdlib").file('native-wasm/wasi/'))
     }
     into('nativeMain') {
         from(project(':kotlin-native:runtime').file('src/main/kotlin'))
@@ -401,7 +409,7 @@ tasks.register("crossDist") {
 }
 
 tasks.register("distInvalidateStaleCaches", InvalidateStaleCaches) {
-    distributionAsDirectory.set(nativeDistribution.map { it.root })
+    distributionRoot.set(nativeDistribution.map { it.root })
     // If the build graph includes any of the fingerprint updates, this task must run after them.
     // However, it shouldn't force any of the fingerprints to be computed (e.g. when building :kotlin-native:dist
     // this task should run after compiler and host runtime fingerprint updates, but shouldn't force fingerprint from an iOS simulator

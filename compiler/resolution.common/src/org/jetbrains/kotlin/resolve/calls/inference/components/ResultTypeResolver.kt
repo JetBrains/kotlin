@@ -82,6 +82,9 @@ class ResultTypeResolver(
     private val useImprovedCapturedTypeApproximation: Boolean =
         languageVersionSettings.supportsFeature(LanguageFeature.ImprovedCapturedTypeApproximationInInference)
 
+    private val discriminateNothingAsNullabilityConstraintInInference: Boolean =
+        languageVersionSettings.supportsFeature(LanguageFeature.DiscriminateNothingAsNullabilityConstraintInInference)
+
     context(c: Context)
     fun findResultTypeOrNull(
         variableWithConstraints: VariableWithConstraints,
@@ -297,9 +300,9 @@ class ResultTypeResolver(
 
     context(c: Context)
     private fun isSuitableType(resultType: KotlinTypeMarker, variableWithConstraints: VariableWithConstraints): Boolean {
-        val filteredConstraints = variableWithConstraints.constraints.filter { it.type.isProperTypeForFixation() }
+        val filteredConstraints = variableWithConstraints.constraints.filter { it.isProperConstraint() }
 
-        // TODO(KT-68213) this loop is only used for checking of incomptible ILT approximations in K1
+        // TODO(KT-68213) this loop is only used for checking of incompatible ILT approximations in K1
         // It shouldn't be necessary in K2
         // but removing it breaks compiler/fir/analysis-tests/testData/resolve/inference/kt53494.kt
         for (constraint in filteredConstraints) {
@@ -312,20 +315,31 @@ class ResultTypeResolver(
         // Nothing and Nothing? is not allowed for reified parameters
         if (c.isReified(variableWithConstraints.typeVariable)) return false
 
-        // It's ok to fix result to non-nullable Nothing and parameter is not reified
-        if (!resultType.isNullableType()) return true
-
-        return isNullableNothingMayBeConsideredAsSuitableResultType(filteredConstraints)
+        return if (!resultType.isNullableType()) {
+            mayNothingBeConsideredAsSuitableResultType(filteredConstraints)
+        } else {
+            mayNullableNothingBeConsideredAsSuitableResultType(filteredConstraints)
+        }
     }
 
     context(c: Context)
-    private fun isNullableNothingMayBeConsideredAsSuitableResultType(constraints: List<Constraint>): Boolean = when {
+    private fun mayNullableNothingBeConsideredAsSuitableResultType(constraints: List<Constraint>): Boolean = when {
         c.isK2 ->
             // There might be an assertion for green code that if `allUpperConstraintsAreFromBounds(constraints) == true` then
             // the single `Nothing?` lower bound constraint has Constraint::isNullabilityConstraint is set to false
             // because otherwise we would not start fixing the variable since it has no proper constraints.
             allUpperConstraintsAreFromBounds(constraints)
         else -> !isThereSingleLowerNullabilityConstraint(constraints)
+    }
+
+    context(c: Context)
+    private fun mayNothingBeConsideredAsSuitableResultType(constraints: List<Constraint>): Boolean = when {
+        // Nothing <: T can't be used to infer T = Nothing in case it's a nullability constraint,
+        // in this case an upper constraint should be preferred. See also comments to KT-81948.
+        discriminateNothingAsNullabilityConstraintInInference -> !isThereSingleLowerNullabilityConstraint(constraints)
+        // This (potentially legacy) code is in use only for language versions 2.3 and earlier
+        // It's ok to fix result to non-nullable Nothing and parameter is not reified
+        else -> true
     }
 
     private fun allUpperConstraintsAreFromBounds(constraints: List<Constraint>): Boolean =
@@ -338,6 +352,28 @@ class ResultTypeResolver(
     private fun isFromTypeParameterUpperBound(constraint: Constraint): Boolean =
         constraint.position.isFromDeclaredUpperBound || constraint.position.from is DeclaredUpperBoundConstraintPosition<*>
 
+    /**
+     * This function determines if [constraints] contain a single lower constraint which is a nullability constraint.
+     *
+     * The function has two separate use-sites:
+     * - for K1 (legacy code soon to be deleted) we use it to determine if we can use a constraint like `Nothing? <: T`
+     * for a type fixation. This influences quite old OI->NI issues: KT-32106, KT-33166.
+     * - for K2 (new code used from LV 2.4) we use it to determine if we can use a constraint like `Nothing <: T`
+     * for a type fixation. If it's a nullability constraint, we in fact shouldn't.
+     * This allows us to prioritize proper upper constraints like T <: SomeType thus fixing KT-81948.
+     *
+     * In both cases, the result of true means that we shouldn't use a lower constraint like `Nothing(?) <: T` for a type fixation.
+     *
+     * Note: it's likely that the code like below (it covers the current K2 case more obviously)
+     *
+     * ```
+     * constraints.any { it.kind.isLower() && it.type.isNothing() && !it.isNullabilityConstraint }
+     * ```
+     *
+     * is equivalent to `!isThereSingleLowerNullabilityConstraint(constraints)`,
+     * because if there are some other non-Nothing lower constraints, the resulting subtype would be different (less concrete than `Nothing`),
+     * at the same time there should not be two `Nothing` constraints for the same variable (they should be merged).
+     */
     private fun isThereSingleLowerNullabilityConstraint(constraints: List<Constraint>): Boolean {
         return constraints.singleOrNull { it.kind.isLower() }?.isNullabilityConstraint ?: false
     }
@@ -504,20 +540,21 @@ class ResultTypeResolver(
             it.kind == ConstraintKind.EQUALITY && it.isProperConstraint()
         }
 
-        return representativeFromEqualityConstraints(properEqualityConstraints, isStrictMode)
+        return representativeFromEqualityConstraints(variableWithConstraints, properEqualityConstraints, isStrictMode)
     }
 
     // Discriminate integer literal types as they are less specific than separate integer types (Int, Short...)
     context(c: Context)
     private fun representativeFromEqualityConstraints(
-        constraints: List<Constraint>,
+        variableWithConstraints: VariableWithConstraints,
+        properEqualityConstraints: List<Constraint>,
         // Allow only types not-containing ILT and which might work as a representative of other ones from EQ constraints
         // TODO: Consider making it always `true` (see KT-70062)
         isStrictMode: Boolean
     ): KotlinTypeMarker? {
-        if (constraints.isEmpty()) return null
+        if (properEqualityConstraints.isEmpty()) return null
 
-        val constraintTypes = constraints.map { it.type }
+        val constraintTypes = properEqualityConstraints.map { it.type }
         val nonLiteralTypes = constraintTypes.filter { constraintType ->
             if (isStrictMode)
                 !constraintType.contains { it.typeConstructor().isIntegerLiteralTypeConstructor() }
@@ -529,7 +566,44 @@ class ResultTypeResolver(
 
         if (isStrictMode) return null
 
-        return constraintTypes.singleBestRepresentative()
-            ?: constraintTypes.first() // seems like constraint system has contradiction
+        constraintTypes.singleBestRepresentative()?.let { return it }
+        // At this point, it seems like the constraint system has found a contradiction.
+
+        val typeVariable = variableWithConstraints.typeVariable
+        // If there's a contradiction, it's best if we fix the variable to exactly
+        // the type argument the user has provided for it, so that the diagnostics
+        // remain accurate.
+        return LanguageFeature.ReportUpperBoundViolatedInCallArgumentInteractions.chooseType(
+            createFutureType = { properEqualityConstraints.findExplicitTypeArgumentConstraintFor(typeVariable)?.type },
+            createFallbackType = { constraintTypes.first() },
+        )
     }
+
+    /**
+     * Returns the future type if the language feature is enabled, or
+     * the fallback with a `TypeWillChangeAttribute` containing the future type.
+     * If the future one is `null`, returns the fallback.
+     */
+    context(c: Context)
+    private inline fun LanguageFeature.chooseType(
+        createFutureType: () -> KotlinTypeMarker?,
+        createFallbackType: () -> KotlinTypeMarker,
+    ): KotlinTypeMarker = when (val futureType = createFutureType()) {
+        null -> createFallbackType()
+        else if languageVersionSettings.supportsFeature(this) -> futureType
+        else -> when (val fallbackType = createFallbackType()) {
+            futureType -> futureType
+            else -> fallbackType.withNewTypeSince(this, futureType)
+        }
+    }
+
+    /**
+     * If there's a contradiction, type argument variables should be fixed to the explicit arguments
+     * to make sure the error diagnostics and further checks in checkers remain accurate.
+     */
+    context(c: Context)
+    private fun List<Constraint>.findExplicitTypeArgumentConstraintFor(typeVariable: TypeVariableMarker): Constraint? =
+        firstOrNull {
+            it.position.from is ExplicitTypeParameterConstraintPosition<*> && it.position.initialConstraint.a == typeVariable.defaultType()
+        }
 }

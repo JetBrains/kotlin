@@ -63,7 +63,7 @@ public final class Box : java/lang/Object, android/os/Parcelable {
 
     public static Box copy$default(Box p0, android.os.Parcelable p1, int p2, java.lang.Object p3)
 
-    public int describeContents()
+    public final int describeContents()
 
     public boolean equals(java.lang.Object other)
         @Lorg/jetbrains/annotations/Nullable;([]) // invisible, parameter 0
@@ -77,18 +77,20 @@ public final class Box : java/lang/Object, android/os/Parcelable {
     public java.lang.String toString()
       @Lorg/jetbrains/annotations/NotNull;([]) // invisible
 
-    public void writeToParcel(android.os.Parcel out, int flags)
+    public final void writeToParcel(android.os.Parcel dest, int flags)
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0 {
         LABEL (L0)
           ALOAD (1)
-          LDC (out)
+          LDC (dest)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (1)
           ALOAD (0)
           GETFIELD (Box, box, Landroid/os/Parcelable;)
           ILOAD (2)
           INVOKEVIRTUAL (android/os/Parcel, writeParcelable, (Landroid/os/Parcelable;I)V)
-          RETURN
         LABEL (L1)
+        LINENUMBER (9)
+          RETURN
+        LABEL (L2)
     }
 }

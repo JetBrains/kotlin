@@ -1,40 +1,31 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.decompiler.stub
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
-import org.jetbrains.kotlin.constant.ConstantValue
-import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.load.kotlin.AbstractBinaryClassAnnotationLoader
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.metadata.ProtoBuf.Modality
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
-import org.jetbrains.kotlin.psi.KtContextReceiverList
+import org.jetbrains.kotlin.psi.KtContextParameterList
 import org.jetbrains.kotlin.psi.KtParameterList
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
-import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 const val COMPILED_DEFAULT_INITIALIZER = "COMPILED_CODE"
@@ -57,13 +48,18 @@ fun createDeclarationsStubs(
     propertyProtos: List<ProtoBuf.Property>,
 ) {
     for (propertyProto in propertyProtos) {
+        ProgressManager.checkCanceled()
+
         if (mustNotBeWrittenToStubs(propertyProto.flags)) {
             continue
         }
 
         PropertyClsStubBuilder(parentStub, outerContext, protoContainer, propertyProto).build()
     }
+
     for (functionProto in functionProtos) {
+        ProgressManager.checkCanceled()
+
         if (mustNotBeWrittenToStubs(functionProto.flags)) {
             continue
         }
@@ -79,6 +75,8 @@ fun createTypeAliasesStubs(
     typeAliasesProtos: List<ProtoBuf.TypeAlias>
 ) {
     for (typeAliasProto in typeAliasesProtos) {
+        ProgressManager.checkCanceled()
+
         createTypeAliasStub(parentStub, typeAliasProto, protoContainer, outerContext)
     }
 }
@@ -112,6 +110,8 @@ abstract class CallableClsStubBuilder(
     protected abstract val callableProto: MessageLite
 
     fun build() {
+        ProgressManager.checkCanceled()
+
         createModifierListStub()
         val typeConstraintListData = typeStubBuilder.createTypeParameterListStub(callableStub, typeParameters)
         createReceiverTypeReferenceStub()
@@ -164,9 +164,9 @@ abstract class CallableClsStubBuilder(
             return typeStubBuilder.createContextReceiverStubs(modifierListStub, contextReceiverTypes)
         }
 
-        val contextReceiverListStub = KotlinPlaceHolderStubImpl<KtContextReceiverList>(
+        val contextReceiverListStub = KotlinPlaceHolderStubImpl<KtContextParameterList>(
             modifierListStub,
-            KtStubElementTypes.CONTEXT_RECEIVER_LIST,
+            KtStubElementTypes.CONTEXT_PARAMETER_LIST,
         )
 
         typeStubBuilder.createValueParameterStubs(
@@ -243,9 +243,6 @@ private class FunctionClsStubBuilder(
             returnValueStatus = Flags.RETURN_VALUE_STATUS_FUNCTION,
         )
 
-        // If function is marked as having no annotations, we don't create stubs for it
-        if (!Flags.HAS_ANNOTATIONS.get(flags)) return
-
         val annotations = c.components.annotationLoader.loadCallableAnnotations(
             protoContainer, functionProto, AnnotatedCallableKind.FUNCTION
         )
@@ -269,6 +266,7 @@ private class FunctionClsStubBuilder(
             hasBody = Flags.MODALITY.get(functionProto.flags) != Modality.ABSTRACT,
             hasTypeParameterListBeforeFunctionName = functionProto.typeParameterList.isNotEmpty(),
             mayHaveContract = hasContract,
+            kdocText = functionProto.getExtensionOrNull(KlibMetadataProtoBuf.functionKdoc),
             runIf(hasContract) {
                 ClsContractBuilder(c, typeStubBuilder).loadContract(
                     contractOwner = ClsContractOwner.Function(functionProto),
@@ -320,25 +318,25 @@ private class PropertyClsStubBuilder(
             returnValueStatus = Flags.RETURN_VALUE_STATUS_PROPERTY,
         )
 
-        // If field is marked as having no annotations, we don't create stubs for it
-        if (!Flags.HAS_ANNOTATIONS.get(flags)) return
-
         val propertyAnnotations =
             c.components.annotationLoader.loadCallableAnnotations(protoContainer, propertyProto, AnnotatedCallableKind.PROPERTY)
         val backingFieldAnnotations =
             c.components.annotationLoader.loadPropertyBackingFieldAnnotations(protoContainer, propertyProto)
         val delegateFieldAnnotations =
             c.components.annotationLoader.loadPropertyDelegateFieldAnnotations(protoContainer, propertyProto)
-        val allAnnotations =
-            propertyAnnotations.map { AnnotationWithTarget(it, null) } +
-                    backingFieldAnnotations.map { AnnotationWithTarget(it, AnnotationUseSiteTarget.FIELD) } +
-                    delegateFieldAnnotations.map { AnnotationWithTarget(it, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD) }
+
+        val allAnnotations = buildList {
+            propertyAnnotations.mapTo(this) { AnnotationWithTarget(it, null) }
+            backingFieldAnnotations.mapTo(this) { AnnotationWithTarget(it, AnnotationUseSiteTarget.FIELD) }
+            delegateFieldAnnotations.mapTo(this) { AnnotationWithTarget(it, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD) }
+        }
+
         createTargetedAnnotationStubs(allAnnotations, modifierListStubImpl)
     }
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
         val callableName = c.nameResolver.getName(propertyProto.name)
-        val initializer = calcInitializer()
+        val initializer = c.components.annotationLoader.loadPropertyInitializer(protoContainer, propertyProto)
 
         // Note that arguments passed to stubs here and elsewhere are based on what stabs would be generated based on decompiled code
         // This info is anyway irrelevant for the purposes these stubs are used
@@ -357,6 +355,7 @@ private class PropertyClsStubBuilder(
             initializer,
             origin = createStubOrigin(protoContainer),
             hasBackingField = propertyProto.getExtensionOrNull(JvmProtoBuf.propertySignature)?.hasField(),
+            kdocText = propertyProto.getExtensionOrNull(KlibMetadataProtoBuf.propertyKdoc),
         )
     }
 
@@ -384,7 +383,7 @@ private class PropertyClsStubBuilder(
             getDefaultPropertyAccessorFlags(propertyFlags)
         }
 
-        val annotations = loadAccessorAnnotations(getterFlags, AnnotatedCallableKind.PROPERTY_GETTER)
+        val annotations = loadAccessorAnnotations(AnnotatedCallableKind.PROPERTY_GETTER)
         if (annotations.isEmpty() && !shouldGenerateAccessor(propertyFlags = propertyFlags, accessorFlags = getterFlags)) {
             return
         }
@@ -426,7 +425,7 @@ private class PropertyClsStubBuilder(
             getDefaultPropertyAccessorFlags(propertyFlags)
         }
 
-        val annotations = loadAccessorAnnotations(setterFlags, AnnotatedCallableKind.PROPERTY_SETTER)
+        val annotations = loadAccessorAnnotations(AnnotatedCallableKind.PROPERTY_SETTER)
         if (annotations.isEmpty() && !shouldGenerateAccessor(propertyFlags = propertyFlags, accessorFlags = setterFlags)) {
             return
         }
@@ -463,9 +462,6 @@ private class PropertyClsStubBuilder(
         }
     }
 
-    /**
-     * [Flags.HAS_ANNOTATIONS] is not used here as it is checked separately by [loadAccessorAnnotations]
-     */
     private fun shouldGenerateAccessor(propertyFlags: Int, accessorFlags: Int): Boolean = when {
         Flags.IS_NOT_DEFAULT.get(accessorFlags) -> true
         Flags.IS_INLINE_ACCESSOR.get(accessorFlags) -> true
@@ -489,17 +485,13 @@ private class PropertyClsStubBuilder(
     )
 
     private fun loadAccessorAnnotations(
-        accessorFlags: Int,
         callableKind: AnnotatedCallableKind,
-    ): List<AnnotationWithArgs> = if (Flags.HAS_ANNOTATIONS[accessorFlags]) {
+    ): List<AnnotationWithArgs> =
         c.components.annotationLoader.loadCallableAnnotations(
             protoContainer,
             propertyProto,
             callableKind,
         )
-    } else {
-        emptyList()
-    }
 
     private fun createModifierListAndAnnotationStubsForAccessor(
         accessorStub: KotlinPropertyAccessorStubImpl,
@@ -517,80 +509,6 @@ private class PropertyClsStubBuilder(
         if (annotations.isNotEmpty()) {
             createAnnotationStubs(annotations, modifierList)
         }
-    }
-
-    private fun calcInitializer(): ConstantValue<*>? {
-        val classFinder = c.components.classFinder
-        val containerClass =
-            if (classFinder != null) getSpecialCaseContainerClass(classFinder, c.components.metadataVersion!!) else null
-        val source = protoContainer.source
-        val binaryClass = containerClass ?: (source as? KotlinJvmBinarySourceElement)?.binaryClass
-        var constantInitializer: ConstantValue<*>? = null
-        if (binaryClass != null) {
-            val callableName = c.nameResolver.getName(propertyProto.name)
-            binaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
-                private val getterName = lazy(LazyThreadSafetyMode.NONE) {
-                    val signature = propertyProto.getExtensionOrNull(JvmProtoBuf.propertySignature) ?: return@lazy null
-                    c.nameResolver.getName(signature.getter.name)
-                }
-
-                override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? {
-                    if (protoContainer is ProtoContainer.Class && protoContainer.kind == ProtoBuf.Class.Kind.ANNOTATION_CLASS && getterName.value == name) {
-                        return object : KotlinJvmBinaryClass.MethodAnnotationVisitor {
-                            override fun visitParameterAnnotation(
-                                index: Int,
-                                classId: ClassId,
-                                source: SourceElement
-                            ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? = null
-
-                            override fun visitAnnotationMemberDefaultValue(): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
-                                return object : AnnotationMemberDefaultValueVisitor() {
-                                    override fun visitEnd() {
-                                        constantInitializer = args.values.firstOrNull()
-                                    }
-                                }
-                            }
-
-                            override fun visitAnnotation(
-                                classId: ClassId,
-                                source: SourceElement
-                            ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? = null
-
-                            override fun visitEnd() {}
-                        }
-                    }
-                    return null
-                }
-
-                override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {
-                    if (initializer != null && name == callableName) {
-                        constantInitializer = createConstantValue(initializer)
-                    }
-                    return null
-                }
-            }, null)
-        } else {
-            val value = propertyProto.getExtensionOrNull(c.components.serializationProtocol.compileTimeValue)
-            if (value != null) {
-                constantInitializer = createConstantValue(value, c.nameResolver)
-            }
-        }
-        return constantInitializer
-    }
-
-    private fun getSpecialCaseContainerClass(
-        classFinder: KotlinClassFinder,
-        metadataVersion: MetadataVersion
-    ): KotlinJvmBinaryClass? {
-        return AbstractBinaryClassAnnotationLoader.getSpecialCaseContainerClass(
-            container = protoContainer,
-            property = true,
-            field = true,
-            isConst = Flags.IS_CONST.get(propertyProto.flags),
-            isMovedFromInterfaceCompanion = JvmProtoBufUtil.isMovedFromInterfaceCompanion(propertyProto),
-            kotlinClassFinder = classFinder,
-            metadataVersion = metadataVersion
-        )
     }
 }
 
@@ -630,9 +548,6 @@ private class ConstructorClsStubBuilder(
             returnValueStatus = Flags.RETURN_VALUE_STATUS_CTOR,
         )
 
-        // If constructor is marked as having no annotations, we don't create stubs for it
-        if (!Flags.HAS_ANNOTATIONS.get(flags)) return
-
         val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
             protoContainer, constructorProto, AnnotatedCallableKind.FUNCTION
         )
@@ -653,77 +568,14 @@ private class ConstructorClsStubBuilder(
                 isDelegatedCallToThis = false,
                 isExplicitDelegationCall = false,
                 mayHaveContract = false, // constructors don't have contracts in the metadata yet
+                kdocText = constructorProto.getExtensionOrNull(KlibMetadataProtoBuf.constructorKdoc),
             )
         else
             KotlinPrimaryConstructorStubImpl(
                 parent = parent,
                 containingClassName = name,
+                kdocText = constructorProto.getExtensionOrNull(KlibMetadataProtoBuf.constructorKdoc),
             )
     }
 }
 
-open class AnnotationMemberDefaultValueVisitor : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
-    protected val args = mutableMapOf<Name, ConstantValue<*>>()
-
-    private fun nameOrSpecial(name: Name?): Name {
-        return name ?: Name.special("<no_name>")
-    }
-
-    override fun visit(name: Name?, value: Any?) {
-        val constantValue = createConstantValue(value)
-        args[nameOrSpecial(name)] = constantValue
-    }
-
-    override fun visitClassLiteral(name: Name?, value: ClassLiteralValue) {
-        args[nameOrSpecial(name)] = createConstantValue(KClassData(value.classId, value.arrayNestedness))
-    }
-
-    override fun visitEnum(name: Name?, enumClassId: ClassId, enumEntryName: Name) {
-        args[nameOrSpecial(name)] = createConstantValue(EnumData(enumClassId, enumEntryName))
-    }
-
-    override fun visitAnnotation(
-        name: Name?,
-        classId: ClassId
-    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-        val visitor = AnnotationMemberDefaultValueVisitor()
-        return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
-            override fun visitEnd() {
-                args[nameOrSpecial(name)] = createConstantValue(AnnotationData(classId, visitor.args))
-            }
-        }
-    }
-
-    override fun visitArray(name: Name?): KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor? {
-        return object : KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
-            private val elements = mutableListOf<Any>()
-
-            override fun visit(value: Any?) {
-                elements.addIfNotNull(value)
-            }
-
-            override fun visitEnum(enumClassId: ClassId, enumEntryName: Name) {
-                elements.add(EnumData(enumClassId, enumEntryName))
-            }
-
-            override fun visitClassLiteral(value: ClassLiteralValue) {
-                elements.add(KClassData(value.classId, value.arrayNestedness))
-            }
-
-            override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
-                val visitor = AnnotationMemberDefaultValueVisitor()
-                return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
-                    override fun visitEnd() {
-                        elements.addIfNotNull(AnnotationData(classId, visitor.args))
-                    }
-                }
-            }
-
-            override fun visitEnd() {
-                args[nameOrSpecial(name)] = createConstantValue(elements.toTypedArray())
-            }
-        }
-    }
-
-    override fun visitEnd() {}
-}

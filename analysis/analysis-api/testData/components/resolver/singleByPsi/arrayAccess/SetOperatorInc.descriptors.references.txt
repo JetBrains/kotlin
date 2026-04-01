@@ -2,6 +2,9 @@ KtArrayAccessExpression(205,209): 'a[2]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in test.B) operator fun get(i: kotlin.Int): test.B
+    resolveToSymbols:
       0: (in test.B) operator fun get(i: kotlin.Int): test.B
       1: (in test.B) operator fun set(i: kotlin.Int, a: test.B)

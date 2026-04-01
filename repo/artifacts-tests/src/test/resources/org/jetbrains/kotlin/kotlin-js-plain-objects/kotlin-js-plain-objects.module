@@ -10,17 +10,10 @@
     },
     "createdBy": {
         "gradle": {
-            "version": "8.14"
+            "version": "9.4.1"
         }
     },
     "variants": [
-        {
-            "name": "commonFakeApiElements-published",
-            "attributes": {
-                "org.gradle.usage": "kotlin-api",
-                "org.jetbrains.kotlin.platform.type": "common"
-            }
-        },
         {
             "name": "jsApiElements-published",
             "attributes": {

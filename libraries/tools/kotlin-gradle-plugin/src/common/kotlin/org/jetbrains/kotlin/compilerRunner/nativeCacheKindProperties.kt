@@ -6,12 +6,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.NativeCacheOrchestration
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-
-internal fun Project.getKonanCacheOrchestration(): NativeCacheOrchestration {
-    return PropertiesProvider(this).nativeCacheOrchestration ?: NativeCacheOrchestration.Compiler
-}
 
 internal fun Project.isKonanIncrementalCompilationEnabled(): Boolean {
     return PropertiesProvider(this).incrementalNative ?: false

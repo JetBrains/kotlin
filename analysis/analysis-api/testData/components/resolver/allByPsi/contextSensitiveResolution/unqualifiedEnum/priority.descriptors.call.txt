@@ -83,21 +83,20 @@ KtWhenExpression(168,206): 'when (f) {'
   null
 
 KtNameReferenceExpression(174,175): 'f'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = f
-          receiverType = null
-          returnType = first.First
-          symbol = f: first.First
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = f
+        receiverType = null
+        returnType = first.First
+        symbol = f: first.First
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(183,191): 'ONE -> 1'
@@ -107,21 +106,20 @@ KtWhenConditionWithExpression(183,186): 'ONE'
   null
 
 KtNameReferenceExpression(183,186): 'ONE'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = ONE
-          receiverType = null
-          returnType = second.Second
-          symbol = val ONE: second.Second
-          contextParameters = []
-          callableId = second/ONE
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = ONE
+        receiverType = null
+        returnType = second.Second
+        symbol = val ONE: second.Second
+        contextParameters = []
+        callableId = second/ONE
       typeArgumentsMapping = {}
 
 KtConstantExpression(190,191): '1'
@@ -134,7 +132,7 @@ KtWhenConditionWithExpression(196,199): 'TWO'
   null
 
 KtNameReferenceExpression(196,199): 'TWO'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: TWO>
 
@@ -163,21 +161,20 @@ KtWhenExpression(229,270): 'when (s) {'
   null
 
 KtNameReferenceExpression(235,236): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = second.Second
-          symbol = s: second.Second
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = second.Second
+        symbol = s: second.Second
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(244,254): 'THREE -> 3'
@@ -187,21 +184,20 @@ KtWhenConditionWithExpression(244,249): 'THREE'
   null
 
 KtNameReferenceExpression(244,249): 'THREE'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = THREE
-          receiverType = null
-          returnType = first.First
-          symbol = val THREE: first.First
-          contextParameters = []
-          callableId = first/THREE
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = THREE
+        receiverType = null
+        returnType = first.First
+        symbol = val THREE: first.First
+        contextParameters = []
+        callableId = first/THREE
       typeArgumentsMapping = {}
 
 KtConstantExpression(253,254): '3'
@@ -214,7 +210,7 @@ KtWhenConditionWithExpression(259,263): 'FOUR'
   null
 
 KtNameReferenceExpression(259,263): 'FOUR'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: FOUR>
 

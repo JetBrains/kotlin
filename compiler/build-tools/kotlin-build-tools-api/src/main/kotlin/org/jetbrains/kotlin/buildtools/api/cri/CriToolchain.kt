@@ -61,5 +61,25 @@ public interface CriToolchain : KotlinToolchains.Toolchain {
         @JvmStatic
         @get:JvmName("get")
         public inline val KotlinToolchains.cri: CriToolchain get() = getToolchain<CriToolchain>()
+
+        /**
+         * Relative path within the output directory for storing generated compiler reference index data.
+         */
+        public const val DATA_PATH: String = "cri"
+
+        /**
+         * The filename used to store serialized lookup references for the compiler reference index.
+         */
+        public const val LOOKUPS_FILENAME: String = "lookups.table"
+
+        /**
+         * The filename used to store serialized fileIdToPath references for the compiler reference index.
+         */
+        public const val FILE_IDS_TO_PATHS_FILENAME: String = "fileIdsToPaths.table"
+
+        /**
+         * The filename used to store serialized subtype references for the compiler reference index.
+         */
+        public const val SUBTYPES_FILENAME: String = "subtypes.table"
     }
 }

@@ -24,6 +24,7 @@ package kotlin
 public inline fun <T, R> context(with: T, block: context(T) () -> R): R {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        returnsResultOf(block)
     }
     return block(with)
 }
@@ -42,6 +43,7 @@ public inline fun <T, R> context(with: T, block: context(T) () -> R): R {
 public inline fun <A, B, R> context(a: A, b: B, block: context(A, B) () -> R): R {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        returnsResultOf(block)
     }
     return block(a, b)
 }
@@ -60,6 +62,7 @@ public inline fun <A, B, R> context(a: A, b: B, block: context(A, B) () -> R): R
 public inline fun <A, B, C, R> context(a: A, b: B, c: C, block: context(A, B, C) () -> R): R {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        returnsResultOf(block)
     }
     return block(a, b, c)
 }
@@ -78,6 +81,7 @@ public inline fun <A, B, C, R> context(a: A, b: B, c: C, block: context(A, B, C)
 public inline fun <A, B, C, D, R> context(a: A, b: B, c: C, d: D, block: context(A, B, C, D) () -> R): R {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        returnsResultOf(block)
     }
     return block(a, b, c, d)
 }
@@ -96,6 +100,7 @@ public inline fun <A, B, C, D, R> context(a: A, b: B, c: C, d: D, block: context
 public inline fun <A, B, C, D, E, R> context(a: A, b: B, c: C, d: D, e: E, block: context(A, B, C, D, E) () -> R): R {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        returnsResultOf(block)
     }
     return block(a, b, c, d, e)
 }
@@ -114,7 +119,7 @@ public inline fun <A, B, C, D, E, R> context(a: A, b: B, c: C, d: D, e: E, block
 public inline fun <A, B, C, D, E, F, R> context(a: A, b: B, c: C, d: D, e: E, f: F, block: context(A, B, C, D, E, F) () -> R): R {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        returnsResultOf(block)
     }
     return block(a, b, c, d, e, f)
 }
-

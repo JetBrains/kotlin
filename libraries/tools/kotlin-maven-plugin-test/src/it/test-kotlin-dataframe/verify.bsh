@@ -1,3 +1,0 @@
-source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
-
-assertFileExists("target/test-kotlin-dataframe-1.0-SNAPSHOT.jar");

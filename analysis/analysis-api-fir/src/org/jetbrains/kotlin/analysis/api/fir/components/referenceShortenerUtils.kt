@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ContextSensitiveResolutionMightBeUsed
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -85,3 +86,8 @@ private fun resolvesToSameStaticMethods(
     return referencedDeclaration is FirMemberDeclaration && referencedDeclaration.isStatic
 }
 
+internal val FirQualifiedAccessExpression.isResolvableByContextSensitiveResolution: Boolean
+    get() = nonFatalDiagnostics.any { it is ContextSensitiveResolutionMightBeUsed }
+
+internal val FirResolvedQualifier.isResolvableByContextSensitiveResolution: Boolean
+    get() = nonFatalDiagnostics.any { it is ContextSensitiveResolutionMightBeUsed }

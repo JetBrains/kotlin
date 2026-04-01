@@ -1,4 +1,4 @@
-target datalayout = "e-m:o-i64:64-i128:128-n32:64-S128-Fn32"
+target datalayout = "e-m:o-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-n32:64-S128-Fn32"
 
 ; Prevent function from DCE
 @llvm.compiler.used = appending global [1 x i8*] [ i8* bitcast (void (i8*, i8*)* @test to i8*) ], section "llvm.metadata"

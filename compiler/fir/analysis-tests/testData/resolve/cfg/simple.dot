@@ -30,28 +30,30 @@ digraph simple_kt {
         subgraph cluster_4 {
             color=blue
             7 [label="Enter block"];
-            8 [label="Const: Int(1)"];
-            9 [label="Variable declaration: lval x: R|kotlin/Int|"];
+            8 [label="Enter variable declaration: lval x: R|kotlin/Int|"];
+            9 [label="Const: Int(1)"];
+            10 [label="Exit variable declaration: lval x: R|kotlin/Int|"];
+            11 [label="Enter variable declaration: lval y: R|kotlin/Int|"];
             subgraph cluster_5 {
                 color=blue
-                10 [label="Function call arguments enter"];
-                11 [label="Access variable R|<local>/x|"];
-                12 [label="Const: Int(1)"];
-                13 [label="Function call arguments exit"];
+                12 [label="Function call arguments enter"];
+                13 [label="Access variable R|<local>/x|"];
+                14 [label="Const: Int(1)"];
+                15 [label="Function call arguments exit"];
             }
-            14 [label="Function call enter: R|<local>/x|.R|kotlin/Int.plus|(...)"];
-            15 [label="Function call exit: R|<local>/x|.R|kotlin/Int.plus|(...)" style="filled" fillcolor=yellow];
-            16 [label="Variable declaration: lval y: R|kotlin/Int|"];
+            16 [label="Function call enter: R|<local>/x|.R|kotlin/Int.plus|(...)"];
+            17 [label="Function call exit: R|<local>/x|.R|kotlin/Int.plus|(...)" style="filled" fillcolor=yellow];
+            18 [label="Exit variable declaration: lval y: R|kotlin/Int|"];
             subgraph cluster_6 {
                 color=blue
-                17 [label="Function call arguments enter"];
-                18 [label="Function call arguments exit"];
+                19 [label="Function call arguments enter"];
+                20 [label="Function call arguments exit"];
             }
-            19 [label="Function call enter: R|/foo|()"];
-            20 [label="Function call exit: R|/foo|()" style="filled" fillcolor=yellow];
-            21 [label="Exit block"];
+            21 [label="Function call enter: R|/foo|()"];
+            22 [label="Function call exit: R|/foo|()" style="filled" fillcolor=yellow];
+            23 [label="Exit block"];
         }
-        22 [label="Exit function test" style="filled" fillcolor=red];
+        24 [label="Exit function test" style="filled" fillcolor=red];
     }
     6 -> {7};
     7 -> {8};
@@ -69,5 +71,7 @@ digraph simple_kt {
     19 -> {20};
     20 -> {21};
     21 -> {22};
+    22 -> {23};
+    23 -> {24};
 
 }

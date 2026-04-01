@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,13 +18,12 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
-import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
+import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtension
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.TypeResolutionConfiguration
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguouslyResolvedAnnotationFromPlugin
@@ -36,6 +35,7 @@ import org.jetbrains.kotlin.fir.scopes.getNestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -126,6 +126,25 @@ open class FirTypeResolveTransformer(
         }
     }
 
+    override fun transformReplSnippet(replSnippet: FirReplSnippet, data: Any?): FirReplSnippet {
+        whileAnalysing(session, replSnippet) {
+            return withReplSnippetScope(replSnippet) {
+                transformElement(replSnippet, data)
+            }
+        }
+    }
+
+    inline fun <R> withReplSnippetScope(replSnippet: FirReplSnippet, crossinline action: () -> R): R {
+        return withScopeCleanup {
+            // TODO: robuster matching and error reporting on no extension (KT-72969)
+            session.replSnippetResolveExtension?.getSnippetScope(replSnippet, session)?.let {
+                addScopes(listOf(it))
+            }
+
+            action()
+        }
+    }
+
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
         whileAnalysing(session, regularClass) {
             withClassDeclarationCleanup(regularClass) {
@@ -206,11 +225,18 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformReceiverParameter(receiverParameter: FirReceiverParameter, data: Any?): FirReceiverParameter {
-        return receiverParameter.transformAnnotations(this, data).transformTypeRef(this, data)
+        val transformedAnnotations = receiverParameter.transformAnnotations(this, data)
+        return typeResolverTransformer.withBareTypes(receiverParameter.containingDeclarationSymbol.let { it is FirCallableSymbol && it.isCompanionExtension }) {
+            transformedAnnotations.transformTypeRef(this, data)
+        }
     }
 
     override fun transformProperty(property: FirProperty, data: Any?): FirProperty = whileAnalysing(session, property) {
         withScopeCleanup {
+            if (property.isStatic) {
+                scopes = staticScopes
+            }
+
             withDeclaration(property) {
                 addTypeParametersScope(property)
                 property.transformTypeParameters(this, data)
@@ -279,6 +305,10 @@ open class FirTypeResolveTransformer(
         data: Any?,
     ): FirNamedFunction = whileAnalysing(session, namedFunction) {
         withScopeCleanup {
+            if (namedFunction.isStatic) {
+                scopes = staticScopes
+            }
+
             withDeclaration(namedFunction) {
                 addTypeParametersScope(namedFunction)
                 val result = transformDeclaration(namedFunction, data).also {

@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
 }
@@ -15,7 +14,9 @@ dependencies {
     testFixturesApi(testFixtures(project(":kotlinx-serialization-compiler-plugin")))
     testFixturesApi(testFixtures(project(":kotlin-lombok-compiler-plugin")))
     testFixturesApi(testFixtures(project(":kotlin-noarg-compiler-plugin")))
+    testFixturesApi(testFixtures(project(":kotlin-power-assert-compiler-plugin")))
     testFixturesApi(testFixtures(project(":plugins:parcelize:parcelize-compiler")))
+    testFixturesApi(testFixtures(project(":plugins:plugin-sandbox")))
 
     testFixturesApi(testFixtures(project(":compiler:tests-integration")))
 
@@ -23,9 +24,6 @@ dependencies {
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
-
-    testRuntimeOnly(project(":core:descriptors.runtime"))
-    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
@@ -65,4 +63,5 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.compiler.plugins.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
+    withPluginSandboxAnnotations()
 }

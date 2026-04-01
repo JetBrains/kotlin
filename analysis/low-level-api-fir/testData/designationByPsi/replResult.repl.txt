@@ -1,0 +1,5 @@
+KT element: KtScriptInitializer
+Resolve target: replResult.repl.kts -> <snippet-replResult.repl.kts> -> ReplResult_repl -> $$result
+FIR:
+  public final val $$result: <implicit> = REPL_EXPRESSION_REF
+      public get(): <implicit>

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinDefaultHierarchyFallbackDependsOnUsageDetected
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinDefaultHierarchyFallbackIllegalTargetNames
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.toolingDiagnosticsContext
 import org.jetbrains.kotlin.gradle.plugin.requiredStage
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
@@ -38,7 +39,7 @@ internal suspend fun Project.setupDefaultKotlinHierarchy() = requiredStage(Final
         val sourceSetsWithDependsOnEdges = extension.sourceSets.filter { sourceSet -> sourceSet.dependsOn.isNotEmpty() }
         if (sourceSetsWithDependsOnEdges.isEmpty()) return@check
         val diagnostic = KotlinDefaultHierarchyFallbackDependsOnUsageDetected(project, sourceSetsWithDependsOnEdges)
-        kotlinToolingDiagnosticsCollector.report(project, diagnostic)
+        kotlinToolingDiagnosticsCollector.report(toolingDiagnosticsContext, diagnostic)
         setupPreMultiplatformStableDefaultDependsOnEdges()
         return@setup
     }
@@ -52,7 +53,7 @@ internal suspend fun Project.setupDefaultKotlinHierarchy() = requiredStage(Final
         val illegalTargetNamesUsed = illegalTargetNamesUsed()
         if (illegalTargetNamesUsed.isEmpty()) return@check
         val diagnostic = KotlinDefaultHierarchyFallbackIllegalTargetNames(project, illegalTargetNamesUsed)
-        kotlinToolingDiagnosticsCollector.report(project, diagnostic)
+        kotlinToolingDiagnosticsCollector.report(toolingDiagnosticsContext, diagnostic)
         setupPreMultiplatformStableDefaultDependsOnEdges()
         return@setup
     }
@@ -86,4 +87,3 @@ private suspend fun Project.setupPreMultiplatformStableDefaultDependsOnEdges() =
         val commonSourceSet = multiplatformExtension.sourceSets.findByName(commonSourceSetName) ?: return@forEach
         compilation.defaultSourceSet.dependsOn(commonSourceSet)
     }
-

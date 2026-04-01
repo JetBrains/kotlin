@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSo
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaErrorTypeRenderer
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaScopeLike
-import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -173,7 +173,7 @@ internal object TestScopeRenderer {
     private fun prettyRenderDeclaration(symbol: KaDeclarationSymbol): String =
         symbol.render(prettyPrintSymbolRenderer)
 
-    private val debugRenderer = DebugSymbolRenderer()
+    private val debugRenderer = KaDebugRenderer()
 
     private val prettyPrintSymbolRenderer = KaDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
         annotationRenderer = annotationRenderer.with { annotationFilter = KaRendererAnnotationsFilter.NONE }

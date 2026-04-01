@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.konan.prepareAsOutput
 import org.jetbrains.kotlin.gradle.plugin.konan.registerIsolatedClassLoadersServiceIfAbsent
 import org.jetbrains.kotlin.gradle.plugin.konan.runKonanTool
 import org.jetbrains.kotlin.konan.target.PlatformManager
-import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
-import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
+import org.jetbrains.kotlin.nativeDistribution.asNativeDistribution
 import javax.inject.Inject
 
 private abstract class KonanCacheAction : WorkAction<KonanCacheAction.Parameters> {
@@ -57,7 +56,9 @@ open class KonanCacheTask @Inject constructor(
     val outputDirectory: DirectoryProperty = objectFactory.directoryProperty()
 
     @get:Internal("Depends upon the compiler classpath, native libraries (used by codegen) and konan.properties (compilation flags + dependencies)")
-    val compilerDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
+    val compilerDistributionRoot: DirectoryProperty = objectFactory.directoryProperty()
+
+    private val compilerDistribution = compilerDistributionRoot.asNativeDistribution()
 
     @get:Classpath
     protected val compilerClasspath = compilerDistribution.map { it.compilerClasspath }
@@ -90,6 +91,7 @@ open class KonanCacheTask @Inject constructor(
             PlatformManager(compilerDistribution.get().root.asFile.absolutePath).apply {
                 addAll(platform(targetByName(target.get())).additionalCacheFlags)
             }
+            add("-Xdebug-prefix-map=${outputDirectory.get().asFile.parentFile.absolutePath}=out")
         }
         val workQueue = workerExecutor.noIsolation()
         workQueue.submit(KonanCacheAction::class.java) {

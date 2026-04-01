@@ -24,8 +24,8 @@ FILE: [ResolvedTo(RAW_FIR)] annotationWithEnumFromBody.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|WithEnumFromBody.MyLevel| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -57,8 +57,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|WithEnumFromBody.MyLevel| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -90,8 +90,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|WithEnumFromBody.MyLevel| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -123,8 +123,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|WithEnumFromBody.MyLevel| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -156,8 +156,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|WithEnumFromBody.MyLevel| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -189,8 +189,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|WithEnumFromBody.MyLevel| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -206,7 +206,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/String| = R|<local>/a|
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|kotlin/String|
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|WithEnumFromBody.MyLevel| = R|<local>/b|
+        @R|WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|WithEnumFromBody.MyLevel| = R|<local>/b|
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|WithEnumFromBody.MyLevel|
 
         public final? [ResolvedTo(RAW_FIR)] enum class MyLevel : R|kotlin/Enum<WithEnumFromBody.MyLevel>| {
@@ -222,8 +222,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|WithEnumFromBody.MyLevel| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -239,7 +239,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/String| = R|<local>/a|
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|kotlin/String|
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|WithEnumFromBody.MyLevel| = R|<local>/b|
+        @R|WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|WithEnumFromBody.MyLevel| = R|<local>/b|
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|WithEnumFromBody.MyLevel|
 
         public final? [ResolvedTo(RAW_FIR)] enum class MyLevel : R|kotlin/Enum<WithEnumFromBody.MyLevel>| {
@@ -255,8 +255,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|WithEnumFromBody.MyLevel| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -272,7 +272,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/String| = R|<local>/a|
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|kotlin/String|
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|WithEnumFromBody.MyLevel| = R|<local>/b|
+        @R|WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|WithEnumFromBody.MyLevel| = R|<local>/b|
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|WithEnumFromBody.MyLevel|
 
         public final? [ResolvedTo(RAW_FIR)] enum class MyLevel : R|kotlin/Enum<WithEnumFromBody.MyLevel>| {
@@ -288,8 +288,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|WithEnumFromBody.MyLevel| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -305,7 +305,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/String| = R|<local>/a|
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|kotlin/String|
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|WithEnumFromBody.MyLevel| = R|<local>/b|
+        @R|WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|WithEnumFromBody.MyLevel| = R|<local>/b|
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|WithEnumFromBody.MyLevel|
 
         public final? [ResolvedTo(RAW_FIR)] enum class MyLevel : R|kotlin/Enum<WithEnumFromBody.MyLevel>| {
@@ -321,8 +321,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|WithEnumFromBody.MyLevel| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -338,7 +338,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/String| = R|<local>/a|
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|kotlin/String|
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|WithEnumFromBody.MyLevel| = R|<local>/b|
+        @R|WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|WithEnumFromBody.MyLevel| = R|<local>/b|
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|WithEnumFromBody.MyLevel|
 
         public final? [ResolvedTo(RAW_FIR)] enum class MyLevel : R|kotlin/Enum<WithEnumFromBody.MyLevel>| {
@@ -354,8 +354,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|WithEnumFromBody.MyLevel| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -363,15 +363,15 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
-    @R|WithEnumFromBody|[Types](a = String(), b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class WithEnumFromBody : R|kotlin/Annotation| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/WithEnumFromBody.a] a: R|kotlin/String| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/WithEnumFromBody.b] @R|WithEnumFromBody|[Types](a = String(), b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.WARNING|) b: R|WithEnumFromBody.MyLevel| = LAZY_EXPRESSION): R|WithEnumFromBody| {
+    @R|WithEnumFromBody|[Types](a = String() [evaluated = String()], b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR| [evaluated = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class WithEnumFromBody : R|kotlin/Annotation| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/WithEnumFromBody.a] a: R|kotlin/String| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/WithEnumFromBody.b] @R|WithEnumFromBody|[Types](a = String() [evaluated = String()], b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.WARNING| [evaluated = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.WARNING|]) b: R|WithEnumFromBody.MyLevel| = LAZY_EXPRESSION): R|WithEnumFromBody| {
             LAZY_super<R|kotlin/Any|>
         }
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/String| = R|<local>/a|
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|kotlin/String|
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|WithEnumFromBody.MyLevel| = R|<local>/b|
+        @R|WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|WithEnumFromBody.MyLevel| = R|<local>/b|
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|WithEnumFromBody.MyLevel|
 
         public final [ResolvedTo(STATUS)] enum class MyLevel : R|kotlin/Enum<WithEnumFromBody.MyLevel>| {
@@ -387,8 +387,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|WithEnumFromBody.MyLevel| {
             }
 
-            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -396,15 +396,15 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
-    @R|WithEnumFromBody|[Types](a = String(), b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class WithEnumFromBody : R|kotlin/Annotation| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithEnumFromBody.a] a: R|kotlin/String| = String(), [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithEnumFromBody.b] @R|WithEnumFromBody|[Types](a = String(), b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.WARNING|) b: R|WithEnumFromBody.MyLevel| = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|): R|WithEnumFromBody| {
+    @R|WithEnumFromBody|[Types](a = String() [evaluated = String()], b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR| [evaluated = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class WithEnumFromBody : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithEnumFromBody.a, EvaluatedValue=String()] a: R|kotlin/String| = String(), [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithEnumFromBody.b, EvaluatedValue=Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|] @R|WithEnumFromBody|[Types](a = String() [evaluated = String()], b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.WARNING| [evaluated = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.WARNING|]) b: R|WithEnumFromBody.MyLevel| = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|): R|WithEnumFromBody| {
             super<R|kotlin/Any|>()
         }
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/String| = R|<local>/a|
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|kotlin/String|
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|WithEnumFromBody.MyLevel| = R|<local>/b|
+        @R|WithEnumFromBody|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|WithEnumFromBody.MyLevel| = R|<local>/b|
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithEnumFromBody] get(): R|WithEnumFromBody.MyLevel|
 
         public final [ResolvedTo(STATUS)] enum class MyLevel : R|kotlin/Enum<WithEnumFromBody.MyLevel>| {
@@ -420,8 +420,8 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|WithEnumFromBody.MyLevel| {
             }
 
-            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 
@@ -429,15 +429,15 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithEnumFromBody.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithEnumFromBody.kt
-    @R|WithEnumFromBody|[Types](a = String(), b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|) public final [ResolvedTo(BODY_RESOLVE)] annotation class WithEnumFromBody : R|kotlin/Annotation| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithEnumFromBody.a] a: R|kotlin/String| = String(), [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithEnumFromBody.b] @R|WithEnumFromBody|[Types](a = String(), b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.WARNING|) b: R|WithEnumFromBody.MyLevel| = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|): R|WithEnumFromBody| {
+    @R|WithEnumFromBody|[Types](a = String() [evaluated = String()], b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR| [evaluated = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|]) public final [ResolvedTo(BODY_RESOLVE)] annotation class WithEnumFromBody : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithEnumFromBody] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithEnumFromBody.a, EvaluatedValue=String()] a: R|kotlin/String| = String(), [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithEnumFromBody.b, EvaluatedValue=Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|] @R|WithEnumFromBody|[Types](a = String() [evaluated = String()], b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.WARNING| [evaluated = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.WARNING|]) b: R|WithEnumFromBody.MyLevel| = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.ERROR|): R|WithEnumFromBody| {
             super<R|kotlin/Any|>()
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val a: R|kotlin/String| = R|<local>/a|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithEnumFromBody] get(): R|kotlin/String|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val b: R|WithEnumFromBody.MyLevel| = R|<local>/b|
+        @R|WithEnumFromBody|[Types](a = String() [evaluated = String()], b = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.WARNING| [evaluated = Q|WithEnumFromBody.MyLevel|.R|/WithEnumFromBody.MyLevel.WARNING|]) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val b: R|WithEnumFromBody.MyLevel| = R|<local>/b|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithEnumFromBody] get(): R|WithEnumFromBody.MyLevel|
 
         public final [ResolvedTo(BODY_RESOLVE)] enum class MyLevel : R|kotlin/Enum<WithEnumFromBody.MyLevel>| {
@@ -453,8 +453,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithEnumFromBody.kt
             public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyLevel] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|WithEnumFromBody.MyLevel| {
             }
 
-            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyLevel] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
-                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
+                public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<WithEnumFromBody.MyLevel>|
 
         }
 

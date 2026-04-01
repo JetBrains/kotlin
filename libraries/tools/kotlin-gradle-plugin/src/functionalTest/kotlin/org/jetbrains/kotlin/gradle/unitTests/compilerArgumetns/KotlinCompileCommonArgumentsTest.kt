@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.Create
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertNull
@@ -52,5 +53,23 @@ class KotlinCompileCommonArgumentsTest {
         val commonMainCompileTask = kotlin.metadata().compilations.getByName("commonMain").compileTaskProvider.get() as KotlinCompileCommon
         assertNull(commonMainCompileTask.createCompilerArguments(lenient).classpath)
         assertFails { commonMainCompileTask.createCompilerArguments(CreateCompilerArgumentsContext.default) }
+    }
+
+    @Test
+    fun `test - simple project - -Xtarget-platform argument`() {
+        val project = buildProjectWithMPP()
+        val kotlin = project.multiplatformExtension
+        kotlin.jvm()
+        kotlin.linuxX64()
+        project.evaluate()
+
+        val commonMainCompilation = kotlin.metadata().compilations.getByName("commonMain")
+        val commonMainCompileTask = commonMainCompilation.compileTaskProvider.get() as KotlinCompileCommon
+
+        val argumentsFromCompilerArgumentsProducer = commonMainCompileTask.createCompilerArguments(lenient)
+        assertContentEquals(
+            listOf("JVM", "Native"),
+            argumentsFromCompilerArgumentsProducer.targetPlatform.orEmpty().toList(),
+        )
     }
 }

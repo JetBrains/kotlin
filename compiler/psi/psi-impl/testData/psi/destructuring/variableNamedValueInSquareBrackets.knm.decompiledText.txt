@@ -1,0 +1,28 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public fun foo1(b: Box, l: kotlin.collections.List<Box>): kotlin.Unit { /* compiled code */ }
+
+public fun foo2(b: Box, l: kotlin.collections.List<Box>): kotlin.Unit { /* compiled code */ }
+
+public fun foo3(b: Box, l: kotlin.collections.List<Box>): kotlin.Unit { /* compiled code */ }
+
+public fun foo4(b: Box, l: kotlin.collections.List<Box>): kotlin.Unit { /* compiled code */ }
+
+public final data class Box public constructor(key: kotlin.String, value: kotlin.String) {
+    public final val key: kotlin.String /* compiled code */
+
+    public final val value: kotlin.String /* compiled code */
+
+    public final operator fun component1(): kotlin.String { /* compiled code */ }
+
+    public final operator fun component2(): kotlin.String { /* compiled code */ }
+
+    public final fun copy(key: kotlin.String = COMPILED_CODE, value: kotlin.String = COMPILED_CODE): Box { /* compiled code */ }
+
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+
+    public open fun hashCode(): kotlin.Int { /* compiled code */ }
+
+    public open fun toString(): kotlin.String { /* compiled code */ }
+}

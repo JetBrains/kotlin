@@ -21,6 +21,7 @@ import com.intellij.util.io.BooleanDataDescriptor
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getVisibleTypeAliasFqNames
+import org.jetbrains.kotlin.incremental.components.SubtypeTracker
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.inline.InlineFunction
 import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
@@ -45,9 +46,11 @@ open class IncrementalJvmCache(
     targetDataRoot: File,
     icContext: IncrementalCompilationContext,
     targetOutputDir: File?,
+    subtypeTracker: SubtypeTracker = SubtypeTracker.DoNothing,
 ) : AbstractIncrementalCache<JvmClassName>(
     workingDir = File(targetDataRoot, KOTLIN_CACHE_DIRECTORY_NAME),
     icContext,
+    subtypeTracker,
 ), IncrementalCache {
     companion object {
         private const val PROTO_MAP = "proto"
@@ -151,7 +154,7 @@ open class IncrementalJvmCache(
         when (kotlinClassInfo.classKind) {
             KotlinClassHeader.Kind.FILE_FACADE -> {
                 if (sourceFiles != null) {
-                    assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
+                    assert(sourceFiles.size <= 1) { "Package part from several source files: $sourceFiles" }
                 }
                 packagePartMap.addPackagePart(className)
 
@@ -196,7 +199,7 @@ open class IncrementalJvmCache(
             }
             KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
                 if (sourceFiles != null) {
-                    assert(sourceFiles.size == 1) { "Multifile class part from several source files: $sourceFiles" }
+                    assert(sourceFiles.size <= 1) { "Multifile class part from several source files: $sourceFiles" }
                 }
                 packagePartMap.addPackagePart(className)
                 partToMultifileFacade[className] = kotlinClassInfo.multifileClassName!!
@@ -207,7 +210,7 @@ open class IncrementalJvmCache(
                 }
             }
             KotlinClassHeader.Kind.CLASS -> {
-                addToClassStorage(kotlinClassInfo.protoData as ClassProtoData, sourceFiles?.let { sourceFiles.single() }, icContext.useCompilerMapsOnly)
+                addToClassStorage(kotlinClassInfo.protoData as ClassProtoData, sourceFiles?.singleOrNull(), icContext.useCompilerMapsOnly)
 
                 protoMap.process(kotlinClassInfo, changesCollector)
 

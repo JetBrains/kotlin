@@ -1,5 +1,7 @@
 // DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS
 // WITH_STDLIB
+
+// FILE: lib.kt
 import kotlin.reflect.typeOf
 
 class A {
@@ -7,6 +9,9 @@ class A {
         inline fun <reified T : CharSequence> foo(a: T) = typeOf<T>()
     }
 }
+
+// FILE: main.kt
+import kotlin.reflect.typeOf
 
 fun box(): String {
     if (A().Inner().foo("0123456789") != typeOf<String>())

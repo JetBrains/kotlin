@@ -13,7 +13,7 @@ FILE: multipleOverloads.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<MyEnum1>|
-            public get(): R|kotlin/enums/EnumEntries<MyEnum1>|
+            public static get(): R|kotlin/enums/EnumEntries<MyEnum1>|
 
     }
     public final enum class MyEnum2 : R|kotlin/Enum<MyEnum2>| {
@@ -30,7 +30,7 @@ FILE: multipleOverloads.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<MyEnum2>|
-            public get(): R|kotlin/enums/EnumEntries<MyEnum2>|
+            public static get(): R|kotlin/enums/EnumEntries<MyEnum2>|
 
     }
     public final enum class MyEnum3 : R|kotlin/Enum<MyEnum3>| {
@@ -47,7 +47,7 @@ FILE: multipleOverloads.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<MyEnum3>|
-            public get(): R|kotlin/enums/EnumEntries<MyEnum3>|
+            public static get(): R|kotlin/enums/EnumEntries<MyEnum3>|
 
     }
     public final fun foo(x: R|MyEnum1|): R|kotlin/Unit| {

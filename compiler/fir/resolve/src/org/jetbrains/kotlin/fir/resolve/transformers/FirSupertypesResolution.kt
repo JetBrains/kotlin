@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -114,6 +117,10 @@ private class FirApplySupertypesTransformer(
         }
     }
 
+    override fun transformReplSnippet(replSnippet: FirReplSnippet, data: Any?): FirReplSnippet {
+        return transformDeclarationContent(replSnippet, null) as FirReplSnippet
+    }
+
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
         applyResolvedSupertypesToClass(regularClass)
 
@@ -196,6 +203,7 @@ open class FirSupertypeResolverVisitor(
 
     @PrivateForInline
     val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque()
+    private var replSnippet: FirReplSnippet? = null
 
     init {
         containingDeclarations.forEach {
@@ -227,6 +235,17 @@ open class FirSupertypeResolverVisitor(
         return supertypeComputationSession.getOrPutFileScope(file) {
             createImportingScopes(file, session, scopeSession).asReversed().toPersistentList()
         }
+    }
+
+    private fun prepareReplScopes(replSnippet: FirReplSnippet): ScopePersistentList {
+        return buildList {
+            val symbol = replSnippet.symbol
+            val file = symbol.moduleData.session.firProvider.getFirReplSnippetContainerFile(symbol)
+            if (file != null) addAll(prepareFileScopes(file))
+
+            // TODO: robuster matching and error reporting on no extension (KT-72969)
+            session.replSnippetResolveExtension?.getSnippetScope(replSnippet, session)?.let(::add)
+        }.toPersistentList()
     }
 
     private fun prepareScopeForNestedClasses(klass: FirClass, forStaticNestedClass: Boolean): ScopePersistentList {
@@ -314,6 +333,7 @@ open class FirSupertypeResolverVisitor(
                 val isStatic = !classLikeDeclaration.isInner
                 prepareScopeForNestedClasses(outerClassFir ?: return persistentListOf(), isStatic || forStaticNestedClass)
             }
+            replSnippet != null -> prepareReplScopes(replSnippet!!)
             else -> getFirClassifierContainerFileIfAny(classLikeDeclaration.symbol)?.let(::prepareFileScopes) ?: persistentListOf()
         }
 
@@ -390,7 +410,13 @@ open class FirSupertypeResolverVisitor(
     }
 
     override fun visitReplSnippet(replSnippet: FirReplSnippet, data: Any?) {
-        visitDeclarationContent(replSnippet, data)
+        val original = this.replSnippet
+        this.replSnippet = replSnippet
+        try {
+            visitDeclarationContent(replSnippet, data)
+        } finally {
+            this.replSnippet = original
+        }
     }
 
     /**

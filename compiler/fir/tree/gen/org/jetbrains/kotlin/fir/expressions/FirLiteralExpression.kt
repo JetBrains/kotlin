@@ -16,6 +16,11 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 /**
+ * Represents a literal expression in FIR, such as a plain string, number (signed or unsigned), boolean, char, or null.
+ *
+ * The [value] doesn't describe the type of expression that is stored. It is possible that unsigned number is represented as signed.
+ * Only the [kind] field describes the type of expression that is stored. For that reason [kind] and [coneTypeOrNull] should be in sync.
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.literalExpression]
  */
 abstract class FirLiteralExpression : FirExpression() {

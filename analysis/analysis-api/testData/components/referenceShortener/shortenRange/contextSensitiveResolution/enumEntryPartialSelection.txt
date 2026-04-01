@@ -1,0 +1,9 @@
+Before shortening: pkg.MyEnum
+with default settings:
+[qualifier] pkg.MyEnum
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+[qualifier] pkg.MyEnum
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] pkg.MyEnum

@@ -1,0 +1,6 @@
+public open class NativeMethod : R|kotlin/Any| {
+    public open external fun foo(): R|kotlin/Unit|
+
+    public constructor(): R|test/NativeMethod|
+
+}

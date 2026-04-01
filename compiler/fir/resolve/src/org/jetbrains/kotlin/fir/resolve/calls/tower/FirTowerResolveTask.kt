@@ -7,23 +7,31 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.toImplicitResolvedQualifierReceiver
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 internal class TowerDataElementsForName(
     name: Name,
@@ -56,13 +64,26 @@ internal abstract class FirBaseTowerResolveTask(
     protected val towerDataElementsForName: TowerDataElementsForName,
     private val collector: CandidateCollector,
     private val candidateFactory: CandidateFactory
-) {
-    protected val session get() = components.session
-
+) : SessionHolder by components {
     private val handler: TowerLevelHandler = TowerLevelHandler()
 
     open fun interceptTowerGroup(towerGroup: TowerGroup) = towerGroup
     open fun onSuccessfulLevel(towerGroup: TowerGroup) {}
+
+    protected suspend inline fun processLevel(
+        towerLevel: ScopeBasedTowerLevel,
+        callInfo: CallInfo,
+        group: TowerGroup,
+        explicitReceiverKind: ExplicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+        onEmptyLevel: () -> Unit = {},
+        onNoCompanionExtensions: () -> Unit = {},
+    ) {
+        if (processLevel(towerLevel as TowerLevel, callInfo, group, explicitReceiverKind)) {
+            onEmptyLevel()
+        } else if (!towerLevel.hasFoundCompanionExtensions) {
+            onNoCompanionExtensions()
+        }
+    }
 
     protected suspend inline fun processLevel(
         towerLevel: TowerLevel,
@@ -80,12 +101,13 @@ internal abstract class FirBaseTowerResolveTask(
         extensionReceiver: ReceiverValue? = null,
         withHideMembersOnly: Boolean = false,
         constructorFilter: ConstructorFilter = extensionReceiver.toConstructorFilter(),
+        companionExtensionPolicy: CompanionExtensionPolicy = CompanionExtensionPolicy.NoCompanionExtensions,
         dispatchReceiverForStatics: ExpressionReceiverValue? = null
     ): ScopeBasedTowerLevel {
         return ScopeBasedTowerLevel(
             components, this,
             givenExtensionReceiver = extensionReceiver?.receiverExpression,
-            withHideMembersOnly, constructorFilter, dispatchReceiverForStatics
+            withHideMembersOnly, constructorFilter, companionExtensionPolicy, dispatchReceiverForStatics
         )
     }
 
@@ -103,7 +125,7 @@ internal abstract class FirBaseTowerResolveTask(
         extensionReceiver = null,
         withHideMembersOnly = false,
         constructorFilter = ConstructorFilter.OnlyNested,
-        staticOwnerOwnerSymbol?.let {
+        dispatchReceiverForStatics = staticOwnerOwnerSymbol?.let {
             ExpressionReceiverValue(
                 it.toImplicitResolvedQualifierReceiver(
                     components,
@@ -126,19 +148,24 @@ internal abstract class FirBaseTowerResolveTask(
         parentGroup: TowerGroup = TowerGroup.EmptyRoot,
         onScope: (FirScope, FirRegularClassSymbol?, TowerGroup) -> Unit,
         onImplicitReceiver: (ImplicitReceiverValue<*>, TowerGroup) -> Unit,
+        onStaticScopeOwnerSymbol: (FirRegularClassSymbol, TowerGroup) -> Unit = { _, _ -> },
     ) {
         for ((index, localScope) in towerDataElementsForName.reversedFilteredLocalScopes) {
             onScope(localScope, null, parentGroup.Local(index))
         }
 
         for ((depth, lexical) in towerDataElementsForName.nonLocalTowerDataElements.withIndex()) {
-            val scope = lexical.scope
-            if (!lexical.isLocal && scope != null) {
-                onScope(
-                    scope,
-                    lexical.staticScopeOwnerSymbol,
-                    parentGroup.NonLocal(depth)
-                )
+            if (!lexical.isLocal) {
+                val scope = lexical.scope
+                val staticScopeOwnerSymbol = lexical.staticScopeOwnerSymbol
+
+                if (scope != null) {
+                    onScope(scope, staticScopeOwnerSymbol, parentGroup.NonLocal(depth))
+                }
+
+                if (staticScopeOwnerSymbol != null) {
+                    onStaticScopeOwnerSymbol(staticScopeOwnerSymbol, parentGroup.NonLocal(depth))
+                }
             }
 
             val receiver = lexical.implicitReceiver
@@ -189,6 +216,8 @@ internal open class FirTowerResolveTask(
     candidateFactory,
 ) {
 
+    private val companionExtensionsEnabled = LanguageFeature.CompanionBlocksAndExtensions.isEnabled()
+
     suspend fun runResolverForQualifierReceiver(
         info: CallInfo,
         resolvedQualifier: FirResolvedQualifier
@@ -197,6 +226,17 @@ internal open class FirTowerResolveTask(
 
         processQualifierScopes(info, qualifierReceiver)
         processClassifierScope(info, qualifierReceiver)
+
+        // Searching for companion extensions triggers a bunch of resolution tasks.
+        // We skip them for performance reasons when the LF is disabled.
+        if (companionExtensionsEnabled) {
+            enumerateTowerLevelsForCompanionExtensions(
+                info,
+                resolvedQualifier,
+                TowerGroup.QualifierOrClassifier,
+                explicitReceiverKind = ExplicitReceiverKind.EXTENSION_RECEIVER
+            )
+        }
 
         if (resolvedQualifier.symbol != null) {
             if (info is CallableReferenceInfo && info.lhs is DoubleColonLHS.Type) {
@@ -215,6 +255,52 @@ internal open class FirTowerResolveTask(
                 runResolverForExpressionReceiver(info, resolvedQualifier, parentGroup = TowerGroup.QualifierValue)
             }
 
+        }
+    }
+
+    private suspend fun enumerateTowerLevelsForCompanionExtensions(
+        info: CallInfo,
+        resolvedQualifier: FirResolvedQualifier,
+        parentGroup: TowerGroup,
+        explicitReceiverKind: ExplicitReceiverKind,
+        emptyScopes: MutableSet<FirScope>? = null,
+        scopesWithoutCompanionExtensions: MutableSet<FirScope>? = null,
+    ) {
+        if (resolvedQualifier.symbol?.fullyExpandedClass()?.classKind.let { it == null || it == ClassKind.OBJECT }) {
+            return
+        }
+
+        val explicitReceiverValue = ExpressionReceiverValue(resolvedQualifier)
+        for ((depth, lexical) in towerDataElementsForName.nonLocalTowerDataElements.withIndex()) {
+            val scope = lexical.scope
+
+            if (!scope.canContainCompanionExtensions()) continue
+
+            if (!lexical.isLocal && emptyScopes?.contains(scope) != true && scopesWithoutCompanionExtensions?.contains(scope) != true) {
+                processScopeForExplicitReceiver(
+                    scope,
+                    explicitReceiverValue,
+                    info,
+                    parentGroup.NonLocal(depth),
+                    companionExtensionPolicy = CompanionExtensionPolicy.OnlyCompanionExtensions,
+                    explicitReceiverKind = explicitReceiverKind,
+                    onEmptyLevel = { emptyScopes?.add(scope) },
+                )
+            }
+        }
+    }
+
+    /**
+     * Optimization: companion extensions can only be top-level.
+     */
+    @OptIn(ExperimentalContracts::class)
+    private fun FirScope?.canContainCompanionExtensions(): Boolean {
+        contract { returns(true) implies (this@canContainCompanionExtensions != null) }
+        return when (this) {
+            is FirPackageMemberScope,
+            is FirAbstractImportingScope,
+                -> true
+            else -> false
         }
     }
 
@@ -275,7 +361,8 @@ internal open class FirTowerResolveTask(
                     scope,
                     explicitReceiverValue,
                     info,
-                    group
+                    group,
+                    companionExtensionPolicy = CompanionExtensionPolicy.NoCompanionExtensions,
                 )
             },
             onImplicitReceiver = { implicitReceiverValue, group ->
@@ -293,23 +380,36 @@ internal open class FirTowerResolveTask(
         skipSynthetics: Boolean = false,
     ) {
         val emptyScopes = mutableSetOf<FirScope>()
+        val scopesWithoutCompanionExtensions = mutableSetOf<FirScope>()
         val implicitReceiverValuesWithEmptyScopes = mutableSetOf<ImplicitReceiverValue<*>>()
 
         enumerateTowerLevels(
-            onScope = l@{ scope, staticScopeOwnerSymbol, group ->
+            onScope = { scope, staticScopeOwnerSymbol, group ->
                 // NB: this check does not work for variables
                 // because we do not search for objects if we have extension receiver
-                if (info.callKind != CallKind.VariableAccess && scope in emptyScopes) return@l
-
-                processLevel(
-                    scope.toScopeBasedTowerLevelForStaticWithImplicitDispatchReceiver(
-                        staticScopeOwnerSymbol, source = info.callSite.source
-                    ),
-                    info, group,
-                    onEmptyLevel = {
-                        emptyScopes += scope
-                    }
-                )
+                if (info.callKind == CallKind.VariableAccess || scope !in emptyScopes) {
+                    processLevel(
+                        scope.toScopeBasedTowerLevelForStaticWithImplicitDispatchReceiver(
+                            staticScopeOwnerSymbol, source = info.callSite.source
+                        ),
+                        info, group,
+                        onEmptyLevel = { emptyScopes += scope },
+                        onNoCompanionExtensions = { scopesWithoutCompanionExtensions += scope }
+                    )
+                }
+            },
+            onStaticScopeOwnerSymbol = { staticScopeOwnerSymbol, group ->
+                // Searching for companion extensions triggers a bunch of resolution tasks.
+                // We skip them for performance reasons when the LF is disabled.
+                if (companionExtensionsEnabled) {
+                    enumerateTowerLevelsForCompanionExtensionsForImplicitReceiver(
+                        info,
+                        staticScopeOwnerSymbol,
+                        group,
+                        emptyScopes,
+                        scopesWithoutCompanionExtensions,
+                    )
+                }
             },
             onImplicitReceiver = { receiver, group ->
                 processCandidatesWithGivenImplicitReceiverAsValue(
@@ -318,9 +418,32 @@ internal open class FirTowerResolveTask(
                     group,
                     implicitReceiverValuesWithEmptyScopes,
                     emptyScopes,
+                    scopesWithoutCompanionExtensions,
                     skipSynthetics,
                 )
             },
+        )
+    }
+
+    private suspend fun enumerateTowerLevelsForCompanionExtensionsForImplicitReceiver(
+        info: CallInfo,
+        staticScopeOwnerSymbol: FirRegularClassSymbol,
+        group: TowerGroup,
+        emptyScopes: MutableSet<FirScope>,
+        scopesWithoutCompanionExtensions: MutableSet<FirScope>,
+    ) {
+        val receiver = staticScopeOwnerSymbol.toImplicitResolvedQualifierReceiver(
+            components,
+            info.callSite.source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
+        )
+
+        enumerateTowerLevelsForCompanionExtensions(
+            info,
+            receiver,
+            group,
+            ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+            emptyScopes,
+            scopesWithoutCompanionExtensions,
         )
     }
 
@@ -353,17 +476,20 @@ internal open class FirTowerResolveTask(
         }
     }
 
-    private suspend fun processScopeForExplicitReceiver(
+    private suspend inline fun processScopeForExplicitReceiver(
         scope: FirScope,
         explicitReceiverValue: ExpressionReceiverValue,
         info: CallInfo,
         towerGroup: TowerGroup,
+        companionExtensionPolicy: CompanionExtensionPolicy,
+        explicitReceiverKind: ExplicitReceiverKind = ExplicitReceiverKind.EXTENSION_RECEIVER,
+        onEmptyLevel: () -> Unit = {}
     ) {
         processLevel(
-            scope.toScopeBasedTowerLevel(extensionReceiver = explicitReceiverValue),
-            info, towerGroup, ExplicitReceiverKind.EXTENSION_RECEIVER
+            scope.toScopeBasedTowerLevel(companionExtensionPolicy = companionExtensionPolicy, extensionReceiver = explicitReceiverValue),
+            info, towerGroup, explicitReceiverKind,
+            onEmptyLevel = onEmptyLevel,
         )
-
     }
 
     private suspend fun processCandidatesWithGivenImplicitReceiverAsValue(
@@ -372,6 +498,7 @@ internal open class FirTowerResolveTask(
         parentGroup: TowerGroup,
         implicitReceiverValuesWithEmptyScopes: MutableSet<ImplicitReceiverValue<*>>,
         emptyScopes: MutableSet<FirScope>,
+        scopesWithoutCompanionExtensions: MutableSet<FirScope>,
         skipSynthetics: Boolean,
     ) {
         processExtensionsThatHideMembers(
@@ -394,9 +521,8 @@ internal open class FirTowerResolveTask(
                 processLevel(
                     scope.toScopeBasedTowerLevel(extensionReceiver = receiver),
                     info, group,
-                    onEmptyLevel = {
-                        emptyScopes += scope
-                    }
+                    onEmptyLevel = { emptyScopes += scope },
+                    onNoCompanionExtensions = { scopesWithoutCompanionExtensions += scope }
                 )
             },
             onImplicitReceiver = l@{ implicitReceiverValue, group ->

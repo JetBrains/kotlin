@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -41,6 +42,14 @@ public class PropertyBuildingContext(
 ) : DeclarationBuildingContext<FirProperty>(session, key, owner) {
     private var setterVisibility: Visibility? = null
     private var extensionReceiverTypeProvider: ((List<FirTypeParameter>) -> ConeKotlinType)? = null
+    private var generateDefaultInitializer: Boolean = false
+
+    /**
+     * Generate the default throwing initializer if the property has a backing field and is not abstract.
+     */
+    public fun withGeneratedDefaultInitializer() {
+        generateDefaultInitializer = true
+    }
 
     /**
      * Sets [type] as extension receiver type of constructed property
@@ -142,6 +151,9 @@ public class PropertyBuildingContext(
                     status,
                     resolvePhase = FirResolvePhase.BODY_RESOLVE,
                 )
+            }
+            if (generateDefaultInitializer && hasBackingField && modality != Modality.ABSTRACT) {
+                initializer = generateExpressionStub()
             }
             bodyResolveState = FirPropertyBodyResolveState.ALL_BODIES_RESOLVED
         }.also {

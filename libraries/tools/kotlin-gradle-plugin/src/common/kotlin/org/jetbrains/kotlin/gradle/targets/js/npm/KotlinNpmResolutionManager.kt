@@ -15,7 +15,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
-import org.gradle.internal.service.ServiceRegistry
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
@@ -95,7 +95,6 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
 
     internal fun installIfNeeded(
         args: List<String> = emptyList(),
-        services: ServiceRegistry,
         logger: Logger,
         nodeJsEnvironment: NodeJsEnvironment,
         packageManagerEnvironment: PackageManagerEnvironment,
@@ -111,7 +110,6 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
 
             return try {
                 nodeJsEnvironment.packageManager.resolveRootProject(
-                    services,
                     logger,
                     nodeJsEnvironment,
                     packageManagerEnvironment,

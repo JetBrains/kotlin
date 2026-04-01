@@ -1,10 +1,11 @@
 KtBinaryExpression(31,37): 'i += 1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
         operand = 1
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = i
@@ -26,10 +27,22 @@ KtBinaryExpression(31,37): 'i += 1'
             ]
             contextParameters = []
             callableId = kotlin/Int.plus
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {
+            i -> (KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = other: kotlin.Int
+              contextParameters = []
+              callableId = null)
+          }
+      variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
+        isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = i
           receiverType = null
@@ -37,4 +50,5 @@ KtBinaryExpression(31,37): 'i += 1'
           symbol = var i: kotlin.Int
           contextParameters = []
           callableId = null
+        typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -2,5 +2,6 @@ KtNameReferenceExpression(65,70): 'Inner'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in my.sample.Inner) companion object Inner

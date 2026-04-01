@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
@@ -39,6 +38,7 @@ abstract class KotlinIrLinker(
     val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
 ) : IrDeserializer, FileLocalAwareLinker {
     val irInterner = IrInterningService()
+    val fileEntryDeserializer = FileEntryDeserializer(irInterner)
 
     /**
      * This is the queue of modules containing top-level declarations to be deserialized. This is
@@ -70,8 +70,6 @@ abstract class KotlinIrLinker(
 
     open val moduleDependencyTracker: IrModuleDependencyTracker get() = IrModuleDependencyTracker.DISABLED
 
-    protected open val userVisibleIrModulesSupport: UserVisibleIrModulesSupport get() = UserVisibleIrModulesSupport.DEFAULT
-
     fun deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(
         idSignature: IdSignature,
         symbolKind: BinarySymbolData.SymbolKind,
@@ -82,7 +80,13 @@ abstract class KotlinIrLinker(
         // Note: The top-level symbol might be gone in newer version of dependency KLIB. Then the KLIB that was compiled against
         // the older version of dependency KLIB will still have a reference to non-existing symbol. And the linker will have to
         // handle such situation appropriately. See KT-41378.
-        val actualModuleDeserializer: IrModuleDeserializer? = moduleDeserializer.findModuleDeserializerForTopLevelId(topLevelSignature)
+        val actualModuleDeserializer: IrModuleDeserializer? = if (topLevelSignature in moduleDeserializer) {
+            moduleDeserializer
+        } else {
+            moduleDeserializer.moduleDescriptor.allDependencyModules
+                .mapNotNull { deserializersForModules[it.name.asString()] }
+                .firstOrNull { topLevelSignature in it }
+        }
 
         // Note: It might happen that the top-level symbol still exists in KLIB, but nested symbol has been removed.
         // Then the `actualModuleDeserializer` will be non-null, but `actualModuleDeserializer.tryDeserializeIrSymbol()` call
@@ -90,7 +94,7 @@ abstract class KotlinIrLinker(
         val symbol: IrSymbol? = actualModuleDeserializer?.tryDeserializeIrSymbol(idSignature, symbolKind)
 
         if (symbol != null) {
-            moduleDependencyTracker?.trackDependency(
+            moduleDependencyTracker.trackDependency(
                 fromModule = moduleDeserializer.moduleFragment,
                 toModule = actualModuleDeserializer.moduleFragment
             )
@@ -102,14 +106,17 @@ abstract class KotlinIrLinker(
             SignatureIdNotFoundInModuleWithDependencies(
                 idSignature = idSignature,
                 problemModuleDeserializer = moduleDeserializer,
-                allModuleDeserializers = deserializersForModules.values,
-                userVisibleIrModulesSupport = userVisibleIrModulesSupport
             ).raiseIssue(messageCollector)
     }
 
-    fun resolveModuleDeserializer(module: ModuleDescriptor, idSignature: IdSignature?): IrModuleDeserializer {
-        return deserializersForModules[module.name.asString()]
-            ?: NoDeserializerForModule(module.name, idSignature).raiseIssue(messageCollector)
+    private fun resolveModuleDeserializer(irFile: IrFile): IrModuleDeserializer? {
+        return deserializersForModules.values.firstOrNull { moduleDeserializer ->
+            moduleDeserializer.fileDeserializers().any { it.file == irFile }
+        }
+    }
+
+    private fun resolveModuleDeserializer(idSignature: IdSignature): IrModuleDeserializer? {
+        return deserializersForModules.values.firstOrNull() { idSignature in it }
     }
 
     protected abstract fun createModuleDeserializer(
@@ -132,35 +139,34 @@ abstract class KotlinIrLinker(
         }
     }
 
-    private fun findDeserializedDeclarationForSymbol(symbol: IrSymbol): DeclarationDescriptor? {
-        if (!triedToDeserializeDeclarationForSymbol.add(symbol)) return null
-        val descriptor = if (symbol.hasDescriptor) symbol.descriptor else return null
+    private fun findDeserializedDeclarationForSymbol(symbol: IrSymbol): Boolean {
+        if (!triedToDeserializeDeclarationForSymbol.add(symbol)) return false
 
-        val moduleDeserializer = resolveModuleDeserializer(descriptor.module, symbol.signature)
+        val signature = symbol.signature ?: return false
+        val moduleDeserializer = resolveModuleDeserializer(signature)
+            ?: return false
         moduleDeserializer.declareIrSymbol(symbol)
 
         deserializeAllReachableTopLevels()
 
-        return if (symbol.isBound) descriptor else null
+        return symbol.isBound
     }
 
     protected open fun platformSpecificSymbol(symbol: IrSymbol): Boolean = false
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? =
-        deserializeOrResolveDeclaration(symbol, false)
+        deserializeOrResolveDeclaration(symbol)
 
-    protected fun deserializeOrResolveDeclaration(symbol: IrSymbol, allowSymbolsWithoutSignaturesFromOtherModule: Boolean): IrDeclaration? {
-        if (!allowSymbolsWithoutSignaturesFromOtherModule) {
-            if (!symbol.isPublicApi && symbol.hasDescriptor && !platformSpecificSymbol(symbol) &&
-                symbol.descriptor.module !== currentModule
-            ) return null
-        }
+    private fun deserializeOrResolveDeclaration(symbol: IrSymbol): IrDeclaration? {
+        if (!symbol.isPublicApi && symbol.hasDescriptor && !platformSpecificSymbol(symbol) &&
+            symbol.descriptor.module !== currentModule
+        ) return null
 
         if (!symbol.isBound) {
             try {
-                findDeserializedDeclarationForSymbol(symbol) ?: return null
+                if (!findDeserializedDeclarationForSymbol(symbol)) return null
             } catch (e: IrSymbolTypeMismatchException) {
-                SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageCollector)
+                SymbolTypeMismatch(e).raiseIssue(messageCollector)
             }
         }
 
@@ -177,18 +183,14 @@ abstract class KotlinIrLinker(
         return symbol.owner as IrDeclaration
     }
 
-    override fun tryReferencingSimpleFunctionByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrSimpleFunctionSymbol? {
+    override fun tryReferencingSimpleFunctionByLocalSignature(file: IrFile, idSignature: IdSignature): IrSimpleFunctionSymbol? {
         if (idSignature.isPubliclyVisible) return null
-        val file = parent.file
-        val moduleDescriptor = file.moduleDescriptor
-        return resolveModuleDeserializer(moduleDescriptor, null).referenceSimpleFunctionByLocalSignature(file, idSignature)
+        return resolveModuleDeserializer(file)?.referenceSimpleFunctionByLocalSignature(file, idSignature)
     }
 
-    override fun tryReferencingPropertyByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrPropertySymbol? {
+    override fun tryReferencingPropertyByLocalSignature(file: IrFile, idSignature: IdSignature): IrPropertySymbol? {
         if (idSignature.isPubliclyVisible) return null
-        val file = parent.file
-        val moduleDescriptor = file.moduleDescriptor
-        return resolveModuleDeserializer(moduleDescriptor, null).referencePropertyByLocalSignature(file, idSignature)
+        return resolveModuleDeserializer(file)?.referencePropertyByLocalSignature(file, idSignature)
     }
 
     protected open fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer =
@@ -197,7 +199,8 @@ abstract class KotlinIrLinker(
     override fun init(moduleFragment: IrModuleFragment?) {
         if (moduleFragment != null) {
             val currentModuleDependencies = moduleFragment.descriptor.allDependencyModules.map {
-                resolveModuleDeserializer(it, null)
+                deserializersForModules[it.name.asString()]
+                    ?: NoDeserializerForModule(it.name, null).raiseIssue(messageCollector)
             }
             val currentModuleDeserializer = createCurrentModuleDeserializer(moduleFragment, currentModuleDependencies)
             deserializersForModules[moduleFragment.name.asString()] =
@@ -215,7 +218,7 @@ abstract class KotlinIrLinker(
             // We have to exclude classifiers with unbound symbols in supertypes and in type parameter upper bounds from F.O. generation
             // to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
             partialLinkageSupport.exploreClassifiers(fakeOverrideBuilder)
-            partialLinkageSupport.generateStubsForClassifiers(symbolTable)
+            partialLinkageSupport.preprocessBeforeFakeOverridesBuilding(symbolTable, fakeOverrideBuilder)
         }
 
         // Fake override generator creates new IR declarations. This may have effect of binding for certain symbols.
@@ -274,13 +277,13 @@ abstract class KotlinIrLinker(
         }.moduleFragment
 
         moduleFragment.kotlinLibrary = kotlinLibrary
-        moduleDependencyTracker?.addModuleForTracking(module = moduleFragment)
+        moduleDependencyTracker.addModuleForTracking(module = moduleFragment)
 
         // The IrModule and its IrFiles have been created during module initialization.
         return moduleFragment
     }
 
-    protected open fun maybeWrapWithBuiltInAndInit(
+    protected fun maybeWrapWithBuiltInAndInit(
         moduleDescriptor: ModuleDescriptor,
         moduleDeserializer: IrModuleDeserializer
     ): IrModuleDeserializer =

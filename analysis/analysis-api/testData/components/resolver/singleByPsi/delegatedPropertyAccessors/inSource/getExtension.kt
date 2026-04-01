@@ -1,4 +1,4 @@
-val x: Int <caret>by Foo()
+val x: Int <expr>by Foo()</expr>
 
 class Foo
 

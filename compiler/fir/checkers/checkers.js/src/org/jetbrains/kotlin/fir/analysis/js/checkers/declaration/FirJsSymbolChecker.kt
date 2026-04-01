@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOverride
  * Checks that @JsSymbol is only applied to member declarations (not to top-level declarations).
  */
 object FirJsSymbolChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         val annotation = declaration.getAnnotationByClassId(JsStandardClassIds.Annotations.JsSymbol, context.session) ?: return

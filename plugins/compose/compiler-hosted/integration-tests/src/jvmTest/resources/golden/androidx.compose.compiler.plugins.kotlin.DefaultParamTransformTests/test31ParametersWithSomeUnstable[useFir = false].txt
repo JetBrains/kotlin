@@ -5,6 +5,8 @@
 import androidx.compose.runtime.*
 
 
+class Foo(var x: Int)
+
 @Composable
 fun Example(
     a00: Int = 0,
@@ -16,7 +18,7 @@ fun Example(
     a06: Int = 0,
     a07: Int = 0,
     a08: Int = 0,
-    a09: Foo = Foo(),
+    a09: Foo = Foo(0),
     a10: Int = 0,
     a11: Int = 0,
     a12: Int = 0,
@@ -38,7 +40,7 @@ fun Example(
     a28: Int = 0,
     a29: Int = 0,
     a30: Int = 0,
-    a31: Foo = Foo()
+    a31: Foo = Foo(0)
 ) {
     used(a00)
     used(a01)
@@ -84,6 +86,13 @@ fun Test() {
 // Transformed IR
 // ------------------------------------------
 
+@StabilityInferred(parameters = 0)
+class Foo(var x: Int) {
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
 @Composable
 fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Foo?, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, a31: Foo?, %composer: Composer?, %changed: Int, %changed1: Int, %changed2: Int, %changed3: Int, %default: Int, %default1: Int) {
   %composer = %composer.startRestartGroup(<>)
@@ -138,7 +147,7 @@ fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int
     %dirty = %dirty or if (%composer.changed(a08)) 0b0100000000000000000000000000 else 0b0010000000000000000000000000
   }
   if (%changed and 0b00110000000000000000000000000000 == 0) {
-    %dirty = %dirty or if (%default and 0b001000000000 == 0 && %composer.changed(a09)) 0b00100000000000000000000000000000 else 0b00010000000000000000000000000000
+    %dirty = %dirty or if (%default and 0b001000000000 == 0 && %composer.changedInstance(a09)) 0b00100000000000000000000000000000 else 0b00010000000000000000000000000000
   }
   if (%default and 0b010000000000 != 0) {
     %dirty1 = %dirty1 or 0b0110
@@ -246,7 +255,7 @@ fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int
     %dirty3 = %dirty3 or if (%composer.changed(a30)) 0b0100 else 0b0010
   }
   if (%changed3 and 0b00110000 == 0) {
-    %dirty3 = %dirty3 or if (%default1 and 0b0001 == 0 && %composer.changed(a31)) 0b00100000 else 0b00010000
+    %dirty3 = %dirty3 or if (%default1 and 0b0001 == 0 && %composer.changedInstance(a31)) 0b00100000 else 0b00010000
   }
   if (%composer.shouldExecute(%dirty and 0b00010010010010010010010010010011 != 0b00010010010010010010010010010010 || %dirty1 and 0b00010010010010010010010010010011 != 0b00010010010010010010010010010010 || %dirty2 and 0b00010010010010010010010010010011 != 0b00010010010010010010010010010010 || %dirty3 and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
     %composer.startDefaults()
@@ -279,7 +288,7 @@ fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int
         a08 = 0
       }
       if (%default and 0b001000000000 != 0) {
-        a09 = Foo()
+        a09 = Foo(0)
         %dirty = %dirty and 0b01110000000000000000000000000000.inv()
       }
       if (%default and 0b010000000000 != 0) {
@@ -346,7 +355,7 @@ fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int
         a30 = 0
       }
       if (%default1 and 0b0001 != 0) {
-        a31 = Foo()
+        a31 = Foo(0)
         %dirty3 = %dirty3 and 0b01110000.inv()
       }
     } else {

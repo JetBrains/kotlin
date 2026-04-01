@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.dump
 
-import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibsInTestPipeline
+import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibs
 import org.jetbrains.kotlin.cli.common.SessionWithSources
 import org.jetbrains.kotlin.cli.common.prepareNativeSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 import org.jetbrains.kotlin.test.AbstractLoadedMetadataDumpHandler
-import org.jetbrains.kotlin.test.frontend.fir.getAllNativeDependenciesPaths
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -44,11 +43,7 @@ class KlibNativeLoadedMetadataDumpHandler(testServices: TestServices) : Abstract
         moduleName: Name,
         libraryList: DependencyListForCliModule,
     ): List<SessionWithSources<KtFile>> {
-        val klibs = loadNativeKlibsInTestPipeline(
-            configuration = configuration,
-            libraryPaths = getAllNativeDependenciesPaths(module, testServices),
-            nativeTarget = testServices.nativeEnvironmentConfigurator.getNativeTarget(module),
-        )
+        val klibs = loadNativeKlibs(configuration, testServices.nativeEnvironmentConfigurator.getNativeTarget(module))
 
         return prepareNativeSessions(
             files = emptyList(),

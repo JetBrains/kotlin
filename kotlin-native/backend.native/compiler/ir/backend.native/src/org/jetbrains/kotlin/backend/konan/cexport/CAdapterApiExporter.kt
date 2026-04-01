@@ -284,7 +284,7 @@ internal class CAdapterApiExporter(
     |void Kotlin_initRuntimeIfNeeded();
     |void Kotlin_mm_switchThreadStateRunnable() RUNTIME_NOTHROW;
     |void Kotlin_mm_switchThreadStateNative() RUNTIME_NOTHROW;
-    |void HandleCurrentExceptionWhenLeavingKotlinCode();
+    |void HandleCurrentExceptionWhenLeavingKotlinCode() RUNTIME_NORETURN;
     |
     |KObjHeader* CreateStringFromCString(const char*, KObjHeader**);
     |char* CreateCStringFromString(const KObjHeader*);

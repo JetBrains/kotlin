@@ -5,32 +5,39 @@
 
 package org.jetbrains.kotlin.konan.test.dump
 
-import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
-import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
+import org.jetbrains.kotlin.konan.test.Fir2IrCliNativeFacade
+import org.jetbrains.kotlin.konan.test.FirCliNativeFacade
+import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
+import org.jetbrains.kotlin.konan.test.NativePreSerializationLoweringCliFacade
 import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
-import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.FirMetadataLoadingTestSuppressor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
-import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
+import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.model.ArtifactKind
+import org.jetbrains.kotlin.test.model.DependencyKind
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 
 abstract class AbstractNativeLoadCompiledKotlinTest :
     AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE)
 {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         useConfigurators(
-            ::NativeEnvironmentConfigurator,
+            ::CommonEnvironmentConfigurator,
+            ::NativeFirstStageEnvironmentConfigurator,
         )
         globalDefaults {
             frontend = FrontendKinds.FIR
@@ -44,20 +51,20 @@ abstract class AbstractNativeLoadCompiledKotlinTest :
         }
 
         configureFirParser(FirParser.LightTree)
-        facadeStep(::FirFrontendFacade)
+        facadeStep(::FirCliNativeFacade)
         firHandlersStep {
             useHandlers(::FirDiagnosticsHandler)
         }
 
-        facadeStep(::Fir2IrNativeResultsConverter)
-        facadeStep(::NativePreSerializationLoweringFacade)
+        facadeStep(::Fir2IrCliNativeFacade)
+        facadeStep(::NativePreSerializationLoweringCliFacade)
 
         loweredIrHandlersStep {
             useHandlers(::IrDiagnosticsHandler)
             useHandlers(::NoIrCompilationErrorsHandler)
         }
 
-        facadeStep(::NativeKlibSerializerFacade)
+        facadeStep(::KlibSerializerNativeCliFacade)
         facadeStep(::NativeDeserializerFacade)
 
         klibArtifactsHandlersStep {

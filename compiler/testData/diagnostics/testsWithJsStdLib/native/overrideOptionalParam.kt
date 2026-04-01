@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open external class A {
     open fun f(x: Int = definedExternally)
 }

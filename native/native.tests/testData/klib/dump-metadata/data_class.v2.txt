@@ -23,12 +23,15 @@ library {
       public final /* synthesized */ fun copy(intProp: kotlin/Int /* = ... */, stringProp: kotlin/String /* = ... */): test/DataClass
 
       // signature: test/DataClass.equals|equals(kotlin.Any?){}[0]
+      // must-use return value
       public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
 
       // signature: test/DataClass.hashCode|hashCode(){}[0]
+      // must-use return value
       public open /* synthesized */ fun hashCode(): kotlin/Int
 
       // signature: test/DataClass.toString|toString(){}[0]
+      // must-use return value
       public open /* synthesized */ fun toString(): kotlin/String
 
       // signature: test/DataClass.intProp|{}intProp[0]
@@ -54,12 +57,15 @@ library {
       private constructor()
 
       // signature: test/DataObject.equals|equals(kotlin.Any?){}[0]
+      // must-use return value
       public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
 
       // signature: test/DataObject.hashCode|hashCode(){}[0]
+      // must-use return value
       public open /* synthesized */ fun hashCode(): kotlin/Int
 
       // signature: test/DataObject.toString|toString(){}[0]
+      // must-use return value
       public open /* synthesized */ fun toString(): kotlin/String
     }
   }

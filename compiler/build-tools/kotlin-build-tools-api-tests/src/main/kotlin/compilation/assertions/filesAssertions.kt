@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions
+package org.jetbrains.kotlin.buildtools.tests.compilation.assertions
 
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.CompilationOutcome
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.nio.file.Path
 import kotlin.io.path.isRegularFile
@@ -17,17 +17,21 @@ import kotlin.io.path.walk
 /**
  * Equivalent to [assertNoCompiledSources] with an empty array/set
  */
-fun CompilationOutcome.assertNoCompiledSources(module: Module) {
-    assertCompiledSources(module)
+context(module: Module)
+fun CompilationOutcome.assertNoCompiledSources() {
+    assertCompiledSources()
 }
 
-fun CompilationOutcome.assertCompiledSources(module: Module, vararg expectedCompiledSources: String) {
-    assertCompiledSources(module, expectedCompiledSources.toSet())
+context(module: Module)
+fun CompilationOutcome.assertCompiledSources(vararg expectedCompiledSources: String) {
+    assertCompiledSources(expectedCompiledSources.toSet())
 }
 
-fun CompilationOutcome.assertCompiledSources(module: Module, expectedCompiledSources: Set<String>) {
+context(module: Module)
+fun CompilationOutcome.assertCompiledSources(expectedCompiledSources: Set<String>) {
     requireLogLevel(LogLevel.DEBUG)
     val actualCompiledSources = logLines.getValue(LogLevel.DEBUG)
+        .map { it.removePrefix("[KOTLIN] ") }
         .filter { it.startsWith("compile iteration") }
         .flatMap { it.replace("compile iteration: ", "").trim().split(", ") }
         .toSet()
@@ -47,11 +51,13 @@ fun CompilationOutcome.assertCompiledSources(module: Module, expectedCompiledSou
     }
 }
 
-fun CompilationOutcome.assertOutputs(module: Module, vararg expectedOutputs: String) {
-    assertOutputs(module, expectedOutputs.toSet())
+context(module: Module)
+fun CompilationOutcome.assertOutputs(vararg expectedOutputs: String) {
+    assertOutputs(expectedOutputs.toSet())
 }
 
-fun CompilationOutcome.assertOutputs(module: Module, expectedOutputs: Set<String>) {
+context(module: Module)
+fun CompilationOutcome.assertOutputs(expectedOutputs: Set<String>) {
     val filesLeft = expectedOutputs.map { module.outputDirectory.resolve(it).relativeTo(module.outputDirectory) }
         .toMutableSet()
         .apply {

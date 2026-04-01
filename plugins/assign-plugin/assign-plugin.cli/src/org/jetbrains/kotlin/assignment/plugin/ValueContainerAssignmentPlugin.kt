@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.assignment.plugin
 
-import org.jetbrains.kotlin.assignment.plugin.AssignmentConfigurationKeys.ANNOTATION
+import org.jetbrains.kotlin.assignment.plugin.AssignmentConfigurationKeys.ASSIGNMENT_ANNOTATION
 import org.jetbrains.kotlin.assignment.plugin.AssignmentPluginNames.ANNOTATION_OPTION_NAME
 import org.jetbrains.kotlin.assignment.plugin.AssignmentPluginNames.PLUGIN_ID
 import org.jetbrains.kotlin.assignment.plugin.diagnostics.AssignmentPluginDeclarationChecker
@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 
 object AssignmentConfigurationKeys {
-    val ANNOTATION: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("annotation qualified name")
+    val ASSIGNMENT_ANNOTATION: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("ASSIGNMENT_ANNOTATION")
 }
 
 class AssignmentCommandLineProcessor : CommandLineProcessor {
@@ -38,7 +38,7 @@ class AssignmentCommandLineProcessor : CommandLineProcessor {
     override val pluginOptions = listOf(ANNOTATION_OPTION)
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
-        ANNOTATION_OPTION -> configuration.appendList(ANNOTATION, value)
+        ANNOTATION_OPTION -> configuration.appendList(ASSIGNMENT_ANNOTATION, value)
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }
 }
@@ -46,11 +46,11 @@ class AssignmentCommandLineProcessor : CommandLineProcessor {
 class AssignmentComponentRegistrar : CompilerPluginRegistrar() {
     @OptIn(InternalNonStableExtensionPoints::class)
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        val annotations = configuration.getList(ANNOTATION)
+        val annotations = configuration.getList(ASSIGNMENT_ANNOTATION)
         if (annotations.isNotEmpty()) {
             AssignResolutionAltererExtension.Companion.registerExtension(CliAssignPluginResolutionAltererExtension(annotations))
             StorageComponentContainerContributor.registerExtension(AssignmentComponentContainerContributor(annotations))
-            FirExtensionRegistrarAdapter.registerExtension(FirAssignmentPluginExtensionRegistrar(annotations))
+            FirExtensionRegistrar.registerExtension(FirAssignmentPluginExtensionRegistrar(annotations))
         }
     }
 

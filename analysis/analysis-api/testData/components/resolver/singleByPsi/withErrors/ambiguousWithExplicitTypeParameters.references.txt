@@ -2,6 +2,17 @@ KtNameReferenceExpression(128,136): 'function'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    fun <T> function(t: T, a: Char): Unit:
+      No value passed for parameter 'a'.
+
+    fun <U> function(u: U, b: Boolean): Unit:
+      No value passed for parameter 'b'.
+
+    fun <V> function(v: V, c: String): Unit:
+      No value passed for parameter 'c'.>
     symbols:
       0: (in ROOT) fun <T> function(t: T, a: kotlin.Char)
       1: (in ROOT) fun <U> function(u: U, b: kotlin.Boolean)

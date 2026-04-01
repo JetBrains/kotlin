@@ -1,0 +1,137 @@
+FILE: privateDeclaration.kt
+    public final class TestClass : R|kotlin/Any| {
+        public constructor(): R|TestClass|
+
+        public final val publicProperty: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public final var publicBackingField: R|kotlin/String|
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final typealias PublicAlias = R|kotlin/String|
+
+        public final fun publicFunction(): R|kotlin/Unit| {
+        }
+
+        public final class PublicInnerClass : R|kotlin/Any| {
+            public constructor(): R|TestClass.PublicInnerClass|
+
+        }
+
+        public final companion object PublicCompanion : R|kotlin/Any| {
+            private constructor(): R|TestClass.PublicCompanion|
+
+        }
+
+        private final val usedPropertyByInline: R|kotlin/String|
+            private get(): R|kotlin/String|
+
+        public final inline fun witnessForProperty(): R|kotlin/Unit| {
+            lval x: R|kotlin/String| = this@R|/TestClass|.R|/TestClass.usedPropertyByInline|
+        }
+
+        private final var usedBackingFieldByInline: R|kotlin/Int|
+            private get(): R|kotlin/Int|
+            private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final inline fun witnessForField(): R|kotlin/Unit| {
+            this@R|/TestClass|.R|/TestClass.usedBackingFieldByInline| = Int(42)
+        }
+
+        private final fun usedByInline(): R|kotlin/Unit| {
+        }
+
+        public final inline fun witnessForFunction(): R|kotlin/Unit| {
+            this@R|/TestClass|.R|/TestClass.usedByInline|()
+        }
+
+        private final companion object UsedByInlineCompanion : R|kotlin/Any| {
+            private constructor(): R|TestClass.UsedByInlineCompanion|
+
+            public final fun companionFun(): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final inline fun witnessForCompanion(): R|kotlin/Unit| {
+            Q|TestClass.UsedByInlineCompanion|.R|/TestClass.UsedByInlineCompanion.companionFun|()
+        }
+
+        private final typealias KeptPrivateAlias = R|kotlin/String|
+
+        public final val aliasUser: R|{TestClass.KeptPrivateAlias=} kotlin/String|
+            public get(): R|{TestClass.KeptPrivateAlias=} kotlin/String|
+
+        private final class KeptPrivateInner : R|kotlin/Any| {
+            public constructor(): R|TestClass.KeptPrivateInner|
+
+        }
+
+        public final fun provideInner(): R|TestClass.KeptPrivateInner| {
+        }
+
+        private final class MixedClass : R|kotlin/Any| {
+            public constructor(): R|TestClass.MixedClass|
+
+            public final fun used(): R|kotlin/Unit| {
+            }
+
+        }
+
+        private final companion object MixedCompanion : R|kotlin/Any| {
+            private constructor(): R|TestClass.MixedCompanion|
+
+            public final fun used(): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final inline fun useMixed(): R|kotlin/Unit| {
+            R|/TestClass.MixedClass.MixedClass|().R|/TestClass.MixedClass.used|()
+            Q|TestClass.MixedCompanion|.R|/TestClass.MixedCompanion.used|()
+        }
+
+        private final class NestedMixedOuter : R|kotlin/Any| {
+            public constructor(): R|TestClass.NestedMixedOuter|
+
+            public final class Nested : R|kotlin/Any| {
+                public constructor(): R|TestClass.NestedMixedOuter.Nested|
+
+                public final fun used(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+        public final inline fun useNestedMixed(): R|kotlin/Unit| {
+            Q|TestClass.NestedMixedOuter|.R|/TestClass.NestedMixedOuter.Nested.Nested|().R|/TestClass.NestedMixedOuter.Nested.used|()
+        }
+
+        private final class InlineChain : R|kotlin/Any| {
+            public constructor(): R|TestClass.InlineChain|
+
+            public final fun used(): R|kotlin/Unit| {
+            }
+
+        }
+
+        private final inline fun privateInlineChainMiddle(): R|kotlin/Unit| {
+            R|/TestClass.InlineChain.InlineChain|().R|/TestClass.InlineChain.used|()
+        }
+
+        public final inline fun publicInlineChainStart(): R|kotlin/Unit| {
+            this@R|/TestClass|.R|/TestClass.privateInlineChainMiddle|()
+        }
+
+        private final fun privateNonInlineMiddle(): R|kotlin/Unit| {
+        }
+
+        public final inline fun publicBrokenChainStart(): R|kotlin/Unit| {
+            this@R|/TestClass|.R|/TestClass.privateNonInlineMiddle|()
+        }
+
+    }
+    public final fun topLevelKept(): R|kotlin/Unit| {
+    }

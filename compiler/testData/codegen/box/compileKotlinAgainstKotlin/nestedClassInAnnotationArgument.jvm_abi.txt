@@ -1,9 +1,0 @@
-MODULE lib
-	CLASS AnnoWithDefault.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(Lkotlin/reflect/KClass;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(k: kotlin/reflect/KClass<*> /* = ... */)
-					K2
-						(k: kotlin/reflect/KClass<*> = AnnoWithDefault.Nested0::class)

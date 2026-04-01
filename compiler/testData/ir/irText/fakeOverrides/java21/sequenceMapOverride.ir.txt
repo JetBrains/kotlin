@@ -137,6 +137,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] kotlin.Any?, value: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Any? [fake_override]
@@ -337,6 +338,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] kotlin.Any?, value: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Any? [fake_override]
@@ -566,6 +568,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] kotlin.Any?, value: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Any? [fake_override]
@@ -783,6 +786,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] kotlin.Any?, value: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Any? [fake_override]
@@ -1004,6 +1008,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] kotlin.Any?, value: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.Java3
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Any? [fake_override]
@@ -1223,6 +1228,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] kotlin.Any?, value: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.Java3
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Any? [fake_override]
@@ -1434,6 +1440,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] K of java.util.SequencedMap?, value: @[FlexibleNullability] V of java.util.SequencedMap?): kotlin.Boolean declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Any? [fake_override]

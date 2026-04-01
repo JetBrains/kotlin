@@ -5,24 +5,33 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.resolution
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundOperation
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundVariableAccessCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedVariableSymbol
+import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 
 @KaImplementationDetail
 class KaBaseCompoundVariableAccessCall(
-    private val backingPartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
-    compoundAccess: KaCompoundOperation,
+    private val backingVariableCall: KaVariableAccessCall,
+    private val backingCompoundOperation: KaCompoundOperation,
 ) : KaCompoundVariableAccessCall {
-    private val backingCompoundOperation: KaCompoundOperation = compoundAccess
-    override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
+    override val token: KaLifetimeToken get() = backingVariableCall.token
 
+    @Deprecated("Use 'variableCall' instead")
     override val variablePartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>
-        get() = withValidityAssertion { backingPartiallyAppliedSymbol }
+        get() = withValidityAssertion { backingVariableCall.asPartiallyAppliedSymbol }
 
-    override val compoundOperation: KaCompoundOperation get() = withValidityAssertion { backingCompoundOperation }
+    override val variableCall: KaVariableAccessCall
+        get() = withValidityAssertion { backingVariableCall }
+
+    override val compoundOperation: KaCompoundOperation
+        get() = withValidityAssertion { backingCompoundOperation }
+
+    @KaExperimentalApi
+    override val calls: List<KaSingleCall<*, *>>
+        get() = withValidityAssertion {
+            listOf(backingVariableCall, backingCompoundOperation.operationCall)
+        }
 }

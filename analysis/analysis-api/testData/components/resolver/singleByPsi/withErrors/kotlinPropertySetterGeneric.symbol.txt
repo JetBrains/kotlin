@@ -1,0 +1,5 @@
+KtNameReferenceExpression(51,56): 'value'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var value: T
+    ]

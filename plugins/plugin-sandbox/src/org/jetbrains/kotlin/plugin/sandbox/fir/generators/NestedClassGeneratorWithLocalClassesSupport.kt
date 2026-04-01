@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.plugin.sandbox.fir.generators
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
+import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
+import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
+import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.plugin.createNestedClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -50,7 +53,7 @@ class NestedClassGeneratorWithLocalClassesSupport(session: FirSession) : FirDecl
         return when (name) {
             GENERATED -> {
                 if (!session.predicateBasedProvider.matches(PREDICATE, owner)) return null
-                createNestedClass(owner, GENERATED, Key, classKind = ClassKind.CLASS).symbol
+                createNestedClass(owner, GENERATED, NestedClassGeneratorWithLocalClassesSupportGeneratorKey, ClassKind.CLASS).symbol
             }
             else -> null
         }
@@ -60,5 +63,5 @@ class NestedClassGeneratorWithLocalClassesSupport(session: FirSession) : FirDecl
         register(PREDICATE)
     }
 
-    private object Key : GeneratedDeclarationKey()
+    private data object NestedClassGeneratorWithLocalClassesSupportGeneratorKey : GeneratedDeclarationKey()
 }

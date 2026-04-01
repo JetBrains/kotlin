@@ -1,44 +1,29 @@
 Usage: kotlinc-js <options> <source files>
 where advanced options include:
-  -Xcache-directory=<path>   Path to the cache directory.
   -Xenable-extension-functions-in-externals
                              Enable extension function members in external interfaces.
+  -Xenable-implementing-interfaces-from-typescript
+                             Enable exporting of Kotlin interfaces to implement them from JavaScript/TypeScript.
+  -Xenable-suspend-function-exporting
+                             Enable exporting suspend functions to JavaScript/TypeScript.
   -Xes-arrow-functions       Use ES2015 arrow functions in the JavaScript code generated for Kotlin lambdas. Enabled by default in case of ES2015 target usage
   -Xes-classes               Let generated JavaScript code use ES2015 classes. Enabled by default in case of ES2015 target usage
   -Xes-generators            Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage
   -Xes-long-as-bigint        Compile Long values as ES2020 bigint instead of object.
-  -Xfake-override-validator  Enable the IR fake override validator.
-  -Xfriend-modules=<path>    Paths to friend modules.
-  -Xfriend-modules-disabled  Disable internal declaration export.
-  -Xgenerate-dts             Generate a TypeScript declaration .d.ts file alongside the JS file.
   -Xgenerate-polyfills       Generate polyfills for features from the ES6+ standards.
-  -Xinclude=<path>           Path to an intermediate library that should be processed in the same manner as source files.
   -Xir-build-cache           Use the compiler to build the cache.
-  -Xir-dce                   Perform experimental dead code elimination.
-  -Xir-dce-print-reachability-info
-                             Print reachability information about declarations to 'stdout' while performing DCE.
-  -Xir-dce-runtime-diagnostic={log|exception}
-                             Enable runtime diagnostics instead of removing declarations when performing DCE.
   -Xir-generate-inline-anonymous-functions
                              Lambda expressions that capture values are translated into in-line anonymous JavaScript functions.
   -Xir-keep                  Comma-separated list of fully qualified names not to be eliminated by DCE (if it can be reached), and for which to keep non-minified names.
   -Xir-minimized-member-names Minimize the names of members.
-  -Xir-module-name=<name>    Specify the name of the compilation module for the IR backend.
   -Xir-per-file              Generate one .js file per source file.
   -Xir-per-module            Generate one .js file per module.
-  -Xir-per-module-output-name Add a custom output name to the split .js files.
-  -Xir-produce-js            Generate a JS file using the IR backend.
-  -Xir-produce-klib-dir      Generate an unpacked klib into the parent directory of the output JS file.
-  -Xir-produce-klib-file     Generate a packed klib into the directory specified by '-ir-output-dir'.
-  -Xir-property-lazy-initialization
-                             Perform lazy initialization for properties.
   -Xir-safe-external-boolean Wrap access to external 'Boolean' properties with an explicit conversion to 'Boolean'.
   -Xir-safe-external-boolean-diagnostic={log|exception}
                              Enable runtime diagnostics when accessing external 'Boolean' properties.
   -Xoptimize-generated-js    Perform additional optimizations on the generated JS code.
   -Xplatform-arguments-in-main-function
                              JS expression that will be executed in runtime and be put as an Array<String> parameter of the main function
-  -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files.
   -Xir-dce-dump-reachability-info-to-file=<path>
                              Dump reachability information collected about declarations while performing DCE to a file. The format will be chosen automatically based on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.
   -Xir-dump-declaration-ir-sizes-to-file=<path>
@@ -51,13 +36,15 @@ where advanced options include:
   -Xwasm-enable-array-range-checks
                              Turn on range checks for array access functions.
   -Xwasm-enable-asserts      Turn on asserts.
+  -Xwasm-generate-closed-world-multimodule
+                             Compile modules in multi-module closed-world mode using module passed in `-include` argument as main module
   -Xwasm-generate-dwarf      Generate DWARF debug information.
   -Xwasm-generate-wat        Generate a .wat file.
-  -Xwasm-ic-cache-readonly   Do not commit IC cache updates.
   -Xwasm-included-module-only Compile only a module passed using `-include` option.
+  -Xwasm-internal-local-variable-prefix
+                             Prefix to use for internally generated local variables.
   -Xwasm-kclass-fqn          Enable support for 'KClass.qualifiedName'.
   -Xwasm-no-jstag            Don't use WebAssembly.JSTag for throwing and catching exceptions
-  -Xwasm-preserve-ic-order   Preserve wasm file structure between IC runs.
   -Xwasm-source-map-include-mappings-from-unavailable-sources
                              Insert source mappings from libraries even if their sources are unavailable on the end-user machine.
   -Xwasm-target              Set up the Wasm target (wasm-js or wasm-wasi).
@@ -65,6 +52,25 @@ where advanced options include:
                              Use an updated version of the exception proposal with try_table.
   -Xwasm-use-traps-instead-of-exceptions
                              Use traps instead of throwing exceptions.
+  -Xcache-directory=<path>   Path to the cache directory.
+  -Xfake-override-validator  Enable the IR fake override validator.
+  -Xfriend-modules=<path>    Paths to friend modules.
+  -Xfriend-modules-disabled  Disable internal declaration export.
+  -Xgenerate-dts             Generate a TypeScript declaration .d.ts file alongside the JS file.
+  -Xinclude=<path>           Path to an intermediate library that should be processed in the same manner as source files.
+  -Xir-dce                   Perform experimental dead code elimination.
+  -Xir-dce-print-reachability-info
+                             Print reachability information about declarations to 'stdout' while performing DCE.
+  -Xir-dce-runtime-diagnostic={log|exception}
+                             Enable runtime diagnostics instead of removing declarations when performing DCE.
+  -Xir-module-name=<name>    Specify the name of the compilation module for the IR backend.
+  -Xir-per-module-output-name Add a custom output name to the split .js files.
+  -Xir-produce-js            Generate a JS file using the IR backend.
+  -Xir-produce-klib-dir      Generate an unpacked klib into the parent directory of the output JS file.
+  -Xir-produce-klib-file     Generate a packed klib into the directory specified by '-ir-output-dir'.
+  -Xir-property-lazy-initialization
+                             Perform lazy initialization for properties.
+  -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files.
   -Xklib-abi-version=<version> Specify the custom ABI version to be written in KLIB. This option is intended only for tests.
                              Warning: This option does not affect KLIB ABI. Neither allows it making a KLIB backward-compatible with older ABI versions.
                              The only observable effect is that a custom ABI version is written to KLIB manifest file.
@@ -81,13 +87,19 @@ where advanced options include:
                              - `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version
 
   -Xklib-normalize-absolute-path Normalize absolute paths in klibs.
-  -Xklib-relative-path-base  Provide a base path to compute the source's relative paths in klib (default is empty).
+  -Xklib-relative-path-base  Relativize all the paths stored in a klib using the given path prefixes.
+                             The supplied prefixes should be absolute paths to the directories containing the source code files.
+                             Note: The prefixes are applied in the same order as they are passed in this CLI argument.
   -Xklib-zip-file-accessor-cache-limit
                              Maximum number of klibs that can be cached during compilation. Default is 64.
   -Xpartial-linkage={enable|disable}
-                             Use partial linkage mode.
-  -Xpartial-linkage-loglevel={info|warning|error}
+                             This option is deprecated and will be deleted in future versions.
+                             The partial linkage engine is always turned on.
+                             If you would like to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.
+  -Xpartial-linkage-loglevel={silent|info|warning|error}
                              Define the compile-time log level for partial linkage.
+  -Xskip-library-special-compatibility-checks
+                             Skip library compatibility checks for stdlib and kotlin.test library.
   -Xallow-any-scripts-in-source-roots
                              Allow compiling scripts along with regular Kotlin sources.
   -Xallow-condition-implies-returns-contracts
@@ -105,6 +117,7 @@ where advanced options include:
                              default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.
   -Xannotation-target-all    Enable experimental language support for @all: annotation use-site target.
   -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
+  -Xcollection-literals      Enable experimental language support for collection literals.
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in multiplatform mode.
                              They should be a subset of sources passed as free arguments.
   -Xcompiler-plugin=<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]
@@ -144,6 +157,7 @@ where advanced options include:
                              Force the compiler to report errors on all public API declarations without an explicit visibility or a return type.
                              Use the 'warning' level to issue warnings instead of errors.
   -Xexplicit-backing-fields  Enable experimental language support for explicit backing fields.
+  -Xexplicit-context-arguments Enable explicit passing of context arguments using named argument syntax.
   -Xfragment-dependency=<fragment name>:<path>
                              Declare common klib dependencies for the specific fragment.
                              This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
@@ -165,6 +179,10 @@ where advanced options include:
                              build systems where header libraries can be used to replace downstream dependencies for which we only need to
                              see the type names and method signatures required to compile a given translation unit. Inline functions are still kept
                              with bodies.
+  -Xheader-mode-type={any|compilation}
+                             Generates output based on what it is used for:
+                             -Xheader-mode-type=compilation: Skips the IR generation for modules that don't have inline functions.
+                             -Xheader-mode-type=any: Can be used for any downstream dependency which doesn't require linking.
   -Xignore-const-optimization-errors
                              Ignore all compilation exceptions while optimizing some constant expressions.
   -Xinline-classes           Enable experimental inline classes.
@@ -192,6 +210,7 @@ where advanced options include:
   -Xphases-to-validate-after Validate the backend's state after these phases.
   -Xphases-to-validate-before Validate the backend's state before these phases.
   -Xplugin=<path>            Load plugins from the given classpath.
+  -Xprint-configuration      Print compiler configuration.
   -Xprofile-phases           Profile backend phases.
   -Xrender-internal-diagnostic-names
                              Render the internal names of warnings and errors.

@@ -17,3 +17,15 @@ inline fun BitSet.forEachBit(block: (Int) -> Unit) {
         block(i)
     }
 }
+
+inline fun <R> BitSet.mapEachBit(block: (Int) -> R): List<R> {
+    val result = ArrayList<R>()
+    var i = -1
+    while (true) {
+        i = nextSetBit(i + 1)
+        if (i < 0) break
+        result.add(block(i))
+    }
+
+    return result
+}

@@ -9,7 +9,8 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.backend.handlers.UpdateTestDataHandler
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.impl.TestConfigurationImpl
+import org.jetbrains.kotlin.test.impl.NonGroupingPhaseTestConfigurationImpl
+import org.jetbrains.kotlin.test.impl.GroupingPhaseTestConfigurationImpl
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -17,45 +18,38 @@ import kotlin.io.path.Path
 
 @DefaultsDsl
 @OptIn(TestInfrastructureInternals::class, PrivateForInline::class)
-class TestConfigurationBuilder {
+abstract class TestConfigurationBuilderBase<Self : TestConfigurationBuilderBase<Self, C>, C : TestConfiguration<*>> {
     val defaultsProviderBuilder: DefaultsProviderBuilder = DefaultsProviderBuilder()
     lateinit var assertions: AssertionsService
 
-    @PrivateForInline
-    val steps: MutableList<TestStepBuilder<*, *>> = mutableListOf()
+    protected val sourcePreprocessors: MutableList<Constructor<SourceFilePreprocessor>> = mutableListOf()
+    protected val additionalMetaInfoProcessors: MutableList<Constructor<AdditionalMetaInfoProcessor>> = mutableListOf()
+    protected val environmentConfigurators: MutableList<Constructor<AbstractEnvironmentConfigurator>> = mutableListOf()
+    protected val preAnalysisHandlers: MutableList<Constructor<PreAnalysisHandler>> = mutableListOf()
 
-    @PrivateForInline
-    val namedSteps: MutableMap<String, TestStepBuilder<*, *>> = mutableMapOf()
+    protected val additionalSourceProviders: MutableList<Constructor<AdditionalSourceProvider>> = mutableListOf()
+    protected val moduleStructureTransformers: MutableList<Constructor<ModuleStructureTransformer>> = mutableListOf()
 
-    private val sourcePreprocessors: MutableList<Constructor<SourceFilePreprocessor>> = mutableListOf()
-    private val additionalMetaInfoProcessors: MutableList<Constructor<AdditionalMetaInfoProcessor>> = mutableListOf()
-    private val environmentConfigurators: MutableList<Constructor<AbstractEnvironmentConfigurator>> = mutableListOf()
-    private val preAnalysisHandlers: MutableList<Constructor<PreAnalysisHandler>> = mutableListOf()
+    protected val metaTestConfigurators: MutableList<Constructor<MetaTestConfigurator>> = mutableListOf()
+    protected val afterAnalysisCheckers: MutableList<Constructor<AfterAnalysisChecker>> = mutableListOf()
 
-    private val additionalSourceProviders: MutableList<Constructor<AdditionalSourceProvider>> = mutableListOf()
-    private val moduleStructureTransformers: MutableList<Constructor<ModuleStructureTransformer>> = mutableListOf()
+    protected var metaInfoHandlerEnabled: Boolean = false
 
-    private val metaTestConfigurators: MutableList<Constructor<MetaTestConfigurator>> = mutableListOf()
-    private val afterAnalysisCheckers: MutableList<Constructor<AfterAnalysisChecker>> = mutableListOf()
-
-    private var metaInfoHandlerEnabled: Boolean = false
-
-    private val directives: MutableList<DirectivesContainer> = mutableListOf()
+    protected val directives: MutableList<DirectivesContainer> = mutableListOf()
     val defaultRegisteredDirectivesBuilder: RegisteredDirectivesBuilder = RegisteredDirectivesBuilder()
 
-    private val configurationsByPositiveTestDataCondition: MutableList<Pair<Regex, TestConfigurationBuilder.() -> Unit>> = mutableListOf()
-    private val configurationsByNegativeTestDataCondition: MutableList<Pair<Regex, TestConfigurationBuilder.() -> Unit>> = mutableListOf()
-    private val additionalServices: MutableList<ServiceRegistrationData> = mutableListOf()
+    protected val configurationsByPositiveTestDataCondition: MutableList<Pair<Regex, Self.() -> Unit>> = mutableListOf()
+    protected val configurationsByNegativeTestDataCondition: MutableList<Pair<Regex, Self.() -> Unit>> = mutableListOf()
+    protected val additionalServices: MutableList<ServiceRegistrationData> = mutableListOf()
 
-    private var compilerConfigurationProvider: ((TestServices, Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)? = null
-    private var runtimeClasspathProviders: MutableList<Constructor<RuntimeClasspathProvider>> = mutableListOf()
+    protected var compilerConfigurationProvider: ((TestServices, Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)? =
+        null
+    protected var runtimeClasspathProviders: MutableList<Constructor<RuntimeClasspathProvider>> = mutableListOf()
 
-    lateinit var testInfo: KotlinTestInfo
+    protected val globalDefaultsConfigurators: MutableList<DefaultsProviderBuilder.() -> Unit> = mutableListOf()
+    protected val defaultDirectiveConfigurators: MutableList<RegisteredDirectivesBuilder.() -> Unit> = mutableListOf()
 
-    lateinit var startingArtifactFactory: (TestModule) -> ResultingArtifact<*>
-
-    private val globalDefaultsConfigurators: MutableList<DefaultsProviderBuilder.() -> Unit> = mutableListOf()
-    private val defaultDirectiveConfigurators: MutableList<RegisteredDirectivesBuilder.() -> Unit> = mutableListOf()
+    // ------------------------------------------------------------------------------------------------------------
 
     inline fun <reified T : TestService> useAdditionalService(noinline serviceConstructor: (TestServices) -> T) {
         useAdditionalServices(service(serviceConstructor))
@@ -65,99 +59,9 @@ class TestConfigurationBuilder {
         additionalServices += serviceRegistrationData
     }
 
-    fun forTestsMatching(pattern: String, configuration: TestConfigurationBuilder.() -> Unit) {
-        val regex = pattern.toMatchingRegexString().toRegex()
-        forTestsMatching(regex, configuration)
-    }
-
-    fun forTestsNotMatching(pattern: String, configuration: TestConfigurationBuilder.() -> Unit) {
-        val regex = pattern.toMatchingRegexString().toRegex()
-        forTestsNotMatching(regex, configuration)
-    }
-
-    infix fun String.or(other: String): String {
-        return """$this|$other"""
-    }
-
-    private fun String.toMatchingRegexString(): String = when (this) {
-        "*" -> ".*"
-        else -> """^.*/(${replace("*", ".*")})$"""
-    }
-
-    fun forTestsMatching(pattern: Regex, configuration: TestConfigurationBuilder.() -> Unit) {
-        configurationsByPositiveTestDataCondition += pattern to configuration
-    }
-
-    fun forTestsNotMatching(pattern: Regex, configuration: TestConfigurationBuilder.() -> Unit) {
-        configurationsByNegativeTestDataCondition += pattern to configuration
-    }
-
     fun globalDefaults(init: DefaultsProviderBuilder.() -> Unit) {
         globalDefaultsConfigurators += init
         defaultsProviderBuilder.apply(init)
-    }
-
-    fun <I : ResultingArtifact<I>, O : ResultingArtifact<O>> facadeStep(
-        facade: Constructor<AbstractTestFacade<I, O>>,
-    ): FacadeStepBuilder<I, O> {
-        return FacadeStepBuilder(facade).also {
-            steps += it
-        }
-    }
-
-    inline fun <InputArtifact, InputArtifactKind> handlersStep(
-        artifactKind: InputArtifactKind,
-        compilationStage: CompilationStage,
-        init: HandlersStepBuilder<InputArtifact, InputArtifactKind>.() -> Unit,
-    ): HandlersStepBuilder<InputArtifact, InputArtifactKind>
-            where InputArtifact : ResultingArtifact<InputArtifact>,
-                  InputArtifactKind : TestArtifactKind<InputArtifact> {
-        return HandlersStepBuilder(artifactKind, compilationStage).also {
-            it.init()
-            steps += it
-        }
-    }
-
-    inline fun <InputArtifact, InputArtifactKind> namedHandlersStep(
-        name: String,
-        artifactKind: InputArtifactKind,
-        compilationStage: CompilationStage,
-        init: HandlersStepBuilder<InputArtifact, InputArtifactKind>.() -> Unit,
-    ): HandlersStepBuilder<InputArtifact, InputArtifactKind>
-            where InputArtifact : ResultingArtifact<InputArtifact>,
-                  InputArtifactKind : TestArtifactKind<InputArtifact> {
-        val previouslyContainedStep = namedStepOfType<InputArtifact, InputArtifactKind>(name)
-        return if (previouslyContainedStep == null) {
-            val step = handlersStep(artifactKind, compilationStage, init)
-            namedSteps[name] = step
-            step
-        } else {
-            configureNamedHandlersStep(name, artifactKind, skipMissingStep = false, init)
-            previouslyContainedStep
-        }
-    }
-
-    inline fun <InputArtifact, InputArtifactKind> configureNamedHandlersStep(
-        name: String,
-        artifactKind: InputArtifactKind,
-        skipMissingStep: Boolean = false,
-        init: HandlersStepBuilder<InputArtifact, InputArtifactKind>.() -> Unit
-    ) where InputArtifact : ResultingArtifact<InputArtifact>,
-            InputArtifactKind : TestArtifactKind<InputArtifact> {
-        val step = namedStepOfType<InputArtifact, InputArtifactKind>(name)
-            ?: when (skipMissingStep) {
-                true -> return
-                false -> error("Step \"$name\" not found" )
-            }
-        require(step.artifactKind == artifactKind) { "Step kind: ${step.artifactKind}, passed kind is $artifactKind" }
-        step.apply(init)
-    }
-
-    fun <InputArtifact, InputArtifactKind> namedStepOfType(name: String): HandlersStepBuilder<InputArtifact, InputArtifactKind>?
-        where InputArtifact : ResultingArtifact<InputArtifact>,
-              InputArtifactKind : TestArtifactKind<InputArtifact> {
-        @Suppress("UNCHECKED_CAST")
-        return namedSteps[name] as HandlersStepBuilder<InputArtifact, InputArtifactKind>?
     }
 
     fun useSourcePreprocessor(vararg preprocessors: Constructor<SourceFilePreprocessor>, needToPrepend: Boolean = false) {
@@ -225,34 +129,158 @@ class TestConfigurationBuilder {
         defaultRegisteredDirectivesBuilder.apply(init)
     }
 
-    fun enableMetaInfoHandler() {
-        metaInfoHandlerEnabled = true
+    fun forTestsMatching(pattern: String, configuration: Self.() -> Unit) {
+        val regex = pattern.toMatchingRegexString().toRegex()
+        forTestsMatching(regex, configuration)
     }
 
-    fun build(testDataPath: String): TestConfiguration {
+    fun forTestsNotMatching(pattern: String, configuration: Self.() -> Unit) {
+        val regex = pattern.toMatchingRegexString().toRegex()
+        forTestsNotMatching(regex, configuration)
+    }
+
+    infix fun String.or(other: String): String {
+        return """$this|$other"""
+    }
+
+    private fun String.toMatchingRegexString(): String = when (this) {
+        "*" -> ".*"
+        else -> """^.*/(${replace("*", ".*")})$"""
+    }
+
+    fun forTestsMatching(pattern: Regex, configuration: Self.() -> Unit) {
+        configurationsByPositiveTestDataCondition += pattern to configuration
+    }
+
+    fun forTestsNotMatching(pattern: Regex, configuration: Self.() -> Unit) {
+        configurationsByNegativeTestDataCondition += pattern to configuration
+    }
+
+    abstract fun build(testDataPath: String): C
+
+    protected fun applyConditionalConfigurations(testDataPath: String) {
         // We use URI here because we use '/' in our codebase, and URI also uses it (unlike OS-dependent `toString()`)
         val absoluteTestDataPath = Path(testDataPath).normalize().toUri().toString()
 
         for ((regex, configuration) in configurationsByPositiveTestDataCondition) {
             if (regex.matches(absoluteTestDataPath)) {
-                this.configuration()
+                @Suppress("UNCHECKED_CAST")
+                configuration(this as Self)
             }
         }
         for ((regex, configuration) in configurationsByNegativeTestDataCondition) {
             if (!regex.matches(absoluteTestDataPath)) {
-                this.configuration()
+                @Suppress("UNCHECKED_CAST")
+                configuration(this as Self)
             }
         }
+    }
+
+}
+
+@DefaultsDsl
+@OptIn(TestInfrastructureInternals::class, PrivateForInline::class)
+sealed class OnePhaseTestConfigurationBuilderBase<Self, C> : TestConfigurationBuilderBase<Self, C>()
+        where Self : TestConfigurationBuilderBase<Self, C>,
+              C : TestConfiguration<*>
+{
+    private typealias Step = TestStep<*, *>
+    private typealias StepBuilder = TestStepBuilder<*, *, Step>
+
+    @PrivateForInline
+    val steps: MutableList<StepBuilder> = mutableListOf()
+
+    @PrivateForInline
+    val namedSteps: MutableMap<String, StepBuilder> = mutableMapOf()
+}
+
+@OptIn(PrivateForInline::class)
+class NonGroupingPhaseTestConfigurationBuilder :
+    OnePhaseTestConfigurationBuilderBase<NonGroupingPhaseTestConfigurationBuilder, NonGroupingPhaseTestConfiguration>() {
+    lateinit var testInfo: KotlinTestInfo
+    lateinit var startingArtifactFactory: (TestModule) -> ResultingArtifact<*>
+
+    fun <I : ResultingArtifact<I>, O : ResultingArtifact<O>> facadeStep(
+        facade: Constructor<AbstractTestFacade<I, O>>,
+    ): TestStepBuilder.FacadeStepBuilder.NonGroupingPhase<I, O> {
+        return TestStepBuilder.FacadeStepBuilder.NonGroupingPhase(facade).also {
+            steps.add(it)
+        }
+    }
+
+    inline fun <InputArtifact, InputArtifactKind> handlersStep(
+        artifactKind: InputArtifactKind,
+        compilationStage: CompilationStage,
+        init: TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<InputArtifact, InputArtifactKind>.() -> Unit,
+    ): TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<InputArtifact, InputArtifactKind>
+            where InputArtifact : ResultingArtifact<InputArtifact>,
+                  InputArtifactKind : TestArtifactKind<InputArtifact> {
+        return TestStepBuilder.HandlersStepBuilder.NonGroupingPhase(artifactKind, compilationStage).also {
+            it.init()
+            steps += it
+        }
+    }
+
+    inline fun <InputArtifact, InputArtifactKind> namedHandlersStep(
+        name: String,
+        artifactKind: InputArtifactKind,
+        compilationStage: CompilationStage,
+        init: TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<InputArtifact, InputArtifactKind>.() -> Unit,
+    ): TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<InputArtifact, InputArtifactKind>
+            where InputArtifact : ResultingArtifact<InputArtifact>,
+                  InputArtifactKind : TestArtifactKind<InputArtifact> {
+        val previouslyContainedStep = namedStepOfType<InputArtifact, InputArtifactKind>(name)
+        return if (previouslyContainedStep == null) {
+            val step = handlersStep(artifactKind, compilationStage, init)
+            namedSteps[name] = step
+            step
+        } else {
+            configureNamedHandlersStep(name, artifactKind, skipMissingStep = false, init)
+            previouslyContainedStep
+        }
+    }
+
+    inline fun <InputArtifact, InputArtifactKind> configureNamedHandlersStep(
+        name: String,
+        artifactKind: InputArtifactKind,
+        skipMissingStep: Boolean = false,
+        init: TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<InputArtifact, InputArtifactKind>.() -> Unit,
+    ) where InputArtifact : ResultingArtifact<InputArtifact>,
+            InputArtifactKind : TestArtifactKind<InputArtifact> {
+        val step = namedStepOfType<InputArtifact, InputArtifactKind>(name)
+            ?: when (skipMissingStep) {
+                true -> return
+                false -> error("Step \"$name\" not found")
+            }
+        require(step.artifactKind == artifactKind) { "Step kind: ${step.artifactKind}, passed kind is $artifactKind" }
+        step.apply(init)
+    }
+
+    fun <InputArtifact, InputArtifactKind> namedStepOfType(name: String): TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<InputArtifact, InputArtifactKind>?
+            where InputArtifact : ResultingArtifact<InputArtifact>,
+                  InputArtifactKind : TestArtifactKind<InputArtifact> {
+        @Suppress("UNCHECKED_CAST")
+        return namedSteps[name] as TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<InputArtifact, InputArtifactKind>?
+    }
+
+    fun enableMetaInfoHandler() {
+        metaInfoHandlerEnabled = true
+    }
+
+    @OptIn(TestInfrastructureInternals::class)
+    override fun build(testDataPath: String): NonGroupingPhaseTestConfiguration {
+        applyConditionalConfigurations(testDataPath)
 
         // UpdateTestDataHandler should be _the very last_ handler at all times to avoid false-positive test data changes,
         // so it is added after all configuration callbacks have already been executed
         useAfterAnalysisCheckers(::UpdateTestDataHandler)
 
-        return TestConfigurationImpl(
+        @Suppress("UNCHECKED_CAST")
+        return NonGroupingPhaseTestConfigurationImpl(
             testInfo,
             defaultsProviderBuilder.build(),
             assertions,
-            steps,
+            steps as List<TestStepBuilder<*, *, TestStep.NonGroupingStep<*, *>>>,
             sourcePreprocessors,
             additionalMetaInfoProcessors,
             environmentConfigurators,
@@ -272,9 +300,7 @@ class TestConfigurationBuilder {
         )
     }
 
-    class ReadOnlyBuilder(private val builder: TestConfigurationBuilder, val testDataPath: String) {
-        val defaultsProviderBuilder: DefaultsProviderBuilder
-            get() = builder.defaultsProviderBuilder
+    class ReadOnlyBuilder(private val builder: NonGroupingPhaseTestConfigurationBuilder, val testDataPath: String) {
         val assertions: AssertionsService
             get() = builder.assertions
         val sourcePreprocessors: List<Constructor<SourceFilePreprocessor>>
@@ -283,18 +309,6 @@ class TestConfigurationBuilder {
             get() = builder.additionalMetaInfoProcessors
         val environmentConfigurators: List<Constructor<AbstractEnvironmentConfigurator>>
             get() = builder.environmentConfigurators
-        val preAnalysisHandlers: List<Constructor<PreAnalysisHandler>>
-            get() = builder.preAnalysisHandlers
-        val additionalSourceProviders: List<Constructor<AdditionalSourceProvider>>
-            get() = builder.additionalSourceProviders
-        val moduleStructureTransformers: List<Constructor<ModuleStructureTransformer>>
-            get() = builder.moduleStructureTransformers
-        val metaTestConfigurators: List<Constructor<MetaTestConfigurator>>
-            get() = builder.metaTestConfigurators
-        val afterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>
-            get() = builder.afterAnalysisCheckers
-        val metaInfoHandlerEnabled: Boolean
-            get() = builder.metaInfoHandlerEnabled
         val directives: List<DirectivesContainer>
             get() = builder.directives
 
@@ -304,17 +318,11 @@ class TestConfigurationBuilder {
         val globalDefaultsConfigurators: List<DefaultsProviderBuilder.() -> Unit>
             get() = builder.globalDefaultsConfigurators
 
-        val configurationsByPositiveTestDataCondition: List<Pair<Regex, TestConfigurationBuilder.() -> Unit>>
-            get() = builder.configurationsByPositiveTestDataCondition
-        val configurationsByNegativeTestDataCondition: List<Pair<Regex, TestConfigurationBuilder.() -> Unit>>
-            get() = builder.configurationsByNegativeTestDataCondition
         val additionalServices: List<ServiceRegistrationData>
             get() = builder.additionalServices
 
         val compilerConfigurationProvider: ((TestServices, Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)?
             get() = builder.compilerConfigurationProvider
-        val runtimeClasspathProviders: List<Constructor<RuntimeClasspathProvider>>
-            get() = builder.runtimeClasspathProviders
         val testInfo: KotlinTestInfo
             get() = builder.testInfo
         val startingArtifactFactory: (TestModule) -> ResultingArtifact<*>
@@ -322,6 +330,137 @@ class TestConfigurationBuilder {
     }
 }
 
-inline fun testConfiguration(testDataPath: String, init: TestConfigurationBuilder.() -> Unit): TestConfiguration {
-    return TestConfigurationBuilder().apply(init).build(testDataPath)
+typealias TestConfigurationBuilder = NonGroupingPhaseTestConfigurationBuilder
+
+@OptIn(PrivateForInline::class)
+class GroupingPhaseTestConfigurationBuilder :
+    OnePhaseTestConfigurationBuilderBase<GroupingPhaseTestConfigurationBuilder, GroupingPhaseTestConfiguration>() {
+    lateinit var testInfo: KotlinTestInfo
+    val mergerWorkers: MutableList<Constructor<GroupingPhaseInputsMerger.Worker>> = mutableListOf()
+
+    fun <I : ResultingArtifact<I>, O : ResultingArtifact<O>> facadeStep(
+        facade: Constructor<AbstractGroupingPhaseTestFacade<I, O>>,
+    ): TestStepBuilder.FacadeStepBuilder.GroupingPhase<I, O> {
+        return TestStepBuilder.FacadeStepBuilder.GroupingPhase(facade).also {
+            steps.add(it)
+        }
+    }
+
+    inline fun <InputArtifact, InputArtifactKind> handlersStep(
+        artifactKind: InputArtifactKind,
+        compilationStage: CompilationStage,
+        init: TestStepBuilder.HandlersStepBuilder.GroupingPhase<InputArtifact, InputArtifactKind>.() -> Unit,
+    ): TestStepBuilder.HandlersStepBuilder.GroupingPhase<InputArtifact, InputArtifactKind>
+            where InputArtifact : ResultingArtifact<InputArtifact>,
+                  InputArtifactKind : TestArtifactKind<InputArtifact> {
+        return TestStepBuilder.HandlersStepBuilder.GroupingPhase(artifactKind, compilationStage).also {
+            it.init()
+            steps += it
+        }
+    }
+
+    inline fun <InputArtifact, InputArtifactKind> namedHandlersStep(
+        name: String,
+        artifactKind: InputArtifactKind,
+        compilationStage: CompilationStage,
+        init: TestStepBuilder.HandlersStepBuilder.GroupingPhase<InputArtifact, InputArtifactKind>.() -> Unit,
+    ): TestStepBuilder.HandlersStepBuilder.GroupingPhase<InputArtifact, InputArtifactKind>
+            where InputArtifact : ResultingArtifact<InputArtifact>,
+                  InputArtifactKind : TestArtifactKind<InputArtifact> {
+        val previouslyContainedStep = namedStepOfType<InputArtifact, InputArtifactKind>(name)
+        return if (previouslyContainedStep == null) {
+            val step = handlersStep(artifactKind, compilationStage, init)
+            namedSteps[name] = step
+            step
+        } else {
+            configureNamedHandlersStep(name, artifactKind, skipMissingStep = false, init)
+            previouslyContainedStep
+        }
+    }
+
+    inline fun <InputArtifact, InputArtifactKind> configureNamedHandlersStep(
+        name: String,
+        artifactKind: InputArtifactKind,
+        skipMissingStep: Boolean = false,
+        init: TestStepBuilder.HandlersStepBuilder.GroupingPhase<InputArtifact, InputArtifactKind>.() -> Unit,
+    ) where InputArtifact : ResultingArtifact<InputArtifact>,
+            InputArtifactKind : TestArtifactKind<InputArtifact> {
+        val step = namedStepOfType<InputArtifact, InputArtifactKind>(name)
+            ?: when (skipMissingStep) {
+                true -> return
+                false -> error("Step \"$name\" not found")
+            }
+        require(step.artifactKind == artifactKind) { "Step kind: ${step.artifactKind}, passed kind is $artifactKind" }
+        step.apply(init)
+    }
+
+    fun <InputArtifact, InputArtifactKind> namedStepOfType(name: String): TestStepBuilder.HandlersStepBuilder.GroupingPhase<InputArtifact, InputArtifactKind>?
+            where InputArtifact : ResultingArtifact<InputArtifact>,
+                  InputArtifactKind : TestArtifactKind<InputArtifact> {
+        @Suppress("UNCHECKED_CAST")
+        return namedSteps[name] as TestStepBuilder.HandlersStepBuilder.GroupingPhase<InputArtifact, InputArtifactKind>?
+    }
+
+    fun withMergerWorker(worker: Constructor<GroupingPhaseInputsMerger.Worker>) {
+        mergerWorkers += worker
+    }
+
+    @OptIn(TestInfrastructureInternals::class)
+    override fun build(testDataPath: String): GroupingPhaseTestConfiguration {
+        applyConditionalConfigurations(testDataPath)
+
+        // UpdateTestDataHandler should be _the very last_ handler at all times to avoid false-positive test data changes,
+        // so it is added after all configuration callbacks have already been executed
+        useAfterAnalysisCheckers(::UpdateTestDataHandler)
+
+        @Suppress("UNCHECKED_CAST")
+        return GroupingPhaseTestConfigurationImpl(
+            testInfo,
+            defaultsProviderBuilder.build(),
+            assertions,
+            steps as List<TestStepBuilder<*, *, TestStep.GroupingPhaseStep<*, *>>>,
+            sourcePreprocessors,
+            additionalMetaInfoProcessors,
+            environmentConfigurators,
+            additionalSourceProviders,
+            preAnalysisHandlers,
+            moduleStructureTransformers,
+            metaTestConfigurators,
+            afterAnalysisCheckers,
+            compilerConfigurationProvider,
+            runtimeClasspathProviders,
+            metaInfoHandlerEnabled,
+            directives,
+            defaultRegisteredDirectivesBuilder.build(),
+            mergerWorkers,
+            additionalServices,
+        )
+    }
+}
+
+@DefaultsDsl
+@OptIn(TestInfrastructureInternals::class, PrivateForInline::class)
+class TwoPhaseTestConfigurationBuilder {
+    val firstPhaseBuilder = NonGroupingPhaseTestConfigurationBuilder()
+    val secondPhaseBuilder = GroupingPhaseTestConfigurationBuilder()
+
+    fun commonConfiguration(init: TestConfigurationBuilderBase<*, *>.() -> Unit) {
+        firstPhaseBuilder.apply(init)
+        secondPhaseBuilder.apply(init)
+    }
+
+    fun nonGroupingPhase(init: NonGroupingPhaseTestConfigurationBuilder.() -> Unit) {
+        firstPhaseBuilder.apply(init)
+    }
+
+    fun groupingPhase(init: GroupingPhaseTestConfigurationBuilder.() -> Unit) {
+        secondPhaseBuilder.apply(init)
+    }
+}
+
+inline fun testConfiguration(
+    testDataPath: String,
+    init: NonGroupingPhaseTestConfigurationBuilder.() -> Unit,
+): NonGroupingPhaseTestConfiguration {
+    return NonGroupingPhaseTestConfigurationBuilder().apply(init).build(testDataPath)
 }

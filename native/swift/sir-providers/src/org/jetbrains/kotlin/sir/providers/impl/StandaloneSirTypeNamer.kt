@@ -14,10 +14,13 @@ import org.jetbrains.kotlin.sir.SirExistentialType
 import org.jetbrains.kotlin.sir.SirFunctionalType
 import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirScopeDefiningDeclaration
+import org.jetbrains.kotlin.sir.SirTupleType
 import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.SirTypedFlowType
 import org.jetbrains.kotlin.sir.SirUnsupportedType
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
+import org.jetbrains.kotlin.sir.providers.utils.KotlinCoroutineSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
@@ -60,19 +63,29 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
 
     private fun kotlinFqName(type: SirType): String = when (type) {
         is SirNominalType -> kotlinFqName(type)
+        is SirTypedFlowType -> when (type.typedProtocol) {
+            KotlinCoroutineSupportModule.kotlinTypedFlow -> "kotlinx.coroutines.flow.Flow<${kotlinParametrizedName(type.elementType)}>"
+            KotlinCoroutineSupportModule.kotlinTypedSharedFlow -> "kotlinx.coroutines.flow.SharedFlow<${kotlinParametrizedName(type.elementType)}>"
+            KotlinCoroutineSupportModule.kotlinTypedMutableSharedFlow -> "kotlinx.coroutines.flow.MutableSharedFlow<${kotlinParametrizedName(type.elementType)}>"
+            KotlinCoroutineSupportModule.kotlinTypedStateFlow -> "kotlinx.coroutines.flow.StateFlow<${kotlinParametrizedName(type.elementType)}>"
+            KotlinCoroutineSupportModule.kotlinTypedMutableStateFlow -> "kotlinx.coroutines.flow.MutableStateFlow<${kotlinParametrizedName(type.elementType)}>"
+            else -> error("TypedFlowType $type can not be named")
+        }
         is SirExistentialType -> kotlinFqName(type)
-        is SirErrorType, is SirFunctionalType, is SirUnsupportedType -> error("Type $type can not be named")
+        is SirFunctionalType -> "${"kotlin.coroutines.Suspend".takeIf { type.isAsync } ?: ""}Function${type.contextTypes.count() + type.parameterTypes.count()}<${(type.contextTypes + type.parameterTypes + type.returnType).joinToString { kotlinFqName(it) }}>"
+        is SirErrorType, is SirUnsupportedType, is SirTupleType ->
+            error("Type $type can not be named")
     }
 
     private fun kotlinParametrizedName(type: SirType): String = when (type) {
         is SirNominalType -> type.typeDeclaration.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
-        is SirExistentialType -> type.protocols.singleOrNull()?.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
-        is SirErrorType, is SirFunctionalType, is SirUnsupportedType -> null
+        is SirExistentialType -> type.protocols.singleOrNull()?.first?.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
+        is SirErrorType, is SirFunctionalType, is SirUnsupportedType, is SirTupleType -> null
     } ?: kotlinFqName(type)
 
-    private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let {
-        if (it == KotlinRuntimeSupportModule.kotlinBridgeable) "kotlin.Any"
-        else it.kaSymbolOrNull<KaClassLikeSymbol>()!!.classId!!.asFqNameString()
+    private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let { (protocol, _) ->
+        if (protocol == KotlinRuntimeSupportModule.kotlinBridgeable) "kotlin.Any"
+        else protocol.kaSymbolOrNull<KaClassLikeSymbol>()!!.classId!!.asFqNameString()
     }
 
     @OptIn(KaExperimentalApi::class)
@@ -82,13 +95,15 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         return when (declaration) {
             KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
             KotlinRuntimeSupportModule.kotlinBridgeable -> "kotlin.Any"
+            KotlinCoroutineSupportModule.swiftJob -> "SwiftJob"
             SirSwiftModule.anyHashable -> "kotlin.Any"
             SirSwiftModule.string -> "kotlin.String"
 
             SirSwiftModule.unsafeMutableRawPointer -> "kotlin.native.internal.NativePtr"
 
-            SirSwiftModule.void -> "Void"
+            SirSwiftModule.void -> "Unit"
             SirSwiftModule.never -> "Nothing"
+            SirSwiftModule.error -> "platform.Foundation.NSError"
 
             SirSwiftModule.array -> "kotlin.collections.List<${kotlinParametrizedName(type.typeArguments.first())}>"
             SirSwiftModule.set -> "kotlin.collections.Set<${kotlinParametrizedName(type.typeArguments.first())}>"
@@ -96,8 +111,22 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
 
             SirSwiftModule.optional -> kotlinFqName(type.typeArguments.first()) + "?"
 
-            else -> declaration.kaSymbolOrNull<KaClassLikeSymbol>()?.classId?.asFqNameString()
-                ?: error("Unnameable declaration $declaration")
+            SirSwiftModule.range -> "kotlin.ranges.OpenEndRange<${kotlinParametrizedName(type.typeArguments.first())}>"
+            SirSwiftModule.closedRange -> {
+                val firstArgument = type.typeArguments.first()
+                when ((firstArgument as? SirNominalType)?.typeDeclaration) {
+                    SirSwiftModule.int64 -> "kotlin.ranges.LongRange"
+                    SirSwiftModule.int32 -> "kotlin.ranges.IntRange"
+                    else -> "kotlin.ranges.ClosedRange<${kotlinParametrizedName(firstArgument)}>"
+                }
+            }
+
+            else -> declaration.kaSymbolOrNull<KaClassLikeSymbol>()?.let { symbol ->
+                val fqName = symbol.classId?.asFqNameString() ?: return@let null
+                // Generics aren't supported yet, so we don't have the actual typeArguments, fallback to the upperbound
+                val typeArgs = symbol.typeParameters.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") { "*" } ?: ""
+                "$fqName$typeArgs"
+            } ?: error("Unnameable declaration $declaration")
         }
     }
 
@@ -111,7 +140,7 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         val typesRendered = typeParameters.map { it.upperBounds.firstOrNull() }
             .map {
                 when (it?.symbol?.classId?.asFqNameString()) {
-                    fqname -> classId?.asFqNameString() + "<${typeParameters.joinToString { "*" }}>"
+                    fqname -> "*"
                     else -> it?.symbol?.parametrisedTypeName()
                 }
             }

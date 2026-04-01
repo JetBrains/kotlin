@@ -39,36 +39,12 @@ owner -> FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /pro
 context -> FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /propertyWithContextReceivers
 
 @ContextReceiverAnnotation(IntegerLiteral(9))
-owner -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClass.MyClass
-context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClass.MyClass
-
-@ContextReceiverAnnotation()
-owner -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClass.MyClass
-context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClass.MyClass
-
-@ContextReceiverAnnotation(IntegerLiteral(9))
 owner -> FirValueParameterSymbol <local>/List from FirRegularClassSymbol MyClass
 context -> FirValueParameterSymbol <local>/List from FirRegularClassSymbol MyClass
 
 @ContextReceiverAnnotation()
 owner -> FirValueParameterSymbol <local>/List from FirRegularClassSymbol MyClass
 context -> FirValueParameterSymbol <local>/List from FirRegularClassSymbol MyClass
-
-@ContextReceiverAnnotation(IntegerLiteral(10))
-owner -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
-context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
-
-@ContextReceiverAnnotation()
-owner -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
-context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
-
-@ContextReceiverAnnotation(IntegerLiteral(10))
-owner -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
-context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
-
-@ContextReceiverAnnotation()
-owner -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
-context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
 
 @ContextReceiverAnnotation(IntegerLiteral(10))
 owner -> FirValueParameterSymbol <local>/List from FirRegularClassSymbol MyClassWithExplicitConstructor

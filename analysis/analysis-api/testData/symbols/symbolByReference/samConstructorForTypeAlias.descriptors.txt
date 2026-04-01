@@ -7,6 +7,7 @@ KaSamConstructorSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   location: TOP_LEVEL
   modality: FINAL
   name: MyInterface
@@ -30,6 +31,7 @@ KaSamConstructorSymbol:
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true

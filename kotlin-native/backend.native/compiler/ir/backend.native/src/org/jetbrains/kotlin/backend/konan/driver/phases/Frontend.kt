@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.TopDownAnalyzerFacadeForKonan
 import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -36,7 +36,7 @@ internal interface FrontendContext : NativeBackendPhaseContext {
 }
 
 internal class FrontendContextImpl(
-        config: KonanConfig
+        config: NativeSecondStageCompilationConfig
 ) : BasicNativeBackendPhaseContext(config), FrontendContext {
     override lateinit var frontendServices: FrontendServices
 }
@@ -48,11 +48,7 @@ internal val FrontendPhase = createSimpleNamedCompilerPhase(
     lateinit var analysisResult: AnalysisResult
 
     do {
-        val analyzerWithCompilerReport = AnalyzerWithCompilerReport(
-                context.messageCollector,
-                input.configuration.languageVersionSettings,
-                input.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-        )
+        val analyzerWithCompilerReport = AnalyzerWithCompilerReport(input.configuration)
 
         val sourceFiles = input.getSourceFiles()
 

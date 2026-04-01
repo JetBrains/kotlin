@@ -20,7 +20,7 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
             return Enum_i_get(self.__externalRCRef())
         }
         set {
-            return Enum_i_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
+            return { Enum_i_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue); return () }()
         }
     }
     public var rawValue: Swift.Int32 {
@@ -51,9 +51,9 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        switch __externalRCRefUnsafe {
-        case Enum_a(): self = .a
-        case Enum_b(): self = .b
+        switch __root___Enum_ordinal(__externalRCRefUnsafe) {
+        case 0: self = .a
+        case 1: self = .b
         default: fatalError()
         }
     }
@@ -112,10 +112,10 @@ public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterab
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        switch __externalRCRefUnsafe {
-        case EnumSimple_FIRST(): self = .FIRST
-        case EnumSimple_SECOND(): self = .SECOND
-        case EnumSimple_LAST(): self = .LAST
+        switch __root___EnumSimple_ordinal(__externalRCRefUnsafe) {
+        case 0: self = .FIRST
+        case 1: self = .SECOND
+        case 2: self = .LAST
         default: fatalError()
         }
     }
@@ -177,10 +177,10 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        switch __externalRCRefUnsafe {
-        case EnumWithAbstractMembers_YELLOW(): self = .YELLOW
-        case EnumWithAbstractMembers_SKY(): self = .SKY
-        case EnumWithAbstractMembers_MAGENTA(): self = .MAGENTA
+        switch __root___EnumWithAbstractMembers_ordinal(__externalRCRefUnsafe) {
+        case 0: self = .YELLOW
+        case 1: self = .SKY
+        case 2: self = .MAGENTA
         default: fatalError()
         }
     }
@@ -247,9 +247,9 @@ public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        switch __externalRCRefUnsafe {
-        case EnumWithMembers_NORTH(): self = .NORTH
-        case EnumWithMembers_SOUTH(): self = .SOUTH
+        switch __root___EnumWithMembers_ordinal(__externalRCRefUnsafe) {
+        case 0: self = .NORTH
+        case 1: self = .SOUTH
         default: fatalError()
         }
     }

@@ -69,7 +69,7 @@ extern "C" void getNativeActivityState(NativeActivityState* state) {
 }
 
 extern "C" void notifySysEventProcessed() {
-  int8_t message;
+  int8_t message = 0;
   write(launcherState->pipeKonan, &message, sizeof(message));
 }
 

@@ -9,22 +9,26 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundAssignOperation
+import org.jetbrains.kotlin.analysis.api.resolution.KaFunctionCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.psi.KtExpression
 
 @KaImplementationDetail
 class KaBaseCompoundAssignOperation(
-    private val backingOperationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
-    kind: KaCompoundAssignOperation.Kind,
-    operand: KtExpression,
+    private val backingOperationCall: KaFunctionCall<KaNamedFunctionSymbol>,
+    private val backingKind: KaCompoundAssignOperation.Kind,
+    private val backingOperand: KtExpression,
 ) : KaCompoundAssignOperation {
-    private val backingKind: KaCompoundAssignOperation.Kind = kind
-    private val backingOperand: KtExpression = operand
-    override val token: KaLifetimeToken get() = backingOperationPartiallyAppliedSymbol.token
+    override val token: KaLifetimeToken get() = backingOperationCall.token
 
     override val kind: KaCompoundAssignOperation.Kind get() = withValidityAssertion { backingKind }
     override val operand: KtExpression get() = withValidityAssertion { backingOperand }
+
+    @Deprecated("Use 'operationCall' instead")
     override val operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
-        get() = withValidityAssertion { backingOperationPartiallyAppliedSymbol }
+        get() = withValidityAssertion { backingOperationCall.asPartiallyAppliedSymbol }
+
+    override val operationCall: KaFunctionCall<KaNamedFunctionSymbol>
+        get() = withValidityAssertion { backingOperationCall }
 }

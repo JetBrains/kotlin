@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.AnalysisHandler
-import org.jetbrains.kotlin.test.model.ArtifactKind
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.DeserializerFacade
@@ -56,15 +55,18 @@ class PhasedPipelineChecker(
     }
 
     private fun getTargetedPhase(): TestPhase? {
-        return testServices.moduleStructure.allDirectives[RUN_PIPELINE_TILL].firstOrNull() ?: defaultRunPipelineTill
+        return testServices.moduleStructure.allDirectives[RUN_PIPELINE_TILL].lastOrNull() ?: defaultRunPipelineTill
     }
 
+    /**
+     * Infers a test phase from its output artifact kind.
+     */
     private fun TestArtifactKind<*>.toPhase(): TestPhase? = when (this) {
         is FrontendKind -> TestPhase.FRONTEND
         is BackendKind -> TestPhase.FIR2IR
-        is ArtifactKinds.KLib -> TestPhase.KLIB
-        is ArtifactKind -> TestPhase.BACKEND
-        else -> null
+        ArtifactKinds.Jvm -> TestPhase.BACKEND
+        ArtifactKinds.KLib -> TestPhase.BACKEND
+        else -> error("Cannot infer phase by output artifact kind `${this.javaClass.simpleName}`.")
     }
 
     private fun AbstractTestFacade<*, *>.toPhase(): TestPhase? =
@@ -74,11 +76,11 @@ class PhasedPipelineChecker(
                     TestPhase.FIR2IR
                 is BackendKind -> {
                     require(this is IrPreSerializationLoweringFacade)
-                    TestPhase.KLIB
+                    TestPhase.BACKEND
                 }
                 is ArtifactKinds.KLib -> {
                     require(this is DeserializerFacade)
-                    TestPhase.KLIB
+                    TestPhase.BACKEND
                 }
                 else -> error(
                     "Unexpected facade of type ${this.javaClass.simpleName} taking input artifact of kind=$this, " +
@@ -222,6 +224,9 @@ class PhasedPipelineChecker(
                 is WrappedException.WrappedExceptionWithoutModule -> nonSuppressibleFailures
                 is WrappedException.FromHandler ->
                     processFailure(exception.failedModule, exception.handler.toPhase(), exception)
+                is WrappedException.FromGroupingFacade,
+                is WrappedException.FromGroupingHandler ->
+                    processFailure(module = null, TestPhase.BACKEND, exception)
             }
             targetStorage += exception
         }

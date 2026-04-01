@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.staticScope
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
@@ -26,11 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.getParentChainForContextSensitiveResolut
 import org.jetbrains.kotlin.fir.scopes.getClassifiers
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
@@ -40,7 +36,7 @@ import org.jetbrains.kotlin.name.Name
 object FirContextSensitiveResolutionAmbiguityCheckerForEqualities : FirEqualityOperatorCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirEqualityOperatorCall) {
-        if (!LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isEnabled()) return
+        if (LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isDisabled()) return
         val rhs = expression.arguments[1]
 
         val resolvedSymbol = when (rhs) {
@@ -94,7 +90,7 @@ object FirContextSensitiveResolutionAmbiguityCheckerForEqualities : FirEqualityO
 object FirContextSensitiveResolutionAmbiguityCheckerForTypeOperators : FirTypeOperatorCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirTypeOperatorCall) {
-        if (!LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isEnabled()) return
+        if (LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isDisabled()) return
         val typeRef = expression.conversionTypeRef as? FirResolvedTypeRef ?: return
         if (!typeRef.resolvedSymbolOrigin.shouldWarn || typeRef is FirErrorTypeRef) return
 

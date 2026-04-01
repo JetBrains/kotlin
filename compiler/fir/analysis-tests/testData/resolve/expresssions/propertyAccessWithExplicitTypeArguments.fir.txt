@@ -39,12 +39,12 @@ FILE: propertyAccessWithExplicitTypeArguments.kt
         public get(): R|kotlin/String| {
             ^ String(hello 1)
         }
-    context(R|Context<A>|)
+    context(<unused var>: R|Context<A>|)
     public final val <A> hello2: R|kotlin/String|
         public get(): R|kotlin/String| {
             ^ String(hello 2)
         }
-    context(R|Context<B>|)
+    context(<unused var>: R|Context<B>|)
     public final val <A, B> R|Receiver<A>|.hello3: R|kotlin/String|
         public get(): R|kotlin/String| {
             ^ String(hello 3)

@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.dsl.base.*
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
+import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
+import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultTrue
@@ -18,9 +21,12 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         name = "Xwasm"
         description = "Use the WebAssembly compiler backend.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
-
+        additionalAnnotations(
+            Deprecated("This flag is deprecated. Use kotlinc-wasm or the KotlinWasmCompiler class instead to compile to WebAssembly.")
+        )
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_0,
         )
     }
 
@@ -66,6 +72,16 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xwasm-generate-closed-world-multimodule"
+        description = "Compile modules in multi-module closed-world mode using module passed in `-include` argument as main module".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0,
         )
     }
 
@@ -121,6 +137,19 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     }
 
     compilerArgument {
+        name = "Xwasm-internal-local-variable-prefix"
+        description = "Prefix to use for internally generated local variables.".asReleaseDependent()
+        valueType = StringType(
+            isNullable = false.asReleaseDependent(),
+            defaultValue = "~".asReleaseDependent()
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0
+        )
+    }
+
+    compilerArgument {
         name = "Xwasm-use-new-exception-proposal"
         description = "Use an updated version of the exception proposal with try_table.".asReleaseDependent()
         valueType = BooleanType(
@@ -166,28 +195,6 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         name = "Xwasm-source-map-include-mappings-from-unavailable-sources"
         compilerName = "includeUnavailableSourcesIntoSourceMap"
         description = "Insert source mappings from libraries even if their sources are unavailable on the end-user machine.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_1_20,
-        )
-    }
-
-    compilerArgument {
-        name = "Xwasm-preserve-ic-order"
-        compilerName = "preserveIcOrder"
-        description = "Preserve wasm file structure between IC runs.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_1_20,
-        )
-    }
-
-    compilerArgument {
-        name = "Xwasm-ic-cache-readonly"
-        compilerName = "icCacheReadonly"
-        description = "Do not commit IC cache updates.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
         lifecycle(

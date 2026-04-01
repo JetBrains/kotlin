@@ -14,11 +14,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.BuiltInAnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AbstractTypeParameterDescriptor
-import org.jetbrains.kotlin.name.ClassIdBasedLocality
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
@@ -438,11 +434,12 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
 
     override fun newTypeCheckerState(
+        typeSystemContext: TypeSystemContext,
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean,
         dnnTypesEqualToFlexible: Boolean,
     ): TypeCheckerState {
-        return createClassicTypeCheckerState(errorTypesEqualToAnything, stubTypesEqualToAnything, typeSystemContext = this)
+        return createClassicTypeCheckerState(errorTypesEqualToAnything, stubTypesEqualToAnything, typeSystemContext)
     }
 
     override fun nullableNothingType(): SimpleTypeMarker {
@@ -654,6 +651,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun KotlinTypeMarker.isSpecial(): Boolean {
         require(this is KotlinType)
         return this is TypeUtils.SpecialType
+    }
+
+    @K2Only
+    override fun KotlinTypeMarker.hasEnhancedNullability(): Boolean {
+        error("hasEnhancedNullability is only supported in K2")
     }
 
     override fun TypeConstructorMarker.isTypeVariable(): Boolean {

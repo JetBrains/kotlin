@@ -118,10 +118,8 @@ internal object KotlinMultiplatformSourceSetConventionsImpl : KotlinMultiplatfor
 
     override val NamedDomainObjectContainer<KotlinSourceSet>.iosSimulatorArm64Test by KotlinSourceSetConvention
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     override val NamedDomainObjectContainer<KotlinSourceSet>.iosX64Main by KotlinSourceSetConvention
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     override val NamedDomainObjectContainer<KotlinSourceSet>.iosX64Test by KotlinSourceSetConvention
 
     @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
@@ -194,4 +192,5 @@ internal object KotlinMultiplatformSourceSetConventionsImpl : KotlinMultiplatfor
     override val NamedDomainObjectContainer<KotlinSourceSet>.androidUnitTest by KotlinSourceSetConvention
     override val NamedDomainObjectContainer<KotlinSourceSet>.androidInstrumentedTest by KotlinSourceSetConvention
 }
+
 

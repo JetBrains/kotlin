@@ -1,0 +1,6 @@
+KtNameReferenceExpression(327,331): 'Test'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(): Test<T>
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

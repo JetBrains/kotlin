@@ -5,7 +5,6 @@
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("project-tests-convention")
     id("java-test-fixtures")
 }
@@ -24,7 +23,6 @@ dependencies {
 
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
 
-    testRuntimeOnly(project(":core:descriptors.runtime"))
     testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
     testFixturesApi(project(":compiler:fir:resolve"))
     testFixturesApi(project(":compiler:fir:providers"))
@@ -33,6 +31,7 @@ dependencies {
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 
     testRuntimeOnly(project(":compiler:fir:plugin-utils"))
 
@@ -58,7 +57,7 @@ optInToK1Deprecation()
 projectTests {
     testTask(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit5) {
         dependsOn(":dist", ":plugins:compose-compiler-plugin:compiler-hosted:jar")
-        systemProperties(this.project.properties.filterKeys<String, Any?> { it.startsWith("fir.") })
+        systemProperties(providers.gradlePropertiesPrefixedBy("fir.").get())
         this.workingDir = rootDir
         systemProperty("fir.bench.compose.plugin.classpath", composeCompilerPlugin.asPath)
         val argsExt = this.project.findProperty("fir.modularized.jvm.args") as? String

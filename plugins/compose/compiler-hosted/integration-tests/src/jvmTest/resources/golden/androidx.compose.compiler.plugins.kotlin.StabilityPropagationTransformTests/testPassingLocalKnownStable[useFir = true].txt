@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 
 import androidx.compose.runtime.remember
 
+class Foo(val foo: Int)
+
 @Composable
 fun Test(x: Foo) {
     A(x)
@@ -18,6 +20,13 @@ fun Test(x: Foo) {
 // Transformed IR
 // ------------------------------------------
 
+@StabilityInferred(parameters = 1)
+class Foo(val foo: Int) {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
 @Composable
 fun Test(x: Foo, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)

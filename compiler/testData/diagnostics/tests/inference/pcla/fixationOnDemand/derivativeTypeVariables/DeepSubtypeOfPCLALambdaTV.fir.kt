@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// DUMP_INFERENCE_LOGS: FIXATION, MARKDOWN
 fun test() {
     val resultA = pcla { otvOwner ->
         // ContravariantContainer<OTv> <: ContravariantContainer<PNTv>  =>  PNTv <: OTv
@@ -14,7 +15,7 @@ fun test() {
         otvOwner.provide().function()
 
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; uninferred PNT (of fun <PNT> createDerivativeTypeVariable) & ScopeOwner")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultA<!>
@@ -56,7 +57,7 @@ fun test() {
         otvOwner.provide().function()
 
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; uninferred PNT (of fun <PNT> createDerivativeTypeVariable) & ScopeOwner")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultC<!>

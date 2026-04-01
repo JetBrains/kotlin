@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,9 +30,17 @@ abstract class AbstractResolveCandidatesFirTreeConsistencyTest : AbstractResolve
 }
 
 abstract class AbstractSourceResolveCandidatesFirTreeConsistencyTest : AbstractResolveCandidatesFirTreeConsistencyTest() {
-    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+    override val configurator: AnalysisApiTestConfigurator =
+        object : AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false) {
+            override val testPrefixes: List<String>
+                get() = super.testPrefixes.patchedChainForConsistencyTests()
+        }
 }
 
 abstract class AbstractScriptResolveCandidatesFirTreeConsistencyTest : AbstractResolveCandidatesFirTreeConsistencyTest() {
-    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
+    override val configurator: AnalysisApiTestConfigurator =
+        object : AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false) {
+            override val testPrefixes: List<String>
+                get() = super.testPrefixes.patchedChainForConsistencyTests()
+        }
 }

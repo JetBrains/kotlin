@@ -1,9 +1,10 @@
 KtPostfixExpression(182,190): 'm["a"]++'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = m["a"]
@@ -17,8 +18,11 @@ KtPostfixExpression(182,190): 'm["a"]++'
             valueParameters = []
             contextParameters = []
             callableId = kotlin/Int.inc
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
-      getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      getterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m
@@ -40,10 +44,21 @@ KtPostfixExpression(182,190): 'm["a"]++'
           ]
           contextParameters = []
           callableId = /MyMap.get
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "a" -> (KaVariableSignature:
+            name = k
+            receiverType = null
+            returnType = kotlin.String
+            symbol = k: K1
+            contextParameters = []
+            callableId = null)
+        }
       indexArguments = [
         "a"
       ]
-      setPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      setterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = /Foo
@@ -74,3 +89,16 @@ KtPostfixExpression(182,190): 'm["a"]++'
           ]
           contextParameters = []
           callableId = /Foo.set
+        typeArgumentsMapping = {
+          K2 -> (kotlin.String),
+          V2 -> (kotlin.Int)
+        }
+        valueArgumentMapping = {
+          "a" -> (KaVariableSignature:
+            name = v
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = v: V2
+            contextParameters = []
+            callableId = null)
+        }

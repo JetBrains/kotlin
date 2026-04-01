@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.packageFqName
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph.Kind
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -50,6 +52,7 @@ abstract class VariableInitializationCheckProcessor {
             isForInitialization,
             doNotReportUninitializedVariable = false,
             doNotReportConstantUninitialized = true,
+            doNotReportStaticUninitialized = true,
             scopes = hashMapOf(),
         )
     }
@@ -63,6 +66,7 @@ abstract class VariableInitializationCheckProcessor {
         isForInitialization: Boolean,
         doNotReportUninitializedVariable: Boolean,
         doNotReportConstantUninitialized: Boolean,
+        doNotReportStaticUninitialized: Boolean,
         scopes: MutableMap<FirVariableSymbol<*>, FirDeclaration?>,
     ) {
         for (node in graph.nodes) {
@@ -71,12 +75,13 @@ abstract class VariableInitializationCheckProcessor {
             }
 
             when (node) {
-                is VariableDeclarationNode -> processVariableDeclaration(node, scope, properties, scopes)
+                is VariableDeclarationExitNode -> processVariableDeclaration(node, scope, properties, scopes)
                 is VariableAssignmentNode -> processVariableAssignment(node, properties, scope, scopes)
                 is QualifiedAccessNode -> processQualifiedAccess(
                     node, node.fir, properties,
                     doNotReportUninitializedVariable,
-                    doNotReportConstantUninitialized
+                    doNotReportConstantUninitialized,
+                    doNotReportStaticUninitialized,
                 )
                 is FunctionCallEnterNode -> {
                     val call = node.fir
@@ -88,7 +93,8 @@ abstract class VariableInitializationCheckProcessor {
                             processQualifiedAccess(
                                 receiverExitNode, receiver, properties,
                                 doNotReportUninitializedVariable,
-                                doNotReportConstantUninitialized
+                                doNotReportConstantUninitialized,
+                                doNotReportStaticUninitialized,
                             )
                         }
                     }
@@ -99,6 +105,7 @@ abstract class VariableInitializationCheckProcessor {
                         scope, isForInitialization,
                         doNotReportUninitializedVariable,
                         doNotReportConstantUninitialized,
+                        doNotReportStaticUninitialized,
                         scopes
                     )
                 }
@@ -123,7 +130,7 @@ abstract class VariableInitializationCheckProcessor {
             for (previousNode in previousCfgNodes) {
                 if (edgeFrom(previousNode).kind.isBack) continue
                 when (val assignmentNode = getValue(previousNode)[path]?.get(symbol)?.range?.location) {
-                    is VariableDeclarationNode -> {} // unreachable - `val`s with initializers do not require hindsight
+                    is VariableDeclarationExitNode -> {} // unreachable - `val`s with initializers do not require hindsight
                     is VariableAssignmentNode -> reportCapturedInitialization(assignmentNode, symbol)
                     else -> // merge node for a branching construct, e.g. `if (p) { x = 1 } else { x = 2 }` - report on all branches
                         assignmentNode?.reportErrorsOnInitializationsInInputs(symbol, path, newVisited)
@@ -147,7 +154,7 @@ abstract class VariableInitializationCheckProcessor {
     }
 
     private fun VariableInitializationInfoData.processVariableDeclaration(
-        node: VariableDeclarationNode,
+        node: VariableDeclarationExitNode,
         scope: FirDeclaration?,
         properties: Set<FirVariableSymbol<*>>,
         scopes: MutableMap<FirVariableSymbol<*>, FirDeclaration?>,
@@ -203,12 +210,14 @@ abstract class VariableInitializationCheckProcessor {
         properties: Set<FirVariableSymbol<*>>,
         doNotReportUninitializedVariable: Boolean,
         doNotReportConstantUninitialized: Boolean,
+        doNotReportStaticUninitialized: Boolean,
     ) {
         if (doNotReportUninitializedVariable) return
         if (expression is FirWhenSubjectExpression) return
         if (expression.resolvedType.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes)) return
         val symbol = expression.calleeReference.toResolvedVariableSymbol() ?: return
         if (doNotReportConstantUninitialized && symbol.isConst) return
+        if (doNotReportStaticUninitialized && symbol.isStatic && symbol !is FirEnumEntrySymbol) return
         if (symbol.source?.kind != KtRealSourceElementKind) return
         if (
             !symbol.isLateInit &&
@@ -236,6 +245,7 @@ abstract class VariableInitializationCheckProcessor {
         isForInitialization: Boolean,
         doNotReportUninitializedVariable: Boolean,
         doNotReportConstantUninitialized: Boolean,
+        doNotReportStaticUninitialized: Boolean,
         scopes: MutableMap<FirVariableSymbol<*>, FirDeclaration?>,
     ) {
         // In the class case, subgraphs of the exit node are member functions, which are considered to not
@@ -254,6 +264,8 @@ abstract class VariableInitializationCheckProcessor {
             // allows "regular" properties to reference constant properties out-of-order, but all other
             // property references must be in-order.
             val isSubGraphConstProperty = (subGraph.declaration as? FirProperty)?.isConst == true
+            // Similarly, instance properties are allowed to access companion properties during initialization out-of-order.
+            val isSubGraphStaticProperty = (subGraph.declaration as? FirProperty)?.isStatic == true
 
             val newScope = subGraph.declaration?.takeIf { !it.evaluatedInPlace } ?: scope
             runCheck(
@@ -261,6 +273,7 @@ abstract class VariableInitializationCheckProcessor {
                 isForInitialization,
                 doNotReportUninitializedVariable = doNotReportUninitializedVariable || doNotReportForSubGraph,
                 doNotReportConstantUninitialized = doNotReportConstantUninitialized && !isSubGraphConstProperty,
+                doNotReportStaticUninitialized = doNotReportStaticUninitialized && !isSubGraphStaticProperty,
                 scopes
             )
         }
@@ -346,7 +359,7 @@ fun buildRecursionErrorMessage(
     return buildString {
         appendLine("Node has already been visited and could result in infinite recursion.")
         appendLine()
-        append("File Path: ").appendLine(context.containingFilePath)
+        append("File Path: ").appendLine(context.containingFile?.path)
         append("Variable: ").appendLine(symbol.getDebugFqName())
         appendLine("Declarations:")
         problemNode.firstGraphDeclaration()?.let { declaration ->
@@ -368,7 +381,7 @@ private fun FirBasedSymbol<*>.getDebugFqName(): FqName {
     return when (val fir = this.fir) {
         is FirFile -> fir.packageFqName.child(Name.identifier(fir.name))
         is FirScript -> fir.symbol.fqName
-        is FirReplSnippet -> FqName.topLevel(fir.name)
+        is FirReplSnippet -> fir.snippetClass.symbol.classId.asSingleFqName()
         is FirClassLikeDeclaration -> fir.symbol.classId.asSingleFqName()
         is FirTypeParameter -> fir.containingDeclarationSymbol.getDebugFqName().child(fir.name)
         is FirAnonymousInitializer -> fir.containingDeclarationSymbol.getDebugFqName().child(Name.special("<init>"))

@@ -1,8 +1,8 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -33,21 +33,34 @@ dependencies {
     testFixturesApi(commonDependency("org.jetbrains.kotlinx", "kotlinx-metadata-klib"))
     testFixturesImplementation(libs.kotlinx.coroutines.core) { isTransitive = false }
 
+    testFixturesApi(project(":compiler:cli:cli-native-klib"))
     testRuntimeOnly(libs.intellij.fastutil)
+    testImplementation(testFixtures(project(":native:native.tests:klib-compatibility")))
+    if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
+        testImplementation(project(":native:cli-native"))
+    }
 }
 
 sourceSets {
     "main" { none() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
 testsJar {}
 
 projectTests {
+    testData(isolated, "testData")
+    testData(project(":compiler").isolated, "testData")
+    testData(project(":kotlin-test").isolated, "common/src/test/kotlin")
+
+    // From StdlibTest
+    testData(project(":kotlin-stdlib").isolated, "test")
+    testData(project(":kotlin-stdlib").isolated, "common/test")
+    testData(project(":kotlin-stdlib").isolated, "native-wasm/test")
+    // :kotlin-native:runtime project availability depends on kotlin.native.enabled=true
+    testData(rootProject.isolated, "kotlin-native/runtime/test")
+
     // Tasks that run different sorts of tests. Most frequent use case: running specific tests at TeamCity.
     nativeTestTask("infrastructureTest", "infrastructure")
     nativeTestTask("stdlibTest", "stdlib")
@@ -75,7 +88,7 @@ projectTests {
             // See also kotlin-native/build-tools/src/main/kotlin/org/jetbrains/kotlin/nativeFullCrossDist.kt
             systemProperty(
                 "kotlin.native.internal.fullCrossDistEnabled",
-                kotlinBuildProperties.getOrNull("kotlin.native.pathToDarwinDist") != null
+                kotlinBuildProperties.stringProperty("kotlin.native.pathToDarwinDist").orNull != null
             )
         }
 
@@ -85,7 +98,7 @@ projectTests {
         jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
     }
 
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateNativeTestsKt") {
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateNativeTestsKt", generateTestsInBuildDirectory = true) {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     }
 }

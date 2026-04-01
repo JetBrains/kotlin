@@ -6,6 +6,7 @@ import primitive_types
 import collection_types
 import data
 import receivers
+import consume_consuming
 
 @Test
 func testCallingClosureSentToKotlin() throws {
@@ -18,6 +19,24 @@ func testCallingClosureSentToKotlin() throws {
     try #require(i == 1)
     call_consumed_simple_block()
     try #require(i == 2)
+}
+
+@Test
+func testSimpleProduceBlock() throws {
+    let block = foo_produce_simple()
+    try #require(foo_produce_simple_counter == 0)
+    block()
+    try #require(foo_produce_simple_counter == 1)
+    block()
+    try #require(foo_produce_simple_counter == 2)
+}
+
+@Test
+func testSimpleProduceBlockReturningInt() throws {
+    let block = foo_produce_simple_int()
+    try #require(block() == 1)
+    try #require(block() == 2)
+    try #require(block() == 3)
 }
 
 @Test
@@ -61,6 +80,20 @@ func testBlockWithOptRefType() throws {
     receivedB = callOptRefBlock(with: nil)
     try #require(receivedB == nil)
     try #require(lastB == nil)
+}
+
+@Test
+func testProduceBlockWithOptRefType() throws {
+    let block = produceOptionalId()
+    var receivedB: Bar? = nil
+
+    receivedB = block(Bar(i: 0))
+    try #require(receivedB!.i == 1)
+    try #require(last_seen_bar_by_produceOptionalId!.i == 0)
+
+    receivedB = block(nil)
+    try #require(receivedB == nil)
+    try #require(last_seen_bar_by_produceOptionalId == nil)
 }
 
 @Test
@@ -109,6 +142,16 @@ func testBlockWithListType() throws {
 }
 
 @Test
+func testProduceBlockWithListType() throws {
+    let block = produceListId()
+    var received: [Int32] = []
+
+    received = block([1, 2, 3])
+    try #require(received == [3, 2, 1])
+    try #require(last_seen_bar_by_produceListId == [1, 2, 3])
+}
+
+@Test
 func testFunctionWithIntReceiver() throws {
     var received: Int32? = nil
     fooReceiverInt { it in
@@ -143,4 +186,24 @@ func testFunctionWithListReceiver() throws {
     }
     try #require(received!.count == 3)
     try #require(received == [1, 2, 3])
+}
+
+@Test
+func testProduceBlockWithStringReceiver() throws {
+    let block = produceWithStringReceiver()
+    var received: String = ""
+
+    received = block("hello")
+    try #require(received == "hellohello")
+    try #require(last_seen_bar_by_produceWithStringReceiver == "hello")
+}
+
+@Test
+func testConsumeConsuming() throws {
+    var range: Swift.ClosedRange<Swift.Int32>? = nil
+    foo_consume_consuming { block in
+        range = block(1, 3)
+    }
+    #expect(range!.contains(2))
+    #expect(!range!.contains(11))
 }

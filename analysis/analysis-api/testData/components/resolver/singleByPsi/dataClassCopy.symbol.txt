@@ -1,0 +1,5 @@
+KtNameReferenceExpression(82,86): 'copy'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Data.copy(<dispatch receiver>: Data, aaa: kotlin.Int): Data
+    ]

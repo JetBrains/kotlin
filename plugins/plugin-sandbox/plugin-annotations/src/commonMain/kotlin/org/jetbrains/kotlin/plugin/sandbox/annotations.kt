@@ -77,6 +77,7 @@ annotation class AddNestedGeneratedClass
 annotation class GeneratedEntityType
 
 @Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPEALIAS, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY)
 annotation class EmitMetadata(val value: Int)
 
 @Retention(AnnotationRetention.SOURCE)
@@ -87,3 +88,6 @@ annotation class GenerateBodyUsingEmittedMetadata
  * in the annotated function
  */
 annotation class CallSpecifiedFunction(val functionName: String)
+
+annotation class GenerateFunctionWithAnnotatedParameters
+annotation class AnnotationWithStringValue(val value: String)

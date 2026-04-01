@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.builder.CompanionBlockCollector
 import org.jetbrains.kotlin.fir.declarations.builder.FirClassBuilder
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierList
@@ -24,6 +25,7 @@ class ClassWrapper(
     val delegatedSelfTypeRef: FirTypeRef,
     val delegatedSuperTypeRef: FirTypeRef,
     val delegatedSuperCalls: List<DelegatedConstructorWrapper>,
+    val companionBlockCollector: CompanionBlockCollector,
 ) {
 
     fun isEnumEntry(): Boolean {

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
@@ -502,18 +503,33 @@ internal abstract class IrExpectActualMatchingContext(
 
     override val CallableSymbolMarker.hasStableParameterNames: Boolean
         get() {
-            var ir = asIr()
-
-            if (ir.isFakeOverride && ir is IrOverridableDeclaration<*>) {
-                ir.resolveFakeOverrideMaybeAbstract()?.let { ir = it }
-            }
-
+            val ir = asIrResolvingFakeOverrides()
             return when (ir.origin) {
                 IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
                 IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB,
-                -> false
+                    -> false
                 else -> true
             }
+        }
+
+    private fun CallableSymbolMarker.asIrResolvingFakeOverrides(): IrDeclaration {
+        var ir = asIr()
+        if (ir.isFakeOverride && ir is IrOverridableDeclaration<*>) {
+            ir.resolveFakeOverrideMaybeAbstract()?.let { ir = it }
+        }
+        return ir
+    }
+
+    private val objCAnnotations: List<ClassId> = run {
+        val packageFqName = FqName("kotlinx.cinterop")
+        listOf("ObjCMethod", "ObjCConstructor", "ObjCFactory")
+            .map { ClassId(packageFqName, Name.identifier(it)) }
+    }
+
+    override val CallableSymbolMarker.shouldMatchByParameterNames: Boolean
+        get() {
+            val ir = asIrResolvingFakeOverrides()
+            return ir.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB && objCAnnotations.any { ir.hasAnnotation(it) }
         }
 
     override val CallableSymbolMarker.isJavaField: Boolean

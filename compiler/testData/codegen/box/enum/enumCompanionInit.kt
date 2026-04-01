@@ -1,6 +1,8 @@
 // DONT_TARGET_EXACT_BACKEND: JS_IR
 // DONT_TARGET_EXACT_BACKEND: JS_IR_ES6
 // DONT_TARGET_EXACT_BACKEND: WASM_JS, WASM_WASI
+// ^KT-83337 Difference in behavior on nested class initialization
+
 var result = ""
 
 enum class E(a: String) {

@@ -51,7 +51,7 @@ class Merger(
                     .also { f.classes.clear() }
 
                 classModels.entries.forEach { (name, model) ->
-                    f.classes[rename(name)] = JsIrIcClassModel(model.superClasses.map { rename(it) }).also {
+                    f.classes[rename(name)] = JsIrIcClassModel(model.dependsOnClasses.map { rename(it) }).also {
                         it.preDeclarationBlock.statements += model.preDeclarationBlock.statements
                         it.postDeclarationBlock.statements += model.postDeclarationBlock.statements
                         rename(it.preDeclarationBlock)
@@ -300,7 +300,7 @@ class Merger(
 
         DFS.dfs(
             classModelMap.keys,
-            { classModelMap[it]?.superClasses ?: emptyList() },
+            { classModelMap[it]?.dependsOnClasses ?: emptyList() },
             declarationHandler
         )
     }
@@ -335,7 +335,7 @@ class Merger(
         if (name == null) return this
 
         return when (this) {
-            is JsVars -> JsVars(JsVars.JsVar(name, vars.single().initExpression))
+            is JsVars -> JsVars(JsVars.Variant.Var, JsVars.JsVar(name, vars.single().initExpression))
             is JsImport -> JsImport(
                 module,
                 when (target) {

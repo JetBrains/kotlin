@@ -103,6 +103,6 @@ private fun ConstantValue<*>.toRuntimeValue(): Any? = when (this) {
 // and implement annotationType method (see #KT-16621 for details).
 // TODO: instead of the workaround described above, consider using a sum-type for returning errors from constructAnnotation
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-class InvalidScriptResolverAnnotation(val name: String, val annParams: List<Pair<String?, Any?>>?, val error: Exception? = null) : Annotation, java.lang.annotation.Annotation {
+class InvalidScriptResolverAnnotation(val name: String, @Suppress("unused") val annParams: List<Pair<String?, Any?>>?, val error: Exception? = null) : Annotation, java.lang.annotation.Annotation {
     override fun annotationType(): Class<out Annotation> = InvalidScriptResolverAnnotation::class.java
 }

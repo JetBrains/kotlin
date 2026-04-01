@@ -101,7 +101,7 @@ value class CompilerPlugins(val compilerPluginJars: Set<File>) {
  * The set of custom (external) klibs that should be passed to the Kotlin/Native compiler.
  */
 @JvmInline
-internal value class CustomKlibs(val klibs: Set<File>) {
+value class CustomKlibs(val klibs: Set<File>) {
     init {
         val invalidKlibs = klibs.filterNot { it.isDirectory || (it.isFile && it.extension == "klib") }
         assertTrue(invalidKlibs.isEmpty()) {
@@ -182,7 +182,7 @@ class ExplicitBinaryOptions(private val rawOptions: List<String>) {
         parseBinaryOptions(rawOptions.toTypedArray(), { println(it) }, { error(it) })
     }
 
-    inline fun <reified T> getOrNull(key: CompilerConfigurationKey<T>): T? =
+    inline fun <reified T : Any> getOrNull(key: CompilerConfigurationKey<T>): T? =
         options.singleOrNull { it.compilerConfigurationKey == key }?.value as? T
 }
 
@@ -273,9 +273,8 @@ sealed class CacheMode {
             testTarget: KonanTarget,
             cacheKind: String,
             debuggable: Boolean,
-            partialLinkageEnabled: Boolean,
             checkStateAtExternalCalls: Boolean,
-        ) = "$testTarget${if (debuggable) "-g" else ""}${cacheKind}${if (checkStateAtExternalCalls) "-check_state_at_external_calls" else ""}-user${if (partialLinkageEnabled) "-pl" else ""}"
+        ) = "$testTarget${if (debuggable) "-g" else ""}${cacheKind}${if (checkStateAtExternalCalls) "-check_state_at_external_calls" else ""}-user-pl"
     }
 }
 

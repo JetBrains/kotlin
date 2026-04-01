@@ -10,14 +10,37 @@ sealed class ConstantValueKind(val asString: kotlin.String) {
     object Boolean : ConstantValueKind("Boolean")
     object Char : ConstantValueKind("Char")
 
-    object Byte : ConstantValueKind("Byte")
-    object UnsignedByte : ConstantValueKind("UByte")
-    object Short : ConstantValueKind("Short")
-    object UnsignedShort : ConstantValueKind("UShort")
-    object Int : ConstantValueKind("Int")
-    object UnsignedInt : ConstantValueKind("UInt")
-    object Long : ConstantValueKind("Long")
-    object UnsignedLong : ConstantValueKind("ULong")
+    object Byte : ConstantValueKind("Byte") {
+        override fun toUnsigned(): ConstantValueKind = UnsignedByte
+    }
+
+    object UnsignedByte : ConstantValueKind("UByte") {
+        override fun toSigned(): ConstantValueKind = Byte
+    }
+
+    object Short : ConstantValueKind("Short") {
+        override fun toUnsigned(): ConstantValueKind = UnsignedShort
+    }
+
+    object UnsignedShort : ConstantValueKind("UShort") {
+        override fun toSigned(): ConstantValueKind = Short
+    }
+
+    object Int : ConstantValueKind("Int") {
+        override fun toUnsigned(): ConstantValueKind = UnsignedInt
+    }
+
+    object UnsignedInt : ConstantValueKind("UInt") {
+        override fun toSigned(): ConstantValueKind = Int
+    }
+
+    object Long : ConstantValueKind("Long") {
+        override fun toUnsigned(): ConstantValueKind = UnsignedLong
+    }
+
+    object UnsignedLong : ConstantValueKind("ULong") {
+        override fun toSigned(): ConstantValueKind = Long
+    }
 
     object String : ConstantValueKind("String")
 
@@ -26,8 +49,18 @@ sealed class ConstantValueKind(val asString: kotlin.String) {
 
     object Error : ConstantValueKind("Error")
 
-    object IntegerLiteral : ConstantValueKind("IntegerLiteral")
-    object UnsignedIntegerLiteral : ConstantValueKind("UnsignedIntegerLiteral")
+    object IntegerLiteral : ConstantValueKind("IntegerLiteral") {
+        override fun toUnsigned(): ConstantValueKind = UnsignedIntegerLiteral
+    }
+
+    object UnsignedIntegerLiteral : ConstantValueKind("UnsignedIntegerLiteral") {
+        override fun toSigned(): ConstantValueKind = IntegerLiteral
+    }
+
+    val isUnsigned: kotlin.Boolean get() = asString[0] == 'U'
+
+    open fun toSigned(): ConstantValueKind = this
+    open fun toUnsigned(): ConstantValueKind = this
 
     override fun toString() = asString
 }

@@ -1,5 +1,5 @@
 FILE: tryFinally.kt
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun test_1(f: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final inline fun test_1(f: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(f, EXACTLY_ONCE)
@@ -19,7 +19,7 @@ FILE: tryFinally.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun test_2(f: R|() -> kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final inline fun test_2(f: R|() -> kotlin/Int|): R|kotlin/Int|
         [R|Contract description]
          <
             CallsInPlace(f, EXACTLY_ONCE)
@@ -40,7 +40,7 @@ FILE: tryFinally.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun test_3(f: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final inline fun test_3(f: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(f, EXACTLY_ONCE)
@@ -60,7 +60,7 @@ FILE: tryFinally.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun test_4(f: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final inline fun test_4(f: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(f, EXACTLY_ONCE)
@@ -81,7 +81,7 @@ FILE: tryFinally.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun test_5(f: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final inline fun test_5(f: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(f, EXACTLY_ONCE)
@@ -104,7 +104,7 @@ FILE: tryFinally.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun test_6(f: R|() -> kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final inline fun test_6(f: R|() -> kotlin/Int|): R|kotlin/Int|
         [R|Contract description]
          <
             CallsInPlace(f, EXACTLY_ONCE)
@@ -127,7 +127,7 @@ FILE: tryFinally.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun test_7(f: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final inline fun test_7(f: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(f, EXACTLY_ONCE)
@@ -149,7 +149,7 @@ FILE: tryFinally.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun test_8(f: R|() -> kotlin/Int|): R|kotlin/Int|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final inline fun test_8(f: R|() -> kotlin/Int|): R|kotlin/Int|
         [R|Contract description]
          <
             CallsInPlace(f, EXACTLY_ONCE)

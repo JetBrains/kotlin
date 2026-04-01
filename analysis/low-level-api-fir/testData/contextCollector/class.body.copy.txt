@@ -17,6 +17,7 @@ Tower Data Context:
                 FirRegularClassSymbol public final? inner class InnerClass : R|kotlin/Any|
                 FirRegularClassSymbol public final? class NestedClass : R|kotlin/Any|
                 FirRegularClassSymbol public final? object NestedObject : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
     Element 7
         Implicit receiver:
             FirRegularClassSymbol public final class MyClass : R|kotlin/Any|

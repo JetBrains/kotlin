@@ -43,6 +43,14 @@ class ObjCExportObjCNameAnnotation(
     val isExact: Boolean,
 )
 
+/**
+ * Represents the values resolved from the [kotlin.native.ObjCEnum.EntryName] annotation.
+ */
+class ObjCExportObjCEnumEntryNameAnnotation(
+    val objCName: String?,
+    val swiftName: String?,
+)
+
 internal fun KaAnnotatedSymbol.resolveObjCNameAnnotation(): ObjCExportObjCNameAnnotation? {
     val annotation = annotations.find { it.classId?.asSingleFqName() == KonanFqNames.objCName } ?: return null
 
@@ -53,11 +61,21 @@ internal fun KaAnnotatedSymbol.resolveObjCNameAnnotation(): ObjCExportObjCNameAn
     )
 }
 
-private fun KaAnnotation.findArgument(name: String): KaNamedAnnotationValue? {
+internal fun KaAnnotatedSymbol.resolveObjCEnumEntryNameAnnotation(): ObjCExportObjCEnumEntryNameAnnotation? {
+    val annotation = annotations.find { it.classId?.asSingleFqName() == KonanFqNames.objCEnumEntryName } ?: return null
+
+    return ObjCExportObjCEnumEntryNameAnnotation(
+        objCName = annotation.findArgument("name")?.resolveStringConstantValue(),
+        swiftName = annotation.findArgument("swiftName")?.resolveStringConstantValue(),
+    )
+}
+
+
+internal fun KaAnnotation.findArgument(name: String): KaNamedAnnotationValue? {
     return arguments.find { it.name.identifier == name }
 }
 
-private fun KaNamedAnnotationValue.resolveStringConstantValue(): String? {
+internal fun KaNamedAnnotationValue.resolveStringConstantValue(): String? {
     return expression.let { it as? KaAnnotationValue.ConstantValue }?.value
         ?.let { it as? StringValue }
         ?.value

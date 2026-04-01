@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.independentSourceDirectoryPath
+import org.jetbrains.kotlin.test.services.independentSourceDirectoryPathsTransitive
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.services.transitiveDependsOnDependencies
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
@@ -131,13 +131,19 @@ class IrTextDumpHandler(
 
         pathRelativizer.addModule(module)
 
+        val ignoreIrExpectFlag = CodegenTestDirectives.IGNORE_IR_EXPECT_FLAG in module.directives
+
         val dumpOptions = DumpIrTreeOptions(
             normalizeNames = true,
             printFacadeClassInFqNames = false,
             declarationFlagsFilter = FlagsFilter { declaration, isReference, flags ->
                 // By coincidence, there is a huge number of cases in IR text test data files
                 // when flags are still rendered for references to fields and classes.
-                flags.takeIf { !isReference || declaration is IrField || declaration is IrClass }.orEmpty()
+                var filteredFlags = flags.takeIf { !isReference || declaration is IrField || declaration is IrClass }.orEmpty()
+                if (ignoreIrExpectFlag && filteredFlags.isNotEmpty()) {
+                    filteredFlags = filteredFlags.filter { it != "expect" }
+                }
+                filteredFlags
             },
             isHiddenDeclaration = { isHiddenDeclaration(it, info.irBuiltIns) },
             stableOrder = true,
@@ -182,7 +188,7 @@ class IrTextDumpHandler(
         ) {
             // irBuiltIns.symbolFinder sometimes returns unbound symbols in JVM K1 tests.
             // Use IrPluginContext for this instead, it works okay.
-            return (this as IrBackendInput.JvmIrBackendInput).backendInput.pluginContext?.referenceClass(classId)?.owner
+            return (this as IrBackendInput.JvmIrBackendInput).backendInput.pluginContext?.finderForBuiltins()?.findClass(classId)?.owner
                 ?: assertions.fail { "Can't find a class in external dependencies: $externalClassId" }
         }
 
@@ -217,9 +223,7 @@ private class IrFileEntryPathRelativizer(private val testServices: TestServices)
     private val relativizedPathsCache = mutableMapOf<String, String>()
 
     fun addModule(module: TestModule) {
-        module.transitiveDependsOnDependencies(includeSelf = true).forEach {
-            absolutePathPrefixes += it.independentSourceDirectoryPath(testServices)
-        }
+        absolutePathPrefixes.addAll(module.independentSourceDirectoryPathsTransitive(testServices))
     }
 
     fun getRelativePath(fullPath: String): String = relativizedPathsCache.getOrPut(fullPath) {

@@ -227,27 +227,6 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
         }
     }
 
-    @Test
-    fun `apiCheck should be run when we run check`() {
-        val runner = test {
-            buildGradleKts {
-                resolve("/examples/gradle/base/withPlugin.gradle.kts")
-            }
-
-            emptyApiFile(projectName = rootProjectDir.name)
-
-            runner {
-                arguments.add(":check")
-            }
-        }
-
-        runner.build().apply {
-            assertTaskUpToDate(":check")
-            assertTaskNotRun(":checkKotlinAbi")
-        }
-    }
-
-
     private fun underlyingFsIsCaseSensitive(): Boolean {
         val f = Files.createTempFile("UPPER", "UPPER").toFile()
         f.deleteOnExit()

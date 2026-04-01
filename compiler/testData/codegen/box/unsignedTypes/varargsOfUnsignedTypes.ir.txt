@@ -1,4 +1,10 @@
-FILE fqName:<root> fileName:/varargsOfUnsignedTypes.kt
+FILE fqName:<root> fileName:/lib.kt
+  FUN name:inlinedUInt visibility:public modality:FINAL returnType:kotlin.UIntArray [inline]
+    VALUE_PARAMETER kind:Regular name:us index:0 type:kotlin.UIntArray varargElementType:kotlin.UInt [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun inlinedUInt (vararg us: kotlin.UInt): kotlin.UIntArray declared in <root>'
+        GET_VAR 'us: kotlin.UIntArray declared in <root>.inlinedUInt' type=kotlin.UIntArray origin=null
+FILE fqName:<root> fileName:/main.kt
   PROPERTY name:ubyte0 visibility:public modality:FINAL [val]
     annotations:
       AnnoUByte(args = [] type=kotlin.UByteArray varargElementType=kotlin.UByte)
@@ -318,11 +324,6 @@ FILE fqName:<root> fileName:/varargsOfUnsignedTypes.kt
             CONST String type=kotlin.String value="Fail 7"
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"
-  FUN name:inlinedUInt visibility:public modality:FINAL returnType:kotlin.UIntArray [inline]
-    VALUE_PARAMETER kind:Regular name:us index:0 type:kotlin.UIntArray varargElementType:kotlin.UInt [vararg]
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun inlinedUInt (vararg us: kotlin.UInt): kotlin.UIntArray declared in <root>'
-        GET_VAR 'us: kotlin.UIntArray declared in <root>.inlinedUInt' type=kotlin.UIntArray origin=null
   FUN name:nullableUInt visibility:public modality:FINAL returnType:kotlin.UIntArray
     VALUE_PARAMETER kind:Regular name:us index:0 type:kotlin.Array<out kotlin.UInt?> varargElementType:kotlin.UInt? [vararg]
     BLOCK_BODY

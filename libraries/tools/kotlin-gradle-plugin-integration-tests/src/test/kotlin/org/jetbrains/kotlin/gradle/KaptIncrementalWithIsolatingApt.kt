@@ -24,7 +24,7 @@ import kotlin.io.path.*
 import kotlin.test.assertEquals
 
 @DisplayName("Kapt incremental tests with isolating apt")
-open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
+class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         incremental = true,
         kaptOptions = super.defaultBuildOptions.kaptOptions!!.copy(
@@ -57,8 +57,8 @@ open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             build("assemble") {
                 assertEquals(
                     setOf(
-                        "$KAPT3_STUBS_PATH/bar/UseBKt.java",
-                        "$KAPT3_STUBS_PATH/error/NonExistentClass.java"
+                        "$KAPT_STUBS_PATH/bar/UseBKt.java",
+                        "$KAPT_STUBS_PATH/error/NonExistentClass.java"
                     )
                         .map { projectPath.resolve(it).toRealPath().toString() }
                         .toSet(),
@@ -73,9 +73,9 @@ open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             build("assemble") {
                 assertEquals(
                     setOf(
-                        "$KAPT3_STUBS_PATH/bar/B.java",
-                        "$KAPT3_STUBS_PATH/bar/UseBKt.java",
-                        "$KAPT3_STUBS_PATH/error/NonExistentClass.java",
+                        "$KAPT_STUBS_PATH/bar/B.java",
+                        "$KAPT_STUBS_PATH/bar/UseBKt.java",
+                        "$KAPT_STUBS_PATH/error/NonExistentClass.java",
                     )
                         .map { projectPath.resolve(it).toRealPath().toString() }
                         .toSet(),
@@ -259,18 +259,18 @@ open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             )
 
             val annotatedKotlinStubs = listOf(
-                "$KAPT3_STUBS_PATH/foo/A.java",
-                "$KAPT3_STUBS_PATH/bar/B.java",
-                "$KAPT3_STUBS_PATH/bar/UseBKt.java",
-                "$KAPT3_STUBS_PATH/baz/UtilKt.java",
-                "$KAPT3_STUBS_PATH/baz/UtilKt.java",
-                "$KAPT3_STUBS_PATH/jvmName/Math.java",
-                "$KAPT3_STUBS_PATH/error/NonExistentClass.java"
+                "$KAPT_STUBS_PATH/foo/A.java",
+                "$KAPT_STUBS_PATH/bar/B.java",
+                "$KAPT_STUBS_PATH/bar/UseBKt.java",
+                "$KAPT_STUBS_PATH/baz/UtilKt.java",
+                "$KAPT_STUBS_PATH/baz/UtilKt.java",
+                "$KAPT_STUBS_PATH/jvmName/Math.java",
+                "$KAPT_STUBS_PATH/error/NonExistentClass.java"
             )
 
             val allKotlinStubs = annotatedKotlinStubs + listOf(
-                "$KAPT3_STUBS_PATH/delegate/Delegate.java",
-                "$KAPT3_STUBS_PATH/delegate/Usage.java"
+                "$KAPT_STUBS_PATH/delegate/Delegate.java",
+                "$KAPT_STUBS_PATH/delegate/Usage.java"
             )
 
             build("clean", "assemble") {
@@ -309,13 +309,6 @@ open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = providedJdk.location
         ) {
-            // Remove the once minimal supported AGP version will be 8.1.0: https://issuetracker.google.com/issues/260059413
-            gradleProperties.appendText(
-                """
-                |kotlin.jvm.target.validation.mode=warning
-                """.trimMargin()
-            )
-
             build(
                 "clean",
                 ":mylibrary:assembleDebug",
@@ -331,7 +324,6 @@ open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             build(":mylibrary:assembleDebug") {
                 assertEquals(
                     listOf(
-                        "baseLibrary/build/tmp/kapt3/stubs/debug/error/NonExistentClass.java",
                         "mylibrary/src/main/java/com/example/lib/ExampleParcel.java",
                         "baseLibrary/src/main/java/com/example/lib2/basemodule/BaseClassParcel.java",
                     ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),

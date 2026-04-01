@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/contextWithAnnotation.kt
   CLASS ANNOTATION_CLASS name:Ann modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
-      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:TYPE' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
+      Target(allowedTargets = [AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Ann
     CONSTRUCTOR visibility:public returnType:<root>.Ann [primary]
       BLOCK_BODY
@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/contextWithAnnotation.kt
         public open fun toString (): kotlin.String declared in kotlin.Annotation
   CLASS ANNOTATION_CLASS name:AnnotationWithConstructor modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
-      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:TYPE' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:FUNCTION' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:PROPERTY' type=kotlin.annotation.AnnotationTarget] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
+      Target(allowedTargets = [AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.AnnotationWithConstructor
     PROPERTY name:k visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:k type:kotlin.String visibility:private [final]

@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.ModelTarget
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseSet
+import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.ir.backend.js.JsICContext
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
@@ -22,11 +24,12 @@ import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.engine.ScriptExecutionException
-import org.jetbrains.kotlin.js.test.ir.AbstractJsCompilerInvocationTest
-import org.jetbrains.kotlin.js.test.ir.JsCompilerInvocationTestConfiguration
+import org.jetbrains.kotlin.js.test.runners.AbstractJsCompilerInvocationTest
+import org.jetbrains.kotlin.js.test.runners.JsCompilerInvocationTestConfiguration
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
@@ -59,11 +62,14 @@ abstract class JsAbstractInvalidationTest(
     override val kotlinTestKLib: String =
         File(System.getProperty("kotlin.js.kotlin.test.klib.path") ?: error("Please set kotlin.test path")).canonicalPath
 
+    open val libraryNamesToExcludeFromStats
+        get() = setOf(STDLIB_MODULE_NAME, KOTLIN_TEST_MODULE_NAME)
+
     final override val rootDisposable: TestDisposable =
         TestDisposable("${JsAbstractInvalidationTest::class.simpleName}.rootDisposable")
 
     override val environment: KotlinCoreEnvironment =
-        KotlinCoreEnvironment.createForParallelTests(rootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+        KotlinCoreEnvironment.createForParallelTests(rootDisposable, CompilerConfiguration.create(), EnvironmentConfigFiles.JS_CONFIG_FILES)
 
     override fun testConfiguration(buildDir: File): KlibCompilerInvocationTestUtils.TestConfiguration =
         JsCompilerInvocationTestConfiguration(buildDir, AbstractJsCompilerInvocationTest.CompilerType.WITH_IC)
@@ -86,6 +92,7 @@ abstract class JsAbstractInvalidationTest(
         )
         copy.put(JSConfigurationKeys.USE_ES6_CLASSES, targetBackend == TargetBackend.JS_IR_ES6)
         copy.put(JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR, targetBackend == TargetBackend.JS_IR_ES6)
+        copy.targetPlatform = JsPlatforms.defaultJsPlatform
         return copy
     }
 
@@ -132,6 +139,7 @@ abstract class JsAbstractInvalidationTest(
                     includedLibrary = mainModuleInfo.modulePath,
                 ).apply {
                     put(JSConfigurationKeys.GENERATE_DTS, projectInfo.checkTypeScriptDefinitions)
+                    put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, SourceMapSourceEmbedding.NEVER)
                 }
 
                 val dirtyData = when (granularity) {
@@ -139,7 +147,7 @@ abstract class JsAbstractInvalidationTest(
                     else -> projStep.dirtyJsModules
                 }
 
-                configuration.phaseConfig = getPhaseConfig(projStep.id)
+                configuration.phaseConfig = createPhaseConfig(projStep.id, buildDir)
                 val icContext = JsICContext(
                     mainArguments,
                     granularity,
@@ -180,7 +188,7 @@ abstract class JsAbstractInvalidationTest(
         }
 
         private fun verifyJsExecutableProducerBuildModules(stepId: Int, gotRebuilt: List<String>, expectedRebuilt: List<String>) {
-            val got = gotRebuilt.filter { !it.startsWith(STDLIB_MODULE_NAME) && !it.startsWith(KOTLIN_TEST_MODULE_NAME) }
+            val got = gotRebuilt.filter { moduleName -> libraryNamesToExcludeFromStats.none { moduleName.startsWith(it) } }
             JUnit4Assertions.assertSameElements(got, expectedRebuilt) {
                 "Mismatched rebuilt modules at step $stepId"
             }
@@ -230,17 +238,6 @@ abstract class JsAbstractInvalidationTest(
             }
         }
 
-        private fun getPhaseConfig(stepId: Int): PhaseConfig {
-            if (DebugMode.fromSystemProperty("kotlin.js.debugMode") < DebugMode.SUPER_DEBUG) {
-                return PhaseConfig()
-            }
-
-            return PhaseConfig(
-                toDumpStateAfter = PhaseSet.All,
-                dumpToDirectory = buildDir.resolve("irdump").resolve("step-$stepId").path
-            )
-        }
-
         private fun writeJsCode(
             stepId: Int,
             mainModuleName: String,
@@ -273,5 +270,16 @@ abstract class JsAbstractInvalidationTest(
 
             return compiledJsFiles.mapTo(prepareExternalJsFiles()) { it.absolutePath }
         }
+    }
+
+    override fun createPhaseConfig(stepId: Int, buildDir: File): PhaseConfig {
+        if (DebugMode.fromSystemProperty("kotlin.js.debugMode") < DebugMode.SUPER_DEBUG) {
+            return PhaseConfig()
+        }
+
+        return PhaseConfig(
+            toDumpStateAfter = PhaseSet.All,
+            dumpToDirectory = buildDir.resolve("irdump").resolve("step-$stepId").path
+        )
     }
 }

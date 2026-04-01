@@ -1,0 +1,9 @@
+KtCallExpression(208,319): 'sumOf { c ->'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.Int): kotlin.Int,
+      kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.UInt): kotlin.UInt
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun <T> Iterable<T>.sumOf(selector: (T) -> Int): Int
+    fun <T> Iterable<T>.sumOf(selector: (T) -> UInt): UInt>

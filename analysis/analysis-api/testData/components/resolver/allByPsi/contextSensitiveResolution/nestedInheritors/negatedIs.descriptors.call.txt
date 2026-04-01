@@ -74,21 +74,20 @@ KtWhenExpression(187,325): 'when(s) {'
   null
 
 KtNameReferenceExpression(192,193): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = Simple
-          symbol = s: Simple
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = Simple
+        symbol = s: Simple
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(201,225): '!is Left -> "not a left"'
@@ -104,7 +103,7 @@ KtUserType(205,209): 'Left'
   null
 
 KtNameReferenceExpression(205,209): 'Left'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Left>
 
@@ -127,7 +126,7 @@ KtOperationReferenceExpression(231,232): '!'
   null
 
 KtNameReferenceExpression(232,248): 'USELESS_IS_CHECK'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: USELESS_IS_CHECK>
 
@@ -156,7 +155,7 @@ KtUserType(254,262): 'Right<!>'
   null
 
 KtNameReferenceExpression(254,259): 'Right'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Right>
 
@@ -188,7 +187,7 @@ KtOperationReferenceExpression(285,286): '!'
   null
 
 KtNameReferenceExpression(286,308): 'REDUNDANT_ELSE_IN_WHEN'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: REDUNDANT_ELSE_IN_WHEN>
 

@@ -1,0 +1,6 @@
+STEP 0:
+    modifications:
+        U : a.0.kt -> a.kt
+    added file: a.kt
+STEP 1:
+    updated exports: a.kt

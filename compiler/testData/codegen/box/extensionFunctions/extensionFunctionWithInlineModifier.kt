@@ -1,3 +1,4 @@
+// FILE: lib.kt
 inline fun foo(noinline a: Int.()-> Unit) {
     a
 }
@@ -15,6 +16,7 @@ inline fun baz(a: Int.()-> Unit) {
     a(1)
 }
 
+// FILE: main.kt
 fun box(): String {
     foo { }
     bar { }

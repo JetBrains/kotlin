@@ -1,0 +1,2 @@
+KtThisExpression(65,69): 'this'
+  NO_CANDIDATES

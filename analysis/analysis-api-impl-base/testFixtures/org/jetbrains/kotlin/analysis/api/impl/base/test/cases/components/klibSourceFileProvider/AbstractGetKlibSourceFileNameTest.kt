@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
-import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.components.metadata
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
@@ -23,9 +24,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.util.DummyLogger
 import kotlin.test.fail
-import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 /**
  * Reads through the declarations provided in the .klib and renders their `klibSourceFile`
@@ -44,7 +43,11 @@ abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest(
         // We have to analyze the KLIB from a source use-site module because `KaLibraryModule`s aren't supported as use sites (KT-76042).
         analyze(mainModule.ktModule) {
             val binaryRoot = libraryModule.binaryRoots.singleOrNull() ?: fail("Expected single binary root")
-            val library = ToolingSingleFileKlibResolveStrategy.tryResolve(KonanFile(binaryRoot), DummyLogger) ?: fail("Failed loading klib")
+
+            val klibLoadingResult = KlibLoader { libraryPaths(binaryRoot) }.load()
+            klibLoadingResult.reportLoadingProblemsIfAny { _, message -> fail(message) }
+
+            val library = klibLoadingResult.librariesStdlibFirst.single()
 
             val metadata = library.metadata
             val headerProto = parseModuleHeader(metadata.moduleHeaderData)

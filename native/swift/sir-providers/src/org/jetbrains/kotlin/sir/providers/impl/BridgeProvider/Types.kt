@@ -42,6 +42,7 @@ internal sealed class CType {
     data object id : Predefined("id")
     data object NSString : Predefined("NSString *")
     data object NSNumber : Predefined("NSNumber *")
+    data object NSError : Predefined("NSError *")
     data object NSObject : Predefined("id<NSObject>") // NSProxy and NSObject conforms to this
 
     sealed class Generic(base: String, vararg args: CType) : Predefined(
@@ -121,3 +122,32 @@ internal val KotlinType.defaultValue: String
             -> "kotlin.native.internal.NativePtr.NULL"
         KotlinType.String -> ""
     }
+
+internal fun CType.toSwiftTypeName(): String = when (this) {
+    CType.Void -> "Swift.Void"
+    CType.Bool -> "Swift.Bool"
+    CType.Int8 -> "Swift.Int8"
+    CType.Int16 -> "Swift.Int16"
+    CType.Int32 -> "Swift.Int32"
+    CType.Int64 -> "Swift.Int64"
+    CType.UInt8 -> "Swift.UInt8"
+    CType.UInt16 -> "Swift.UInt16"
+    CType.UInt32 -> "Swift.UInt32"
+    CType.UInt64 -> "Swift.UInt64"
+    CType.Float -> "Swift.Float"
+    CType.Double -> "Swift.Double"
+    CType.Object -> "Swift.UnsafeMutableRawPointer"
+    CType.id -> "Any"
+    CType.NSString -> "Swift.String"
+    CType.NSError -> "Swift.Error"
+    CType.NSObject -> "Any"
+    CType.NSNumber -> "Foundation.NSNumber"
+    is CType.NullabilityAnnotated -> wrapped.toSwiftTypeName() + "?"
+    is CType.BlockPointer -> toSwiftTypeName()
+    else -> "Any"
+}
+
+internal fun CType.BlockPointer.toSwiftTypeName(): String {
+    val params = parameters.joinToString(", ") { it.toSwiftTypeName() }
+    return "($params) -> ${returnType.toSwiftTypeName()}"
+}

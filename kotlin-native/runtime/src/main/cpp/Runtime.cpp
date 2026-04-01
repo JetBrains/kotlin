@@ -50,7 +50,6 @@ enum {
   ALLOC_THREAD_LOCAL_GLOBALS = 0,
   INIT_GLOBALS = 1,
   INIT_THREAD_LOCAL_GLOBALS = 2,
-  DEINIT_GLOBALS = 3
 };
 
 void InitOrDeinitGlobalVariables(int initialize, MemoryState* memory) {
@@ -255,6 +254,15 @@ KInt Konan_Platform_getCpuArchitecture() {
 
 KBoolean Konan_Platform_isDebugBinary() {
   return kotlin::compiler::shouldContainDebugInfo();
+}
+
+KInt Konan_Platform_getAllocator() {
+    if (!compiler::pagedAllocator()) {
+        // Allocator.PER_OBJECT
+        return 1;
+    }
+    // Allocator.PAGED
+    return 0;
 }
 
 OBJ_GETTER0(Konan_Platform_getProgramName) {

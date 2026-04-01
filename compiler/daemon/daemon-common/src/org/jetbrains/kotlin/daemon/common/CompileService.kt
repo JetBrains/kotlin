@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.daemon.common
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
-import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import java.io.File
 import java.io.Serializable
 import java.rmi.Remote
@@ -35,7 +34,8 @@ interface CompileService : Remote {
     enum class TargetPlatform : Serializable {
         JVM,
         JS,
-        METADATA
+        METADATA,
+        WASM
     }
 
     companion object {
@@ -124,6 +124,19 @@ interface CompileService : Remote {
             servicesFacade: CompilerServicesFacadeBase,
             compilationResults: CompilationResults?
     ): CallResult<Int>
+
+    @Throws(RemoteException::class)
+    fun compile(
+        sessionId: Int,
+        compilerArguments: Array<out String>,
+        compilationOptions: CompilationOptions,
+        servicesFacade: CompilerServicesFacadeBase,
+        compilationResults: CompilationResults?,
+        compilationId: Int?,
+    ): CallResult<Int>
+
+    @Throws(RemoteException::class)
+    fun cancelCompilation(sessionId: Int, compilationId: Int): CallResult<Nothing>
 
     @Throws(RemoteException::class)
     fun classesFqNamesByFiles(

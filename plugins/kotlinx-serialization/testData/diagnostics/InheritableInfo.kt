@@ -1,7 +1,6 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
 // SKIP_TXT
-// USE_EXPERIMENTAL: kotlinx.serialization.ExperimentalSerializationApi
 // FILE: test.kt
 
 import kotlinx.serialization.*

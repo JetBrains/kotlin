@@ -60,44 +60,48 @@ class KotlinDeclarationInCompiledFileSearcher {
         } ?: return null
 
         if (member is PsiMethod && member.isConstructor) {
-            return container.safeAs<KtClassOrObject>()
-                ?.takeIf { it.name == memberName }
-                ?.allConstructors
-                ?.firstOrNull { doParametersMatch(member, it) }
+            val classOrObject = container.safeAs<KtClassOrObject>()?.takeIf { it.name == memberName }
+            return classOrObject?.allConstructors?.firstOrNull { doParametersMatch(member, it) } ?: classOrObject?.primaryConstructor
+            ?: classOrObject
         }
 
-        val declarations = container.declarations
+        val (regularDeclarations, companionDeclarations) = if (container is KtClass && member.hasModifierProperty(PsiModifier.STATIC)) {
+            // Compiled code cannot have more than one companion object, so we can pick the first one
+            container.declarations to container.companionObjects.firstOrNull()?.declarations.orEmpty()
+        } else {
+            container.declarations to emptyList()
+        }
+
+        val declarations = regularDeclarations + companionDeclarations
         return when (member) {
             is PsiMethod -> {
                 val names = SmartList(memberName)
                 val setter = if (JvmAbi.isGetterName(memberName) && PsiTypes.voidType() != member.returnType) {
                     propertyNameByGetMethodName(Name.identifier(memberName))?.let { names.add(it.identifier) }
+                    memberName.removePrefix("get").takeIf { it != memberName }?.let { names.add(it) }
                     false
                 } else if (JvmAbi.isSetterName(memberName) && PsiTypes.voidType() == member.returnType) {
                     propertyNamesBySetMethodName(Name.identifier(memberName)).forEach { names.add(it.identifier) }
+                    memberName.removePrefix("set").takeIf { it != memberName }?.let { names.add(it) }
                     true
                 } else null
-                declarations
-                    .firstOrNull { declaration ->
-                        val declarationName = getJvmName(declaration)
-                        when (declaration) {
-                            is KtNamedFunction -> {
-                                declarationName in names && doParametersMatch(member, declaration)
-                            }
-                            is KtProperty -> {
-                                val getterName = getJvmName(declaration.getter)
-                                val setterName = getJvmName(declaration.setter)
-                                if (setter != null) {
-                                    val accessorName = (if (setter) setterName else getterName) ?: declarationName
-                                    accessorName in names && doPropertyMatch(member, declaration, setter)
-                                } else {
-                                    getterName in names && doPropertyMatch(member, declaration, false) ||
-                                            setterName in names && doPropertyMatch(member, declaration, true)
-                                }
-                            }
-                            else -> false
-                        }
-                    }
+                declarations.firstOrNull { declaration ->
+                    doMatchDeclaration(
+                        declaration,
+                        names,
+                        member,
+                        setter,
+                        { declaration -> doParametersMatch(member, declaration) },
+                        { declaration, setter -> doPropertyMatch(member, declaration, setter) })
+                } ?: declarations.firstOrNull { declaration ->
+                    doMatchDeclaration(
+                        declaration,
+                        names,
+                        member,
+                        setter,
+                        { declaration -> doParametersMatchByName(member, declaration) },
+                        { declaration, setter -> doPropertyMatchByName(member, declaration, setter) })
+                }
             }
 
             is PsiField -> {
@@ -107,19 +111,11 @@ class KotlinDeclarationInCompiledFileSearcher {
 
                 val declarations = when {
                     container is KtFile || container is KtObjectDeclaration -> declarations
-                    member.hasModifier(JvmModifier.STATIC) -> {
-                        val nonPropertyDeclarations = declarations.filter { it is KtEnumEntry || it is KtObjectDeclaration }
-
-                        // Fields for properties from companion objects are materialized in the containing class
-                        // Compiled code cannot have more than one companion object, so we can pick the first one
-                        val propertiesFromCompanion = (container as? KtClass)?.companionObjects
-                            ?.firstOrNull()
-                            ?.declarations
-                            ?.filterIsInstance<KtProperty>()
-                            .orEmpty()
-
-                        nonPropertyDeclarations + propertiesFromCompanion
-                    }
+                    member.hasModifier(JvmModifier.STATIC) ->
+                        // Enum entries and companion objects are materialized in the containing class as fields
+                        regularDeclarations.filter { it is KtEnumEntry || it is KtObjectDeclaration && it.isCompanion() } +
+                                // Fields for properties from companion objects are materialized in the containing class
+                                companionDeclarations.filterIsInstance<KtProperty>()
 
                     else -> declarations
                 }
@@ -148,13 +144,49 @@ class KotlinDeclarationInCompiledFileSearcher {
         }
     }
 
+    private fun doMatchDeclaration(
+        declaration: KtDeclaration,
+        names: SmartList<String>,
+        member: PsiMethod,
+        setter: Boolean?,
+        functionMatcher: (declaration: KtNamedFunction) -> Boolean,
+        propertyMatcher: (declaration: KtProperty, setter: Boolean) -> Boolean,
+    ): Boolean {
+        val declarationName = getJvmName(declaration)
+        return when (declaration) {
+            is KtNamedFunction -> {
+                declarationName in names && functionMatcher(declaration)
+            }
+            is KtProperty -> {
+                val getterName = getJvmName(declaration.getter)
+                val setterName = getJvmName(declaration.setter)
+                if (setter != null) {
+                    val accessorName = (if (setter) setterName else getterName) ?: declarationName
+                    accessorName in names && propertyMatcher(declaration, setter)
+                } else {
+                    val containingClass = member.containingClass
+                    getterName in names && propertyMatcher(declaration, false) ||
+                            setterName in names && propertyMatcher(declaration, true) ||
+                            getterName == null && setterName == null && declarationName in names &&
+                            (containingClass?.isRecord == true || containingClass?.isAnnotationType == true) &&
+                            propertyMatcher(declaration, false)
+                }
+            }
+            else -> false
+        }
+    }
+
     private fun getJvmName(declaration: KtDeclaration?): String? {
         if (declaration == null) return null
         val annotationEntry = declaration.annotationEntries.firstOrNull {
             it.calleeExpression?.constructorReferenceExpression?.getReferencedName() == JvmStandardClassIds.JVM_NAME_SHORT
         }
         if (annotationEntry != null) {
-            val constantValue = (annotationEntry.stub as? KotlinAnnotationEntryStubImpl)?.valueArguments?.get(Name.identifier("name"))
+            // Decompiled stubs have value arguments,
+            // but stubs calculation has to be forced in case AST was loaded based on decompiled text and stubs were gc-collected
+            val annotationEntryStub =
+                annotationEntry.greenStub ?: annotationEntry.containingKtFile.calcStubTree().let { annotationEntry.greenStub }
+            val constantValue = (annotationEntryStub as? KotlinAnnotationEntryStubImpl)?.valueArguments?.get(Name.identifier("name"))
             if (constantValue is StringValue) {
                 return constantValue.value
             }
@@ -163,15 +195,17 @@ class KotlinDeclarationInCompiledFileSearcher {
     }
 
     private fun KtCallableDeclaration.extractContextParameters(to: MutableList<KtTypeReference>) {
-        modifierList?.contextReceiverList?.let { contextReceiverList ->
-            contextReceiverList.contextReceivers().forEach { to.add(it.typeReference()!!) }
-            contextReceiverList.contextParameters().forEach { to.add(it.typeReference!!) }
+        modifierList?.contextParameterList?.let { contextParameterList ->
+            contextParameterList.contextReceivers().forEach { to.add(it.typeReference()!!) }
+            contextParameterList.contextParameters.forEach { to.add(it.typeReference!!) }
         }
 
         receiverTypeReference?.let { to.add(it) }
     }
 
     private fun doPropertyMatch(member: PsiMethod, property: KtProperty, setter: Boolean): Boolean {
+        if (member.typeParameters.size != property.typeParameters.size) return false
+
         val ktTypes = mutableListOf<KtTypeReference>()
         property.extractContextParameters(ktTypes)
         property.typeReference?.let { ktTypes.add(it) }
@@ -184,31 +218,101 @@ class KotlinDeclarationInCompiledFileSearcher {
         }
 
         if (ktTypes.size != psiTypes.size) return false
+        val isInsideAnnotation = member.containingClass?.isAnnotationType == true
         ktTypes.zip(psiTypes).forEach { (ktType, psiType) ->
-            if (!areTypesTheSame(ktType, psiType, false)) return false
+            if (!areTypesTheSame(ktType, psiType, false, isInsideAnnotation)) return false
+        }
+        return true
+    }
+
+    private fun KtCallableDeclaration.extractContextParameterNames(to: MutableList<String>) {
+        modifierList?.contextParameterList?.let { contextParameterList ->
+            contextParameterList.contextParameters.forEach { to.add(it.name!!) }
+        }
+
+        receiverTypeReference?.let { to.add($$"$this$" + this@extractContextParameterNames.name) }
+    }
+
+    private fun doPropertyMatchByName(member: PsiMethod, property: KtProperty, setter: Boolean): Boolean {
+        if (!doTypeParametersMatchByName(member, property)) return false
+        val names = mutableListOf<String>()
+        property.extractContextParameterNames(names)
+        if (setter) {
+            names.addIfNotNull(property.setter?.parameter?.name)
+        }
+
+        val psiNames = mutableListOf<String>()
+        member.parameterList.parameters.forEach { psiNames.add(it.name) }
+
+        if (names.size != psiNames.size) return false
+        names.zip(psiNames).forEach { (ktName, psiName) ->
+            if (ktName != psiName) return false
         }
         return true
     }
 
     private fun doParametersMatch(member: PsiMethod, ktNamedFunction: KtFunction): Boolean {
-        if (!doTypeParameters(member, ktNamedFunction)) {
-            return false
-        }
+        if (!doTypeParameters(member, ktNamedFunction)) return false
 
         val ktTypes = mutableListOf<KtTypeReference>()
         ktNamedFunction.extractContextParameters(ktTypes)
 
-        val valueParameters = ktNamedFunction.valueParameters
+        return compareParameters(
+            member = member,
+            ktNamedFunction = ktNamedFunction,
+            initial = ktTypes,
+            fromKtParamMapper = { it.typeReference },
+            fromPsiMapper = { it.type },
+            matcher = { ktTypeRef, psiType ->
+                areTypesTheSame(ktTypeRef, psiType, (ktTypeRef.parent as? KtParameter)?.isVarArg == true)
+            })
+    }
+
+    private fun doTypeParametersMatchByName(member: PsiMethod, callableDeclaration: KtCallableDeclaration): Boolean {
+        if (member.typeParameters.size != callableDeclaration.typeParameters.size) return false
+        member.typeParameters.zip(callableDeclaration.typeParameters) { psiTypeParam, ktTypeParameter ->
+            if (psiTypeParam.name.toString() != ktTypeParameter.name) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun doParametersMatchByName(member: PsiMethod, ktNamedFunction: KtFunction): Boolean {
+        if (!doTypeParametersMatchByName(member, ktNamedFunction)) return false
+
+        val names = mutableListOf<String>()
+        ktNamedFunction.extractContextParameterNames(names)
+
+        return compareParameters(
+            member = member,
+            ktNamedFunction = ktNamedFunction,
+            initial = names,
+            fromKtParamMapper = { it.name },
+            fromPsiMapper = { it.name },
+            matcher = { lcName, ktName -> lcName == ktName })
+    }
+
+    private inline fun <K, P> compareParameters(
+        member: PsiMethod,
+        ktNamedFunction: KtFunction,
+        initial: MutableList<K>,
+        crossinline fromKtParamMapper: (KtParameter) -> K?,
+        crossinline fromPsiMapper: (PsiParameter) -> P,
+        crossinline matcher: (K, P) -> Boolean,
+    ): Boolean {
         val memberParameterList = member.parameterList
         val memberParametersCount = memberParameterList.parametersCount
         val parametersCount = memberParametersCount - (if (ktNamedFunction.isSuspendFunction(memberParameterList)) 1 else 0)
+
+        val valueParameters = ktNamedFunction.valueParameters
         val isJvmOverloads = ktNamedFunction.annotationEntries.any {
-            it.calleeExpression?.constructorReferenceExpression?.getReferencedName() ==
-                    JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME.shortName().asString()
+            it.calleeExpression?.constructorReferenceExpression?.getReferencedName() == JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME.shortName()
+                .asString()
         }
         val firstDefaultParametersToPass = if (isJvmOverloads) {
             val totalNumberOfParametersWithDefaultValues = valueParameters.filter { it.hasDefaultValue() }.size
-            val numberOfSkippedParameters = valueParameters.size + ktTypes.size - parametersCount
+            val numberOfSkippedParameters = valueParameters.size + initial.size - parametersCount
             totalNumberOfParametersWithDefaultValues - numberOfSkippedParameters
         } else 0
         var defaultParamIdx = 0
@@ -220,14 +324,15 @@ class KotlinDeclarationInCompiledFileSearcher {
                 defaultParamIdx++
             }
 
-            ktTypes.add(valueParameter.typeReference!!)
+            fromKtParamMapper(valueParameter)?.let(initial::add)
         }
-        if (parametersCount != ktTypes.size) return false
-        memberParameterList.parameters.map { it.type }
-            .zip(ktTypes)
-            .forEach { (psiType, ktTypeRef) ->
-                if (!areTypesTheSame(ktTypeRef, psiType, (ktTypeRef.parent as? KtParameter)?.isVarArg == true)) return false
-            }
+
+        if (parametersCount != initial.size) return false
+
+        val memberValues = memberParameterList.parameters.map(fromPsiMapper)
+        initial.zip(memberValues).forEach { (fromKt, fromPsi) ->
+            if (!matcher(fromKt, fromPsi)) return false
+        }
         return true
     }
 
@@ -265,14 +370,19 @@ class KotlinDeclarationInCompiledFileSearcher {
     /**
      * Compare erased types
      */
-    private fun areTypesTheSame(ktTypeRef: KtTypeReference, psiType: PsiType, varArgs: Boolean): Boolean {
+    private fun areTypesTheSame(
+        ktTypeRef: KtTypeReference,
+        psiType: PsiType,
+        varArgs: Boolean,
+        insideAnnotation: Boolean = false,
+    ): Boolean {
         val qualifiedName =
             getQualifiedName(ktTypeRef.typeElement, ktTypeRef.getAllModifierLists().any { it.hasSuspendModifier() }) ?: return false
         return if (psiType is PsiArrayType && psiType.componentType !is PsiPrimitiveType) {
             qualifiedName == StandardNames.FqNames.array.asString() ||
-                    varArgs && areTypesTheSame(ktTypeRef, psiType.componentType, false)
+                    varArgs && areTypesTheSame(ktTypeRef, psiType.componentType, varArgs = false, insideAnnotation = insideAnnotation)
         } else {
-            psiType.isTheSame(psiType(qualifiedName, ktTypeRef))
+            psiType.isTheSame(psiType(qualifiedName, ktTypeRef, isInsideAnnotation = insideAnnotation))
         }
     }
 

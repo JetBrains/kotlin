@@ -71,9 +71,32 @@ KtNameReferenceExpression(51,57): 'String'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(61,74): 'this((((i))))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = THIS_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<T>
+        symbol = <constructor>(i: T): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = T
+            symbol = i: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -81,35 +104,42 @@ KtConstructorDelegationCall(61,74): 'this((((i))))'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<T>
-          symbol = <constructor>(i: T): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = T
-              symbol = i: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (T)
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = THIS_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<T>
+        symbol = <constructor>(i: T, str: kotlin.String): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = T
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -117,43 +147,43 @@ KtConstructorDelegationCall(61,74): 'this((((i))))'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<T>
-          symbol = <constructor>(i: T, str: kotlin.String): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = T
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (T)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = THIS_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<T>
+        symbol = <constructor>(i: T, value: kotlin.Int): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = T
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = value: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -161,44 +191,37 @@ KtConstructorDelegationCall(61,74): 'this((((i))))'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<T>
-          symbol = <constructor>(i: T, value: kotlin.Int): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = T
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = value: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (T)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(61,65): 'this'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = THIS_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<T>
+        symbol = <constructor>(i: T): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = T
+            symbol = i: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -206,35 +229,42 @@ KtConstructorDelegationReferenceExpression(61,65): 'this'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<T>
-          symbol = <constructor>(i: T): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = T
-              symbol = i: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (T)
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = THIS_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<T>
+        symbol = <constructor>(i: T, str: kotlin.String): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = T
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -242,43 +272,43 @@ KtConstructorDelegationReferenceExpression(61,65): 'this'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<T>
-          symbol = <constructor>(i: T, str: kotlin.String): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = T
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (T)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = THIS_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<T>
+        symbol = <constructor>(i: T, value: kotlin.Int): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = T
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = value: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -286,36 +316,6 @@ KtConstructorDelegationReferenceExpression(61,65): 'this'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<T>
-          symbol = <constructor>(i: T, value: kotlin.Int): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = T
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = value: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (T)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
@@ -336,21 +336,20 @@ KtParenthesizedExpression(68,71): '(i)'
   NO_CANDIDATES
 
 KtNameReferenceExpression(69,70): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = T
-          symbol = i: T
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = T
+        symbol = i: T
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -385,9 +384,32 @@ KtNameReferenceExpression(104,107): 'Int'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = THIS_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<T>
+        symbol = <constructor>(i: T): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = T
+            symbol = i: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -395,35 +417,42 @@ KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<T>
-          symbol = <constructor>(i: T): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = T
-              symbol = i: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (T)
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = THIS_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<T>
+        symbol = <constructor>(i: T, str: kotlin.String): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = T
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -431,43 +460,43 @@ KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<T>
-          symbol = <constructor>(i: T, str: kotlin.String): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = T
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (T)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = THIS_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<T>
+        symbol = <constructor>(i: T, value: kotlin.Int): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = T
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = value: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -475,44 +504,37 @@ KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<T>
-          symbol = <constructor>(i: T, value: kotlin.Int): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = T
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = value: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (T)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(111,115): 'this'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = THIS_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<T>
+        symbol = <constructor>(i: T): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = T
+            symbol = i: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -520,35 +542,42 @@ KtConstructorDelegationReferenceExpression(111,115): 'this'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<T>
-          symbol = <constructor>(i: T): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = T
-              symbol = i: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (T)
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = THIS_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<T>
+        symbol = <constructor>(i: T, str: kotlin.String): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = T
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -556,43 +585,43 @@ KtConstructorDelegationReferenceExpression(111,115): 'this'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<T>
-          symbol = <constructor>(i: T, str: kotlin.String): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = T
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (T)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = THIS_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<T>
+        symbol = <constructor>(i: T, value: kotlin.Int): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = T
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = value: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {
         (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -600,36 +629,6 @@ KtConstructorDelegationReferenceExpression(111,115): 'this'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<T>
-          symbol = <constructor>(i: T, value: kotlin.Int): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = T
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = value: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (T)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
@@ -656,21 +655,20 @@ KtParenthesizedExpression(122,125): '(i)'
   NO_CANDIDATES
 
 KtNameReferenceExpression(123,124): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = T
-          symbol = i: T
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = T
+        symbol = i: T
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -717,9 +715,32 @@ KtParameterList(172,174): '()'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(177,189): 'super(((1)))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((1)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -727,35 +748,42 @@ KtConstructorDelegationCall(177,189): 'super(((1)))'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T, str: kotlin.String): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((1)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -763,43 +791,43 @@ KtConstructorDelegationCall(177,189): 'super(((1)))'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T, str: kotlin.String): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T, value: kotlin.Int): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = value: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((1)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -807,44 +835,37 @@ KtConstructorDelegationCall(177,189): 'super(((1)))'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T, value: kotlin.Int): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = value: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(177,182): 'super'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((1)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -852,35 +873,42 @@ KtConstructorDelegationReferenceExpression(177,182): 'super'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T, str: kotlin.String): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((1)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -888,43 +916,43 @@ KtConstructorDelegationReferenceExpression(177,182): 'super'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T, str: kotlin.String): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T, value: kotlin.Int): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = value: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((1)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -932,36 +960,6 @@ KtConstructorDelegationReferenceExpression(177,182): 'super'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T, value: kotlin.Int): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = value: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
@@ -1000,9 +998,32 @@ KtNameReferenceExpression(214,217): 'Int'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((value)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1010,35 +1031,42 @@ KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T, str: kotlin.String): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((value)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1046,43 +1074,43 @@ KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T, str: kotlin.String): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T, value: kotlin.Int): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = value: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((value)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1090,44 +1118,37 @@ KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T, value: kotlin.Int): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = value: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(221,226): 'super'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((value)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1135,35 +1156,42 @@ KtConstructorDelegationReferenceExpression(221,226): 'super'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T, str: kotlin.String): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((value)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1171,43 +1199,43 @@ KtConstructorDelegationReferenceExpression(221,226): 'super'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T, str: kotlin.String): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T, value: kotlin.Int): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = value: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((value)) -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1215,36 +1243,6 @@ KtConstructorDelegationReferenceExpression(221,226): 'super'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T, value: kotlin.Int): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = value: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
@@ -1268,21 +1266,20 @@ KtParenthesizedExpression(232,239): '(value)'
   NO_CANDIDATES
 
 KtNameReferenceExpression(233,238): 'value'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = value: kotlin.Int
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = value
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = value: kotlin.Int
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1305,9 +1302,32 @@ KtNameReferenceExpression(266,272): 'String'
   NO_CANDIDATES
 
 KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((5)) as Int -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1315,35 +1335,42 @@ KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T, str: kotlin.String): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((5)) as Int -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1351,43 +1378,43 @@ KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T, str: kotlin.String): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T, value: kotlin.Int): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = value: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((5)) as Int -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1395,44 +1422,37 @@ KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T, value: kotlin.Int): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = value: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(276,281): 'super'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((5)) as Int -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1440,35 +1460,42 @@ KtConstructorDelegationReferenceExpression(276,281): 'super'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T, str: kotlin.String): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((5)) as Int -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1476,43 +1503,43 @@ KtConstructorDelegationReferenceExpression(276,281): 'super'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T, str: kotlin.String): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(i: T, value: kotlin.Int): A<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = value: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
         ((5)) as Int -> (KaVariableSignature:
           name = i
           receiverType = null
@@ -1520,36 +1547,6 @@ KtConstructorDelegationReferenceExpression(276,281): 'super'
           symbol = i: T
           contextParameters = []
           callableId = null)
-      }
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = A<kotlin.Int>
-          symbol = <constructor>(i: T, value: kotlin.Int): A<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: T
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = value: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
       }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
     isInBestCandidates = false

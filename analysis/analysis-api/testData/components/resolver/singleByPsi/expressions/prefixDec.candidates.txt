@@ -1,9 +1,10 @@
 KtPrefixExpression(138,148): '--variable'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = variable
@@ -17,11 +18,15 @@ KtPrefixExpression(138,148): '--variable'
             valueParameters = []
             contextParameters = []
             callableId = /MyClass.dec
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = PREFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
+        isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = variable
           receiverType = null
@@ -29,4 +34,5 @@ KtPrefixExpression(138,148): '--variable'
           symbol = var variable: MyClass
           contextParameters = []
           callableId = /variable
+        typeArgumentsMapping = {}
     isInBestCandidates = true

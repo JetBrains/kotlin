@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -175,6 +177,12 @@ class ComposerParamTransformer(
         }
     }
 
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+        expression.overriddenFunctionSymbol = expression.overriddenFunctionSymbol.owner.withComposerParamIfNeeded().symbol
+
+        return super.visitRichFunctionReference(expression)
+    }
+
     private fun IrFunction.findCallInBody(): IrCall? {
         var call: IrCall? = null
         body?.acceptChildrenVoid(object : IrVisitorVoid() {
@@ -197,8 +205,9 @@ class ComposerParamTransformer(
         fn: IrSimpleFunction
     ): IrExpression {
         val type = expression.type as IrSimpleType
-        val changedParamCount = changedParamCount(type.arguments.size - /* return type */ 1, 0)
-        val arity = type.arguments.size + /* composer */ 1 + changedParamCount
+        val paramCount = type.arguments.size - /* return type */ 1
+        val changedParamCount = changedParamCount(paramCount, 0)
+        val arity = paramCount + /* composer */ 1 + changedParamCount
 
         val newType = IrSimpleTypeImpl(
             classifier = if (expression.type.isKComposableFunction()) {
@@ -356,7 +365,7 @@ class ComposerParamTransformer(
     }
 
     private fun createComposableAnnotation() =
-        IrConstructorCallImpl(
+        IrAnnotationImpl(
             startOffset = SYNTHETIC_OFFSET,
             endOffset = SYNTHETIC_OFFSET,
             type = composableIrClass.defaultType,
@@ -546,11 +555,11 @@ class ComposerParamTransformer(
         return newInvoke
     }
 
-    private fun jvmNameAnnotation(name: String): IrConstructorCall {
+    private fun jvmNameAnnotation(name: String): IrAnnotation {
         val jvmName = getTopLevelClass(JvmStandardClassIds.Annotations.JvmName)
         val ctor = jvmName.constructors.first { it.owner.isPrimary }
         val type = jvmName.createType(false, emptyList())
-        return IrConstructorCallImpl(
+        return IrAnnotationImpl(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             type = type,
@@ -577,11 +586,13 @@ class ComposerParamTransformer(
         }
 
     private fun IrSimpleFunction.isLegacyOpenFunctionWithDefault(): Boolean =
-        modality == Modality.OPEN && (
+        overriddenSymbols.isEmpty() &&
+                modality == Modality.OPEN && (
                 origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
                         parameters.any { it.hasDefaultValue() } &&
                         composeMetadata?.supportsOpenFunctionsWithDefaultParams() != true
-        ) || overriddenSymbols.any { it.owner.isLegacyOpenFunctionWithDefault() }
+                )
+                || overriddenSymbols.any { it.owner.isLegacyOpenFunctionWithDefault() }
 
 
     private fun IrSimpleFunction.hasDefaultForParam(index: Int): Boolean {
@@ -608,6 +619,29 @@ class ComposerParamTransformer(
         val typeRemapper = createTypeRemapper(symbolRemapper)
         return (transform(DeepCopyPreservingMetadata(symbolRemapper, typeRemapper), null) as T).patchDeclarationParents(initialParent)
     }
+
+    private fun IrSimpleFunction.toComparableParams(referenceFn: IrSimpleFunction): List<Pair<IrClassifierSymbol, SimpleTypeNullability>?> =
+        parameters.map {
+            when (val paramType = it.type) {
+                is IrSimpleType ->
+                    if (paramType.classifier is IrTypeParameterSymbol) {
+                        val typeParam = paramType.classifier.owner as IrTypeParameter
+                        // if a type parameter is defined on a stub,
+                        // it should be compared with matching original function's type parameter
+                        // instead of comparing each stub's type parameters
+                        val classifier = if (typeParam.parent == this) {
+                            referenceFn.typeParameters[typeParam.index].symbol
+                        } else {
+                            paramType.classifier
+                        }
+                        Pair(classifier, paramType.nullability)
+
+                    } else {
+                        Pair(paramType.classifier, paramType.nullability)
+                    }
+                else -> null
+            }
+        }
 
     private fun IrSimpleFunction.copyWithComposerParam(): IrSimpleFunction {
         assert(parameters.lastOrNull()?.name != ComposeNames.ComposerParameter) {
@@ -717,9 +751,9 @@ class ComposerParamTransformer(
             val parent = fn.parent
             if (parent is IrClass || parent is IrFile) {
                 // checking if any stubs have all same-type parameters and discarding them
-                val addedParamTypes = mutableSetOf(fn.parameters.map { it.type })
+                val addedParamTypes = mutableSetOf(fn.toComparableParams(fn))
                 stubs.forEach { stub ->
-                    val stubParamTypes = stub.parameters.map { it.type }
+                    val stubParamTypes = stub.toComparableParams(fn)
                     if (addedParamTypes.add(stubParamTypes)) {
                         parent.addChild(stub)
                     }

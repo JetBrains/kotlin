@@ -34,10 +34,7 @@ import kotlin.test.assertEquals
 class KotlinTopLevelDependenciesIT : KGPBaseTest() {
 
     override val defaultBuildOptions =
-        super.defaultBuildOptions.copy(
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-        )
+        super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
         
     @DisplayName("Top-level dependencies block FUS events")
     @GradleTest
@@ -142,6 +139,7 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
         val projectDependency = project(template, gradleVersion) {
             plugins {
                 kotlin("multiplatform")
+                id("org.gradle.maven-publish")
             }
             buildScriptInjection {
                 project.group = "foo"

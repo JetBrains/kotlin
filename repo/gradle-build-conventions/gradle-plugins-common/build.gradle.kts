@@ -43,9 +43,14 @@ repositories {
 
 dependencies {
     api(project(":utilities"))
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion.get()}")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
     implementation(libs.gradle.pluginPublish.gradlePlugin)
+
+    // Shadow plugin has some interaction with spdx plugin leading to:
+    // java.lang.ExceptionInInitializerError: No XmlService implementation found
+    // as a workaround we provide maven-xml-impl to the classpath ourselves
+    runtimeOnly(libs.maven.xml.impl)
     implementation(libs.spdx.gradlePlugin)
     implementation(libs.shadow.gradlePlugin)
 
@@ -74,4 +79,14 @@ tasks.withType<Test>().configureEach {
 
 tasks.register("checkBuild") {
     dependsOn("test")
+}
+
+project.configurations.configureEach {
+    if (name.startsWith(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME)) {
+        resolutionStrategy {
+            eachDependency {
+                if (this.requested.group == "org.jetbrains.kotlin") useVersion(libs.versions.kotlin.`for`.gradle.plugins.compilation.get())
+            }
+        }
+    }
 }

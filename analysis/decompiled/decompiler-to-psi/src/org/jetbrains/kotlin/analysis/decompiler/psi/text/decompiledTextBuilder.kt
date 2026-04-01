@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStubKind
 import org.jetbrains.kotlin.psi.stubs.impl.*
-import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -504,15 +504,15 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = PrettyP
 
         override fun visitModifierList(list: KtModifierList) {
             " ".separated(
-                { list.contextReceiverList?.accept(this) },
+                { list.contextParameterList?.accept(this) },
                 { printAnnotations(list) },
                 { printModifiers(list) },
             )
         }
 
-        override fun visitContextReceiverList(contextReceiverList: KtContextReceiverList) {
-            val contextElements = contextReceiverList.contextParameters().ifEmpty {
-                contextReceiverList.contextReceivers()
+        override fun visitContextParameterList(contextParameterList: KtContextParameterList) {
+            val contextElements = contextParameterList.contextParameters.ifEmpty {
+                contextParameterList.contextReceivers()
             }
 
             printCollection(contextElements, prefix = "context(", postfix = ")") {

@@ -35,38 +35,38 @@ KtDeclarationModifierList(59,81): '@Repeatable'
   null
 
 KtAnnotationEntry(59,70): '@Repeatable'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {}
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.annotation.Repeatable
-          symbol = <constructor>(): kotlin.annotation.Repeatable
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Repeatable
+        symbol = <constructor>(): kotlin.annotation.Repeatable
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(60,70): 'Repeatable'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {}
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.annotation.Repeatable
-          symbol = <constructor>(): kotlin.annotation.Repeatable
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Repeatable
+        symbol = <constructor>(): kotlin.annotation.Repeatable
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(60,70): 'Repeatable'
   null
@@ -102,38 +102,38 @@ KtDeclarationModifierList(122,144): '@Repeatable'
   null
 
 KtAnnotationEntry(122,133): '@Repeatable'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {}
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.annotation.Repeatable
-          symbol = <constructor>(): kotlin.annotation.Repeatable
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Repeatable
+        symbol = <constructor>(): kotlin.annotation.Repeatable
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(123,133): 'Repeatable'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {}
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.annotation.Repeatable
-          symbol = <constructor>(): kotlin.annotation.Repeatable
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Repeatable
+        symbol = <constructor>(): kotlin.annotation.Repeatable
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(123,133): 'Repeatable'
   null
@@ -175,38 +175,38 @@ KtDeclarationModifierList(185,207): '@Repeatable'
   null
 
 KtAnnotationEntry(185,196): '@Repeatable'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {}
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.annotation.Repeatable
-          symbol = <constructor>(): kotlin.annotation.Repeatable
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Repeatable
+        symbol = <constructor>(): kotlin.annotation.Repeatable
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(186,196): 'Repeatable'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {}
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.annotation.Repeatable
-          symbol = <constructor>(): kotlin.annotation.Repeatable
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Repeatable
+        symbol = <constructor>(): kotlin.annotation.Repeatable
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(186,196): 'Repeatable'
   null
@@ -338,9 +338,29 @@ KtDeclarationModifierList(423,826): '@AnnoWithArray([1, 2, 3])'
   null
 
 KtAnnotationEntry(423,448): '@AnnoWithArray([1, 2, 3])'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithArray
+        symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+        valueParameters = [
+          KaVariableSignature:
+            name = arr
+            receiverType = null
+            returnType = kotlin.IntArray
+            symbol = arr: kotlin.IntArray
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         [1, 2, 3] -> (KaVariableSignature:
           name = arr
           receiverType = null
@@ -349,31 +369,31 @@ KtAnnotationEntry(423,448): '@AnnoWithArray([1, 2, 3])'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithArray
-          symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
-          valueParameters = [
-            KaVariableSignature:
-              name = arr
-              receiverType = null
-              returnType = kotlin.IntArray
-              symbol = arr: kotlin.IntArray
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtConstructorCalleeExpression(424,437): 'AnnoWithArray'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithArray
+        symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+        valueParameters = [
+          KaVariableSignature:
+            name = arr
+            receiverType = null
+            returnType = kotlin.IntArray
+            symbol = arr: kotlin.IntArray
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         [1, 2, 3] -> (KaVariableSignature:
           name = arr
           receiverType = null
@@ -382,26 +402,6 @@ KtConstructorCalleeExpression(424,437): 'AnnoWithArray'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithArray
-          symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
-          valueParameters = [
-            KaVariableSignature:
-              name = arr
-              receiverType = null
-              returnType = kotlin.IntArray
-              symbol = arr: kotlin.IntArray
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtTypeReference(424,437): 'AnnoWithArray'
   null
@@ -419,9 +419,29 @@ KtValueArgument(438,447): '[1, 2, 3]'
   null
 
 KtCollectionLiteralExpression(438,447): '[1, 2, 3]'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.IntArray
+        symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg elements: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/intArrayOf
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = elements
           receiverType = null
@@ -444,27 +464,6 @@ KtCollectionLiteralExpression(438,447): '[1, 2, 3]'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = vararg elements: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/intArrayOf
-      typeArgumentsMapping = {}
 
 KtConstantExpression(439,440): '1'
   null
@@ -476,9 +475,29 @@ KtConstantExpression(445,446): '3'
   null
 
 KtAnnotationEntry(449,480): '@AnnoWithArray(arr = [4, 5, 6])'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithArray
+        symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+        valueParameters = [
+          KaVariableSignature:
+            name = arr
+            receiverType = null
+            returnType = kotlin.IntArray
+            symbol = arr: kotlin.IntArray
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         [4, 5, 6] -> (KaVariableSignature:
           name = arr
           receiverType = null
@@ -487,31 +506,31 @@ KtAnnotationEntry(449,480): '@AnnoWithArray(arr = [4, 5, 6])'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithArray
-          symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
-          valueParameters = [
-            KaVariableSignature:
-              name = arr
-              receiverType = null
-              returnType = kotlin.IntArray
-              symbol = arr: kotlin.IntArray
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtConstructorCalleeExpression(450,463): 'AnnoWithArray'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithArray
+        symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+        valueParameters = [
+          KaVariableSignature:
+            name = arr
+            receiverType = null
+            returnType = kotlin.IntArray
+            symbol = arr: kotlin.IntArray
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         [4, 5, 6] -> (KaVariableSignature:
           name = arr
           receiverType = null
@@ -520,26 +539,6 @@ KtConstructorCalleeExpression(450,463): 'AnnoWithArray'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithArray
-          symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
-          valueParameters = [
-            KaVariableSignature:
-              name = arr
-              receiverType = null
-              returnType = kotlin.IntArray
-              symbol = arr: kotlin.IntArray
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtTypeReference(450,463): 'AnnoWithArray'
   null
@@ -563,9 +562,29 @@ KtNameReferenceExpression(464,467): 'arr'
   null
 
 KtCollectionLiteralExpression(470,479): '[4, 5, 6]'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.IntArray
+        symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg elements: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/intArrayOf
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         4 -> (KaVariableSignature:
           name = elements
           receiverType = null
@@ -588,27 +607,6 @@ KtCollectionLiteralExpression(470,479): '[4, 5, 6]'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = vararg elements: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/intArrayOf
-      typeArgumentsMapping = {}
 
 KtConstantExpression(471,472): '4'
   null
@@ -620,9 +618,29 @@ KtConstantExpression(477,478): '6'
   null
 
 KtAnnotationEntry(481,516): '@AnnoWithArray(intArrayOf(7, 8, 9))'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithArray
+        symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+        valueParameters = [
+          KaVariableSignature:
+            name = arr
+            receiverType = null
+            returnType = kotlin.IntArray
+            symbol = arr: kotlin.IntArray
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         intArrayOf(7, 8, 9) -> (KaVariableSignature:
           name = arr
           receiverType = null
@@ -631,31 +649,31 @@ KtAnnotationEntry(481,516): '@AnnoWithArray(intArrayOf(7, 8, 9))'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithArray
-          symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
-          valueParameters = [
-            KaVariableSignature:
-              name = arr
-              receiverType = null
-              returnType = kotlin.IntArray
-              symbol = arr: kotlin.IntArray
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtConstructorCalleeExpression(482,495): 'AnnoWithArray'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithArray
+        symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+        valueParameters = [
+          KaVariableSignature:
+            name = arr
+            receiverType = null
+            returnType = kotlin.IntArray
+            symbol = arr: kotlin.IntArray
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         intArrayOf(7, 8, 9) -> (KaVariableSignature:
           name = arr
           receiverType = null
@@ -664,26 +682,6 @@ KtConstructorCalleeExpression(482,495): 'AnnoWithArray'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithArray
-          symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
-          valueParameters = [
-            KaVariableSignature:
-              name = arr
-              receiverType = null
-              returnType = kotlin.IntArray
-              symbol = arr: kotlin.IntArray
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtTypeReference(482,495): 'AnnoWithArray'
   null
@@ -701,9 +699,29 @@ KtValueArgument(496,515): 'intArrayOf(7, 8, 9)'
   null
 
 KtCallExpression(496,515): 'intArrayOf(7, 8, 9)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.IntArray
+        symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg elements: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/intArrayOf
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         7 -> (KaVariableSignature:
           name = elements
           receiverType = null
@@ -726,32 +744,31 @@ KtCallExpression(496,515): 'intArrayOf(7, 8, 9)'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = vararg elements: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/intArrayOf
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(496,506): 'intArrayOf'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.IntArray
+        symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg elements: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/intArrayOf
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         7 -> (KaVariableSignature:
           name = elements
           receiverType = null
@@ -774,27 +791,6 @@ KtNameReferenceExpression(496,506): 'intArrayOf'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = vararg elements: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/intArrayOf
-      typeArgumentsMapping = {}
 
 KtValueArgumentList(506,515): '(7, 8, 9)'
   null
@@ -818,9 +814,29 @@ KtConstantExpression(513,514): '9'
   null
 
 KtAnnotationEntry(517,555): '@AnnoWithKClass(AnnoWithKClass::class)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithKClass
+        symbol = <constructor>(k: kotlin.reflect.KClass<*>): one.AnnoWithKClass
+        valueParameters = [
+          KaVariableSignature:
+            name = k
+            receiverType = null
+            returnType = kotlin.reflect.KClass<*>
+            symbol = k: kotlin.reflect.KClass<*>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         AnnoWithKClass::class -> (KaVariableSignature:
           name = k
           receiverType = null
@@ -829,31 +845,31 @@ KtAnnotationEntry(517,555): '@AnnoWithKClass(AnnoWithKClass::class)'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithKClass
-          symbol = <constructor>(k: kotlin.reflect.KClass<*>): one.AnnoWithKClass
-          valueParameters = [
-            KaVariableSignature:
-              name = k
-              receiverType = null
-              returnType = kotlin.reflect.KClass<*>
-              symbol = k: kotlin.reflect.KClass<*>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtConstructorCalleeExpression(518,532): 'AnnoWithKClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithKClass
+        symbol = <constructor>(k: kotlin.reflect.KClass<*>): one.AnnoWithKClass
+        valueParameters = [
+          KaVariableSignature:
+            name = k
+            receiverType = null
+            returnType = kotlin.reflect.KClass<*>
+            symbol = k: kotlin.reflect.KClass<*>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         AnnoWithKClass::class -> (KaVariableSignature:
           name = k
           receiverType = null
@@ -862,26 +878,6 @@ KtConstructorCalleeExpression(518,532): 'AnnoWithKClass'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithKClass
-          symbol = <constructor>(k: kotlin.reflect.KClass<*>): one.AnnoWithKClass
-          valueParameters = [
-            KaVariableSignature:
-              name = k
-              receiverType = null
-              returnType = kotlin.reflect.KClass<*>
-              symbol = k: kotlin.reflect.KClass<*>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtTypeReference(518,532): 'AnnoWithKClass'
   null
@@ -908,9 +904,29 @@ KtAnnotation(556,600): '@[AnnoWithKClass(one.AnnoWithKClass::class)]'
   null
 
 KtAnnotationEntry(558,599): 'AnnoWithKClass(one.AnnoWithKClass::class)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithKClass
+        symbol = <constructor>(k: kotlin.reflect.KClass<*>): one.AnnoWithKClass
+        valueParameters = [
+          KaVariableSignature:
+            name = k
+            receiverType = null
+            returnType = kotlin.reflect.KClass<*>
+            symbol = k: kotlin.reflect.KClass<*>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         one.AnnoWithKClass::class -> (KaVariableSignature:
           name = k
           receiverType = null
@@ -919,31 +935,31 @@ KtAnnotationEntry(558,599): 'AnnoWithKClass(one.AnnoWithKClass::class)'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithKClass
-          symbol = <constructor>(k: kotlin.reflect.KClass<*>): one.AnnoWithKClass
-          valueParameters = [
-            KaVariableSignature:
-              name = k
-              receiverType = null
-              returnType = kotlin.reflect.KClass<*>
-              symbol = k: kotlin.reflect.KClass<*>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtConstructorCalleeExpression(558,572): 'AnnoWithKClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithKClass
+        symbol = <constructor>(k: kotlin.reflect.KClass<*>): one.AnnoWithKClass
+        valueParameters = [
+          KaVariableSignature:
+            name = k
+            receiverType = null
+            returnType = kotlin.reflect.KClass<*>
+            symbol = k: kotlin.reflect.KClass<*>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         one.AnnoWithKClass::class -> (KaVariableSignature:
           name = k
           receiverType = null
@@ -952,26 +968,6 @@ KtConstructorCalleeExpression(558,572): 'AnnoWithKClass'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithKClass
-          symbol = <constructor>(k: kotlin.reflect.KClass<*>): one.AnnoWithKClass
-          valueParameters = [
-            KaVariableSignature:
-              name = k
-              receiverType = null
-              returnType = kotlin.reflect.KClass<*>
-              symbol = k: kotlin.reflect.KClass<*>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtTypeReference(558,572): 'AnnoWithKClass'
   null
@@ -1001,9 +997,29 @@ KtNameReferenceExpression(577,591): 'AnnoWithKClass'
   null
 
 KtAnnotationEntry(601,675): '@AnnoWithArrayOfKClass([AnnoWithKClass::class, one.AnnoWithKClass::class])'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithArrayOfKClass
+        symbol = <constructor>(a: kotlin.Array<kotlin.reflect.KClass<*>>): one.AnnoWithArrayOfKClass
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Array<kotlin.reflect.KClass<*>>
+            symbol = a: kotlin.Array<kotlin.reflect.KClass<*>>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         [AnnoWithKClass::class, one.AnnoWithKClass::class] -> (KaVariableSignature:
           name = a
           receiverType = null
@@ -1012,31 +1028,31 @@ KtAnnotationEntry(601,675): '@AnnoWithArrayOfKClass([AnnoWithKClass::class, one.
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithArrayOfKClass
-          symbol = <constructor>(a: kotlin.Array<kotlin.reflect.KClass<*>>): one.AnnoWithArrayOfKClass
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = kotlin.Array<kotlin.reflect.KClass<*>>
-              symbol = a: kotlin.Array<kotlin.reflect.KClass<*>>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtConstructorCalleeExpression(602,623): 'AnnoWithArrayOfKClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithArrayOfKClass
+        symbol = <constructor>(a: kotlin.Array<kotlin.reflect.KClass<*>>): one.AnnoWithArrayOfKClass
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Array<kotlin.reflect.KClass<*>>
+            symbol = a: kotlin.Array<kotlin.reflect.KClass<*>>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         [AnnoWithKClass::class, one.AnnoWithKClass::class] -> (KaVariableSignature:
           name = a
           receiverType = null
@@ -1045,26 +1061,6 @@ KtConstructorCalleeExpression(602,623): 'AnnoWithArrayOfKClass'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithArrayOfKClass
-          symbol = <constructor>(a: kotlin.Array<kotlin.reflect.KClass<*>>): one.AnnoWithArrayOfKClass
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = kotlin.Array<kotlin.reflect.KClass<*>>
-              symbol = a: kotlin.Array<kotlin.reflect.KClass<*>>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtTypeReference(602,623): 'AnnoWithArrayOfKClass'
   null
@@ -1082,9 +1078,31 @@ KtValueArgument(624,674): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
   null
 
 KtCollectionLiteralExpression(624,674): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Array<kotlin.reflect.KClass<*>>
+        symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.reflect.KClass<*>
+            symbol = vararg elements: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/arrayOf
+      typeArgumentsMapping = {
+        T -> (kotlin.reflect.KClass<*>)
+      }
+      valueArgumentMapping = {
         AnnoWithKClass::class -> (KaVariableSignature:
           name = elements
           receiverType = null
@@ -1099,29 +1117,6 @@ KtCollectionLiteralExpression(624,674): '[AnnoWithKClass::class, one.AnnoWithKCl
           symbol = vararg elements: T
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Array<kotlin.reflect.KClass<*>>
-          symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.reflect.KClass<*>
-              symbol = vararg elements: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/arrayOf
-      typeArgumentsMapping = {
-        T -> (kotlin.reflect.KClass<*>)
       }
 
 KtClassLiteralExpression(625,646): 'AnnoWithKClass::class'
@@ -1143,9 +1138,29 @@ KtNameReferenceExpression(652,666): 'AnnoWithKClass'
   null
 
 KtAnnotationEntry(676,783): '@AnnoWithAnotherAnnotation(arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15))))'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithAnotherAnnotation
+        symbol = <constructor>(another: kotlin.Array<one.AnnoWithArray>): one.AnnoWithAnotherAnnotation
+        valueParameters = [
+          KaVariableSignature:
+            name = another
+            receiverType = null
+            returnType = kotlin.Array<one.AnnoWithArray>
+            symbol = another: kotlin.Array<one.AnnoWithArray>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15))) -> (KaVariableSignature:
           name = another
           receiverType = null
@@ -1154,31 +1169,31 @@ KtAnnotationEntry(676,783): '@AnnoWithAnotherAnnotation(arrayOf(one.AnnoWithArra
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithAnotherAnnotation
-          symbol = <constructor>(another: kotlin.Array<one.AnnoWithArray>): one.AnnoWithAnotherAnnotation
-          valueParameters = [
-            KaVariableSignature:
-              name = another
-              receiverType = null
-              returnType = kotlin.Array<one.AnnoWithArray>
-              symbol = another: kotlin.Array<one.AnnoWithArray>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtConstructorCalleeExpression(677,702): 'AnnoWithAnotherAnnotation'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithAnotherAnnotation
+        symbol = <constructor>(another: kotlin.Array<one.AnnoWithArray>): one.AnnoWithAnotherAnnotation
+        valueParameters = [
+          KaVariableSignature:
+            name = another
+            receiverType = null
+            returnType = kotlin.Array<one.AnnoWithArray>
+            symbol = another: kotlin.Array<one.AnnoWithArray>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15))) -> (KaVariableSignature:
           name = another
           receiverType = null
@@ -1187,26 +1202,6 @@ KtConstructorCalleeExpression(677,702): 'AnnoWithAnotherAnnotation'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithAnotherAnnotation
-          symbol = <constructor>(another: kotlin.Array<one.AnnoWithArray>): one.AnnoWithAnotherAnnotation
-          valueParameters = [
-            KaVariableSignature:
-              name = another
-              receiverType = null
-              returnType = kotlin.Array<one.AnnoWithArray>
-              symbol = another: kotlin.Array<one.AnnoWithArray>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtTypeReference(677,702): 'AnnoWithAnotherAnnotation'
   null
@@ -1224,9 +1219,31 @@ KtValueArgument(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArra
   null
 
 KtCallExpression(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15)))'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Array<one.AnnoWithArray>
+        symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = one.AnnoWithArray
+            symbol = vararg elements: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/arrayOf
+      typeArgumentsMapping = {
+        T -> (one.AnnoWithArray)
+      }
+      valueArgumentMapping = {
         one.AnnoWithArray([10, 11, 12]) -> (KaVariableSignature:
           name = elements
           receiverType = null
@@ -1241,35 +1258,34 @@ KtCallExpression(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArr
           symbol = vararg elements: T
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Array<one.AnnoWithArray>
-          symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = one.AnnoWithArray
-              symbol = vararg elements: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/arrayOf
-      typeArgumentsMapping = {
-        T -> (one.AnnoWithArray)
       }
 
 KtNameReferenceExpression(703,710): 'arrayOf'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Array<one.AnnoWithArray>
+        symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = one.AnnoWithArray
+            symbol = vararg elements: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/arrayOf
+      typeArgumentsMapping = {
+        T -> (one.AnnoWithArray)
+      }
+      valueArgumentMapping = {
         one.AnnoWithArray([10, 11, 12]) -> (KaVariableSignature:
           name = elements
           receiverType = null
@@ -1284,29 +1300,6 @@ KtNameReferenceExpression(703,710): 'arrayOf'
           symbol = vararg elements: T
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Array<one.AnnoWithArray>
-          symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = one.AnnoWithArray
-              symbol = vararg elements: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/arrayOf
-      typeArgumentsMapping = {
-        T -> (one.AnnoWithArray)
       }
 
 KtValueArgumentList(710,782): '(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15)))'
@@ -1316,9 +1309,29 @@ KtValueArgument(711,742): 'one.AnnoWithArray([10, 11, 12])'
   null
 
 KtDotQualifiedExpression(711,742): 'one.AnnoWithArray([10, 11, 12])'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithArray
+        symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+        valueParameters = [
+          KaVariableSignature:
+            name = arr
+            receiverType = null
+            returnType = kotlin.IntArray
+            symbol = arr: kotlin.IntArray
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         [10, 11, 12] -> (KaVariableSignature:
           name = arr
           receiverType = null
@@ -1327,35 +1340,34 @@ KtDotQualifiedExpression(711,742): 'one.AnnoWithArray([10, 11, 12])'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithArray
-          symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
-          valueParameters = [
-            KaVariableSignature:
-              name = arr
-              receiverType = null
-              returnType = kotlin.IntArray
-              symbol = arr: kotlin.IntArray
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(711,714): 'one'
   null
 
 KtCallExpression(715,742): 'AnnoWithArray([10, 11, 12])'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithArray
+        symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+        valueParameters = [
+          KaVariableSignature:
+            name = arr
+            receiverType = null
+            returnType = kotlin.IntArray
+            symbol = arr: kotlin.IntArray
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         [10, 11, 12] -> (KaVariableSignature:
           name = arr
           receiverType = null
@@ -1364,32 +1376,31 @@ KtCallExpression(715,742): 'AnnoWithArray([10, 11, 12])'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithArray
-          symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
-          valueParameters = [
-            KaVariableSignature:
-              name = arr
-              receiverType = null
-              returnType = kotlin.IntArray
-              symbol = arr: kotlin.IntArray
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(715,728): 'AnnoWithArray'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithArray
+        symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+        valueParameters = [
+          KaVariableSignature:
+            name = arr
+            receiverType = null
+            returnType = kotlin.IntArray
+            symbol = arr: kotlin.IntArray
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         [10, 11, 12] -> (KaVariableSignature:
           name = arr
           receiverType = null
@@ -1398,27 +1409,6 @@ KtNameReferenceExpression(715,728): 'AnnoWithArray'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithArray
-          symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
-          valueParameters = [
-            KaVariableSignature:
-              name = arr
-              receiverType = null
-              returnType = kotlin.IntArray
-              symbol = arr: kotlin.IntArray
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtValueArgumentList(728,742): '([10, 11, 12])'
   null
@@ -1427,9 +1417,29 @@ KtValueArgument(729,741): '[10, 11, 12]'
   null
 
 KtCollectionLiteralExpression(729,741): '[10, 11, 12]'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.IntArray
+        symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg elements: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/intArrayOf
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         10 -> (KaVariableSignature:
           name = elements
           receiverType = null
@@ -1452,27 +1462,6 @@ KtCollectionLiteralExpression(729,741): '[10, 11, 12]'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = vararg elements: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/intArrayOf
-      typeArgumentsMapping = {}
 
 KtConstantExpression(730,732): '10'
   null
@@ -1487,9 +1476,29 @@ KtValueArgument(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
   null
 
 KtCallExpression(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithArray
+        symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+        valueParameters = [
+          KaVariableSignature:
+            name = arr
+            receiverType = null
+            returnType = kotlin.IntArray
+            symbol = arr: kotlin.IntArray
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         intArrayOf(13, 14, 15) -> (KaVariableSignature:
           name = arr
           receiverType = null
@@ -1498,32 +1507,31 @@ KtCallExpression(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithArray
-          symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
-          valueParameters = [
-            KaVariableSignature:
-              name = arr
-              receiverType = null
-              returnType = kotlin.IntArray
-              symbol = arr: kotlin.IntArray
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(744,757): 'AnnoWithArray'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithArray
+        symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+        valueParameters = [
+          KaVariableSignature:
+            name = arr
+            receiverType = null
+            returnType = kotlin.IntArray
+            symbol = arr: kotlin.IntArray
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         intArrayOf(13, 14, 15) -> (KaVariableSignature:
           name = arr
           receiverType = null
@@ -1532,27 +1540,6 @@ KtNameReferenceExpression(744,757): 'AnnoWithArray'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithArray
-          symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
-          valueParameters = [
-            KaVariableSignature:
-              name = arr
-              receiverType = null
-              returnType = kotlin.IntArray
-              symbol = arr: kotlin.IntArray
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtValueArgumentList(757,781): '(intArrayOf(13, 14, 15))'
   null
@@ -1561,9 +1548,29 @@ KtValueArgument(758,780): 'intArrayOf(13, 14, 15)'
   null
 
 KtCallExpression(758,780): 'intArrayOf(13, 14, 15)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.IntArray
+        symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg elements: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/intArrayOf
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         13 -> (KaVariableSignature:
           name = elements
           receiverType = null
@@ -1586,32 +1593,31 @@ KtCallExpression(758,780): 'intArrayOf(13, 14, 15)'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = vararg elements: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/intArrayOf
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(758,768): 'intArrayOf'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.IntArray
+        symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg elements: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/intArrayOf
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         13 -> (KaVariableSignature:
           name = elements
           receiverType = null
@@ -1634,27 +1640,6 @@ KtNameReferenceExpression(758,768): 'intArrayOf'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = vararg elements: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/intArrayOf
-      typeArgumentsMapping = {}
 
 KtValueArgumentList(768,780): '(13, 14, 15)'
   null
@@ -1678,9 +1663,29 @@ KtConstantExpression(777,779): '15'
   null
 
 KtAnnotationEntry(784,826): '@AnnoWithString(stringConstant + " 1.2.3")'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithString
+        symbol = <constructor>(str: kotlin.String): one.AnnoWithString
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         stringConstant + " 1.2.3" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -1689,31 +1694,31 @@ KtAnnotationEntry(784,826): '@AnnoWithString(stringConstant + " 1.2.3")'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithString
-          symbol = <constructor>(str: kotlin.String): one.AnnoWithString
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtConstructorCalleeExpression(785,799): 'AnnoWithString'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.AnnoWithString
+        symbol = <constructor>(str: kotlin.String): one.AnnoWithString
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         stringConstant + " 1.2.3" -> (KaVariableSignature:
           name = str
           receiverType = null
@@ -1722,26 +1727,6 @@ KtConstructorCalleeExpression(785,799): 'AnnoWithString'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.AnnoWithString
-          symbol = <constructor>(str: kotlin.String): one.AnnoWithString
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
 
 KtTypeReference(785,799): 'AnnoWithString'
   null
@@ -1759,9 +1744,32 @@ KtValueArgument(800,825): 'stringConstant + " 1.2.3"'
   null
 
 KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = stringConstant
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/String.plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         " 1.2.3" -> (KaVariableSignature:
           name = other
           receiverType = null
@@ -1770,53 +1778,51 @@ KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = stringConstant
-          isSafeNavigation = false
-          type = kotlin.String
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/String.plus
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(800,814): 'stringConstant'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = stringConstant
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val stringConstant: kotlin.String
-          contextParameters = []
-          callableId = one/stringConstant
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = stringConstant
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val stringConstant: kotlin.String
+        contextParameters = []
+        callableId = one/stringConstant
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(815,816): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = stringConstant
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/String.plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         " 1.2.3" -> (KaVariableSignature:
           name = other
           receiverType = null
@@ -1825,30 +1831,6 @@ KtOperationReferenceExpression(815,816): '+'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = stringConstant
-          isSafeNavigation = false
-          type = kotlin.String
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/String.plus
-      typeArgumentsMapping = {}
 
 KtStringTemplateExpression(817,825): '" 1.2.3"'
   null

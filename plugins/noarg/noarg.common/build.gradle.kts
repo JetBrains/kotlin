@@ -2,7 +2,6 @@ description = "Kotlin NoArg Compiler Plugin (Common)"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {

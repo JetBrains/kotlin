@@ -18,7 +18,7 @@ void RUNTIME_NORETURN ThrowException(KRef exception);
 
 void SetKonanTerminateHandler();
 
-void HandleCurrentExceptionWhenLeavingKotlinCode();
+void RUNTIME_NORETURN HandleCurrentExceptionWhenLeavingKotlinCode();
 
 RUNTIME_NOTHROW OBJ_GETTER(Kotlin_getExceptionObject, void* holder);
 

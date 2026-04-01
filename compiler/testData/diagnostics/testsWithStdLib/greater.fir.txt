@@ -1,11 +1,11 @@
 FILE: greater.kt
-    public final class Expression<T> : R|kotlin/Any| {
-        public constructor<T>(x: R|T|): R|Expression<T>| {
+    public final class Expression<M> : R|kotlin/Any| {
+        public constructor<M>(x: R|M|): R|Expression<M>| {
             super<R|kotlin/Any|>()
         }
 
-        public final val x: R|T| = R|<local>/x|
-            public get(): R|T|
+        public final val x: R|M| = R|<local>/x|
+            public get(): R|M|
 
     }
     public final class GreaterOp : R|kotlin/Any| {

@@ -8,16 +8,16 @@ public interface IrDynamicTypeOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
    */
-  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> 
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation> 
       getAnnotationList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index);
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation getAnnotation(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
    */
   int getAnnotationCount();
 }

@@ -113,7 +113,7 @@ fun main(args: Array<String>) {
             alias<FirStatement>("BasicExpressionChecker", false).let {
                 visitAlso<FirExpression>(it)
                 visitAlso<FirVarargArgumentsExpression>(it)
-                visitAlso<FirSamConversionExpression>(it)
+                visitAlso<FirFunctionTypeConversionExpression>(it)
                 visitAlso<FirWrappedExpression>(it)
                 visitAlso<FirWrappedArgumentExpression>(it)
                 visitAlso<FirSpreadArgumentExpression>(it)
@@ -151,6 +151,10 @@ fun main(args: Array<String>) {
             alias<FirBooleanOperatorExpression>("BooleanOperatorExpressionChecker")
             alias<FirReturnExpression>("ReturnExpressionChecker")
             alias<FirBlock>("BlockChecker")
+            alias<FirReplDeclarationReference>("ReplDeclarationReferenceChecker")
+            alias<FirReplPropertyInitializer>("ReplPropertyInitializerChecker")
+            alias<FirReplPropertyDelegate>("ReplPropertyDelegateChecker")
+            alias<FirReplExpressionReference>("ReplExpressionReferenceChecker")
             alias<FirAnnotation>("AnnotationChecker")
             alias<FirAnnotationCall>("AnnotationCallChecker").let {
                 visitAlso<FirErrorAnnotationCall>(it)

@@ -27,7 +27,7 @@ dependencies {
     compileOnly(project(":kotlin-metadata")) { isTransitive = false }
     compileOnly(project(":native:kotlin-klib-commonizer-api")) { isTransitive = false }
     compileOnly(project(":kotlin-tooling-core")) { isTransitive = false }
-    compileOnly(project(":compiler:cli-common"))
+    compileOnly(project(":compiler:cli-base"))
     compileOnly(project(":compiler:ir.serialization.common"))
     compileOnly(project(":core:compiler.common.native"))
     compileOnly(project(":native:frontend.native"))
@@ -46,6 +46,7 @@ dependencies {
     testImplementation(project(":kotlin-metadata")) { isTransitive = false }
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
     testImplementation(project(":kotlin-tooling-core"))
+    testImplementation(project(":native:native.config"))
     testImplementation(intellijCore())
 }
 

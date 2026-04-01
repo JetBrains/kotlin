@@ -12,17 +12,20 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsPolyfills
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.translateJsCodeIntoStatementList
 import org.jetbrains.kotlin.ir.backend.js.utils.JsInlineClassesUtils
+import org.jetbrains.kotlin.ir.backend.js.utils.JsSignaturesPool
 import org.jetbrains.kotlin.ir.backend.js.utils.Keeper
 import org.jetbrains.kotlin.ir.backend.js.utils.MinimizedNameGenerator
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
@@ -100,6 +103,7 @@ class JsIrBackendContext(
 
     val packageLevelJsModules = hashSetOf<IrFile>()
 
+    val signaturesPool = JsSignaturesPool()
     val testFunsPerFile = hashMapOf<IrFile, IrSimpleFunction>()
 
     override val inlineClassesUtils = JsInlineClassesUtils(this)
@@ -130,7 +134,7 @@ class JsIrBackendContext(
     override val jsPromiseSymbol: IrClassSymbol
         get() = symbols.promiseClassSymbol
 
-    override val symbols = JsSymbols(irBuiltIns, irFactory.stageController, configuration.compileLongAsBigint)
+    override val symbols = BackendJsSymbols(irBuiltIns, irFactory.stageController, configuration.compileLongAsBigint)
 
     override val propertyLazyInitialization: PropertyLazyInitialization = PropertyLazyInitialization(
         enabled = configuration.get(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true),
@@ -171,7 +175,10 @@ class JsIrBackendContext(
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
         configuration.partialLinkageConfig,
         irBuiltIns,
-        configuration.messageCollector
+        KtDiagnosticReporterWithImplicitIrBasedContext(
+            configuration.diagnosticsCollector,
+            configuration.languageVersionSettings
+        )
     )
 
     internal var nextAssociatedObjectKey = 0

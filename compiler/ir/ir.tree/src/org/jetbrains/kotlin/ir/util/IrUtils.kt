@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -267,7 +270,6 @@ val IrClass.isClass get() = kind == ClassKind.CLASS
 val IrClass.isObject get() = kind == ClassKind.OBJECT
 val IrClass.isAnonymousObject get() = isClass && name == SpecialNames.NO_NAME_PROVIDED
 val IrClass.isNonCompanionObject: Boolean get() = isObject && !isCompanion
-val IrClass.isReplSnippet: Boolean get() = origin == IrDeclarationOrigin.REPL_SNIPPET_CLASS
 
 val IrDeclarationWithName.fqNameWhenAvailable: FqName?
     get() {
@@ -329,16 +331,16 @@ tailrec fun IrDeclaration.getPackageFragment(): IrPackageFragment {
         ?: (parent as IrDeclaration).getPackageFragment()
 }
 
-// Just delegate to IrConstructorCall.isAnnotationWithEqualFqName(FqName) which is capable to correctly handle unbound symbols.
-fun IrConstructorCall.isAnnotation(name: FqName): Boolean = isAnnotationWithEqualFqName(name)
+// Just delegate to IrAnnotation.isAnnotationWithEqualFqName(FqName) which is capable to correctly handle unbound symbols.
+fun IrAnnotation.isAnnotation(name: FqName): Boolean = isAnnotationWithEqualFqName(name)
 
-fun IrAnnotationContainer.getAnnotation(name: FqName): IrConstructorCall? =
+fun IrAnnotationContainer.getAnnotation(name: FqName): IrAnnotation? =
     annotations.find { it.isAnnotationWithEqualFqName(name) }
 
-// Just delegate to List<IrConstructorCall>.hasAnnotation(FqName) which is capable to correctly handle unbound symbols.
+// Just delegate to List<IrAnnotation>.hasAnnotation(FqName) which is capable to correctly handle unbound symbols.
 fun IrAnnotationContainer.hasAnnotation(name: FqName): Boolean = annotations.hasAnnotation(name)
 
-// Just delegate to List<IrConstructorCall>.hasAnnotation(ClassId) which is capable to correctly handle unbound symbols.
+// Just delegate to List<IrAnnotation>.hasAnnotation(ClassId) which is capable to correctly handle unbound symbols.
 fun IrAnnotationContainer.hasAnnotation(classId: ClassId): Boolean = annotations.hasAnnotation(classId)
 
 fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
@@ -346,28 +348,28 @@ fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
         it.symbol.owner.parentAsClass.symbol == symbol
     }
 
-fun IrConstructorCall.getAnnotationStringValue() = (arguments[0] as? IrConst)?.value as String?
+fun IrAnnotation.getAnnotationStringValue() = (arguments[0] as? IrConst)?.value as String?
 
-fun IrConstructorCall.getAnnotationStringValue(name: String): String {
+fun IrAnnotation.getAnnotationStringValue(name: String): String {
     val parameter = symbol.owner.parameters.single { it.name.asString() == name }
     return (arguments[parameter.indexInParameters] as IrConst).value as String
 }
 
-inline fun <reified T> IrConstructorCall.getAnnotationValueOrNull(name: String): T? =
+inline fun <reified T> IrAnnotation.getAnnotationValueOrNull(name: String): T? =
     getAnnotationValueOrNullImpl(name) as T?
 
 @PublishedApi
-internal fun IrConstructorCall.getAnnotationValueOrNullImpl(name: String): Any? {
+internal fun IrAnnotation.getAnnotationValueOrNullImpl(name: String): Any? {
     val parameter = symbol.owner.parameters.atMostOne { it.name.asString() == name }
     val argument = parameter?.let { arguments[it.indexInParameters] }
     return (argument as IrConst?)?.value
 }
 
-inline fun <reified T> IrDeclaration.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? =
+inline fun <reified T> IrAnnotationContainer.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? =
     getAnnotationArgumentValueImpl(fqName, argumentName) as T?
 
 @PublishedApi
-internal fun IrDeclaration.getAnnotationArgumentValueImpl(fqName: FqName, argumentName: String): Any? {
+internal fun IrAnnotationContainer.getAnnotationArgumentValueImpl(fqName: FqName, argumentName: String): Any? {
     val annotation = this.annotations.findAnnotation(fqName) ?: return null
     for (parameter in annotation.symbol.owner.parameters) {
         if (parameter.name.asString() == argumentName) {
@@ -878,10 +880,17 @@ fun IrFunction.copyParameters(source: List<IrValueParameter>, substitutionMap: M
     }
 }
 
-fun IrFunction.copyValueAndTypeParametersFrom(from: IrFunction) {
+/**
+ * Appends the type and value parameters of [source] to [this], also replacing the return type of this with [returnType], performing
+ * all the necessary substitutions wrt the new type parameters.
+ */
+fun IrFunction.copyFunctionSignatureFrom(source: IrFunction, returnType: IrType = source.returnType): Map<IrTypeParameterSymbol, IrType> {
     assert(typeParameters.isEmpty())
-    copyTypeParametersFrom(from)
-    copyParametersFrom(from)
+    copyTypeParametersFrom(source)
+    val substitutionMap = makeTypeParameterSubstitutionMap(source, this)
+    copyParametersFrom(source, substitutionMap)
+    this.returnType = returnType.substitute(substitutionMap)
+    return substitutionMap
 }
 
 fun IrTypeParametersContainer.copyTypeParameters(
@@ -895,6 +904,7 @@ fun IrTypeParametersContainer.copyTypeParameters(
     // Therefore, we first copy the parameters themselves, then set up their supertypes.
     val newTypeParameters = srcTypeParameters.memoryOptimizedMapIndexed { i, sourceParameter ->
         sourceParameter.copyToWithoutSuperTypes(this, index = i + shift, origin = origin ?: sourceParameter.origin).also {
+            it.copyAnnotationsFrom(sourceParameter)
             oldToNewParameterMap[sourceParameter] = it
         }
     }
@@ -920,9 +930,9 @@ private fun IrTypeParameter.copySuperTypesFrom(source: IrTypeParameter, srcToDst
     }
 }
 
-fun IrAnnotationContainer.copyAnnotations(): List<IrConstructorCall> =
-    annotations.memoryOptimizedMap {
-        it.transform(DeepCopyIrTreeWithSymbols(SymbolRemapper.EMPTY), null) as IrConstructorCall
+fun IrAnnotationContainer.copyAnnotations(filter: ((IrAnnotation) -> Boolean)? = null): List<IrAnnotation> =
+    (if (filter == null) annotations else annotations.filter(filter)).memoryOptimizedMap {
+        it.transform(DeepCopyIrTreeWithSymbols(SymbolRemapper.EMPTY), null) as IrAnnotation
     }
 
 fun IrMutableAnnotationContainer.copyAnnotationsFrom(source: IrAnnotationContainer) {
@@ -1211,6 +1221,49 @@ fun IrClass.addFakeOverrides(
     }
 }
 
+/**
+ * Appends the type and value parameters of [source] to [this],
+ * converting dispatch, extension and context receivers into regular parameters,
+ * also replacing the return type of this with [returnType],
+ * performing all the necessary substitutions wrt the new type parameters.
+ */
+fun IrFunction.copyFunctionSignatureAsStaticFrom(
+    source: IrFunction,
+    returnType: IrType = source.returnType,
+    dispatchReceiverType: IrType? = source.dispatchReceiverParameter?.type,
+    typeParametersFromContext: List<IrTypeParameter> = listOf(),
+) {
+    assert(typeParameters.isEmpty())
+    val newTypeParametersFromContext = copyAndRenameConflictingTypeParametersFrom(
+        typeParametersFromContext,
+        source.typeParameters
+    )
+    val newTypeParametersFromFunction = copyTypeParametersFrom(source)
+    val typeParameterMap =
+        (typeParametersFromContext + source.typeParameters)
+            .zip(newTypeParametersFromContext + newTypeParametersFromFunction).toMap()
+
+    fun remap(type: IrType): IrType =
+        type.remapTypeParameters(source, this, typeParameterMap)
+
+    typeParameters.forEach { it.superTypes = it.superTypes.memoryOptimizedMap(::remap) }
+
+    copyValueParametersToStatic(source, origin, dispatchReceiverType, typeParameterMap)
+
+    // TODO(KT-83771): think on moving this logic inside [copyValueParametersToStatic]
+    parameters.forEachIndexed { index, parameter ->
+        val oldParam = source.parameters[index]
+        parameter.origin = when (oldParam.kind) {
+            IrParameterKind.DispatchReceiver -> IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
+            IrParameterKind.ExtensionReceiver -> IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
+            IrParameterKind.Context -> IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
+            IrParameterKind.Regular -> oldParam.origin
+        }
+    }
+
+    this.returnType = remap(returnType)
+}
+
 fun IrFactory.createStaticFunctionWithReceivers(
     irParent: IrDeclarationParent,
     name: Name,
@@ -1244,50 +1297,9 @@ fun IrFactory.createStaticFunctionWithReceivers(
         isFakeOverride = isFakeOverride,
     ).apply {
         parent = irParent
-
-        val newTypeParametersFromContext = copyAndRenameConflictingTypeParametersFrom(
-            typeParametersFromContext,
-            oldFunction.typeParameters
-        )
-        val newTypeParametersFromFunction = copyTypeParametersFrom(oldFunction)
-        val typeParameterMap =
-            (typeParametersFromContext + oldFunction.typeParameters)
-                .zip(newTypeParametersFromContext + newTypeParametersFromFunction).toMap()
-
-        fun remap(type: IrType): IrType =
-            type.remapTypeParameters(oldFunction, this, typeParameterMap)
-
-        typeParameters.forEach { it.superTypes = it.superTypes.memoryOptimizedMap(::remap) }
-
         annotations = oldFunction.annotations
 
-        parameters = oldFunction.parameters.map { oldParam ->
-            val name = when (oldParam.kind) {
-                IrParameterKind.DispatchReceiver -> Name.identifier("\$this")
-                IrParameterKind.ExtensionReceiver -> Name.identifier("\$receiver")
-                IrParameterKind.Context, IrParameterKind.Regular -> oldParam.name
-            }
-            val origin = when (oldParam.kind) {
-                IrParameterKind.DispatchReceiver -> IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
-                IrParameterKind.ExtensionReceiver -> IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
-                IrParameterKind.Context -> IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
-                IrParameterKind.Regular -> oldParam.origin
-            }
-            val type = if (oldParam.kind == IrParameterKind.DispatchReceiver) {
-                remap(dispatchReceiverType!!)
-            } else {
-                oldParam.type.remapTypeParameters(oldFunction.classIfConstructor, this.classIfConstructor, typeParameterMap)
-            }
-
-            oldParam.copyTo(
-                this@apply,
-                name = name,
-                type = type,
-                origin = origin,
-                kind = IrParameterKind.Regular,
-            )
-        }
-
+        copyFunctionSignatureAsStaticFrom(oldFunction, returnType, dispatchReceiverType, typeParametersFromContext)
         remapMultiFieldValueClassStructure(oldFunction, this, null)
 
         if (copyMetadata) metadata = oldFunction.metadata
@@ -1310,7 +1322,7 @@ fun IrContainerExpression.unwrapBlock(): IrExpression = statements.singleOrNull(
  * @returns List of newly created, possibly renamed, copies of type parameters
  *     in order of the corresponding parameters in [context].
  */
-private fun IrSimpleFunction.copyAndRenameConflictingTypeParametersFrom(
+private fun IrFunction.copyAndRenameConflictingTypeParametersFrom(
     contextParameters: List<IrTypeParameter>,
     existingParameters: Collection<IrTypeParameter>
 ): List<IrTypeParameter> {
@@ -1664,4 +1676,6 @@ val IrSimpleFunction.isTrivialGetter: Boolean
         return (receiver as? IrGetValue)?.symbol?.owner === this.dispatchReceiverParameter
     }
 
+fun IrSimpleFunction.findOverriddenMethodOfAny() =
+    allOverridden().firstOrNull { it.parentClassOrNull?.isAny() == true }
 

@@ -2,7 +2,6 @@ description = "Kotlin Build Common"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("gradle-plugin-compiler-dependency-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
@@ -12,7 +11,7 @@ dependencies {
     compileOnly(project(":core:util.runtime"))
     compileOnly(project(":compiler:backend.common.jvm"))
     compileOnly(project(":compiler:util"))
-    compileOnly(project(":compiler:cli-common"))
+    compileOnly(project(":compiler:cli-base"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":js:js.serializer"))
     compileOnly(project(":js:js.config"))
@@ -26,7 +25,7 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(protobufFull())
-    testFixturesCompileOnly(project(":compiler:cli-common"))
+    testFixturesCompileOnly(project(":compiler:cli-base"))
     testFixturesImplementation(libs.junit.jupiter.api)
     testFixturesImplementation(libs.junit.jupiter.params)
     testFixturesImplementation(libs.junit4)
@@ -34,8 +33,9 @@ dependencies {
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testFixturesImplementation("org.reflections:reflections:0.10.2")
 
-    testCompileOnly(project(":compiler:cli-common"))
+    testCompileOnly(project(":compiler:cli-base"))
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.junit4)

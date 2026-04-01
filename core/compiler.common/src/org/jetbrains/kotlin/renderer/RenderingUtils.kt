@@ -19,25 +19,33 @@ package org.jetbrains.kotlin.renderer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.render
 
+@Deprecated(
+    "Use 'Name.render()' from 'org.jetbrains.kotlin.name' instead",
+    ReplaceWith("this.render()", "org.jetbrains.kotlin.name.render")
+)
 fun Name.render(stipSpecialMarkers: Boolean = false): String {
-    val string = if (stipSpecialMarkers) asStringStripSpecialMarkers() else asString()
-    return if ((!stipSpecialMarkers || !isSpecial) && shouldBeEscaped(string)) '`' + string + '`' else string
+    // Sic! Explicit import
+    return this.render(stipSpecialMarkers)
 }
 
-private fun shouldBeEscaped(string: String): Boolean {
-    return string in KeywordStringsGenerated.KEYWORDS ||
-            string.any { !Character.isLetterOrDigit(it) && it != '_' } ||
-            string.isEmpty() ||
-            !Character.isJavaIdentifierStart(string.codePointAt(0))
-}
-
+@Deprecated(
+    "Use 'FqNameUnsafe.render()' from 'org.jetbrains.kotlin.name' instead",
+    ReplaceWith("this.render()", "org.jetbrains.kotlin.name.render")
+)
 fun FqNameUnsafe.render(): String {
-    return renderFqName(pathSegments())
+    // Sic! Explicit import
+    return this.render()
 }
 
+@Deprecated(
+    "Use 'FqName.render()' from 'org.jetbrains.kotlin.name' instead",
+    ReplaceWith("this.render()", "org.jetbrains.kotlin.name.render")
+)
 fun FqName.render(): String {
-    return renderFqName(pathSegments())
+    // Sic! Explicit import
+    return this.render()
 }
 
 fun renderFqName(pathSegments: List<Name>): String {

@@ -124,13 +124,13 @@ constructor(
                             )
                         }
                     )
+                    add(project.dependencies.create("org.ow2.asm:asm-tree:9.7"))
                 }
             }
 
         return project.configurations.register(RUNTIME_CLASSPATH_RESOLVER_CONFIGURATION_NAME) {
             description = "Resolve the runtime classpath for running binary-compatibility-validator."
             resolvable()
-            isVisible = false
             extendsFrom(bcvGenerateClasspath.get())
         }
     }

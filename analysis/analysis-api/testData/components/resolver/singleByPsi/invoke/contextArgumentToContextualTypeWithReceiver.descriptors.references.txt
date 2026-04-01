@@ -1,0 +1,18 @@
+KtNameReferenceExpression(118,123): 'block'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
+    public abstract operator fun String.invoke(p2: Int): Unit defined in kotlin.Function2>
+    symbols:
+      (in kotlin.Function2) operator fun P1.invoke(p2: P2): R
+    resolveToSymbols:
+      Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)

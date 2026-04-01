@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
+import org.jetbrains.kotlin.native.interop.gen.jvm.CCallMode
 import org.jetbrains.kotlin.native.interop.indexer.*
 
 internal fun ObjCMethod.getKotlinParameterNames(forConstructorOrFactory: Boolean = false): List<String> {
@@ -440,13 +441,54 @@ internal abstract class ObjCContainerStubBuilder(
 
     private val externalObjCAnnotation = when (container) {
         is ObjCProtocol -> {
-            protocolGetter = if (metaContainerStub != null) {
-                metaContainerStub.protocolGetter!!
-            } else {
-                // TODO: handle the case when protocol getter stub can't be compiled.
-                "${context.generateNextUniqueId("kniprot_")}_${container.name}"
+            /*
+            The `ExternalObjCClass` annotation generated here has two parameters:
+            - `protocolGetter` -- name of the Obj-C function that returns the protocol object;
+                This function is generated later and compiled to bitcode that is stored in the cinterop klib.
+            - `binaryName` -- name of the protocol as used in machine code and Obj-C runtime.
+
+            Both are used for a single purpose: make the compiler able to generate a type check against this protocol.
+            `protocolGetter` is an old and robust method that relies on having bitcode in the cinterop klib.
+            `binaryName` is a new method with known and unknown issues.
+
+            The idea is to eventually migrate to the latter, while having a transition period in the meantime.
+            To achieve that, this code piggybacks the `-Xccall-mode` machinery, following its general meaning:
+            - `indirect` mode:
+                allow only the legacy access method that relies on bitcode in the cinterop klib (here: `protocolGetter`).
+                It also matches the behaviour before the introduction of the `-Xccall-mode` machinery,
+                which roughly corresponds to `-Xccall-mode indirect`.
+            - `direct` mode:
+                allow only the experimental access method that doesn't need the bitcode (here: `binaryName`).
+            - `both` mode: allow both, let the compiler decide.
+
+            So, based on the `cCallMode`, this code decides what parameters to include.
+            */
+
+            protocolGetter = when {
+                context.configuration.cCallMode == CCallMode.DIRECT -> {
+                    null
+                }
+                metaContainerStub != null -> {
+                    metaContainerStub.protocolGetter!!
+                }
+                else -> {
+                    // TODO: handle the case when protocol getter stub can't be compiled.
+                    "${context.generateNextUniqueId("kniprot_")}_${container.name}"
+                }
             }
-            AnnotationStub.ObjC.ExternalClass(protocolGetter)
+
+            val binaryName = if (context.configuration.cCallMode == CCallMode.INDIRECT) {
+                null
+            } else {
+                // Note: `binaryName` can be `null` if getting it is not supported for this declaration yet.
+                // The compiler is expected to handle this gracefully
+                // (i.e., report an understandable error when it is unable to generate a type check).
+                container.binaryName
+            }
+            AnnotationStub.ObjC.ExternalClass(
+                    protocolGetter = protocolGetter ?: "",
+                    binaryName = binaryName ?: ""
+            )
         }
         is ObjCClass -> {
             protocolGetter = null

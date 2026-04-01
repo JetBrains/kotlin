@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.generators.gradle.dsl
 
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.generators.arguments.getPrinterToFile
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainer
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 import javax.inject.Inject
+import kotlin.jvm.java
 
 fun main() {
     generateKotlinTargetContainerWithPresetFunctionsInterface(::getPrinterToFile)
@@ -50,6 +52,7 @@ internal fun generateKotlinTargetContainerWithPresetFunctionsInterface(withPrint
         .plus(typeName(KotlinTarget::class.java.canonicalName))
         .plus(typeName(ObjectFactory::class.java.canonicalName))
         .plus(typeName(Inject::class.java.canonicalName))
+        .plus(typeName(Project::class.java.canonicalName))
         .plus(typeName("org.jetbrains.kotlin.gradle.utils.newInstance"))
         .plus(typeName("org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset"))
         .filter { it.packageName() != className.packageName() }
@@ -93,8 +96,14 @@ private fun KotlinPresetEntry.deprecated(replaceWithArguments: List<String>? = n
         "@Deprecated(${deprecation.renderDeprecationMessage()}, level = DeprecationLevel.${deprecation.level.name})"
     }
 
-    // magic indent is needed to make the result look pretty
-    return "$deprecationAnnotation\n    "
+    return "$deprecationAnnotation\n"
+}
+
+private fun KotlinPresetEntry.kdoc(): String {
+    val kdoc = kdoc ?: return ""
+
+    val kdocLines = kdoc.split("\n")
+    return kdocLines.joinToString(separator = "\n", prefix = "/**\n", postfix = "\n| */\n") { "| * $it" }
 }
 
 private fun KotlinPresetEntry.Deprecation.renderDeprecationMessage(): String = if (messageIsTheCode) {
@@ -113,7 +122,7 @@ private fun generatePresetFunctions(
             DeprecationLevel.ERROR -> "DEPRECATION_ERROR"
             DeprecationLevel.HIDDEN -> "DEPRECATION_HIDDEN"
         }
-        "@Suppress(\"$suppressDeprecationId\")\n    "
+        "@Suppress(\"$suppressDeprecationId\")\n"
     } else {
         ""
     }
@@ -122,22 +131,22 @@ private fun generatePresetFunctions(
     val entityName = presetEntry.entityName
 
     return """
-    ${presetEntry.deprecated()}fun $presetName(
-        name: String = "$entityName",
-        configure: ${presetEntry.targetType.renderShort()}.() -> Unit = { }
-    ): ${presetEntry.targetType.renderShort()}
-    
-    ${presetEntry.deprecated(emptyList())}${suppress}fun $presetName() = $presetName("$entityName") { }
-    
-    ${presetEntry.deprecated(listOf("name"))}${suppress}fun $presetName(name: String) = $presetName(name) { }
-    
-    ${presetEntry.deprecated()}${suppress}fun $presetName(
-        name: String,
-        configure: Action<${presetEntry.targetType.renderShort()}>
-    ) = $presetName(name) { configure.execute(this) }
-    
-    ${presetEntry.deprecated()}${suppress}fun $presetName(configure: Action<${presetEntry.targetType.renderShort()}>) = $presetName { configure.execute(this) }
-""".trimIndent()
+    |${presetEntry.kdoc()}${presetEntry.deprecated()}fun $presetName(
+    |    name: String = "$entityName",
+    |    configure: ${presetEntry.targetType.renderShort()}.() -> Unit = { }
+    |): ${presetEntry.targetType.renderShort()}
+    |
+    |${presetEntry.kdoc()}${presetEntry.deprecated(emptyList())}${suppress}fun $presetName() = $presetName("$entityName") { }
+    |
+    |${presetEntry.kdoc()}${presetEntry.deprecated(listOf("name"))}${suppress}fun $presetName(name: String) = $presetName(name) { }
+    |
+    |${presetEntry.kdoc()}${presetEntry.deprecated()}${suppress}fun $presetName(
+    |    name: String,
+    |    configure: Action<${presetEntry.targetType.renderShort()}>
+    |) = $presetName(name) { configure.execute(this) }
+    |
+    |${presetEntry.kdoc()}${presetEntry.deprecated()}${suppress}fun $presetName(configure: Action<${presetEntry.targetType.renderShort()}>) = $presetName { configure.execute(this) }
+    """.trimMargin()
 }
 
 private fun generateDefaultPresetFunctionImplementation(
@@ -158,17 +167,18 @@ private fun generateDefaultPresetFunctionImplementation(
     val entityName = presetEntry.entityName
 
     return """
-    ${presetEntry.deprecated()}override fun $presetName(
-        name: String,
-        configure: ${presetEntry.targetType.renderShort()}.() -> Unit
-    ): ${presetEntry.targetType.renderShort()} =
-        $configureOrCreateFunctionName(
-            name,
-            presets.getByName("$entityName") as ${presetEntry.presetType.renderShort()},
-            configure
-        )$alsoBlockAfterConfiguration
-    
-    """.trimIndent()
+    |${presetEntry.kdoc()}${presetEntry.deprecated()}override fun $presetName(
+    |    name: String,
+    |    configure: ${presetEntry.targetType.renderShort()}.() -> Unit
+    |): ${presetEntry.targetType.renderShort()} =
+    |    $configureOrCreateFunctionName(
+    |        name,
+    |        presets.getByName("$entityName") as ${presetEntry.presetType.renderShort()},
+    |        project,
+    |        configure
+    |    )$alsoBlockAfterConfiguration
+    |
+    """.trimMargin()
 }
 
 //language=kotlin
@@ -177,12 +187,14 @@ private fun defaultContainerClassHeader(
     className: TypeName,
 ) = """
 internal fun ObjectFactory.${defaultImplementationClassname.renderShort()}(
-    targets: NamedDomainObjectCollection<KotlinTarget>
-): ${defaultImplementationClassname.renderShort()} = newInstance<${defaultImplementationClassname.renderShort()}>(targets)
+    targets: NamedDomainObjectCollection<KotlinTarget>,
+    project: Project,
+): ${defaultImplementationClassname.renderShort()} = newInstance<${defaultImplementationClassname.renderShort()}>(targets, project)
 
 internal abstract class ${defaultImplementationClassname.renderShort()} @Inject constructor(
     objectFactory: ObjectFactory,
     override val targets: NamedDomainObjectCollection<KotlinTarget>,
+    private val project: Project,
 ) : ${className.renderShort()}, ${parentInterface.simpleName} {
 
     val presets: NamedDomainObjectCollection<InternalKotlinTargetPreset<*>> =

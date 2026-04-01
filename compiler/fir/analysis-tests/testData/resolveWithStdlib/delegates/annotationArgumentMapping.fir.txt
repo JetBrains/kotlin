@@ -12,7 +12,7 @@ FILE: annotationArgumentMapping.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun buildAnnotationArgumentMapping(init: R|FirAnnotationArgumentMappingBuilder.() -> kotlin/Unit|): R|FirAnnotationArgumentMapping|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun buildAnnotationArgumentMapping(init: R|FirAnnotationArgumentMappingBuilder.() -> kotlin/Unit|): R|FirAnnotationArgumentMapping|
         [R|Contract description]
          <
             CallsInPlace(init, EXACTLY_ONCE)
@@ -61,6 +61,10 @@ FILE: annotationArgumentMapping.kt
                 )
             }
             )
+                local get(): R|kotlin/collections/Map<kotlin/String, ValueParameter>?| {
+                    ^ D|<local>/parameterByName|.R|kotlin/getValue|<R|kotlin/collections/Map<kotlin/String, ValueParameter>?|>(Null(null), ::R|<local>/parameterByName|)
+                }
+
             R|<local>/arguments|.R|kotlin/collections/mapNotNull|<R|Argument|, R|kotlin/Pair<kotlin/String, kotlin/String>|>(<L> = mapNotNull@fun <anonymous>(it: R|Argument|): R|kotlin/Pair<kotlin/String, kotlin/String>?| <inline=Inline, kind=UNKNOWN>  {
                 lval name: R|kotlin/String| = R|<local>/it|.R|/Argument.name|
                 lval value: R|kotlin/String| = R|<local>/parameterByName|?.{ $subj$.R|SubstitutionOverride<kotlin/collections/Map.get: R|ValueParameter?|>|(R|<local>/name|) }?.{ $subj$.R|/ValueParameter.name| } ?: ^@mapNotNull Null(null)

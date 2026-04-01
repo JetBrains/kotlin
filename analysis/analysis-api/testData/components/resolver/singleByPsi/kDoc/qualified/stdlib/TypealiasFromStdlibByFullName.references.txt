@@ -2,5 +2,6 @@ KDocName(8,36): 'kotlin.collections.ArrayList'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.collections) typealias ArrayList<E> = java.util.ArrayList<E>

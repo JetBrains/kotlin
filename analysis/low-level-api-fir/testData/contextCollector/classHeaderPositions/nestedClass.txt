@@ -16,7 +16,10 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol public final class B : R|r/A.Base|
                 FirRegularClassSymbol public open class Base : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public final class A : R|kotlin/Any|
     Element 7
+        Static scope owner symbol: FirRegularClassSymbol public final class B : R|r/A.Base|
+    Element 8
         Scope: FirLocalScope
             Properties:
                 FirValueParameterSymbol x: R|kotlin/Int|

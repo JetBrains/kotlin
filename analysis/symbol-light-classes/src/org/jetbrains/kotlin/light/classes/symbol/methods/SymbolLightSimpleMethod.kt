@@ -10,9 +10,7 @@ import com.intellij.psi.*
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.mutate
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
@@ -191,26 +189,6 @@ internal class SymbolLightSimpleMethod private constructor(
         withFunctionSymbol { it.isOverride }
     }
 
-    // Inspired by KotlinTypeMapper#forceBoxedReturnType
-    private fun KaSession.shouldEnforceBoxedReturnType(functionSymbol: KaNamedFunctionSymbol): Boolean {
-        val returnType = functionSymbol.returnType
-        // 'invoke' methods for lambdas, function literals, and callable references
-        // implicitly override generic 'invoke' from a corresponding base class.
-        if (functionSymbol.isBuiltinFunctionInvoke && isInlineClassType(returnType))
-            return true
-
-        return isJvmExposedBoxed && typeForValueClass(returnType) ||
-                returnType.isPrimitiveBacked &&
-                functionSymbol.allOverriddenSymbols.any { overriddenSymbol ->
-                    !overriddenSymbol.returnType.isPrimitiveBacked
-                }
-    }
-
-    @Suppress("UnusedReceiverParameter")
-    private fun KaSession.isInlineClassType(type: KaType): Boolean {
-        return ((type as? KaClassType)?.symbol as? KaNamedClassSymbol)?.isInline == true
-    }
-
     private fun KaSession.isVoidType(type: KaType): Boolean {
         val expandedType = type.fullyExpandedType
         return expandedType.isUnitType && !expandedType.isMarkedNullable
@@ -245,6 +223,8 @@ internal class SymbolLightSimpleMethod private constructor(
     companion object {
         /**
          * @param suppressValueClass whether suppress the [containingClass] check for [isValueClass]
+         * @param staticsFromCompanion whether this function was called to materialize static members from a companion object
+         *  * inside the containing class
          */
         internal fun KaSession.createSimpleMethods(
             containingClass: SymbolLightClassBase,
@@ -255,16 +235,20 @@ internal class SymbolLightSimpleMethod private constructor(
             isTopLevel: Boolean,
             suppressStatic: Boolean = false,
             suppressValueClass: Boolean = false,
+            staticsFromCompanion: Boolean = false,
         ) {
             ProgressManager.checkCanceled()
 
             if (functionSymbol.name.isSpecial || functionSymbol.hasReifiedParameters || isHiddenOrSynthetic(functionSymbol)) return
+            if (staticsFromCompanion && !functionSymbol.hasJvmStaticAnnotation()) return
 
             val hasJvmNameAnnotation = functionSymbol.hasJvmNameAnnotation()
             val exposeBoxedMode = jvmExposeBoxedMode(functionSymbol)
             val hasValueClassInReturnType = hasValueClassInReturnType(functionSymbol)
 
             val isNonMaterializableValueClassFunction = !suppressValueClass &&
+                    // Static methods should be materialized even inside value classes if possible
+                    !staticsFromCompanion &&
                     containingClass.isValueClass &&
                     // Overrides are materialized by default
                     !functionSymbol.isOverride

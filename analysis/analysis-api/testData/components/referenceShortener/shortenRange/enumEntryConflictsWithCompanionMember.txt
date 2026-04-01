@@ -1,0 +1,10 @@
+Before shortening: MyEnum.Companion.m
+with default settings:
+[qualifier] MyEnum.Companion
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[qualifier] MyEnum.Companion
+with SHORTEN_AND_IMPORT:
+[qualifier] MyEnum.Companion
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] MyEnum.Companion

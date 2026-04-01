@@ -31,7 +31,10 @@ open class Open {
     %composer.startReplaceGroup(<>)
     %composer.endReplaceGroup()
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 1)
 class Impl : Open {
@@ -52,7 +55,10 @@ class Impl : Open {
       tmp0_rcvr.Test(%composer, updateChangedFlags(%changed or 0b0001))
     }
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 1)
 open class OpenImpl : Open {
@@ -62,5 +68,8 @@ open class OpenImpl : Open {
     super<Open>.Test(%composer, 0b1110 and %changed)
     %composer.endReplaceGroup()
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }

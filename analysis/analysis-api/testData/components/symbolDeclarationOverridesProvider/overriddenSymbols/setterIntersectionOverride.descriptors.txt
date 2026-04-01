@@ -1,0 +1,8 @@
+ALL:
+  /B.foo.<no name>: Unit
+  /C.foo.<no name>: Unit
+  /D.foo.<no name>: Unit
+DIRECT:
+  /B.foo.<no name>: Unit
+  /C.foo.<no name>: Unit
+INTERSECTION:

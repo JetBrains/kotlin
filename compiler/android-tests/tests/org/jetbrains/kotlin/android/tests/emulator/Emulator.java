@@ -26,6 +26,10 @@ import org.jetbrains.kotlin.android.tests.run.RunResult;
 import org.jetbrains.kotlin.android.tests.run.RunUtils;
 import org.junit.Assert;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,6 +39,7 @@ public class Emulator {
     public static final String ARM = "arm";
     public static final String X86 = "x86";
     private static final String AVD_NAME = "kotlin_box_test_avd";
+    private static final String SYSTEM_IMAGE_API = "26";
 
     private final static Pattern EMULATOR_PATTERN = Pattern.compile("emulator-([0-9])*");
 
@@ -58,22 +63,56 @@ public class Emulator {
         commandLine.addParameter("-p");
         commandLine.addParameter(pathManager.getAndroidAvdRoot());
         commandLine.addParameter("-k");
-        if (platform == X86) {
-            commandLine.addParameter("system-images;android-19;default;x86");
+
+        // Allow override of system image via system property
+        String overrideImage = System.getProperty("kotlin.android.avd.systemImage");
+        if (overrideImage != null && !overrideImage.isEmpty()) {
+            commandLine.addParameter(overrideImage);
+        } else if (platform == X86) {
+            commandLine.addParameter("system-images;android-" + SYSTEM_IMAGE_API + ";default;x86_64");
         } else {
-            commandLine.addParameter("system-images;android-19;default;armeabi-v7a");
+            commandLine.addParameter("system-images;android-" + SYSTEM_IMAGE_API + ";default;arm64-v8a");
         }
+
+        commandLine.withEnvironment("ANDROID_SDK_ROOT", pathManager.getAndroidSdkRoot());
+        commandLine.withEnvironment("ANDROID_HOME", pathManager.getAndroidSdkRoot());
+
         return commandLine;
     }
 
     private GeneralCommandLine getStartCommand() {
         GeneralCommandLine commandLine = new GeneralCommandLine();
-        commandLine.setExePath(pathManager.getEmulatorFolderInAndroidSdk() + "/" + "emulator");
+
+        // Prefer the new SDK layout: $SDK/emulator/emulator
+        String sdkRoot = pathManager.getAndroidSdkRoot();
+        String newLayoutEmulator = sdkRoot + "/emulator/emulator";
+
+        File newEmulatorFile = new File(newLayoutEmulator);
+        if (newEmulatorFile.isFile() && newEmulatorFile.canExecute()) {
+            commandLine.setExePath(newEmulatorFile.getAbsolutePath());
+        } else {
+            // Fallback to the old path if needed
+            commandLine.setExePath(pathManager.getEmulatorFolderInAndroidSdk() + "/emulator");
+        }
+
         commandLine.addParameter("-avd");
         commandLine.addParameter(AVD_NAME);
         commandLine.addParameter("-no-audio");
         commandLine.addParameter("-no-window");
+        commandLine.addParameter("-gpu");
+        commandLine.addParameter("swiftshader_indirect");
+        if (isRunningInCi()) {
+            System.out.println("Disabling emulator hardware acceleration in CI");
+            commandLine.addParameter("-no-accel");
+        } else {
+            System.out.println("Using emulator hardware acceleration for local run");
+        }
         return commandLine;
+    }
+
+    private static boolean isRunningInCi() {
+        return Boolean.getBoolean("kotlin.test.android.teamcity")
+               || !StringUtil.isEmpty(System.getenv("TEAMCITY_VERSION"));
     }
 
     private GeneralCommandLine getWaitCommand() {
@@ -101,9 +140,49 @@ public class Emulator {
         return null;
     }
 
+    private void patchAvdConfigSystemImage() {
+        File configIni = new File(pathManager.getAndroidAvdRoot(), "config.ini");
+        if (!configIni.isFile()) return;
+
+        try {
+            List<String> lines = Files.readAllLines(configIni.toPath());
+            List<String> patched = new ArrayList<>(lines.size());
+            boolean replaced = false;
+
+            for (String line : lines) {
+                if (line.startsWith("image.sysdir.1=")) {
+                    // Force the correct relative path under SDK root
+                    if (platform == X86) {
+                        patched.add("image.sysdir.1=system-images/android-" + SYSTEM_IMAGE_API + "/default/x86_64/");
+                    } else {
+                        patched.add("image.sysdir.1=system-images/android-" + SYSTEM_IMAGE_API + "/default/arm64-v8a/");
+                    }
+                    replaced = true;
+                } else {
+                    patched.add(line);
+                }
+            }
+
+            if (!replaced) {
+                // If the key was missing, add it explicitly
+                if (platform == X86) {
+                    patched.add("image.sysdir.1=system-images/android-" + SYSTEM_IMAGE_API + "/default/x86_64/");
+                } else {
+                    patched.add("image.sysdir.1=system-images/android-" + SYSTEM_IMAGE_API + "/default/arm64-v8a/");
+                }
+            }
+
+            Files.write(configIni.toPath(), patched);
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
     public void createEmulator() {
         System.out.println("Creating emulator...");
         OutputUtils.checkResult(RunUtils.execute(new RunUtils.RunSettings(getCreateCommand(), "no", true, null, false)));
+        // Fix up stale system image path in config.ini, otherwise, there will be androidSdk/androidSdk in path.
+        patchAvdConfigSystemImage();
     }
 
     private GeneralCommandLine createAdbCommand() {
@@ -169,15 +248,37 @@ public class Emulator {
         Assert.fail("Can't find booted emulator: " + execute.getOutput());
     }
 
+    public void waitForPackageManager() {
+        System.out.println("Waiting for Package Manager...");
+        GeneralCommandLine packageManagerCheckCommand = createAdbCommand();
+        packageManagerCheckCommand.addParameters("shell", "pm", "path", "android");
+
+        int counter = 0;
+        RunResult execute = RunUtils.execute(packageManagerCheckCommand);
+        while (counter < 20) {
+            String output = execute.getOutput();
+            if (execute.getStatus() && output.contains("package:")) {
+                System.out.println("Package Manager is ready!");
+                return;
+            }
+
+            System.out.println("Waiting for Package Manager (" + counter + ")...");
+            try {
+                Thread.sleep(10000);
+            }
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            counter++;
+            execute = RunUtils.execute(packageManagerCheckCommand);
+        }
+        Assert.fail("Can't access Package Manager: " + execute.getOutput());
+    }
+
     public void stopEmulator() {
         System.out.println("Stopping emulator...");
 
-        GeneralCommandLine command = createAdbCommand();
-        command.addParameter("-s");
-        command.addParameter("emulator-5554");
-        command.addParameter("emu");
-        command.addParameter("kill");
-        RunUtils.execute(command);
+        stopRedundantEmulators(pathManager);
 
         finishProcess("emulator64-" + platform);
         finishProcess("emulator-" + platform);
@@ -213,7 +314,12 @@ public class Emulator {
     private static void finishProcess(String processName) {
         if (SystemInfo.isUnix) {
             GeneralCommandLine pidOfProcess = new GeneralCommandLine();
-            pidOfProcess.setExePath("pidof");
+            if (SystemInfo.isMac) {
+                pidOfProcess.setExePath("pgrep");
+                pidOfProcess.addParameter("-f");
+            } else {
+                pidOfProcess.setExePath("pidof");
+            }
             pidOfProcess.addParameter(processName);
             RunResult runResult = RunUtils.execute(pidOfProcess);
             String processIdsStr = runResult.getOutput().substring(("pidof " + processName).length());
@@ -229,11 +335,14 @@ public class Emulator {
         }
     }
 
-    public String runTestsViaAdb() {
-        System.out.println("Running tests via adb...");
+    public String runTestsViaInstrumentation(String suiteClassName) {
+        System.out.println("Running tests via adb instrumentation for " + suiteClassName + "...");
         GeneralCommandLine adbCommand = createAdbCommand();
-        //adb shell am instrument -w -r org.jetbrains.kotlin.android.tests/android.test.InstrumentationTestRunner
-        adbCommand.addParameters("shell", "am", "instrument", "-w", "-r", "org.jetbrains.kotlin.android.tests/android.test.InstrumentationTestRunner");
+        adbCommand.addParameters(
+                "shell", "am", "instrument", "-w", "-r",
+                "-e", "class", suiteClassName,
+                "org.jetbrains.kotlin.android.tests.gradle/org.jetbrains.kotlin.android.tests.KotlinBoxInstrumentation"
+        );
         RunResult execute = RunUtils.execute(adbCommand);
         return execute.getOutput();
     }
@@ -259,7 +368,6 @@ public class Emulator {
             }
             else {
                 if (!isDdmsStopped && SystemInfo.isUnix) {
-                    stopEmulator();
                     stopDdmsProcess();
                     isDdmsStopped = true;
                 }

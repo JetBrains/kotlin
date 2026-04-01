@@ -15,9 +15,12 @@ internal object ThrowingCaller : Caller<Nothing?> {
         get() = emptyList()
 
     override val returnType: Type
-        get() = Void.TYPE
+        get() = throwUnsupported()
 
-    override fun call(args: Array<*>): Any? {
+    override fun call(args: Array<*>): Any =
+        throwUnsupported()
+
+    private fun throwUnsupported(): Nothing {
         throw UnsupportedOperationException("call/callBy are not supported for this declaration.")
     }
 }

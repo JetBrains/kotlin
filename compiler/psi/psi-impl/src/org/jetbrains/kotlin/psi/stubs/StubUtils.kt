@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,8 +12,10 @@ import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.kotlin.contracts.description.KtContractDescriptionElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
@@ -34,15 +36,28 @@ object StubUtils {
     }
 
     @JvmStatic
+    fun StubOutputStream.serializeKdocText(kdocText: String?) {
+        writeBoolean(kdocText != null)
+        if (kdocText != null) {
+            writeUTFFast(kdocText)
+        }
+    }
+
+    @JvmStatic
+    fun StubInputStream.deserializeKdocText(): String? {
+        return if (readBoolean()) readUTFFast() else null
+    }
+
+    @JvmStatic
     @Suppress("DEPRECATION") // KT-78356
-    fun createNestedClassId(parentStub: StubElement<*>, currentDeclaration: KtClassLikeDeclaration): ClassId? {
+    fun createClassId(parentStub: StubElement<*>, currentDeclaration: KtClassLikeDeclaration): ClassId? {
         if (currentDeclaration is KtObjectDeclaration && currentDeclaration.isObjectLiteral()) {
             return null
         }
 
         return when (parentStub) {
-            is KotlinFileStub -> ClassId(parentStub.getPackageFqName(), currentDeclaration.nameAsSafeName)
-            is KotlinScriptStub -> createNestedClassId(parentStub.parentStub, currentDeclaration)
+            is KotlinFileStub -> parentStub.createTopLevelClassId(currentDeclaration)
+            is KotlinScriptStub -> parentStub.createClassId(currentDeclaration)
             is KotlinPlaceHolderStub<*> if parentStub.stubType == KtStubElementTypes.CLASS_BODY -> {
                 val containingClassStub = parentStub.parentStub as? KotlinClassifierStub
                 if (containingClassStub != null && currentDeclaration !is KtEnumEntry) {
@@ -55,8 +70,26 @@ object StubUtils {
         }
     }
 
+    private fun KotlinFileStub.createTopLevelClassId(name: Name): ClassId = ClassId(getPackageFqName(), name)
+    private fun KotlinFileStub.createTopLevelClassId(currentDeclaration: KtClassLikeDeclaration): ClassId {
+        return createTopLevelClassId(currentDeclaration.nameAsSafeName)
+    }
+
+    private fun KotlinScriptStub.createClassId(currentDeclaration: KtClassLikeDeclaration): ClassId? {
+        val fileStub = parentStub as? KotlinFileStub ?: return null
+
+        @OptIn(KtImplementationDetail::class)
+        return if (isReplSnippet) {
+            val snippetClassName = fqName.shortName()
+            fileStub.createTopLevelClassId(snippetClassName).createNestedClassId(currentDeclaration.nameAsSafeName)
+        } else {
+            fileStub.createTopLevelClassId(currentDeclaration)
+        }
+    }
+
+    @KtImplementationDetail
     @JvmStatic
-    internal tailrec fun isDeclaredInsideValueArgument(node: ASTNode?): Boolean {
+    tailrec fun isDeclaredInsideValueArgument(node: ASTNode?): Boolean {
         val parent = node?.treeParent
         return when (parent?.elementType) {
             // Constants are allowed only in the argument position
@@ -66,8 +99,9 @@ object StubUtils {
         }
     }
 
+    @KtImplementationDetail
     @JvmStatic
-    internal fun StubOutputStream.writeNullableBoolean(value: Boolean?) {
+    fun StubOutputStream.writeNullableBoolean(value: Boolean?) {
         val byte = when (value) {
             true -> 0
             false -> 1
@@ -77,8 +111,9 @@ object StubUtils {
         writeByte(byte)
     }
 
+    @KtImplementationDetail
     @JvmStatic
-    internal fun StubInputStream.readNullableBoolean(): Boolean? = when (readByte().toInt()) {
+    fun StubInputStream.readNullableBoolean(): Boolean? = when (readByte().toInt()) {
         0 -> true
         1 -> false
         else -> null
@@ -148,15 +183,17 @@ object StubUtils {
         }
     }
 
+    @KtImplementationDetail
     @JvmStatic
-    internal fun StubOutputStream.writeContract(contract: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>?) {
+    fun StubOutputStream.writeContract(contract: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>?) {
         writeNullableCollection(contract) { effect ->
             effect.accept(KotlinContractSerializationVisitor(this), null)
         }
     }
 
+    @KtImplementationDetail
     @JvmStatic
-    internal fun StubInputStream.readContract(): List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>? = readNullableCollection {
+    fun StubInputStream.readContract(): List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>? = readNullableCollection {
         val effectType: KotlinContractEffectType = KotlinContractEffectType.entries[readVarInt()]
         effectType.deserialize(this@readContract)
     }

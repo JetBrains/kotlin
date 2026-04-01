@@ -40,6 +40,7 @@ internal class Runtime(
     private fun createOpaqueStructType(name: String): LLVMTypeRef =
             LLVMStructCreateNamed(llvmContext, name) ?: error("failed to create struct $name")
 
+    val pointerType = LLVMPointerTypeInContext(llvmContext, 0)!!
     val typeInfoType = getStructType("TypeInfo")
     val extendedTypeInfoType = getStructType("ExtendedTypeInfo")
     val writableTypeInfoType = getStructTypeOrNull("WritableTypeInfo")
@@ -47,15 +48,12 @@ internal class Runtime(
     val associatedObjectTableRecordType = getStructType("AssociatedObjectTableRecord")
 
     val objHeaderType = getStructType("ObjHeader")
-    val objHeaderPtrType = pointerType(objHeaderType)
-    val objHeaderPtrPtrType = pointerType(objHeaderType)
     val arrayHeaderType = getStructType("ArrayHeader")
     val stringHeaderType = getStructType("StringHeader")
 
     val frameOverlayType = getStructType("FrameOverlay")
 
     val initNodeType = getStructType("InitNode")
-    val memoryStateType = getStructTypeOrNull("MemoryState") ?: createOpaqueStructType("struct.MemoryState")
 
     val target = LLVMGetTarget(llvmModule)!!.toKString()
 
@@ -72,16 +70,14 @@ internal class Runtime(
     val typeInfoObjCExportAddition by lazy { getStructType("TypeInfoObjCExportAddition") }
 
     val objCClassObjectType: LLVMTypeRef by lazy {
-        val result = LLVMStructCreateNamed(llvmContext, "_class_t") ?: error("failed to create struct _class_t")
-        val fieldTypes = listOf(
-                pointerType(result),
-                pointerType(result),
-                pointerType(objCCache),
-                pointerType(pointerType(functionType(i8Ptr, false, i8Ptr, i8Ptr))),
-                pointerType(objCClassRoType)
+        createStructType(
+                "_class_t",
+                pointerType, // _class_t*
+                pointerType, // _class_t*
+                pointerType, // _objc_cache*
+                pointerType, // char* (*)(char*, char*)
+                pointerType, // _class_ro_t*
         )
-        LLVMStructSetBody(result, fieldTypes.toList().toCValues(), fieldTypes.size, 0)
-        result
     }
     val objCCache by lazy { createOpaqueStructType("_objc_cache") }
     val objCClassRoType by lazy {
@@ -90,27 +86,20 @@ internal class Runtime(
                 i32,
                 i32,
                 i32,
-                i8Ptr,
-                i8Ptr,
-                pointerType(objCMethodListType),
-                pointerType(objCProtocolListType),
-                pointerType(objCIVarListType),
-                i8Ptr,
-                pointerType(objCPropListType)
+                pointerType, // char*
+                pointerType, // char*
+                pointerType, // __method_list_t*
+                pointerType, // _objc_protocol_list*
+                pointerType, // _ivar_list_t*
+                pointerType, // char*
+                pointerType, // _prop_list_t*
         )
     }
     val objCMethodType by lazy {
-        createStructType("_objc_method", i8Ptr, i8Ptr, i8Ptr)
+        createStructType("_objc_method", pointerType, pointerType, pointerType)
     }
 
     private val i32 = LLVMInt32TypeInContext(llvmContext)!!
-    private val i8 = LLVMInt8TypeInContext(llvmContext)!!
-    private val i8Ptr = pointerType(i8)
-
-    val objCMethodListType by lazy { createOpaqueStructType("__method_list_t") }
-    val objCProtocolListType by lazy { createOpaqueStructType("_objc_protocol_list") }
-    val objCIVarListType by lazy { createOpaqueStructType("_ivar_list_t") }
-    val objCPropListType by lazy { createOpaqueStructType("_prop_list_t") }
 
     val blockLiteralType by lazy { getStructType("Block_literal_1") }
     val blockDescriptorType by lazy { getStructType("Block_descriptor_1") }
@@ -119,8 +108,8 @@ internal class Runtime(
     fun alignOf(type: LLVMTypeRef) = LLVMABIAlignmentOfType(targetData, type)
     fun offsetOf(type: LLVMTypeRef, index: Int) = LLVMOffsetOfElement(targetData, type, index).toInt()
 
-    val pointerSize: Int by lazy { sizeOf(objHeaderPtrType) }
-    val pointerAlignment: Int by lazy { alignOf(objHeaderPtrType) }
+    val pointerSize: Int by lazy { sizeOf(pointerType) }
+    val pointerAlignment: Int by lazy { alignOf(pointerType) }
 
     val stringHeaderExtraSize: Int by lazy {
         offsetOf(stringHeaderType, LLVMCountStructElementTypes(stringHeaderType) - 1) - sizeOf(arrayHeaderType)

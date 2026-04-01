@@ -1,7 +1,30 @@
 KtNameReferenceExpression(270,279): 'getString'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = context
+        isSafeNavigation = false
+        type = test.pkg.Context
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String!
+        symbol = test/pkg/Context.getString(<dispatch receiver>: test.pkg.Context, id: kotlin.Int): kotlin.String!
+        valueParameters = [
+          KaVariableSignature:
+            name = id
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = id: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/pkg/Context.getString
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         if (testInt == 0) R.string.test_string_1 else R.string.test_string_2 -> (KaVariableSignature:
           name = id
           receiverType = null
@@ -10,28 +33,4 @@ KtNameReferenceExpression(270,279): 'getString'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = context
-          isSafeNavigation = false
-          type = test.pkg.Context
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String!
-          symbol = test/pkg/Context.getString(<dispatch receiver>: test.pkg.Context, id: kotlin.Int): kotlin.String!
-          valueParameters = [
-            KaVariableSignature:
-              name = id
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = id: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = test/pkg/Context.getString
-      typeArgumentsMapping = {}
     isInBestCandidates = true

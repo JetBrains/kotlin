@@ -1,0 +1,4 @@
+KT element: KtTypeAlias
+Resolve target: typeAliasScript.kts -> <script-typeAliasScript.kts> -> MyAlias
+FIR:
+  public final typealias MyAlias = String

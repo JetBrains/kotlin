@@ -2,5 +2,6 @@ KDocName(67,74): 'Foo.foo'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Bar) fun foo()

@@ -5,25 +5,18 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
-import com.intellij.openapi.vfs.impl.ZipHandler
-import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.ProjectId.Companion.RandomProjectUUID
+import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
+import org.jetbrains.kotlin.buildtools.internal.abi.AbiValidationToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.cri.CriToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.incremental.clearJarCaches
 import java.io.File
-import java.util.concurrent.Callable
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
-import kotlin.lazy
+import java.util.concurrent.*
 
 internal class KotlinToolchainsImpl() : KotlinToolchains {
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, File> = ConcurrentHashMap()
@@ -33,8 +26,9 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         @Suppress("UNCHECKED_CAST")
         return toolchains.computeIfAbsent(type) { type ->
             when (type) {
-                JvmPlatformToolchain::class.java -> JvmPlatformToolchainImpl(buildIdToSessionFlagFile)
+                JvmPlatformToolchain::class.java -> JvmPlatformToolchainImpl(getCompilerVersion(), buildIdToSessionFlagFile)
                 CriToolchain::class.java -> CriToolchainImpl()
+                AbiValidationToolchain::class.java -> AbiValidationToolchainImpl()
                 else -> error("Unsupported platform toolchain type: $type. Only JVM compilation is supported for now.")
             }
         } as T
@@ -42,7 +36,13 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
 
     override fun createInProcessExecutionPolicy(): ExecutionPolicy.InProcess = InProcessExecutionPolicyImpl
 
+    @Deprecated(
+        "Use jvmCompilationOperationBuilder instead",
+        replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)")
+    )
     override fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon = DaemonExecutionPolicyImpl()
+
+    override fun daemonExecutionPolicyBuilder(): ExecutionPolicy.WithDaemon.Builder = DaemonExecutionPolicyImpl()
 
     override fun getCompilerVersion(): String = KotlinCompilerVersion.VERSION
 
@@ -97,16 +97,6 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             }
             val file = buildIdToSessionFlagFile.remove(projectId) ?: return
             file.delete()
-        }
-
-        private fun clearJarCaches() {
-            ZipHandler.clearFileAccessorCache()
-            @OptIn(K1Deprecation::class)
-            KotlinCoreEnvironment.applicationEnvironment?.apply {
-                (jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
-                (jrtFileSystem as? CoreJrtFileSystem)?.clearRoots()
-                idleCleanup()
-            }
         }
     }
 }

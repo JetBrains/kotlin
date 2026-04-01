@@ -1,23 +1,18 @@
-@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int
-  context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /Foo.Foo
-  anchor -> [FirValueParameterSymbol <local>/List from FirConstructorSymbol /Foo.Foo]
-
 FILE: [ResolvedTo(IMPORTS)] contextReceiverImplicitPrimaryConstructor.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    context([ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {
-        context([ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    context([ResolvedTo(TYPES)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
+    public final? [ResolvedTo(TYPES)] class Foo : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 

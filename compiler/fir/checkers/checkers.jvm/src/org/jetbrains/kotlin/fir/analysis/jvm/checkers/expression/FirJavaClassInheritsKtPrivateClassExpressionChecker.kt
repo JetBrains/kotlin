@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.java.enhancement.inheritedKtPrivateCls
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 
@@ -22,7 +22,7 @@ object FirJavaClassInheritsKtPrivateClassExpressionChecker : FirQualifiedAccessE
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
-        if (!LanguageFeature.ProhibitJavaClassInheritingPrivateKotlinClass.isEnabled())
+        if (LanguageFeature.ProhibitJavaClassInheritingPrivateKotlinClass.isDisabled())
             return
 
         val calleeSymbol = expression.calleeReference.toResolvedCallableSymbol() ?: return

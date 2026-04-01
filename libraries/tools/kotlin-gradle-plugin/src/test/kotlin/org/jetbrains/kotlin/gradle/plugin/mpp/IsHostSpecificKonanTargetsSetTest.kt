@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class IsHostSpecificKonanTargetsSetTest {

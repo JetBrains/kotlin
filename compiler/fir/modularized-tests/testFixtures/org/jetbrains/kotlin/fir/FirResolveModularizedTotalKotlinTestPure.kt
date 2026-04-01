@@ -15,13 +15,12 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.collectSources
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
+import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsReporterImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.components.DiagnosticComponentsFactory
@@ -76,13 +75,13 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
 
         val (sourceFiles: Collection<KtSourceFile>, scope) =
             if (USE_LIGHT_TREE) {
-                val (platformSources, _) = collectSources(environment.configuration, projectEnvironment, environment.messageCollector)
+                val (platformSources, _) = collectSources(environment.configuration, projectEnvironment)
                 platformSources to projectEnvironment.getSearchScopeForProjectJavaSources()
             } else {
                 val ktFiles = environment.getSourceFiles()
                 ktFiles.map { KtPsiSourceFile(it) } to
                         GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
-                            .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
+                            .uniteWith(AllJavaSourcesInProjectScope(project))
                             .toAbstractProjectFileSearchScope()
             }
         val librariesScope = ProjectScope.getLibrariesScope(project)
@@ -98,10 +97,9 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
             )
 
         val scopeSession = ScopeSession()
-        val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val processors = createAllCompilerResolveProcessors(session, scopeSession).let {
             if (RUN_CHECKERS) {
-                it + FirCheckersResolveProcessor(session, scopeSession, MppCheckerKind.Common, messageCollector)
+                it + FirCheckersResolveProcessor(session, scopeSession, MppCheckerKind.Common)
             } else {
                 it
             }
@@ -273,17 +271,15 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
 class FirCheckersResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession,
-    mppCheckerKind: MppCheckerKind,
-    messageCollector: MessageCollector
+    mppCheckerKind: MppCheckerKind
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, phase = null) {
     val diagnosticCollector: AbstractDiagnosticCollector = DiagnosticComponentsFactory.create(session, scopeSession, mppCheckerKind)
 
-    override val transformer: FirTransformer<Nothing?> = FirCheckersRunnerTransformer(diagnosticCollector, messageCollector)
+    override val transformer: FirTransformer<Nothing?> = FirCheckersRunnerTransformer(diagnosticCollector)
 }
 
 class FirCheckersRunnerTransformer(
     private val diagnosticCollector: AbstractDiagnosticCollector,
-    private val messageCollector: MessageCollector,
 ) : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
         return element
@@ -291,8 +287,9 @@ class FirCheckersRunnerTransformer(
 
     override fun transformFile(file: FirFile, data: Nothing?): FirFile = file.also {
         withFileAnalysisExceptionWrapping(file) {
-            val reporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
-            diagnosticCollector.collectDiagnostics(file, reporter)
+            val diagnosticsCollector = DiagnosticsCollectorImpl()
+            val diagnosticsReporter = PendingDiagnosticsReporterImpl(diagnosticsCollector)
+            diagnosticCollector.collectDiagnostics(file, diagnosticsReporter)
         }
     }
 }

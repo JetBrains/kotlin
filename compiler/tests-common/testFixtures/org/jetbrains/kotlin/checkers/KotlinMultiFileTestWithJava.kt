@@ -74,14 +74,6 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
 
     protected open fun isJavaSourceRootNeeded(): Boolean = true
 
-    protected open fun setupEnvironment(
-        environment: KotlinCoreEnvironment,
-        testDataFile: File,
-        files: List<BaseDiagnosticsTest.TestFile>
-    ) {
-        setupEnvironment(environment)
-    }
-
     private fun getClasspath(file: File, excludeNonTypeUseJetbrainsAnnotations: Boolean): List<File> {
         val result: MutableList<File> = ArrayList()
         if (!excludeNonTypeUseJetbrainsAnnotations) {

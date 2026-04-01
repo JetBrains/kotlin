@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
@@ -20,6 +19,16 @@ import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Represents a single annotation applied to a declaration or expression.
+ *
+ * <h3>Example:</h3>
+ * <pre>{@code
+ *    @Anno
+ * // ^___^
+ * fun foo() {}
+ * }</pre>
+ */
 public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntryStub> implements KtCallElement {
     public KtAnnotationEntry(@NotNull ASTNode node) {
         super(node);
@@ -54,11 +63,6 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
     @Override
     @SuppressWarnings("deprecation") // KT-78356
     public KtValueArgumentList getValueArgumentList() {
-        KotlinAnnotationEntryStub stub = getStub();
-        if (stub == null && getGreenStub() != null) {
-            return (KtValueArgumentList) findChildByType(KtNodeTypes.VALUE_ARGUMENT_LIST);
-        }
-
         return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_ARGUMENT_LIST);
     }
 

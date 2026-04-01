@@ -3,17 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
+package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.*
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.deleteExisting
@@ -24,7 +24,7 @@ internal abstract class BaseScenarioModule(
     internal val module: Module,
     internal val outputs: MutableSet<String>,
     private val strategyConfig: ExecutionPolicy,
-    private val icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit),
+    private val icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
 ) : ScenarioModule {
     override fun changeFile(
         fileName: String,
@@ -65,7 +65,7 @@ internal abstract class BaseScenarioModule(
 
     override fun compile(
         forceOutput: LogLevel?,
-        assertions: CompilationOutcome.(Module, ScenarioModule) -> Unit,
+        assertions: context(Module, ScenarioModule) CompilationOutcome.() -> Unit,
     ) {
         module.compileIncrementally(
             getSourcesChanges(),
@@ -73,7 +73,7 @@ internal abstract class BaseScenarioModule(
             forceOutput,
             icOptionsConfigAction = icOptionsConfigAction,
             assertions = {
-                assertions(this, module, this@BaseScenarioModule)
+                assertions(this)
             })
     }
 
@@ -92,7 +92,7 @@ internal class ExternallyTrackedScenarioModuleImpl(
     module: Module,
     outputs: MutableSet<String>,
     strategyConfig: ExecutionPolicy,
-    icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit),
+    icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
 ) : BaseScenarioModule(module, outputs, strategyConfig, icOptionsConfigAction) {
     private var sourcesChanges = SourcesChanges.Known(emptyList(), emptyList())
 
@@ -122,9 +122,9 @@ internal class ExternallyTrackedScenarioModuleImpl(
 
     override fun getSourcesChanges() = sourcesChanges
 
-    override fun compile(forceOutput: LogLevel?, assertions: CompilationOutcome.(Module, ScenarioModule) -> Unit) {
-        super.compile(forceOutput) { module, scenarioModule ->
-            assertions(module, scenarioModule)
+    override fun compile(forceOutput: LogLevel?, assertions: context(Module, ScenarioModule) CompilationOutcome.() -> Unit) {
+        super.compile(forceOutput) {
+            assertions()
 
             if (actualResult == CompilationResult.COMPILATION_SUCCESS) {
                 sourcesChanges = SourcesChanges.Known(emptyList(), emptyList())
@@ -151,7 +151,7 @@ internal class AutoTrackedScenarioModuleImpl(
     module: Module,
     outputs: MutableSet<String>,
     strategyConfig: ExecutionPolicy,
-    icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit),
+    icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
 ) : BaseScenarioModule(module, outputs, strategyConfig, icOptionsConfigAction) {
     override fun getSourcesChanges() = SourcesChanges.ToBeCalculated
 }
@@ -165,8 +165,8 @@ private class ScenarioDsl(
         moduleName: String,
         dependencies: List<ScenarioModule>,
         snapshotConfig: SnapshotConfig,
-        compilationConfigAction: (JvmCompilationOperation) -> Unit,
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit),
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
+        icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit,
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
         val module =
@@ -180,8 +180,8 @@ private class ScenarioDsl(
         moduleName: String,
         dependencies: List<ScenarioModule>,
         snapshotConfig: SnapshotConfig,
-        compilationConfigAction: ((JvmCompilationOperation) -> Unit),
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit),
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
+        icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit,
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
         val module =

@@ -34,24 +34,6 @@ internal val singleTargetAndroidSourceSetLayout = KotlinAndroidSourceSetLayout(
     checker = KotlinAndroidSourceSetLayoutChecker()
 )
 
-internal val multiplatformAndroidSourceSetLayoutV1 = KotlinAndroidSourceSetLayout(
-    name = "Multiplatform/Android-V1-SourceSetLayout",
-    naming = MultiplatformLayoutV1KotlinAndroidSourceSetNaming,
-    sourceSetConfigurator = KotlinAndroidSourceSetConfigurator(
-        KotlinAndroidSourceSetInfoConfigurator,
-        AndroidKaptSourceSetConfigurator,
-        GradleConventionAddKotlinSourcesToAndroidSourceSetConfigurator,
-        Agp7AddKotlinSourcesToAndroidSourceSetConfigurator
-            .onlyIf { AndroidGradlePluginVersion.current >= "7.0.0" },
-        KotlinAndroidJavaSourceDirConfigurator,
-        MultiplatformAndroidResourceDirConfigurator,
-        MultiplatformLayoutV1DependsOnConfigurator,
-        MultiplatformLayoutV1SourceDirConfigurator
-    ),
-    checker = KotlinAndroidSourceSetLayoutChecker(
-        MultiplatformLayoutV1DeprecationChecker
-    )
-)
 
 internal val multiplatformAndroidSourceSetLayoutV2 = KotlinAndroidSourceSetLayout(
     name = "Multiplatform/Android-V2-SourceSetLayout",
@@ -70,6 +52,5 @@ internal val multiplatformAndroidSourceSetLayoutV2 = KotlinAndroidSourceSetLayou
     checker = KotlinAndroidSourceSetLayoutChecker(
         MultiplatformLayoutV2AgpRequirementChecker,
         MultiplatformLayoutV2AndroidStyleSourceDirUsageChecker,
-        MultiplatformLayoutV2MultiplatformLayoutV1StyleSourceDirUsageChecker
     )
 )

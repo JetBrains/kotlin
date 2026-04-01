@@ -52,6 +52,11 @@ static inline struct KotlinObjCClassData* GetKotlinClassData(id objOrClass) {
   return static_cast<struct KotlinObjCClassData*>(ptr);
 }
 
+RUNTIME_NOTHROW bool IsKotlinObjCClass(Class cls) {
+  // `CreateKotlinObjCClass` adds this selector to both class and meta-class using `AddKotlinClassData`.
+  return [cls instancesRespondToSelector:@selector(_kotlinObjCClassData)];
+}
+
 namespace {
 
 using BackRef = ManuallyScoped<mm::ObjCBackRef>;
@@ -139,6 +144,41 @@ RUNTIME_NOTHROW const TypeInfo* GetObjCKotlinTypeInfo(ObjHeader* obj) {
     return GetKotlinClassData(reinterpret_cast<id>(objcPtr))->typeInfo;
 }
 
+RUNTIME_NOTHROW bool IsInstanceOfKotlinClassImplementingObjCProtocol(ObjHeader* kotlinObj, id obj, const char* protocolName) {
+    // Same as `IsKotlinObjCClass`, but more efficient:
+    if ((kotlinObj->type_info()->flags_ & TF_KOTLIN_OBJC_CLASS) == 0) {
+        // Not an instance of an `IsKotlinObjCClass`-class. The contract requires returning false.
+        return false;
+    }
+
+    /*
+    The implementation below intentionally avoids getting a `Protocol*` by name with `objc_getProtocol`
+    and compares the names instead.
+
+    The reason: `CreateKotlinObjCClass`, when creating the obj's class,
+    looks up protocols by name and doesn't mark the class as adopting the protocol when can't find it.
+    But this can legitimately happen when the protocol has neither properly adopting Objective-C classes
+    nor @protocol references, because the Objective-C compiler creates `__OBJC_PROTOCOL` data on demand.
+    No data => no protocol by name at runtime => no adoption.
+    But this function makes the best effort to keep the type checking behaviour working properly:
+    if the Kotlin class is defined as implementing the protocol, the type check should return `true`.
+
+    So, the implementation below checks `KotlinObjCClassInfo.protocolNames` which contains all the implemented protocols
+    as defined in the source code, regardless of whether they can be found with `objc_getProtocol` at runtime or not.
+
+    Reminder: a Kotlin class can't implement an Objective-C protocol unless it subclasses an Objective-C class.
+    Also, Kotlin subclasses of Objective-C classes (= `IsKotlinObjCClass`) must be final.
+    */
+    auto* classData = GetKotlinClassData(obj);
+    auto* info = classData->classInfo;
+    for (size_t i = 0;; ++i) {
+        const char* name = info->protocolNames[i];
+        if (name == nullptr) break;
+        // Note: the check below might wrongly fail if the protocol has the `objc_runtime_name` attribute. See KT-82296.
+        if (strcmp(protocolName, name) == 0) return true;
+    }
+    return false;
+}
 
 static void AddNSObjectOverride(bool isClassMethod, Class clazz, SEL selector, void* imp) {
   Class nsObjectClass = Kotlin_Interop_getObjCClass("NSObject");
@@ -258,8 +298,6 @@ void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info) {
   AddKotlinClassData(false, newClass, (void*)info->classDataImp);
   AddKotlinClassData(true, newClass, (void*)info->classDataImp);
 
-  const TypeInfo* actualTypeInfo = Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom(newClass, info->typeInfo);
-
   int bodySize = sizeof(BackRef);
   char bodyTypeEncoding[16];
   snprintf(bodyTypeEncoding, sizeof(bodyTypeEncoding), "[%dc]", bodySize);
@@ -273,9 +311,18 @@ void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info) {
   int32_t offset = (int32_t)ivar_getOffset(body);
   *info->bodyOffset = offset;
 
-  // Doing this after objc_registerClassPair because it is not clear whether calling class methods
-  // is safe before that.
+  // `GetKotlinClassData` below calls an Objective-C method on the generated class -- `_kotlinObjCClassData`.
+  //
+  // `Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom` calls a method as well -- `instancesRespondToSelector:`,
+  // as part of `IsKotlinObjCClass`. It also queries a lot of details from the class using Objective-C runtime APIs.
+  //
+  // Doing this to a dynamically created Objective-C class is not safe until it is registered with
+  // `objc_registerClassPair`. See e.g. KT-82669.
+  //
+  // That's why it is important to keep those two calls after `objc_registerClassPair`.
   auto* classData = GetKotlinClassData(newClass);
+  const TypeInfo* actualTypeInfo = Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom(newClass, info->typeInfo);
+
   classData->typeInfo = actualTypeInfo;
   classData->objcClass = newClass;
   classData->bodyOffset = offset;
@@ -289,6 +336,7 @@ void objc_autoreleasePoolPop(void* ptr);
 id objc_allocWithZone(Class clazz);
 id objc_retain(id ptr);
 void objc_release(id ptr);
+id objc_retainAutoreleaseReturnValue(id ptr);
 
 void* Kotlin_objc_autoreleasePoolPush() {
   return objc_autoreleasePoolPush();
@@ -304,12 +352,23 @@ id Kotlin_objc_allocWithZone(Class clazz) {
   return objc_allocWithZone(clazz);
 }
 
-id Kotlin_objc_retain(id ptr) {
+id Kotlin_objc_retain_inNative(id ptr) {
+  NativeOrUnregisteredThreadGuard guard(/*reentrant=*/ true);
   return objc_retain(ptr);
 }
 
-void Kotlin_objc_release(id ptr) {
-  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+id Kotlin_objc_retainBlock_inNative(id ptr) {
+  NativeOrUnregisteredThreadGuard guard(/*reentrant=*/ true);
+  return objc_retainBlock(ptr);
+}
+
+id Kotlin_objc_retainAutoreleaseReturnValue_inNative(id ptr) {
+  NativeOrUnregisteredThreadGuard guard(/*reentrant=*/ true);
+  return objc_retainAutoreleaseReturnValue(ptr);
+}
+
+void Kotlin_objc_release_inNative(id ptr) {
+  NativeOrUnregisteredThreadGuard guard(/*reentrant=*/ true);
   objc_release(ptr);
 }
 
@@ -352,12 +411,22 @@ void* Kotlin_objc_allocWithZone(void* clazz) {
   return nullptr;
 }
 
-void* Kotlin_objc_retain(void* ptr) {
+void* Kotlin_objc_retain_inNative(void* ptr) {
   RuntimeAssert(false, "Objective-C interop is disabled");
   return nullptr;
 }
 
-void Kotlin_objc_release(void* ptr) {
+void* Kotlin_objc_retainBlock_inNative(void* ptr) {
+  RuntimeAssert(false, "Objective-C interop is disabled");
+  return nullptr;
+}
+
+void* Kotlin_objc_retainAutoreleaseReturnValue_inNative(void* ptr) {
+  RuntimeAssert(false, "Objective-C interop is disabled");
+  return nullptr;
+}
+
+void Kotlin_objc_release_inNative(void* ptr) {
   RuntimeAssert(false, "Objective-C interop is disabled");
 }
 

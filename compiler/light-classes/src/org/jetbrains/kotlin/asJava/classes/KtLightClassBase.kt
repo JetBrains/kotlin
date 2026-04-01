@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,7 @@ import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.AbstractLightClass
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import javax.swing.Icon
 
 abstract class KtLightClassBase protected constructor(
     manager: PsiManager
@@ -29,6 +30,8 @@ abstract class KtLightClassBase protected constructor(
     protected open fun cacheDependencies(): List<Any> = listOf(
         KotlinAsJavaSupportBase.getInstance(project).outOfBlockModificationTracker(this)
     )
+
+    override fun getElementIcon(flags: Int): Icon? = null
 
     override fun getDelegate() =
         throw UnsupportedOperationException("Cls delegate shouldn't be loaded for ultra-light classes!")

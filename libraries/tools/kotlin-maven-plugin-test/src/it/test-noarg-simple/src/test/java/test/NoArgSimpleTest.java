@@ -19,7 +19,6 @@ package test;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
-import java.lang.reflect.Modifier;
 
 public class NoArgSimpleTest {
     @Test

@@ -12,8 +12,8 @@ FILE: [ResolvedTo(RAW_FIR)] requiredAnnotationWithStarIncorrectImportedArgument.
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+            public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
     @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class MyAnnotation : R|kotlin/Annotation| {
@@ -37,8 +37,8 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarIncorrectImportedArgument.
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+            public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
     @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class MyAnnotation : R|kotlin/Annotation| {
@@ -62,8 +62,8 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarIncorrectImportedArgument.
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+            public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](R|myPack/MyTarget.ANNOTATION_CLASS|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class MyAnnotation : R|kotlin/Annotation| {
@@ -87,8 +87,8 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarIncorrectImportedArgument.
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+            public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](R|myPack/MyTarget.ANNOTATION_CLASS|) public final? [ResolvedTo(COMPANION_GENERATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
@@ -112,8 +112,8 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarIncorrectImportedArgument.
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+            public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](R|myPack/MyTarget.ANNOTATION_CLASS|) public final? [ResolvedTo(SUPER_TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
@@ -137,8 +137,8 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarIncorrectImportedArgument.
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+            public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
     @R|kotlin/annotation/Target|[Types](R|myPack/MyTarget.ANNOTATION_CLASS|) public final? [ResolvedTo(TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
@@ -162,8 +162,8 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarIncorrectImportedArgument.
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+            public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
     @R|kotlin/annotation/Target|[Types](R|myPack/MyTarget.ANNOTATION_CLASS|) public final [ResolvedTo(STATUS)] annotation class MyAnnotation : R|kotlin/Annotation| {
@@ -187,8 +187,8 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarIncorrectImportedArgument.
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+            public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
     @R|kotlin/annotation/Target|[Types](R|myPack/MyTarget.ANNOTATION_CLASS|) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class MyAnnotation : R|kotlin/Annotation| {
@@ -212,8 +212,8 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarIncorrectImportedArgument.
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+            public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
     @R|kotlin/annotation/Target|[Types](R|myPack/MyTarget.ANNOTATION_CLASS|) public final [ResolvedTo(CONTRACTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
@@ -237,8 +237,8 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarIncorrectImportedArgument.
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+            public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
     @R|kotlin/annotation/Target|[Types](R|myPack/MyTarget.ANNOTATION_CLASS|) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
@@ -262,8 +262,8 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarIncorrectImportedArgument.
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+            public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
     @R|kotlin/annotation/Target|[Types](R|myPack/MyTarget.ANNOTATION_CLASS|) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
@@ -287,11 +287,11 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarIncorrectImportedArgument.
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+            public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|) [evaluated = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -312,11 +312,11 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarIncorrectImportedArgument.
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+            public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|) [evaluated = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             super<R|kotlin/Any|>()
         }
@@ -337,11 +337,11 @@ FILE: [ResolvedTo(BODY_RESOLVE)] requiredAnnotationWithStarIncorrectImportedArgu
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|) [evaluated = vararg(R|myPack/MyTarget.ANNOTATION_CLASS|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             super<R|kotlin/Any|>()
         }

@@ -73,9 +73,10 @@ object KotlinCompilerClient {
         reportingTargets: DaemonReportingTargets,
         autostart: Boolean = true,
         @Suppress("UNUSED_PARAMETER") checkId: Boolean = true,
+        daemonLogOptions: DaemonLogOptions = DaemonLogOptions(),
     ): CompileService? {
         val flagFile = getOrCreateClientFlagFile(daemonOptions)
-        return connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, reportingTargets, autostart)
+        return connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, reportingTargets, autostart, daemonLogOptions)
     }
 
     fun connectToCompileService(
@@ -85,6 +86,7 @@ object KotlinCompilerClient {
         daemonOptions: DaemonOptions,
         reportingTargets: DaemonReportingTargets,
         autostart: Boolean = true,
+        daemonLogOptions: DaemonLogOptions = DaemonLogOptions(),
     ): CompileService? =
         connectAndLease(
             compilerId,
@@ -94,7 +96,8 @@ object KotlinCompilerClient {
             reportingTargets,
             autostart,
             leaseSession = false,
-            sessionAliveFlagFile = null
+            sessionAliveFlagFile = null,
+            daemonLogOptions,
         )?.compileService
 
 
@@ -107,6 +110,7 @@ object KotlinCompilerClient {
         autostart: Boolean,
         leaseSession: Boolean,
         sessionAliveFlagFile: File? = null,
+        daemonLogOptions: DaemonLogOptions = DaemonLogOptions(),
     ): CompileServiceSession? {
         val ignoredDaemonSessionFiles = mutableSetOf<File>()
         var daemonStartupAttemptsCount = 0
@@ -162,6 +166,7 @@ object KotlinCompilerClient {
                             startDaemon(
                                 compilerId,
                                 result.requiredJvmOptions,
+                                daemonLogOptions,
                                 daemonOptions,
                                 reportingTargets,
                                 daemonStartupAttemptsCount++,
@@ -185,7 +190,7 @@ object KotlinCompilerClient {
             daemonOptions,
             DaemonReportingTargets(out = System.out),
             autostart = false,
-            checkId = false
+            checkId = false,
         )
             ?.shutdown()
     }
@@ -263,6 +268,7 @@ object KotlinCompilerClient {
     @JvmStatic
     fun main(vararg args: String) {
         val compilerId = CompilerId()
+        val daemonLogOptions = DaemonLogOptions()
         val daemonOptions = configureDaemonOptions()
         val daemonLaunchingOptions =
             configureDaemonJVMOptions(inheritMemoryLimits = true, inheritOtherJvmOptions = false, inheritAdditionalProperties = true)
@@ -270,6 +276,7 @@ object KotlinCompilerClient {
         val filteredArgs = args.asIterable().filterExtractProps(
             compilerId,
             daemonOptions,
+            daemonLogOptions,
             daemonLaunchingOptions,
             clientOptions,
             prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX
@@ -294,7 +301,8 @@ object KotlinCompilerClient {
             daemonOptions,
             DaemonReportingTargets(out = System.out),
             autostart = !clientOptions.stop,
-            checkId = !clientOptions.stop
+            checkId = !clientOptions.stop,
+            daemonLogOptions,
         )
 
         if (daemon == null) {
@@ -507,6 +515,7 @@ object KotlinCompilerClient {
     private fun startDaemon(
         compilerId: CompilerId,
         daemonJVMOptions: DaemonJVMOptions,
+        daemonLogOptions: DaemonLogOptions,
         daemonOptions: DaemonOptions,
         reportingTargets: DaemonReportingTargets,
         startupAttempt: Int,
@@ -554,6 +563,7 @@ object KotlinCompilerClient {
                 initiatorInfoAsSystemProperties +
                 javaIllegalAccessWorkaround +
                 COMPILER_DAEMON_CLASS_FQN +
+                daemonLogOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
                 daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
                 compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
         reportingTargets.report(DaemonReportCategory.INFO, "starting the daemon as: " + args.joinToString(" "))

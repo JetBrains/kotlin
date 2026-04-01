@@ -127,8 +127,8 @@ public expect annotation class JvmWildcard()
 /**
  * Specifies that given value class is inline class.
  *
- * Adding and removing the annotation is binary incompatible change, since inline classes' methods and functions with inline classes
- * in their signature are mangled.
+ * Adding or removing the annotation is a binary-incompatible change, since methods of inline classes
+ * and functions with inline classes in their signatures are mangled.
  */
 @Target(CLASS)
 @MustBeDocumented

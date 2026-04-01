@@ -40,6 +40,12 @@ The following list of general recommendations (that can also be used as a review
 5. Keep the granularity of the change reasonably small, but avoid overdoing it:
     * A few small isolated refactorings can be fused together in a single commit with a bullet list of changes, especially if they are automated or trivial;
     * Rule of thumb: if refactorings are trivial and the reviewer is unlikely to get back to it after taking an initial look, it’s better to squash them before creating an MR – more concise history, easier git annotate/blame, and focus on the actual semantics both in review and history
+6. Ensure that the change is covered with automated tests. Either pre-existing tests should be enough, or new tests should be added in the MR.
+    * We can say that a test covers "X" if reverting "X" makes the test fail.
+    * For example, if you revert your whole change (but not the tests), some tests should be failing.
+    * Same for any non-trivial problem you encountered while developing the change: if a problem made you change the approach or introduce special cases in the implementation, there should be a test that would fail if you didn't.
+    * If the change fixes a regression, there should be a test reflecting this regression.
+    * When making a test covering a fix, it is particularly helpful to first write a test, make sure it fails as expected, and then proceed to fix it.
 
 ### Commit messages and YT tickets
 

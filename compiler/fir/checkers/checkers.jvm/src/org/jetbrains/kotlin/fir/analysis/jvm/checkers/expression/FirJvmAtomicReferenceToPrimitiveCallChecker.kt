@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.AbstractAtomicReferenceToPrimitiveCallChecker
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.Name
 
 object FirJvmAtomicReferenceToPrimitiveCallChecker :
     AbstractAtomicReferenceToPrimitiveCallChecker(
@@ -22,7 +24,11 @@ object FirJvmAtomicReferenceToPrimitiveCallChecker :
         JvmStandardClassIds.Callables.atomicReferenceCompareAndExchange,
         JvmStandardClassIds.Callables.atomicReferenceCompareAndExchangeAcquire,
         JvmStandardClassIds.Callables.atomicReferenceCompareAndExchangeRelease,
-    )
+    ) {
+    override fun isDangerousAtomicCallParameterNameWithin(function: FirFunctionSymbol<*>, name: Name): Boolean =
+        super.isDangerousAtomicCallParameterNameWithin(function, name)
+                || name == Name.identifier("p0") || name == Name.identifier("p1")
+}
 
 object FirJvmAtomicReferenceArrayToPrimitiveCallChecker :
     AbstractAtomicReferenceToPrimitiveCallChecker(
@@ -37,4 +43,8 @@ object FirJvmAtomicReferenceArrayToPrimitiveCallChecker :
         JvmStandardClassIds.Callables.atomicReferenceArrayCompareAndExchange,
         JvmStandardClassIds.Callables.atomicReferenceArrayCompareAndExchangeAcquire,
         JvmStandardClassIds.Callables.atomicReferenceArrayCompareAndExchangeRelease,
-    )
+    ) {
+    override fun isDangerousAtomicCallParameterNameWithin(function: FirFunctionSymbol<*>, name: Name): Boolean =
+        super.isDangerousAtomicCallParameterNameWithin(function, name)
+                || name == Name.identifier("p1") || name == Name.identifier("p2")
+}

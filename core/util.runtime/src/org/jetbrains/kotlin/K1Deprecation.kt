@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin
 
-const val K1_DEPRECATION_WARNING = "This declaration is part of K1 API which is going to be removed in future releases.\nThis warning will become an error in Kotlin 2.3"
+const val K1_DEPRECATION_WARNING = "This declaration is part of K1 API which is going to be removed in future releases."
 
 @RequiresOptIn(
-    message = "This declaration is part of K1 API, which is planned to be deprecated and reworked.\nThis warning will become an error in Kotlin 2.3",
-    level = RequiresOptIn.Level.WARNING,
+    message = "This declaration is part of K1 API, which is planned to be deprecated and reworked.",
+    level = RequiresOptIn.Level.ERROR,
 )
 annotation class K1Deprecation

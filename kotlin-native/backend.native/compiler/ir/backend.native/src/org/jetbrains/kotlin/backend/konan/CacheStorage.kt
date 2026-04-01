@@ -30,7 +30,6 @@ private fun NativeGenerationState.generateCacheMetadata(): CacheMetadata {
             target = config.target,
             compilerFingerprint = config.distribution.compilerFingerprint,
             runtimeFingerprint = runtimeFingerprint,
-            fullCompilerConfiguration = config.configuration.toString(),
     )
 }
 

@@ -1,0 +1,67 @@
+FILE: thisPlusStringWithObject.kt
+    public final object Test : R|kotlin/Any| {
+        private [ContainingClassKey=Test] constructor(): R|Test| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun test1(): R|kotlin/String| {
+        lval a: R|kotlin/String| = String(test 1: ).R|kotlin/String.plus|(Q|Test|)
+        lval test: R|Test| = Q|Test|
+        lval b: R|kotlin/String| = String(test 1: ).R|kotlin/String.plus|(R|<local>/test|)
+        when () {
+            !=(R|<local>/a|, R|<local>/b|) ->  {
+                ^test1 <strcat>(String(Fail 1: ), String("), R|<local>/a|, String("), String( != ), String("), R|<local>/b|, String("))
+            }
+        }
+
+        ^test1 String(OK)
+    }
+    public final fun test2(): R|kotlin/String| {
+        lval a: R|kotlin/String| = String(test 2: ).R|kotlin/String.plus|(Q|Test|.R|kotlin/Any.toString|())
+        lval test: R|Test| = Q|Test|
+        lval b: R|kotlin/String| = String(test 2: ).R|kotlin/String.plus|(R|<local>/test|.R|kotlin/Any.toString|())
+        when () {
+            !=(R|<local>/a|, R|<local>/b|) ->  {
+                ^test2 <strcat>(String(Fail 2: ), String("), R|<local>/a|, String("), String( != ), String("), R|<local>/b|, String("))
+            }
+        }
+
+        ^test2 String(OK)
+    }
+    public final fun test3(): R|kotlin/String| {
+        lval a: R|kotlin/String| = <strcat>(String(test 3: ), Q|Test|)
+        lval test: R|Test| = Q|Test|
+        lval b: R|kotlin/String| = <strcat>(String(test 3: ), R|<local>/test|)
+        when () {
+            !=(R|<local>/a|, R|<local>/b|) ->  {
+                ^test3 <strcat>(String(Fail 3: ), String("), R|<local>/a|, String("), String( != ), String("), R|<local>/b|, String("))
+            }
+        }
+
+        ^test3 String(OK)
+    }
+    public final fun box(): R|kotlin/String| {
+        lval test1Result: R|kotlin/String| = R|/test1|()
+        when () {
+            !=(R|<local>/test1Result|, String(OK)) ->  {
+                ^box R|<local>/test1Result|
+            }
+        }
+
+        lval test2Result: R|kotlin/String| = R|/test2|()
+        when () {
+            !=(R|<local>/test2Result|, String(OK)) ->  {
+                ^box R|<local>/test2Result|
+            }
+        }
+
+        lval test3Result: R|kotlin/String| = R|/test2|()
+        when () {
+            !=(R|<local>/test3Result|, String(OK)) ->  {
+                ^box R|<local>/test3Result|
+            }
+        }
+
+        ^box String(OK)
+    }

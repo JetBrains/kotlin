@@ -3,15 +3,27 @@
 
 package org.jetbrains.kotlin.buildtools.api.arguments
 
-import kotlin.Array
+import java.nio.`file`.Path
 import kotlin.Boolean
+import kotlin.Deprecated
 import kotlin.Int
 import kotlin.String
+import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.AbiStabilityMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.AssertionsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.CompatqualAnnotationsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JdkRelease
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JspecifyAnnotationsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.SamConversionsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.StringConcatMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode
 
 /**
  * @since 2.3.0
@@ -28,6 +40,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
   /**
    * Set the [value] for option specified by [key], overriding any previous value for that option.
    */
+  @Deprecated(message = "Compiler argument classes will become immutable in an upcoming release. Use a Builder instance to create and modify compiler arguments.")
   public operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V)
 
   /**
@@ -40,7 +53,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
   public operator fun contains(key: JvmCompilerArgument<*>): Boolean
 
   /**
-   * Base class for [JvmCompilerArguments] options.
+   * An option for configuring [JvmCompilerArguments].
    *
    * @see get
    * @see set    
@@ -49,6 +62,40 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     public val id: String,
     public val availableSinceVersion: KotlinReleaseVersion,
   )
+
+  /**
+   * A builder for [JvmCompilerArguments].
+   *
+   * @since 2.3.20
+   */
+  public interface Builder : CommonCompilerArguments.Builder {
+    /**
+     * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
+     *
+     * @return the previously set value for an option
+     * @throws IllegalStateException if the option was not set and has no default value
+     */
+    public operator fun <V> `get`(key: JvmCompilerArgument<V>): V
+
+    /**
+     * Set the [value] for option specified by [key], overriding any previous value for that option.
+     */
+    public operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V)
+
+    /**
+     * Check if an option specified by [key] has a value set.
+     *
+     * Note: trying to read an option (by using [get]) that has not been set will result in an exception.
+     *
+     * @return true if the option has a value set, false otherwise
+     */
+    public operator fun contains(key: JvmCompilerArgument<*>): Boolean
+
+    /**
+     * Constructs a new immutable [JvmCompilerArguments] instance with the options set in this builder.
+     */
+    public fun build(): JvmCompilerArguments
+  }
 
   public companion object {
     /**
@@ -61,7 +108,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ABI_STABILITY: JvmCompilerArgument<String?> =
+    public val X_ABI_STABILITY: JvmCompilerArgument<AbiStabilityMode?> =
         JvmCompilerArgument("X_ABI_STABILITY", KotlinReleaseVersion(1, 4, 30))
 
     /**
@@ -71,7 +118,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ADD_MODULES: JvmCompilerArgument<Array<String>?> =
+    public val X_ADD_MODULES: JvmCompilerArgument<List<String>> =
         JvmCompilerArgument("X_ADD_MODULES", KotlinReleaseVersion(1, 1, 4))
 
     /**
@@ -116,7 +163,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ASSERTIONS: JvmCompilerArgument<String?> =
+    public val X_ASSERTIONS: JvmCompilerArgument<AssertionsMode?> =
         JvmCompilerArgument("X_ASSERTIONS", KotlinReleaseVersion(1, 2, 60))
 
     /**
@@ -135,9 +182,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Enable behaviour needed to compile builtins as part of JVM stdlib
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.3.20.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_COMPILE_BUILTINS_AS_PART_OF_STDLIB: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_COMPILE_BUILTINS_AS_PART_OF_STDLIB", KotlinReleaseVersion(2, 1, 20))
 
@@ -211,7 +261,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_FRIEND_PATHS: JvmCompilerArgument<Array<String>?> =
+    public val X_FRIEND_PATHS: JvmCompilerArgument<List<Path>> =
         JvmCompilerArgument("X_FRIEND_PATHS", KotlinReleaseVersion(1, 2, 70))
 
     /**
@@ -223,6 +273,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     @ExperimentalCompilerArgument
     public val X_GENERATE_STRICT_METADATA_VERSION: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_GENERATE_STRICT_METADATA_VERSION", KotlinReleaseVersion(1, 3, 0))
+
+    /**
+     * Do not copy these annotations to the bridge methods from their targets.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_IGNORED_ANNOTATIONS_FOR_BRIDGES: JvmCompilerArgument<List<String>> =
+        JvmCompilerArgument("X_IGNORED_ANNOTATIONS_FOR_BRIDGES", KotlinReleaseVersion(2, 3, 20))
 
     /**
      * Allow using 'invokedynamic' for lambda expressions with annotations
@@ -274,19 +334,19 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_JAVA_SOURCE_ROOTS: JvmCompilerArgument<Array<String>?> =
+    public val X_JAVA_SOURCE_ROOTS: JvmCompilerArgument<List<Path>> =
         JvmCompilerArgument("X_JAVA_SOURCE_ROOTS", KotlinReleaseVersion(1, 3, 40))
 
     /**
      * Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
-     * The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–25.
+     * The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–26.
      * This also sets the value of '-jvm-target' to be equal to the selected JDK version.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_JDK_RELEASE: JvmCompilerArgument<String?> =
+    public val X_JDK_RELEASE: JvmCompilerArgument<JdkRelease?> =
         JvmCompilerArgument("X_JDK_RELEASE", KotlinReleaseVersion(1, 7, 0))
 
     /**
@@ -297,25 +357,8 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_JSPECIFY_ANNOTATIONS: JvmCompilerArgument<String?> =
+    public val X_JSPECIFY_ANNOTATIONS: JvmCompilerArgument<JspecifyAnnotationsMode?> =
         JvmCompilerArgument("X_JSPECIFY_ANNOTATIONS", KotlinReleaseVersion(1, 4, 30))
-
-    /**
-     * Specify the behavior of 'JSR-305' nullability annotations:
-     * -Xjsr305={ignore/strict/warn}                   global (all non-@UnderMigration annotations)
-     * -Xjsr305=under-migration:{ignore/strict/warn}   all @UnderMigration annotations
-     * -Xjsr305=@<fq.name>:{ignore/strict/warn}        annotation with the given fully qualified class name
-     * Modes:
-     * * ignore
-     * * strict (experimental; treat like other supported nullability annotations)
-     * * warn (report a warning)
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_JSR305: JvmCompilerArgument<Array<String>?> =
-        JvmCompilerArgument("X_JSR305", KotlinReleaseVersion(1, 1, 50))
 
     /**
      * This option is deprecated. Migrate to -jvm-default as follows:
@@ -361,7 +404,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_KLIB: JvmCompilerArgument<String?> =
+    public val X_KLIB: JvmCompilerArgument<List<Path>?> =
         JvmCompilerArgument("X_KLIB", KotlinReleaseVersion(1, 4, 0))
 
     /**
@@ -375,7 +418,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_LAMBDAS: JvmCompilerArgument<String?> =
+    public val X_LAMBDAS: JvmCompilerArgument<LambdasMode?> =
         JvmCompilerArgument("X_LAMBDAS", KotlinReleaseVersion(1, 5, 0))
 
     /**
@@ -401,7 +444,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_MODULE_PATH: JvmCompilerArgument<String?> =
+    public val X_MODULE_PATH: JvmCompilerArgument<List<Path>?> =
         JvmCompilerArgument("X_MODULE_PATH", KotlinReleaseVersion(1, 1, 4))
 
     /**
@@ -495,20 +538,6 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_NO_UNIFIED_NULL_CHECKS", KotlinReleaseVersion(1, 4, 10))
 
     /**
-     * Specify the behavior for specific Java nullability annotations (provided with fully qualified package name).
-     * Modes:
-     * * ignore
-     * * strict
-     * * warn (report a warning)
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_NULLABILITY_ANNOTATIONS: JvmCompilerArgument<Array<String>?> =
-        JvmCompilerArgument("X_NULLABILITY_ANNOTATIONS", KotlinReleaseVersion(1, 5, 30))
-
-    /**
      * Output builtins metadata as .kotlin_builtins files
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -517,19 +546,6 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     @ExperimentalCompilerArgument
     public val X_OUTPUT_BUILTINS_METADATA: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_OUTPUT_BUILTINS_METADATA", KotlinReleaseVersion(2, 1, 20))
-
-    /**
-     * Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.
-     * `profilerPath` is the path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.
-     * If it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath.
-     * Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_PROFILE: JvmCompilerArgument<String?> =
-        JvmCompilerArgument("X_PROFILE", KotlinReleaseVersion(1, 4, 20))
 
     /**
      * Select the code generation scheme for SAM conversions.
@@ -541,7 +557,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_SAM_CONVERSIONS: JvmCompilerArgument<String?> =
+    public val X_SAM_CONVERSIONS: JvmCompilerArgument<SamConversionsMode?> =
         JvmCompilerArgument("X_SAM_CONVERSIONS", KotlinReleaseVersion(1, 5, 0))
 
     /**
@@ -563,16 +579,19 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_SCRIPT_RESOLVER_ENVIRONMENT: JvmCompilerArgument<Array<String>?> =
+    public val X_SCRIPT_RESOLVER_ENVIRONMENT: JvmCompilerArgument<List<String>> =
         JvmCompilerArgument("X_SCRIPT_RESOLVER_ENVIRONMENT", KotlinReleaseVersion(1, 1, 2))
 
     /**
      * Save the IR to metadata (Experimental).
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.4.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_SERIALIZE_IR: JvmCompilerArgument<String> =
         JvmCompilerArgument("X_SERIALIZE_IR", KotlinReleaseVersion(1, 6, 0))
 
@@ -587,7 +606,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_STRING_CONCAT: JvmCompilerArgument<String?> =
+    public val X_STRING_CONCAT: JvmCompilerArgument<StringConcatMode?> =
         JvmCompilerArgument("X_STRING_CONCAT", KotlinReleaseVersion(1, 4, 20))
 
     /**
@@ -598,7 +617,8 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS: JvmCompilerArgument<String?> =
+    public val X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS:
+        JvmCompilerArgument<CompatqualAnnotationsMode?> =
         JvmCompilerArgument("X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS", KotlinReleaseVersion(1, 2, 20))
 
     /**
@@ -729,14 +749,14 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_WHEN_EXPRESSIONS: JvmCompilerArgument<String?> =
+    public val X_WHEN_EXPRESSIONS: JvmCompilerArgument<WhenExpressionsMode?> =
         JvmCompilerArgument("X_WHEN_EXPRESSIONS", KotlinReleaseVersion(2, 2, 20))
 
     /**
      * List of directories and JAR/ZIP archives to search for user class files.
      */
     @JvmField
-    public val CLASSPATH: JvmCompilerArgument<String?> =
+    public val CLASSPATH: JvmCompilerArgument<List<Path>?> =
         JvmCompilerArgument("CLASSPATH", KotlinReleaseVersion(1, 0, 0))
 
     /**
@@ -750,7 +770,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Include a custom JDK from the specified location in the classpath instead of the default 'JAVA_HOME'.
      */
     @JvmField
-    public val JDK_HOME: JvmCompilerArgument<String?> =
+    public val JDK_HOME: JvmCompilerArgument<Path?> =
         JvmCompilerArgument("JDK_HOME", KotlinReleaseVersion(1, 0, 3))
 
     /**
@@ -762,11 +782,11 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * -jvm-default=disable             Do not generate JVM default methods. This is the default behavior up to language version 2.1.
      */
     @JvmField
-    public val JVM_DEFAULT: JvmCompilerArgument<String?> =
+    public val JVM_DEFAULT: JvmCompilerArgument<JvmDefaultMode?> =
         JvmCompilerArgument("JVM_DEFAULT", KotlinReleaseVersion(2, 2, 0))
 
     /**
-     * The target version of the generated JVM bytecode (1.8 and 9–25), with 1.8 as the default.
+     * The target version of the generated JVM bytecode (1.8 and 9–26), with 1.8 as the default.
      */
     @JvmField
     public val JVM_TARGET: JvmCompilerArgument<JvmTarget?> =
@@ -804,7 +824,53 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Script definition template classes.
      */
     @JvmField
-    public val SCRIPT_TEMPLATES: JvmCompilerArgument<Array<String>?> =
+    public val SCRIPT_TEMPLATES: JvmCompilerArgument<List<String>> =
         JvmCompilerArgument("SCRIPT_TEMPLATES", KotlinReleaseVersion(1, 1, 0))
+
+    /**
+     * Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.
+     * `profilerPath` is the path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.
+     * If it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath. 
+     * Individual parameter values are separated by the system path separator.
+     * Example (Unix/Linux): -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>
+     * Example (Windows): -Xprofile=<PATH_TO_ASYNC_PROFILER>\async-profiler\build\libasyncProfiler.so;event=cpu,interval=1ms,threads,start;<SNAPSHOT_DIR_PATH>
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_PROFILE: JvmCompilerArgument<ProfileCompilerCommand?> =
+        JvmCompilerArgument("X_PROFILE", KotlinReleaseVersion(1, 4, 20))
+
+    /**
+     * Specify the behavior for specific Java nullability annotations (provided with fully qualified package name).
+     * Modes:
+     * * ignore
+     * * strict
+     * * warn (report a warning)
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_NULLABILITY_ANNOTATIONS: JvmCompilerArgument<List<NullabilityAnnotation>> =
+        JvmCompilerArgument("X_NULLABILITY_ANNOTATIONS", KotlinReleaseVersion(1, 5, 30))
+
+    /**
+     * Specify the behavior of 'JSR-305' nullability annotations:
+     * -Xjsr305={ignore/strict/warn}                   global (all non-@UnderMigration annotations)
+     * -Xjsr305=under-migration:{ignore/strict/warn}   all @UnderMigration annotations
+     * -Xjsr305=@<fq.name>:{ignore/strict/warn}        annotation with the given fully qualified class name
+     * Modes:
+     * * ignore
+     * * strict (experimental; treat like other supported nullability annotations)
+     * * warn (report a warning)
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_JSR305: JvmCompilerArgument<List<Jsr305>> =
+        JvmCompilerArgument("X_JSR305", KotlinReleaseVersion(1, 1, 50))
   }
 }

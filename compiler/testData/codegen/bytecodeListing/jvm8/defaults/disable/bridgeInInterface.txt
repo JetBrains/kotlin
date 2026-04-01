@@ -23,6 +23,7 @@ public final class Test2$DefaultImpls {
 public interface Test2 {
     // source: 'bridgeInInterface.kt'
     public abstract @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public synthetic bridge method test(p0: java.lang.Object): java.lang.Object
     public final inner class Test2$DefaultImpls
 }
 

@@ -1,0 +1,58 @@
+KtFile: 'forWithRange.kt'
+  null
+
+KtPackageDirective(0,9): 'package f'
+  null
+
+KtNameReferenceExpression(8,9): 'f'
+  null
+
+KtImportList(9,9): ''
+  null
+
+KtNamedFunction(11,56): 'fun usage() {'
+  null
+
+KtParameterList(20,22): '()'
+  null
+
+KtBlockExpression(23,56): '{'
+  null
+
+KtForExpression(29,54): 'for (i in 1..<5) {'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/ranges/IntProgression.iterator(<dispatch receiver>: kotlin.ranges.IntProgression): kotlin.collections.IntIterator,
+      kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean,
+      kotlin/collections/IntIterator.next(<dispatch receiver>: kotlin.collections.IntIterator): kotlin.Int
+    ]
+
+KtParameter(34,35): 'i'
+  null
+
+KtContainerNode(39,44): '1..<5'
+  null
+
+KtBinaryExpression(39,44): '1..<5'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.rangeUntil(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+    ]
+
+KtConstantExpression(39,40): '1'
+  null
+
+KtOperationReferenceExpression(40,43): '..<'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.rangeUntil(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+    ]
+
+KtConstantExpression(43,44): '5'
+  null
+
+KtContainerNodeForControlStructureBody(46,54): '{'
+  null
+
+KtBlockExpression(46,54): '{'
+  null

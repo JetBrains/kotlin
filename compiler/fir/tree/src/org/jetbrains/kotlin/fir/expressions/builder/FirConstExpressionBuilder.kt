@@ -6,16 +6,15 @@
 package org.jetbrains.kotlin.fir.expressions.builder
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirLiteralExpressionImpl
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-@OptIn(UnresolvedExpressionTypeAccess::class)
 fun buildLiteralExpression(
     source: KtSourceElement?,
     kind: ConstantValueKind,
@@ -24,29 +23,29 @@ fun buildLiteralExpression(
     setType: Boolean,
     prefix: String? = null,
 ): FirLiteralExpression {
-    return FirLiteralExpressionImpl(source, null, annotations.toMutableOrEmpty(), kind, value, prefix).also {
-        if (setType) {
-            when (kind) {
-                ConstantValueKind.Boolean -> it.coneTypeOrNull = StandardClassIds.Boolean.constructClassLikeType()
-                ConstantValueKind.Byte -> it.coneTypeOrNull = StandardClassIds.Byte.constructClassLikeType()
-                ConstantValueKind.Char -> it.coneTypeOrNull = StandardClassIds.Char.constructClassLikeType()
-                ConstantValueKind.Double -> it.coneTypeOrNull = StandardClassIds.Double.constructClassLikeType()
-                ConstantValueKind.Float -> it.coneTypeOrNull = StandardClassIds.Float.constructClassLikeType()
-                ConstantValueKind.Int -> it.coneTypeOrNull = StandardClassIds.Int.constructClassLikeType()
-                ConstantValueKind.Long -> it.coneTypeOrNull = StandardClassIds.Long.constructClassLikeType()
-                ConstantValueKind.Null -> it.coneTypeOrNull = StandardClassIds.Any.constructClassLikeType(isMarkedNullable = true)
-                ConstantValueKind.Short -> it.coneTypeOrNull = StandardClassIds.Short.constructClassLikeType()
-                ConstantValueKind.String -> it.coneTypeOrNull = StandardClassIds.String.constructClassLikeType()
-                ConstantValueKind.UnsignedByte -> it.coneTypeOrNull = StandardClassIds.UByte.constructClassLikeType()
-                ConstantValueKind.UnsignedInt -> it.coneTypeOrNull = StandardClassIds.UInt.constructClassLikeType()
-                ConstantValueKind.UnsignedLong -> it.coneTypeOrNull = StandardClassIds.ULong.constructClassLikeType()
-                ConstantValueKind.UnsignedShort -> it.coneTypeOrNull = StandardClassIds.UShort.constructClassLikeType()
-                ConstantValueKind.IntegerLiteral,
-                ConstantValueKind.UnsignedIntegerLiteral,
-                ConstantValueKind.Error,
-                -> {
-                }
-            }
-        }
+    val coneType = runIf(setType) {
+        kind.toConeType()
     }
+    return FirLiteralExpressionImpl(source, coneType, annotations.toMutableOrEmpty(), kind, value, prefix)
+}
+
+fun ConstantValueKind.toConeType(): ConeKotlinType? = when (this) {
+    ConstantValueKind.Boolean -> StandardTypes.Boolean
+    ConstantValueKind.Byte -> StandardTypes.Byte
+    ConstantValueKind.Char -> StandardTypes.Char
+    ConstantValueKind.Double -> StandardTypes.Double
+    ConstantValueKind.Float -> StandardTypes.Float
+    ConstantValueKind.Int -> StandardTypes.Int
+    ConstantValueKind.Long -> StandardTypes.Long
+    ConstantValueKind.Null -> StandardTypes.NullableAny
+    ConstantValueKind.Short -> StandardTypes.Short
+    ConstantValueKind.String -> StandardTypes.String
+    ConstantValueKind.UnsignedByte -> StandardTypes.UByte
+    ConstantValueKind.UnsignedInt -> StandardTypes.UInt
+    ConstantValueKind.UnsignedLong -> StandardTypes.ULong
+    ConstantValueKind.UnsignedShort -> StandardTypes.UShort
+    ConstantValueKind.IntegerLiteral,
+    ConstantValueKind.UnsignedIntegerLiteral,
+    ConstantValueKind.Error
+        -> null
 }

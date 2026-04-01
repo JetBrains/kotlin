@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.fir.SequentialPositionFinder
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
 import org.jetbrains.kotlin.codeMetaInfo.model.DiagnosticCodeMetaInfo
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Severity
@@ -47,8 +47,8 @@ fun BinaryArtifactHandler<*>.reportKtDiagnostics(module: TestModule, ktDiagnosti
     fun processModule(module: TestModule) {
         if (!processedModules.add(module)) return
         for (testFile in module.files) {
-            val ktDiagnostics = testFile.findByPath(testServices) {
-                ktDiagnosticReporter.diagnosticsByFilePath[it]
+            val ktDiagnostics = testFile.findByPath(testServices) { file ->
+                ktDiagnosticReporter.diagnosticsByFile.entries.firstOrNull { it.key?.path == file }?.value
             } ?: continue
             ktDiagnostics.forEach {
                 if (diagnosticsService.shouldRenderDiagnostic(module, it.factoryName, it.severity)) {
@@ -76,7 +76,7 @@ fun BinaryArtifactHandler<*>.checkFullDiagnosticRender() {
         for (testFile in module.files) {
             testServices.sourceFileProvider.getContentOfSourceFile(testFile).byteInputStream().reader().use {
                 val finder = SequentialPositionFinder(it)
-                for (metaInfo in testServices.globalMetadataInfoHandler.getReportedMetaInfosForFile(testFile).sortedBy { it.start }) {
+                for (metaInfo in testServices.globalMetadataInfoHandler.getReportedMetaInfosForFile(testFile).sortedWith(CodeMetaInfoComparator)) {
                     val rendered = when (metaInfo) {
                         is DiagnosticCodeMetaInfo -> metaInfo.diagnostic.let {
                             val message = DefaultErrorMessages.render(it)
@@ -114,8 +114,43 @@ fun BinaryArtifactHandler<*>.checkFullDiagnosticRender() {
     }
 }
 
+/**
+ * Ensure deterministic ordering for diagnostics that share the same source position.
+ * Different backends may report diagnostics in different orders, which previously
+ * resulted in unstable output for entries with identical offsets.
+ */
+private object CodeMetaInfoComparator : Comparator<CodeMetaInfo> {
+    override fun compare(
+        o1: CodeMetaInfo,
+        o2: CodeMetaInfo,
+    ): Int {
+        // First, we try to sort by the start offset
+        val byStart = o1.start.compareTo(o2.start)
+        if (byStart != 0) return byStart
+
+        // If the start offset is equal, we sort by severity
+        val bySeverity = severityOrdinal(o1).compareTo(severityOrdinal(o2))
+        if (bySeverity != 0) return bySeverity
+
+        // If the severity is equal, we sort by message
+        return renderForSort(o1).compareTo(renderForSort(o2))
+    }
+
+    private fun severityOrdinal(codeMetaInfo: CodeMetaInfo) = when (codeMetaInfo) {
+        is DiagnosticCodeMetaInfo -> codeMetaInfo.diagnostic.severity.ordinal
+        is FirDiagnosticCodeMetaInfo -> codeMetaInfo.diagnostic.severity.ordinal
+        else -> -1
+    }
+
+    private fun renderForSort(codeMetaInfo: CodeMetaInfo) = when (codeMetaInfo) {
+        is DiagnosticCodeMetaInfo -> DefaultErrorMessages.render(codeMetaInfo.diagnostic)
+        is FirDiagnosticCodeMetaInfo -> codeMetaInfo.diagnostic.renderMessage()
+        else -> ""
+    }
+}
+
 private fun renderDiagnosticMessage(fileName: String, severity: Severity, message: String?, line: Int, column: Int): String {
-    val severityString = AnalyzerWithCompilerReport.convertSeverity(severity).toString().toLowerCaseAsciiOnly()
+    val severityString = severity.toCompilerMessageSeverity().toString().toLowerCaseAsciiOnly()
     return "/${fileName}:$line:$column: $severityString: $message"
 }
 

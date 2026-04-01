@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.caches.FirCache
@@ -22,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirNamedFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
@@ -36,9 +33,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.ArgumentTypeMismatch
-import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
@@ -58,7 +53,6 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ArrayFqNames
-import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.Variance
@@ -74,7 +68,10 @@ class FirSyntheticCallGenerator(
     private val idFunction: FirNamedFunction = generateSyntheticSelectFunction(SyntheticCallableId.ID)
     private val checkNotNullFunction: FirNamedFunction = generateSyntheticCheckNotNullFunction()
     private val elvisFunction: FirNamedFunction = generateSyntheticElvisFunction()
-    private val arrayOfSymbolCache: FirCache<Name, FirNamedFunctionSymbol?, Nothing?> = session.firCachesFactory.createCache(::getArrayOfSymbol)
+    private val equalityFunction: FirNamedFunction = generateSyntheticEqualityFunction()
+
+    private val arrayOfSymbolCache: FirCache<Name, FirNamedFunctionSymbol?, Nothing?> =
+        session.firCachesFactory.createCache(::getArrayOfSymbol)
 
     private fun assertSyntheticResolvableReferenceIsNotResolved(resolvable: FirResolvable) {
         // All synthetic calls (FirWhenExpression, FirTryExpression, FirElvisExpression, FirCheckNotNullCall)
@@ -168,12 +165,32 @@ class FirSyntheticCallGenerator(
             elvisExpression,
             elvisFunction,
             argumentList,
-            SyntheticCallableId.ELVIS_NOT_NULL.callableName,
+            SyntheticCallableId.ELVIS.callableName,
             context = context,
             resolutionMode = resolutionMode,
         )
 
         return elvisExpression.transformCalleeReference(UpdateReference, reference)
+    }
+
+    fun generateCalleeForEqualityOperatorCall(
+        equalityOperatorCall: FirEqualityOperatorCall,
+        context: ResolutionContext,
+        resolutionMode: ResolutionMode,
+    ): FirEqualityOperatorCall {
+        assertSyntheticResolvableReferenceIsNotResolved(equalityOperatorCall)
+
+        val argumentList = equalityOperatorCall.argumentList
+        val reference = generateCalleeReferenceWithCandidate(
+            equalityOperatorCall,
+            equalityFunction,
+            argumentList,
+            SyntheticCallableId.EQUALITY.callableName,
+            context = context,
+            resolutionMode = resolutionMode,
+        )
+
+        return equalityOperatorCall.transformCalleeReference(UpdateReference, reference)
     }
 
     fun generateSyntheticIdCall(arrayLiteral: FirExpression, context: ResolutionContext, resolutionMode: ResolutionMode): FirFunctionCall {
@@ -191,6 +208,11 @@ class FirSyntheticCallGenerator(
                 resolutionMode = resolutionMode,
             )
         }
+    }
+
+    private fun calculateArrayOfSymbol(expectedType: ConeKotlinType): FirNamedFunctionSymbol? {
+        val arrayCallName = toArrayOfFactoryName(expectedType, session, eagerlyReturnNonPrimitive = true)
+        return arrayCallName?.let { arrayOfSymbolCache.getValue(it) }
     }
 
     fun generateSyntheticArrayOfCall(
@@ -226,24 +248,6 @@ class FirSyntheticCallGenerator(
         }
     }
 
-    private fun calculateArrayOfSymbol(expectedType: ConeKotlinType): FirNamedFunctionSymbol? {
-        val coneType = expectedType.fullyExpandedType(session)
-        val arrayCallName = when {
-            coneType.isPrimitiveArray -> {
-                val arrayElementClassId = coneType.arrayElementType()!!.classId
-                val primitiveType = PrimitiveType.getByShortName(arrayElementClassId!!.shortClassName.asString())
-                ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY[primitiveType]!!
-            }
-            coneType.isUnsignedArray -> {
-                val arrayElementClassId = coneType.arrayElementType()!!.classId
-                ArrayFqNames.UNSIGNED_TYPE_TO_ARRAY[arrayElementClassId!!.asSingleFqName()]!!
-            }
-            else -> {
-                ArrayFqNames.ARRAY_OF_FUNCTION
-            }
-        }
-        return arrayOfSymbolCache.getValue(arrayCallName)
-    }
 
     private fun getArrayOfSymbol(arrayOfName: Name): FirNamedFunctionSymbol? {
         return session.symbolProvider
@@ -377,11 +381,20 @@ class FirSyntheticCallGenerator(
         when (this) {
             is FirAnonymousFunctionExpression -> {
                 val storage = if (candidate.usedOuterCs) candidate.system.currentStorage() else candidate.system.asReadOnlyStorage()
-                val substitutor = storage.buildCurrentSubstitutor(components.session.typeContext, emptyMap())
-                val substitutedType = substitutor.safeSubstitute(
-                    components.session.typeContext,
-                    argumentTypeMismatchOnWholeExpression.actualType
-                ).asCone()
+                val nonErrorSubstitutionMap = storage.fixedTypeVariables.filterValues { it !is ConeErrorType }
+                val substitutor = components.session.typeContext.typeSubstitutorByTypeConstructor(nonErrorSubstitutionMap)
+
+                val substitutedType = substitutor
+                    .safeSubstitute(
+                        components.session.typeContext,
+                        argumentTypeMismatchOnWholeExpression.actualType,
+                    )
+                    .asCone()
+                    .removeTypeVariableTypes(
+                        components.session.typeContext,
+                        TypeVariableReplacement.ErrorType,
+                        candidate.system.outerTypeVariables,
+                    )
 
                 anonymousFunction.replaceTypeRef(
                     anonymousFunction.typeRef.withReplacedConeType(substitutedType)
@@ -391,7 +404,7 @@ class FirSyntheticCallGenerator(
                 // completed collection literal
                 check(
                     session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals)
-                            && source?.kind == KtFakeSourceElementKind.OperatorOfCall
+                            && calleeReference.source?.kind == KtFakeSourceElementKind.CalleeReferenceForOperatorOfCall
                 ) {
                     "Expected ${FirFunctionCall::class.simpleName} originating from ${FirCollectionLiteral::class.simpleName}"
                 }
@@ -441,7 +454,7 @@ class FirSyntheticCallGenerator(
             // If the callable reference cannot be resolved with the expected type, let's try to resolve it with any type and report
             // something like INITIALIZER_TYPE_MISMATCH or NONE_APPLICABLE instead of UNRESOLVED_REFERENCE.
 
-            check(callableReferenceAccess.calleeReference is FirSimpleNamedReference && !callableReferenceAccess.isResolved) {
+            check(callableReferenceAccess.calleeReference is FirSimpleNamedReference && !callableReferenceAccess.hasResolvedType) {
                 "Expected FirCallableReferenceAccess to be unresolved."
             }
 
@@ -618,7 +631,6 @@ class FirSyntheticCallGenerator(
 
     private fun generateSyntheticSelectTypeParameter(
         functionSymbol: FirSyntheticFunctionSymbol,
-        isNullableBound: Boolean = true,
     ): Pair<FirTypeParameter, ConeKotlinType> {
         val typeParameterSymbol = FirTypeParameterSymbol()
         val typeParameter =
@@ -632,11 +644,7 @@ class FirSyntheticCallGenerator(
                 variance = Variance.INVARIANT
                 isReified = false
 
-                if (!isNullableBound) {
-                    bounds += moduleData.session.builtinTypes.anyType
-                } else {
-                    addDefaultBoundIfNecessary()
-                }
+                addDefaultBoundIfNecessary()
             }
 
         val typeParameterType = ConeTypeParameterTypeImpl(typeParameterSymbol.toLookupTag(), false)
@@ -666,7 +674,7 @@ class FirSyntheticCallGenerator(
         // Synthetic function signature:
         //   fun <K> checkNotNull(arg: K?): K & Any
         val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.CHECK_NOT_NULL)
-        val (typeParameter, typeParameterType) = generateSyntheticSelectTypeParameter(functionSymbol, isNullableBound = true)
+        val (typeParameter, typeParameterType) = generateSyntheticSelectTypeParameter(functionSymbol)
 
         return generateMemberFunction(
             functionSymbol,
@@ -686,12 +694,12 @@ class FirSyntheticCallGenerator(
 
     private fun generateSyntheticElvisFunction(): FirNamedFunction {
         // Synthetic function signature:
-        //   fun <K> checkNotNull(x: K?, y: K): @Exact K
+        //   fun <K> elvis(x: K?, y: K): @Exact K
         //
         // Note: The upper bound of `K` cannot be `Any` because of the following case:
         //   fun <X> test(a: X, b: X) = a ?: b
         // `X` is not a subtype of `Any` and hence cannot satisfy `K` if it had an upper bound of `Any`.
-        val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.ELVIS_NOT_NULL)
+        val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.ELVIS)
         val (typeParameter, rightArgumentType) = generateSyntheticSelectTypeParameter(functionSymbol)
 
         val returnType = rightArgumentType
@@ -705,7 +713,7 @@ class FirSyntheticCallGenerator(
 
         return generateMemberFunction(
             functionSymbol,
-            SyntheticCallableId.ELVIS_NOT_NULL.callableName,
+            SyntheticCallableId.ELVIS.callableName,
             typeArgument.typeRef
         ).apply {
             typeParameters += typeParameter
@@ -713,6 +721,22 @@ class FirSyntheticCallGenerator(
                 .withNullability(nullable = true, session.typeContext)
                 .toValueParameter("x", functionSymbol)
             valueParameters += rightArgumentType
+                .toValueParameter("y", functionSymbol)
+        }.build()
+    }
+
+    private fun generateSyntheticEqualityFunction(): FirNamedFunction {
+        // Synthetic function signature:
+        //   fun equals(x: Any?, y: Any?): Boolean
+        val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.EQUALITY)
+        return generateMemberFunction(
+            functionSymbol,
+            SyntheticCallableId.EQUALITY.callableName,
+            session.builtinTypes.booleanType
+        ).apply {
+            valueParameters += session.builtinTypes.nullableAnyType.coneType
+                .toValueParameter("x", functionSymbol)
+            valueParameters += session.builtinTypes.nullableAnyType.coneType
                 .toValueParameter("y", functionSymbol)
         }.build()
     }
@@ -725,7 +749,7 @@ class FirSyntheticCallGenerator(
             origin = FirDeclarationOrigin.Synthetic.FakeFunction
             this.symbol = symbol
             this.name = name
-            status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+            status = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
             isLocal = false
             returnTypeRef = returnType
             resolvePhase = FirResolvePhase.BODY_RESOLVE

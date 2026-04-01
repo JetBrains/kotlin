@@ -1,0 +1,5 @@
+KtCallExpression(50,54): 'y(1)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.y(<dispatch receiver>: A, a: kotlin.Int): kotlin.Unit
+    ]

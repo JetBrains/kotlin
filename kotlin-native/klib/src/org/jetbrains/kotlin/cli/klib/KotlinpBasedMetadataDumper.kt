@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.klib
 
+import kotlinx.metadata.klib.KlibMetadataVersion
 import kotlin.metadata.KmConstructor
 import kotlin.metadata.KmFunction
 import kotlin.metadata.KmPackage
@@ -22,8 +23,12 @@ import org.jetbrains.kotlin.kotlinp.Printer
 import org.jetbrains.kotlin.kotlinp.Settings
 import org.jetbrains.kotlin.kotlinp.klib.*
 import org.jetbrains.kotlin.kotlinp.klib.TypeArgumentId.VarianceId
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_METADATA_VERSION
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.metadata
+import org.jetbrains.kotlin.library.metadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -87,14 +92,15 @@ internal class KotlinpBasedMetadataDumper(
                 }
             }
         }.sortedBy { it.fqName.orEmpty() },
-        annotations = originalModuleMetadata.annotations
+        metadataVersion = originalModuleMetadata.metadataVersion,
     )
 
-    private fun loadModuleMetadata(library: KotlinLibrary) = KlibModuleMetadata.read(
+    private fun loadModuleMetadata(library: KotlinLibrary) = KlibModuleMetadata.readLenient(
         object : KlibModuleMetadata.MetadataLibraryProvider {
             private val metadata = library.metadata
-
             override val moduleHeaderData get() = metadata.moduleHeaderData
+            override val metadataVersion = KlibMetadataVersion((library.metadataVersion?.toArray()
+                    ?: error("No metadata version specified in ${library.location}")))
             override fun packageMetadata(fqName: String, partName: String) = metadata.getPackageFragment(fqName, partName)
             override fun packageMetadataParts(fqName: String) = metadata.getPackageFragmentNames(fqName)
         }
@@ -103,7 +109,7 @@ internal class KotlinpBasedMetadataDumper(
     private fun prepareSignatureComputer(library: KotlinLibrary, moduleMetadata: KlibModuleMetadata): ExternalSignatureComputer? {
         val signatureCollector = SignaturesCollector(signatureRenderer ?: return null)
 
-        val moduleDescriptor = ModuleDescriptorLoader(output).load(library)
+        val moduleDescriptor = ModuleDescriptorLoader(output).load(library) ?: return null
         moduleDescriptor.accept(signatureCollector, Unit)
 
         return ExternalSignatureComputer(moduleMetadata, signatureCollector.signatures::get)

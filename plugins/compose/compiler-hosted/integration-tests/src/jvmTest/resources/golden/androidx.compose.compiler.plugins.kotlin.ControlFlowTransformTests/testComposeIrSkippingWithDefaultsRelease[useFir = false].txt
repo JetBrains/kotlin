@@ -26,7 +26,10 @@ fun Ui.UiTextField(
 
 @StabilityInferred(parameters = 1)
 object Ui {
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @Composable
 @ComposableTarget(applier = "androidx.compose.ui.UiComposable")

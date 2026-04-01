@@ -8,12 +8,8 @@ package org.jetbrains.kotlin.plugin.sandbox.fir.generators
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
-import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
+import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
-import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.plugin.createTopLevelFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.CallableId
@@ -44,9 +40,12 @@ internal class TopLevelPrivateSuspendFunctionGenerator(session: FirSession) : Fi
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         if (context != null) return emptyList()
         if (callableId.callableName != TEST_FUN_NAME) return emptyList()
-        val function = createTopLevelFunction(Key, callableId, session.builtinTypes.unitType.coneType) {
+        val function = createTopLevelFunction(
+            TopLevelPrivateSuspendFunctionGeneratorKey, callableId, session.builtinTypes.unitType.coneType,
+        ) {
             visibility = Visibilities.Private
             status { isSuspend = true }
+            withGeneratedDefaultBody()
         }
         return listOf(function.symbol)
     }
@@ -55,7 +54,7 @@ internal class TopLevelPrivateSuspendFunctionGenerator(session: FirSession) : Fi
         return matchedPackageNames.map { CallableId(it, TEST_FUN_NAME) }.toSet()
     }
 
-    object Key : GeneratedDeclarationKey()
+    data object TopLevelPrivateSuspendFunctionGeneratorKey : GeneratedDeclarationKey()
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(PREDICATE)

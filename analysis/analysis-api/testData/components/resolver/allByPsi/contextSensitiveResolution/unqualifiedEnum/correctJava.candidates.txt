@@ -29,21 +29,20 @@ KtWhenExpression(56,106): 'when (javaEnum) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(62,70): 'javaEnum'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = javaEnum
-          receiverType = null
-          returnType = JavaEnum
-          symbol = javaEnum: JavaEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = javaEnum
+        receiverType = null
+        returnType = JavaEnum
+        symbol = javaEnum: JavaEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -54,24 +53,23 @@ KtWhenConditionWithExpression(78,83): 'FIRST'
   NO_CANDIDATES
 
 KtNameReferenceExpression(78,83): 'FIRST'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = FIRST
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = FIRST
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = FIRST
-          receiverType = null
-          returnType = JavaEnum
-          symbol = /JavaEnum.FIRST
-          contextParameters = []
-          callableId = /JavaEnum.FIRST
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = FIRST
+        receiverType = null
+        returnType = JavaEnum
+        symbol = /JavaEnum.FIRST
+        contextParameters = []
+        callableId = /JavaEnum.FIRST
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -85,24 +83,23 @@ KtWhenConditionWithExpression(93,99): 'SECOND'
   NO_CANDIDATES
 
 KtNameReferenceExpression(93,99): 'SECOND'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = SECOND
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = SECOND
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = SECOND
-          receiverType = null
-          returnType = JavaEnum
-          symbol = /JavaEnum.SECOND
-          contextParameters = []
-          callableId = /JavaEnum.SECOND
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = SECOND
+        receiverType = null
+        returnType = JavaEnum
+        symbol = /JavaEnum.SECOND
+        contextParameters = []
+        callableId = /JavaEnum.SECOND
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

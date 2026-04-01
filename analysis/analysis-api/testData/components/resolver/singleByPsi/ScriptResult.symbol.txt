@@ -1,0 +1,5 @@
+KtNameReferenceExpression(16,26): '`$$result`'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val $$result: kotlin.Int
+    ]

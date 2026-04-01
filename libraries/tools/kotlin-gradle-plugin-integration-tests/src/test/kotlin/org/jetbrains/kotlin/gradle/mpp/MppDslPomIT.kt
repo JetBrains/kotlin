@@ -26,10 +26,7 @@ class MppDslPomIT : KGPBaseTest() {
             projectName = "kt-27059-pom-rewriting",
             gradleVersion = gradleVersion,
             localRepoDir = localRepoDir,
-            buildOptions = defaultBuildOptions.copy(
-                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-            ),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             val repoGroupDir = localRepoDir.resolve("com/example").pathString
 
@@ -55,7 +52,7 @@ class MppDslPomIT : KGPBaseTest() {
                     )
 
                     val jvmPom = "$repoGroupDir/jvm-app/1.0/jvm-app-1.0.pom"
-                    val jsPom = "$repoGroupDir/js-app/1.0/js-app-1.0.pom"
+                    val jsPom = "$repoGroupDir/js-app-js/1.0/js-app-js-1.0.pom"
 
                     if (keepPomIntact) {
                         // The JVM POM should contain the original dependency on 'mpp-lib'

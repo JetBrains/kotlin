@@ -1,0 +1,6 @@
+KT element: KtSecondaryConstructor
+Resolve target: secondaryConstructor.kt -> WithConstructor -> constructor
+FIR:
+  public? constructor(x: Int, y: Int): R|WithConstructor| {
+      LAZY_this<R|WithConstructor|>
+  }

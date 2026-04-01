@@ -1,0 +1,5 @@
+KtNameReferenceExpression(18,28): 'Comparator'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java/util/Comparator(function: (T!, T!) -> kotlin.Int): java.util.Comparator<T>
+    ]

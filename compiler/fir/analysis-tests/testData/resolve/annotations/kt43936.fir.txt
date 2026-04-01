@@ -9,7 +9,7 @@ FILE: kt43936.kt
         public final val foo: R|kotlin/String| = R|<local>/foo|
             public get(): R|kotlin/String|
 
-        @R|kotlin/Suppress|(names = vararg(String(test))) public final class Boom : R|kotlin/Any| {
+        @R|kotlin/Suppress|(names = vararg(String(test)) [evaluated = vararg(String(test))]) public final class Boom : R|kotlin/Any| {
             public constructor(bar: R|kotlin/String|): R|FooOperation.Boom| {
                 super<R|kotlin/Any|>()
             }

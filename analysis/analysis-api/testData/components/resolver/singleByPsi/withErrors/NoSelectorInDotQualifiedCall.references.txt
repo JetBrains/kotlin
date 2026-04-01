@@ -2,5 +2,6 @@ KtNameReferenceExpression(108,115): 'makeFoo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in testing) fun makeFoo(): testing.Foo

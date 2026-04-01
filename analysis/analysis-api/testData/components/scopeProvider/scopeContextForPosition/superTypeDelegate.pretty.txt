@@ -8,13 +8,13 @@ scopes:
       base: test.Base
     constructors: 0
 
-  ExplicitSimpleImportingScope, index = 1
+  ExplicitSimpleImportingScope, index = 2
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 2
+  PackageMemberScope, index = 3
     packages: 0
     classifiers: 2
       interface Base
@@ -22,15 +22,14 @@ scopes:
     callables: 0
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 3
-
   DefaultSimpleImportingScope, index = 4
 
-  ExplicitStarImportingScope, index = 5
+  DefaultSimpleImportingScope, index = 5
+
+  ExplicitStarImportingScope, index = 6
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 6
-
+  DefaultStarImportingScope, index = 7

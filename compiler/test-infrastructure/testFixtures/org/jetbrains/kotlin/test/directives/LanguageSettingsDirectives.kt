@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.test.directives
 
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.ExplicitApiMode
-import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.ReturnValueCheckerMode
+import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object LanguageSettingsDirectives : SimpleDirectivesContainer() {
@@ -44,6 +41,16 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
+    val ALLOW_MULTIPLE_API_VERSIONS_SETTING by directive(
+        description = """
+            Disables the failure in the ${LanguageVersionSettingsBuilder::class} in case if there
+            several values specified for the $API_VERSION. In this case the latest version will be used.
+            
+            Please note that having several API versions specified is most likely an error prone
+            situation, so it's not recommended to use this directive.
+       """.trimIndent()
+    )
+
 
     // --------------------- Analysis Flags ---------------------
 
@@ -72,10 +79,6 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
 
     val ALLOW_KOTLIN_PACKAGE by directive(
         description = "Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info (AnalysisFlags.allowKotlinPackage)"
-    )
-
-    val EXPECT_BUILTINS_AS_PART_OF_STDLIB by directive(
-        description = "Emulate kotlin-stdlib compilation"
     )
 
     val PREFER_IN_TEST_OVER_STDLIB by directive(
@@ -143,6 +146,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val USE_INLINE_SCOPES_NUMBERS by directive("Use inline scopes numbers for inline marker variables")
     val DONT_WARN_ON_ERROR_SUPPRESSION by directive("Don't emit warning when an error is suppressed")
     val HEADER_MODE by directive("Enable header mode")
+    val IDE_MODE by directive("Enable ide mode")
 
 
     // --------------------- Utils ---------------------

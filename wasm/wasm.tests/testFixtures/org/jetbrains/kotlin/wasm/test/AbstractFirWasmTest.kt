@@ -17,10 +17,12 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.wasmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
@@ -319,14 +321,16 @@ open class AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest : AbstractFirWa
     }
 }
 
-open class AbstractFirWasmTypeScriptExportTest : AbstractFirWasmJsTest(
-    "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/wasm/",
-    "typescript-export/"
-) {
+open class AbstractFirWasmTypeScriptExportTest(
+    pathToTestDir: String = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/wasm/",
+    testGroupOutputDirPrefix: String = "typescript-export/"
+) : AbstractFirWasmJsTest(pathToTestDir, testGroupOutputDirPrefix) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.defaultDirectives {
             +WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS
+            JsEnvironmentConfigurationDirectives.TSC_TARGET with "es2020"
+            JsEnvironmentConfigurationDirectives.TSC_MODULE with "es2020"
         }
     }
 }

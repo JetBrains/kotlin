@@ -8,16 +8,13 @@ package org.jetbrains.kotlin.fir.expressions
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -25,10 +22,11 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.constants.evaluate.CompileTimeType
+import org.jetbrains.kotlin.resolve.constants.evaluate.canEvalOp
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun ConeKotlinType.canBeUsedForConstVal(): Boolean = with(lowerBoundIfFlexible()) { isPrimitive || isString || isUnsignedType }
@@ -278,6 +276,8 @@ private class FirConstCheckVisitor(
             // Better to report "UNRESOLVED_REFERENCE" later than some "NOT_CONST" diagnostic right now.
             null -> return ConstantArgumentKind.RESOLUTION_ERROR
             is FirPropertySymbol -> {
+                // Check for the resolved type. In case of cyclic resolution error, we will get an exception from `getReferencedClassSymbol`.
+                if (propertySymbol.fir.returnTypeRef !is FirResolvedTypeRef) return ConstantArgumentKind.NOT_CONST
                 val classKindOfParent = (propertySymbol.getReferencedClassSymbol() as? FirRegularClassSymbol)?.classKind
                 if (classKindOfParent == ClassKind.ENUM_CLASS) {
                     return ConstantArgumentKind.ENUM_NOT_CONST
@@ -302,8 +302,20 @@ private class FirConstCheckVisitor(
                     propertySymbol.isConst -> {
                         // even if called on CONSTANT_EVALUATION, it's safe to call resolvedInitializer, as intializers of const vals
                         // are resolved at previous IMPLICIT_TYPES_BODY_RESOLVE phase
-                        val initializer = propertySymbol.resolvedInitializer
-                        propertySymbol.visit { initializer?.accept(this, data) } ?: ConstantArgumentKind.RESOLUTION_ERROR
+                        when (val evaluationResult = propertySymbol.fir.evaluatedInitializer) {
+                            null -> {
+                                val initializer = propertySymbol.resolvedInitializer
+                                propertySymbol.visit { initializer?.accept(this, data) } ?: ConstantArgumentKind.RESOLUTION_ERROR
+                            }
+                            else -> {
+                                if (evaluationResult is FirEvaluatorResult.Evaluated) {
+                                    ConstantArgumentKind.VALID_CONST
+                                } else {
+                                    ConstantArgumentKind.NOT_CONST
+                                }
+                            }
+                        }
+
                     }
 
                     // if it called at checkers stage it's safe to call resolvedInitializer
@@ -339,14 +351,12 @@ private class FirConstCheckVisitor(
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?): ConstantArgumentKind {
         val calleeReference = functionCall.calleeReference
-        if (calleeReference is FirErrorNamedReference || calleeReference is FirResolvedErrorReference) {
-            return ConstantArgumentKind.RESOLUTION_ERROR
-        }
+        if (calleeReference !is FirResolvedNamedReference) return ConstantArgumentKind.NOT_CONST
+
         if (functionCall.getExpandedType().classId == StandardClassIds.KClass) {
             return ConstantArgumentKind.NOT_KCLASS_LITERAL
         }
 
-        if (calleeReference !is FirResolvedNamedReference) return ConstantArgumentKind.NOT_CONST
         return when (val symbol = calleeReference.resolvedSymbol) {
             is FirNamedFunctionSymbol -> visitNamedFunction(functionCall, symbol)
             is FirConstructorSymbol -> visitConstructorCall(functionCall, symbol)
@@ -436,6 +446,12 @@ private class FirConstCheckVisitor(
         return intrinsicConstEvaluation && this.hasAnnotation(StandardClassIds.Annotations.IntrinsicConstEvaluation, session)
     }
 
+
+    private fun ConeKotlinType.toCompileTimeType(): CompileTimeType? {
+        if (this.classId == StandardClassIds.Any) return CompileTimeType.ANY
+        return this.classId?.toConstantValueKind()?.toCompileTimeType()
+    }
+
     private fun FirExpression.hasAllowedCompileTimeType(): Boolean {
         // See visitErrorExpression for details. Here we count the type as valid and take a decision later.
         if (this is FirErrorExpression) return true
@@ -457,14 +473,29 @@ private class FirConstCheckVisitor(
 
         val receiverClassId = this.dispatchReceiver?.getExpandedType()?.classId
 
-        if (!intrinsicConstEvaluation && receiverClassId in StandardClassIds.unsignedTypes) return false
+        if (intrinsicConstEvaluation) {
+            val receiverType = this.dispatchReceiver?.getExpandedType()?.toCompileTimeType()
+                ?: this.extensionReceiver?.getExpandedType()?.toCompileTimeType()
+
+            val firstArgType = this.arguments.firstOrNull()?.getExpandedType()?.toCompileTimeType()
+
+            val callableId = symbol?.callableId ?: return false
+
+            val inBuiltinMap = receiverType != null && canEvalOp(
+                callableId = callableId,
+                typeA = receiverType,
+                typeB = firstArgType
+            )
+            return inBuiltinMap
+        }
+
+        if (receiverClassId in StandardClassIds.unsignedTypes) return false
 
         if (
             name in compileTimeFunctions ||
             name in compileTimeExtensionFunctions ||
             name == OperatorNameConventions.TO_STRING ||
-            name in OperatorNameConventions.NUMBER_CONVERSIONS ||
-            (intrinsicConstEvaluation && name in OperatorNameConventions.UNSIGNED_CONVERSIONS)
+            name in OperatorNameConventions.NUMBER_CONVERSIONS
         ) return true
 
         if (calleeReference.name == OperatorNameConventions.GET && receiverClassId == StandardClassIds.String) return true

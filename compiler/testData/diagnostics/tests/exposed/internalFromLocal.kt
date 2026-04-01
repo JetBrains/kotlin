@@ -1,5 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 interface Your
 
 class My {

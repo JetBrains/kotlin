@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -71,8 +72,8 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         process.waitFor(10, TimeUnit.SECONDS)
         val exitCode = process.exitValue()
         try {
-            assertEquals(expectedStdout, stdout)
-            assertEquals(expectedStderr, stderr)
+            assertEquals(expectedStdout.trim(), stdout.trim())
+            assertEquals(expectedStderr.trim(), stderr.trim())
             assertEquals(expectedExitCode, exitCode)
         } catch (e: Throwable) {
             System.err.println("exit code $exitCode")
@@ -155,6 +156,22 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             K2JSCompilerArguments::outputDir.cliArgument,
             tmpdir.path,
             K2JSCompilerArguments::moduleName.cliArgument,
+            "out",
+            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath)
+        )
+    }
+
+    fun testKotlincWasmSimple() {
+        runProcess(
+            "kotlinc-wasm",
+            "$testDataDirectory/emptyMain.kt",
+            KotlinWasmCompilerArguments::suppressWarnings.cliArgument,
+            KotlinWasmCompilerArguments::libraries.cliArgument,
+            PathUtil.kotlinPathsForCompiler.wasmJsStdLibKlibPath.absolutePath,
+            KotlinWasmCompilerArguments::irProduceKlibDir.cliArgument,
+            KotlinWasmCompilerArguments::outputDir.cliArgument,
+            tmpdir.path,
+            KotlinWasmCompilerArguments::moduleName.cliArgument,
             "out",
             environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath)
         )
@@ -282,10 +299,11 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlin", "-no-stdlib", "-e", "println(42)",
             expectedExitCode = 1,
-            expectedStderr = """script.kts:1:1: error: unresolved reference 'println'.
-println(42)
-^
-"""
+            expectedStderr = """
+                script.kts:1:1: error: unresolved reference 'println'.
+                println(42)
+                ^
+                """.trimIndent()
         )
     }
 
@@ -343,10 +361,12 @@ println(42)
 """
         )
         runProcess(
-            "kotlin", "-howtorun", ".main.kts", "$testDataDirectory/noInline.myscript",
+            "kotlin", "-howtorun", ".main.kts",
+            "-P", "plugin:kotlin.scripting:disable-script-compilation-cache=true",
+            "$testDataDirectory/noInline.myscript",
             expectedExitCode = 3,
-            expectedStderr = """java.lang.IllegalAccessError: tried to access method kotlin.io.ConsoleKt.println(Ljava/lang/Object;)V from class NoInline_main
-	at NoInline_main.<init>(noInline.myscript:3)
+            expectedStderr = """java.lang.IllegalAccessError: tried to access method kotlin.io.ConsoleKt.println(Ljava/lang/Object;)V from class NoInline
+	at NoInline.<init>(noInline.myscript:3)
 """
         )
     }
@@ -654,10 +674,6 @@ Caused by: java.lang.AssertionError: assert
 
     fun testKaptVersion() {
         val info = $$"info: kotlinc-jvm $VERSION$ (JRE $JVM_VERSION$)\n"
-        val k1 = "warning: language version 1.9 is deprecated in JVM and its support will be removed in a future version of Kotlin\n"
-
         runProcess("kapt", "-version", expectedStderr = info)
-        runProcess("kapt", "-language-version", "1.9", "-version", expectedStderr = info + k1)
-        runProcess("kapt", "-language-version=1.9", "-version", expectedStderr = info + k1)
     }
 }

@@ -134,7 +134,7 @@ internal fun FirProperty.processOverriddenPropertySymbols(
 
 context(c: Fir2IrComponents)
 internal fun FirClassSymbol<*>.unsubstitutedScope(): FirTypeScope {
-    return this.unsubstitutedScope(c.session, c.scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = FirResolvePhase.STATUS)
+    return this.unsubstitutedScope(withForcedTypeCalculator = true, memberRequiredPhase = FirResolvePhase.STATUS)
 }
 
 context(c: Fir2IrComponents)

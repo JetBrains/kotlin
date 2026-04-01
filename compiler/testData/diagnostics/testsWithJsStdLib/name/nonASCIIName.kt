@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // Note: JsAllowInvalidCharsIdentifiersEscaping
 
 interface I𝔹

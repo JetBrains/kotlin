@@ -2,21 +2,31 @@
  * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromJson
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
-import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupportDeprecated as KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.uklibs.computeTransformedLibraryChecksum
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.gradle.uklibs.metadataTransformationOutputClasspath
+import org.jetbrains.kotlin.gradle.uklibs.relativeTransformationPathComponents
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.utils.addToStdlib.countOccurrencesOf
 import org.junit.jupiter.params.ParameterizedTest
@@ -35,10 +45,7 @@ class MppMetadataResolutionIT : KGPBaseTest() {
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
             localRepoDir = defaultLocalRepo(gradleVersion),
-            buildOptions = defaultBuildOptions.copy(
-                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-            ),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build("publish")
         }
@@ -145,10 +152,10 @@ class MppMetadataResolutionIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         kmpIsolatedProjectsSupport: String,
     ) {
-        val kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.valueOf(kmpIsolatedProjectsSupport)
+        val kmpIsolatedProjectsSupport = @Suppress("DEPRECATION") KmpIsolatedProjectsSupport.valueOf(kmpIsolatedProjectsSupport)
         var buildOptions = defaultBuildOptions.copy(kmpIsolatedProjectsSupport = kmpIsolatedProjectsSupport)
 
-        if (kmpIsolatedProjectsSupport == KmpIsolatedProjectsSupport.DISABLE) {
+        if (kmpIsolatedProjectsSupport == @Suppress("DEPRECATION") KmpIsolatedProjectsSupport.DISABLE) {
             // See: KT-72394 (Dependency.getProjectDependency is deprecated)
             if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_11) &&
                 gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_0)
@@ -260,7 +267,7 @@ class MppMetadataResolutionIT : KGPBaseTest() {
                 defaultBuildOptions.copy(
                     configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
                     isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-                    kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.DISABLE,
+                    kmpIsolatedProjectsSupport = @Suppress("DEPRECATION") KmpIsolatedProjectsSupport.DISABLE,
                 )
             },
         )
@@ -268,5 +275,127 @@ class MppMetadataResolutionIT : KGPBaseTest() {
             setOf(org.jetbrains.kotlin.gradle.plugin.mpp.ModuleDependencyIdentifier("foo", "producer")),
             parseKotlinSourceSetMetadataFromJson(path.readText()).sourceSetModuleDependencies["commonMain"],
         )
+    }
+
+    @GradleTest
+    fun `KT-83917 - dependencySubstitution on target configurations should work in compose-git`(
+        gradleVersion: GradleVersion
+    ) {
+        project("empty", gradleVersion, buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            fun KotlinMultiplatformExtension.applyKmpTargets() {
+                iosArm64()
+                iosSimulatorArm64()
+                macosArm64()
+                jvm()
+                js {
+                    browser()
+                }
+                @OptIn(ExperimentalWasmDsl::class)
+                wasmJs {
+                    browser()
+                }
+            }
+
+            includeOtherProjectAsSubmodule("empty", newSubmoduleName = "androidxCollectionWrapper") {
+                plugins {
+                    kotlin("multiplatform")
+                }
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        applyKmpTargets()
+                        sourceSets.commonMain.dependencies {
+                            api("androidx.collection:collection:1.5.0")
+                        }
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    }
+                }
+            }
+
+            buildScriptInjection {
+                project.computeTransformedLibraryChecksum(false)
+                project.applyMultiplatform {
+                    applyKmpTargets()
+
+                    sourceSets.commonMain.dependencies {
+                        api(project(":androidxCollectionWrapper"))
+                    }
+
+                    // This is sample code from Compose Multiplatform.git project
+                    fun KotlinNativeTarget.substituteForRedirectedPublishedDependencies() {
+                        val main = compilations.getByName("main")
+                        val test = compilations.getByName("test")
+
+                        listOf(main, test).flatMap {
+                            val configurations = it.configurations
+                            listOf(
+                                configurations.compileDependencyConfiguration,
+                                configurations.runtimeDependencyConfiguration,
+                                configurations.apiConfiguration,
+                                configurations.implementationConfiguration,
+                                configurations.runtimeOnlyConfiguration,
+                                configurations.compileOnlyConfiguration
+                            )
+                        }.forEach { c ->
+                            c?.incoming?.beforeResolve {
+                                c.resolutionStrategy { rs ->
+                                    rs.dependencySubstitution { ds ->
+                                        ds.substitute(ds.project(":androidxCollectionWrapper"))
+                                            .using(ds.module("androidx.collection:collection:1.5.0"))
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    val defaultKonanTargetsPublishedByAndroidx = setOf(
+                        KonanTarget.LINUX_X64,
+                        KonanTarget.IOS_X64,
+                        KonanTarget.IOS_ARM64,
+                        KonanTarget.IOS_SIMULATOR_ARM64,
+                        KonanTarget.MACOS_X64,
+                        KonanTarget.MACOS_ARM64,
+                    )
+                    targets.all {
+                        if (it is KotlinNativeTarget && it.konanTarget in defaultKonanTargetsPublishedByAndroidx) {
+                            it.substituteForRedirectedPublishedDependencies()
+                        }
+                    }
+
+                    sourceSets.commonMain.get().compileSource("""
+                        import androidx.collection.*
+                        
+                        fun a() = floatFloatMapOf()
+                        
+                        fun b() = longIntMapOf()
+                    """.trimIndent())
+                }
+            }
+
+            assertEquals(
+                listOf(
+                    listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib")
+                ).prettyPrinted,
+                metadataTransformationOutputClasspath("commonMain")
+                    .relativeTransformationPathComponents().prettyPrinted
+            )
+
+            val flagName = "kotlin.internal.kmp.allowMatchingByRequestedCoordinatesInMetadataTransformations"
+            assertEquals(
+                listOf(
+                    listOf("metadata", "commonMain"),
+                    listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib"),
+                    listOf("commonMain", "androidx.collection-collection-1.5.0-commonMain-.klib"),
+                    listOf("commonMain", "androidx.annotation-annotation-1.9.1-commonMain-.klib"),
+                ).prettyPrinted,
+                metadataTransformationOutputClasspath(
+                    "commonMain",
+                    buildOptions = buildOptions.copy(freeArgs = listOf("-P${flagName}=true"))
+                ).relativeTransformationPathComponents().prettyPrinted
+            )
+        }
     }
 }

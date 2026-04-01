@@ -6,11 +6,8 @@
 package org.jetbrains.kotlin.konan.test.irText
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
-import org.jetbrains.kotlin.konan.test.FirNativeKlibAbiDumpBeforeInliningSavingHandler
-import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
+import org.jetbrains.kotlin.konan.test.*
 import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
-import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
@@ -23,18 +20,13 @@ import org.jetbrains.kotlin.test.configuration.additionalK2ConfigurationForIrTex
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
-import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
-import org.jetbrains.kotlin.test.model.FrontendFacade
-import org.jetbrains.kotlin.test.model.FrontendKind
-import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.model.IrPreSerializationLoweringFacade
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractNonJvmIrTextTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 
 abstract class AbstractNativeIrTextTestBase(private val parser: FirParser) :
     AbstractNonJvmIrTextTest<FirOutputArtifact>(NativePlatforms.unspecifiedNativePlatform, TargetBackend.NATIVE) {
@@ -42,27 +34,27 @@ abstract class AbstractNativeIrTextTestBase(private val parser: FirParser) :
         get() = FrontendKinds.FIR
 
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirFrontendFacade
+        get() = ::FirCliNativeFacade
 
     override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrNativeResultsConverter
+        get() = ::Fir2IrCliNativeFacade
 
     override val klibAbiDumpBeforeInliningSavingHandler: Constructor<AbstractKlibAbiDumpBeforeInliningSavingHandler>?
         get() = ::FirNativeKlibAbiDumpBeforeInliningSavingHandler
 
     override val preSerializerFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>
-        get() = ::NativePreSerializationLoweringFacade
+        get() = ::NativePreSerializationLoweringCliFacade
 
     override val klibFacades: KlibFacades
         get() = KlibFacades(
-            serializerFacade = ::NativeKlibSerializerFacade,
+            serializerFacade = ::KlibSerializerNativeCliFacade,
             deserializerFacade = ::NativeDeserializerFacade,
         )
 
     final override fun TestConfigurationBuilder.applyConfigurators() {
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::NativeEnvironmentConfigurator,
+            ::NativeFirstStageEnvironmentConfigurator,
         )
 
         useAdditionalService(::LibraryProvider)

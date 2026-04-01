@@ -143,7 +143,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     // ------------------------------------------------------------------------------
 
     // KT-62900 K2: Expected expression to be resolved during Fir2Ir
-    fun testMissingEnumReferencedInAnnotationArgument() = muteForK2 {
+    fun testMissingEnumReferencedInAnnotationArgument() {
         doTestBrokenLibrary("library", "a/E.class")
     }
 
@@ -193,10 +193,6 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
     fun testMissingDependencySimple() {
         doTestBrokenLibrary("library", "a/A.class")
-    }
-
-    fun testNonTransitiveDependencyWithJavac() {
-        doTestBrokenLibrary("library", "my/Some.class", additionalOptions = listOf(K2JVMCompilerArguments::useJavac.cliArgument, K2JVMCompilerArguments::compileJava.cliArgument))
     }
 
     fun testComputeSupertypeWithMissingDependency() {
@@ -358,7 +354,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
     fun testMetadataVersionDerivedFromLanguage() {
         for (languageVersion in LanguageVersion.entries) {
-            if (languageVersion.isUnsupported && !languageVersion.isJvmOnly) continue
+            if (languageVersion.isUnsupported) continue
 
             compileKotlin(
                 "source.kt", tmpdir, additionalOptions = listOf(CommonCompilerArguments::languageVersion.cliArgument, languageVersion.versionString),
@@ -502,8 +498,16 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     }
 
     fun testContextualDeclarationUse() = muteForK1 {
-        val library = compileLibrary("library", additionalOptions = listOf(CommonCompilerArguments::contextParameters.cliArgument))
-        compileKotlin("contextualDeclarationUse.kt", tmpdir, listOf(library), additionalOptions = listOf(CommonCompilerArguments::skipPrereleaseCheck.cliArgument))
+        val library = compileLibrary("library")
+        compileKotlin(
+            "contextualDeclarationUse.kt", tmpdir, listOf(library),
+            additionalOptions = listOf(
+                CommonCompilerArguments::skipPrereleaseCheck.cliArgument,
+                CommonCompilerArguments::languageVersion.cliArgument,
+                LanguageVersion.entries.lastOrNull { it < LanguageFeature.ContextParameters.sinceVersion!! }?.versionString
+                    ?: error("No language version found where context parameters aren't enabled by default. Consider dropping this test.")
+            )
+        )
     }
 
     // KT-60531 K2/JS: Report diagnostics before running FIR2IR
@@ -574,7 +578,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         val library = compileLibrary(
             "library",
             additionalOptions = listOf(
-                CommonCompilerArguments::languageVersion.cliArgument, "1.9",
+                CommonCompilerArguments::languageVersion.cliArgument, "2.1",
                 CommonCompilerArguments::suppressVersionWarnings.cliArgument,
             )
         )
@@ -583,7 +587,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         val library2 = compileLibrary(
             "library",
             additionalOptions = listOf(
-                CommonCompilerArguments::languageVersion.cliArgument, "1.9",
+                CommonCompilerArguments::languageVersion.cliArgument, "2.1",
                 CommonCompilerArguments::suppressVersionWarnings.cliArgument,
                 K2JVMCompilerArguments::abiStability.cliArgument("stable")
             )
@@ -611,7 +615,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         val library = compileLibrary(
             "library",
             additionalOptions = listOf(
-                CommonCompilerArguments::languageVersion.cliArgument, "1.9",
+                CommonCompilerArguments::languageVersion.cliArgument, "2.1",
                 CommonCompilerArguments::suppressVersionWarnings.cliArgument,
                 K2JVMCompilerArguments::abiStability.cliArgument("unstable")
             )
@@ -634,7 +638,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         ))
         compileKotlin(
             "source.kt", tmpdir, listOf(library), additionalOptions = listOf(
-                CommonCompilerArguments::languageVersion.cliArgument, "1.9",
+                CommonCompilerArguments::languageVersion.cliArgument, "2.1",
                 CommonCompilerArguments::suppressVersionWarnings.cliArgument,
                 CommonCompilerArguments::skipPrereleaseCheck.cliArgument,
             )
@@ -690,6 +694,25 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin(
             "source.kt", tmpdir, listOf(library),
             additionalOptions = listOf(CommonCompilerArguments::languageVersion.cliArgument, LanguageVersion.KOTLIN_2_2.versionString)
+        )
+    }
+
+    fun testUsageOfNestedTypeAliasesWhenTheyAreEnabled() {
+        val library = compileLibrary(
+            "library",
+            additionalOptions = listOf(
+                CommonCompilerArguments::languageVersion.cliArgument,
+                LanguageVersion.KOTLIN_2_2.versionString,
+                CommonCompilerArguments::nestedTypeAliases.cliArgument,
+            )
+        )
+        compileKotlin(
+            "source.kt", tmpdir, listOf(library),
+            additionalOptions = listOf(
+                CommonCompilerArguments::languageVersion.cliArgument,
+                LanguageVersion.KOTLIN_2_2.versionString,
+                CommonCompilerArguments::nestedTypeAliases.cliArgument,
+            )
         )
     }
 

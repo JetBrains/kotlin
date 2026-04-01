@@ -1,0 +1,5 @@
+KtBinaryExpression(75,81): '1 to 2'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /to(<extension receiver>: A, other: B): A
+    ]

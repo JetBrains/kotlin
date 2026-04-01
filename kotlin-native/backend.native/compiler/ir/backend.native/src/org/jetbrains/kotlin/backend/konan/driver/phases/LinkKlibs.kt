@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
-import org.jetbrains.kotlin.backend.konan.KonanConfig
+import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
 import org.jetbrains.kotlin.backend.konan.KonanReflectionTypes
 import org.jetbrains.kotlin.backend.konan.LinkKlibsContext
 import org.jetbrains.kotlin.backend.konan.LinkKlibsInput
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
 internal class LinkKlibsContextImpl(
-        config: KonanConfig,
+        config: NativeSecondStageCompilationConfig,
         private val moduleDescriptor: ModuleDescriptor,
         override val bindingContext: BindingContext,
 ) : BasicNativeBackendPhaseContext(config), LinkKlibsContext {

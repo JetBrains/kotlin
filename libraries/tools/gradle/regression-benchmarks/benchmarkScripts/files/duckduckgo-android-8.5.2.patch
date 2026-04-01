@@ -1,0 +1,14 @@
+<+>UTF-8
+===================================================================
+diff --git a/versions.properties b/versions.properties
+--- a/versions.properties
++++ b/versions.properties
+@@ -7,7 +7,7 @@
+ #### suppress inspection "SpellCheckingInspection" for whole file
+ #### suppress inspection "UnusedProperty" for whole file
+ 
+-plugin.android=8.5.1
++plugin.android=8.5.2
+ 
+ plugin.com.squareup.anvil=2.7.0
+ 

@@ -137,6 +137,7 @@ internal class ImplementationPrinter(
                                 // For most of the cases dispatch/extension receivers are handled with the `explicitReceiver` case above
                                 in setOf("dispatchReceiver", "extensionReceiver") if (walkableFields.any { it.name == "explicitReceiver" }) -> {}
                                 "companionObject" -> {}
+                                "contextSensitiveAlternative" -> {}
 
                                 else -> {
                                     when (field) {
@@ -200,6 +201,7 @@ internal class ImplementationPrinter(
                                 // But FirSuperReceiverExpressionImpl doesn't have explicitReceiver
                                 field.name == "dispatchReceiver" && this.typeName != "FirSuperReceiverExpressionImpl" -> {}
                                 field.name == "extensionReceiver" -> {}
+                                field.name == "contextSensitiveAlternative" -> {}
 
                                 field.withTransform -> {
                                     if (!(element.needTransformOtherChildren && field.needTransformInOtherChildren)) {

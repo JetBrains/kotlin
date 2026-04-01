@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
-import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
@@ -101,7 +101,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
             return null
         }
 
-        if (declaration.hasDefaultArgs() && (declaration is IrConstructor || declaration.isTopLevel)) {
+        if (declaration.hasDefaultArgs() && (declaration is IrConstructor || declaration.isTopLevel || declaration.isStatic)) {
             return listOf(declaration.introduceDefaultResolution())
         }
 
@@ -212,11 +212,11 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         }
     }
 
-    private fun IrFunction.generateJsNameAnnotationCall(): IrConstructorCall {
+    private fun IrFunction.generateJsNameAnnotationCall(): IrAnnotation {
         val builder = context.createIrBuilder(symbol, startOffset, endOffset)
 
         return with(context) {
-            builder.irCall(symbols.jsNameAnnotationSymbol.constructors.single())
+            builder.irAnnotation(symbols.jsNameAnnotationSymbol.constructors.single())
                 .apply {
                     arguments[0] = IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.stringType, name.identifier)
                 }

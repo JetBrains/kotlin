@@ -1,9 +1,10 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.psi.stubs.elements
 
+import com.intellij.lang.ASTNode
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
@@ -13,9 +14,11 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
-import org.jetbrains.kotlin.psi.stubs.StubUtils.createNestedClassId
+import org.jetbrains.kotlin.psi.stubs.StubUtils.createClassId
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeClassId
+import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeClassId
+import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.Utils
 
@@ -24,9 +27,14 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
     /* psiClass = */ KtClass::class.java,
     /* stubClass = */ KotlinClassStub::class.java,
 ) {
+    /**
+     * All classes should have stubs since we want to index even local ones
+     */
+    override fun shouldCreateStub(node: ASTNode?): Boolean = true
+
     override fun createStub(psi: KtClass, parentStub: StubElement<*>): KotlinClassStubImpl {
         val fqName = psi.safeFqNameForLazyResolve()?.asString()
-        val classId = createNestedClassId(parentStub, psi)
+        val classId = createClassId(parentStub, psi)
         val name = psi.getName()
         val superNames = psi.getSuperNames()
         val isInterface = psi.isInterface()
@@ -42,6 +50,7 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
             isClsStubCompiledToJvmDefaultImplementation = false,
             isLocal = isLocal,
             isTopLevel = isTopLevel,
+            kdocText = null,
             valueClassRepresentation = null,
         )
     }
@@ -56,6 +65,7 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
         dataStream.writeBoolean(stub.isClsStubCompiledToJvmDefaultImplementation)
         dataStream.writeBoolean(stub.isLocal)
         dataStream.writeBoolean(stub.isTopLevel)
+        dataStream.serializeKdocText(stub.kdocText)
 
         val superNames = stub.superNames
         dataStream.writeVarInt(superNames.size)
@@ -77,6 +87,7 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
         val isClsStubCompiledToJvmDefaultImplementation = dataStream.readBoolean()
         val isLocal = dataStream.readBoolean()
         val isTopLevel = dataStream.readBoolean()
+        val kdocText = dataStream.deserializeKdocText()
 
         val superCount = dataStream.readVarInt()
         val superNames = StringRef.createArray(superCount)
@@ -101,6 +112,7 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
             isClsStubCompiledToJvmDefaultImplementation = isClsStubCompiledToJvmDefaultImplementation,
             isLocal = isLocal,
             isTopLevel = isTopLevel,
+            kdocText = kdocText,
             valueClassRepresentation = representation,
         )
     }

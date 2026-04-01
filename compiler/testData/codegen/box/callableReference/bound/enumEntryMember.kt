@@ -1,5 +1,6 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS:2.3
+// ^^^ KT-15101 js: Same callable references are not equal
+
 enum class E {
     A, B;
 

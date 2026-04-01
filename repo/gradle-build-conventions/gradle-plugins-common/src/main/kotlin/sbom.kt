@@ -10,6 +10,7 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.spdx.sbom.gradle.SpdxSbomExtension
 import org.spdx.sbom.gradle.SpdxSbomPlugin
 import org.spdx.sbom.gradle.SpdxSbomTask
@@ -84,4 +85,67 @@ fun Project.configureSbom(
     }
 
     return spdxSbomTask
+}
+
+fun KotlinTarget.configureSbomForTarget() {
+    project.apply<SpdxSbomPlugin>()
+
+    mavenPublication {
+        project.configureSbomForTarget(
+            target = this@configureSbomForTarget,
+            publication = this@mavenPublication,
+        )
+    }
+}
+
+fun Project.configureSbomForTarget(
+    target: KotlinTarget,
+    publication: MavenPublication,
+) {
+    val targetName = target.targetName.capitalize()
+
+    // Much of the following code is duplicated from 'configureSbom()' above.
+    // Without SBOM tests to verify stability, it would be challenging to refactor 'configureSbom()'
+    // with confidence that nothing was broken.
+    // When SBOM tests do exist, these functions should be refactored and combined.
+    configure<SpdxSbomExtension> {
+        targets.create(targetName) {
+            configurations.set(
+                listOfNotNull(
+                    target.compilations.findByName("main")?.compileDependencyConfigurationName,
+                    target.compilations.findByName("main")?.runtimeDependencyConfigurationName,
+                    target.compilations.findByName("commonMain")?.compileDependencyConfigurationName,
+                    target.compilations.findByName("commonMain")?.runtimeDependencyConfigurationName,
+                )
+            )
+            scm {
+                tool.set("git")
+                uri.set("https://github.com/JetBrains/kotlin.git")
+                revision.set("v${target.project.version}")
+            }
+
+            // adjust properties of the document
+            document {
+                name.set(publication.artifactId)
+                // NOTE: The URI does not have to be accessible. It is only intended to provide a unique ID.
+                // In many cases, the URI will point to a Web accessible document, but this should not be assumed to be the case.
+                namespace.set("https://www.jetbrains.com/spdxdocs/${UUID.randomUUID()}")
+                creator.set("Organization: JetBrains s.r.o.")
+                packageSupplier.set("Organization: JetBrains s.r.o.")
+            }
+        }
+    }
+
+    val NOASSERTION = URI.create("NOASSERTION")
+    val spdxSbomTask = target.project.tasks.named<SpdxSbomTask>("spdxSbomFor$targetName") {
+        taskExtension.set(object : DefaultSpdxSbomTaskExtension() {
+            override fun mapRepoUri(input: URI?, moduleId: ModuleVersionIdentifier): URI {
+                return NOASSERTION
+            }
+        })
+    }
+
+    publication.artifact(spdxSbomTask) {
+        extension = "spdx.json"
+    }
 }

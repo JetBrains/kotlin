@@ -2,7 +2,7 @@ declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
     namespace foo {
-        interface I<T, S, U> {
+        interface I<T, out S, in U> {
             x?: T;
             readonly y?: S;
             z(u: U): void;
@@ -168,14 +168,14 @@ declare namespace JS_TESTS {
                 get name(): "EC3";
                 get ordinal(): 2;
             };
+            static values(): [typeof foo.EC.EC1, typeof foo.EC.EC2, typeof foo.EC.EC3];
+            static valueOf(value: string): foo.EC;
             get name(): "EC1" | "EC2" | "EC3";
             get ordinal(): 0 | 1 | 2;
             get foo(): string;
             get bar(): string;
             set bar(value: string);
             bay(): string;
-            static values(): Array<foo.EC>;
-            static valueOf(value: string): foo.EC;
             abstract get baz(): string;
             readonly __doNotUseOrImplementIt: foo.I3["__doNotUseOrImplementIt"];
         }
@@ -210,7 +210,7 @@ declare namespace JS_TESTS {
             constructor();
             process(value: number): void;
             get foo(): number;
-            readonly __doNotUseOrImplementIt: foo.IA["__doNotUseOrImplementIt"] & foo.IG<number>["__doNotUseOrImplementIt"];
+            readonly __doNotUseOrImplementIt: foo.IG<any>["__doNotUseOrImplementIt"] & foo.IA["__doNotUseOrImplementIt"];
         }
         namespace Sixth {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

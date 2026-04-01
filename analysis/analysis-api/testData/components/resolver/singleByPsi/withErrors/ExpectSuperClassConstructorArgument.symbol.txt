@@ -1,0 +1,5 @@
+KtNameReferenceExpression(173,176): 'obj'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      obj: kotlin.Any
+    ]

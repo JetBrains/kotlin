@@ -1,0 +1,5 @@
+KtNameReferenceExpression(202,210): 'IntArray'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      ctrl_click/IntArray(vararg content: kotlin.String): kotlin.Array<out kotlin.String>
+    ]

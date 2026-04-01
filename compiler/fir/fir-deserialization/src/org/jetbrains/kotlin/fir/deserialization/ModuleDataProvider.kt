@@ -13,6 +13,8 @@ abstract class ModuleDataProvider {
     abstract val regularDependenciesModuleData: FirModuleData
 
     abstract fun getModuleData(path: Path?): FirModuleData?
+
+    open fun getModuleDataPaths(moduleData: FirModuleData): Set<Path>? = null
 }
 
 class SingleModuleDataProvider(private val moduleData: FirModuleData) : ModuleDataProvider() {

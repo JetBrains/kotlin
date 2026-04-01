@@ -1,9 +1,0 @@
-MODULE main
-	CLASS MyDeprecated.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(LMyReplaceWith;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(replaceWith: MyReplaceWith /* = ... */)
-					K2
-						(replaceWith: MyReplaceWith = MyReplaceWith(x = "", y = []))

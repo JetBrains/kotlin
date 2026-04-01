@@ -1,0 +1,12 @@
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:+ExportKlibToOlderAbiVersion
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
+error: the language feature 'ExportKlibToOlderAbiVersion' is only intended for producing KLIBs and cannot be used during the second stage of compilation (KLIB to executable/binary).
+warning: following manually enabled features will force generation of pre-release binaries: ExportKlibToOlderAbiVersion
+COMPILATION_ERROR

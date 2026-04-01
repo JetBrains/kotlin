@@ -19,7 +19,12 @@ fun Ref(cls: Cls, content: Function3<Int, Composer, Int, Unit>, %composer: Compo
   sourceInformation(%composer, "C(Ref)N(cls,content)<cls::F...>,<Ref(cl...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(cls)) 0b0100 else 0b0010
+    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+      %composer.changed(cls)
+    } else {
+      %composer.changedInstance(cls)
+    }
+    ) 0b0100 else 0b0010
   }
   if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -28,16 +33,16 @@ fun Ref(cls: Cls, content: Function3<Int, Composer, Int, Unit>, %composer: Compo
     Ref(cls, <block>{
       val tmp0 = cls
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
+      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 || %dirty and 0b1000 != 0 && %composer.changedInstance(tmp0)) {
         @Composable
         fun Cls.Fn(int: Int, %composer: Composer?, %changed: Int) {
-          receiver.Fn(int, %composer, 0b1110 and %changed shr 0b0011 or 0b01110000 and %changed shl 0b0011, 0)
+          receiver.Fn(int, %composer, 0b1110 and %changed shr 0b0011 or Cls.%stable shl 0b0011 or 0b01110000 and %changed shl 0b0011, 0)
         }
         tmp0::Fn
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group
-    }, %composer, 0b1110 and %dirty)
+    }, %composer, Cls.%stable or 0b1110 and %dirty)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

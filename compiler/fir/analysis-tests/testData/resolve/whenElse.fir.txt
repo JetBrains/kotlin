@@ -13,7 +13,7 @@ FILE: whenElse.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<A>|
-            public get(): R|kotlin/enums/EnumEntries<A>|
+            public static get(): R|kotlin/enums/EnumEntries<A>|
 
     }
     public final class B : R|kotlin/Any| {

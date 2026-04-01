@@ -20,3 +20,22 @@ private class Bar : Foo()
 
 fun getFoo(): Foo = Bar()
 var foo: Foo = Bar()
+
+// MODULE: override
+// EXPORT_TO_SWIFT
+// FILE: override.kt
+
+// KT-79227 Swift Export: Fix First Release Issues
+// Override resolution doesn’t consider existential types
+
+interface P {
+    fun f()
+}
+
+open class Base {
+    open fun g(x: P) {}
+}
+
+open class Sub : Base() {
+    override fun g(x: P) {}
+}

@@ -1,0 +1,7 @@
+KtPrefixExpression(128,136): '++m["a"]'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V,
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int,
+      /MyMap.set(<dispatch receiver>: MyMap<K, V>, k: K, v: V): kotlin.Unit
+    ]

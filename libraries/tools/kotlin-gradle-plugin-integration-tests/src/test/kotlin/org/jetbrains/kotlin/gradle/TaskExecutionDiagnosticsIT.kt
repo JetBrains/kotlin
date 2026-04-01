@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
+import org.jetbrains.kotlin.gradle.util.useCompilerVersion
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
@@ -99,7 +100,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
             gradleVersion,
             btaVersion = null,
             expectedSeverity = ToolingDiagnostic.Severity.ERROR, // it's rendered as ERROR because of warning-mode=fail
-            customizedKotlinVersion = KotlinVersion.KOTLIN_1_9,
+            customizedKotlinVersion = KotlinVersion.KOTLIN_2_0,
         )
 
     @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic, custom compiler via BTA with deprecation")
@@ -112,6 +113,8 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
             expectedSeverity = ToolingDiagnostic.Severity.ERROR, // it's rendered as ERROR because of warning-mode=fail
         )
 
+    // Gradle 9.4.0 brings it Kotlin runtime 2.3.0 which metadata is not compatible with Kotlin compiler 2.1.20
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_9_3)
     @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic, custom compiler via BTA without deprecation")
     @JvmGradlePluginTests
     @GradleTest
@@ -137,7 +140,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
                         jvmToolchain(17)
                         @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
                         if (btaVersion != null) {
-                            compilerVersion.set(btaVersion)
+                            useCompilerVersion(btaVersion)
                         }
                     }
                     // to make the test more reliable, fixate AV/LV. Those particular values are defaults for Gradle 8

@@ -1,0 +1,5 @@
+KT element: KtProperty
+Resolve target: topLevelProperty.kt -> topLevelProp
+FIR:
+  public? final? val topLevelProp: Int = LAZY_EXPRESSION
+      public? get(): Int

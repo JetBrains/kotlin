@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.ConversionNames
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTransformer {
     private val symbols = context.symbols
@@ -20,67 +20,67 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
         // TODO: Add Char and Number conversions
 
         irBuiltIns.byteType.let {
-            add(it, ConversionNames.TO_BYTE, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_DOUBLE, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_FLOAT, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_INT, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_SHORT, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_LONG, symbols.longFromInt)
+            add(it, OperatorNameConventions.TO_BYTE, ::useDispatchReceiver)
+            add(it, OperatorNameConventions.TO_DOUBLE, ::useDispatchReceiver)
+            add(it, OperatorNameConventions.TO_FLOAT, ::useDispatchReceiver)
+            add(it, OperatorNameConventions.TO_INT, ::useDispatchReceiver)
+            add(it, OperatorNameConventions.TO_SHORT, ::useDispatchReceiver)
+            add(it, OperatorNameConventions.TO_LONG, symbols.longFromInt)
         }
 
         for (type in listOf(irBuiltIns.floatType, irBuiltIns.doubleType)) {
-            add(type, ConversionNames.TO_BYTE, symbols.jsNumberToByte)
-            add(type, ConversionNames.TO_DOUBLE, ::useDispatchReceiver)
-            add(type, ConversionNames.TO_FLOAT, ::useDispatchReceiver)
-            add(type, ConversionNames.TO_INT, symbols.jsNumberToInt)
-            add(type, ConversionNames.TO_SHORT, symbols.jsNumberToShort)
-            add(type, ConversionNames.TO_LONG, symbols.jsNumberToLong)
+            add(type, OperatorNameConventions.TO_BYTE, symbols.jsNumberToByte)
+            add(type, OperatorNameConventions.TO_DOUBLE, ::useDispatchReceiver)
+            add(type, OperatorNameConventions.TO_FLOAT, ::useDispatchReceiver)
+            add(type, OperatorNameConventions.TO_INT, symbols.jsNumberToInt)
+            add(type, OperatorNameConventions.TO_SHORT, symbols.jsNumberToShort)
+            add(type, OperatorNameConventions.TO_LONG, symbols.jsNumberToLong)
         }
 
         irBuiltIns.intType.let {
-            add(it, ConversionNames.TO_BYTE, symbols.jsToByte)
-            add(it, ConversionNames.TO_DOUBLE, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_FLOAT, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_INT, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_SHORT, symbols.jsToShort)
-            add(it, ConversionNames.TO_LONG, symbols.longFromInt)
+            add(it, OperatorNameConventions.TO_BYTE, symbols.jsToByte)
+            add(it, OperatorNameConventions.TO_DOUBLE, ::useDispatchReceiver)
+            add(it, OperatorNameConventions.TO_FLOAT, ::useDispatchReceiver)
+            add(it, OperatorNameConventions.TO_INT, ::useDispatchReceiver)
+            add(it, OperatorNameConventions.TO_SHORT, symbols.jsToShort)
+            add(it, OperatorNameConventions.TO_LONG, symbols.longFromInt)
         }
 
         irBuiltIns.shortType.let {
-            add(it, ConversionNames.TO_BYTE, symbols.jsToByte)
-            add(it, ConversionNames.TO_DOUBLE, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_FLOAT, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_INT, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_SHORT, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_LONG, symbols.longFromInt)
+            add(it, OperatorNameConventions.TO_BYTE, symbols.jsToByte)
+            add(it, OperatorNameConventions.TO_DOUBLE, ::useDispatchReceiver)
+            add(it, OperatorNameConventions.TO_FLOAT, ::useDispatchReceiver)
+            add(it, OperatorNameConventions.TO_INT, ::useDispatchReceiver)
+            add(it, OperatorNameConventions.TO_SHORT, ::useDispatchReceiver)
+            add(it, OperatorNameConventions.TO_LONG, symbols.longFromInt)
         }
 
 
         irBuiltIns.numberType.let {
-            add(it, ConversionNames.TO_BYTE, symbols.jsNumberToByte)
-            add(it, ConversionNames.TO_DOUBLE, symbols.jsNumberToDouble)
-            add(it, ConversionNames.TO_FLOAT, symbols.jsNumberToDouble)
-            add(it, ConversionNames.TO_INT, symbols.jsNumberToInt)
-            add(it, ConversionNames.TO_SHORT, symbols.jsNumberToShort)
-            add(it, ConversionNames.TO_LONG, symbols.jsNumberToLong)
+            add(it, OperatorNameConventions.TO_BYTE, symbols.jsNumberToByte)
+            add(it, OperatorNameConventions.TO_DOUBLE, symbols.jsNumberToDouble)
+            add(it, OperatorNameConventions.TO_FLOAT, symbols.jsNumberToDouble)
+            add(it, OperatorNameConventions.TO_INT, symbols.jsNumberToInt)
+            add(it, OperatorNameConventions.TO_SHORT, symbols.jsNumberToShort)
+            add(it, OperatorNameConventions.TO_LONG, symbols.jsNumberToLong)
         }
 
         irBuiltIns.longType.let {
-            add(it, ConversionNames.TO_BYTE, symbols.longToByte)
-            add(it, ConversionNames.TO_CHAR, symbols.longToChar)
-            add(it, ConversionNames.TO_DOUBLE, symbols.longToNumber)
-            add(it, ConversionNames.TO_FLOAT, symbols.longToNumber)
-            add(it, ConversionNames.TO_INT, symbols.longToInt)
-            add(it, ConversionNames.TO_SHORT, symbols.longToShort)
-            add(it, ConversionNames.TO_LONG, ::useDispatchReceiver)
+            add(it, OperatorNameConventions.TO_BYTE, symbols.longToByte)
+            add(it, OperatorNameConventions.TO_CHAR, symbols.longToChar)
+            add(it, OperatorNameConventions.TO_DOUBLE, symbols.longToNumber)
+            add(it, OperatorNameConventions.TO_FLOAT, symbols.longToNumber)
+            add(it, OperatorNameConventions.TO_INT, symbols.longToInt)
+            add(it, OperatorNameConventions.TO_SHORT, symbols.longToShort)
+            add(it, OperatorNameConventions.TO_LONG, ::useDispatchReceiver)
         }
 
         for (type in arrayOf(irBuiltIns.byteType, irBuiltIns.shortType, irBuiltIns.intType)) {
-            add(type, ConversionNames.TO_CHAR, symbols.jsNumberToChar)
+            add(type, OperatorNameConventions.TO_CHAR, symbols.jsNumberToChar)
         }
 
         for (type in arrayOf(irBuiltIns.floatType, irBuiltIns.doubleType, irBuiltIns.numberType)) {
-            add(type, ConversionNames.TO_CHAR, symbols.jsNumberToChar)
+            add(type, OperatorNameConventions.TO_CHAR, symbols.jsNumberToChar)
         }
     }
 

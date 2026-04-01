@@ -8,7 +8,7 @@ package kotlin.js
 import kotlin.wasm.internal.ExternalInterfaceType
 
 @OptIn(ExperimentalWasmJsInterop::class)
-private val stackPlaceHolder: ExternalInterfaceType = js("''")
+private val stackPlaceHolder: JsString = js("''")
 
 /**
  * A wrapper for an exception thrown by a JavaScript code.
@@ -29,8 +29,8 @@ public actual class JsException internal constructor(public val thrownValue: JsA
             return value
         }
 
-    private var _jsStack: ExternalInterfaceType? = null
-    override val jsStack: ExternalInterfaceType
+    private var _jsStack: JsString? = null
+    override val jsStack: JsString
         get() {
             var value = _jsStack
             if (value == null) {
@@ -49,7 +49,7 @@ public actual val JsException.thrownValue: JsAny? get() = this.thrownValue
 internal external class JsError : JsAny {
     val message: String
     var name: String
-    val stack: ExternalInterfaceType
+    val stack: JsString
     val cause: JsError?
     var kotlinException: JsReference<Throwable>?
 }

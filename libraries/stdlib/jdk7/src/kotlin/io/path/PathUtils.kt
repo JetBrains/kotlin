@@ -206,6 +206,7 @@ private object PathRelativizer {
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
     val options = if (overwrite) arrayOf<CopyOption>(StandardCopyOption.REPLACE_EXISTING) else emptyArray()
     return Files.copy(this, target, *options)
@@ -245,6 +246,7 @@ public inline fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.copyTo(target: Path, vararg options: CopyOption): Path {
     return Files.copy(this, target, *options)
 }
@@ -394,6 +396,10 @@ public fun Path.listDirectoryEntries(glob: String = "*"): List<Path> {
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun <T> Path.useDirectoryEntries(glob: String = "*", block: (Sequence<Path>) -> T): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        returnsResultOf(block)
+    }
     return Files.newDirectoryStream(this, glob).use { block(it.asSequence()) }
 }
 
@@ -454,6 +460,7 @@ public inline fun Path.deleteExisting() {
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.deleteIfExists(): Boolean =
     Files.deleteIfExists(this)
 
@@ -478,6 +485,7 @@ public inline fun Path.deleteIfExists(): Boolean =
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.createDirectory(vararg attributes: FileAttribute<*>): Path =
     Files.createDirectory(this, *attributes)
 
@@ -504,6 +512,7 @@ public inline fun Path.createDirectory(vararg attributes: FileAttribute<*>): Pat
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.createDirectories(vararg attributes: FileAttribute<*>): Path =
     Files.createDirectories(this, *attributes)
 
@@ -532,6 +541,7 @@ public inline fun Path.createDirectories(vararg attributes: FileAttribute<*>): P
  */
 @SinceKotlin("1.9")
 @Throws(IOException::class)
+@IgnorableReturnValue
 public fun Path.createParentDirectories(vararg attributes: FileAttribute<*>): Path = also {
     val parent = it.parent
     if (parent != null && !parent.isDirectory()) {
@@ -548,6 +558,8 @@ public fun Path.createParentDirectories(vararg attributes: FileAttribute<*>): Pa
  *
  * @param options options specifying how the move should be done, see [StandardCopyOption], [LinkOption].
  *
+ * @return the [target] path.
+ *
  * @throws FileAlreadyExistsException if the target file exists but cannot be replaced because the
  *   [StandardCopyOption.REPLACE_EXISTING] option is not specified (optional specific exception).
  * @throws DirectoryNotEmptyException the [StandardCopyOption.REPLACE_EXISTING] option is specified but the file
@@ -560,6 +572,7 @@ public fun Path.createParentDirectories(vararg attributes: FileAttribute<*>): Pa
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.moveTo(target: Path, vararg options: CopyOption): Path =
     Files.move(this, target, *options)
 
@@ -567,6 +580,8 @@ public inline fun Path.moveTo(target: Path, vararg options: CopyOption): Path =
  * Moves or renames the file located by this path to the [target] path.
  *
  * @param overwrite allows to overwrite the target if it already exists.
+ *
+ * @return the [target] path.
  *
  * @throws FileAlreadyExistsException if the target file exists but cannot be replaced because the
  *   `overwrite = true` option is not specified (optional specific exception).
@@ -580,6 +595,7 @@ public inline fun Path.moveTo(target: Path, vararg options: CopyOption): Path =
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.moveTo(target: Path, overwrite: Boolean = false): Path {
     val options = if (overwrite) arrayOf<CopyOption>(StandardCopyOption.REPLACE_EXISTING) else emptyArray()
     return Files.move(this, target, *options)
@@ -624,6 +640,7 @@ public inline fun Path.getAttribute(attribute: String, vararg options: LinkOptio
  * ```
  * When the view name is not specified, it defaults to `basic`.
  *
+ * @return [this] path.
  * @throws UnsupportedOperationException if the attribute view is not supported.
  * @throws IllegalArgumentException if the attribute name is not specified or is not recognized, or
  *   the attribute value is of the correct type but has an inappropriate value.
@@ -633,6 +650,7 @@ public inline fun Path.getAttribute(attribute: String, vararg options: LinkOptio
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.setAttribute(attribute: String, value: Any?, vararg options: LinkOption): Path =
     Files.setAttribute(this, attribute, value, *options)
 
@@ -747,6 +765,7 @@ public inline fun Path.getOwner(vararg options: LinkOption): UserPrincipal? =
 /**
  * Sets the file owner to the specified [value].
  *
+ * @return [this] path.
  * @throws UnsupportedOperationException if the associated file system does not support the [FileOwnerAttributeView].
  *
  * @see Files.setOwner
@@ -754,6 +773,7 @@ public inline fun Path.getOwner(vararg options: LinkOption): UserPrincipal? =
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.setOwner(value: UserPrincipal): Path =
     Files.setOwner(this, value)
 
@@ -789,6 +809,7 @@ public inline fun Path.setPosixFilePermissions(value: Set<PosixFilePermission>):
  * Calling this function may require the process to be started with implementation specific privileges to create hard links
  * or to create links to directories.
  *
+ * @return [this] path to the link.
  * @throws FileAlreadyExistsException if a file with this name already exists
  *   (optional specific exception, some implementations may throw a more general one).
  * @throws  UnsupportedOperationException if the implementation does not support creating a hard link.
@@ -798,6 +819,7 @@ public inline fun Path.setPosixFilePermissions(value: Set<PosixFilePermission>):
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.createLinkPointingTo(target: Path): Path =
     Files.createLink(this, target)
 
@@ -807,6 +829,7 @@ public inline fun Path.createLinkPointingTo(target: Path): Path =
  * Calling this function may require the process to be started with implementation specific privileges to
  * create symbolic links.
  *
+ * @return [this] path to the link.
  * @throws FileAlreadyExistsException if a file with this name already exists
  *   (optional specific exception, some implementations may throw a more general one).
  * @throws UnsupportedOperationException if the implementation does not support symbolic links or the
@@ -817,6 +840,7 @@ public inline fun Path.createLinkPointingTo(target: Path): Path =
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.createSymbolicLinkPointingTo(target: Path, vararg attributes: FileAttribute<*>): Path =
     Files.createSymbolicLink(this, target, *attributes)
 
@@ -840,6 +864,7 @@ public inline fun Path.readSymbolicLink(): Path =
  *
  * @param attributes an optional list of file attributes to set atomically when creating the file.
  *
+ * @return [this] path.
  * @throws  FileAlreadyExistsException if a file specified by this path already exists
  *   (optional specific exception, some implementations may throw more general [IOException]).
  * @throws  UnsupportedOperationException if the [attributes] array contains an attribute that cannot be set atomically
@@ -850,6 +875,7 @@ public inline fun Path.readSymbolicLink(): Path =
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.createFile(vararg attributes: FileAttribute<*>): Path =
     Files.createFile(this, *attributes)
 

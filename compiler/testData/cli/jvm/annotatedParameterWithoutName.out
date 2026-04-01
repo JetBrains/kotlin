@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/annotatedParameterWithoutName.kt:5:13: error: syntax error: Parameter name expected.
+compiler/testData/cli/jvm/annotatedParameterWithoutName.kt:5:13: error: syntax error: Expecting a parameter declaration.
 fun foo(@Ann) = ""
             ^
 COMPILATION_ERROR

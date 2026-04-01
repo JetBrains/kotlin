@@ -13,7 +13,8 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit4(args, mainClassName) {
         testGroup("compiler/fir/raw-fir/light-tree2fir/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractLightTree2FirConverterTestCase> {
-                model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS)
+                // TODO(KT-77583): support REPL snippets in light tree parser.
+                model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS, excludedPattern = TestGeneratorUtil.REPL_KTS)
             }
         }
     }

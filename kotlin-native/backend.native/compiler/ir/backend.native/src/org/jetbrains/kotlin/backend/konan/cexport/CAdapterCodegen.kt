@@ -114,8 +114,8 @@ internal class CAdapterCodegen(
         }
     }
 
-    private val kGetTypeFuncType = LlvmFunctionSignature(LlvmRetType(codegen.kTypeInfoPtr, isObjectType = false))
+    private val kGetTypeFuncType = LlvmFunctionSignature(LlvmRetType(llvm.pointerType, isObjectType = false))
 
     // Abstraction leak for slot :(.
-    private val kGetObjectFuncType = LlvmFunctionSignature(codegen.kObjHeaderPtrReturnType, listOf(LlvmParamType(codegen.kObjHeaderPtrPtr)))
+    private val kGetObjectFuncType = LlvmFunctionSignature(codegen.kObjHeaderPtrReturnType, listOf(LlvmParamType(llvm.pointerType)))
 }

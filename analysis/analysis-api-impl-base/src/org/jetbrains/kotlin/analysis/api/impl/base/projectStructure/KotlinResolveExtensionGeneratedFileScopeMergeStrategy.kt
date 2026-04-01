@@ -9,7 +9,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMergeStrategy
 import kotlin.reflect.KClass
 
-class KotlinResolveExtensionGeneratedFileScopeMergeStrategy : KotlinGlobalSearchScopeMergeStrategy<KaBaseResolveExtensionGeneratedFilesScope> {
+internal class KotlinResolveExtensionGeneratedFileScopeMergeStrategy : KotlinGlobalSearchScopeMergeStrategy<KaBaseResolveExtensionGeneratedFilesScope> {
     override val targetType: KClass<KaBaseResolveExtensionGeneratedFilesScope> = KaBaseResolveExtensionGeneratedFilesScope::class
 
     override fun uniteScopes(scopes: List<KaBaseResolveExtensionGeneratedFilesScope>): List<GlobalSearchScope> {

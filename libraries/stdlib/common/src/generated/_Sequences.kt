@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -581,6 +581,169 @@ public fun <T> Sequence<T>.take(n: Int): Sequence<T> {
  */
 public fun <T> Sequence<T>.takeWhile(predicate: (T) -> Boolean): Sequence<T> {
     return TakeWhileSequence(this, predicate)
+}
+
+/**
+ * Returns `true` if each element in the sequence is less than or equal
+ * to the following element according to their natural sort order.
+ * 
+ * Returns `true` if the sequence has fewer than two elements.
+ * 
+ * The elements are compared sequentially using [Comparable.compareTo],
+ * and the sequence is considered sorted if for each pair of adjacent elements
+ * the preceding element is not greater than the following one.
+ * 
+ * Note that the result depends on the iteration order of the sequence.
+ * The iteration order of some [Sequence] implementations may be unstable
+ * (change from one invocation to the next),
+ * in which case this function may return inconsistent results.
+ * 
+ * For elements of floating-point types (`Double`, `Float`), `NaN` is considered greater
+ * than any other value (including positive infinity), and `-0.0` is considered less than `0.0`,
+ * consistent with [Double.compareTo] and [Float.compareTo].
+ *
+ * The operation is _terminal_.
+ * 
+ * @sample samples.generated.issorted.IsSortedSequencesSamples.isSorted
+ */
+@SinceKotlin("2.4")
+public fun <T : Comparable<T>> Sequence<T>.isSorted(): Boolean {
+    return isSortedWith(naturalOrder())
+}
+
+/**
+ * Returns `true` if each element in the sequence yields a [selector] value
+ * that is less than or equal to the [selector] value of the following element
+ * according to the natural sort order of the selector values.
+ * 
+ * Returns `true` if the sequence has fewer than two elements.
+ * 
+ * The [selector] values of adjacent elements are compared sequentially using [compareValues],
+ * and the sequence is considered sorted if for each pair of adjacent elements
+ * the [selector] value of the preceding element is not greater than that of the following one.
+ * 
+ * If the [selector] returns `null` for an element, the `null` value is treated as less than any non-null value.
+ * 
+ * Note that the result depends on the iteration order of the sequence.
+ * The iteration order of some [Sequence] implementations may be unstable
+ * (change from one invocation to the next),
+ * in which case this function may return inconsistent results.
+ *
+ * The operation is _terminal_.
+ * 
+ * @sample samples.generated.issorted.IsSortedSequencesSamples.isSortedBy
+ */
+@SinceKotlin("2.4")
+public inline fun <T, R : Comparable<R>> Sequence<T>.isSortedBy(selector: (T) -> R?): Boolean {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return true
+    val previous = iterator.next()
+    if (!iterator.hasNext()) return true
+    var previousValue = selector(previous)
+    while (iterator.hasNext()) {
+        val currentValue = selector(iterator.next())
+        if (compareValues(previousValue, currentValue) > 0) return false
+        previousValue = currentValue
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the sequence yields a [selector] value
+ * that is greater than or equal to the [selector] value of the following element
+ * according to the natural sort order of the selector values.
+ * 
+ * Returns `true` if the sequence has fewer than two elements.
+ * 
+ * The [selector] values of adjacent elements are compared sequentially using [compareValues],
+ * and the sequence is considered sorted in descending order if for each pair
+ * of adjacent elements the [selector] value of the preceding element is not less
+ * than that of the following one.
+ * 
+ * If the [selector] returns `null` for an element, the `null` value is treated as less than any non-null value.
+ * 
+ * Note that the result depends on the iteration order of the sequence.
+ * The iteration order of some [Sequence] implementations may be unstable
+ * (change from one invocation to the next),
+ * in which case this function may return inconsistent results.
+ *
+ * The operation is _terminal_.
+ * 
+ * @sample samples.generated.issorted.IsSortedSequencesSamples.isSortedByDescending
+ */
+@SinceKotlin("2.4")
+public inline fun <T, R : Comparable<R>> Sequence<T>.isSortedByDescending(selector: (T) -> R?): Boolean {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return true
+    val previous = iterator.next()
+    if (!iterator.hasNext()) return true
+    var previousValue = selector(previous)
+    while (iterator.hasNext()) {
+        val currentValue = selector(iterator.next())
+        if (compareValues(previousValue, currentValue) < 0) return false
+        previousValue = currentValue
+    }
+    return true
+}
+
+/**
+ * Returns `true` if each element in the sequence is greater than or equal
+ * to the following element according to their natural sort order.
+ * 
+ * Returns `true` if the sequence has fewer than two elements.
+ * 
+ * The elements are compared sequentially using [Comparable.compareTo],
+ * and the sequence is considered sorted in descending order if for each
+ * pair of adjacent elements the preceding element is not less than the following one.
+ * 
+ * Note that the result depends on the iteration order of the sequence.
+ * The iteration order of some [Sequence] implementations may be unstable
+ * (change from one invocation to the next),
+ * in which case this function may return inconsistent results.
+ * 
+ * For elements of floating-point types (`Double`, `Float`), `NaN` is considered greater
+ * than any other value (including positive infinity), and `-0.0` is considered less than `0.0`,
+ * consistent with [Double.compareTo] and [Float.compareTo].
+ *
+ * The operation is _terminal_.
+ * 
+ * @sample samples.generated.issorted.IsSortedSequencesSamples.isSortedDescending
+ */
+@SinceKotlin("2.4")
+public fun <T : Comparable<T>> Sequence<T>.isSortedDescending(): Boolean {
+    return isSortedWith(reverseOrder())
+}
+
+/**
+ * Returns `true` if each element in the sequence is less than or equal
+ * to the following element according to the specified [comparator].
+ * 
+ * Returns `true` if the sequence has fewer than two elements.
+ * 
+ * The elements are compared sequentially using [Comparator.compare],
+ * and the sequence is considered sorted if for each pair of adjacent elements
+ * the preceding element is not greater than the following one.
+ * 
+ * Note that the result depends on the iteration order of the sequence.
+ * The iteration order of some [Sequence] implementations may be unstable
+ * (change from one invocation to the next),
+ * in which case this function may return inconsistent results.
+ *
+ * The operation is _terminal_.
+ * 
+ * @sample samples.generated.issorted.IsSortedSequencesSamples.isSortedWith
+ */
+@SinceKotlin("2.4")
+public fun <T> Sequence<T>.isSortedWith(comparator: Comparator<in T>): Boolean {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return true
+    var current = iterator.next()
+    while (iterator.hasNext()) {
+        val next = iterator.next()
+        if (comparator.compare(current, next) > 0) return false
+        current = next
+    }
+    return true
 }
 
 /**
@@ -3006,7 +3169,9 @@ public fun <T, R> Sequence<T>.zipWithNext(transform: (a: T, b: T) -> R): Sequenc
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the function appends only [prefix] followed by [postfix] to [buffer] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @return the [buffer] argument with appended elements.
@@ -3033,7 +3198,9 @@ public fun <T, A : Appendable> Sequence<T>.joinTo(buffer: A, separator: CharSequ
 /**
  * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the result consists of only [prefix] followed by [postfix] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  *
  * The operation is _terminal_.

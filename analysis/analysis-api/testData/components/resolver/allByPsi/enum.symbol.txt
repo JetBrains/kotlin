@@ -1,0 +1,380 @@
+KtFile: 'enum.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,133): 'enum class EnumWithConstructor(val i: Int) {'
+  null
+
+KtDeclarationModifierList(0,4): 'enum'
+  null
+
+KtPrimaryConstructor(30,42): '(val i: Int)'
+  null
+
+KtParameterList(30,42): '(val i: Int)'
+  null
+
+KtParameter(31,41): 'val i: Int'
+  null
+
+KtTypeReference(38,41): 'Int'
+  null
+
+KtUserType(38,41): 'Int'
+  null
+
+KtNameReferenceExpression(38,41): 'Int'
+  null
+
+KtClassBody(43,133): '{'
+  null
+
+KtEnumEntry(49,58): 'Entry(1),'
+  null
+
+KtInitializerList(54,57): '(1)'
+  null
+
+KtSuperTypeCallEntry(54,57): '(1)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): EnumWithConstructor
+    ]
+
+KtConstructorCalleeExpression(54,54): ''
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): EnumWithConstructor
+    ]
+
+KtTypeReference(54,54): ''
+  null
+
+KtUserType(54,54): ''
+  null
+
+KtEnumEntrySuperclassReferenceExpression(54,54): ''
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): EnumWithConstructor
+    ]
+
+KtValueArgumentList(54,57): '(1)'
+  null
+
+KtValueArgument(55,56): '1'
+  null
+
+KtConstantExpression(55,56): '1'
+  null
+
+KtEnumEntry(63,131): 'EntryWithBody(2) {'
+  null
+
+KtInitializerList(76,79): '(2)'
+  null
+
+KtSuperTypeCallEntry(76,79): '(2)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): EnumWithConstructor
+    ]
+
+KtConstructorCalleeExpression(76,76): ''
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): EnumWithConstructor
+    ]
+
+KtTypeReference(76,76): ''
+  null
+
+KtUserType(76,76): ''
+  null
+
+KtEnumEntrySuperclassReferenceExpression(76,76): ''
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): EnumWithConstructor
+    ]
+
+KtValueArgumentList(76,79): '(2)'
+  null
+
+KtValueArgument(77,78): '2'
+  null
+
+KtConstantExpression(77,78): '2'
+  null
+
+KtClassBody(80,131): '{'
+  null
+
+KtNamedFunction(90,125): 'fun foo() {'
+  null
+
+KtParameterList(97,99): '()'
+  null
+
+KtBlockExpression(100,125): '{'
+  null
+
+KtNameReferenceExpression(114,115): 'i'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val i: kotlin.Int
+    ]
+
+KtClass(135,262): 'enum class EnumWithoutConstructor {'
+  null
+
+KtDeclarationModifierList(135,139): 'enum'
+  null
+
+KtClassBody(169,262): '{'
+  null
+
+KtEnumEntry(175,181): 'Entry,'
+  null
+
+KtEnumEntry(186,260): 'EntryWithBody {'
+  null
+
+KtClassBody(200,260): '{'
+  null
+
+KtNamedFunction(210,254): 'fun baz() {'
+  null
+
+KtParameterList(217,219): '()'
+  null
+
+KtBlockExpression(220,254): '{'
+  null
+
+KtDotQualifiedExpression(234,244): 'this.baz()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      baz(<dispatch receiver>: <anonymous>): kotlin.Unit
+    ]
+
+KtThisExpression(234,238): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous>
+    ]
+
+KtNameReferenceExpression(234,238): 'this'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous>
+    ]
+
+KtCallExpression(239,244): 'baz()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      baz(<dispatch receiver>: <anonymous>): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(239,242): 'baz'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      baz(<dispatch receiver>: <anonymous>): kotlin.Unit
+    ]
+
+KtValueArgumentList(242,244): '()'
+  null
+
+KtNamedFunction(264,575): 'fun usage(with: EnumWithConstructor) {'
+  null
+
+KtParameterList(273,300): '(with: EnumWithConstructor)'
+  null
+
+KtParameter(274,299): 'with: EnumWithConstructor'
+  null
+
+KtTypeReference(280,299): 'EnumWithConstructor'
+  null
+
+KtUserType(280,299): 'EnumWithConstructor'
+  null
+
+KtNameReferenceExpression(280,299): 'EnumWithConstructor'
+  null
+
+KtBlockExpression(301,575): '{'
+  null
+
+KtDotQualifiedExpression(307,319): 'with.ordinal'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val ordinal: kotlin.Int
+    ]
+
+KtNameReferenceExpression(307,311): 'with'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      with: EnumWithConstructor
+    ]
+
+KtNameReferenceExpression(312,319): 'ordinal'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val ordinal: kotlin.Int
+    ]
+
+KtDotQualifiedExpression(325,350): 'EnumWithConstructor.Entry'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor.Entry
+    ]
+
+KtNameReferenceExpression(325,344): 'EnumWithConstructor'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor
+    ]
+
+KtNameReferenceExpression(345,350): 'Entry'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor.Entry
+    ]
+
+KtDotQualifiedExpression(355,385): 'EnumWithConstructor.Entry.name'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val name: kotlin.String
+    ]
+
+KtDotQualifiedExpression(355,380): 'EnumWithConstructor.Entry'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor.Entry
+    ]
+
+KtNameReferenceExpression(355,374): 'EnumWithConstructor'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor
+    ]
+
+KtNameReferenceExpression(375,380): 'Entry'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor.Entry
+    ]
+
+KtNameReferenceExpression(381,385): 'name'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val name: kotlin.String
+    ]
+
+KtDotQualifiedExpression(390,423): 'EnumWithConstructor.EntryWithBody'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor.EntryWithBody
+    ]
+
+KtNameReferenceExpression(390,409): 'EnumWithConstructor'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor
+    ]
+
+KtNameReferenceExpression(410,423): 'EntryWithBody'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor.EntryWithBody
+    ]
+
+KtDotQualifiedExpression(428,463): 'EnumWithConstructor.EntryWithBody.i'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val i: kotlin.Int
+    ]
+
+KtDotQualifiedExpression(428,461): 'EnumWithConstructor.EntryWithBody'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor.EntryWithBody
+    ]
+
+KtNameReferenceExpression(428,447): 'EnumWithConstructor'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor
+    ]
+
+KtNameReferenceExpression(448,461): 'EntryWithBody'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor.EntryWithBody
+    ]
+
+KtNameReferenceExpression(462,463): 'i'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val i: kotlin.Int
+    ]
+
+KtDotQualifiedExpression(469,499): 'EnumWithoutConstructor.entries'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val entries: kotlin.enums.EnumEntries<EnumWithoutConstructor>
+    ]
+
+KtNameReferenceExpression(469,491): 'EnumWithoutConstructor'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithoutConstructor
+    ]
+
+KtNameReferenceExpression(492,499): 'entries'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val entries: kotlin.enums.EnumEntries<EnumWithoutConstructor>
+    ]
+
+KtDotQualifiedExpression(504,532): 'EnumWithoutConstructor.Entry'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithoutConstructor.Entry
+    ]
+
+KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithoutConstructor
+    ]
+
+KtNameReferenceExpression(527,532): 'Entry'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithoutConstructor.Entry
+    ]
+
+KtDotQualifiedExpression(537,573): 'EnumWithoutConstructor.EntryWithBody'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithoutConstructor.EntryWithBody
+    ]
+
+KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithoutConstructor
+    ]
+
+KtNameReferenceExpression(560,573): 'EntryWithBody'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithoutConstructor.EntryWithBody
+    ]

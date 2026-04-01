@@ -1,4 +1,4 @@
-Kotlin to JS compiler performance report
+Kotlin to Wasm compiler performance report
                 INIT        $UINT>>$ ms
    TRANSLATION to IR        $UINT>>$ ms
          IR LOWERING        $UINT>>$ ms

@@ -13,11 +13,15 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.categoryByName
+import org.jetbrains.kotlin.gradle.plugin.addToAssemble
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.fileExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
@@ -29,7 +33,6 @@ import org.jetbrains.kotlin.gradle.targets.js.subtargets.createDefaultDistributi
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
-import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -83,18 +86,20 @@ sealed class JsIrBinary(
 
                 task.duplicatesStrategy = DuplicatesStrategy.WARN
 
-                task.from.from(project.tasks.named(compilation.processResourcesTaskName))
+                task.from.from(linkSyncTaskRegisteredResources)
 
                 task.destinationDirectory.set(compilation.npmProject.dist.mapToFile())
             }
         }
 
+    internal val defaultLinkSyncTaskInput: Provider<Directory>
+        get() = linkTask.flatMap(KotlinJsIrLink::destinationDirectory)
+
+    internal val linkSyncTaskRegisteredResources: TaskProvider<*>
+        get() = project.tasks.named(compilation.processResourcesTaskName)
+
     protected open fun syncInputConfigure(syncTask: DefaultIncrementalSyncTask) {
-        syncTask.from.from(
-            linkTask.flatMap { linkTask ->
-                linkTask.destinationDirectory
-            }
-        )
+        syncTask.from.from(defaultLinkSyncTaskInput)
     }
 
     // Wasi target doesn't have sync task
@@ -192,28 +197,32 @@ interface WasmBinary {
     val linkTask: TaskProvider<KotlinJsIrLink>
 
     val optimizeTask: TaskProvider<BinaryenExec>
+
+    @InternalKotlinGradlePluginApi
+    val wasmBinaryConfigurationName
+        get() = compilation.disambiguateName("wasmBinary${name}")
+
+    @InternalKotlinGradlePluginApi
+    val wasmBinaryOutputConfigurationName
+        get() = compilation.disambiguateName("wasmBinary${name}Output")
 }
 
 internal fun TaskProvider<BinaryenExec>.configureOptimizeTask(binary: WasmBinary) {
     configure { task ->
         val linkTask = binary.linkTask
-        val compiledWasmFile = linkTask.flatMap { link ->
-            link.destinationDirectory.locationOnly.zip(link.compilerOptions.moduleName) { destDir, moduleName ->
-                destDir.file("$moduleName.wasm")
+        val wasmFiles = linkTask.flatMap { link ->
+            link.destinationDirectory.locationOnly.map { destDir: Directory ->
+                destDir.asFileTree.matching { it.include("**/*.wasm") }
             }
         }
 
         task.dependsOn(linkTask)
-        task.inputFileProperty.set(compiledWasmFile)
+        task.inputFiles.from(wasmFiles)
 
         val outputDirectory: Provider<Directory> = binary.outputDirBase
             .map { it.dir("optimized") }
 
         task.outputDirectory.set(outputDirectory)
-
-        task.outputFileName.set(
-            compiledWasmFile.map { it.asFile.name }
-        )
     }
 
     val target = binary.compilation.target
@@ -222,7 +231,7 @@ internal fun TaskProvider<BinaryenExec>.configureOptimizeTask(binary: WasmBinary
     if (compilation.isMain() && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
         if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
             val project = target.project
-            project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(this)
+            project.addToAssemble(this)
         }
     }
 }
@@ -261,7 +270,15 @@ class ExecutableWasm(
     name,
     mode
 ), WasmBinary {
+    private val wasmPerModule = PropertiesProvider(project).wasmPerModule
+
     override fun syncInputConfigure(syncTask: DefaultIncrementalSyncTask) {
+        if (wasmPerModule) {
+            val conf = project.configurations.named(wasmBinaryConfigurationName)
+
+            syncTask.from.from(conf)
+        }
+
         if (mode == KotlinJsBinaryMode.PRODUCTION) {
             // this is done in optimizeTask "also" block, because optimizeTask cannot be referenced on init stage
         } else {
@@ -277,7 +294,7 @@ class ExecutableWasm(
             fs.copy {
                 it.from(compileWasmDestDir)
                 it.into(outputDirectory)
-                it.exclude(outputFileName.get())
+                it.exclude(inputFiles.map { it.name })
             }
         }
     }.also { binaryenExec ->
@@ -285,7 +302,7 @@ class ExecutableWasm(
 
         if (mode == KotlinJsBinaryMode.PRODUCTION) {
             _linkSyncTask?.configure {
-                it.from.from(binaryenExec.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
+                it.from.from(binaryenExec.flatMap { it.outputDirectory })
                 it.dependsOn(binaryenExec)
             }
         }
@@ -294,6 +311,14 @@ class ExecutableWasm(
     val mainOptimizedFile: Provider<RegularFile> = optimizeTask.flatMap {
         it.outputDirectory.file(mainFileName.get())
     }
+
+    @InternalKotlinGradlePluginApi
+    override val wasmBinaryConfigurationName: String
+        get() = super.wasmBinaryConfigurationName
+
+    @InternalKotlinGradlePluginApi
+    override val wasmBinaryOutputConfigurationName: String
+        get() = super.wasmBinaryOutputConfigurationName
 
     private fun optimizeTaskName(): String =
         "${linkTaskName}Optimize"
@@ -319,9 +344,17 @@ class LibraryWasm(
     name,
     mode
 ), WasmBinary {
+    private val wasmPerModule = PropertiesProvider(project).wasmPerModule
+
     override fun syncInputConfigure(syncTask: DefaultIncrementalSyncTask) {
+        if (wasmPerModule) {
+            val conf = project.configurations.named(wasmBinaryConfigurationName)
+
+            syncTask.from.from(conf)
+        }
+
         if (mode == KotlinJsBinaryMode.PRODUCTION) {
-            syncTask.from.from(optimizeTask.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
+            syncTask.from.from(optimizeTask.flatMap { it.outputDirectory })
             syncTask.dependsOn(optimizeTask)
         } else {
             super.syncInputConfigure(syncTask)
@@ -348,6 +381,14 @@ class LibraryWasm(
     }.also { binaryenExec ->
         binaryenExec.configureOptimizeTask(this)
     }
+
+    @InternalKotlinGradlePluginApi
+    override val wasmBinaryConfigurationName: String
+        get() = super.wasmBinaryConfigurationName
+
+    @InternalKotlinGradlePluginApi
+    override val wasmBinaryOutputConfigurationName: String
+        get() = super.wasmBinaryOutputConfigurationName
 
     private fun optimizeTaskName(): String =
         "${linkTaskName}Optimize"

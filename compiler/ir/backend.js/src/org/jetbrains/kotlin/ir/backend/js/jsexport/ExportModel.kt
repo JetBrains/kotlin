@@ -38,6 +38,7 @@ data class ExportedProperty(
     val isStatic: Boolean = false,
     val irGetter: IrFunction? = null,
     val irSetter: IrFunction? = null,
+    val isDefaultImplementation: Boolean = false
 ) : ExportedDeclaration()
 
 sealed class ExportedClass : ExportedDeclaration() {

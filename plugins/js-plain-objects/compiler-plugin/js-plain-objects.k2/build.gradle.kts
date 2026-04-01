@@ -2,7 +2,6 @@ description = "Kotlin JavaScript Plain Objects Compiler Plugin (K2)"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
@@ -11,7 +10,7 @@ dependencies {
     compileOnly(project(":compiler:fir:resolve"))
     compileOnly(project(":compiler:fir:plugin-utils"))
     compileOnly(project(":compiler:fir:entrypoint"))
-    compileOnly(project(":compiler:cli-common"))
+    compileOnly(project(":compiler:cli-base"))
 
     implementation(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.common"))
 

@@ -8,10 +8,12 @@ package kotlinx.metadata.klib.impl
 import kotlinx.metadata.klib.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.StringTableImpl
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.metadata.*
 import kotlin.metadata.internal.*
 import kotlin.metadata.internal.common.KmModuleFragment
@@ -26,15 +28,41 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     private fun WriteContext.getIndexOf(file: KlibSourceFile) =
         strings.getStringIndex(file.name)
 
+    private fun WriteContext.shouldWriteKlibAnnotationsToCommonMetadata(): Boolean =
+        getMetadataVersion() >= KlibMetadataVersion.FIRST_WITH_ANNOTATIONS_IN_COMMON_METADATA
+
+    private fun WriteContext.getMetadataVersion(): KlibMetadataVersion =
+        contextExtensions.firstIsInstanceOrNull<KlibMetadataVersionWriteExtension>()?.version
+            ?: error("No KlibMetadataVersionWriteExtension found")
+
+    private fun readAnnotations(
+        commonMetadataSource: List<ProtoBuf.Annotation>,
+        klibMetadataSource: List<ProtoBuf.Annotation>,
+        c: ReadContext,
+        destination: MutableList<KmAnnotation>,
+    ) = commonMetadataSource.ifEmpty { klibMetadataSource }.mapTo(destination) { it.readAnnotation(c.strings) }
+
+    private fun writeAnnotations(
+        annotations: List<KmAnnotation>,
+        c: WriteContext,
+        writeToCommonMetadata: (List<ProtoBuf.Annotation>) -> Unit,
+        writeToKlibMetadata: (List<ProtoBuf.Annotation>) -> Unit,
+    ) {
+        if (annotations.isEmpty()) return
+
+        val serializedAnnotations = annotations.map { it.writeAnnotation(c.strings).build() }
+        if (c.shouldWriteKlibAnnotationsToCommonMetadata()) {
+            writeToCommonMetadata(serializedAnnotations)
+        } else {
+            writeToKlibMetadata(serializedAnnotations)
+        }
+    }
+
     override fun readClassExtensions(kmClass: KmClass, proto: ProtoBuf.Class, c: ReadContext) {
         val extension = kmClass.klibExtensions
 
-        for (annotation in proto.getExtension(KlibMetadataProtoBuf.classAnnotation)) {
-            kmClass.annotations.add(annotation.readAnnotation(c.strings))
-        }
-        proto.getExtensionOrNull(KlibMetadataProtoBuf.classUniqId)?.let { uniqId ->
-            extension.uniqId = uniqId.readUniqId()
-        }
+        readAnnotations(proto.annotationList, proto.getExtension(KlibMetadataProtoBuf.classAnnotation), c, kmClass.annotations)
+
         proto.getExtensionOrNull(KlibMetadataProtoBuf.classFile)?.let {
             extension.file = c.getSourceFile(it)
         }
@@ -51,9 +79,6 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     override fun readModuleFragmentExtensions(kmModuleFragment: KmModuleFragment, proto: ProtoBuf.PackageFragment, c: ReadContext) {
         val extension = kmModuleFragment.klibExtensions
 
-        for (file in proto.getExtension(KlibMetadataProtoBuf.packageFragmentFiles)) {
-            extension.moduleFragmentFiles.add(c.getSourceFile(file))
-        }
         proto.getExtensionOrNull(KlibMetadataProtoBuf.fqName)?.let {
             extension.fqName = it
         }
@@ -65,12 +90,14 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     override fun readFunctionExtensions(kmFunction: KmFunction, proto: ProtoBuf.Function, c: ReadContext) {
         val extension = kmFunction.klibExtensions
 
-        for (annotation in proto.getExtension(KlibMetadataProtoBuf.functionAnnotation)) {
-            kmFunction.annotations.add(annotation.readAnnotation(c.strings))
-        }
-        proto.getExtensionOrNull(KlibMetadataProtoBuf.functionUniqId)?.let { uniqId ->
-            extension.uniqId = uniqId.readUniqId()
-        }
+        readAnnotations(proto.annotationList, proto.getExtension(KlibMetadataProtoBuf.functionAnnotation), c, kmFunction.annotations)
+        readAnnotations(
+            proto.extensionReceiverAnnotationList,
+            proto.getExtension(KlibMetadataProtoBuf.functionExtensionReceiverAnnotation),
+            c,
+            kmFunction.extensionReceiverParameterAnnotations
+        )
+
         proto.getExtensionOrNull(KlibMetadataProtoBuf.functionFile)?.let {
             extension.file = c.getSourceFile(it)
         }
@@ -79,20 +106,40 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     override fun readPropertyExtensions(kmProperty: KmProperty, proto: ProtoBuf.Property, c: ReadContext) {
         val extension = kmProperty.klibExtensions
 
-        for (annotation in proto.getExtension(KlibMetadataProtoBuf.propertyAnnotation)) {
-            kmProperty.annotations.add(annotation.readAnnotation(c.strings))
-        }
-        for (annotation in proto.getExtension(KlibMetadataProtoBuf.propertyGetterAnnotation)) {
-            kmProperty.getter.annotations.add(annotation.readAnnotation(c.strings))
-        }
+        readAnnotations(proto.annotationList, proto.getExtension(KlibMetadataProtoBuf.propertyAnnotation), c, kmProperty.annotations)
+        readAnnotations(
+            proto.getterAnnotationList,
+            proto.getExtension(KlibMetadataProtoBuf.propertyGetterAnnotation),
+            c,
+            kmProperty.getter.annotations
+        )
         kmProperty.setter?.let { setter ->
-            for (annotation in proto.getExtension(KlibMetadataProtoBuf.propertySetterAnnotation)) {
-                setter.annotations.add(annotation.readAnnotation(c.strings))
-            }
+            readAnnotations(
+                proto.setterAnnotationList,
+                proto.getExtension(KlibMetadataProtoBuf.propertySetterAnnotation),
+                c,
+                setter.annotations
+            )
         }
-        proto.getExtensionOrNull(KlibMetadataProtoBuf.propertyUniqId)?.let { uniqId ->
-            extension.uniqId = uniqId.readUniqId()
-        }
+        readAnnotations(
+            proto.extensionReceiverAnnotationList,
+            proto.getExtension(KlibMetadataProtoBuf.propertyExtensionReceiverAnnotation),
+            c,
+            kmProperty.extensionReceiverParameterAnnotations
+        )
+        readAnnotations(
+            proto.backingFieldAnnotationList,
+            proto.getExtension(KlibMetadataProtoBuf.propertyBackingFieldAnnotation),
+            c,
+            kmProperty.backingFieldAnnotations
+        )
+        readAnnotations(
+            proto.delegateFieldAnnotationList,
+            proto.getExtension(KlibMetadataProtoBuf.propertyDelegatedFieldAnnotation),
+            c,
+            kmProperty.delegateFieldAnnotations
+        )
+
         proto.getExtensionOrNull(KlibMetadataProtoBuf.propertyFile)?.let { file ->
             extension.file = c.getSourceFile(file)
         }
@@ -104,66 +151,39 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     }
 
     override fun readConstructorExtensions(kmConstructor: KmConstructor, proto: ProtoBuf.Constructor, c: ReadContext) {
-        val extension = kmConstructor.klibExtensions
-
-        for (annotation in proto.getExtension(KlibMetadataProtoBuf.constructorAnnotation)) {
-            kmConstructor.annotations.add(annotation.readAnnotation(c.strings))
-        }
-        proto.getExtensionOrNull(KlibMetadataProtoBuf.constructorUniqId)?.let { uniqId ->
-            extension.uniqId = uniqId.readUniqId()
-        }
+        readAnnotations(proto.annotationList, proto.getExtension(KlibMetadataProtoBuf.constructorAnnotation), c, kmConstructor.annotations)
     }
 
     override fun readTypeParameterExtensions(kmTypeParameter: KmTypeParameter, proto: ProtoBuf.TypeParameter, c: ReadContext) {
-        val extension = kmTypeParameter.klibExtensions
-
-        for (annotation in proto.getExtension(KlibMetadataProtoBuf.typeParameterAnnotation)) {
-            kmTypeParameter.annotations.add(annotation.readAnnotation(c.strings))
-        }
-        proto.getExtensionOrNull(KlibMetadataProtoBuf.typeParamUniqId)?.let { uniqId ->
-            extension.uniqId = uniqId.readUniqId()
-        }
+        readAnnotations(
+            proto.annotationList,
+            proto.getExtension(KlibMetadataProtoBuf.typeParameterAnnotation),
+            c,
+            kmTypeParameter.annotations
+        )
     }
 
     override fun readEnumEntryExtensions(kmEnumEntry: KmEnumEntry, proto: ProtoBuf.EnumEntry, c: ReadContext) {
         val extension = kmEnumEntry.klibExtensions
 
         extension.ordinal = proto.getExtensionOrNull(KlibMetadataProtoBuf.enumEntryOrdinal)
-        extension.uniqId = proto.getExtensionOrNull(KlibMetadataProtoBuf.enumEntryUniqId)?.readUniqId()
-        for (annotation in proto.getExtension(KlibMetadataProtoBuf.enumEntryAnnotation)) {
-            kmEnumEntry.annotations.add(annotation.readAnnotation(c.strings))
-        }
+
+        readAnnotations(proto.annotationList, proto.getExtension(KlibMetadataProtoBuf.enumEntryAnnotation), c, kmEnumEntry.annotations)
     }
 
     override fun readTypeExtensions(kmType: KmType, proto: ProtoBuf.Type, c: ReadContext) {
-        val extension = kmType.klibExtensions
-
-        for (annotation in proto.getExtension(KlibMetadataProtoBuf.typeAnnotation)) {
-            extension.annotations.add(annotation.readAnnotation(c.strings))
-        }
+        readAnnotations(proto.annotationList, proto.getExtension(KlibMetadataProtoBuf.typeAnnotation), c, kmType.annotations)
     }
 
-    override fun readTypeAliasExtensions(kmTypeAlias: KmTypeAlias, proto: ProtoBuf.TypeAlias, c: ReadContext) {
-        val extension = kmTypeAlias.klibExtensions
-
-        proto.getExtension(KlibMetadataProtoBuf.typeAliasUniqId).let { uniqId ->
-            extension.uniqId = uniqId.readUniqId()
-        }
-    }
+    override fun readTypeAliasExtensions(kmTypeAlias: KmTypeAlias, proto: ProtoBuf.TypeAlias, c: ReadContext) {}
 
     override fun readValueParameterExtensions(kmValueParameter: KmValueParameter, proto: ProtoBuf.ValueParameter, c: ReadContext) {
-        for (annotation in proto.getExtension(KlibMetadataProtoBuf.parameterAnnotation)) {
-            kmValueParameter.annotations.add(annotation.readAnnotation(c.strings))
-        }
+        readAnnotations(proto.annotationList, proto.getExtension(KlibMetadataProtoBuf.parameterAnnotation), c, kmValueParameter.annotations)
     }
 
     override fun writeClassExtensions(kmClass: KmClass, proto: ProtoBuf.Class.Builder, c: WriteContext) {
-        for (annotation in kmClass.annotations) {
-            proto.addExtension(KlibMetadataProtoBuf.classAnnotation, annotation.writeAnnotation(c.strings).build())
-        }
-
-        kmClass.uniqId?.let { uniqId ->
-            proto.setExtension(KlibMetadataProtoBuf.classUniqId, uniqId.writeUniqId().build())
+        writeAnnotations(kmClass.annotations, c, proto::addAllAnnotation) {
+            proto.setExtension(KlibMetadataProtoBuf.classAnnotation, it)
         }
 
         kmClass.file?.let { file ->
@@ -180,10 +200,6 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     override fun writeModuleFragmentExtensions(
         kmModuleFragment: KmModuleFragment, proto: ProtoBuf.PackageFragment.Builder, c: WriteContext,
     ) {
-        for (file in kmModuleFragment.moduleFragmentFiles) {
-            proto.addExtension(KlibMetadataProtoBuf.packageFragmentFiles, c.getIndexOf(file))
-        }
-
         kmModuleFragment.fqName?.let { fqName ->
             proto.setExtension(KlibMetadataProtoBuf.fqName, fqName)
         }
@@ -195,12 +211,11 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     }
 
     override fun writeFunctionExtensions(kmFunction: KmFunction, proto: ProtoBuf.Function.Builder, c: WriteContext) {
-        for (annotation in kmFunction.annotations) {
-            proto.addExtension(KlibMetadataProtoBuf.functionAnnotation, annotation.writeAnnotation(c.strings).build())
+        writeAnnotations(kmFunction.annotations, c, proto::addAllAnnotation) {
+            proto.setExtension(KlibMetadataProtoBuf.functionAnnotation, it)
         }
-
-        kmFunction.uniqId?.let { uniqId ->
-            proto.setExtension(KlibMetadataProtoBuf.functionUniqId, uniqId.writeUniqId().build())
+        writeAnnotations(kmFunction.extensionReceiverParameterAnnotations, c, proto::addAllExtensionReceiverAnnotation) {
+            proto.setExtension(KlibMetadataProtoBuf.functionExtensionReceiverAnnotation, it)
         }
 
         kmFunction.file?.let { file ->
@@ -209,18 +224,23 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     }
 
     override fun writePropertyExtensions(kmProperty: KmProperty, proto: ProtoBuf.Property.Builder, c: WriteContext) {
-        for (annotation in kmProperty.annotations) {
-            proto.addExtension(KlibMetadataProtoBuf.propertyAnnotation, annotation.writeAnnotation(c.strings).build())
+        writeAnnotations(kmProperty.annotations, c, proto::addAllAnnotation) {
+            proto.setExtension(KlibMetadataProtoBuf.propertyAnnotation, it)
         }
-        for (annotation in kmProperty.getter.annotations) {
-            proto.addExtension(KlibMetadataProtoBuf.propertyGetterAnnotation, annotation.writeAnnotation(c.strings).build())
+        writeAnnotations(kmProperty.getter.annotations, c, proto::addAllGetterAnnotation) {
+            proto.setExtension(KlibMetadataProtoBuf.propertyGetterAnnotation, it)
         }
-        for (annotation in kmProperty.setter?.annotations.orEmpty()) {
-            proto.addExtension(KlibMetadataProtoBuf.propertySetterAnnotation, annotation.writeAnnotation(c.strings).build())
+        writeAnnotations(kmProperty.setter?.annotations ?: emptyList(), c, proto::addAllSetterAnnotation) {
+            proto.setExtension(KlibMetadataProtoBuf.propertySetterAnnotation, it)
         }
-
-        kmProperty.uniqId?.let { uniqId ->
-            proto.setExtension(KlibMetadataProtoBuf.propertyUniqId, uniqId.writeUniqId().build())
+        writeAnnotations(kmProperty.extensionReceiverParameterAnnotations, c, proto::addAllExtensionReceiverAnnotation) {
+            proto.setExtension(KlibMetadataProtoBuf.propertyExtensionReceiverAnnotation, it)
+        }
+        writeAnnotations(kmProperty.backingFieldAnnotations, c, proto::addAllBackingFieldAnnotation) {
+            proto.setExtension(KlibMetadataProtoBuf.propertyBackingFieldAnnotation, it)
+        }
+        writeAnnotations(kmProperty.delegateFieldAnnotations, c, proto::addAllDelegateFieldAnnotation) {
+            proto.setExtension(KlibMetadataProtoBuf.propertyDelegatedFieldAnnotation, it)
         }
 
         kmProperty.file?.let { file ->
@@ -233,22 +253,14 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     }
 
     override fun writeConstructorExtensions(kmConstructor: KmConstructor, proto: ProtoBuf.Constructor.Builder, c: WriteContext) {
-        for (annotation in kmConstructor.annotations) {
-            proto.addExtension(KlibMetadataProtoBuf.constructorAnnotation, annotation.writeAnnotation(c.strings).build())
-        }
-
-        kmConstructor.uniqId?.let { uniqId ->
-            proto.setExtension(KlibMetadataProtoBuf.constructorUniqId, uniqId.writeUniqId().build())
+        writeAnnotations(kmConstructor.annotations, c, proto::addAllAnnotation) {
+            proto.setExtension(KlibMetadataProtoBuf.constructorAnnotation, it)
         }
     }
 
     override fun writeTypeParameterExtensions(kmTypeParameter: KmTypeParameter, proto: ProtoBuf.TypeParameter.Builder, c: WriteContext) {
-        for (annotation in kmTypeParameter.annotations) {
-            proto.addExtension(KlibMetadataProtoBuf.typeParameterAnnotation, annotation.writeAnnotation(c.strings).build())
-        }
-
-        kmTypeParameter.uniqId?.let { uniqId ->
-            proto.setExtension(KlibMetadataProtoBuf.typeParamUniqId, uniqId.writeUniqId().build())
+        writeAnnotations(kmTypeParameter.annotations, c, proto::addAllAnnotation) {
+            proto.setExtension(KlibMetadataProtoBuf.typeParameterAnnotation, it)
         }
     }
 
@@ -256,29 +268,23 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         enumEntry.ordinal?.let { ordinal ->
             proto.setExtension(KlibMetadataProtoBuf.enumEntryOrdinal, ordinal)
         }
-        enumEntry.uniqId?.let { uniqId ->
-            proto.setExtension(KlibMetadataProtoBuf.enumEntryUniqId, uniqId.writeUniqId().build())
-        }
-        for (annotation in enumEntry.annotations) {
-            proto.addExtension(KlibMetadataProtoBuf.enumEntryAnnotation, annotation.writeAnnotation(c.strings).build())
+
+        writeAnnotations(enumEntry.annotations, c, proto::addAllAnnotation) {
+            proto.setExtension(KlibMetadataProtoBuf.enumEntryAnnotation, it)
         }
     }
 
     override fun writeTypeExtensions(type: KmType, proto: ProtoBuf.Type.Builder, c: WriteContext) {
-        for (annotation in type.annotations) {
-            proto.addExtension(KlibMetadataProtoBuf.typeAnnotation, annotation.writeAnnotation(c.strings).build())
+        writeAnnotations(type.annotations, c, proto::addAllAnnotation) {
+            proto.setExtension(KlibMetadataProtoBuf.typeAnnotation, it)
         }
     }
 
-    override fun writeTypeAliasExtensions(typeAlias: KmTypeAlias, proto: ProtoBuf.TypeAlias.Builder, c: WriteContext) {
-        typeAlias.uniqId?.let { uniqId ->
-            proto.setExtension(KlibMetadataProtoBuf.typeAliasUniqId, uniqId.writeUniqId().build())
-        }
-    }
+    override fun writeTypeAliasExtensions(typeAlias: KmTypeAlias, proto: ProtoBuf.TypeAlias.Builder, c: WriteContext) {}
 
     override fun writeValueParameterExtensions(valueParameter: KmValueParameter, proto: ProtoBuf.ValueParameter.Builder, c: WriteContext) {
-        for (annotation in valueParameter.annotations) {
-            proto.addExtension(KlibMetadataProtoBuf.parameterAnnotation, annotation.writeAnnotation(c.strings).build())
+        writeAnnotations(valueParameter.annotations, c, proto::addAllAnnotation) {
+            proto.setExtension(KlibMetadataProtoBuf.parameterAnnotation, it)
         }
     }
 

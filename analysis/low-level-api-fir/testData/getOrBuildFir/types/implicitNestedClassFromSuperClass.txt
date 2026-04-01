@@ -1,0 +1,41 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|m2/BaseClass.NestedInterface|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] implicitNestedClassFromSuperClass.kt
+    package m2
+
+    public abstract [ResolvedTo(STATUS)] class BaseClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=BaseClass] constructor(): R|m2/BaseClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] interface NestedInterface : R|kotlin/Any| {
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] class IntermediateClass : R|m2/BaseClass| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=IntermediateClass] constructor(): R|m2/IntermediateClass| {
+            LAZY_super<R|m2/BaseClass|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val intermedicateClassUsage: R|kotlin/Any| = object : R|m2/IntermediateClass| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|m2/<anonymous>| {
+            super<R|m2/IntermediateClass|>()
+        }
+
+        local final inner [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] class AnonymousInnerClass : R|m2/BaseClass.NestedInterface| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnonymousInnerClass] m2/<anonymous>.constructor(): R|<local>/<anonymous>.AnonymousInnerClass| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Any|

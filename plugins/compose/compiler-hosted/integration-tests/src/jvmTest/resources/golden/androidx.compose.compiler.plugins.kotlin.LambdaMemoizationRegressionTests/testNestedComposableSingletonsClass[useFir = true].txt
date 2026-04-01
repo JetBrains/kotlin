@@ -15,7 +15,10 @@ class A {
 @StabilityInferred(parameters = 1)
 class A {
   val x: Function2<Composer, Int, Unit> = ComposableSingletons%TestKt.lambda%-749522881
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 internal object ComposableSingletons%TestKt {
   val lambda%-749522881: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->

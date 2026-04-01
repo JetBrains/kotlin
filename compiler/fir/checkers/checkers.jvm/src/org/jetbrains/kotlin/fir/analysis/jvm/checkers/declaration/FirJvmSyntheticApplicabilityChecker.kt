@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_CLASS_ID
 
 object FirJvmSyntheticApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
         val annotation = declaration.backingField?.getAnnotationByClassId(JVM_SYNTHETIC_ANNOTATION_CLASS_ID, context.session)

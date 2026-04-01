@@ -18,6 +18,8 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol local final class Local : R|kotlin/Any|
     Element 8
+        Static scope owner symbol: FirRegularClassSymbol local final class Local : R|kotlin/Any|
+    Element 9
         Implicit receiver:
             FirRegularClassSymbol local final class Local : R|kotlin/Any|
                 Type: <local>.Local
@@ -38,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] localClass.kt
                 super<R|kotlin/Any|>()
             }
 
-            [ResolvedTo(BODY_RESOLVE)] @R|bar/Anno|[Types](value = String()) <DANGLING MODIFIER: Top level declaration expected>
+            [ResolvedTo(BODY_RESOLVE)] @R|bar/Anno|[Types](value = String() [evaluated = String()]) <DANGLING MODIFIER: Top level declaration expected>
         }
 
     }

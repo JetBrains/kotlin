@@ -1,0 +1,19 @@
+<caret_1>:
+  KDocName(628,649): 'Derived.someExtension'
+    null
+
+<caret_2>:
+  KDocName(655,677): 'Derived.someExtension2'
+    null
+
+<caret_3>:
+  KDocName(683,705): 'Derived.someExtension3'
+    null
+
+<caret_4>:
+  KDocName(711,733): 'Derived.someExtension4'
+    null
+
+<caret_5>:
+  KDocName(739,773): 'DerivedWithIterable.someExtension4'
+    null

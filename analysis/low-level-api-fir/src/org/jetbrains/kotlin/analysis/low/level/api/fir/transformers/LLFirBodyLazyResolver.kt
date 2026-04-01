@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirMod
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
@@ -49,16 +50,11 @@ import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.isResolved
+import org.jetbrains.kotlin.fir.types.hasResolvedType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtCodeFragment
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -917,6 +913,10 @@ internal object BodyStateKeepers {
     private val VALUE_PARAMETER: StateKeeper<FirValueParameter, FirDesignation> = stateKeeper { builder, valueParameter, _ ->
         if (valueParameter.defaultValue != null) {
             builder.add(FirValueParameter::defaultValue, FirValueParameter::replaceDefaultValue, ::expressionGuard)
+            builder.add(
+                { parameter -> parameter.evaluatedInitializer },
+                { parameter, evaluatorResult -> parameter.evaluatedInitializer = evaluatorResult },
+            )
         }
 
         builder.add(FirValueParameter::controlFlowGraphReference, FirValueParameter::replaceControlFlowGraphReference)
@@ -949,15 +949,24 @@ private fun StateKeeperScope<FirAnonymousInitializer, FirDesignation>.preserveRe
     builder: StateKeeperBuilder,
     initializer: FirAnonymousInitializer
 ) {
-    preservePartialBodyResolveResult(builder, initializer, FirAnonymousInitializer::body) { emptyList() }
+    preservePartialBodyResolveResult(
+        builder = builder,
+        declaration = initializer,
+        bodySupplier = FirAnonymousInitializer::body,
+        parameterSupplier = { emptyList() },
+    )
 }
 
 private fun StateKeeperScope<FirFunction, FirDesignation>.preserveResolvedState(builder: StateKeeperBuilder, function: FirFunction) {
-    if (preservePartialBodyResolveResult(builder, function, FirFunction::body, FirFunction::valueParameters)) {
-        // If the function is partially analyzed, its contract (if present) is also copied, so we don't need to patch it once more.
-        return
+    val analyzedFirStatementCount = preservePartialBodyResolveResult(builder, function, FirFunction::body, FirFunction::valueParameters)
+    // If the function is partially analyzed, its contract (if present) is also copied, so we don't need to patch it once more.
+    // BUT! The function might be partially analyzed with 0 statements, in this case the contract still has to be copied
+    if (analyzedFirStatementCount == null || analyzedFirStatementCount < 1) {
+        preserveLegacyContract(function, builder)
     }
+}
 
+private fun StateKeeperScope<FirFunction, FirDesignation>.preserveLegacyContract(function: FirFunction, builder: StateKeeperBuilder) {
     val oldBody = function.body
     if (oldBody == null || oldBody is FirLazyBlock) {
         return
@@ -981,21 +990,24 @@ private fun StateKeeperScope<FirFunction, FirDesignation>.preserveResolvedState(
     }
 }
 
+/**
+ * @return the number of analyzed fir statements or null if no partial result is present
+ */
 private fun <T : FirDeclaration> StateKeeperScope<T, FirDesignation>.preservePartialBodyResolveResult(
     builder: StateKeeperBuilder,
     declaration: T,
     bodySupplier: (T) -> FirBlock?,
     parameterSupplier: (T) -> List<FirValueParameter>
-): Boolean {
+): Int? {
     val oldBody = bodySupplier(declaration)
     val oldDefaultValues = parameterSupplier(declaration).map { it.defaultValue }
 
     // No need to check parameters explicitly as they are substituted together with the body
     if (oldBody == null || oldBody is FirLazyBlock) {
-        return false
+        return null
     }
 
-    val state = declaration.partialBodyAnalysisState ?: return false
+    val state = declaration.partialBodyAnalysisState ?: return null
 
     builder.postProcess {
         val newBody = bodySupplier(declaration)
@@ -1011,6 +1023,8 @@ private fun <T : FirDeclaration> StateKeeperScope<T, FirDesignation>.preservePar
             }
         }
 
+        // NOTE: parameters might have `evaluatedInitializer` that is not stored in the partial context,
+        // but it is not a problem as long as annotation constructors are not partially resolvable
         val newParameters = parameterSupplier(declaration)
         for ((index, newParameter) in newParameters.withIndex()) {
             if (newParameter.defaultValue != null) {
@@ -1019,7 +1033,7 @@ private fun <T : FirDeclaration> StateKeeperScope<T, FirDesignation>.preservePar
         }
     }
 
-    return true
+    return state.analyzedFirStatementCount
 }
 
 private val FirFunction.isCertainlyResolved: Boolean
@@ -1036,7 +1050,7 @@ private val FirFunction.isCertainlyResolved: Boolean
         }
 
         val body = this.body ?: return false // Not completely sure
-        return body !is FirLazyBlock && body.isResolved
+        return body !is FirLazyBlock && body.hasResolvedType
     }
 
 private val FirVariable.initializerGetterIfUnresolved: KProperty1<FirVariable, FirExpression?>?

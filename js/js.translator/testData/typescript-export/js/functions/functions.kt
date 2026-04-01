@@ -17,7 +17,43 @@ fun sum(x: Int, y: Int): Int =
     x + y
 
 @JsExport
+fun varargByte(vararg x: Byte): Int =
+    x.size
+
+@JsExport
+fun varargShort(vararg x: Short): Int =
+    x.size
+
+@JsExport
 fun varargInt(vararg x: Int): Int =
+    x.size
+
+@JsExport
+fun varargFloat(vararg x: Float): Int =
+    x.size
+
+@JsExport
+fun varargDouble(vararg x: Double): Int =
+    x.size
+
+@JsExport
+fun varargBoolean(vararg x: Boolean): Int =
+    x.size
+
+@JsExport
+fun varargChar(vararg x: Char): Int =
+    x.size
+
+@JsExport
+fun varargUByte(vararg x: UByte): Int =
+    x.size
+
+@JsExport
+fun varargUShort(vararg x: UShort): Int =
+    x.size
+
+@JsExport
+fun varargUInt(vararg x: UInt): Int =
     x.size
 
 @JsExport
@@ -99,4 +135,4 @@ fun Scope2.concatWithExtensionAndContextParameter() = scope1.getA() + getA()
 fun Scope1.getWithExtension() = getA()
 
 @JsExport
-fun <A, B, R> context(a: A, b: B, block: context(A, B) () -> R): R = block(a, b)
+fun <A, B, C, D, R> allParameters(a: A, b: B, c: C, d: D, block: context(A, B) C.(d: D) -> R): R = block(a, b, c, d)

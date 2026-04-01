@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.codegen.CodegenTestFiles
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -64,7 +65,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     //keep it globally to avoid test grouping on TC
     private val generatedTestNames = hashSetOf<String>()
 
-    private val commonFlavor = FlavorConfig(TargetBackend.ANDROID, "common", 4)
+    private val commonFlavor = FlavorConfig(TargetBackend.ANDROID, "common", 5)
     private val reflectFlavor = FlavorConfig(TargetBackend.ANDROID, "reflect", 1)
 
     class FlavorConfig(private val backend: TargetBackend, private val prefix: String, val limit: Int) {
@@ -157,6 +158,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
         val folders = arrayOf(
             File("compiler/testData/codegen/box"),
+            File("compiler/testData/codegen/boxJvm"),
             File("compiler/testData/codegen/boxInline")
         )
 
@@ -206,6 +208,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 disposable,
                 configuration.copy().apply {
                     put(CommonConfigurationKeys.MODULE_NAME, "android-module-" + currentModuleIndex++)
+                    // KT-84021 Use full K/JVM stdlib, not minimal K/JVM stdlib
+                    addJvmClasspathRoot(ForTestCompileRuntime.runtimeJarForTests())
+                    addJvmClasspathRoot(ForTestCompileRuntime.kotlinTestJarForTests())
                 },
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
             )
@@ -308,6 +313,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     if (fullFileText.contains("// LANGUAGE_VERSION: 1.2")) continue
                 }
 
+                // Cannot dex -> cannot run
+                if (fullFileText.contains("// IGNORE_DEXING")) continue
+
                 //TODO support JvmPackageName
                 if (fullFileText.contains("@file:JvmPackageName(")) continue
                 // TODO: Support jvm assertions
@@ -345,6 +353,10 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     if (module.files.isEmpty()) continue
                     services.registerArtifactsProvider(ArtifactsProvider(services, moduleStructure.modules))
 
+                    // The configuration is used as a key here and not used for the actual compiler invocation
+                    // So if the configuration is created with default services inside, it messes up the
+                    // equals/hashcode.
+                    @OptIn(CompilerConfiguration.Internals::class)
                     val keyConfiguration = CompilerConfiguration()
                     val configuratorForFlags = JvmEnvironmentConfigurator(services)
                     with(configuratorForFlags) {
@@ -387,7 +399,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         }
     }
 
-    private fun createTestConfiguration(testDataFile: File): TestConfiguration {
+    private fun createTestConfiguration(testDataFile: File): NonGroupingPhaseTestConfiguration {
         return TestConfigurationBuilder().apply {
             configure()
             testInfo = KotlinTestInfo(
@@ -436,12 +448,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     }
 
     companion object {
-        const val GRADLE_VERSION = "6.8.1" // update GRADLE_SHA_256 on change
-        const val GRADLE_SHA_256 = "fd591a34af7385730970399f473afabdb8b28d57fd97d6625c388d090039d6fd"
+        const val GRADLE_VERSION = "8.14" // update GRADLE_SHA_256 on change
+        const val GRADLE_SHA_256 = "61ad310d3c7d3e5da131b76bbf22b5a4c0786e9d892dae8c1658d4b484de3caa"
         const val testClassPackage = "org.jetbrains.kotlin.android.tests"
-        const val testClassName = "CodegenTestCaseOnAndroid"
-        const val baseTestClassPackage = "org.jetbrains.kotlin.android.tests"
-        const val baseTestClassName = "AbstractCodegenTestCaseOnAndroid"
 
 
         @JvmOverloads

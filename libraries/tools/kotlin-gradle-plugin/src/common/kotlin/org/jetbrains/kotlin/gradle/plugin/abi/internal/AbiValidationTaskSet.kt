@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.gradle.plugin.abi.internal
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetId
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiCheckTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiDumpTaskImpl
-import org.jetbrains.kotlin.abi.tools.KlibTarget
 import org.jetbrains.kotlin.gradle.utils.named
 
 /**
@@ -53,48 +52,33 @@ internal class AbiValidationTaskSet(project: Project) {
      * @param [klibTarget] The target to add
      * @param [klibFiles] files of the unpacked klib containing Kotlin compiled code
      */
-    fun addKlibTarget(klibTarget: KlibTarget, klibFiles: FileCollection) {
+    fun addKlibTarget(klibTarget: KlibTargetId, klibFiles: FileCollection) {
         legacyDumpTaskProvider.configure {
-            it.klibInput.add(KotlinAbiDumpTaskImpl.KlibTargetInfo(klibTarget.configurableName, klibTarget.targetName, klibFiles))
+            it.klib.add(
+                KotlinAbiDumpTaskImpl.KlibTargetInfo(
+                    klibTarget.customizedName,
+                    klibTarget.targetType.canonicalName,
+                    klibFiles
+                )
+            )
         }
     }
 
     /**
      * Keeps ABI declarations in a dump file for unsupported targets which were added using [unsupportedTarget].
      */
-    fun keepUnsupportedTargets(keep: Provider<Boolean>) {
+    fun keepLocallyUnsupportedTargets(keep: Provider<Boolean>) {
         legacyDumpTaskProvider.configure {
-            it.keepUnsupportedTargets.set(keep)
-        }
-    }
-
-    /**
-     * Enables generation of ABI dump files for klib targets.
-     */
-    fun klibEnabled(isEnabled: Provider<Boolean>) {
-        legacyDumpTaskProvider.configure {
-            it.klibIsEnabled.set(isEnabled)
+            it.keepLocallyUnsupportedTargets.set(keep)
         }
     }
 
     /**
      * Marks the specified target as unsupported by the Kotlin compiler on the current host.
      */
-    fun unsupportedTarget(klibTarget: KlibTarget) {
+    fun unsupportedTarget(klibTarget: KlibTargetId) {
         legacyDumpTaskProvider.configure {
             it.unsupportedTargets.add(klibTarget)
-        }
-    }
-
-    /**
-     * Sets the classpath of the ABI tools dependency for all ABI validation tasks.
-     */
-    fun setClasspath(toolClasspath: Configuration) {
-        legacyDumpTaskProvider.configure {
-            it.toolsClasspath.from(toolClasspath)
-        }
-        legacyCheckDumpTaskProvider.configure {
-            it.toolsClasspath.from(toolClasspath)
         }
     }
 }

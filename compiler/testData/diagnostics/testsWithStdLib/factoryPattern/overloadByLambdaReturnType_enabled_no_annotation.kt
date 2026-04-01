@@ -2,6 +2,7 @@
 // LANGUAGE: +OverloadResolutionByLambdaReturnType
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 // ISSUE: KT-11265
+// LATEST_LV_DIFFERENCE
 
 fun create(f: (Int) -> Int): Int = 1
 fun create(f: (Int) -> String): String = ""

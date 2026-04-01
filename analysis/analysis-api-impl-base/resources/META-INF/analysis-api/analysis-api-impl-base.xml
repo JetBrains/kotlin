@@ -9,9 +9,35 @@
         area="IDEA_PROJECT"
         dynamic="true"
     />
+
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.psiReferenceProvider"
+        interface="org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor"
+        area="IDEA_PROJECT"
+        dynamic="true"
+    />
+
+    <!--suppress DeprecatedClassUsageInspection -->
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.analysis.additionalKDocResolutionProvider"
+        interface="org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider"
+        dynamic="true"
+    />
+
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.kaAdditionalKDocResolutionProvider"
+        interface="org.jetbrains.kotlin.analysis.api.symbols.KaAdditionalKDocResolutionProvider"
+        dynamic="true"
+    />
+
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.irGenerationExtension"
+                    interface="org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension"
+                    area="IDEA_PROJECT" dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
+    <stubElementTypeHolder externalIdPrefix="kotlin." class="org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes"/>
+
     <fileType name="ARCHIVE" extensions="klib"/>
 
     <fileType name="Kotlin" fieldName="INSTANCE" language="kotlin" extensions="kt;kts"
@@ -50,7 +76,7 @@
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.psi.KotlinReferenceProvidersService"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.references.KotlinReferenceProvidersServiceImpl"
     />
 
     <projectService

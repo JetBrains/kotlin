@@ -1,7 +1,29 @@
 KtNameReferenceExpression(78,85): 'suspend'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = suspend () -> kotlin.Unit
+        symbol = kotlin/suspend(block: suspend () -> R): suspend () -> R
+        valueParameters = [
+          KaVariableSignature:
+            name = block
+            receiverType = null
+            returnType = suspend () -> kotlin.Unit
+            symbol = block: suspend () -> R
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/suspend
+      typeArgumentsMapping = {
+        R -> (kotlin.Unit)
+      }
+      valueArgumentMapping = {
         {} -> (KaVariableSignature:
           name = block
           receiverType = null
@@ -9,27 +31,4 @@ KtNameReferenceExpression(78,85): 'suspend'
           symbol = block: suspend () -> R
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = suspend () -> kotlin.Unit
-          symbol = kotlin/suspend(block: suspend () -> R): suspend () -> R
-          valueParameters = [
-            KaVariableSignature:
-              name = block
-              receiverType = null
-              returnType = suspend () -> kotlin.Unit
-              symbol = block: suspend () -> R
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/suspend
-      typeArgumentsMapping = {
-        R -> (kotlin.Unit)
       }

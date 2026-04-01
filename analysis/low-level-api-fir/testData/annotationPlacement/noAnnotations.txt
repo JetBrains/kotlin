@@ -1,0 +1,3 @@
+kotlin/collections/List<kotlin/String>
+
+No annotations

@@ -19,15 +19,15 @@
 
 package kotlin.reflect.full
 
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.utils.DFS
 import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.DescriptorKCallable
-import kotlin.reflect.jvm.internal.DescriptorKFunction
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
+import kotlin.reflect.jvm.internal.ReflectKCallable
+import kotlin.reflect.jvm.internal.ReflectKFunction
 import kotlin.reflect.jvm.internal.types.AbstractKType
 import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
+import kotlin.reflect.jvm.internal.types.allTypeParameters
 
 /**
  * Returns the primary constructor of this class, or `null` if this class has no primary constructor.
@@ -36,8 +36,8 @@ import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
  */
 @SinceKotlin("1.1")
 val <T : Any> KClass<T>.primaryConstructor: KFunction<T>?
-    get() = (this as KClassImpl<T>).constructors.firstOrNull {
-        ((it as DescriptorKFunction).descriptor as ConstructorDescriptor).isPrimary
+    get() = constructors.firstOrNull {
+        (it as ReflectKFunction).isPrimaryConstructor
     }
 
 
@@ -73,7 +73,7 @@ val KClass<*>.defaultType: KType
     get() = createDefaultType()
 
 internal fun KClass<*>.createDefaultType(): KType =
-    createType(typeParameters.map { typeParameter ->
+    createType(allTypeParameters().map { typeParameter ->
         KTypeProjection(KVariance.INVARIANT, typeParameter.createType())
     })
 
@@ -175,10 +175,10 @@ val <T : Any> KClass<T>.declaredMemberExtensionProperties: Collection<KProperty2
     get() = (this as KClassImpl<T>).data.value.declaredNonStaticMembers.filter { it.isExtension && it is KProperty2<*, *, *> } as Collection<KProperty2<T, *, *>>
 
 
-private val DescriptorKCallable<*>.isExtension: Boolean
-    get() = descriptor.extensionReceiverParameter != null
+private val ReflectKCallable<*>.isExtension: Boolean
+    get() = allParameters.any { it.kind == KParameter.Kind.EXTENSION_RECEIVER }
 
-private val DescriptorKCallable<*>.isNotExtension: Boolean
+private val ReflectKCallable<*>.isNotExtension: Boolean
     get() = !isExtension
 
 /**
@@ -203,7 +203,8 @@ val KClass<*>.allSupertypes: Collection<KType>
             if (current.arguments.isEmpty()) {
                 supertypes
             } else {
-                val substitutor = KTypeSubstitutor.create(klass, current.arguments, (current as AbstractKType).isSuspendFunctionType)
+                val substitutor =
+                    KTypeSubstitutor.create(klass, current.arguments, (current as AbstractKType).isSuspendFunctionType, current.isRawType)
                 supertypes.map {
                     substitutor.substitute(it).type ?: throw KotlinReflectionInternalError("Incorrect type substitution: $it")
                 }

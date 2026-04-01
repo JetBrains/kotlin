@@ -24,8 +24,8 @@ FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationConflict.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -57,8 +57,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -90,8 +90,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -123,8 +123,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -156,8 +156,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -189,8 +189,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -222,8 +222,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -255,8 +255,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -288,8 +288,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -321,8 +321,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -354,8 +354,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -372,7 +372,11 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             Annotation symbol resolved differently on compiler annotation and symbols stages:
               - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.CLASS
               - compiler arguments stage: FirEnumEntrySymbol /Some.AnnotationTarget.CLASS
-        >#)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Ann : R|kotlin/Annotation| {
+        >#) [evaluated = vararg(Q|Some.AnnotationTarget|.<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.CLASS
+              - compiler arguments stage: FirEnumEntrySymbol /Some.AnnotationTarget.CLASS
+        >#)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -391,8 +395,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
             }
 
-            public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -409,7 +413,11 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             Annotation symbol resolved differently on compiler annotation and symbols stages:
               - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.CLASS
               - compiler arguments stage: FirEnumEntrySymbol /Some.AnnotationTarget.CLASS
-        >#)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+        >#) [evaluated = vararg(Q|Some.AnnotationTarget|.<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.CLASS
+              - compiler arguments stage: FirEnumEntrySymbol /Some.AnnotationTarget.CLASS
+        >#)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 super<R|kotlin/Any|>()
             }
@@ -428,8 +436,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
             }
 
-            public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -446,7 +454,11 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationConflict.kt
             Annotation symbol resolved differently on compiler annotation and symbols stages:
               - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.CLASS
               - compiler arguments stage: FirEnumEntrySymbol /Some.AnnotationTarget.CLASS
-        >#)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+        >#) [evaluated = vararg(Q|Some.AnnotationTarget|.<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.CLASS
+              - compiler arguments stage: FirEnumEntrySymbol /Some.AnnotationTarget.CLASS
+        >#)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 super<R|kotlin/Any|>()
             }
@@ -465,8 +477,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationConflict.kt
             public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
             }
 
-            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 

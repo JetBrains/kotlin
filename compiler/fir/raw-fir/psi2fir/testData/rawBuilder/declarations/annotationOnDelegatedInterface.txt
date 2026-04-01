@@ -24,7 +24,7 @@ FILE: annotationOnDelegatedInterface.kt
             public? [ContainingClassKey=Some] get(): String
 
     }
-    public final? [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : Base {
+    public final? [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : Base {
         public? [ContainingClassKey=Derived] constructor(b: Base): R|Derived| {
             super<<implicit>>()
         }

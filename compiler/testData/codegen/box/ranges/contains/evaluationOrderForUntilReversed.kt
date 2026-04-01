@@ -1,7 +1,6 @@
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 var order = StringBuilder()
 
 inline fun expectOrder(at: String, expected: String, body: () -> Unit) {
@@ -9,6 +8,9 @@ inline fun expectOrder(at: String, expected: String, body: () -> Unit) {
     body()
     if (order.toString() != expected) throw AssertionError("$at: expected: $expected, actual: $order")
 }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun low(i: Int): Int {
     order.append("L")

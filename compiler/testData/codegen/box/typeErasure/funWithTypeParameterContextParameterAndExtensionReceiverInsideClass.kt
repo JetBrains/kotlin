@@ -2,6 +2,7 @@
 // WITH_STDLIB
 // LANGUAGE: +ContextParameters
 
+// FILE: lib.kt
 class A {
     val b = 42
 
@@ -12,6 +13,7 @@ class A {
     fun <T : CharSequence> A.bar(a: T) = a.length + b + c + this.b
 }
 
+// FILE: main.kt
 fun box(): String = with(42) {
     val arguments = listOf<String>("0123456789", "", "\n")
     for (arg in arguments)

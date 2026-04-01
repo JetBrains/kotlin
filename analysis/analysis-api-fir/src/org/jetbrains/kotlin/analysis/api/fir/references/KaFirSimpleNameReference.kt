@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
+import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 
 internal class KaFirSimpleNameReference(
     expression: KtSimpleNameExpression,
@@ -87,5 +90,22 @@ internal class KaFirSimpleNameReference(
         val name = element.getReferencedName()
         val file = element.containingKtFile
         return getImportAlias(file.findImportByAlias(name))
+    }
+
+    class Provider : KotlinPsiReferenceProviderContributor<KtSimpleNameExpression> {
+        override val elementClass: Class<KtSimpleNameExpression>
+            get() = KtSimpleNameExpression::class.java
+
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtSimpleNameExpression>
+            get() = { nameReferenceExpression ->
+                when (nameReferenceExpression.readWriteAccess(useResolveForReadWrite = true)) {
+                    ReferenceAccess.READ -> listOf(KaFirSimpleNameReference(nameReferenceExpression, isRead = true))
+                    ReferenceAccess.WRITE -> listOf(KaFirSimpleNameReference(nameReferenceExpression, isRead = false))
+                    ReferenceAccess.READ_WRITE -> listOf(
+                        KaFirSimpleNameReference(nameReferenceExpression, isRead = true),
+                        KaFirSimpleNameReference(nameReferenceExpression, isRead = false),
+                    )
+                }
+            }
     }
 }

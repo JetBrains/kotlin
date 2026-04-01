@@ -44,14 +44,14 @@ FILE: [ResolvedTo(IMPORTS)] explicitParameterName.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] explicitParameterName.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] action: R|(@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] action: R|(@R|kotlin/ParameterName|(name = String(intParam) [evaluated = String(intParam)])  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam) [evaluated = String(longParam)])  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] explicitParameterName.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] action: R|(@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] action: R|(@R|kotlin/ParameterName|(name = String(intParam) [evaluated = String(intParam)])  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam) [evaluated = String(longParam)])  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
     }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] explicitParameterName.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] action: R|(@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] action: R|(@R|kotlin/ParameterName|(name = String(intParam) [evaluated = String(intParam)])  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam) [evaluated = String(longParam)])  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
     }

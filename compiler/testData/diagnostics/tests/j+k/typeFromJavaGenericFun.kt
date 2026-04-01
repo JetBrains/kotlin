@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible -PreciseSimplificationToFlexibleLowerConstraint
+// LANGUAGE: -DontMakeExplicitNullableJavaTypeArgumentsFlexible
 
 // FILE: JavaWithGenericFun.java
 public class JavaWithGenericFun {

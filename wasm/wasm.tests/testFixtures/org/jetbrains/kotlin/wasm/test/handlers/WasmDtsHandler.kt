@@ -17,6 +17,7 @@ class WasmDtsHandler(testServices: TestServices) : WasmBinaryArtifactHandler(tes
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Wasm) {
+        require(info is BinaryArtifacts.Wasm.CompilationSets)
         val globalDirectives = testServices.moduleStructure.allDirectives
         if (WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS !in globalDirectives) return
 
@@ -24,7 +25,7 @@ class WasmDtsHandler(testServices: TestServices) : WasmBinaryArtifactHandler(tes
             .resolve("index.d.mts")
             .run { takeIf { it.exists() } ?: error("'${path}' doesn't exist") }
 
-        val generatedDts = info.compilerResult.dts
+        val generatedDts = info.compilation.compilerResult.dts
             ?: error("Can't find generated .d.ts file")
 
         TestDataAssertions.assertEqualsToFile(referenceDtsFile, generatedDts)

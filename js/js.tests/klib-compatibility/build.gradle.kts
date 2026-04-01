@@ -5,7 +5,9 @@ plugins {
     alias(libs.plugins.gradle.node)
     id("java-test-fixtures")
     id("d8-configuration")
+    id("nodejs-configuration")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
@@ -33,20 +35,13 @@ optInToExperimentalCompilerApi()
 sourceSets {
     "main" { }
     "testFixtures" { projectDefault() }
-    "test" { generatedTestDir() }
+    "test" {
+        projectDefault()
+        generatedTestDir()
+    }
 }
 
 testsJar {}
-
-fun Test.setUpJsBoxTests(tag: String) {
-    with(d8KotlinBuild) {
-        setupV8()
-    }
-    dependsOn(":dist")
-    systemProperty("kotlin.js.test.root.out.dir", "${node.nodeProjectDir.get().asFile}/")
-    useJUnitPlatform { includeTags(tag) }
-    workingDir = rootDir
-}
 
 data class CustomCompilerVersion(val rawVersion: String) {
     val sanitizedVersion = rawVersion.replace('.', '_').replace('-', '_')
@@ -79,6 +74,7 @@ fun Project.customCompilerTest(
     version: CustomCompilerVersion,
     taskName: String,
     tag: String,
+    body: Test.() -> Unit = {},
 ): TaskProvider<out Task> {
     val customCompiler: Configuration = getOrCreateConfiguration("customCompiler_$version") {
         project.dependencies.add(name, "org.jetbrains.kotlin:kotlin-compiler-embeddable:${version.rawVersion}")
@@ -93,44 +89,80 @@ fun Project.customCompilerTest(
         }
     }
 
-    return projectTests.testTask(taskName, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
-        setUpJsBoxTests(tag)
+    return projectTests.jsTestTask(taskName, tag) {
         addClasspathProperty(customCompiler, "kotlin.internal.js.test.compat.customCompilerClasspath")
         addClasspathProperty(runtimeDependencies, "kotlin.internal.js.test.compat.runtimeDependencies")
         systemProperty("kotlin.internal.js.test.compat.customCompilerVersion", version.rawVersion)
+        systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/build/libs/kotlin-stdlib-js-$version.klib")
+        body()
     }
 }
 
-fun Project.customFirstPhaseTest(rawVersion: String): TaskProvider<out Task> {
+fun Project.customFirstStageTest(
+    rawVersion: String,
+    addWritePermissionsForAllProperties: Boolean = false,
+    addReadWritePermissionsForGradleCache: Boolean = false,
+): TaskProvider<out Task> {
     val version = CustomCompilerVersion(rawVersion)
 
     return customCompilerTest(
         version = version,
-        taskName = "testCustomFirstPhase_$version",
-        tag = "custom-first-phase"
-    )
+        taskName = "testCustomFirstStage_$version",
+        tag = "custom-first-stage"
+    ) {
+        if (addWritePermissionsForAllProperties)
+            extensions.configure<TestInputsCheckExtension> {
+                // compiler version 2.1.20 and earlier needs `write` permissions to all system properties. This was fixed in commit 7473dc76
+                // So to invoke older compilers, more permissions are given.
+                extraPermissions.add("""permission java.util.PropertyPermission "*", "write";""")
+            }
+        if (addReadWritePermissionsForGradleCache)
+            System.getenv("GRADLE_RO_DEP_CACHE")?.let {
+                // Compiler's code in 1.9.20 accesses `kotlin-js-test` library in the Gradle cache using both read and write file permissions.
+                // `read` permission is used to check the existence of either `kotlin-test-js-1.9.20.jar` or `kotlin-test-js-1.9.20.klib`
+                // `write` file permission is weirdly needed within `com.sun.nio.zipfs.ZipFileSystem.<init>` to check whether a `kotlin-test-js-1.9.20.jar` is writable
+                // See invocation of `if (!Files.isWritable(zfpath))`, which throws `java.security.AccessControlException` in case of no `write` permission
+                //   in https://github.com/corretto/corretto-8/blob/8dc02d99b636df3812f38e1014821ceb2926b3c4/jdk/src/share/demo/nio/zipfs/src/com/sun/nio/zipfs/ZipFileSystem.java#L128
+                extensions.configure<TestInputsCheckExtension> {
+                    val kotlinTestJsGradleCache = "${File(it).absolutePath}/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-test-js/1.9.20/-"
+                    extraPermissions.add("""permission java.io.FilePermission "$kotlinTestJsGradleCache", "read, write";""")
+                }
+            }
+    }
 }
 
-fun Project.customSecondPhaseTest(rawVersion: String): TaskProvider<out Task> {
+fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
     val version = CustomCompilerVersion(rawVersion)
     return customCompilerTest(
         version = version,
-        taskName = "testCustomSecondPhase_$version",
-        tag = "custom-second-phase"
+        taskName = "testCustomSecondStage_$version",
+        tag = "custom-second-stage"
     )
 }
 
-/* Custom-first-phase test tasks for different compiler versions. */
-customFirstPhaseTest("1.9.20")
-customFirstPhaseTest("2.0.0")
-customFirstPhaseTest("2.1.0")
-customFirstPhaseTest("2.2.0")
-// TODO: Add a new task for the "custom-first-phase" test here.
+fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task> {
+    val version = CustomCompilerVersion(rawVersion)
+    return customCompilerTest(
+        version = version,
+        taskName = "testMinimalInAggregate",
+        tag = "aggregate",
+    )
+}
 
-/* Custom-second-phase test task for the two compiler major versions: previous one and the latest one . */
-// TODO: Keep updating two following compiler versions to be the previous and latest ones.
-customSecondPhaseTest("2.2.0")
-customSecondPhaseTest("2.3.0-Beta2")
+/* Custom-first-stage test tasks for different compiler versions. */
+customFirstStageTest("1.9.20", addWritePermissionsForAllProperties = true, addReadWritePermissionsForGradleCache = true)
+customFirstStageTest("2.0.0", addWritePermissionsForAllProperties = true)
+customFirstStageTest("2.1.0", addWritePermissionsForAllProperties = true)
+customFirstStageTest("2.2.0")
+customFirstStageTest("2.3.0")
+// TODO: Add a new task for the "custom-first-stage" test here.
+
+/* Custom-second-stage test task for the two compiler major versions: previous one and the latest one . */
+// TODO: Keep updating the following compiler versions to be the previous one and latest one(as as soon it's released).
+customSecondStageTest("2.3.0")
+
+// TODO: Keep updating the following compiler versions to be the previous major one.
+customStagesAggregateTest("2.3.0")
 
 tasks.test {
     // The default test task does not resolve the necessary dependencies and does not set up the environment.
@@ -139,6 +171,12 @@ tasks.test {
 }
 
 projectTests {
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsKlibCompatibilityTestsKt")
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsKlibCompatibilityTestsKt", generateTestsInBuildDirectory = true)
+    testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/klib/klib-compatibility/sanity")
+    testData(project(":js:js.translator").isolated, "testData/_commonFiles")
+
+    withJsRuntime()
+    withStdlibCommon()
 }
 

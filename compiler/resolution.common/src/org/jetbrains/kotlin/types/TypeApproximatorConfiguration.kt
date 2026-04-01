@@ -104,6 +104,7 @@ abstract class TypeApproximatorConfiguration {
 
         object SaveAnonymousTypes : PublicDeclaration(approximateLocalTypes = false, approximateAnonymous = false)
         object ApproximateAnonymousTypes : PublicDeclaration(approximateLocalTypes = false, approximateAnonymous = true)
+        object ApproximateLocalAndAnonymousTypes : PublicDeclaration(approximateLocalTypes = true, approximateAnonymous = true)
     }
 
     /**

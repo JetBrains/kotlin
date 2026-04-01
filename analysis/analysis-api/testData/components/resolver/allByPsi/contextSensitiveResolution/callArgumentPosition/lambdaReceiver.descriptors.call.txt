@@ -26,7 +26,7 @@ KtUserType(130,136): 'String'
   null
 
 KtNameReferenceExpression(130,136): 'String'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -58,40 +58,40 @@ KtSuperTypeList(217,226): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(217,226): 'MyClass()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(217,224): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(217,224): 'MyClass'
   null
@@ -100,22 +100,22 @@ KtUserType(217,224): 'MyClass'
   null
 
 KtNameReferenceExpression(217,224): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(224,226): '()'
   null
@@ -133,7 +133,7 @@ KtUserType(247,253): 'String'
   null
 
 KtNameReferenceExpression(247,253): 'String'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -147,40 +147,40 @@ KtSuperTypeList(292,301): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(292,301): 'MyClass()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(292,299): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(292,299): 'MyClass'
   null
@@ -189,22 +189,22 @@ KtUserType(292,299): 'MyClass'
   null
 
 KtNameReferenceExpression(292,299): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(299,301): '()'
   null
@@ -222,7 +222,7 @@ KtUserType(322,328): 'String'
   null
 
 KtNameReferenceExpression(322,328): 'String'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -242,40 +242,40 @@ KtSuperTypeList(388,395): 'Super()'
   null
 
 KtSuperTypeCallEntry(388,395): 'Super()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Super
-          symbol = <constructor>(): Super
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Super
+        symbol = <constructor>(): Super
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(388,393): 'Super'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Super
-          symbol = <constructor>(): Super
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Super
+        symbol = <constructor>(): Super
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(388,393): 'Super'
   null
@@ -284,22 +284,22 @@ KtUserType(388,393): 'Super'
   null
 
 KtNameReferenceExpression(388,393): 'Super'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
-      argumentMapping = {}
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Super
-          symbol = <constructor>(): Super
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Super
+        symbol = <constructor>(): Super
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(393,395): '()'
   null
@@ -317,45 +317,43 @@ KtUserType(423,430): 'MyClass'
   null
 
 KtNameReferenceExpression(423,430): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(433,439): 'TODO()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(433,437): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(437,439): '()'
   null
@@ -370,45 +368,43 @@ KtUserType(472,486): 'InheritorClass'
   null
 
 KtNameReferenceExpression(472,486): 'InheritorClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(489,505): 'InheritorClass()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass.InheritorClass
-          symbol = <constructor>(): MyClass.InheritorClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass.InheritorClass
+        symbol = <constructor>(): MyClass.InheritorClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(489,503): 'InheritorClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass.InheritorClass
-          symbol = <constructor>(): MyClass.InheritorClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass.InheritorClass
+        symbol = <constructor>(): MyClass.InheritorClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(503,505): '()'
   null
@@ -423,12 +419,12 @@ KtUserType(539,554): 'InheritorObject'
   null
 
 KtNameReferenceExpression(539,554): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(557,572): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -442,7 +438,7 @@ KtUserType(592,598): 'String'
   null
 
 KtNameReferenceExpression(592,598): 'String'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -462,7 +458,7 @@ KtUserType(634,640): 'String'
   null
 
 KtNameReferenceExpression(634,640): 'String'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -479,17 +475,74 @@ KtUserType(669,675): 'String'
   null
 
 KtNameReferenceExpression(669,675): 'String'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtPropertyDelegate(676,688): 'by lazy {""}'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedPropertyCall:
+      provideDelegateCall = null
+      valueGetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = lazy {""}
+          isSafeNavigation = false
+          type = kotlin.Lazy<kotlin.String>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.Lazy<kotlin.String>
+          returnType = kotlin.String
+          symbol = kotlin/getValue(<extension receiver>: kotlin.Lazy<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
+          valueParameters = [
+            KaVariableSignature:
+              name = thisRef
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = thisRef: kotlin.Any?
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = property
+              receiverType = null
+              returnType = kotlin.reflect.KProperty<*>
+              symbol = property: kotlin.reflect.KProperty<*>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/getValue
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      valueSetterCall = null
 
 KtCallExpression(679,688): 'lazy {""}'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Lazy<kotlin.String>
+        symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = initializer
+            receiverType = null
+            returnType = kotlin.Function0<kotlin.String>
+            symbol = initializer: kotlin.Function0<T>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/lazy
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
@@ -497,35 +550,34 @@ KtCallExpression(679,688): 'lazy {""}'
           symbol = initializer: kotlin.Function0<T>
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = initializer
-              receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/lazy
-      typeArgumentsMapping = {
-        T -> (kotlin.String)
       }
 
 KtNameReferenceExpression(679,683): 'lazy'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Lazy<kotlin.String>
+        symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = initializer
+            receiverType = null
+            returnType = kotlin.Function0<kotlin.String>
+            symbol = initializer: kotlin.Function0<T>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/lazy
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
@@ -533,29 +585,6 @@ KtNameReferenceExpression(679,683): 'lazy'
           symbol = initializer: kotlin.Function0<T>
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = initializer
-              receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/lazy
-      typeArgumentsMapping = {
-        T -> (kotlin.String)
       }
 
 KtLambdaArgument(684,688): '{""}'
@@ -586,45 +615,43 @@ KtUserType(710,717): 'MyClass'
   null
 
 KtNameReferenceExpression(710,717): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(720,726): 'TODO()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(720,724): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(724,726): '()'
   null
@@ -642,7 +669,7 @@ KtBlockExpression(754,769): 'InheritorObject'
   null
 
 KtNameReferenceExpression(754,769): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -677,7 +704,7 @@ KtUserType(809,810): 'T'
   null
 
 KtNameReferenceExpression(809,810): 'T'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -694,10 +721,32 @@ KtBlockExpression(841,1409): '{'
   null
 
 KtCallExpression(847,889): 'receiveLambda<MyClass> { InheritorObject }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { InheritorObject } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -705,38 +754,37 @@ KtCallExpression(847,889): 'receiveLambda<MyClass> { InheritorObject }'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(847,860): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { InheritorObject } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -744,29 +792,6 @@ KtNameReferenceExpression(847,860): 'receiveLambda'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
@@ -784,7 +809,7 @@ KtUserType(861,868): 'MyClass'
   null
 
 KtNameReferenceExpression(861,868): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -801,15 +826,37 @@ KtBlockExpression(872,887): 'InheritorObject'
   null
 
 KtNameReferenceExpression(872,887): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(894,932): 'receiveLambda<MyClass> { propMyClass }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { propMyClass } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -817,38 +864,37 @@ KtCallExpression(894,932): 'receiveLambda<MyClass> { propMyClass }'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(894,907): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { propMyClass } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -856,29 +902,6 @@ KtNameReferenceExpression(894,907): 'receiveLambda'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
@@ -896,7 +919,7 @@ KtUserType(908,915): 'MyClass'
   null
 
 KtNameReferenceExpression(908,915): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -913,15 +936,37 @@ KtBlockExpression(919,930): 'propMyClass'
   null
 
 KtNameReferenceExpression(919,930): 'propMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(937,982): 'receiveLambda<MyClass> { propInheritorClass }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { propInheritorClass } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -929,38 +974,37 @@ KtCallExpression(937,982): 'receiveLambda<MyClass> { propInheritorClass }'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(937,950): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { propInheritorClass } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -968,29 +1012,6 @@ KtNameReferenceExpression(937,950): 'receiveLambda'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
@@ -1008,7 +1029,7 @@ KtUserType(951,958): 'MyClass'
   null
 
 KtNameReferenceExpression(951,958): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1025,15 +1046,37 @@ KtBlockExpression(962,980): 'propInheritorClass'
   null
 
 KtNameReferenceExpression(962,980): 'propInheritorClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(987,1033): 'receiveLambda<MyClass> { propInheritorObject }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { propInheritorObject } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1041,38 +1084,37 @@ KtCallExpression(987,1033): 'receiveLambda<MyClass> { propInheritorObject }'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(987,1000): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { propInheritorObject } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1080,29 +1122,6 @@ KtNameReferenceExpression(987,1000): 'receiveLambda'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
@@ -1120,7 +1139,7 @@ KtUserType(1001,1008): 'MyClass'
   null
 
 KtNameReferenceExpression(1001,1008): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1137,15 +1156,37 @@ KtBlockExpression(1012,1031): 'propInheritorObject'
   null
 
 KtNameReferenceExpression(1012,1031): 'propInheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(1039,1070): 'receiveLambda<MyClass> { prop }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { prop } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1153,38 +1194,37 @@ KtCallExpression(1039,1070): 'receiveLambda<MyClass> { prop }'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1039,1052): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { prop } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1192,29 +1232,6 @@ KtNameReferenceExpression(1039,1052): 'receiveLambda'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
@@ -1232,7 +1249,7 @@ KtUserType(1053,1060): 'MyClass'
   null
 
 KtNameReferenceExpression(1053,1060): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1249,15 +1266,37 @@ KtBlockExpression(1064,1068): 'prop'
   null
 
 KtNameReferenceExpression(1064,1068): 'prop'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(1075,1111): 'receiveLambda<MyClass> { superProp }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { superProp } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1265,38 +1304,37 @@ KtCallExpression(1075,1111): 'receiveLambda<MyClass> { superProp }'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1075,1088): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { superProp } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1304,29 +1342,6 @@ KtNameReferenceExpression(1075,1088): 'receiveLambda'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
@@ -1344,7 +1359,7 @@ KtUserType(1089,1096): 'MyClass'
   null
 
 KtNameReferenceExpression(1089,1096): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1361,15 +1376,37 @@ KtBlockExpression(1100,1109): 'superProp'
   null
 
 KtNameReferenceExpression(1100,1109): 'superProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(1116,1152): 'receiveLambda<MyClass> { constProp }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { constProp } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1377,38 +1414,37 @@ KtCallExpression(1116,1152): 'receiveLambda<MyClass> { constProp }'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1116,1129): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { constProp } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1416,29 +1452,6 @@ KtNameReferenceExpression(1116,1129): 'receiveLambda'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
@@ -1456,7 +1469,7 @@ KtUserType(1130,1137): 'MyClass'
   null
 
 KtNameReferenceExpression(1130,1137): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1473,15 +1486,37 @@ KtBlockExpression(1141,1150): 'constProp'
   null
 
 KtNameReferenceExpression(1141,1150): 'constProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(1157,1194): 'receiveLambda<MyClass> { lambdaProp }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { lambdaProp } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1489,38 +1524,37 @@ KtCallExpression(1157,1194): 'receiveLambda<MyClass> { lambdaProp }'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1157,1170): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { lambdaProp } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1528,29 +1562,6 @@ KtNameReferenceExpression(1157,1170): 'receiveLambda'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
@@ -1568,7 +1579,7 @@ KtUserType(1171,1178): 'MyClass'
   null
 
 KtNameReferenceExpression(1171,1178): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1585,15 +1596,37 @@ KtBlockExpression(1182,1192): 'lambdaProp'
   null
 
 KtNameReferenceExpression(1182,1192): 'lambdaProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(1199,1234): 'receiveLambda<MyClass> { lazyProp }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { lazyProp } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1601,38 +1634,37 @@ KtCallExpression(1199,1234): 'receiveLambda<MyClass> { lazyProp }'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1199,1212): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { lazyProp } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1640,29 +1672,6 @@ KtNameReferenceExpression(1199,1212): 'receiveLambda'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
@@ -1680,7 +1689,7 @@ KtUserType(1213,1220): 'MyClass'
   null
 
 KtNameReferenceExpression(1213,1220): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1697,15 +1706,37 @@ KtBlockExpression(1224,1232): 'lazyProp'
   null
 
 KtNameReferenceExpression(1224,1232): 'lazyProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(1239,1277): 'receiveLambda<MyClass> { NestedObject}'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { NestedObject} -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1713,38 +1744,37 @@ KtCallExpression(1239,1277): 'receiveLambda<MyClass> { NestedObject}'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1239,1252): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { NestedObject} -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1752,29 +1782,6 @@ KtNameReferenceExpression(1239,1252): 'receiveLambda'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
@@ -1792,7 +1799,7 @@ KtUserType(1253,1260): 'MyClass'
   null
 
 KtNameReferenceExpression(1253,1260): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1809,15 +1816,37 @@ KtBlockExpression(1264,1276): 'NestedObject'
   null
 
 KtNameReferenceExpression(1264,1276): 'NestedObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(1283,1316): 'receiveLambda<MyClass> { func() }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { func() } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1825,38 +1854,37 @@ KtCallExpression(1283,1316): 'receiveLambda<MyClass> { func() }'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1283,1296): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { func() } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1864,29 +1892,6 @@ KtNameReferenceExpression(1283,1296): 'receiveLambda'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
@@ -1904,7 +1909,7 @@ KtUserType(1297,1304): 'MyClass'
   null
 
 KtNameReferenceExpression(1297,1304): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1921,12 +1926,12 @@ KtBlockExpression(1308,1314): 'func()'
   null
 
 KtCallExpression(1308,1314): 'func()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1308,1312): 'func'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1934,10 +1939,32 @@ KtValueArgumentList(1312,1314): '()'
   null
 
 KtCallExpression(1321,1364): 'receiveLambda<MyClass> { InheritorClass() }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { InheritorClass() } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1945,38 +1972,37 @@ KtCallExpression(1321,1364): 'receiveLambda<MyClass> { InheritorClass() }'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1321,1334): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { InheritorClass() } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -1984,29 +2010,6 @@ KtNameReferenceExpression(1321,1334): 'receiveLambda'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
@@ -2024,7 +2027,7 @@ KtUserType(1335,1342): 'MyClass'
   null
 
 KtNameReferenceExpression(1335,1342): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -2041,12 +2044,12 @@ KtBlockExpression(1346,1362): 'InheritorClass()'
   null
 
 KtCallExpression(1346,1362): 'InheritorClass()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1346,1360): 'InheritorClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -2054,10 +2057,32 @@ KtValueArgumentList(1360,1362): '()'
   null
 
 KtCallExpression(1369,1407): 'receiveLambda<MyClass> { superFunc() }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { superFunc() } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -2065,38 +2090,37 @@ KtCallExpression(1369,1407): 'receiveLambda<MyClass> { superFunc() }'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1369,1382): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyClass>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+        typeArgumentsMapping = {
+          T -> (MyClass)
+        }
+        valueArgumentMapping = {
           { superFunc() } -> (KaVariableSignature:
             name = l
             receiverType = null
@@ -2104,29 +2128,6 @@ KtNameReferenceExpression(1369,1382): 'receiveLambda'
             symbol = l: kotlin.Function0<T>
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = l
-                receiverType = null
-                returnType = kotlin.Function0<MyClass>
-                symbol = l: kotlin.Function0<T>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiveLambda
-        typeArgumentsMapping = {
-          T -> (MyClass)
         }
     ]
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
@@ -2144,7 +2145,7 @@ KtUserType(1383,1390): 'MyClass'
   null
 
 KtNameReferenceExpression(1383,1390): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -2161,12 +2162,12 @@ KtBlockExpression(1394,1405): 'superFunc()'
   null
 
 KtCallExpression(1394,1405): 'superFunc()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1394,1403): 'superFunc'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 

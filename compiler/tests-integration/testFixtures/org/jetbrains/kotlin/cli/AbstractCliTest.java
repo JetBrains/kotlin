@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
+import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler;
 import org.jetbrains.kotlin.test.*;
@@ -330,6 +331,10 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
     protected void doJsTest(@NotNull String fileName) {
         doTest(fileName, new K2JSCompiler());
+    }
+
+    protected void doWasmTest(@NotNull String fileName) {
+        doTest(fileName, new KotlinWasmCompiler());
     }
 
     protected void doMetadataTest(@NotNull String fileName) {

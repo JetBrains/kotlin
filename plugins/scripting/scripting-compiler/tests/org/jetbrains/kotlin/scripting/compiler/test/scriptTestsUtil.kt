@@ -63,18 +63,20 @@ internal fun assertEqualsTrimmed(expected: String, actual: String) =
 internal fun compileScript(
     script: SourceCode,
     environment: KotlinCoreEnvironment,
-    parentClassLoader: ClassLoader?
+    parentClassLoader: ClassLoader? = null
 ): Pair<KClass<*>?, ExitCode> {
     val scriptCompiler = ScriptJvmCompilerFromEnvironment(environment)
     val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-    val scriptDefinition = ScriptDefinitionProvider.getInstance(environment.project)!!.findDefinition(script)!!
+    val scriptDefinition =
+        ScriptDefinitionProvider.getInstance(environment.project)?.findDefinition(script)
+            ?: return null to ExitCode.COMPILATION_ERROR
 
-    val scriptCompilationConfiguration = scriptDefinition.compilationConfiguration.with {
-        jvm {
-            dependenciesFromCurrentContext(wholeClasspath = true)
-        }
+    val compileResult = scriptCompiler.compile(script, scriptDefinition.compilationConfiguration)
+    for (report in compileResult.reports) {
+        messageCollector.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
     }
-    val compiledScript = scriptCompiler.compile(script, scriptCompilationConfiguration).onSuccess {
+
+    val compiledScript = compileResult.onSuccess {
         runBlocking {
             it.getClass(scriptDefinition.evaluationConfiguration.with {
                 jvm {
@@ -83,9 +85,6 @@ internal fun compileScript(
             })
         }
     }.valueOr {
-        for (report in it.reports) {
-            messageCollector.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
-        }
         return null to ExitCode.COMPILATION_ERROR
     }
     return compiledScript to ExitCode.OK
@@ -95,10 +94,9 @@ internal fun compileScript(
 internal fun compileAndExecuteScript(
     script: SourceCode,
     environment: KotlinCoreEnvironment,
-    parentClassLoader: ClassLoader?,
     scriptArgs: List<String>
 ): ExitCode {
-    val (compiled, code) = compileScript(script, environment, parentClassLoader)
+    val (compiled, code) = compileScript(script, environment)
 
     if (compiled == null || code != ExitCode.OK) return code
 

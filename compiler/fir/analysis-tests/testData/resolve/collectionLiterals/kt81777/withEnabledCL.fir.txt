@@ -1,0 +1,77 @@
+FILE: withEnabledCL.kt
+    public final fun testWithLambdas(): R|kotlin/Unit| {
+        lval lam: R|kotlin/collections/List<() -> kotlin/Unit>| = Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
+        }
+        )
+        lval withParam: R|kotlin/collections/List<(kotlin/Int) -> kotlin/Unit>| = ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
+        lval withParamOfSpecifiedType: R|kotlin/collections/List<(kotlin/Int) -> kotlin/Unit>| = Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
+        }
+        )
+        lval withReturn: R|kotlin/collections/List<() -> kotlin/Int>| = Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(42)
+        }
+        )
+        lval withReturnAndParam: R|kotlin/collections/List<(kotlin/Int) -> kotlin/Int>| = ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
+        Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
+        }
+        )
+        ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
+        Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
+        }
+        )
+        Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(42)
+        }
+        )
+        ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
+    }
+    public final fun testWithAnons(): R|kotlin/Unit| {
+        lval anon: R|kotlin/collections/List<() -> kotlin/Unit>| = Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        }
+        )
+        lval withParam: R|kotlin/collections/List<(kotlin/Int) -> kotlin/Unit>| = Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+        }
+        )
+        lval withReturn: R|kotlin/collections/List<() -> kotlin/Int>| = Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(42)
+        }
+        )
+        lval withReturnAndParam: R|kotlin/collections/List<(kotlin/Int) -> kotlin/Int>| = Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Int| <inline=Unknown>  {
+            ^ R|<local>/x|
+        }
+        )
+        Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        }
+        )
+        Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+        }
+        )
+        Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(42)
+        }
+        )
+        Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Int| <inline=Unknown>  {
+            ^ R|<local>/x|
+        }
+        )
+    }
+    public final fun skip(): R|kotlin/Unit| {
+    }
+    public final fun <T> id(it: R|T|): R|T| {
+        ^id R|<local>/it|
+    }
+    public final fun const42(): R|kotlin/Int| {
+        ^const42 Int(42)
+    }
+    public final fun <T> consume(it: R|T|): R|kotlin/Unit| {
+    }
+    public final fun testWithCallables(): R|kotlin/Unit| {
+        lval callable: R|kotlin/collections/List<() -> kotlin/Unit>| = Q|kotlin/collections|.<Unresolved name: listOf>#(::R|/skip|)
+        lval withParam: R|kotlin/collections/List<(kotlin/Int) -> kotlin/Unit>| = ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
+        lval withReturn: R|kotlin/collections/List<() -> kotlin/Int>| = Q|kotlin/collections|.<Unresolved name: listOf>#(::R|/const42|)
+        lval withReturnAndParam: R|kotlin/collections/List<(kotlin/Int) -> kotlin/Int>| = ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
+    }

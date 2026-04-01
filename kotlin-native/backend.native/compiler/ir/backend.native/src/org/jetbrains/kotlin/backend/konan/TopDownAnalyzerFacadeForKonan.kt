@@ -101,7 +101,7 @@ internal object TopDownAnalyzerFacadeForKonan {
         var result = analysisHandlerExtensions.firstNotNullOfOrNull { extension ->
             extension.doAnalysis(project, moduleDescriptor, projectContext, files, trace, container)
         } ?: run {
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             analyzerForKonan.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
             AnalysisResult.success(trace.bindingContext, moduleDescriptor)
         }

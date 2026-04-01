@@ -1,0 +1,5 @@
+KT element: KtProperty
+Resolve target: topLevelPropertyScript.kts -> <script-topLevelPropertyScript.kts> -> topLevelProp
+FIR:
+  public? final? val topLevelProp: Int = LAZY_EXPRESSION
+      public? get(): Int

@@ -1,0 +1,9 @@
+KtNameReferenceExpression(42,49): 'Generic'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
+      (in ROOT) class Generic<T>

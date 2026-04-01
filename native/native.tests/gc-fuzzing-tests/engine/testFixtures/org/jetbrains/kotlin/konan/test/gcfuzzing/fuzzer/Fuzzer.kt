@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.translate
 import org.jetbrains.kotlin.konan.test.gcfuzzing.execution.*
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
+import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.Config
 import kotlin.random.*
+import kotlin.time.Duration
 
 fun buildProgram(programId: ProgramId): Program = when (programId) {
     is ProgramId.Initial -> generate(programId.seed)
@@ -19,7 +21,16 @@ fun buildProgram(programId: ProgramId): Program = when (programId) {
 fun AbstractNativeSimpleTest.execute(id: ProgramId) {
     val name = id.toString()
     val dslGeneratedDir = resolveDslDir(name)
-    val output = buildProgram(id).translate()
+    val output = buildProgram(id).translate(
+        Config(
+            maximumStackDepth = Config.DEFAULT.maximumStackDepth,
+            mainLoopRepeatCount = Config.DEFAULT.mainLoopRepeatCount,
+            maxThreadCount = Config.DEFAULT.maxThreadCount,
+            memoryPressureHazardZoneBytes = Config.DEFAULT.memoryPressureHazardZoneBytes,
+            memoryPressureCheckInterval = Config.DEFAULT.memoryPressureCheckInterval,
+            softTimeout = System.getProperty("gcfuzzing.softTimeout")?.let { Duration.parse(it) } ?: Config.DEFAULT.softTimeout,
+        )
+    )
     output.save(dslGeneratedDir)
     runDSL(
         name,

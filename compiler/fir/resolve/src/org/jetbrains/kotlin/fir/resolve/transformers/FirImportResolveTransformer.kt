@@ -54,6 +54,15 @@ open class FirImportResolveTransformer protected constructor(
 
         if (!fqName.isAcceptable) return import
 
+        currentFile?.let { file ->
+            session.importTracker?.let { tracker ->
+                val importString = import.importedFqName?.asString()?.let {
+                    if (import.isAllUnder) "$it.*" else it
+                }
+                tracker.reportImportDirectives(file.sourceFile?.path, importString)
+            }
+        }
+
         if (import.isAllUnder) {
             return transformImportForFqName(fqName, import)
         }

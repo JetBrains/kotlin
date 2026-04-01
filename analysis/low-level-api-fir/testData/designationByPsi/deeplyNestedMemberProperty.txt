@@ -1,0 +1,5 @@
+KT element: KtProperty
+Resolve target: deeplyNestedMemberProperty.kt -> Outer -> Middle -> deepProp
+FIR:
+  public? final? val deepProp: Int = LAZY_EXPRESSION
+      public? get(): Int

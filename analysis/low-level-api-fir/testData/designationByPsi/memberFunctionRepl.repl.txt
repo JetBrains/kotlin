@@ -1,0 +1,4 @@
+KT element: KtNamedFunction
+Resolve target: memberFunctionRepl.repl.kts -> <snippet-memberFunctionRepl.repl.kts> -> MemberFunctionRepl_repl -> MyClass -> memberFun
+FIR:
+  public? final? fun memberFun(): R|kotlin/Unit| { LAZY_BLOCK }

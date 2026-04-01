@@ -5,10 +5,12 @@
 
 package kotlin.native.internal
 
-import kotlin.reflect.KType
-import kotlin.reflect.KFunction
-import kotlin.reflect.KClass
+import kotlin.internal.UsedFromCompilerGeneratedCode
 
+@UsedFromCompilerGeneratedCode
 internal abstract class KSuspendFunctionImpl<out R>(description: KFunctionDescription): KFunctionImpl<R>(description) {
-    override fun toString() = "suspend function $name"
+    override fun toString(): String {
+        val nameStrict = description.checkCorrect().name
+        return "suspend function $nameStrict"
+    }
 }

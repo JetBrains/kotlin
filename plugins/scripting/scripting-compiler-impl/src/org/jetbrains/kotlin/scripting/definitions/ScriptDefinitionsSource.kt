@@ -5,6 +5,11 @@
 
 package org.jetbrains.kotlin.scripting.definitions
 
+@Deprecated(
+    level = DeprecationLevel.WARNING,
+    message = "Using ScriptDefinitionsSource directly is deprecated, replace with `ScriptDefinitionsProvider`. See: KT-82551",
+    replaceWith = ReplaceWith("ScriptDefinitionsProvider", "kotlin.script.experimental.intellij")
+)
 interface ScriptDefinitionsSource {
     val definitions: Sequence<ScriptDefinition>
 }

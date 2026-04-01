@@ -14,14 +14,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirConstructorChec
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.java.enhancement.inheritedKtPrivateCls
 
 object FirJavaClassInheritsKtPrivateClassDeclarationChecker : FirConstructorChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirConstructor) {
-        if (!LanguageFeature.ProhibitJavaClassInheritingPrivateKotlinClass.isEnabled())
+        if (LanguageFeature.ProhibitJavaClassInheritingPrivateKotlinClass.isDisabled())
             return
 
         val delegatedConstructorCall = declaration.delegatedConstructor ?: return

@@ -26,6 +26,7 @@ scopes:
         isCrossinline: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
         isVal: true
@@ -56,6 +57,8 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
+          isNotDefault: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -81,6 +84,7 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isInline: false
           isNotDefault: false
           isOverride: false
@@ -163,6 +167,8 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
+          isNotDefault: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -188,6 +194,7 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isInline: false
           isNotDefault: false
           isOverride: false
@@ -238,6 +245,8 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
+          isNotDefault: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -263,6 +272,7 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isInline: false
           isNotDefault: false
           isOverride: false
@@ -345,6 +355,8 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
+          isNotDefault: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -370,6 +382,7 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isInline: false
           isNotDefault: false
           isOverride: false
@@ -453,6 +466,7 @@ scopes:
             isCrossinline: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
             isVal: true
@@ -544,6 +558,7 @@ scopes:
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isPrimary: true
         location: CLASS
         modality: FINAL
@@ -570,6 +585,8 @@ scopes:
                 isActual: false
                 isExpect: false
                 isExtension: false
+                isExternal: false
+                isNotDefault: false
                 isVal: true
                 location: PROPERTY
                 modality: FINAL
@@ -595,6 +612,7 @@ scopes:
                 isActual: false
                 isExpect: false
                 isExtension: false
+                isExternal: false
                 isInline: false
                 isNotDefault: false
                 isOverride: false
@@ -641,6 +659,7 @@ scopes:
             isCrossinline: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
             isVal: true
@@ -667,6 +686,7 @@ scopes:
             isCrossinline: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
             isVal: true
@@ -684,13 +704,13 @@ scopes:
         ]
         visibility: PUBLIC
 
-  ExplicitSimpleImportingScope, index = 2
+  ExplicitSimpleImportingScope, index = 3
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 3
+  PackageMemberScope, index = 4
     packages: 0
     classifiers: 2
       KaNamedClassSymbol:
@@ -748,15 +768,14 @@ scopes:
     callables: 0
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 4
-
   DefaultSimpleImportingScope, index = 5
 
-  ExplicitStarImportingScope, index = 6
+  DefaultSimpleImportingScope, index = 6
+
+  ExplicitStarImportingScope, index = 7
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 7
-
+  DefaultStarImportingScope, index = 8

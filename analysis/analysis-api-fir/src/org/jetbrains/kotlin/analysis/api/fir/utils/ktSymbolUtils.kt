@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -58,7 +60,9 @@ internal fun KaSymbol.getContainingKtModule(resolutionFacade: LLResolutionFacade
 }
 
 @KaImplementationDetail
+context(session: KaSession)
 fun KaSymbol.getActualAnnotationTargets(): List<KotlinTarget>? {
     val firSymbol = this.firSymbol.fir as? FirAnnotationContainer ?: return null
-    return getActualTargetList(firSymbol).defaultTargets
+    val firSession = (session as? KaFirSession)?.firSession ?: return null
+    return getActualTargetList(firSymbol, firSession).defaultTargets
 }

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm.dwarf.lines
 
 import org.jetbrains.kotlin.backend.wasm.dwarf.Dwarf
-import org.jetbrains.kotlin.wasm.ir.convertors.ByteWriter
+import org.jetbrains.kotlin.wasm.ir.ByteWriter
 
 sealed class LineInstruction(val operation: DwLines) {
     protected open fun writeArguments(writer: ByteWriter) {}

@@ -1,0 +1,5 @@
+KtNameReferenceExpression(138,142): 'test'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /test(): kotlin.Unit
+    ]

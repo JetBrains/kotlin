@@ -6,16 +6,16 @@
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.LANGUAGE_VERSION
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.USE_FIR_RUNNER
-import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertNoCompiledSources
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertAddedOutputs
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertRemovedOutputs
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.moduleWithFir
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.USE_FIR_RUNNER
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertAddedOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertRemovedOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.scenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.moduleWithFir
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
@@ -43,18 +43,18 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
                 """.trimIndent()
             )
 
-            module1.compile { module, scenarioModule ->
-                assertCompiledSources(module, "foobar.kt")
-                assertAddedOutputs(module, scenarioModule, "FoobarKt.class") // specify only the difference
+            module1.compile {
+                assertCompiledSources("foobar.kt")
+                assertAddedOutputs("FoobarKt.class") // specify only the difference
             }
 
             module1.deleteFile(
                 "foobar.kt",
             )
 
-            module1.compile { module, scenarioModule ->
-                assertNoCompiledSources(module)
-                assertRemovedOutputs(module, scenarioModule, "FoobarKt.class") // specify only the difference
+            module1.compile {
+                assertNoCompiledSources()
+                assertRemovedOutputs("FoobarKt.class") // specify only the difference
             }
         }
     }

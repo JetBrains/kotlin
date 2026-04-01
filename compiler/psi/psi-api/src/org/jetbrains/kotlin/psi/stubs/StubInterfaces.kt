@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,7 +18,11 @@ import org.jetbrains.kotlin.psi.*
 /** Base interface for all Kotlin stubs */
 @KtImplementationDetail
 interface KotlinStubElement<T : KtElement> : StubElement<T> {
-    /** Returns a copy of this stub with the parent set to [newParent] */
+    /**
+     * Returns a copy of this stub with the parent set to [newParent].
+     *
+     * **Note**: the implementation doesn't guarantee that [com.intellij.psi.stubs.ObjectStubBase.isDangling] flag is copied
+     */
     @KtImplementationDetail
     fun copyInto(newParent: StubElement<*>?): KotlinStubElement<T>
 }
@@ -62,6 +66,14 @@ interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinClassifierStub<T>
     val isLocal: Boolean get() = classId == null
     val superNames: List<String>
     val isTopLevel: Boolean
+
+    /**
+     * Raw KDoc text, if available.
+     *
+     * Currently, KDoc is only available for decompiled declaration.
+     * For source ones one can read the KDoc content from the PSI directly.
+     */
+    val kdocText: String?
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)
@@ -224,6 +236,14 @@ interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
 interface KotlinCallableStubBase<TDeclaration : KtCallableDeclaration> : KotlinStubWithFqName<TDeclaration> {
     val isTopLevel: Boolean
     val isExtension: Boolean
+
+    /**
+     * Raw KDoc text, if available.
+     *
+     * Currently, KDoc is only available for decompiled declaration.
+     * For source ones one can read the KDoc content from the PSI directly.
+     */
+    val kdocText: String?
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)
@@ -272,6 +292,14 @@ interface KotlinFunctionTypeStub : KotlinStubElement<KtFunctionType>
 @SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinScriptStub : KotlinStubWithFqName<KtScript> {
     override val fqName: FqName
+
+    /**
+     * Whether the script is a REPL snippet.
+     *
+     * @see KtScript.isReplSnippet
+     */
+    @KtImplementationDetail
+    val isReplSnippet: Boolean
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)

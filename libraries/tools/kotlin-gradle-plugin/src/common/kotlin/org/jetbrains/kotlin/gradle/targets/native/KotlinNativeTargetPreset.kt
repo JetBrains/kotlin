@@ -10,8 +10,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.native.internal.getOrRegisterDownloadKotlinNativeDistributionTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommonizerDependencies
@@ -56,7 +60,7 @@ internal abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>
             targetPreset = this@AbstractKotlinNativeTargetPreset
 
             val compilationFactory = KotlinNativeCompilationFactory(this)
-            compilations = project.container(compilationFactory.itemClass, compilationFactory)
+            compilations = project.objects.domainObjectContainer(compilationFactory.itemClass, compilationFactory)
         }
 
         createTargetConfigurator().configureTarget(result)
@@ -107,7 +111,7 @@ internal open class KotlinNativeTargetWithSimulatorTestsPreset(name: String, pro
 }
 
 internal val KonanTarget.isCurrentHost: Boolean
-    get() = this == HostManager.host
+    get() = this == HostManager.hostOrNull
 
 /**
  * Returns whether klib compilation is allowed for [this]-target on the current host.
@@ -122,18 +126,27 @@ internal val KonanTarget.isCurrentHost: Boolean
 @Deprecated("Use crossCompilationOnCurrentHostSupported instead")
 internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(
     provider: PropertiesProvider,
-) = if (provider.enableKlibsCrossCompilation) {
-    // If cross-compilation is enabled, allow compilation for all targets
-    true
+) = if (HostManager.hostIsSupported) {
+    if (provider.enableKlibsCrossCompilation) {
+        // If cross-compilation is enabled, allow compilation for all targets
+        true
+    } else {
+        // If cross-compilation is disabled use standard HostManager enablement check
+        HostManager().isEnabled(this)
+    }
 } else {
-    // If cross-compilation is disabled use standard HostManager enablement check
-    HostManager().isEnabled(this)
+    false
 }
+
+internal val AbstractKotlinNativeCompilation.crossCompilationSharedData: KotlinProjectSharedDataProvider<CrossCompilationData>
+    get() = project.kotlinSecondaryVariantsDataSharing.consumeCrossCompilationMetadata(
+        compilation.configurations.compileDependencyConfiguration
+    )
 
 internal val AbstractKotlinNativeCompilation.crossCompilationOnCurrentHostSupported: Boolean
     get() = when (this) {
         is KotlinNativeCompilation -> target.crossCompilationOnCurrentHostSupported.getOrThrow()
-        else -> HostManager.hostOrNull != null
+        else -> HostManager.hostIsSupported
     }
 
 // KT-81134 with a fallback to `enabledOnCurrentHostForKlibCompilation`
@@ -143,4 +156,16 @@ internal val KotlinNativeTarget.publishableWithFallback: Boolean
         ?: konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
 
 internal val KonanTarget.enabledOnCurrentHostForBinariesCompilation
-    get() = HostManager().isEnabled(this)
+    get() = if (HostManager.hostIsSupported) HostManager().isEnabled(this) else false
+
+internal val HostManager.supportedHosts: List<String> get() = enabledByHost.keys.map { it.formattedHostName }
+
+private val KonanTarget.formattedHostName: String
+    get() = when (this) {
+        KonanTarget.LINUX_X64 -> "Linux (x86_64)"
+        KonanTarget.MINGW_X64 -> "Windows (x86_64)"
+        KonanTarget.MACOS_X64 -> "macOS (x86_64)"
+        KonanTarget.MACOS_ARM64 -> "macOS (arm64)"
+        // Fallback for any future hosts, though the 'when' should be exhaustive
+        else -> visibleName
+    }

@@ -31,6 +31,7 @@ object StatementIds {
     const val MULTI_LINE_COMMENT = 19
     const val IMPORT = 20
     const val EXPORT = 21
+    const val FOR_OF = 22
 }
 
 object ImportType {
@@ -73,4 +74,25 @@ object ExpressionIds {
     const val SUPER_REF = 23
     const val YIELD = 24
     const val BIGINT_LITERAL = 25
+    const val YIELD_STAR = 26
+    const val TEMPLATE_STRING_LITERAL = 27
+    const val TEMPLATE_ELEMENT_STRING = 28
+    const val TEMPLATE_ELEMENT_INTERPOLATION = 29
+    const val SPREAD = 30
+}
+
+object PropertyInitializerKinds {
+    const val KEY_VALUE = 0
+    const val SPREAD = 1
+}
+
+object ArrayPatternItemKinds {
+    const val ELEMENT = 0
+    const val HOLE = 1
+}
+
+object AssignableIds {
+    const val NAMED = 0
+    const val ARRAY_PATTERN = 1
+    const val OBJECT_PATTERN = 2
 }

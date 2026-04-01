@@ -330,7 +330,7 @@ object IrTree : AbstractTreeBuilder() {
     val mutableAnnotationContainer: Element by element(Declaration) {
         parent(type(Packages.declarations, "IrAnnotationContainer"))
 
-        +listField("annotations", constructorCall, mutability = Var, isChild = false) {
+        +listField("annotations", annotation, mutability = Var, isChild = false) {
             isOverride = true
         }
     }
@@ -578,11 +578,9 @@ object IrTree : AbstractTreeBuilder() {
                 Contains link to the static state object for this compilation session.
             """.trimIndent()
         }
-        +field("body", body)
-        +field("returnType", irTypeType, nullable = true)
-        +referencedSymbol("targetClass", classSymbol, nullable = true){
+        +referencedSymbol("targetClass", classSymbol, nullable = true) {
             kDoc = """
-                Contains link to the IrClass symbol to which this snippet should be lowered on the appropriate stage.
+                Contains link to the IrClass symbol to which this snippet was lowered.
             """.trimIndent()
         }
     }
@@ -742,11 +740,11 @@ object IrTree : AbstractTreeBuilder() {
         +field("source", type<SourceElement>())
         +field("constructorTypeArgumentsCount", int)
     }
-    val annotation: Element by element(Other) {
+    val annotation: Element by element(Expression) {
         parent(constructorCall)
         parent(type<AnnotationMarker>())
 
-        +field("classId", type<ClassId>())
+        +field("classId", type<ClassId>(), nullable = true)
         +field("argumentMapping", StandardTypes.map.withArgs(type<Name>(), expression))
     }
     val getSingletonValue: Element by element(Expression) {

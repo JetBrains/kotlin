@@ -2,12 +2,14 @@ package org.jetbrains.kotlin.konan.library
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
-import org.jetbrains.kotlin.konan.library.impl.createKonanLibraryComponents
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
+import java.nio.file.Paths
 
 interface SearchPathResolverWithTarget<L : KotlinLibrary> : SearchPathResolver<L> {
     val target: KonanTarget
@@ -20,7 +22,7 @@ fun defaultResolver(
     logger: Logger = DummyLogger,
     skipCurrentDir: Boolean = false,
     zipFileSystemAccessor: ZipFileSystemAccessor? = null,
-): SearchPathResolverWithTarget<KonanLibrary> = KonanLibraryProperResolver(
+): SearchPathResolverWithTarget<KotlinLibrary> = KonanLibraryProperResolver(
     directLibs = directLibs,
     target = target,
     distributionKlib = distribution.klib,
@@ -36,26 +38,36 @@ class KonanLibraryProperResolver(
     skipCurrentDir: Boolean,
     override val logger: Logger,
     val zipFileSystemAccessor: ZipFileSystemAccessor? = null,
-) : KotlinLibraryProperResolverWithAttributes<KonanLibrary>(
+) : KotlinLibraryProperResolverWithAttributes<KotlinLibrary>(
     directLibs = directLibs,
     distributionKlib = distributionKlib,
     skipCurrentDir = skipCurrentDir,
     logger = logger,
     knownIrProviders = listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER)
-), SearchPathResolverWithTarget<KonanLibrary> {
-    override fun libraryComponentBuilder(file: File, isDefault: Boolean) =
-        createKonanLibraryComponents(file, target, isDefault, zipFileSystemAccessor)
+), SearchPathResolverWithTarget<KotlinLibrary> {
+    override fun libraryComponentBuilder(file: File, /* ignored */ isDefault: Boolean): List<KotlinLibrary> =
+        KlibLoader {
+            // KT-58979: The klib path should be normalized to correctly provide symbols from resolved klibs.
+            libraryPaths(Paths.get(file.absolutePath).normalize())
+            zipFileSystemAccessor?.let(::zipFileSystemAccessor)
+            platformChecker(KlibPlatformChecker.NativeMetadata(target.name))
+            manifestTransformer(KlibNativeManifestTransformer(target))
+        }.load().librariesStdlibFirst
 
     override val distPlatformHead: File?
         get() = distributionKlib?.File()?.child("platform")?.child(target.visibleName)
 
-    override fun libraryMatch(candidate: KonanLibrary, unresolved: UnresolvedLibrary): Boolean {
+    override fun libraryMatch(candidate: KotlinLibrary, unresolved: UnresolvedLibrary): Boolean {
         val resolverTarget = this.target
         val candidatePath = candidate.libraryFile.absolutePath
 
-        if (!candidate.targetList.contains(resolverTarget.visibleName)) {
-            logger.strongWarning("KLIB resolver: Skipping '$candidatePath'. The target doesn't match. Expected '$resolverTarget', found ${candidate.targetList}.")
-            return false
+        val supportedTargets = candidate.supportedTargetList
+        if (supportedTargets.isNotEmpty()) {
+            // TODO: We have a choice: either assume it is the CURRENT TARGET or a list of ALL KNOWN targets.
+            if (resolverTarget.visibleName !in supportedTargets) {
+                logger.strongWarning("KLIB resolver: Skipping '$candidatePath'. The target doesn't match. Expected '$resolverTarget', found $supportedTargets.")
+                return false
+            }
         }
 
         return super.libraryMatch(candidate, unresolved)

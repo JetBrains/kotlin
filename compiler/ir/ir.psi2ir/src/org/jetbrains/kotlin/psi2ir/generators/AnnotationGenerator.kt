@@ -52,7 +52,7 @@ internal class AnnotationGenerator(context: GeneratorContext) : IrVisitorVoid() 
 
         if (annotatedDescriptor != null) {
             declaration.annotations += annotatedDescriptor.annotations.mapNotNull {
-                constantValueGenerator.generateAnnotationConstructorCall(it)
+                constantValueGenerator.generateAnnotationCall(it)
             }
         }
     }

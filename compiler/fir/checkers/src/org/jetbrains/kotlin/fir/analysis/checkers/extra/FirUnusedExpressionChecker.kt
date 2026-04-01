@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirUnusedCheckerBase
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasSideEffect
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.*
 
@@ -18,19 +19,32 @@ object FirUnusedExpressionChecker : FirUnusedCheckerBase() {
     override fun isEnabled(): Boolean = true // Controlled by FIR_EXTRA_CHECKERS
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun reportUnusedExpressionIfNeeded(
-        expression: FirExpression,
-        hasSideEffects: Boolean,
-        source: KtSourceElement?,
-    ): Boolean {
-        if (hasSideEffects) return false
+    override fun createVisitor(): UsageVisitorBase = UsageVisitor(context, reporter)
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun reportUnused(
+        expression: FirExpression,
+        source: KtSourceElement?,
+    ) {
+        val isLambda = expression is FirAnonymousFunctionExpression && expression.anonymousFunction.isLambda
         val factory = when {
-            expression is FirAnonymousFunctionExpression && expression.anonymousFunction.isLambda
+            isLambda
                 -> FirErrors.UNUSED_LAMBDA_EXPRESSION
             else -> FirErrors.UNUSED_EXPRESSION
         }
         reporter.reportOn(source, factory)
-        return true
+    }
+
+    private class UsageVisitor(context: CheckerContext, reporter: DiagnosticReporter) : UsageVisitorBase(context, reporter) {
+        override fun checkExpression(
+            expression: FirExpression,
+            data: UsageState,
+        ) {
+            if (!data.isUnused()) return
+            if (expression.hasSideEffect()) return
+            context(context, reporter) {
+                reportUnused(expression, expression.source)
+            }
+        }
     }
 }

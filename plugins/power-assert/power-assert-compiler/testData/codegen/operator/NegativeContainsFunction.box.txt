@@ -1,0 +1,6 @@
+---
+assert(!listOf("Hello", "World").contains("Hello"))
+       ||                        |
+       |[Hello, World]           true
+       false
+---

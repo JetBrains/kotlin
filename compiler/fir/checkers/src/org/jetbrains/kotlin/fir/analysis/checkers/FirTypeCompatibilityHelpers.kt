@@ -55,7 +55,7 @@ internal fun ConeKotlinType.isEnum(session: FirSession) = toRegularClassSymbol(s
 
 internal fun ConeKotlinType.isClass(session: FirSession) = toRegularClassSymbol(session) != null
 
-internal fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
+fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
     val bounds = collectUpperBounds(session.typeContext).map { it.replaceArgumentsWithStarProjections() }
     val type = bounds.ifNotEmpty { ConeTypeIntersector.intersectTypes(session.typeContext, this) }?.fullyExpandedType(session)
         ?: session.builtinTypes.nullableAnyType.coneType
@@ -81,7 +81,7 @@ internal fun ConeKotlinType.toKotlinTypeIfPlatform(session: FirSession): ConeCla
 internal fun ConeKotlinType.toPlatformTypeIfKotlin(session: FirSession): ConeClassLikeType? =
     session.platformClassMapper.getCorrespondingPlatformClass(classId)?.constructClassLikeType(typeArguments, isMarkedNullable, attributes)
 
-internal class ArgumentInfo(
+class ArgumentInfo(
     val argument: FirExpression,
     val userType: ConeKotlinType,
     val originalType: ConeKotlinType,
@@ -89,11 +89,11 @@ internal class ArgumentInfo(
 ) {
     val smartCastType: ConeKotlinType by lazy { userType.fullyExpandedType(session) }
 
-    val originalTypeInfo get() = originalType.toTypeInfo(session)
+    val originalTypeInfo: TypeInfo get() = originalType.toTypeInfo(session)
 
-    val smartCastTypeInfo get() = smartCastType.toTypeInfo(session)
+    val smartCastTypeInfo: TypeInfo get() = smartCastType.toTypeInfo(session)
 
-    override fun toString() = "${argument.source?.text} :: $userType"
+    override fun toString(): String = "${argument.source?.text} :: $userType"
 }
 
 @Suppress("RecursivePropertyAccessor")

@@ -1,0 +1,5 @@
+KtNameReferenceExpression(99,104): 'coreR'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/pkg/R
+    ]

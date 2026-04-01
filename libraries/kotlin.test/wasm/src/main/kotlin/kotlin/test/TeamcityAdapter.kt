@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -176,7 +176,7 @@ internal open class TeamcityAdapter : FrameworkAdapter {
         }
 
         enterIfIncluded(name, false) {
-            runOrScheduleNextWithResult {
+            val _ = runOrScheduleNextWithResult {
                 MessageType.Started.report(name)
 
                 val result = try {

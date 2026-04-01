@@ -26,9 +26,7 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
             enableUnsafeIncrementalCompilationForMultiplatform = true,
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-        )
+        ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @Disabled("Broken, see KT-59153")
     @DisplayName("KT-59153 - incremental build when interface changes - intra-module version - jvm")
@@ -51,7 +49,9 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
 
             build("app:jvmTest") {
                 assertTestResults(
-                    projectPath.resolve("TEST-jvm.xml"),
+                    projectPath.resolve(
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) "TEST-js.xml" else "Gradle93-TEST-js.xml"
+                    ),
                     "jvmTest",
                     subprojectName = "app"
                 )
@@ -69,7 +69,9 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
         ) {
             build("app:jsNodeTest") {
                 assertTestResults(
-                    projectPath.resolve("TEST-js.xml"),
+                    projectPath.resolve(
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) "TEST-js.xml" else "Gradle93-TEST-js.xml"
+                    ),
                     "jsNodeTest",
                     subprojectName = "app"
                 )
@@ -79,7 +81,9 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
 
             build("app:jsNodeTest") {
                 assertTestResults(
-                    projectPath.resolve("TEST-js.xml"),
+                    projectPath.resolve(
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) "TEST-js.xml" else "Gradle93-TEST-js.xml"
+                    ),
                     "jsNodeTest",
                     subprojectName = "app"
                 )
@@ -127,7 +131,8 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
         ) {
             build("app:jsNodeTest") {
                 assertTestResults(
-                    projectPath.resolve("TEST-js.xml"),
+                    projectPath.resolve(
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) "TEST-js.xml" else "Gradle93-TEST-js.xml"),
                     "jsNodeTest",
                     subprojectName = "app"
                 )
@@ -138,7 +143,9 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
 
             build("app:jsNodeTest") {
                 assertTestResults(
-                    projectPath.resolve("TEST-js.xml"),
+                    projectPath.resolve(
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) "TEST-js.xml" else "Gradle93-TEST-js.xml"
+                    ),
                     "jsNodeTest",
                     subprojectName = "app"
                 )
@@ -154,9 +161,7 @@ class KmpIncrementalCompilationSetExpansionIT : KGPBaseTest() {
         get() = super.defaultBuildOptions.copy(
             // it's more convenient to set up the test project using common sourceset
             enableUnsafeIncrementalCompilationForMultiplatform = true,
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-        )
+        ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @DisplayName("Inline cycle with monotonous expansion")
     @GradleTest

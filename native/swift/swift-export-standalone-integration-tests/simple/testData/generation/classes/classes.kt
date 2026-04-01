@@ -28,6 +28,11 @@ class Foo {
 
     var my_variable: Long = 5
 
+    var private_set: Int = 0
+        private set
+
+    var internal_set: Int = 0
+        internal set
 }
 
 
@@ -268,6 +273,12 @@ class INHERITANCE_UNSUPPORTED_BASE : INHERITANCE_GENERIC()
 // FILE: inheritance.kt
 
 open class OPEN_CLASS()
+
+// KT-79227 Swift Export: Fix First Release Issues
+// Protected declarations can not be called from bridges
+open class OPEN_CLASS_WITH_PROTECTED_FUNCTION {
+    protected fun protectedFunction(a: Unit): Unit = a
+}
 
 class INHERITANCE_SINGLE_CLASS(var value: Int = 42) : OPEN_CLASS()
 

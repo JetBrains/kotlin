@@ -1,0 +1,17 @@
+FILE: genericWithExpectedAny.kt
+    public final object A : R|kotlin/Any| {
+        private constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun <T> genericFunction(block: R|() -> T|): R|T| {
+            ^genericFunction (R|kotlin/Any.Any|() as? R|T|) ?: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
+        }
+
+        public final val property: R|kotlin/Any| = this@R|/A|.R|/A.genericFunction|<R|kotlin/Nothing|>(<L> = genericFunction@fun <anonymous>(): R|kotlin/Nothing| <inline=NoInline>  {
+            throw R|java/lang/Exception.Exception|()
+        }
+        )
+            public get(): R|kotlin/Any|
+
+    }

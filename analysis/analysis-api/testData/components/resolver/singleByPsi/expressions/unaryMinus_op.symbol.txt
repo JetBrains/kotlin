@@ -1,0 +1,5 @@
+KtOperationReferenceExpression(191,192): '-'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
+    ]

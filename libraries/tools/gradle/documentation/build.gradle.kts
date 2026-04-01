@@ -2,16 +2,19 @@ plugins {
     id("gradle-plugins-documentation")
 }
 
+description = "Generates documentation for Kotlin Gradle plugins API reference"
+
 pluginsApiDocumentation {
     documentationOutput = layout.buildDirectory.dir("documentation/kotlinlang")
     documentationOldVersions = layout.buildDirectory.dir("documentation/kotlinlangOld")
     templatesArchiveUrl = "https://github.com/JetBrains/kotlin-web-site/archive/refs/heads/master.zip"
     templatesArchiveSubDirectoryPattern = "kotlin-web-site-master/dokka-templates/**"
     templatesArchivePrefixToRemove = "kotlin-web-site-master/dokka-templates/"
-
     moduleDescription.set(layout.projectDirectory.file("module-description.md"))
-    addGradlePluginProject(project(":kotlin-gradle-plugin-api"))
-    addGradlePluginProject(project(":compose-compiler-gradle-plugin"))
+}
+
+dokka {
+    moduleName.set("Kotlin Gradle Plugins API reference")
 }
 
 configurations.all {
@@ -21,4 +24,9 @@ configurations.all {
             because("CVE-2025-48924")
         }
     }
+}
+
+dependencies {
+    dokka(project(":kotlin-gradle-plugin-api"))
+    dokka(project(":compose-compiler-gradle-plugin"))
 }

@@ -16,7 +16,7 @@ public open class NestedEnumArgument : R|kotlin/Any| {
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<test/NestedEnumArgument.E>|
-            public get(): R|kotlin/enums/EnumEntries<test/NestedEnumArgument.E>|
+            public static get(): R|kotlin/enums/EnumEntries<test/NestedEnumArgument.E>|
 
     }
 }

@@ -1,0 +1,72 @@
+{
+    "formatVersion": "1.1",
+    "component": {
+        "url": "../../kotlin-power-assert-runtime/ArtifactsTest.version/kotlin-power-assert-runtime-ArtifactsTest.version.module",
+        "group": "org.jetbrains.kotlin",
+        "module": "kotlin-power-assert-runtime",
+        "version": "ArtifactsTest.version",
+        "attributes": {
+            "org.gradle.status": "release"
+        }
+    },
+    "createdBy": {
+        "gradle": {
+            "version": "9.4.1"
+        }
+    },
+    "variants": [
+        {
+            "name": "linuxArm64ApiElements-published",
+            "attributes": {
+                "org.gradle.category": "library",
+                "org.gradle.usage": "kotlin-api",
+                "org.gradle.jvm.environment": "non-jvm",
+                "org.jetbrains.kotlin.platform.type": "native",
+                "org.jetbrains.kotlin.native.target": "linux_arm64"
+            },
+            "dependencies": [
+                {
+                    "group": "org.jetbrains.kotlin",
+                    "module": "kotlin-stdlib",
+                    "version": {
+                        "requires": "ArtifactsTest.version"
+                    }
+                }
+            ],
+            "files": [
+                {
+                    "name": "kotlin-power-assert-runtime-linuxArm64Main-ArtifactsTest.version.klib",
+                    "url": "kotlin-power-assert-runtime-linuxarm64-ArtifactsTest.version.klib",
+                    "size": null,
+                    "sha512": null,
+                    "sha256": null,
+                    "sha1": null,
+                    "md5": null
+                }
+            ]
+        },
+        {
+            "name": "linuxArm64SourcesElements-published",
+            "attributes": {
+                "org.gradle.category": "documentation",
+                "org.gradle.dependency.bundling": "external",
+                "org.gradle.docstype": "sources",
+                "org.gradle.usage": "kotlin-runtime",
+                "org.gradle.jvm.environment": "non-jvm",
+                "org.jetbrains.kotlin.platform.type": "native",
+                "org.jetbrains.kotlin.native.target": "linux_arm64"
+            },
+            "files": [
+                {
+                    "name": "kotlin-power-assert-runtime-linuxarm64-ArtifactsTest.version-sources.jar",
+                    "url": "kotlin-power-assert-runtime-linuxarm64-ArtifactsTest.version-sources.jar",
+                    "size": null,
+                    "sha512": null,
+                    "sha256": null,
+                    "sha1": null,
+                    "md5": null
+                }
+            ]
+        }
+    ]
+}

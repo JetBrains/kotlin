@@ -31,7 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] afterSmartCastFunction.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/Boolean|): R|kotlin/Unit| {
         when () {
             (R|<local>/c| is R|kotlin/Int|) ->  {
-                context(R|<local>/c|) R|/bar|()
+                <Ambiguity: bar, [/bar, /bar]>#()
             }
         }
 

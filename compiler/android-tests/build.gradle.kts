@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("android-sdk-provisioner")
     id("project-tests-convention")
 }
@@ -40,10 +39,19 @@ sourceSets {
 
 optInToK1Deprecation()
 
+val acceptAndroidSdkLicenses = with(androidSdkProvisioner) {
+    project.registerAcceptLicensesTask()
+}
+
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit4) {
+        develocity {
+            testRetry.maxRetries.set(0)
+        }
+
         dependsOn(":dist")
-        val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
+        dependsOn(acceptAndroidSdkLicenses)
+        val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_17_0)
         doFirst {
             environment("kotlin.tests.android.timeout", "45")
             environment("JAVA_HOME", jdkHome.get())
@@ -66,7 +74,11 @@ projectTests {
     withJvmStdlibAndReflect()
 }
 
-val generateAndroidTests by generator("org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator") {
+val generateAndroidTests by generator(
+    "org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator",
+    testSourceSet,
+    inputKind = GeneratorInputKind.RuntimeClasspath,
+) {
     workingDir = rootDir
     dependsOn(rootProject.tasks.named("dist"))
 }

@@ -1250,6 +1250,7 @@ public interface Errors {
     DiagnosticFactory0<KtExpression> INTEGER_OVERFLOW = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtConstantExpression> WRONG_LONG_SUFFIX = DiagnosticFactory0.create(ERROR, LONG_LITERAL_SUFFIX);
     DiagnosticFactory0<KtConstantExpression> INT_LITERAL_OUT_OF_RANGE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtConstantExpression> INT_LITERAL_WITH_LEADING_ZEROS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtConstantExpression> FLOAT_LITERAL_OUT_OF_RANGE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtConstantExpression> FLOAT_LITERAL_CONFORMS_INFINITY = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtConstantExpression> FLOAT_LITERAL_CONFORMS_ZERO = DiagnosticFactory0.create(WARNING);

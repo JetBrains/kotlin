@@ -15,7 +15,6 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.reflect.full.createDefaultType
-import kotlin.reflect.full.withNullability
 import kotlin.reflect.jvm.internal.*
 
 /**
@@ -26,6 +25,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
     callable: ReflectKCallable<*>,
     private val caller: Caller<M>,
     private val isDefault: Boolean,
+    forbidUnboxingForIndices: List<Int>,
 ) : Caller<M> {
     override val member: M
         get() = caller.member
@@ -39,7 +39,11 @@ internal class ValueClassAwareCaller<out M : Member?>(
     override val isBoundInstanceCallWithValueClasses: Boolean
         get() = caller is CallerImpl.Method.BoundInstance
 
-    private class BoxUnboxData(val argumentRange: IntRange, val unboxParameters: Array<Method?>, val box: Method?)
+    private class BoxUnboxData(
+        val argumentRange: IntRange,
+        val unboxParameters: Array<Method?>,
+        val box: Method?,
+    )
 
     private val data: BoxUnboxData = run {
         val returnType = callable.returnType
@@ -82,10 +86,16 @@ internal class ValueClassAwareCaller<out M : Member?>(
 
         val kotlinParameterTypes = makeKotlinParameterTypes(callable, caller.member)
 
+        val paramsWithAllocatedDefaultMaskBitsCount = if (callable.allParameters.any { it.kind == KParameter.Kind.EXTENSION_RECEIVER }) {
+            kotlinParameterTypes.size - 1
+        } else {
+            kotlinParameterTypes.size
+        }
+
         // If the default argument is set,
-        // (kotlinParameterTypes.size + Int.SIZE_BITS - 1) / Int.SIZE_BITS masks and one marker are added to the end of the argument.
+        // (paramsWithAllocatedDefaultMaskBitsCount + Int.SIZE_BITS - 1) / Int.SIZE_BITS masks and one marker are added to the end of the argument.
         val extraArgumentsTail =
-            (if (isDefault) ((kotlinParameterTypes.size + Int.SIZE_BITS - 1) / Int.SIZE_BITS) + 1 else 0) +
+            (if (isDefault) ((paramsWithAllocatedDefaultMaskBitsCount + Int.SIZE_BITS - 1) / Int.SIZE_BITS) + 1 else 0) +
                     (if (callable is ReflectKFunction && callable.isSuspend) 1 else 0)
         val expectedArgsSize = kotlinParameterTypes.size + shift + extraArgumentsTail
         checkParametersSize(expectedArgsSize, callable, isDefault)
@@ -98,6 +108,15 @@ internal class ValueClassAwareCaller<out M : Member?>(
             if (i in argumentRange)
                 kotlinParameterTypes[i - shift].toInlineClass()?.getInlineClassUnboxMethod(callable)
             else null
+        }
+
+        forbidUnboxingForIndices.forEach { index -> unbox[index] = null }
+
+        // If the actual called member lies in the interface/DefaultImpls class, it accepts a boxed parameter as ex-dispatch receiver.
+        // Forbid unboxing dispatchReceiver in this case.
+        val container = callable.container
+        if (!callable.isConstructor && container is KClass<*> && container.isValue && member?.acceptsBoxedReceiverParameter() == true) {
+            unbox[0] = null
         }
 
         BoxUnboxData(argumentRange, unbox, box)
@@ -145,20 +164,9 @@ private fun makeKotlinParameterTypes(callable: ReflectKCallable<*>, member: Memb
     val result = mutableListOf<KType>()
     val container = callable.container
     if (!callable.isConstructor && container is KClass<*> && container.isValue) {
-        val containerType = container.createDefaultType()
-        if (member?.acceptsBoxedReceiverParameter() == true) {
-            // Hack to forbid unboxing dispatchReceiver if it is used upcasted.
-            // `kotlinParameterTypes` are used to determine shifts and calls according to whether type is an inline class or not.
-            // If it is an inline class, boxes are unboxed. If the actual called member lies in the interface/DefaultImpls class,
-            // it accepts a boxed parameter as ex-dispatch receiver. Making the type nullable allows to prevent unboxing in this case.
-            result.add(containerType.withNullability(nullable = true))
-        } else {
-            result.add(containerType)
-        }
+        result.add(container.createDefaultType())
     }
-
     val isInnerClassConstructor = callable.isConstructor && (container as? KClass<*>)?.isInner == true
-
     for (parameter in callable.allParameters) {
         if (parameter.kind != KParameter.Kind.INSTANCE || isInnerClassConstructor) {
             result.add(parameter.type)
@@ -179,9 +187,13 @@ private fun Member.acceptsBoxedReceiverParameter(): Boolean {
     return !clazz.kotlin.isValue
 }
 
-internal fun <M : Member?> Caller<M>.createValueClassAwareCallerIfNeeded(callable: ReflectKCallable<*>, isDefault: Boolean): Caller<M> =
+internal fun <M : Member?> Caller<M>.createValueClassAwareCallerIfNeeded(
+    callable: ReflectKCallable<*>,
+    isDefault: Boolean,
+    forbidUnboxingForIndices: List<Int>,
+): Caller<M> =
     if (callable.parameters.any { it.type.isInlineClassType } || callable.returnType.isInlineClassType)
-        ValueClassAwareCaller(callable, this, isDefault)
+        ValueClassAwareCaller(callable, this, isDefault, forbidUnboxingForIndices)
     else this
 
 internal fun Class<*>.getInlineClassUnboxMethod(callable: ReflectKCallable<*>): Method =
@@ -213,7 +225,7 @@ internal fun KType?.toInlineClass(): Class<*>? {
 private fun ReflectKCallable<*>.isGetterOfUnderlyingPropertyOfValueClass(): Boolean =
     this is KProperty.Getter<*> && (property as ReflectKProperty<*>).isUnderlyingPropertyOfValueClass()
 
-private fun ReflectKProperty<*>.isUnderlyingPropertyOfValueClass(): Boolean =
+internal fun ReflectKProperty<*>.isUnderlyingPropertyOfValueClass(): Boolean =
     allParameters.all { it.kind == KParameter.Kind.INSTANCE } &&
             name == (container as? KClassImpl<*>)?.inlineClassUnderlyingPropertyName
 
@@ -222,6 +234,3 @@ private fun KType.isPrimitiveType(): Boolean {
     val klass = (classifier as? KClass<*>)?.javaPrimitiveType
     return klass != null && klass != Void.TYPE
 }
-
-private fun KType.unsubstitutedUnderlyingType(): KType? =
-    (classifier as? KClassImpl<*>)?.inlineClassUnderlyingType

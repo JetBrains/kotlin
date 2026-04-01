@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -155,6 +155,30 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val TSC_TARGET by stringDirective(
+        description = """
+        The argument for the --target CLI option of the TypeScript compiler.
+        See https://www.typescriptlang.org/tsconfig/#target for supported values.
+        """,
+        applicability = DirectiveApplicability.Global,
+    )
+
+    val TSC_LIB by stringDirective(
+        description = """
+        The argument for the --lib CLI option of the TypeScript compiler.
+        See https://www.typescriptlang.org/tsconfig/#lib for supported values.
+        """,
+        applicability = DirectiveApplicability.Global,
+    )
+
+    val TSC_MODULE by stringDirective(
+        description = """
+        The argument for the --module CLI option of the TypeScript compiler.
+        See https://www.typescriptlang.org/tsconfig/#module for supported values.
+        """,
+        applicability = DirectiveApplicability.Global,
+    )
+
     // Directives for IR tests
 
     val RUN_IR_DCE by directive(
@@ -179,6 +203,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
 
     val KLIB_MAIN_MODULE by directive(
         description = "Specify that main module is actually a klib",
+        applicability = DirectiveApplicability.Global
+    )
+
+    val DELEGATE_JS_TRANSPILATION by directive(
+        description = "Enables new transpilation pipeline, where the compiler produces only latest ECMAScript version and the lowering to older versions is on the swc tool",
         applicability = DirectiveApplicability.Global
     )
 
@@ -212,5 +241,10 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val KEEP by stringDirective(
         description = "Keep declarations",
         applicability = DirectiveApplicability.Global
+    )
+
+    val DISABLE_JS_EXPORT_SOURCE_PREPROCESSOR by directive(
+        description = "Disable JsExportSourcePreprocessor",
+        applicability = DirectiveApplicability.Any,
     )
 }

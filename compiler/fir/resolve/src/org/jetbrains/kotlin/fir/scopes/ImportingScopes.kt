@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,13 +7,10 @@ package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.firScriptResolutionConfigurators
-import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtensions
-import org.jetbrains.kotlin.fir.importTracker
+import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtension
 import org.jetbrains.kotlin.fir.packageFqName
-import org.jetbrains.kotlin.fir.reportImportDirectives
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
@@ -60,12 +57,6 @@ internal fun computeImportingScopes(
         excludedImportNames.mapNotNullTo(mutableSetOf()) {
             if (it.parent() == file.packageFqName) it.shortName() else null
         }
-
-    session.importTracker?.let { tracker ->
-        file.imports.map { import ->
-            tracker.reportImportDirectives(file.sourceFile?.path, import.importedFqName?.asString())
-        }
-    }
 
     val scriptingDefaultImports = getDefaultImportsForScripting(session, file)
 
@@ -133,9 +124,10 @@ private fun getDefaultImportsForScripting(session: FirSession, file: FirFile): P
                 it.getScriptDefaultImports(scriptOrSnippet).orEmpty()
             }.transformImports()
         is FirReplSnippet ->
-            session.extensionService.replSnippetResolveExtensions.flatMap {
-                it.getSnippetDefaultImports(file.sourceFile!!, scriptOrSnippet).orEmpty()
-            }.transformImports()
+            session.replSnippetResolveExtension
+                ?.getSnippetDefaultImports(file.sourceFile!!, scriptOrSnippet)
+                .orEmpty()
+                .transformImports()
         else -> null
     }
 }

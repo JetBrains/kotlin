@@ -38,12 +38,16 @@ fun SimpleAnimatedContentSample(%composer: Composer?, %changed: Int) {
     }
     AnimatedContent(1.0f, rememberComposableLambda(<>, false, { it: Float, %composer: Composer?, %changed: Int ->
       sourceInformation(%composer, "C<Foo()>:Test.kt")
-      if (isTraceInProgress()) {
-        traceEventStart(<>, %changed, -1, <>)
-      }
-      Foo(%composer, 0)
-      if (isTraceInProgress()) {
-        traceEventEnd()
+      if (%composer.shouldExecute(%changed and 0b10000001 != 0b10000000, %changed and 0b0001)) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, <>)
+        }
+        Foo(%composer, 0)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
       }
     }, %composer, 0b00110110), %composer, 0b00110110)
     if (isTraceInProgress()) {

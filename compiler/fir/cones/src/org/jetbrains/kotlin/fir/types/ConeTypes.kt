@@ -248,6 +248,7 @@ data class ConeCapturedType(
  * Types of this kind are represented as (Type & Any).
  *
  * @param original the base type for being DNN. It can be [ConeTypeVariableType], ConeTypeParameterType or [ConeCapturedType].
+ * It can be also [ConeErrorType] in a situation with uninferred parameter type diagnostic.
  */
 data class ConeDefinitelyNotNullType(
     val original: ConeSimpleKotlinType

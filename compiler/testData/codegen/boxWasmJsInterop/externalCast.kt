@@ -1,5 +1,5 @@
-// TARGET_BACKEND: WASM
 // MODULE: main
+// WITH_STDLIB
 
 // FILE: test.kt
 

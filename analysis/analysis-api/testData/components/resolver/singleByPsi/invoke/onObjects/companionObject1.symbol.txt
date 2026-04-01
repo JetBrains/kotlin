@@ -1,0 +1,5 @@
+KtNameReferenceExpression(116,119): 'Foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo.Companion
+    ]

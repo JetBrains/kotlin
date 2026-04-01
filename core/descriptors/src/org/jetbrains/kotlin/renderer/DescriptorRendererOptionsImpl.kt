@@ -21,39 +21,16 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.types.KotlinType
-import java.lang.IllegalStateException
-import java.lang.reflect.Modifier
-import kotlin.jvm.internal.PropertyReference1Impl
 import kotlin.properties.Delegates
-import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadWriteProperty
 
-internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
+class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     var isLocked: Boolean = false
         private set
 
     fun lock() {
         assert(!isLocked)
         isLocked = true
-    }
-
-    fun copy(): DescriptorRendererOptionsImpl {
-        val copy = DescriptorRendererOptionsImpl()
-
-        //TODO: use Kotlin reflection
-        for (field in this::class.java.declaredFields) {
-            if (field.modifiers.and(Modifier.STATIC) != 0) continue
-            field.isAccessible = true
-            val property = field.get(this) as? ObservableProperty<*> ?: continue
-            assert(!field.name.startsWith("is")) { "Fields named is* are not supported here yet" }
-            val value = property.getValue(
-                    this,
-                    PropertyReference1Impl(DescriptorRendererOptionsImpl::class, field.name, "get" + field.name.replaceFirstChar(Char::uppercaseChar))
-            )
-            field.set(copy, copy.property(value))
-        }
-
-        return copy
     }
 
     private fun <T> property(initialValue: T): ReadWriteProperty<DescriptorRendererOptionsImpl, T> {

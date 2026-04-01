@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.ir
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.lower.at
@@ -90,7 +91,7 @@ fun IrSimpleFunction.createExtensionReceiver(type: IrType, origin: IrDeclaration
 fun IrExpression?.isPure(
     anyVariable: Boolean,
     checkFields: Boolean = true,
-    symbols: Symbols? = null
+    symbols: BackendSymbols? = null
 ): Boolean {
     if (this == null) return true
 
@@ -138,14 +139,14 @@ fun CommonBackendContext.createArrayOfExpression(
     arrayElements: List<IrExpression>
 ): IrExpression {
 
-    val arrayType = symbols.array.typeWith(arrayElementType)
+    val arrayType = irBuiltIns.arrayClass.typeWith(arrayElementType)
     val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, arrayElementType, arrayElements)
 
     return IrCallImpl(
         startOffset,
         endOffset,
         arrayType,
-        symbols.arrayOf,
+        irBuiltIns.arrayOf,
         typeArgumentsCount = 1,
     ).apply {
         typeArguments[0] = arrayElementType
@@ -164,7 +165,7 @@ val IrFile.isJvmBuiltin: Boolean get() = hasAnnotation(StandardClassIds.Annotati
 
 val IrFile.isBytecodeGenerationSuppressed: Boolean get() = hasAnnotation(StandardClassIds.Annotations.SuppressBytecodeGeneration)
 
-fun IrFunction.wrapWithLambdaCall(parent: IrDeclarationParent, context: CommonBackendContext): IrRichFunctionReference {
+fun IrFunction.wrapWithLambdaCall(parent: IrDeclarationParent, context: LoweringContext): IrRichFunctionReference {
     require(this.typeParameters.isEmpty())
     val wrapper = factory.buildFun {
         setSourceRange(this@wrapWithLambdaCall)

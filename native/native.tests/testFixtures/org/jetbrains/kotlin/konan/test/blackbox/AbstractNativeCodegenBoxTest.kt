@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Tag
 import java.io.File
 
 @Tag("codegen")
-abstract class AbstractNativeCodegenBoxTest : ExternalSourceTransformersProvider, AbstractNativeBlackBoxTest() {
+abstract class AbstractNativeCodegenBoxTest : AbstractNativeBlackBoxTest() {
     override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers? {
         val needTransform = "// $WORKS_WHEN_VALUE_CLASS" in testDataFile.readText()
         val transformer = object : ExternalSourceTransformer {

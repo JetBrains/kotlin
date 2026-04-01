@@ -1,0 +1,14 @@
+@kotlin.Metadata
+public final class BoxKt {
+    // source: 'Box.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class ExposedResult {
+    // source: 'Test.kt'
+    public method <init>(): void
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method consume(@org.jetbrains.annotations.Nullable p0: kotlin.Result): java.lang.String
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method consume1(@org.jetbrains.annotations.Nullable p0: kotlin.Result): java.lang.String
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method consume2(p0: kotlin.Result): java.lang.String
+}

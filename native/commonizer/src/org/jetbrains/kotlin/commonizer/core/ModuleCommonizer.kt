@@ -5,17 +5,23 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
+import kotlinx.metadata.klib.KlibMetadataVersion
 import org.jetbrains.kotlin.commonizer.cir.CirModule
 import org.jetbrains.kotlin.commonizer.cir.CirName
 
 class ModuleCommonizer : AbstractStandardCommonizer<CirModule, CirModule>() {
     private lateinit var name: CirName
+    private lateinit var metadataVersion: KlibMetadataVersion
 
-    override fun commonizationResult() = CirModule.create(name = name)
+    override fun commonizationResult() = CirModule.create(name = name, metadataVersion = metadataVersion)
 
     override fun initialize(first: CirModule) {
         name = first.name
+        metadataVersion = first.metadataVersion
     }
 
-    override fun doCommonizeWith(next: CirModule) = true
+    override fun doCommonizeWith(next: CirModule): Boolean {
+        metadataVersion = minOf(metadataVersion, next.metadataVersion)
+        return true
+    }
 }

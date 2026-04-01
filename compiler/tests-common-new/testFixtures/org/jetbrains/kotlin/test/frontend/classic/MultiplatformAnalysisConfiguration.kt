@@ -82,15 +82,9 @@ internal class MultiplatformSeparateAnalysisConfiguration(
             if (dependencies.isEmpty()) return
             for (dependency in dependencies) {
                 val dependencyModule = dependency.dependencyModule
-                val artifact = if (testServices.defaultsProvider.frontendKind == FrontendKinds.ClassicAndFIR) {
-                    artifactsProvider.getArtifact(dependencyModule, FrontendKinds.ClassicAndFIR).k1Artifact
-                } else {
-                    artifactsProvider.getArtifact(dependencyModule, FrontendKinds.ClassicFrontend)
-                }
-                /*
-                We need create KtFiles again with new project because otherwise we can access to some caches using
-                old project as key which may leads to missing services in core environment
-                 */
+                val artifact = artifactsProvider.getArtifact(dependencyModule, FrontendKinds.ClassicFrontend)
+                // We need to create KtFiles again with the new project. Otherwise, we can access some caches using the old project
+                // as a key, which may lead to missing services in the core environment.
                 val ktFiles = sourceFileProvider.getKtFilesForSourceFiles(artifact.allKtFiles.keys, project)
                 ktFiles.values.forEach { ktFile -> ktFile.isCommonSource = true }
                 ktFilesMap.putAll(ktFiles)

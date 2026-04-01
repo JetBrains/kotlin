@@ -1,0 +1,59 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] intrinsicConstOnIncorrectProperty.kt
+    @Deprecated[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] String.abc(): String { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] intrinsicConstOnIncorrectProperty.kt
+    @Deprecated[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] String.abc(): String { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] intrinsicConstOnIncorrectProperty.kt
+    @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(Deprecated in Java).abc#) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] String.abc(): String { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] intrinsicConstOnIncorrectProperty.kt
+    @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(Deprecated in Java).abc#) public? final? [ResolvedTo(COMPANION_GENERATION)] fun [ResolvedTo(COMPANION_GENERATION)] String.abc(): String { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] intrinsicConstOnIncorrectProperty.kt
+    @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(Deprecated in Java).abc#) public? final? [ResolvedTo(SUPER_TYPES)] fun [ResolvedTo(SUPER_TYPES)] String.abc(): String { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] intrinsicConstOnIncorrectProperty.kt
+    @R|kotlin/Deprecated|[Types](String(Deprecated in Java).abc#) public? final? [ResolvedTo(TYPES)] fun [ResolvedTo(TYPES)] R|kotlin/String|.abc(): R|kotlin/String| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] intrinsicConstOnIncorrectProperty.kt
+    @R|kotlin/Deprecated|[Types](String(Deprecated in Java).abc#) public final [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|kotlin/String|.abc(): R|kotlin/String| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] intrinsicConstOnIncorrectProperty.kt
+    @R|kotlin/Deprecated|[Types](String(Deprecated in Java).abc#) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|kotlin/String|.abc(): R|kotlin/String| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] intrinsicConstOnIncorrectProperty.kt
+    @R|kotlin/Deprecated|[Types](String(Deprecated in Java).abc#) public final [ResolvedTo(CONTRACTS)] fun [ResolvedTo(CONTRACTS)] R|kotlin/String|.abc(): R|kotlin/String| { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] intrinsicConstOnIncorrectProperty.kt
+    @R|kotlin/Deprecated|[Types](String(Deprecated in Java).abc#) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/String|.abc(): R|kotlin/String| { LAZY_BLOCK }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] intrinsicConstOnIncorrectProperty.kt
+    @R|kotlin/Deprecated|[Types](String(Deprecated in Java).abc#) public final [ResolvedTo(CONSTANT_EVALUATION)] fun [ResolvedTo(CONSTANT_EVALUATION)] R|kotlin/String|.abc(): R|kotlin/String| { LAZY_BLOCK }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] intrinsicConstOnIncorrectProperty.kt
+    @R|kotlin/Deprecated|[Types](message = String(Deprecated in Java).R|/abc<Function call expected: abc()>#| [evaluated = String(Deprecated in Java).R|/abc<Function call expected: abc()>#|]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/String|.abc(): R|kotlin/String| { LAZY_BLOCK }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] intrinsicConstOnIncorrectProperty.kt
+    @R|kotlin/Deprecated|[Types](message = String(Deprecated in Java).R|/abc<Function call expected: abc()>#| [evaluated = String(Deprecated in Java).R|/abc<Function call expected: abc()>#|]) public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|.abc(): R|kotlin/String| {
+        ^abc this@R|/abc|
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] intrinsicConstOnIncorrectProperty.kt
+    @R|kotlin/Deprecated|[Types](message = String(Deprecated in Java).R|/abc<Function call expected: abc()>#| [evaluated = String(Deprecated in Java).R|/abc<Function call expected: abc()>#|]) public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|.abc(): R|kotlin/String| {
+        ^abc this@R|/abc|
+    }

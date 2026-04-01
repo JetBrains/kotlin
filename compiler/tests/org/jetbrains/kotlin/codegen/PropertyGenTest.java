@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.FirParser;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.lang.reflect.*;
@@ -27,6 +28,16 @@ import static org.jetbrains.kotlin.codegen.CodegenTestUtil.findDeclaredMethodByN
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.findDeclaredMethodByNameOrNull;
 
 public class PropertyGenTest extends CodegenTestCase {
+    @Override
+    public boolean getUseFir() {
+        return true;
+    }
+
+    @Override
+    public @NotNull FirParser getFirParser() {
+        return FirParser.LightTree;
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();

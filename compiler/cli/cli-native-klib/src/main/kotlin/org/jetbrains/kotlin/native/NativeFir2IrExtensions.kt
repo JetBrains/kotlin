@@ -24,11 +24,9 @@ import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
-internal object NativeFir2IrExtensions : Fir2IrExtensions {
-    override val irNeedsDeserialization = false
+object NativeFir2IrExtensions : Fir2IrExtensions {
     override val parametersAreAssignable: Boolean get() = false
     override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = listOf(IrObjCOverridabilityCondition)
-    override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean = false
     override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): InjectedValue? = null
     override fun findInjectedInlineLambdaArgument(parameter: FirValueParameterSymbol): FirExpression? = null
 
@@ -42,6 +40,5 @@ internal object NativeFir2IrExtensions : Fir2IrExtensions {
 
     override fun specialBackingFieldVisibility(firProperty: FirProperty, session: FirSession): Visibility? = null
 
-    override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {}
     override fun shouldGenerateDelegatedMember(delegateMemberFromBaseType: IrOverridableDeclaration<*>): Boolean = true
 }

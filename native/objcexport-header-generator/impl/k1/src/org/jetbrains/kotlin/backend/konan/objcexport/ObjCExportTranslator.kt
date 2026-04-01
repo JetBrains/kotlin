@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
+import org.jetbrains.kotlin.descriptors.konan.allParameters
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -32,11 +32,16 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.*
 
+class ObjCExportTranslatedClass(
+    val auxiliaryDeclarations: List<ObjCExportStub> = emptyList(),
+    val objCInterface: ObjCInterface,
+)
+
 interface ObjCExportTranslator {
     fun generateBaseDeclarations(): List<ObjCTopLevel>
     fun getClassIfExtension(receiverType: KotlinType): ClassDescriptor?
     fun translateFile(file: SourceFile, declarations: List<CallableMemberDescriptor>): ObjCInterface
-    fun translateClass(descriptor: ClassDescriptor): ObjCInterface
+    fun translateClass(descriptor: ClassDescriptor): ObjCExportTranslatedClass
     fun translateInterface(descriptor: ClassDescriptor): ObjCProtocol
     fun translateExtensions(classDescriptor: ClassDescriptor, declarations: List<CallableMemberDescriptor>): ObjCInterface
 }
@@ -172,12 +177,13 @@ class ObjCExportTranslatorImpl(
         )
     }
 
-    override fun translateClass(descriptor: ClassDescriptor): ObjCInterface {
+    override fun translateClass(descriptor: ClassDescriptor): ObjCExportTranslatedClass {
         require(!descriptor.isInterface)
         if (!mapper.shouldBeExposed(descriptor)) {
-            return translateUnexposedClassAsUnavailableStub(descriptor)
+            return ObjCExportTranslatedClass(objCInterface = translateUnexposedClassAsUnavailableStub(descriptor))
         }
 
+        val auxiliaryDeclarations = mutableListOf<ObjCExportStub>()
         val genericExportScope = createGenericExportScope(descriptor)
 
         fun superClassGenerics(genericExportScope: ObjCExportScope): List<ObjCNonNullReferenceType> {
@@ -284,6 +290,39 @@ class ObjCExportTranslatorImpl(
                 ClassKind.ENUM_CLASS -> {
                     val type = mapType(descriptor.defaultType, ReferenceBridge, ObjCRootExportScope)
 
+                    namer.getNSEnumTypeName(descriptor)?.let { nsEnumTypeName ->
+                        // Map the enum entries in declaration order, preserving the ordinal
+                        auxiliaryDeclarations.add(
+                            ObjCNSEnum(
+                                name = nsEnumTypeName.objCName,
+                                swiftName = nsEnumTypeName.swiftName,
+                                origin = ObjCExportStubOrigin(descriptor),
+                                entries = descriptor.enumEntries.mapIndexed { ordinal, entry ->
+                                    val objcEnumEntryName = entry.getObjCEnumEntryName()
+                                    val objCName = objcEnumEntryName.getName(forSwift = false) ?: namer.getEnumEntrySelector(entry)
+                                    val swiftName = objcEnumEntryName.getName(forSwift = true) ?: namer.getEnumEntrySwiftName(entry)
+                                    ObjCNSEnum.Entry(
+                                        objCName = nsEnumTypeName.objCName + objCName.replaceFirstChar { it.uppercaseChar() },
+                                        swiftName = swiftName,
+                                        value = ordinal
+                                    )
+                                }
+                            )
+                        )
+
+                        add {
+                            // TODO(KT-82581): If an enum already has a property named nsEnum, we'll get a name conflict
+                            ObjCProperty(
+                                "nsEnum",
+                                null,
+                                ObjCRawType(nsEnumTypeName.objCName),
+                                listOf("readonly"),
+                                declarationAttributes = emptyList(),
+                                comment = null
+                            )
+                        }
+                    }
+
                     descriptor.enumEntries.forEach {
                         val entryName = namer.getEnumEntrySelector(it)
                         val swiftName = namer.getEnumEntrySwiftName(it)
@@ -337,16 +376,19 @@ class ObjCExportTranslatorImpl(
         val generics = mapTypeConstructorParameters(descriptor)
         val superClassGenerics = superClassGenerics(genericExportScope)
 
-        return objCInterface(
-            name,
-            generics = generics,
-            descriptor = descriptor,
-            superClass = superName.objCName,
-            superClassGenerics = superClassGenerics,
-            superProtocols = superProtocols,
-            members = members,
-            attributes = attributes,
-            comment = objCCommentOrNull(mustBeDocumentedAttributeList(descriptor.annotations))
+        return ObjCExportTranslatedClass(
+            auxiliaryDeclarations = auxiliaryDeclarations.toList(),
+            objCInterface = objCInterface(
+                name,
+                generics = generics,
+                descriptor = descriptor,
+                superClass = superName.objCName,
+                superClassGenerics = superClassGenerics,
+                superProtocols = superProtocols,
+                members = members,
+                attributes = attributes,
+                comment = objCCommentOrNull(mustBeDocumentedAttributeList(descriptor.annotations))
+            )
         )
     }
 
@@ -772,7 +814,9 @@ class ObjCExportTranslatorImpl(
     }
 
     private val mustBeDocumentedAnnotationsStopList =
-        setOf(StandardNames.FqNames.deprecated, KonanFqNames.objCName, KonanFqNames.shouldRefineInSwift)
+        setOf(
+            StandardNames.FqNames.deprecated, KonanFqNames.objCName, KonanFqNames.shouldRefineInSwift, KonanFqNames.objCEnum
+        )
 
     private fun mustBeDocumentedAnnotations(annotations: Annotations): List<String> {
         return annotations.mapNotNull { it ->

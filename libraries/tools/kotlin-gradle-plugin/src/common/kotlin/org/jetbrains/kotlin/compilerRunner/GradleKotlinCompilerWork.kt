@@ -177,7 +177,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         ) {
             compileInProcess(messageCollector) to KotlinCompilerExecutionStrategy.IN_PROCESS
         } else {
-            compileOutOfProcess() to KotlinCompilerExecutionStrategy.OUT_OF_PROCESS
+            compileInProcess(messageCollector) to KotlinCompilerExecutionStrategy.IN_PROCESS
         }
     }
 
@@ -210,6 +210,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         val targetPlatform = when (config.compilerClassName) {
             KotlinCompilerClass.JVM -> CompileService.TargetPlatform.JVM
             KotlinCompilerClass.JS -> CompileService.TargetPlatform.JS
+            KotlinCompilerClass.WASM -> CompileService.TargetPlatform.WASM
             KotlinCompilerClass.METADATA -> CompileService.TargetPlatform.METADATA
             else -> throw IllegalArgumentException("Unknown compiler type ${config.compilerClassName}")
         }
@@ -313,21 +314,6 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         }.also {
             metrics.addMetrics(compilationResults.buildMetrics)
             icLogLines = compilationResults.icLogLines
-        }
-    }
-
-    private fun compileOutOfProcess(): ExitCode {
-        metrics.addAttribute(BuildAttribute.OUT_OF_PROCESS_EXECUTION)
-        cleanOutputsAndLocalState(config.outputFiles, log, metrics, reason = "out-of-process execution strategy is non-incremental")
-
-        return metrics.measure(NON_INCREMENTAL_COMPILATION_OUT_OF_PROCESS) {
-            runToolInSeparateProcess(
-                config.compilerArgs,
-                config.compilerClassName,
-                config.compilerFullClasspath,
-                log,
-                config.projectFiles.buildDir,
-            )
         }
     }
 

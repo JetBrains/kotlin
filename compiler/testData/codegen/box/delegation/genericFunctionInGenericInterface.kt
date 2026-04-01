@@ -1,5 +1,4 @@
 // ISSUE: KT-64257
-// JVM_ABI_K1_K2_DIFF: KT-63855
 
 interface Base {
     fun <R> fold(initial: R, operation: (R, String) -> R): R = operation(initial, "K")

@@ -962,7 +962,11 @@ internal constructor(private val rawValue: Long) :
 // constructing from number of units
 // extension functions
 
-/** Returns a [Duration] equal to this [Int] number of the specified [unit]. */
+/**
+ * Returns a [Duration] equal to this [Int] number of the specified [unit].
+ *
+ * @sample samples.time.Durations.toDurationInt
+ */
 @SinceKotlin("1.6")
 public fun Int.toDuration(unit: DurationUnit): Duration {
     return if (unit <= DurationUnit.SECONDS) {
@@ -971,13 +975,22 @@ public fun Int.toDuration(unit: DurationUnit): Duration {
         toLong().toDuration(unit)
 }
 
-/** Returns a [Duration] equal to this [Long] number of the specified [unit]. */
+/**
+ * Returns a [Duration] equal to this [Long] number of the specified [unit].
+ *
+ * @sample samples.time.Durations.toDurationLong
+ */
 @SinceKotlin("1.6")
 public fun Long.toDuration(unit: DurationUnit): Duration {
     val maxNsInUnit = convertDurationUnitOverflow(MAX_NANOS, DurationUnit.NANOSECONDS, unit)
     return when {
         this in -maxNsInUnit..maxNsInUnit -> durationOfNanos(convertDurationUnitOverflow(this, unit, DurationUnit.NANOSECONDS))
-        unit >= DurationUnit.MILLISECONDS -> durationOfMillis(this.sign * convertDurationUnitToMilliseconds(abs(this), unit))
+        unit >= DurationUnit.MILLISECONDS -> durationOfMillis(
+            this.sign * convertDurationUnitToMilliseconds(
+                abs(this.coerceAtLeast(Long.MIN_VALUE + 1)),
+                unit
+            )
+        )
         else -> durationOfMillis(convertDurationUnit(this, unit, DurationUnit.MILLISECONDS).coerceIn(-MAX_MILLIS, MAX_MILLIS))
     }
 }
@@ -988,6 +1001,8 @@ public fun Long.toDuration(unit: DurationUnit): Duration {
  * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
  *
  * @throws IllegalArgumentException if this `Double` value is `NaN`.
+ *
+ * @sample samples.time.Durations.toDurationDouble
  */
 @SinceKotlin("1.6")
 public fun Double.toDuration(unit: DurationUnit): Duration {
@@ -1003,7 +1018,11 @@ public fun Double.toDuration(unit: DurationUnit): Duration {
 }
 
 
-/** Returns a duration whose value is the specified [duration] value multiplied by this number. */
+/**
+ * Returns a duration whose value is the specified [duration] value multiplied by this number.
+ *
+ * @sample samples.time.Durations.timesOperatorInt
+ */
 @SinceKotlin("1.6")
 @kotlin.internal.InlineOnly
 public inline operator fun Int.times(duration: Duration): Duration = duration * this
@@ -1014,6 +1033,8 @@ public inline operator fun Int.times(duration: Duration): Duration = duration * 
  * The operation may involve rounding when the result cannot be represented exactly with a [Double] number.
  *
  * @throws IllegalArgumentException if the operation results in a `NaN` value.
+ *
+ * @sample samples.time.Durations.timesOperatorDouble
  */
 @SinceKotlin("1.6")
 @kotlin.internal.InlineOnly

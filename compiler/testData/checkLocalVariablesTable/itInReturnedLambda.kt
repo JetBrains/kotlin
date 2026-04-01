@@ -9,5 +9,5 @@ fun foo() {
 }
 
 // METHOD : ItInReturnedLambdaKt$foo$bar$1.invoke(I)V
-// VARIABLE : NAME=this TYPE=LItInReturnedLambdaKt$foo$bar$1; INDEX=0
-// VARIABLE : NAME=it TYPE=I INDEX=1
+// VARIABLE : NAME=it TYPE=I
+// VARIABLE : NAME=this TYPE=LItInReturnedLambdaKt$foo$bar$1;

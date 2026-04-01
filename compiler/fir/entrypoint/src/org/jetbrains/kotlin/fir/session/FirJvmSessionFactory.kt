@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.fir.session
 
-import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.jvmTarget
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
@@ -22,11 +18,13 @@ import org.jetbrains.kotlin.fir.java.deserialization.FirJvmClasspathBuiltinSymbo
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.*
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
@@ -84,8 +82,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
         languageVersionSettings: LanguageVersionSettings,
         context: Context,
     ): FirSession {
-        val projectEnvironment = context.projectEnvironment
-        val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(context.librariesScope)
         return createLibrarySession(
             context,
             sharedLibrarySession,
@@ -94,7 +90,12 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
             extensionRegistrars,
             createSeparateSharedProvidersInHmppCompilation = true,
             createProviders = { session, kotlinScopeProvider ->
+                val projectEnvironment = context.projectEnvironment
                 val moduleData = moduleDataProvider.allModuleData.last()
+                val searchScope = moduleDataProvider.getModuleDataPaths(moduleData)?.let { paths ->
+                    projectEnvironment.getSearchScopeByClassPath(paths)
+                }?.takeUnless { it.isEmpty } ?: context.librariesScope
+                val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(searchScope)
                 listOfNotNull(
                     JvmClassFileBasedSymbolProvider(
                         session,
@@ -122,7 +123,12 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
     }
 
     override fun FirSession.registerLibrarySessionComponents(c: Context) {
-        registerJavaComponents(c.projectEnvironment.getJavaModuleResolver(), c.predefinedJavaComponents)
+        registerJavaComponents(
+            javaModuleResolver = c.projectEnvironment.getJavaModuleResolver(),
+            predefinedComponents = c.predefinedJavaComponents,
+            registerJvmDeserializationExtension = c.registerJvmDeserializationExtension,
+            inlineConstTracker = c.inlineConstTracker
+        )
     }
 
     // ==================================== Platform session ====================================
@@ -202,12 +208,15 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
     }
 
     override fun FirSession.registerSourceSessionComponents(c: Context) {
-        registerJavaComponents(c.projectEnvironment.getJavaModuleResolver(), c.predefinedJavaComponents)
+        registerLibrarySessionComponents(c)
         register(FirJvmTargetProvider::class, FirJvmTargetProvider(c.jvmTarget))
     }
 
     override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
         get() = true
+
+    override val isFactoryForMetadataCompilation: Boolean
+        get() = false
 
     // ==================================== Common parts ====================================
 
@@ -217,15 +226,20 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
         val jvmTarget: JvmTarget,
         val projectEnvironment: AbstractProjectEnvironment,
         val librariesScope: AbstractProjectFileSearchScope,
+        val registerJvmDeserializationExtension: Boolean,
+        val inlineConstTracker: InlineConstTracker?
     ) {
         constructor(
             configuration: CompilerConfiguration,
             projectEnvironment: AbstractProjectEnvironment,
             librariesScope: AbstractProjectFileSearchScope,
+            registerJvmDeserializationExtension: Boolean = true,
         ) : this(
             jvmTarget = configuration.jvmTarget ?: JvmTarget.DEFAULT,
             projectEnvironment,
             librariesScope,
+            registerJvmDeserializationExtension = registerJvmDeserializationExtension,
+            inlineConstTracker = configuration.inlineConstTracker
         )
 
         val packagePartProviderForLibraries: PackagePartProvider = projectEnvironment.getPackagePartProvider(librariesScope)

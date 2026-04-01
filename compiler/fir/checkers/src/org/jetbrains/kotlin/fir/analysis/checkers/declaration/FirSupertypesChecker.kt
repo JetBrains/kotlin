@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -66,7 +66,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
             }
             if (!extensionOrContextFunctionSupertypeReported &&
                 originalSupertype.fullyExpandedType().let { it.isExtensionFunctionType || it.hasContextParameters } &&
-                !LanguageFeature.FunctionalTypeWithExtensionAsSupertype.isEnabled()
+                LanguageFeature.FunctionalTypeWithExtensionAsSupertype.isDisabled()
             ) {
                 reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE)
                 extensionOrContextFunctionSupertypeReported = true
@@ -133,6 +133,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
         superTypeRef: FirTypeRef,
     ) {
         for (annotation in superTypeRef.annotations) {
+            // Without a use-site target it can be a valid type annotation
             if (annotation.useSiteTarget != null) {
                 reporter.reportOn(annotation.source, FirErrors.ANNOTATION_ON_SUPERCLASS_ERROR)
             }

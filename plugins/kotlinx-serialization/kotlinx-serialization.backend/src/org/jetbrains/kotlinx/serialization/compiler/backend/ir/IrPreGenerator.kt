@@ -102,7 +102,7 @@ class IrPreGenerator(
             )
         }
 
-        compilerContext.referenceClass(StandardClassIds.Annotations.jvmStatic)
+        compilerContext.finderForBuiltins().findClass(StandardClassIds.Annotations.jvmStatic)
             ?.let { method.annotations += method.createAnnotationCallWithoutArgs(it) }
 
         compilerContext.metadataDeclarationRegistrar.registerFunctionAsMetadataVisible(method)

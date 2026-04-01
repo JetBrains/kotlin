@@ -339,25 +339,61 @@ sourceElements
     ;
 
 arrayLiteral
-    : ('[' elementList ']')
+    : '[' ']'
+    | '[' elementList ']'
     ;
 
-// JavaScript supports arrays like [,,1,2,,].
 elementList
-    : ','* arrayElement? (','+ arrayElement) * ','* // Yes, everything is optional
+    : arrayElement (',' arrayElement)*
     ;
 
 arrayElement
-    : Ellipsis? singleExpression
+    : Ellipsis singleExpression
+    | singleExpression? // Nullable because of the array holes we need to preserve during parsing
     ;
 
 propertyAssignment
     : propertyName ':' singleExpression                                  # PropertyExpressionAssignment
-    | '[' singleExpression ']' ':' singleExpression                      # ComputedPropertyExpressionAssignment
+    | '[' label=singleExpression ']' ':' value=singleExpression          # ComputedPropertyExpressionAssignment
     | Async? '*'? propertyName '(' formalParameterList? ')' functionBody # FunctionProperty
     | getter '(' ')' functionBody                                        # PropertyGetter
     | setter '(' formalParameterArg ')' functionBody                     # PropertySetter
-    | Ellipsis? singleExpression                                         # PropertyShorthand
+    | Ellipsis singleExpression                                          # SpreadProperty
+    | identifierName                                                     # PropertyShorthand
+    ;
+
+objectBindingPattern
+    : '{' '}'
+    | '{' restBindingElement ','? '}'
+    | '{' propertyBindingPattern (',' propertyBindingPattern)* (',' restBindingElement)? ','? '}'
+    ;
+
+propertyBindingPattern
+    : identifierName initializer?                                        # RegularPropertyBindingPattern
+    | propertyName ':' bindingElement                                    # NamedPropertyBindingPattern
+    ;
+
+arrayBindingPattern
+    : '[' ']'
+    | '[' restBindingElement ','? ']'
+    | '[' arrayItemList (',' restBindingElement)? ','?']'
+    ;
+
+arrayItemList
+    : bindingElement (',' arrayItemBinding)*               // starts with an element
+    | ',' arrayItemBinding (',' arrayItemBinding)*         // starts with a hole (consumes a comma)
+    ;
+
+arrayItemBinding
+    : bindingElement? // Nullable because of the array pattern holes we need to preserve during parsing
+    ;
+
+bindingElement
+    : assignable initializer?
+    ;
+
+restBindingElement
+    : Ellipsis identifierName
     ;
 
 propertyName
@@ -395,7 +431,8 @@ singleExpressionImpl
     | New singleExpressionImpl arguments                                           # NewExpression
     | New singleExpressionImpl                                                     # NewExpression
     | singleExpressionImpl arguments                                               # ArgumentsExpression
-    | New '.' identifier                                                           # MetaExpression // new.target
+    | New '.' Target                                                               # MetaExpression // new.target
+    | Import '.' Meta                                                              # ImportMetaExpression
     | singleExpressionImpl {this.notLineTerminator()}? '++'                        # PostIncrementExpression
     | singleExpressionImpl {this.notLineTerminator()}? '--'                        # PostDecreaseExpression
     | Delete singleExpressionImpl                                                  # DeleteExpression
@@ -423,15 +460,14 @@ singleExpressionImpl
     | singleExpressionImpl '&&' singleExpressionImpl                               # LogicalAndExpression
     | singleExpressionImpl '||' singleExpressionImpl                               # LogicalOrExpression
     | <assoc = right> singleExpressionImpl '?' singleExpressionImpl ':' singleExpressionImpl # TernaryExpression
-    | <assoc = right> lhs=singleExpressionImpl '=' rhs=singleExpressionImpl                # AssignmentExpression
-    | <assoc = right> lhs=singleExpressionImpl assignmentOperator rhs=singleExpressionImpl # AssignmentOperatorExpression
+    | <assoc = right> lhs=singleExpressionImpl '=' rhs=singleExpressionImpl                  # AssignmentExpression
+    | <assoc = right> lhs=singleExpressionImpl assignmentOperator rhs=singleExpressionImpl   # AssignmentOperatorExpression
     | Import '(' singleExpressionImpl ')'                                          # ImportExpression
     | singleExpressionImpl templateStringLiteral                                   # TemplateStringExpression // ECMAScript 6
     | (Yield | YieldStar) ({this.notLineTerminator()}? expressionSequence)?        # YieldExpression          // ECMAScript 6
     | This                                                                         # ThisExpression
     | identifier                                                                   # IdentifierExpression
     | Super                                                                        # SuperExpression
-    | Import '.' Meta                                                              # ImportMetaExpression
     | literal                                                                      # LiteralExpression
     | arrayLiteral                                                                 # ArrayLiteralExpression
     | objectLiteral                                                                # ObjectLiteralExpression
@@ -447,8 +483,8 @@ initializer
 assignable
     : identifier
     | keyword
-    | arrayLiteral
-    | objectLiteral
+    | arrayBindingPattern
+    | objectBindingPattern
     ;
 
 objectLiteral
@@ -462,7 +498,7 @@ anonymousFunction
     ;
 
 arrowFunctionParameters
-    : propertyName
+    : identifierName
     | '(' formalParameterList? ')'
     ;
 
@@ -542,6 +578,8 @@ identifier
     | From
     | Yield
     | Of
+    | Target
+    | Meta
     ;
 
 reservedWord

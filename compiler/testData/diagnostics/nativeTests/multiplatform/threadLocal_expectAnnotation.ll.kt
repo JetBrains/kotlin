@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LL_FIR_DIVERGENCE
 // Checkers are run with Common session in Analysis API, so they can't see actualized declarations
 // LL_FIR_DIVERGENCE
@@ -67,7 +68,7 @@ class Bar2 {
     }
 }
 
-@MyThreadLocal
+<!INAPPLICABLE_THREAD_LOCAL!>@MyThreadLocal<!>
 enum class Color(var rgb: Int) {
     RED(0xFF0000),
     GREEN(0x00FF00),

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.konan.config.bundleId
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.name.Name
 
@@ -23,7 +24,7 @@ internal enum class BundleType {
  * https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Introduction/Introduction.html
  */
 internal class InfoPListBuilder(
-        private val config: KonanConfig,
+        private val config: NativeSecondStageCompilationConfig,
         private val bundleType: BundleType = BundleType.FRAMEWORK
 ) {
     private val configuration = config.configuration
@@ -160,7 +161,7 @@ internal class InfoPListBuilder(
         mainPackageGuesser: MainPackageGuesser,
         moduleDescriptor: ModuleDescriptor,
     ): String {
-        val deprecatedBundleIdOption = configuration[KonanConfigKeys.BUNDLE_ID]
+        val deprecatedBundleIdOption = configuration.bundleId
         val bundleIdOption = configuration[BinaryOptions.bundleId]
         if (deprecatedBundleIdOption != null && bundleIdOption != null && deprecatedBundleIdOption != bundleIdOption) {
             configuration.report(
@@ -177,7 +178,9 @@ internal class InfoPListBuilder(
                 moduleDescriptor.getIncludedLibraryDescriptors(config),
                 moduleDescriptor.getExportedDependencies(config),
         )
-        val bundleID = mainPackage.child(Name.identifier(bundleName)).asString()
+        // Bundle ID must contain only alphanumerics, `-` and `.`: https://developer.apple.com/documentation/bundleresources/information-property-list/cfbundleidentifier#Discussion
+        // Replace any other character with `-`.
+        val bundleID = mainPackage.child(Name.identifier(bundleName)).asString().replace("[^0-9a-zA-Z.-]".toRegex(), "-")
 
         if (mainPackage.isRoot) {
             configuration.report(

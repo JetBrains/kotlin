@@ -17,7 +17,7 @@ fun test_1(x: Any?) {
     when {
         x !is A -> {}
         x !is B -> x.foo()
-        <!USELESS_IS_CHECK!>x is Int<!> -> {
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>x is Int<!> -> {
             x.foo()
             x.bar()
             x.inc()
@@ -38,7 +38,7 @@ fun test_2(x: Any?) {
     when(x) {
         !is A -> {}
         !is B -> x.foo()
-        <!USELESS_IS_CHECK!>is Int<!> -> {
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is Int<!> -> {
             x.foo()
             x.bar()
             x.inc()
@@ -68,7 +68,7 @@ fun test_3(x: Any?) {
             x.foo()
             y.foo()
         }
-        <!USELESS_IS_CHECK!>is Int<!> -> {
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is Int<!> -> {
             x.foo()
             x.bar()
             x.inc()

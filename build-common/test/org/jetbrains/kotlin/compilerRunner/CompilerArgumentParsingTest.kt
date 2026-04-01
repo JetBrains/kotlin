@@ -134,8 +134,9 @@ fun Random.randomValue(type: KType): Any? {
         type == typeOf<Boolean>() -> randomBoolean()
         type == typeOf<Array<String>>() -> randomStringArray()
         type.isSubtypeOf(typeOf<List<*>>()) -> randomList(type.arguments.first().type ?: error("Missing elementType on $type"))
-        type == typeOf<ManualLanguageFeatureSetting>() -> return null
+        type == typeOf<ManualLanguageFeatureSetting>() -> null
         (type.classifier as? KClass<*>)?.isData == true -> null
+        type == typeOf<Map<ArgumentField, List<Any>>>() -> null
         else -> error("Unsupported type '$type'")
     }
 }

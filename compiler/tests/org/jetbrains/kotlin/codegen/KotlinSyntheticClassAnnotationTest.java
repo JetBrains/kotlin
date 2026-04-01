@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.FirParser;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.lang.annotation.Annotation;
@@ -36,6 +37,16 @@ import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_FQ_NAME
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_VERSION_FIELD_NAME;
 
 public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
+    @Override
+    public boolean getUseFir() {
+        return true;
+    }
+
+    @Override
+    public @NotNull FirParser getFirParser() {
+        return FirParser.LightTree;
+    }
+
     private static final FqName PACKAGE_NAME = new FqName("test");
 
     @Override

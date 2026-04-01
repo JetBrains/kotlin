@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.fir.FirIdeOnly
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.*
@@ -21,10 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaRetur
 import org.jetbrains.kotlin.fir.resolve.shouldBeResolvedInContextSensitiveMode
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
-import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
-import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
-import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -86,10 +84,18 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
                 null -> null
                 is FirAnonymousFunctionExpression -> ConeResolutionAtomWithPostponedChild(expression)
                 is FirCallableReferenceAccess -> when {
-                    expression.isResolved -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
+                    expression.hasResolvedType -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
                     else -> ConeResolutionAtomWithPostponedChild(expression)
                 }
-                is FirPropertyAccessExpression if expression.shouldBeResolvedInContextSensitiveMode() -> {
+                is FirPropertyAccessExpression -> when {
+                    expression.shouldBeResolvedInContextSensitiveMode() || expression.shouldAlternativeBeResolved() ->
+                        ConeResolutionAtomWithPostponedChild(
+                            expression,
+                            fallbackSubAtom = createRawAtomForResolvable(expression, allowUnresolvedExpression),
+                        )
+                    else -> createRawAtomForResolvable(expression, allowUnresolvedExpression)
+                }
+                is FirResolvedQualifier if expression.shouldAlternativeBeResolved() -> {
                     ConeResolutionAtomWithPostponedChild(
                         expression,
                         fallbackSubAtom = createRawAtomForResolvable(expression, allowUnresolvedExpression),
@@ -108,11 +114,16 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
             }
         }
 
-        private fun <F> createRawAtomForResolvable(
-            expression: F,
+        private fun FirQualifierWithContextSensitiveAlternative.shouldAlternativeBeResolved(): Boolean {
+            // It's ok to opt in here because it's only not-null in ideMode
+            return (@OptIn(FirIdeOnly::class) contextSensitiveAlternative) != null
+        }
+
+        private fun createRawAtomForResolvable(
+            expression: FirExpression,
             allowUnresolvedExpression: Boolean,
-        ): ConeResolutionAtom where F : FirResolvable, F : FirExpression =
-            when (val candidate = expression.candidate()) {
+        ): ConeResolutionAtom =
+            when (val candidate = (expression as? FirResolvable)?.candidate()) {
                 null -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
                 else -> ConeAtomWithCandidate(expression, candidate)
             }
@@ -127,7 +138,7 @@ class ConeSimpleLeafResolutionAtom(override val expression: FirExpression, allow
             checkWithAttachment(
                 allowUnresolvedExpression ||
                         expression.unwrapArgument() is FirFakeArgumentForCallableReference ||
-                        expression.isResolved,
+                        expression.hasResolvedType,
                 { "ConeResolvedAtom should be created only for resolved expressions" }
             ) {
                 withFirEntry("expression", expression)
@@ -306,7 +317,7 @@ class ConeResolvedCallableReferenceAtom(
 
     val isPostponedBecauseOfAmbiguity: Boolean get() = state == State.POSTPONED_BECAUSE_OF_AMBIGUITY
 
-    val needsResolution: Boolean get() = state.needsResolution
+    override val needsResolution: Boolean get() = state.needsResolution
 
     var resultingReference: FirNamedReference? = null
         private set
@@ -368,11 +379,31 @@ class ConeSimpleNameForContextSensitiveResolution(
         get() = null
 }
 
+class ConeContextSensitiveAlternativeForQualifierAtom @FirIdeOnly constructor(
+    val originalExpression: FirQualifierWithContextSensitiveAlternative,
+    val alternative: FirPropertyAccessExpression,
+    override val expectedType: ConeKotlinType,
+) : ConePostponedResolvedAtom() {
+    override val inputTypes: Collection<ConeKotlinType> = listOf(expectedType)
+    override val outputType: ConeKotlinType?
+        get() = null
+
+    override val expression: FirExpression
+        get() = originalExpression as FirExpression
+
+    // Generally, all the call-site might just assign `analyzed = true` themselves, but this method might help to highlight the places
+    // where we discard the alternative
+    fun markDiscarded() {
+        analyzed = true
+        originalExpression.replaceContextSensitiveAlternative(null)
+    }
+}
+
 class ConeCollectionLiteralAtom(
     override val expression: FirCollectionLiteral,
     override val expectedType: ConeKotlinType?,
     val containingCallCandidate: Candidate,
-) : ConePostponedResolvedAtom() {
+) : ConePostponedResolvedAtom(), CollectionLiteralAtomMarker {
     override val inputTypes: Collection<ConeKotlinType> = listOfNotNull(expectedType)
     override val outputType: ConeKotlinType?
         get() = null

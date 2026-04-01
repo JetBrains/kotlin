@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-68975
 // See same test for codegen: compiler/testData/codegen/box/js/lambdaWithoutNonLocalControlflow.kt
 // TARGET_BACKEND: JS_IR
@@ -8,7 +9,7 @@ import kotlin.test.*
 inline fun testLambdaInline(
     block: (Unit) -> String,
 ): String {
-    return js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>"block()"<!>)
+    return js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_ERROR!>"block()"<!>)
 }
 
 <!NOTHING_TO_INLINE!>inline<!> fun testLambdaNoInline(
@@ -20,7 +21,7 @@ inline fun testLambdaInline(
 inline fun testLambdaCrossInline(
     crossinline block: (Unit) -> String,
 ): String {
-    return js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>"block()"<!>)
+    return js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_ERROR!>"block()"<!>)
 }
 
 fun box(): String {

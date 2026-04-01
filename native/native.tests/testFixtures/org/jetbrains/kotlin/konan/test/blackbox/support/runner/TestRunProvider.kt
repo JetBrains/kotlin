@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.buildTree
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.startsWith
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
+import org.jetbrains.kotlin.test.services.TestService
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.extension.ExtensionContext
 
@@ -34,7 +35,7 @@ import org.junit.jupiter.api.extension.ExtensionContext
  */
 class TestRunProvider(
     val testCaseGroupProvider: TestCaseGroupProvider
-) : BaseTestRunProvider(), ExtensionContext.Store.CloseableResource {
+) : BaseTestRunProvider(), ExtensionContext.Store.CloseableResource, TestService {
     private val compilationFactory = TestCompilationFactory()
     private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation<Executable>>()
     private val cachedXCTestCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation<TestCompilationArtifact.XCTestBundle>>()
@@ -112,7 +113,7 @@ class TestRunProvider(
         fun createTestRun(testRunName: String, testName: TestName?) = createTestRun(testCase, executable, testRunName, testName)
 
         when (testCase.kind) {
-            TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB -> {
+            TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB, TestKind.STANDALONE_STEPPING -> {
                 val testRunName = (testCase.extras<NoTestRunnerExtras>().entryPoint ?: "main").substringAfterLast('.')
                 val testRun = createTestRun(testRunName, testName = null)
                 TreeNode.oneLevel(testRun)
@@ -188,7 +189,7 @@ class TestRunProvider(
             TestExecutable.fromCompilationResult(testCase, adapter)
         } else {
             val testCompilation = when (testCase.kind) {
-                TestKind.STANDALONE, TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB -> {
+                TestKind.STANDALONE, TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB, TestKind.STANDALONE_STEPPING -> {
                     // Create a separate compilation for each standalone test case.
                     cachedCompilations.computeIfAbsent(
                         TestCompilationCacheKey.Standalone(testCaseId)

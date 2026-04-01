@@ -1,0 +1,9 @@
+KtDotQualifiedExpression(118,123): 'f.foo'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      val foo: kotlin.Int,
+      val foo: kotlin.String
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    val <A> Foo<A>.foo: Int
+    val <B> Foo<B>.foo: String>

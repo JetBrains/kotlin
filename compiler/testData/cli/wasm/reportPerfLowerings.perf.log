@@ -1,4 +1,4 @@
-Kotlin to JS compiler performance report
+Kotlin to Wasm compiler performance report
                 INIT        $UINT>>$ ms
              ANALYZE        $UINT>>$ ms            $REAL>>$ loc/s
    TRANSLATION to IR        $UINT>>$ ms            $REAL>>$ loc/s

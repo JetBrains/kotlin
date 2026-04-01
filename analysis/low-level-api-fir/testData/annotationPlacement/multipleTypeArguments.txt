@@ -1,0 +1,5 @@
+Entity<@R|A|()  A, @R|B|()  B, @R|C|()  C>
+
+SmallStack[0, -1, -1] for A
+SmallStack[1, -1, -1] for B
+SmallStack[2, -1, -1] for C

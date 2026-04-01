@@ -16,17 +16,22 @@ class DataFrameUnfold : AbstractSchemaModificationInterpreter() {
     val Arguments.columns: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.asDataFrame().replace { columns }.with {
-            val column = it.asSimpleColumn() as? SimpleDataColumn
-            if (column != null) {
-                if (!column.type.type.canBeUnfolded(session)) {
-                    it
+        return receiver.modify(impliedColumnsResolver = columns) {
+            replace { columns }.with {
+                val column = it.asSimpleColumn() as? SimpleDataColumn
+                if (column != null) {
+                    if (!column.type.coneType.canBeUnfolded(session)) {
+                        it
+                    } else {
+                        SimpleColumnGroup(
+                            it.name(),
+                            toDataFrame(maxDepth, column.type.coneType, TraverseConfiguration.EMPTY).columns()
+                        ).asDataColumn()
+                    }
                 } else {
-                    SimpleColumnGroup(it.name(), toDataFrame(maxDepth, column.type.type, TraverseConfiguration()).columns()).asDataColumn()
+                    it
                 }
-            } else {
-                it
             }
-        }.toPluginDataFrameSchema()
+        }
     }
 }

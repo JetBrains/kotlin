@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: throws.kt
 package kotlin
@@ -33,7 +34,7 @@ fun foo7(x: kotlin.native.<!DEPRECATION!>Throws<!>) {}
 // FILE: main2.kt
 package abc2
 
-import <!DEPRECATION!>kotlin.native.Throws<!>
+import kotlin.native.Throws
 
 @<!DEPRECATION!>Throws<!>(Throwable::class)
 fun foo1() {}
@@ -70,7 +71,7 @@ fun foo7(x: kotlin.native.<!DEPRECATION!>Throws<!>) {}
 package abc4
 
 import kotlin.<!CONFLICTING_IMPORT!>Throws<!>
-import <!DEPRECATION!>kotlin.native.<!CONFLICTING_IMPORT!>Throws<!><!>
+import kotlin.native.<!CONFLICTING_IMPORT!>Throws<!>
 
 @Throws(Throwable::class)
 fun foo1() {}
@@ -144,7 +145,7 @@ fun foo7(x: kotlin.native.<!DEPRECATION!>Throws<!>) {}
 package abc8
 
 import kotlin.*
-import <!DEPRECATION!>kotlin.native.Throws<!>
+import kotlin.native.Throws
 
 @<!DEPRECATION!>Throws<!>(Throwable::class)
 fun foo1() {}

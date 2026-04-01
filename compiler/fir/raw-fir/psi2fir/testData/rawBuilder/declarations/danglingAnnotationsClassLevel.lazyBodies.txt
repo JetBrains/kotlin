@@ -1,29 +1,29 @@
 FILE: danglingAnnotationsClassLevel.kt
     public final? class A : R|kotlin/Any| {
-        public? constructor(): R|A| {
+        public? [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Suppress(LAZY_EXPRESSION) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+        [ContainingClassKey=A] @Suppress(LAZY_EXPRESSION) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
     }
     public final? class B : R|kotlin/Any| {
-        public? constructor(): R|B| {
+        public? [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Suppress(LAZY_EXPRESSION) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+        [ContainingClassKey=B] @Suppress(LAZY_EXPRESSION) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
     }
     public final? class Outer : R|kotlin/Any| {
-        public? constructor(): R|Outer| {
+        public? [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
         public final? class Inner : R|kotlin/Any| {
-            public? constructor(): R|Outer.Inner| {
+            public? [ContainingClassKey=Inner] constructor(): R|Outer.Inner| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            @Suppress(LAZY_EXPRESSION) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+            [ContainingClassKey=Inner] @Suppress(LAZY_EXPRESSION) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
         }
 
         public? final? fun withLocal(): R|kotlin/Unit| { LAZY_BLOCK }

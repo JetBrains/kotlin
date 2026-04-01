@@ -1,17 +1,16 @@
 KtNameReferenceExpression(133,137): 'test'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /test(): kotlin.Unit
-          valueParameters = []
-          contextParameters = []
-          callableId = /test
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /test(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = /test
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}

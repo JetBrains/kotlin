@@ -252,4 +252,63 @@ class Durations {
         assertPrints(Duration.INFINITE.toDouble(DurationUnit.SECONDS), "Infinity")
     }
 
+    @Sample
+    fun toDurationInt() {
+        assertPrints(100.toDuration(DurationUnit.MILLISECONDS), "100ms")
+        assertPrints(60.toDuration(DurationUnit.SECONDS), "1m")
+    }
+
+    @Sample
+    fun toDurationLong() {
+        assertPrints(1_000_000_000L.toDuration(DurationUnit.NANOSECONDS), "1s")
+        assertPrints(Long.MAX_VALUE.toDuration(DurationUnit.DAYS), "Infinity")
+    }
+
+    @Sample
+    fun toDurationDouble() {
+        assertPrints(1.5.toDuration(DurationUnit.HOURS), "1h 30m")
+        assertPrints(0.001.toDuration(DurationUnit.SECONDS), "1ms")
+    }
+
+    @Sample
+    fun timesOperatorInt() {
+        val thirtyMinutes = 30.minutes
+
+        assertPrints(2 * thirtyMinutes, "1h")
+        assertPrints(3 * 10.seconds, "30s")
+    }
+
+    @Sample
+    fun timesOperatorDouble() {
+        val thirtyMinutes = 30.minutes
+
+        assertPrints(1.5 * thirtyMinutes, "45m")
+        assertPrints(0.5 * 1.hours, "30m")
+    }
+
+    @Sample
+    fun durationUnitToTimeUnitConversion() {
+        val timeUnit: java.util.concurrent.TimeUnit = DurationUnit.SECONDS.toTimeUnit()
+        assertPrints(timeUnit, "SECONDS")
+    }
+
+    @Sample
+    fun timeUnitToDurationUnitConversion() {
+        val durationUnit: DurationUnit = java.util.concurrent.TimeUnit.MILLISECONDS.toDurationUnit()
+        assertPrints(durationUnit, "MILLISECONDS")
+    }
+
+    @Sample
+    fun toJavaDurationConversion() {
+        val kotlinDuration = 5.5.seconds
+        val javaDuration: java.time.Duration = kotlinDuration.toJavaDuration()
+        assertPrints(javaDuration.toMillis(), "5500")
+    }
+
+    @Sample
+    fun toKotlinDurationConversion() {
+        val javaMinutes = java.time.Duration.ofMinutes(30)
+        val kotlinMinutes: Duration = javaMinutes.toKotlinDuration()
+        assertPrints(kotlinMinutes, "30m")
+    }
 }

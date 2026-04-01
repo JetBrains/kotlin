@@ -9,7 +9,6 @@ import kotlinx.coroutines.runBlocking
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
-import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.JvmScriptCompiler
@@ -67,7 +66,10 @@ class ConfigurationDslTest {
         val script = "@file:MyTestAnnotation1\nann1+ann12".toScriptSource()
 
         val compiledScript = runBlocking {
-            JvmScriptCompiler(defaultJvmScriptingHostConfiguration).invoke(script, baseConfig).valueOrThrow()
+            val compiler =
+                if (isRunningTestOnK2) JvmScriptCompiler()
+                else JvmScriptCompiler.createLegacy()
+            compiler.invoke(script, baseConfig).valueOrThrow()
         }
         val finalConfig = compiledScript.compilationConfiguration
 
@@ -129,7 +131,10 @@ class ConfigurationDslTest {
         val script = "val x = 1".toScriptSource()
 
         val evalRes = runBlocking {
-            JvmScriptCompiler(defaultJvmScriptingHostConfiguration).invoke(script, ScriptCompilationConfiguration()).onSuccess {
+            val compiler =
+                if (isRunningTestOnK2) JvmScriptCompiler()
+                else JvmScriptCompiler.createLegacy()
+            compiler.invoke(script, ScriptCompilationConfiguration()).onSuccess {
                 BasicJvmScriptEvaluator().invoke(it, ScriptEvaluationConfiguration())
             }.valueOrThrow()
         }

@@ -1,15 +1,19 @@
-apply plugin: 'org.jetbrains.kotlin.js'
-
-dependencies {
-    implementation project(':lib')
-    // do not remove until KT-25488 is fixed
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
-}
+apply plugin: 'org.jetbrains.kotlin.multiplatform'
 
 kotlin {
     js {
         nodejs {
 
+        }
+    }
+
+    sourceSets {
+        jsMain {
+            kotlin.srcDir("src/main/kotlin")
+
+            dependencies {
+                implementation project(':lib')
+            }
         }
     }
 }

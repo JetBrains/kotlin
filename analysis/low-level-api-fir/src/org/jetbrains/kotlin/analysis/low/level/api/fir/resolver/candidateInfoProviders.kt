@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallKind
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.ImplicitInvokeMode
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.buildCallKindWithCustomResolutionSequence
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.receiverType
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -38,7 +35,7 @@ interface CandidateInfoProvider {
     fun shouldFailBeforeResolve(): Boolean
 }
 
-abstract class AbstractCandidateInfoProvider(
+abstract class AbstractBaseCandidateInfoProvider(
     protected val resolutionParameters: ResolutionParameters,
     protected val firFile: FirFile,
     protected val firSession: FirSession,
@@ -63,15 +60,11 @@ abstract class AbstractCandidateInfoProvider(
     override fun shouldFailBeforeResolve(): Boolean = false
 }
 
-/**
- * Provider for CHECK_EXTENSION_FOR_COMPLETION mode.
- */
-class CheckExtensionForCompletionCandidateInfoProvider(
+abstract class AbstractExtensionCandidateInfoProvider(
     resolutionParameters: ResolutionParameters,
     firFile: FirFile,
     firSession: FirSession,
-) : AbstractCandidateInfoProvider(resolutionParameters, firFile, firSession) {
-
+) : AbstractBaseCandidateInfoProvider(resolutionParameters, firFile, firSession) {
     override fun callKind(): CallKind = buildCallKindWithCustomResolutionSequence {
         checkExtensionReceiver = true
     }
@@ -98,5 +91,40 @@ class CheckExtensionForCompletionCandidateInfoProvider(
         val candidateHasExtensionReceiver = fir.receiverParameter != null
                 || fir is FirVariable && fir.returnTypeRef.coneType.receiverType(firSession) != null
         callHasExtensionReceiver != candidateHasExtensionReceiver
+    }
+}
+
+/**
+ * Provider for [SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION] mode.
+ */
+class CheckExtensionForCompletionCandidateInfoProvider(
+    resolutionParameters: ResolutionParameters,
+    firFile: FirFile,
+    firSession: FirSession,
+) : AbstractExtensionCandidateInfoProvider(resolutionParameters, firFile, firSession)
+
+/**
+ * Provider for [SingleCandidateResolutionMode.CHECK_EXTENSION_CALLABlE_REFERENCE_FOR_COMPLETION] mode.
+ */
+class CheckCallableReferenceForCompletionCandidateInfoProvider(
+    resolutionParameters: ResolutionParameters,
+    firFile: FirFile,
+    firSession: FirSession,
+) : AbstractExtensionCandidateInfoProvider(resolutionParameters, firFile, firSession) {
+    override fun callInfo(): CallInfo {
+        return with(resolutionParameters) {
+            CallableReferenceInfo(
+                callSite = firFile,
+                name = callableSymbol.name,
+                explicitReceiver = explicitReceiver,
+                containingDeclarations = emptyList(),
+                containingFile = firFile,
+                session = firSession,
+                expectedType = null,
+                lhs = resolutionParameters.callableReferenceLHS,
+                hasSyntheticOuterCall = false,
+                callKind = callKind(),
+            )
+        }
     }
 }

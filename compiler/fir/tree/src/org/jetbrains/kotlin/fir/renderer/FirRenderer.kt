@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractRenderer
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isDelegatedProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
@@ -45,7 +46,7 @@ class FirRenderer(
     override val contractRenderer: ConeContractRenderer? = ConeContractRenderer(),
     override val declarationRenderer: FirDeclarationRenderer? = FirDeclarationRenderer(),
     override val idRenderer: ConeIdRenderer = ConeIdRendererForDebugging(),
-    override val modifierRenderer: FirModifierRenderer? = FirAllModifierRenderer(),
+    override val modifierRenderer: FirModifierRenderer? = FirAllModifierRenderer(FirModifierRenderer.StaticPolicy.Default),
     override val packageDirectiveRenderer: FirPackageDirectiveRenderer? = null,
     override val propertyAccessorRenderer: FirPropertyAccessorRenderer? = FirPropertyAccessorRenderer(),
     override val resolvePhaseRenderer: FirResolvePhaseRenderer? = null,
@@ -89,7 +90,7 @@ class FirRenderer(
             bodyRenderer = null,
             propertyAccessorRenderer = null,
             callArgumentsRenderer = FirCallNoArgumentsRenderer(),
-            modifierRenderer = FirPartialModifierRenderer(),
+            modifierRenderer = FirPartialModifierRenderer(FirModifierRenderer.StaticPolicy.Default),
             callableSignatureRenderer = FirCallableSignatureRendererForReadability(),
             declarationRenderer = FirDeclarationRenderer("local "),
         )
@@ -246,11 +247,49 @@ class FirRenderer(
             printer.popIndent()
         }
 
+        override fun visitReplSnippet(replSnippet: FirReplSnippet) {
+            annotationRenderer?.render(replSnippet)
+            printer.print("REPL_SNIPPET: ")
+            renderPhaseAndAttributes(replSnippet)
+            printer.println(replSnippet.name)
+            printer.pushIndent()
+            replSnippet.receivers.forEach {
+                it.accept(this)
+                printer.newLine()
+            }
+
+            replSnippet.snippetClass.accept(this)
+            printer.popIndent()
+        }
+
         override fun visitScriptReceiverParameter(scriptReceiverParameter: FirScriptReceiverParameter) {
             renderPhaseAndAttributes(scriptReceiverParameter)
             annotationRenderer?.render(scriptReceiverParameter)
             print("<script receiver parameter>: ")
             scriptReceiverParameter.typeRef.accept(this)
+        }
+
+        override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference) {
+            print("<repl declaration reference>: ")
+            referencedSymbolRenderer.printReference(replDeclarationReference.symbol)
+        }
+
+        override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer) {
+            print("<repl property initializer: ")
+            referencedSymbolRenderer.printReference(replPropertyInitializer.propertySymbol)
+            print("> = ")
+            replPropertyInitializer.initializer.accept(this)
+        }
+
+        override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate) {
+            print("<repl property delegate: ")
+            referencedSymbolRenderer.printReference(replPropertyDelegate.propertySymbol)
+            print("> = ")
+            replPropertyDelegate.delegate.accept(this)
+        }
+
+        override fun visitReplExpressionReference(replExpressionReference: FirReplExpressionReference) {
+            print("REPL_EXPRESSION_REF")
         }
 
         override fun visitCodeFragment(codeFragment: FirCodeFragment) {
@@ -376,7 +415,7 @@ class FirRenderer(
 
         override fun visitProperty(property: FirProperty) {
             visitVariable(property)
-            if (property.symbol is FirLocalPropertySymbol) return
+            if (property.symbol is FirLocalPropertySymbol && !property.isDelegatedProperty) return
             propertyAccessorRenderer?.render(property)
         }
 
@@ -766,17 +805,22 @@ class FirRenderer(
             print(")")
         }
 
-        override fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression) {
-            val expression = samConversionExpression.expression
+        override fun visitFunctionTypeConversionExpression(functionTypeConversionExpression: FirFunctionTypeConversionExpression) {
+            val expression = functionTypeConversionExpression.expression
+
+            val kind = when (functionTypeConversionExpression.kind) {
+                FirFunctionConversionKind.Sam -> "SAM"
+                is FirFunctionConversionKind.BetweenFunctionTypes -> "FConversion"
+            }
 
             if (expression is FirAnonymousFunctionExpression && expression.isTrailingLambda) {
-                print("<L> = SAM(")
+                print("<L> = $kind(")
                 expression.anonymousFunction.accept(this)
                 print(")")
                 return
             }
 
-            print("SAM(")
+            print("$kind(")
             expression.accept(this)
             print(")")
         }
@@ -1060,6 +1104,9 @@ class FirRenderer(
             }
             print("::")
             callableReferenceAccess.calleeReference.accept(this)
+            callableReferenceAccess.errorArgumentList?.let {
+                callArgumentsRenderer?.renderArguments(it.arguments)
+            }
         }
 
         override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {

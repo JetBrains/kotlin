@@ -27,7 +27,7 @@ class A(val v3: Unit)
 // MODULE: m4(m1, m2, m3)
 // FILE: oneExplicitImportOtherStars.kt
 import p1.*
-import p2.<!API_NOT_AVAILABLE!>A<!>
+import p2.A
 import p3.*
 
 fun test(a: <!NONE_APPLICABLE!>A<!>) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.components.containingSymbol
 import org.jetbrains.kotlin.analysis.api.components.defaultType
 import org.jetbrains.kotlin.analysis.api.components.isArrayOrPrimitiveArray
@@ -93,9 +94,10 @@ internal sealed class SirInitFromKtSymbol(
     protected val isBridged: Boolean
         get() = withSessions {
             (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>()?.let {
-                !it.modality.isAbstract() && !it.defaultType.isArrayOrPrimitiveArray
+                !it.modality.isAbstract() && !it.defaultType.isArrayOrPrimitiveArray && !it.hasFBoundedTypeParameters()
             } ?: false
         }
+
 }
 
 private inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.getOuterParameterOfInnerClass(): SirParameter? {
@@ -123,58 +125,67 @@ internal class SirRegularInitFromKtSymbol(
     override val isFailable: Boolean
         get() = false
 
-    override val bridges: List<SirBridge> by lazy {
+    override val bridges: List<SirBridge> by lazyWithSessions {
         val producingType: SirType = SirNominalType(
             parent as? SirScopeDefiningDeclaration ?: error("Encountered an Init that produces non-named type: $parent")
         )
 
-        listOfNotNull(
-            bridgeAllocProxy?.createSirBridge {
-                val args = argNames
-                "kotlin.native.internal.createUninitializedInstance<${
-                    typeNamer.kotlinFqName(
-                        producingType,
-                        SirTypeNamer.KotlinNameType.PARAMETRIZED
-                    )
-                }>(${args.joinToString()})"
-            },
-            if (origin is InnerInitSource) {
-                bridgeInitProxy?.createSirBridge {
-                    val args = this.argNames
-                    require(kotlinFqName.size >= 2) {
-                        "Expected >=2 kotlinFqName.size, but were ${kotlinFqName.size}: ${kotlinFqName.joinToString(",")}"
-                    }
-                    require(args.size >= 2) {
-                        "Expected >=2 inner constructor arguments, but were ${args.size}: ${args.joinToString(",")}"
-                    }
-                    val outerClassName = kotlinFqName.dropLast(1).joinToString(".")
-                    val innerClassName = kotlinFqName.last()
-                    val innerConstructorArgs = args.drop(1).dropLast(1).joinToString(", ")
-                    val innerConstructorCall = "(${args.last()} as $outerClassName).$innerClassName($innerConstructorArgs)"
-
-                    "kotlin.native.internal.initInstance(${args.first()}, $innerConstructorCall)"
-                }
-            } else {
-                bridgeInitProxy?.createSirBridge {
+        buildList {
+            addAll(
+                bridgeAllocProxy?.createSirBridges {
                     val args = argNames
-                    "kotlin.native.internal.initInstance(${args.first()}, ${
+                    "kotlin.native.internal.createUninitializedInstance<${
                         typeNamer.kotlinFqName(
                             producingType,
                             SirTypeNamer.KotlinNameType.PARAMETRIZED
                         )
-                    }(${args.drop(1).joinToString()}))"
-                }
-            },
-        )
+                    }>(${args.joinToString()})${
+                        if ((ktSymbol.containingDeclaration as KaNamedClassSymbol).isInline) " as Any?" else ""
+                    }"
+                }.orEmpty()
+            )
+            if (origin is InnerInitSource) {
+                addAll(
+                    bridgeInitProxy?.createSirBridges {
+                        val args = this.argNames
+
+                        require(!kotlinFqName.parent().isRoot) {
+                            "Expected qualified name with a dot, but were ${kotlinFqName.asString()} instead"
+                        }
+                        require(args.size >= 2) {
+                            "Expected >=2 inner constructor arguments, but were ${args.size}: ${args.joinToString(",")}"
+                        }
+                        val outerClassName = kotlinFqName.parent()
+                        val innerClassName = kotlinFqName.shortName()
+                        val innerConstructorArgs = args.drop(1).dropLast(1).joinToString(", ")
+                        val innerConstructorCall = "(${args.last()} as $outerClassName).$innerClassName($innerConstructorArgs)"
+
+                        "kotlin.native.internal.initInstance(${args.first()}, $innerConstructorCall)"
+                    }.orEmpty()
+                )
+            } else {
+                addAll(
+                    bridgeInitProxy?.createSirBridges {
+                        val args = argNames
+                        "kotlin.native.internal.initInstance(${args.first()}, ${
+                            typeNamer.kotlinFqName(
+                                producingType,
+                                SirTypeNamer.KotlinNameType.PARAMETRIZED
+                            )
+                        }(${args.drop(1).joinToString()}))"
+                    }.orEmpty()
+                )
+            }
+        }
     }
 
     override var body: SirFunctionBody?
         set(_) {}
-        get() {
-            val initDescriptor = bridgeInitProxy ?: return null
-            val allocDescriptor = bridgeAllocProxy ?: return null
+        get() = withSessions {
+            val initDescriptor = bridgeInitProxy ?: return@withSessions null
+            val allocDescriptor = bridgeAllocProxy ?: return@withSessions null
 
-            return SirFunctionBody(buildList {
+            return@withSessions SirFunctionBody(buildList {
                 (parent as? SirScopeDefiningDeclaration)?.let {
                     add("if Self.self != ${it.swiftFqName}.self { fatalError(\"Inheritance from exported Kotlin classes is not supported yet: \\(String(reflecting: Self.self)) inherits from ${it.swiftFqName} \") }")
                 }
@@ -183,7 +194,7 @@ internal class SirRegularInitFromKtSymbol(
                     "let ${obj.name} = $it"
                 })
 
-                add("super.init(__externalRCRefUnsafe: ${obj.name}, options: .asBoundBridge)")
+                add("super.init(__externalRCRefUnsafe: ${obj.name}, options: .asBoundBridge);")
 
                 addAll(initDescriptor.createSwiftInvocation(resultTransformer = null))
             })
@@ -193,12 +204,11 @@ internal class SirRegularInitFromKtSymbol(
         if (!isBridged || bridgeInitProxy == null) return@lazyWithSessions null
 
         val fqName = ktSymbol.containingClassId?.asSingleFqName()
-            ?.pathSegments()?.map { it.toString() }
             ?: return@lazyWithSessions null
 
         val suffix = "_init" + "_allocate"
 
-        val baseName = fqName.forBridge.joinToString("_") + suffix
+        val baseName = fqName.baseBridgeName + suffix
 
         generateFunctionBridge(
             baseBridgeName = baseName,
@@ -206,6 +216,7 @@ internal class SirRegularInitFromKtSymbol(
             returnType = obj.type,
             kotlinFqName = fqName,
             selfParameter = null,
+            contextParameters = emptyList(),
             extensionReceiverParameter = null,
             errorParameter = null,
             isAsync = false,
@@ -216,12 +227,11 @@ internal class SirRegularInitFromKtSymbol(
         if (!isBridged) return@lazyWithSessions null
 
         val fqName = ktSymbol.containingClassId?.asSingleFqName()
-            ?.pathSegments()?.map { it.toString() }
             ?: return@lazyWithSessions null
 
         val suffix = "_init" + "_initialize"
 
-        val baseName = fqName.forBridge.joinToString("_") + suffix
+        val baseName = fqName.baseBridgeName + suffix
 
         generateFunctionBridge(
             baseBridgeName = baseName,
@@ -229,6 +239,7 @@ internal class SirRegularInitFromKtSymbol(
             returnType = returnType,
             kotlinFqName = fqName,
             selfParameter = null,
+            contextParameters = emptyList(),
             extensionReceiverParameter = null,
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
                 SirParameter("", "__error", it)

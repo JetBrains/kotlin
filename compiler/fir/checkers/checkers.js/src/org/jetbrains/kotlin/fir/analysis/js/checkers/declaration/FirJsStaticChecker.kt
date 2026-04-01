@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
@@ -30,6 +31,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
 object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (declaration is FirConstructor) {
@@ -67,16 +71,16 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         targetSource: KtSourceElement?,
     ) {
         if (declaration !is FirMemberDeclaration) {
+            // WRONG_DECLARATION_TARGET
             return
         }
 
-        val container = declaration.getContainingClassSymbol() ?: return
+        val container = declaration.getContainingClassSymbol()
 
         if (
-            !container.isCompanion() || (
-                    container.containerIsInterface() &&
-                    !context.languageVersionSettings.supportsFeature(LanguageFeature.JsStaticInInterface)
-            )
+            container == null ||
+            !container.isCompanion() ||
+            (container.containerIsInterface() && LanguageFeature.JsStaticInInterface.isDisabled())
         ) {
             reporter.reportOn(targetSource, FirJsErrors.JS_STATIC_NOT_IN_CLASS_COMPANION)
         }

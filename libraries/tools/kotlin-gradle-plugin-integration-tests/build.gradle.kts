@@ -22,9 +22,10 @@ kotlin {
             "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
             "kotlin.io.path.ExperimentalPathApi",
         )
-        freeCompilerArgs.add(
+        freeCompilerArgs.addAll(
             // Avoid having to use JvmSerializableLambda in build script injections
-            "-Xlambdas=class"
+            "-Xlambdas=class",
+            "-Xmulti-dollar-interpolation",
         )
     }
 }
@@ -43,15 +44,23 @@ tasks.withType(AbstractKotlinCompile::class.java).configureEach {
 }
 
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
-val applePrivacyManifestPluginClasses = configurations.detachedConfiguration(
-    dependencies.create(dependencies.project(":kotlin-privacy-manifests-plugin"))
-).also { it.isTransitive = false }
+
+val configurationToBeConsumedInTests: MutableMap<String, Configuration> = mutableMapOf()
+
+fun createConfigurationToBeConsumedInTests(name: String, dependencyProject: String) {
+    configurationToBeConsumedInTests[name] = configurations.detachedConfiguration(
+        dependencies.create(dependencies.project(dependencyProject))
+    ).also { it.isTransitive = false }
+}
+
+createConfigurationToBeConsumedInTests("applePrivacyManifestPlugin", ":kotlin-privacy-manifests-plugin")
+createConfigurationToBeConsumedInTests("sandboxPlugin", ":plugins:plugin-sandbox")
 
 dependencies {
     testImplementation(testFixtures(project(":kotlin-gradle-plugin"))) {
         (this as ModuleDependency).isTransitive = false
     }
-    testImplementation(project(":compiler:cli-common"))
+    testImplementation(project(":compiler:cli-base"))
     testImplementation(project(":kotlin-gradle-plugin"))
     testImplementation(project(":kotlin-allopen"))
     testImplementation(project(":kotlin-noarg"))
@@ -78,17 +87,22 @@ dependencies {
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
 
     testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
+    testImplementation(project(":compiler:build-tools:kotlin-build-tools-api"))
+    testRuntimeOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))
     testImplementation(project(":kotlin-compiler-embeddable"))
     testImplementation(intellijJDom())
     testImplementation(intellijPlatformUtil())
-    testImplementation(project(":compiler:cli-common"))
+    testImplementation(project(":compiler:cli-base"))
+    testImplementation(testFixtures(project(":compiler:test-infrastructure-utils.common")))
     // testCompileOnly dependency on non-shaded artifacts is needed for IDE support
     // testRuntimeOnly on shaded artifact is needed for running tests with shaded compiler
     testCompileOnly(project(":kotlin-gradle-plugin-test-utils-embeddable"))
     testRuntimeOnly(project(":kotlin-gradle-plugin-test-utils-embeddable")) { isTransitive = false }
 
-    applePrivacyManifestPluginClasses.dependencies.all {
-        testCompileOnly(this) { (this as ModuleDependency).isTransitive = false }
+    configurationToBeConsumedInTests.values.forEach {
+        it.dependencies.all {
+            testCompileOnly(this) { (this as ModuleDependency).isTransitive = false }
+        }
     }
 
     // AGP classes for buildScriptInjection's
@@ -144,7 +158,7 @@ val cleanUserHomeKonanDir by tasks.registering(Delete::class) {
             "Deletes ~/.konan dir before tests, to ensure that no test inadvertently creates this directory during execution."
 
     val isTeamCityBuild = project.kotlinBuildProperties.isTeamcityBuild
-    onlyIf("Build is running on TeamCity") { isTeamCityBuild }
+    onlyIf("Build is running on TeamCity") { isTeamCityBuild.get() }
 
     val userHomeKonanDir = Paths.get("${System.getProperty("user.home")}/.konan")
     delete(userHomeKonanDir)
@@ -164,14 +178,14 @@ fun Test.applyKotlinNativeConfiguration() {
     )
 
     // Install K/N into Maven Local for local test runs with enabled K/N
-    if (project.kotlinBuildProperties.isKotlinNativeEnabled && !project.kotlinBuildProperties.isTeamcityBuild) {
+    if (project.kotlinBuildProperties.isKotlinNativeEnabled.get() && !project.kotlinBuildProperties.isTeamcityBuild.get()) {
         dependsOn(":kotlin-native:install")
         // This is the version that K/N bundle is assumed to be published with
-        systemProperties["kotlinNativeVersion"] = project.kotlinBuildProperties.defaultSnapshotVersion
+        systemProperties["kotlinNativeVersion"] = project.kotlinBuildProperties.defaultSnapshotVersion.orNull
     }
 
-    val kotlinNativeVersionForTestRuns = project.kotlinBuildProperties.getOrNull("kotlinNativeVersionForGradleIT") as? String
-        // FIXME: Remove reading system property once the TC build script starts passing the gradle property
+    val kotlinNativeVersionForTestRuns = project.kotlinBuildProperties.stringProperty("kotlinNativeVersionForGradleIT").orNull
+    // FIXME: Remove reading system property once the TC build script starts passing the gradle property
         ?: System.getProperty("kotlinNativeVersionForGradleIT")
     // This version is passed by TC build for runs with snapshot KN
     kotlinNativeVersionForTestRuns?.let {
@@ -212,6 +226,10 @@ val gradleVersions = listOf(
     "8.13",
     "8.14",
     "9.0.0",
+    "9.1.0",
+    "9.2.1",
+    "9.3.1",
+    "9.4.1",
 )
 
 // Keep in sync with testTags.kt
@@ -224,10 +242,11 @@ enum class JunitTag {
     AndroidKGP,
     OtherKGP,
     SwiftExportKGP,
+    SwiftPMImportKGP
 }
 
-if (project.kotlinBuildProperties.isTeamcityBuild) {
-    val junitTags = JunitTag.values().filter { it != JunitTag.SwiftExportKGP }.map { it.name }
+if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
+    val junitTags = JunitTag.values().filter { it !in setOf(JunitTag.SwiftExportKGP, JunitTag.SwiftPMImportKGP) }.map { it.name }
     val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
 
     junitTags.forEach { junitTag ->
@@ -238,6 +257,8 @@ if (project.kotlinBuildProperties.isTeamcityBuild) {
                 description = "Runs all tests for Kotlin Gradle plugins against Gradle $gradleVersion"
                 maxParallelForks = maxParallelTestForks
 
+                classpath = sourceSets["test"].runtimeClasspath
+                testClassesDirs = sourceSets["test"].output.classesDirs
                 systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
                 systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 
@@ -260,6 +281,8 @@ tasks.register<Test>("kgpAllParallelTests") {
     description = "Runs all tests for Kotlin Gradle plugins except daemon ones"
     maxParallelForks = maxParallelTestForks
 
+    classpath = sourceSets["test"].runtimeClasspath
+    testClassesDirs = sourceSets["test"].output.classesDirs
     useJUnitPlatform {
         excludeTags(JunitTag.DaemonsKGP.name)
     }
@@ -287,6 +310,10 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         JunitTag.SwiftExportKGP -> junitTag.taskConfiguration(
             "Run Swift Export Kotlin Gradle plugin tests",
             "kgpSwiftExportTests",
+        )
+        JunitTag.SwiftPMImportKGP -> junitTag.taskConfiguration(
+            "Run SwiftPM import Kotlin Gradle plugin tests",
+            "kgpSwiftPMImportTests",
         )
         JunitTag.JsKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/JS part of Gradle plugin",
@@ -367,6 +394,9 @@ tasks.withType<Test>().configureEach {
     val noTestProperty = project.providers.gradleProperty("noTest")
     onlyIf { !noTestProperty.isPresent }
 
+    classpath = sourceSets["test"].runtimeClasspath
+    testClassesDirs = sourceSets["test"].output.classesDirs
+
     /**
      * Gradle needs these opens to serialize CC and adds them implicitly:
      * - https://github.com/gradle/gradle/blob/2c7035c5fc5c18c044d2de45764f88ada143e4a7/platforms/core-runtime/base-services/src/main/java/org/gradle/internal/jvm/JpmsConfiguration.java#L41
@@ -393,37 +423,42 @@ tasks.withType<Test>().configureEach {
     dependsOn(":examples:annotation-processor-example:install")
     dependsOn(":kotlin-dom-api-compat:install")
     dependsOn(cleanUserHomeKonanDir)
-    dependsOn(applePrivacyManifestPluginClasses)
+    configurationToBeConsumedInTests.values.forEach {
+        dependsOn(it)
+    }
 
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
     systemProperty("composeSnapshotVersion", composeRuntimeSnapshot.versions.snapshot.version.get())
     systemProperty("composeSnapshotId", composeRuntimeSnapshot.versions.snapshot.id.get())
 
-    val applePrivacyManifestPluginClasspath = provider {
-        applePrivacyManifestPluginClasses.files.joinToString(":")
-    }
+    val classpathVariables = configurationToBeConsumedInTests
+        .mapKeys { (configurationName, _) -> "${configurationName}Classpath" }
+        .mapValues { (_, configuration) -> provider { configuration.files.joinToString(":") } }
+
     doFirst {
-        systemProperty(
-            "applePrivacyManifestPluginClasspath",
-            applePrivacyManifestPluginClasspath.get(),
-        )
+        for ((variableName, classpath) in classpathVariables) {
+            systemProperty(
+                variableName,
+                classpath.get(),
+            )
+        }
     }
 
     // Add kotlin.gradle.autoDebugIT=false to local.properties to opt out of implicit withDebug when debugging the tests in IDE
-    val autoDebugIT = kotlinBuildProperties.getBoolean("kotlin.gradle.autoDebugIT", true)
+    val autoDebugIT = kotlinBuildProperties.booleanProperty("kotlin.gradle.autoDebugIT", true).get()
     if (autoDebugIT) {
         systemProperty("kotlin.gradle.autoDebugIT", autoDebugIT)
     }
 
-    val runAllIntegrationTestsOnMacos = kotlinBuildProperties.getBoolean("runAllIntegrationTestsOnMacos", false)
+    val runAllIntegrationTestsOnMacos = kotlinBuildProperties.booleanProperty("runAllIntegrationTestsOnMacos", false).get()
     if (runAllIntegrationTestsOnMacos) {
         systemProperty("runAllIntegrationTestsOnMacos", runAllIntegrationTestsOnMacos)
     }
     /**
      * We run all tests on macOS once a week and this property makes sure that tests that are correctly marked @BrokenOnMacosTest are skipped in this run
      */
-    val skipIntegrationTestsMarkedBroken = kotlinBuildProperties.getBoolean("skipIntegrationTestsMarkedBroken", false)
+    val skipIntegrationTestsMarkedBroken = kotlinBuildProperties.booleanProperty("skipIntegrationTestsMarkedBroken", false).get()
     if (skipIntegrationTestsMarkedBroken) {
         systemProperty("skipIntegrationTestsMarkedBroken", skipIntegrationTestsMarkedBroken)
     }

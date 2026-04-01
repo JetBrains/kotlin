@@ -1,7 +1,27 @@
 KtNameReferenceExpression(67,70): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = main/foo(t: {main.T=} ERROR CLASS: Symbol not found for A): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = t
+            receiverType = null
+            returnType = {main.T=} ERROR CLASS: Symbol not found for A
+            symbol = t: {main.T=} ERROR CLASS: Symbol not found for A
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = main/foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         2 -> (KaVariableSignature:
           name = t
           receiverType = null
@@ -10,24 +30,3 @@ KtNameReferenceExpression(67,70): 'foo'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = main/foo(t: {main.T=} ERROR CLASS: Symbol not found for A): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = t
-              receiverType = null
-              returnType = {main.T=} ERROR CLASS: Symbol not found for A
-              symbol = t: {main.T=} ERROR CLASS: Symbol not found for A
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = main/foo
-      typeArgumentsMapping = {}

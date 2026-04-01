@@ -1,0 +1,20 @@
+FILE: orderOfFixationMatters.kt
+    public final fun <K> id(k: R|K|): R|K| {
+        ^id R|<local>/k|
+    }
+    public final fun <T> myIn(b: R|T|, a: R|kotlin/collections/Set<T>|): R|kotlin/Unit| {
+    }
+    public final fun <T> myContains(a: R|kotlin/collections/Set<T>|, b: R|T|): R|kotlin/Unit| {
+    }
+    public final fun <T : R|kotlin/collections/Set<*>|> myInWithUB(b: R|T|, a: R|kotlin/collections/Set<T>|): R|kotlin/Unit| {
+    }
+    public final fun <T : R|kotlin/collections/Set<*>|> myContainsWithUB(a: R|kotlin/collections/Set<T>|, b: R|T|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/myIn|<R|kotlin/IntArray|>(Q|kotlin|.R|kotlin/intArrayOf|(), R|/id|<R|kotlin/collections/Set<kotlin/IntArray>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/IntArray|>(R|kotlin/intArrayOf|())))
+        R|/myContains|<R|kotlin/IntArray|>(R|/id|<R|kotlin/collections/Set<kotlin/IntArray>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/IntArray|>(R|kotlin/intArrayOf|())), Q|kotlin|.R|kotlin/intArrayOf|())
+        R|/myInWithUB|<R|kotlin/collections/Set<kotlin/Int>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(), R|/id|<R|kotlin/collections/Set<kotlin/collections/MutableSet<kotlin/Int>>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>())))
+        R|/myContainsWithUB<Inapplicable(INAPPLICABLE): /myContainsWithUB>#|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|/id|<R|kotlin/collections/Set<kotlin/collections/MutableSet<kotlin/Int>>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>())), <Ambiguous collection literal>#())
+        R|/myInWithUB|<R|kotlin/collections/Set<kotlin/Int>|>(R|/id|<R|kotlin/collections/Set<kotlin/Int>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>()), R|/id|<R|kotlin/collections/Set<kotlin/collections/MutableSet<kotlin/Int>>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>())))
+        R|/myContainsWithUB<Inapplicable(INAPPLICABLE): /myContainsWithUB>#|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|/id|<R|kotlin/collections/Set<kotlin/collections/MutableSet<kotlin/Int>>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>())), R|/id|<R|kotlin/collections/MutableSet<kotlin/Int>|>(<Ambiguous collection literal>#()))
+    }

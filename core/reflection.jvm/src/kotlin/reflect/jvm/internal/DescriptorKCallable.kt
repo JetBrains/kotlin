@@ -5,29 +5,29 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.isInlineClass
-import org.jetbrains.kotlin.resolve.isUnderlyingPropertyOfInlineClass
-import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import java.lang.reflect.ParameterizedType
-import java.lang.reflect.Type
-import java.lang.reflect.WildcardType
-import kotlin.coroutines.Continuation
-import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.calls.getInlineClassUnboxMethod
+import kotlin.metadata.Modality
+import kotlin.reflect.KParameter
+import kotlin.reflect.KType
+import kotlin.reflect.KTypeParameter
+import kotlin.reflect.KVisibility
 import kotlin.reflect.jvm.internal.types.DescriptorKType
+import org.jetbrains.kotlin.descriptors.Modality as DescriptorModality
 
-internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
+internal abstract class DescriptorKCallable<out R>(
+    overriddenStorage: KCallableOverriddenStorage,
+) : ReflectKCallableImpl<R>(overriddenStorage) {
     abstract val descriptor: CallableMemberDescriptor
+
+    protected abstract fun computeReturnType(): DescriptorKType
 
     private val _annotations = ReflectProperties.lazySoft { descriptor.computeAnnotations() }
 
@@ -41,20 +41,19 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
         if (isBound) computeParameters(includeReceivers = false) else allParameters
     }
 
-    override val parameters: List<KParameter> get() = _parameters()
+    final override val parameters: List<KParameter> get() = _parameters()
 
     private fun computeParameters(includeReceivers: Boolean): List<KParameter> {
         val descriptor = descriptor
         val result = ArrayList<KParameter>()
         if (includeReceivers) {
-            val instanceReceiver = descriptor.instanceReceiverParameter
+            val instanceReceiver = instanceReceiverParameter
             if (instanceReceiver != null) {
                 result.add(DescriptorKParameter(this, result.size, KParameter.Kind.INSTANCE) { instanceReceiver })
             }
 
             val contextParameters = descriptor.computeContextParameters()
             for (i in contextParameters.indices) {
-                @OptIn(ExperimentalContextParameters::class)
                 result.add(DescriptorKParameter(this, result.size, KParameter.Kind.CONTEXT) { contextParameters[i] })
             }
 
@@ -104,16 +103,24 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
     }
 
     private val _returnType = ReflectProperties.lazySoft {
-        DescriptorKType(descriptor.returnType!!) {
-            extractContinuationArgument() ?: caller.returnType
-        }
+        val type = computeReturnType()
+        overriddenStorage.getTypeSubstitutor(typeParameters, memberNameForDebug = name).substitute(type).type
+            ?: starProjectionInTopLevelTypeIsNotPossible(containerNameForDebug = name)
     }
 
-    override val returnType: KType
+    final override val returnType: KType
         get() = _returnType()
 
     private val _typeParameters = ReflectProperties.lazySoft {
-        descriptor.typeParameters.map { descriptor -> KTypeParameterImpl(this, descriptor) }
+        val typeParametersWithNotYetSubstitutedUpperBounds =
+            descriptor.typeParameters.map { descriptor -> KTypeParameterImpl(unbindAllReceivers(), descriptor) }
+        val substitutor = overriddenStorage.getTypeSubstitutor(typeParametersWithNotYetSubstitutedUpperBounds, memberNameForDebug = name)
+        for (typeParameter in typeParametersWithNotYetSubstitutedUpperBounds) {
+            typeParameter.upperBounds = typeParameter.upperBounds.map { type ->
+                substitutor.substitute(type).type ?: starProjectionInTopLevelTypeIsNotPossible(containerNameForDebug = name)
+            }
+        }
+        typeParametersWithNotYetSubstitutedUpperBounds
     }
 
     override val typeParameters: List<KTypeParameter>
@@ -122,69 +129,16 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
     override val visibility: KVisibility?
         get() = descriptor.visibility.toKVisibility()
 
-    override val isFinal: Boolean
-        get() = descriptor.modality == Modality.FINAL
+    final override val modality: Modality
+        get() = overriddenStorage.modality ?: descriptor.modality.toMetadataModality()
 
-    override val isOpen: Boolean
-        get() = descriptor.modality == Modality.OPEN
-
-    override val isAbstract: Boolean
-        get() = descriptor.modality == Modality.ABSTRACT
-
-    private val _absentArguments = ReflectProperties.lazySoft(::computeAbsentArguments)
-
-    override fun getAbsentArguments(): Array<Any?> = _absentArguments().clone()
-
-    private fun extractContinuationArgument(): Type? {
-        if (isSuspend) {
-            // kotlin.coroutines.Continuation<? super java.lang.String>
-            val continuationType = caller.parameterTypes.lastOrNull() as? ParameterizedType
-            if (continuationType?.rawType == Continuation::class.java) {
-                // ? super java.lang.String
-                val wildcard = continuationType.actualTypeArguments.single() as? WildcardType
-                // java.lang.String
-                return wildcard?.lowerBounds?.first()
-            }
-        }
-
-        return null
-    }
+    final override val isPackagePrivate: Boolean
+        get() = descriptor.visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY
 }
 
-private fun KotlinType.toInlineClass(): Class<*>? {
-    // See computeExpandedTypeForInlineClass.
-    val klass = constructor.declarationDescriptor.toInlineClass() ?: return null
-    if (!TypeUtils.isNullableType(this)) return klass
-
-    val expandedUnderlyingType = unsubstitutedUnderlyingType() ?: return null
-    if (!TypeUtils.isNullableType(expandedUnderlyingType) && !KotlinBuiltIns.isPrimitiveType(expandedUnderlyingType)) return klass
-
-    return null
-}
-
-internal fun DeclarationDescriptor?.toInlineClass(): Class<*>? =
-    if (this is ClassDescriptor && isInlineClass())
-        toJavaClass() ?: throw KotlinReflectionInternalError("Class object for the class $name cannot be found (classId=$classId)")
-    else
-        null
-
-private val CallableMemberDescriptor.expectedReceiverType: KotlinType?
-    get() {
-        val extensionReceiver = extensionReceiverParameter
-        val dispatchReceiver = dispatchReceiverParameter
-        return when {
-            extensionReceiver != null -> extensionReceiver.type
-            dispatchReceiver == null -> null
-            this is ConstructorDescriptor -> dispatchReceiver.type
-            else -> (containingDeclaration as? ClassDescriptor)?.defaultType
-        }
-    }
-
-internal fun Any?.coerceToExpectedReceiverType(callable: ReflectKCallable<*>, descriptor: CallableMemberDescriptor): Any? {
-    if (descriptor is PropertyDescriptor && descriptor.isUnderlyingPropertyOfInlineClass()) return this
-
-    val expectedReceiverType = descriptor.expectedReceiverType
-    val unboxMethod = expectedReceiverType?.toInlineClass()?.getInlineClassUnboxMethod(callable) ?: return this
-
-    return unboxMethod.invoke(this)
+private fun DescriptorModality.toMetadataModality(): Modality = when (this) {
+    DescriptorModality.FINAL -> Modality.FINAL
+    DescriptorModality.OPEN -> Modality.OPEN
+    DescriptorModality.ABSTRACT -> Modality.ABSTRACT
+    DescriptorModality.SEALED -> Modality.SEALED
 }

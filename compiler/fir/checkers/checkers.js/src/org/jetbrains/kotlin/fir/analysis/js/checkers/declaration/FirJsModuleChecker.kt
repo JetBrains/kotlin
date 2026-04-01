@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.checkJsModuleUsage
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
 import org.jetbrains.kotlin.fir.analysis.js.checkers.superClassNotAny
@@ -32,7 +33,7 @@ object FirJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         if (declaration is FirFile || !declaration.isEitherModuleOrNonModule(context.session)) return
 
         if (declaration is FirProperty && declaration.isVar) {
-            reporter.reportOn(declaration.source, FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR)
+            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR)
         }
 
         val closestNonLocal = context.closestNonLocalWith(declaration) ?: return
@@ -42,7 +43,7 @@ object FirJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         }
 
         if (context.isTopLevel && context.containingFileSymbol?.isEitherModuleOrNonModule(context.session) == true) {
-            reporter.reportOn(declaration.source, FirJsErrors.NESTED_JS_MODULE_PROHIBITED)
+            reporter.reportOn(declaration.source, FirWebCommonErrors.NESTED_JS_MODULE_PROHIBITED)
         }
     }
 

@@ -1,0 +1,5 @@
+KtNameReferenceExpression(126,130): 'Ann0'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Ann0
+    ]

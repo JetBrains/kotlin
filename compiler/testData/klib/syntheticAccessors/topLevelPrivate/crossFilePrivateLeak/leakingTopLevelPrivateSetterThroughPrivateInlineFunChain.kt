@@ -1,4 +1,3 @@
-// JVM_ABI_K1_K2_DIFF
 // FILE: a.kt
 var privateSetterVar = 12
     private set

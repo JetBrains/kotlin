@@ -17,6 +17,10 @@
 package org.jetbrains.kotlin.native.interop.indexer
 
 import clang.*
+import clang.CXIdxEntityKind.CXIdxEntity_ObjCClass
+import clang.CXIdxEntityKind.CXIdxEntity_ObjCProtocol
+import clang.CXIdxEntityKind.CXIdxEntity_Struct
+import clang.CXIdxEntityKind.CXIdxEntity_Union
 import kotlinx.cinterop.*
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -29,7 +33,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.security.DigestInputStream
 import java.security.MessageDigest
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 val CValue<CXType>.kind: CXTypeKind get() = this.useContents { kind }
@@ -51,6 +54,15 @@ internal fun CValue<CXString>.convertAndDispose(): String {
         return clang_getCString(this)!!.toKString()
     } finally {
         clang_disposeString(this)
+    }
+}
+
+@JvmName("convertAndDisposeCString")
+internal fun CValue<CString>.convertAndDispose(): String? {
+    try {
+        return this.useContents { data }?.toKString()
+    } finally {
+        clang_disposeCString(this)
     }
 }
 
@@ -411,11 +423,6 @@ fun Compilation.copy(
         language = language
 )
 
-// Clang-8 crashes when consuming a precompiled header built with -fmodule-map-file argument (see KT-34467).
-// We ignore this argument when building a pch to workaround this crash.
-fun Compilation.copyWithArgsForPCH(): Compilation =
-        copy(compilerArgs = compilerArgs.filterNot { it.startsWith("-fmodule-map-file") })
-
 data class CompilationImpl(
         override val includes: List<IncludeInfo>,
         override val additionalPreambleLines: List<String>,
@@ -430,7 +437,7 @@ data class CompilationImpl(
  */
 fun Compilation.precompileHeaders(): CompilationWithPCH = withIndex(excludeDeclarationsFromPCH = false) { index ->
     val options = CXTranslationUnit_ForSerialization or CXTranslationUnit_DetailedPreprocessingRecord
-    val translationUnit = copyWithArgsForPCH().parse(index, options)
+    val translationUnit = parse(index, options)
     try {
         translationUnit.ensureNoCompileErrors()
         withPrecompiledHeader(translationUnit)
@@ -668,6 +675,82 @@ internal class ModulesMap(
     }
 }
 
+data class TypesDefinitions(
+        private val protocolDefinitionBySpelling: Map<String, CValue<CXCursor>>,
+        private val classDefinitionBySpelling: Map<String, CValue<CXCursor>>,
+        private val structDefinitionBySpelling: Map<String, CValue<CXCursor>>,
+) {
+    fun protocolDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, protocolDefinitionBySpelling)
+    fun classDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, classDefinitionBySpelling)
+    fun structDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, structDefinitionBySpelling)
+
+    private fun getIfNonEmpty(value: String, map: Map<String, CValue<CXCursor>>): CValue<CXCursor>? =
+            /**
+             * The spelling should not normally be empty, but it can be such as in the case of CXCursor_NoDeclFound. Return null instead to
+             * avoid conflating cursors if we are passed an empty string.
+             */
+            if (value.isNotEmpty()) map[value] else null
+}
+
+/**
+ * The [TypesDefinitions] index exists to dereference forward declarations with -fmodules. Without -fmodules we rely on a couple of
+ * different libclang APIs such as [clang_getCursorReferenced] and [clang_getCursorDefinition] to find the definition for a forward
+ * declaration and these work since everything happens within 1 TU. With -fmodules, when the TU where the forward declaration happens
+ * doesn't see the TU with the definition, we must do the lookup manually, or otherwise we generate only the forward declaration type if it
+ * is encountered first.
+ *
+ * Here we pre-index all TUs, build up a map of the type spelling to the definition cursor, and then look up definition in this index
+ * before defining a type during the main indexing pass in [org.jetbrains.kotlin.native.interop.indexer.indexDeclarations].
+ *
+ * We don't use USRs for this mapping on purpose as these get messed up by external_source_symbol
+ *
+ * See: KT-82402
+ */
+fun indexTranslationUnitsForTypesDefinitions(
+        index: CXIndex,
+        translationUnits: Collection<CXTranslationUnit>,
+): TypesDefinitions {
+    val protocolDefinitionBySpelling = mutableMapOf<String, CValue<CXCursor>>()
+    val classDefinitionBySpelling = mutableMapOf<String, CValue<CXCursor>>()
+    val structDefinitionBySpelling = mutableMapOf<String, CValue<CXCursor>>()
+
+    translationUnits.forEach {
+        indexTranslationUnit(index, it, CXIndexOpt_IndexGeneratedDeclarations, object : Indexer {
+            override fun indexDeclaration(info: CXIdxDeclInfo) {
+                val cursor = info.cursor.readValue()
+                if (!isAvailable(cursor)) return
+
+                val entityInfo = info.entityInfo!!.pointed
+                val kind = entityInfo.kind
+                when (kind) {
+                    CXIdxEntity_Union, CXIdxEntity_Struct -> {
+                        if (!isStructDeclForward(cursor)) {
+                            structDefinitionBySpelling.getOrPut(getCursorSpelling(cursor)) { cursor }
+                        }
+                    }
+                    CXIdxEntity_ObjCClass -> {
+                        if (cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl && !isObjCInterfaceDeclForward(cursor)) {
+                            classDefinitionBySpelling.getOrPut(getCursorSpelling(cursor)) { cursor }
+                        }
+                    }
+                    CXIdxEntity_ObjCProtocol -> {
+                        if (cursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl && !isObjCProtocolDeclForward(cursor)) {
+                            protocolDefinitionBySpelling.getOrPut(getCursorSpelling(cursor)) { cursor }
+                        }
+                    }
+                    else -> {}
+                }
+            }
+        })
+    }
+
+    return TypesDefinitions(
+            protocolDefinitionBySpelling = protocolDefinitionBySpelling,
+            classDefinitionBySpelling = classDefinitionBySpelling,
+            structDefinitionBySpelling = structDefinitionBySpelling,
+    )
+}
+
 internal fun getHeaderId(library: NativeLibrary, header: ClangFile?): HeaderId {
     if (header == null) {
         return HeaderId("builtins")
@@ -677,36 +760,66 @@ internal fun getHeaderId(library: NativeLibrary, header: ClangFile?): HeaderId {
     return library.headerToIdMapper.getHeaderId(filePath)
 }
 
-class NativeLibraryHeaders<Header>(val ownHeaders: Set<Header>, val importedHeaders: Set<Header>)
+class NativeLibraryHeaders<Header>(val ownHeaders: Set<Header>, val importedHeaders: Set<Header>, val mainFile: Header)
 data class NativeLibraryHeadersAndUnits(val headers: NativeLibraryHeaders<ClangFile?>, val ownTranslationUnits: Set<CXTranslationUnit>)
+
+/**
+ * A small utility class for collecting outputs of [filterHeadersByName] and [filterHeadersByPredefined].
+ */
+private class FilterHeadersOutput {
+    val ownTranslationUnits = mutableSetOf<CXTranslationUnit>()
+    val ownHeaders = mutableSetOf<ClangFile?>()
+    val allHeaders = mutableSetOf<ClangFile?>(null)
+
+    /**
+     * The indexer generally operates by creating a temporary source file with all includes etc. See [createTempSource].
+     * This file is used as the starting point for libclang, and the latter reports it as the "main file".
+     * Note: there can be only one main file. But it is easier to collect a list and then check there is only one.
+     */
+    val mainFiles = mutableListOf<ClangFile>()
+}
 
 internal fun getHeadersAndUnits(
         library: NativeLibrary,
         index: CXIndex,
         translationUnit: CXTranslationUnit,
         unitsHolder: UnitsHolder
-): NativeLibraryHeadersAndUnits {
-    val ownTranslationUnits = mutableSetOf<CXTranslationUnit>()
-    val ownHeaders = mutableSetOf<ClangFile?>()
-    val allHeaders = mutableSetOf<ClangFile?>(null)
-
+): NativeLibraryHeadersAndUnits = with(FilterHeadersOutput()) {
     val filter = library.headerFilter
 
     when (filter) {
         is NativeLibraryHeaderFilter.NameBased ->
-            filterHeadersByName(library, filter, index, translationUnit, ownTranslationUnits, ownHeaders, allHeaders, unitsHolder)
+            filterHeadersByName(library, filter, index, translationUnit, unitsHolder)
 
         is NativeLibraryHeaderFilter.Predefined ->
-            filterHeadersByPredefined(filter, index, translationUnit, ownTranslationUnits, ownHeaders, allHeaders, unitsHolder)
+            filterHeadersByPredefined(filter, index, translationUnit, unitsHolder)
     }
+
+    val mainFile = mainFiles.singleOrNull()
+            ?: error("Expected exactly one main file, but found ${mainFiles.map { it.path }}")
+
+    // Technically, the main file is not a header. But it should be treated as one in most cases,
+    // e.g. because it contains declarations listed after `---` in the `.def` file.
+    // So it is easier to keep it there.
+    ownHeaders += mainFile
+    allHeaders += mainFile
 
     ownHeaders.removeAll { library.headerExclusionPolicy.excludeAll(getHeaderId(library, it)) }
 
-    return NativeLibraryHeadersAndUnits(NativeLibraryHeaders(ownHeaders, allHeaders - ownHeaders), ownTranslationUnits)
+    NativeLibraryHeadersAndUnits(
+            NativeLibraryHeaders(
+                    ownHeaders = ownHeaders,
+                    importedHeaders = allHeaders - ownHeaders,
+                    mainFile = mainFile
+            ),
+            ownTranslationUnits
+    )
 }
 
 class UnitsHolder(val index: CXIndex) : Disposable {
     private val unitByBinaryFile = mutableMapOf<String, CXTranslationUnit>()
+
+    val loadedTranslationUnits get() = unitByBinaryFile.values.toSet()
 
     internal fun load(info: CXIdxImportedASTFileInfo): CXTranslationUnit {
         val canonicalPath: String = info.getFile()!!.canonicalPath
@@ -742,18 +855,14 @@ fun CXTranslationUnit.getFile(fileName: String): ClangFile? = clang_getFile(this
 fun CXIdxIncludedFileInfo.getFile(): ClangFile? = this.file?.asClangFile()
 fun CXIdxImportedASTFileInfo.getFile(): ClangFile? = this.file?.asClangFile()
 
-private fun filterHeadersByName(
+private fun FilterHeadersOutput.filterHeadersByName(
         compilation: Compilation,
         filter: NativeLibraryHeaderFilter.NameBased,
         index: CXIndex,
         translationUnit: CXTranslationUnit,
-        ownTranslationUnits: MutableSet<CXTranslationUnit>,
-        ownHeaders: MutableSet<ClangFile?>,
-        allHeaders: MutableSet<ClangFile?>,
         unitsHolder: UnitsHolder
 ) {
     val topLevelFiles = mutableSetOf<ClangFile>()
-    var mainFile: ClangFile? = null
     val translationUnits = mutableListOf(translationUnit)
 
     // The *name* of the header here is the path relative to the include path element., e.g. `curl/curl.h`.
@@ -765,8 +874,7 @@ private fun filterHeadersByName(
 
         indexTranslationUnit(index, curUnit, 0, object : Indexer {
             override fun enteredMainFile(file: ClangFile) {
-                mainFile = file
-                allHeaders += file
+                mainFiles += file
             }
 
             override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
@@ -836,17 +944,12 @@ private fun filterHeadersByName(
             ownHeaders.add(null)
         }
     }
-
-    ownHeaders.add(mainFile!!)
 }
 
-private fun filterHeadersByPredefined(
+private fun FilterHeadersOutput.filterHeadersByPredefined(
         filter: NativeLibraryHeaderFilter.Predefined,
         index: CXIndex,
         translationUnit: CXTranslationUnit,
-        ownTranslationUnits: MutableSet<CXTranslationUnit>,
-        ownHeaders: MutableSet<ClangFile?>,
-        allHeaders: MutableSet<ClangFile?>,
         unitsHolder: UnitsHolder
 ) {
     val translationUnits = mutableListOf(translationUnit)
@@ -855,8 +958,7 @@ private fun filterHeadersByPredefined(
     while (curUnitIndex < translationUnits.size) {
         indexTranslationUnit(index, translationUnits[curUnitIndex++], 0, object : Indexer {
             override fun enteredMainFile(file: ClangFile) {
-                ownHeaders += file
-                allHeaders += file
+                mainFiles += file
             }
 
             override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
@@ -910,7 +1012,10 @@ fun NativeLibrary.getHeaderPaths(): NativeLibraryHeaders<String> {
             fun getPath(file: ClangFile?) = if (file == null) "<builtins>" else file.canonicalPath
             return NativeLibraryHeaders(
                     headers.ownHeaders.map(::getPath).toSet(),
-                    headers.importedHeaders.map(::getPath).toSet()
+                    headers.importedHeaders.map(::getPath).toSet(),
+                    // Note: the path to the main file makes little sense (because it is a temporary file),
+                    // and ideally shouldn't be included there, within `ownHeaders`/`importedHeaders` as well.
+                    getPath(headers.mainFile)
             )
         } finally {
             clang_disposeTranslationUnit(translationUnit)
@@ -950,11 +1055,42 @@ internal fun getContainingFile(cursor: CValue<CXCursor>): ClangFile? {
     return clang_getCursorLocation(cursor).getContainingFile()
 }
 
+internal fun findDefinition(cursor: CValue<CXCursor>): CValue<CXCursor>? =
+        clang_getCursorDefinition(cursor).takeIf { clang_Cursor_isNull(it) == 0 }
+
 internal val CXModule.name: String get() = clang_Module_getName(this).convertAndDispose()
 
 // TODO: this map doesn't get cleaned up but adds quite significant performance improvement.
 private val canonicalPaths = ConcurrentHashMap<String, String>()
 internal val ClangFile.canonicalPath: String get() = canonicalPaths.getOrPut(this.path) { File(this.path).canonicalPath }
+
+
+// TODO: unavailable declarations should be imported as deprecated.
+fun isAvailable(cursor: CValue<CXCursor>): Boolean = when (clang_getCursorAvailability(cursor)) {
+    CXAvailabilityKind.CXAvailability_Available,
+    CXAvailabilityKind.CXAvailability_Deprecated -> true
+
+    CXAvailabilityKind.CXAvailability_NotAvailable,
+    CXAvailabilityKind.CXAvailability_NotAccessible -> false
+}
+
+fun isObjCInterfaceDeclForward(cursor: CValue<CXCursor>): Boolean {
+    assert(cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { cursor.kind }
+
+    // It is forward declaration <=> the first child is reference to it:
+    var result = false
+    visitChildren(cursor) { child, _ ->
+        result = (child.kind == CXCursorKind.CXCursor_ObjCClassRef && clang_getCursorReferenced(child) == cursor)
+        CXChildVisitResult.CXChildVisit_Break
+    }
+    return result
+}
+
+private fun isDeclForward(cursor: CValue<CXCursor>): Boolean = clang_isCursorDefinition(cursor) == 0
+fun isObjCProtocolDeclForward(cursor: CValue<CXCursor>): Boolean = isDeclForward(cursor)
+fun isStructDeclForward(cursor: CValue<CXCursor>): Boolean = isDeclForward(cursor)
+
+fun getUsr(cursor: CValue<CXCursor>): String = clang_getCursorUSR(cursor).convertAndDispose()
 
 private fun createVfsOverlayFileContents(virtualPathToReal: Map<Path, Path>): ByteArray {
     val overlay = clang_VirtualFileOverlay_create(0)

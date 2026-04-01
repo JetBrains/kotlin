@@ -61,9 +61,9 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
     companion object {
         val REFINE = ClassId(FqName.ROOT, Name.identifier("Refine"))
         val DATAFRAME = ClassId(FqName.ROOT, Name.identifier("DataFrame"))
-
-        object KEY : GeneratedDeclarationKey()
     }
+
+    data object DataFrameLikeCallsRefinementExtensionGeneratorKey : GeneratedDeclarationKey()
 
     override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): CallReturnType? {
         if (!symbol.hasAnnotation(REFINE, session)) return null
@@ -74,7 +74,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
         val schemaClass = buildRegularClass {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
-            origin = FirDeclarationOrigin.Plugin(KEY)
+            origin = FirDeclarationOrigin.Plugin(DataFrameLikeCallsRefinementExtensionGeneratorKey)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)
             deprecationsProvider = EmptyDeprecationsProvider
             classKind = ClassKind.CLASS
@@ -90,7 +90,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
         val refinedTypeDeclaration = buildRegularClass {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
-            origin = FirDeclarationOrigin.Plugin(KEY)
+            origin = FirDeclarationOrigin.Plugin(DataFrameLikeCallsRefinementExtensionGeneratorKey)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)
             deprecationsProvider = EmptyDeprecationsProvider
             classKind = ClassKind.CLASS
@@ -165,7 +165,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
         val scopeClass = buildRegularClass {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
-            origin = FirDeclarationOrigin.Plugin(KEY)
+            origin = FirDeclarationOrigin.Plugin(DataFrameLikeCallsRefinementExtensionGeneratorKey)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)
             deprecationsProvider = EmptyDeprecationsProvider
             classKind = ClassKind.CLASS
@@ -186,7 +186,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
             anonymousFunction = buildAnonymousFunction {
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 moduleData = session.moduleData
-                origin = FirDeclarationOrigin.Plugin(KEY)
+                origin = FirDeclarationOrigin.Plugin(DataFrameLikeCallsRefinementExtensionGeneratorKey)
                 status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                 deprecationsProvider = EmptyDeprecationsProvider
                 returnTypeRef = buildResolvedTypeRef {
@@ -196,7 +196,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
                 val parameterSymbol = FirValueParameterSymbol()
                 valueParameters += buildValueParameter {
                     moduleData = session.moduleData
-                    origin = FirDeclarationOrigin.Plugin(KEY)
+                    origin = FirDeclarationOrigin.Plugin(DataFrameLikeCallsRefinementExtensionGeneratorKey)
                     returnTypeRef = buildResolvedTypeRef {
                         coneType = receiverType
                     }

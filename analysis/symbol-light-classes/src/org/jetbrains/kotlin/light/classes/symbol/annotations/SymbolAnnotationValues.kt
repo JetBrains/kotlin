@@ -74,8 +74,17 @@ internal class SymbolPsiClassObjectAccessExpression(
     override fun getText(): String = kotlinOrigin?.text ?: (type.getCanonicalText(false) + ".class")
 }
 
-private class LightTypeElementWithParent(private val lightParent: PsiElement, type: PsiType) : LightTypeElement(lightParent.manager, type) {
+internal class LightTypeElementWithParent(
+    private val lightParent: PsiElement,
+    type: PsiType,
+) : LightTypeElement(lightParent.manager, type) {
     override fun getParent(): PsiElement = lightParent
+
+    /**
+     * Avoids delegating to [LightTypeElement.isValid][com.intellij.psi.impl.light.LightTypeElement.isValid]
+     * to prevent infinite recursion between the type element and the validity check of its annotations.
+     */
+    override fun isValid(): Boolean = lightParent.isValid
 }
 
 internal class SymbolPsiReference(

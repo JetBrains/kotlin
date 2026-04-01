@@ -1,12 +1,12 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
 }
 
 dependencies {
     api(project(":compiler:cli"))
+    api(project(":compiler:cli-jvm"))
 
     compileOnly(intellijCore())
 

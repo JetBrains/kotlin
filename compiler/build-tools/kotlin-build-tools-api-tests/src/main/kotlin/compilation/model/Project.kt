@@ -3,20 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
+package org.jetbrains.kotlin.buildtools.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinStdlibLocation
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.copyToRecursively
 import kotlin.io.path.createDirectories
 import kotlin.io.path.isDirectory
-import kotlin.io.path.toPath
 
 class Project(
     val kotlinToolchain: KotlinToolchains,
@@ -28,10 +28,10 @@ class Project(
 
     fun module(
         moduleName: String,
-        dependencies: List<Module> = emptyList(),
+        dependencies: List<Dependency> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         stdlibClasspath: List<Path>? = null,
-        moduleCompilationConfigAction: (JvmCompilationOperation) -> Unit = {},
+        moduleCompilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
     ): Module {
         val moduleDirectory = projectDirectory.resolve(moduleName)
         val sanitizedModuleName = moduleName.replace(invalidModuleNameCharactersRegex, "_")
@@ -46,11 +46,11 @@ class Project(
             snapshotConfig = snapshotConfig,
             moduleCompilationConfigAction = moduleCompilationConfigAction,
             stdlibLocation = stdlibClasspath ?: listOf(
-                KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath() // compile against the provided stdlib
+                currentKotlinStdlibLocation // compile against the provided stdlib
             )
         )
         module.sourcesDirectory.createDirectories()
-        val templatePath = Paths.get("src/main/resources/modules/$moduleName")
+        val templatePath = Paths.get(System.getProperty("kotlin.test.templates.classpath") + "/modules/$moduleName")
         assert(templatePath.isDirectory()) {
             "Template for $moduleName not found. Expected template directory path is $templatePath"
         }

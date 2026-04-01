@@ -364,6 +364,7 @@ internal fun AbstractNativeSimpleTest.freeCompilerArgs(testDataFile: File) = fre
 internal fun AbstractNativeSimpleTest.freeCompilerArgs(testDataFileContents: String) =
     directiveValues(testDataFileContents, TestDirectives.FREE_COMPILER_ARGS.name)
 
+context(test: AbstractNativeSimpleTest)
 internal fun TestCompilationResult<*>.toOutput(): String {
     check(this is TestCompilationResult.ImmediateResult<*>) { this }
     val loggedData = this.loggedData
@@ -371,10 +372,11 @@ internal fun TestCompilationResult<*>.toOutput(): String {
     return normalizeOutput(loggedData.toolOutput, loggedData.exitCode)
 }
 
+context(test: AbstractNativeSimpleTest)
 private fun normalizeOutput(output: String, exitCode: ExitCode): String {
     val dir = "native/native.tests/testData/compilerOutput/"
     return AbstractCliTest.getNormalizedCompilerOutput(
-        output,
+        output.replace(test.buildDir.path, $$"$BUILD_DIR$"),
         exitCode,
         dir,
         dir

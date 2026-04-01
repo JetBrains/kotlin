@@ -1,0 +1,9 @@
+KT element: KtClass
+Resolve target: topLevelClass.kt -> TopLevelClass
+FIR:
+  public final? class TopLevelClass : R|kotlin/Any| {
+      public? constructor(): R|TopLevelClass| {
+          LAZY_super<R|kotlin/Any|>
+      }
+
+  }

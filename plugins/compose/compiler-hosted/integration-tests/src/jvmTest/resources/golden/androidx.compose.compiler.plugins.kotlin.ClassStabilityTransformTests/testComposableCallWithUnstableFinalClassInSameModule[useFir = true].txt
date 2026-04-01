@@ -19,7 +19,10 @@ class Foo(var bar: Int = 0)
 
 @StabilityInferred(parameters = 0)
 class Foo(var bar: Int = 0) {
-  static val %stable: Int = 8
+  val %stable: Int = 8
+    get() {
+      return field
+    }
 }
 @Composable
 fun A(y: Int, x: Foo, %composer: Composer?, %changed: Int) {

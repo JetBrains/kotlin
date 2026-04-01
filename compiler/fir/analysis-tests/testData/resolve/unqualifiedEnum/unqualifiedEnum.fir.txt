@@ -16,7 +16,7 @@ FILE: unqualifiedEnum.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<test/Sample>|
-            public get(): R|kotlin/enums/EnumEntries<test/Sample>|
+            public static get(): R|kotlin/enums/EnumEntries<test/Sample>|
 
     }
     public final fun trivial(s: R|test/Sample|): R|kotlin/Int| {

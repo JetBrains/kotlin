@@ -1,0 +1,5 @@
+KT element: KtProperty
+Resolve target: memberPropertyRepl.repl.kts -> <snippet-memberPropertyRepl.repl.kts> -> MemberPropertyRepl_repl -> MyClass -> memberProp
+FIR:
+  public? final? val memberProp: Int = LAZY_EXPRESSION
+      public? get(): Int

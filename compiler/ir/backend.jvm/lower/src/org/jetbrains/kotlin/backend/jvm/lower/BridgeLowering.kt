@@ -12,9 +12,12 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.RegularMapping
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
@@ -25,12 +28,18 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.addAnnotations
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.EXACT_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.descriptorUtil.NO_INFER_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
@@ -111,10 +120,13 @@ import org.jetbrains.org.objectweb.asm.commons.Method
  */
 @PhasePrerequisites(JvmInlineClassLowering::class, InheritedDefaultMethodsOnClassesLowering::class)
 internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
+    private val useEnhancedBridges = context.config.languageVersionSettings.supportsFeature(LanguageFeature.JvmEnhancedBridges)
+
     // Represents a synthetic bridge to `overridden` with a precomputed signature
     private class Bridge(
         val overridden: IrSimpleFunction,
         val signature: Method,
+        val isErroneous: Boolean,
         val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = mutableListOf()
     )
 
@@ -122,10 +134,10 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         // Bridges in DefaultImpls classes are handled in InterfaceLowering.
         if (irClass.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS || irClass.isAnnotationClass) return
 
-        val bridgeTargets = irClass.functions.filterTo(SmartList()) { it.isPotentialBridgeTarget() }
+        val bridgeTargets = irClass.functions.mapNotNullTo(SmartList()) { it.asBridgeTargetOrNull() }
         if (bridgeTargets.isEmpty()) return
 
-        bridgeTargets.forEach { createBridges(irClass, it) }
+        bridgeTargets.forEach { createBridges(irClass, it.function, it.specialBridgeOrNull) }
 
         if (irClass.isSingleFieldValueClass) {
             // Inline class (implementing 'MutableCollection<T>', where T is Int or an inline class mapped to Int)
@@ -144,29 +156,49 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         }
     }
 
-    private fun IrSimpleFunction.isPotentialBridgeTarget(): Boolean {
+    private class BridgeTarget(val function: IrSimpleFunction, val specialBridgeOrNull: SpecialBridge?)
+
+    // If the function is a potential target for a general or special bridges, returns it mapped to a special bridge
+    // Otherwise, returns null
+    private fun IrSimpleFunction.asBridgeTargetOrNull(): BridgeTarget? {
         // Only overrides may need bridges and so in particular, private and static functions do not.
         // Note that this includes the static replacements for inline class functions (which are static, but have
         // overriddenSymbols in order to produce correct signatures in the type mapper).
         if (DescriptorVisibilities.isPrivate(visibility) || isStatic || overriddenSymbols.isEmpty())
-            return false
+            return null
 
         // None of the methods of Any have type parameters and so we will not need bridges for them.
         if (isMethodOfAny())
-            return false
+            return null
 
-        // We don't produce bridges for abstract functions in interfaces.
-        if (isJvmAbstract(context.config.jvmDefaultMode)) {
-            return !parentAsClass.isJvmInterface
+        // We don't produce bridges for fake overrides in interfaces.
+        if (isFakeOverride && parentAsClass.isJvmInterface)
+            return null
+
+
+        if (useEnhancedBridges) {
+            val specialBridgeOrNull = this.specialBridgeOrNull
+            val mayNeedSpecialBridge = specialBridgeOrNull != null && isJvmAbstract(context.config.jvmDefaultMode)
+
+            // Finally, the JVM backend also ignores concrete fake overrides whose implementation is directly inherited from an interface.
+            // This is sound, since we do not generate type-specialized versions of fake overrides and if the method
+            // were to override several interface methods the frontend would require a separate implementation.
+            if (!isFakeOverride || resolvesToClass() || mayNeedSpecialBridge)
+                return BridgeTarget(this, specialBridgeOrNull)
+
+            return null
+        } else {
+            // old behavior
+            val isCandidate = if (isJvmAbstract(context.config.jvmDefaultMode)) {
+                !parentAsClass.isJvmInterface
+            } else {
+                !isFakeOverride || resolvesToClass()
+            }
+            return if (isCandidate) BridgeTarget(this, specialBridgeOrNull) else null
         }
-
-        // Finally, the JVM backend also ignores concrete fake overrides whose implementation is directly inherited from an interface.
-        // This is sound, since we do not generate type-specialized versions of fake overrides and if the method
-        // were to override several interface methods the frontend would require a separate implementation.
-        return !isFakeOverride || resolvesToClass()
     }
 
-    private fun createBridges(irClass: IrClass, irFunction: IrSimpleFunction) {
+    private fun createBridges(irClass: IrClass, irFunction: IrSimpleFunction, specialBridge: SpecialBridge?) {
         // Track final overrides and bridges to avoid clashes
         val blacklist = mutableSetOf<Method>()
 
@@ -183,8 +215,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         if (!irFunction.isFakeOverride || irFunction.modality == Modality.FINAL)
             blacklist += targetMethod
 
-        // Generate special bridges
-        val specialBridge = irFunction.specialBridgeOrNull
+        // Generate special bridges, but only in classes
         var bridgeTarget = irFunction
         if (specialBridge != null) {
             // If the current function overrides a special bridge then it's possible that we already generated a final
@@ -215,6 +246,8 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
                             // INVOKESPECIAL to call the special bridge implementation in the superclass.
                             // We can be sure that an implementation exists in a superclass,
                             // since we do not generate bridges for fake overrides of interface methods.
+                            // (note that it becomes false if non-abstract fake-overrides special bridges that resolve to default
+                            //  interface methods are allowed in asBridgeTargetOrNull())
                             val overriddenFromClass = irFunction.overriddenFromClass()!!
                             val superBridge = SpecialBridge(
                                 overridden = irFunction,
@@ -284,7 +317,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
                     }
                 }
             }
-        } else if (irFunction.isJvmAbstract(context.config.jvmDefaultMode)) {
+        } else if (!useEnhancedBridges && irFunction.isJvmAbstract(context.config.jvmDefaultMode)) {
             // Do not generate bridge methods for abstract methods which do not override a special bridge method.
             // This matches the behavior of the JVM backend, but it does mean that we generate superfluous bridges
             // for abstract methods overriding a special bridge for which we do not create a bridge due to,
@@ -311,6 +344,11 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             }
         }
 
+        // Some special-related bridge candidates should be considered erroneous, as they would be generated as self-recursive (KT-82651).
+        // Such bridges are generated only in compatibility mode, controlled by LanguageFeature.JvmEnhancedBridges
+        val isErroneousSpecialBridge = specialBridge != null && bridgeTarget.isFakeOverride && !bridgeTarget.resolvesToClass()
+        if (useEnhancedBridges && isErroneousSpecialBridge) return
+
         // Generate common bridges
         val generated = mutableMapOf<Method, Bridge>()
 
@@ -320,7 +358,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             val signature = override.jvmMethod
             if (targetMethod != signature && signature !in blacklist) {
                 val bridge = generated.getOrPut(signature) {
-                    Bridge(override, signature)
+                    Bridge(override, signature, isErroneousSpecialBridge)
                 }
                 bridge.overriddenSymbols += override.symbol
             }
@@ -406,6 +444,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             copyAttributes(target)
             copyParametersWithErasure(this@addBridge, bridge.overridden)
             context.remapMultiFieldValueClassStructure(bridge.overridden, this, parametersMappingOrNull = null)
+            copyBridgeAnnotationsIfNeeded(bridge.overridden, target, bridge.isErroneous)
 
             // If target is a throwing stub, bridge also should just throw UnsupportedOperationException.
             // Otherwise, it might throw ClassCastException when downcasting bridge argument to expected type.
@@ -460,6 +499,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         }.apply {
             copyParametersWithErasure(this@addSpecialBridge, specialBridge.overridden, specialBridge.substitutedParameterTypes)
             context.remapMultiFieldValueClassStructure(specialBridge.overridden, this, parametersMappingOrNull = null)
+            copyBridgeAnnotationsIfNeeded(specialBridge.overridden, target, true)
 
             body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody {
                 specialBridge.methodInfo?.let { info ->
@@ -536,6 +576,97 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
     private fun IrBuilderWithScope.parameterTypeCheck(parameter: IrValueParameter, type: IrType, defaultValue: IrExpression) =
         irIfThen(context.irBuiltIns.unitType, irNot(irIs(irGet(parameter), type)), irReturn(defaultValue))
 
+
+    val ignoredMethodAnnotationsFilter: Function1<IrConstructorCall, Boolean>
+    val userIgnoredAnnotationsFilter: Function1<IrConstructorCall, Boolean>
+
+    init {
+        val userIgnoredAnnotations =
+            context.state.configuration.get(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES)?.toSet() ?: emptySet()
+        userIgnoredAnnotationsFilter = when {
+            userIgnoredAnnotations.isEmpty() -> { _ -> true }
+            userIgnoredAnnotations.contains("*") -> { _ -> false }
+            else -> { it -> !userIgnoredAnnotations.contains(it.symbol.owner.parent.kotlinFqName.toString()) }
+        }
+
+        val kotlinIgnoredMethodAnnotations = setOf(
+            JvmStandardClassIds.STRICTFP_ANNOTATION_FQ_NAME,
+            JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_FQ_NAME,
+            JvmStandardClassIds.JVM_NAME,
+            // copying of the following annotations is just useless for bridges, although it breaks nothing
+            JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME,
+            JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME,
+            JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME,
+        )
+        val ignoredMethodAnnotationNames = userIgnoredAnnotations + kotlinIgnoredMethodAnnotations.map { it.toString() }
+        ignoredMethodAnnotationsFilter = when {
+            userIgnoredAnnotations.contains("*") -> { _ -> false }
+            else -> { it -> !ignoredMethodAnnotationNames.contains(it.symbol.owner.parent.kotlinFqName.toString()) }
+        }
+    }
+
+    // some annotations from "kotlin.internal" and "kotlin.jvm" packages can affect types generation, so
+    // they shall not be copied to the bridge methods from targets.
+    val kotlinSpecialTypeAnnotations = setOf(
+        JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION,
+        JvmAnnotationNames.ENHANCED_MUTABILITY_ANNOTATION,
+        JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME,
+        JvmSymbols.FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME,
+        JvmSymbols.FLEXIBLE_VARIANCE_ANNOTATION_FQ_NAME,
+        JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME,
+        JvmStandardClassIds.JVM_WILDCARD_ANNOTATION_FQ_NAME,
+        NO_INFER_ANNOTATION_FQ_NAME,
+        EXACT_ANNOTATION_FQ_NAME,
+    )
+
+    fun IrConstructorCall.isKotlinSpecialTypeAnnotation() =
+        symbol.owner.parent.kotlinFqName in kotlinSpecialTypeAnnotations
+
+    fun IrConstructorCall.isThrowsAnnotation() =
+        symbol.owner.parent.kotlinFqName == JvmStandardClassIds.THROWS_ANNOTATION_FQ_NAME
+
+    // Copies annotations from the bridge target to the bridge function
+    // Similarly to JVM, the following annotations are copied:
+    // - function annotations
+    // - parameters annotations
+    // - parameters types annotations
+    // - return type annotations.
+    // Exceptions are as follows:
+    // - @Throws is taken from the overridden method rather from the target
+    // - some special `kotlin.jvm` annotations (such as @Synchronized) are ignored
+    // - some type annotations actually extend the type system, so they are not copied from the target
+    private fun IrSimpleFunction.copyBridgeAnnotationsIfNeeded(overridden: IrSimpleFunction, target: IrSimpleFunction, isSpecialOrErroneous: Boolean) {
+        if (!useEnhancedBridges) return
+
+        if (isSpecialOrErroneous && (target.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB || target.isFakeOverride)) {
+            // copying of Kotlin-defined annotations for special bridges seems unnecessary and would result in a lot of changes in
+            // the expected test data
+            return
+        }
+        // from the overridden methods, only @Throws is copied
+        annotations = overridden.copyAnnotations { it.isThrowsAnnotation() } memoryOptimizedPlus
+                target.copyAnnotations(ignoredMethodAnnotationsFilter)
+        // but for types, some annotations are actually a part of the type system, so they are taken from the overridden method,
+        // while others (e.g user-defined) annotations are taken from the bridge target.
+        returnType = returnType.withFilteredAnnotationsFrom(target.returnType)
+
+        val bridgeParamsStructure = getStructure(this) ?: this.parameters.map { RegularMapping(it) }
+        val targetParamsStructure = getStructure(target) ?: target.parameters.map { RegularMapping(it) }
+        for ((bridgeParameterStructure, targetParameterStructure) in bridgeParamsStructure zip targetParamsStructure) {
+            // in case of multi-field source parameters, use only the first one from the group
+            val targetParameter = targetParameterStructure.parameters.first()
+            for (bridgeParameter in bridgeParameterStructure.parameters) {
+                bridgeParameter.annotations = targetParameter.copyAnnotations(userIgnoredAnnotationsFilter)
+                bridgeParameter.type = bridgeParameter.type.withFilteredAnnotationsFrom(targetParameter.type)
+            }
+        }
+    }
+
+    private fun IrType.withFilteredAnnotationsFrom(source: IrType): IrType =
+        removeAnnotations { !it.isKotlinSpecialTypeAnnotation() }
+            .addAnnotations(
+                source.copyAnnotations { !it.isKotlinSpecialTypeAnnotation() && userIgnoredAnnotationsFilter(it) })
+
     private fun IrSimpleFunction.copyParametersWithErasure(
         irClass: IrClass,
         from: IrSimpleFunction,
@@ -559,7 +690,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         visibleTypeParameters: Set<IrTypeParameter>,
         substitutedType: IrType?
     ): IrValueParameter = copyTo(
-        target, IrDeclarationOrigin.BRIDGE,
+        target,
         startOffset = target.startOffset,
         endOffset = target.endOffset,
         type = (substitutedType?.eraseToScope(visibleTypeParameters) ?: type.eraseTypeParameters()),

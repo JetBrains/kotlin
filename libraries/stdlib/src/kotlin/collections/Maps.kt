@@ -175,7 +175,7 @@ internal expect inline fun <K, V> buildMapInternal(builderAction: MutableMap<K, 
  *
  * @throws IllegalArgumentException if the given [capacity] is negative.
  *
- * @sample samples.collections.Builders.Maps.buildMapSample
+ * @sample samples.collections.Builders.Maps.buildMapSampleWithCapacity
  */
 @SinceKotlin("1.6")
 @kotlin.internal.InlineOnly
@@ -325,14 +325,45 @@ public inline operator fun <K, V> Map.Entry<K, V>.component1(): K = key
 public inline operator fun <K, V> Map.Entry<K, V>.component2(): V = value
 
 /**
- * Converts entry to [Pair] with key being first component and value being second.
+ * Converts this map entry to a [Pair] with its key being the first component and its value being the second.
  */
 @kotlin.internal.InlineOnly
 public inline fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> = Pair(key, value)
 
 /**
+ * Returns an immutable copy of this [map entry][Map.Entry] with the same key and value.
+ *
+ * The returned entry is not connected to the map this entry was obtained from.
+ * The key and value of the returned entry remain the same even after the map the original entry was obtained from was modified.
+ *
+ * @return An immutable entry that is equal to `this` entry but not connected to any map.
+ * The function may return the same entry if `this` entry was obtained from the call to [copy].
+ * The returned entry, while still implementing [Map.Entry] interface, may not be an instance of the same class as the original entry.
+ *
+ * @sample samples.collections.Maps.CoreApi.entryCopy
+ */
+@SinceKotlin("2.3")
+@ExperimentalStdlibApi
+public fun <K, V> Map.Entry<K, V>.copy(): Map.Entry<K, V> {
+    return (this as? DetachedMapEntry) ?: mapEntryOf(this.key, this.value)
+}
+
+// TODO: Decide about exposing this function as Map.Companion.Entry(k, v) or Map.Entry.Companion.invoke/of(k, v) once companion becomes available
+internal fun <K, V> mapEntryOf(key: K, value: V): Map.Entry<K, V> = DetachedMapEntry(key, value)
+
+private class DetachedMapEntry<out K, out V>(override val key: K, override val value: V) : Map.Entry<K, V> {
+    override fun equals(other: Any?): Boolean = AbstractMap.entryEquals(this, other)
+    override fun hashCode(): Int = AbstractMap.entryHashCode(this)
+    override fun toString(): String = AbstractMap.entryToString(this)
+}
+
+/**
  * Returns the value for the given [key] if the value is present and not `null`.
  * Otherwise, returns the result of the [defaultValue] function.
+ *
+ * Note: it's not recommended to use this function if the map is expected to contain `null` values.
+ * Use either [getOrElseIfNull], or [getOrElseIfMissing] instead to express the intent
+ * what to return when the key is mapped to `null` value more clearly.
  *
  * @sample samples.collections.Maps.Usage.getOrElse
  */
@@ -344,8 +375,43 @@ public inline fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V): V {
     return get(key) ?: defaultValue()
 }
 
+/**
+ * Returns the value for the given [key] if the value is present and not `null`.
+ * Otherwise, returns the result of the [defaultValue] function.
+ *
+ * In contrast to [getOrElseIfMissing], this function returns
+ * the result of the [defaultValue] function if the [key] is mapped to a `null` value.
+ *
+ * @sample samples.collections.Maps.Usage.getOrElseIfNull
+ */
+@SinceKotlin("2.4")
+@kotlin.internal.InlineOnly
+@ExperimentalStdlibApi
+public inline fun <K, V> Map<K, V>.getOrElseIfNull(key: K, defaultValue: () -> V): V {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return getOrElse(key, defaultValue)
+}
 
-internal inline fun <K, V> Map<K, V>.getOrElseNullable(key: K, defaultValue: () -> V): V {
+/**
+ * Returns the value for the given [key] if the value is present.
+ * Otherwise, returns the result of the [defaultValue] function.
+ *
+ * In contrast to [getOrElseIfNull], this function returns
+ * the mapped value, even if that value is `null`.
+ *
+ * Note that the operation is not guaranteed to be atomic if the map is being modified concurrently.
+ *
+ * @sample samples.collections.Maps.Usage.getOrElseIfMissing
+ */
+@SinceKotlin("2.4")
+@kotlin.internal.InlineOnly
+@ExperimentalStdlibApi
+public inline fun <K, V> Map<K, V>.getOrElseIfMissing(key: K, defaultValue: () -> V): V {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     val value = get(key)
     if (value == null && !containsKey(key)) {
         return defaultValue()
@@ -373,9 +439,20 @@ public fun <K, V> Map<K, V>.getValue(key: K): V = getOrImplicitDefault(key)
 /**
  * Returns the value for the given [key] if the value is present and not `null`.
  * Otherwise, calls the [defaultValue] function,
- * puts its result into the map under the given key and returns the call result.
+ * puts its result into the map under the given key, and returns the call result.
+ *
+ * Note: it's not recommended to use this function if the map is expected to contain `null` values.
+ * Use either [getOrPutIfNull], or [getOrPutIfMissing] instead to express the intent
+ * what to do when the key is mapped to `null` value more clearly.
+ *
+ * When the given [key] is not in this map or is mapped to a `null`, the result of [defaultValue],
+ * even if `null`, is put into the map under the key.
+ * If [defaultValue] throws an exception, the exception is rethrown.
  *
  * Note that the operation is not guaranteed to be atomic if the map is being modified concurrently.
+ *
+ * @throws NullPointerException if the specified [key] or the result of [defaultValue] is `null`,
+ *   and this map does not support `null` keys or values.
  *
  * @sample samples.collections.Maps.Usage.getOrPut
  */
@@ -387,6 +464,73 @@ public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V
         answer
     } else {
         value
+    }
+}
+
+/**
+ * Returns the value for the given [key] if the value is present and not `null`.
+ * Otherwise, calls the [defaultValue] function,
+ * puts its result into the map under the given key, and returns the call result.
+ *
+ * In contrast to [getOrPutIfMissing], this function puts and returns
+ * the result of the [defaultValue] function if the [key] is mapped to a `null` value.
+ *
+ * When the given [key] is not in this map or is mapped to a `null`, the result of [defaultValue],
+ * even if `null`, is put into the map under the key.
+ * If [defaultValue] throws an exception, the exception is rethrown.
+ *
+ * Note that the operation is not guaranteed to be atomic if the map is being modified concurrently.
+ *
+ * @throws NullPointerException if the specified [key] or the result of [defaultValue] is `null`,
+ *   and this map does not support `null` keys or values.
+ *
+ * @sample samples.collections.Maps.Usage.getOrPutIfNull
+ */
+@SinceKotlin("2.4")
+@kotlin.internal.InlineOnly
+@ExperimentalStdlibApi
+@Suppress("LEAKED_IN_PLACE_LAMBDA")
+public inline fun <K, V> MutableMap<K, V>.getOrPutIfNull(key: K, crossinline defaultValue: () -> V): V {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return getOrPut(key, defaultValue)
+}
+
+/**
+ * Returns the value for the given [key] if the value is present.
+ * Otherwise, calls the [defaultValue] function,
+ * puts its result into the map under the given key, and returns the call result.
+ *
+ * In contrast to [getOrPutIfNull], this function returns
+ * the mapped value, even if that value is `null`.
+ *
+ * When the given [key] is not in this map, the result of [defaultValue],
+ * even if `null`, is put into the map under the key.
+ * If [defaultValue] throws an exception, the exception is rethrown.
+ *
+ * Note that the operation is not guaranteed to be atomic if the map is being modified concurrently.
+ *
+ * @throws NullPointerException if the specified [key] or the result of [defaultValue] is `null`,
+ *   and this map does not support `null` keys or values.
+ *
+ * @sample samples.collections.Maps.Usage.getOrPutIfMissing
+ */
+@SinceKotlin("2.4")
+@kotlin.internal.InlineOnly
+@ExperimentalStdlibApi
+public inline fun <K, V> MutableMap<K, V>.getOrPutIfMissing(key: K, crossinline defaultValue: () -> V): V {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    val value = get(key)
+    return if (value == null && !containsKey(key)) {
+        val answer = defaultValue()
+        put(key, answer)
+        answer
+    } else {
+        @Suppress("UNCHECKED_CAST")
+        value as V
     }
 }
 

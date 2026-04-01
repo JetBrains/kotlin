@@ -23,8 +23,11 @@ internal data class LookupEntryImpl(
     @ProtoNumber(2) override val fileIds: List<Int>,
 ) : LookupEntry {
     companion object {
-        operator fun invoke(lookupSymbol: LookupSymbol, fileIds: List<Int>): LookupEntryImpl =
-            LookupEntryImpl("${lookupSymbol.scope}.${lookupSymbol.name}".hashCode(), fileIds)
+        operator fun invoke(lookupSymbol: LookupSymbol, fileIds: List<Int>): LookupEntryImpl {
+            val scope = if (lookupSymbol.scope.isEmpty()) "" else "${lookupSymbol.scope}."
+            val fqName = FqName("$scope${lookupSymbol.name}")
+            return LookupEntryImpl(fqName.hashCode(), fileIds)
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseDummyTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
+import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxCoreTest
 import org.jetbrains.kotlin.konan.test.diagnostics.*
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpIrSignaturesTest
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpIrTest
@@ -29,14 +31,16 @@ import org.jetbrains.kotlin.konan.test.klib.AbstractKlibCrossCompilationIdentity
 import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializationTest
 import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializationWithInlinedFunInKlibTest
 import org.jetbrains.kotlin.konan.test.syntheticAccessors.AbstractNativeKlibSyntheticAccessorTest
-import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeLoadCompiledKotlinTest
+import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     val k1BoxTestDir = listOf("multiplatform/k1")
     val testsRoot = args[0]
+    val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
     generateTestGroupSuiteWithJUnit5(args) {
         // irText tests
@@ -51,44 +55,33 @@ fun main(args: Array<String>) {
 
         // New frontend test infrastructure tests
         testGroup(testsRoot = testsRoot, testDataRoot = "compiler/testData/diagnostics") {
-            testClass<AbstractPsiNativeDiagnosticsTest>(
-                suiteTestClassName = "PsiOldFrontendNativeDiagnosticsTestGenerated",
-            ) {
-                model("nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-            }
-
-            testClass<AbstractLightTreeNativeDiagnosticsTest>(
-                suiteTestClassName = "LightTreeOldFrontendNativeDiagnosticsTestGenerated",
-            ) {
-                model("nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-            }
-
             testClass<AbstractPsiNativeDiagnosticsWithBackendTestBase>(
                 suiteTestClassName = "PsiNativeKlibDiagnosticsTestGenerated",
                 annotations = listOf(klib())
             ) {
-                model("klibSerializationTests")
+                model("klibSerializationTests", excludedPattern = excludedCustomTestdataPattern)
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
-                model("nativeTests/specialBackendChecks")
+                model("nativeTests", excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractLightTreeNativeDiagnosticsWithBackendTestBase>(
                 suiteTestClassName = "LightTreeNativeKlibDiagnosticsTestGenerated",
                 annotations = listOf(klib())
             ) {
-                model("klibSerializationTests")
+                model("klibSerializationTests", excludedPattern = excludedCustomTestdataPattern)
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
-                model("nativeTests/specialBackendChecks")
+                model("nativeTests", excludedPattern = excludedCustomTestdataPattern)
+                model("testsWithAnyBackend", excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase>(
                 suiteTestClassName = "NativeKlibDiagnosticsWithInlinedFunInKlibTestGenerated",
                 annotations = listOf(klib())
             ) {
-                model("klibSerializationTests")
+                model("klibSerializationTests", excludedPattern = excludedCustomTestdataPattern)
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
-                model("nativeTests/specialBackendChecks")
-                model("testsWithAnyBackend")
+                model("nativeTests", excludedPattern = excludedCustomTestdataPattern)
+                model("testsWithAnyBackend", excludedPattern = excludedCustomTestdataPattern)
             }
         }
 
@@ -134,7 +127,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        // Codegen/box tests for IR Inliner at 1st phase, invoked before K2 Klib Serializer
         testGroup(testsRoot, "compiler/testData/codegen") {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "NativeCodegenBoxWithInlinedFunInKlibTestGenerated",
@@ -153,6 +145,30 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeIrDeserializationWithInlinedFunInKlibTest> {
                 model("box", excludeDirs = k1BoxTestDir)
                 model("boxInline")
+            }
+            // Codegen/box tests based on Compiler Core testinfra
+            testClass<AbstractNativeCodegenBoxCoreTest>(
+                suiteTestClassName = "NativeCodegenBoxTestGenerated",
+                annotations = listOf(
+                    provider<UseDummyTestCaseGroupProvider>(),
+                )
+            ) {
+                // TODO Uncomment the following line during work on OSIP-286 Migrate Kotlin Native box tests to common compiler test infra
+                //      Meanwhile let's not run these thousands of tests in `box` to make experimental test runs much faster.
+                // model("box", excludeDirs = k1BoxTestDir)
+                model("boxInline")
+            }
+        }
+        // Native-specific codegen/box tests based on Compiler Core testinfra
+        testGroup(testsRoot, "native/native.tests/testData/codegen") {
+            testClass<AbstractNativeCodegenBoxCoreTest>(
+                suiteTestClassName = "NativeSpecificCodegenBoxTestGenerated",
+                annotations = listOf(
+                    provider<UseDummyTestCaseGroupProvider>(),
+                    temporarilyDisabledBecauseOfKt85080(), // TODO: drop after fixing KT-85080
+                )
+            ) {
+                model()
             }
         }
 
@@ -208,7 +224,8 @@ fun main(args: Array<String>) {
 
 private fun klib() = annotation(Tag::class.java, "klib")
 fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)
-private fun klibSyntheticAccessors() = arrayOf(
+
+fun klibSyntheticAccessors() = arrayOf(
     annotation(
         EnforcedProperty::class.java,
         "property" to ClassLevelProperty.TEST_KIND,
@@ -221,3 +238,6 @@ private fun klibSyntheticAccessors() = arrayOf(
     ),
     provider<UseExtTestCaseGroupProvider>(),
 )
+
+// TODO: drop after fixing KT-85080
+private fun temporarilyDisabledBecauseOfKt85080() = annotation(Disabled::class.java)

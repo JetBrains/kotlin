@@ -57,5 +57,8 @@ class MainActivity {
       tmp1_rcvr.Test(%composer, updateChangedFlags(%changed or 0b0001))
     }
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }

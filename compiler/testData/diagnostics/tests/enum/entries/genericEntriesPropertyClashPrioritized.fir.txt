@@ -20,7 +20,7 @@ FILE: genericEntriesPropertyClashPrioritized.fir.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<pckg/A>|
-            public get(): R|kotlin/enums/EnumEntries<pckg/A>|
+            public static get(): R|kotlin/enums/EnumEntries<pckg/A>|
 
     }
     public final val <T> R|T|.entries: R|kotlin/Int|

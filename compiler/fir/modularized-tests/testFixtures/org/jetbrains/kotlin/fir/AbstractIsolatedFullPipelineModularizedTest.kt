@@ -102,13 +102,13 @@ open class AbstractIsolatedFullPipelineModularizedTest(private val config: Modul
             args.jvmDefaultStable = originalArguments.jvmDefaultStable
             args.jdkRelease = originalArguments.jdkRelease
             args.progressiveMode = originalArguments.progressiveMode
-            args.optIn = (moduleData.optInAnnotations + (originalArguments.optIn ?: emptyArray())).toTypedArray()
+            args.optIn = (moduleData.optInAnnotations + (originalArguments.optIn)).toTypedArray()
             args.allowKotlinPackage = originalArguments.allowKotlinPackage
 
             args.pluginOptions = originalArguments.pluginOptions
-            args.pluginClasspaths = originalArguments.pluginClasspaths?.mapNotNull {
+            args.pluginClasspaths = originalArguments.pluginClasspaths.mapNotNull {
                 substituteCompilerPluginPathForKnownPlugins(it)?.absolutePath
-            }?.toTypedArray()
+            }.toTypedArray()
             args.contextReceivers = originalArguments.contextReceivers
             args.contextParameters = originalArguments.contextParameters
             args.multiDollarInterpolation = originalArguments.multiDollarInterpolation
@@ -124,6 +124,9 @@ open class AbstractIsolatedFullPipelineModularizedTest(private val config: Modul
         args.jdkHome = moduleData.jdkHome?.absolutePath ?: originalArguments?.jdkHome?.fixPath(config.rootPathPrefix)?.absolutePath
         args.renderInternalDiagnosticNames = true
         args.debugLevelCompilerChecks = config.enableSlowAssertions
+
+        args.disableStandardScript = true
+
         configureArgsUsingBuildFile(args, moduleData, outputDir)
     }
 

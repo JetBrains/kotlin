@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.declarations
 
 import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  * Implementations should be consistent with their corresponding [KotlinForwardDeclarationsPackageProviderFactory][org.jetbrains.kotlin.analysis.api.platform.packages.KotlinForwardDeclarationsPackageProviderFactory]
  * implementation.
  */
+@KaPlatformInterface
 public interface KotlinForwardDeclarationProviderFactory : KotlinOptionalPlatformComponent {
     /**
      * Creates a Kotlin/Native forward declaration provider for [module], or `null` if the module cannot contain forward declarations.
@@ -30,6 +32,7 @@ public interface KotlinForwardDeclarationProviderFactory : KotlinOptionalPlatfor
      */
     public fun createDeclarationProvider(module: KaModule): KotlinDeclarationProvider?
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinForwardDeclarationProviderFactory? = project.serviceOrNull()
     }
@@ -40,5 +43,6 @@ public interface KotlinForwardDeclarationProviderFactory : KotlinOptionalPlatfor
  *
  * @see KotlinForwardDeclarationProviderFactory
  */
+@KaPlatformInterface
 public fun Project.createForwardDeclarationProvider(module: KaModule): KotlinDeclarationProvider? =
     KotlinForwardDeclarationProviderFactory.getInstance(this)?.createDeclarationProvider(module)

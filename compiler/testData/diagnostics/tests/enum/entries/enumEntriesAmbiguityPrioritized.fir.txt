@@ -13,7 +13,7 @@ FILE: enumEntriesAmbiguityPrioritized.fir.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<Ambiguous>|
-            public get(): R|kotlin/enums/EnumEntries<Ambiguous>|
+            public static get(): R|kotlin/enums/EnumEntries<Ambiguous>|
 
     }
     public final val e: <ERROR TYPE REF: Unresolved name: ordinal> = Q|Ambiguous|.<Ambiguity: entries, [/Ambiguous.entries, /Ambiguous.entries]>#.<Unresolved name: ordinal>#

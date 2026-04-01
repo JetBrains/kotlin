@@ -1,4 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-63854, KT-76258
 
 open class A<T> {
     open var x: T = "Fail" as T

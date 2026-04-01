@@ -2,6 +2,7 @@ KDocName(50,61): 'foo.Foo.foo'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in foo.Foo) fun foo(string: kotlin.String)
       1: (in foo.Foo) fun foo(number: kotlin.Int)

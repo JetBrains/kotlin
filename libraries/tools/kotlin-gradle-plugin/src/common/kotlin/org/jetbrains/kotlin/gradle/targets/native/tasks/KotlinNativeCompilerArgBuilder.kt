@@ -19,7 +19,6 @@ internal class CompilerPluginData(
 )
 
 internal class SharedCompilationData(
-    val manifestFile: File,
     val refinesPaths: FileCollection,
 )
 

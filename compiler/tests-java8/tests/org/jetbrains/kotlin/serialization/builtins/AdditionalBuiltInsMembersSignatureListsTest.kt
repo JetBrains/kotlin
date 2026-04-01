@@ -36,7 +36,7 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
     }
 
     fun testAllListedSignaturesExistInJdk() {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val module = JvmResolveUtil.analyze(environment).moduleDescriptor as ModuleDescriptorImpl
 
         val hiddenSignatures =

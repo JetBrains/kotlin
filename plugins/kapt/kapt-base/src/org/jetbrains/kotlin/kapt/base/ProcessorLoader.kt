@@ -19,10 +19,14 @@ import javax.annotation.processing.Processor
 
 class LoadedProcessors(val processors: List<IncrementalProcessor>, val classLoader: ClassLoader)
 
-open class ProcessorLoader(private val options: KaptOptions, private val logger: KaptLogger) : Closeable {
+interface ProcessorLoader : Closeable {
+    fun loadProcessors(parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader()): LoadedProcessors
+}
+
+open class ProcessorLoaderImpl(private val options: KaptOptions, private val logger: KaptLogger) : ProcessorLoader {
     private var annotationProcessingClassLoader: URLClassLoader? = null
 
-    fun loadProcessors(parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader()): LoadedProcessors {
+    override fun loadProcessors(parentClassLoader: ClassLoader): LoadedProcessors {
         val classpath = LinkedHashSet<File>().apply {
             addAll(options.processingClasspath)
             if (options[KaptFlag.INCLUDE_COMPILE_CLASSPATH]) {
@@ -55,20 +59,20 @@ open class ProcessorLoader(private val options: KaptOptions, private val logger:
             return processors.map { IncrementalProcessor(it, DeclaredProcType.NON_INCREMENTAL, logger) }
         }
 
-        val processorNames = processors.map {it.javaClass.name}.toSet()
+        val processorNames = processors.map { it.javaClass.name }.toSet()
 
         val processorsInfo: Map<String, DeclaredProcType> = getIncrementalProcessorsFromClasspath(processorNames, classpath)
 
         val nonIncremental = processorNames.filter { !processorsInfo.containsKey(it) }
-        return processors.map {
-            val procType = processorsInfo[it.javaClass.name]?.let {
+        return processors.map { processor ->
+            val procType = processorsInfo[processor.javaClass.name]?.let {
                 if (nonIncremental.isEmpty()) {
                     it
                 } else {
                     DeclaredProcType.INCREMENTAL_BUT_OTHER_APS_ARE_NOT
                 }
             } ?: DeclaredProcType.NON_INCREMENTAL
-            IncrementalProcessor(it, procType, logger)
+            IncrementalProcessor(processor, procType, logger)
         }
     }
 

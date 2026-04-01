@@ -53,7 +53,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS by error<PsiElement>()
         val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED by error<PsiElement>()
 
-        val WRONG_NULLABILITY_FOR_JAVA_OVERRIDE by warning<PsiElement>(PositioningStrategy.OVERRIDE_MODIFIER) {
+        val WRONG_TYPE_FOR_JAVA_OVERRIDE by warning<PsiElement>(PositioningStrategy.OVERRIDE_MODIFIER) {
             parameter<FirCallableSymbol<*>>("override")
             parameter<FirCallableSymbol<*>>("base")
         }
@@ -91,7 +91,11 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<ConeKotlinType>("expectedType")
             parameter<String>("messageSuffix")
         }
-        val NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement> {
+        val RECEIVER_MUTABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement> {
+            parameter<ConeKotlinType>("actualType")
+            parameter<ClassId>("expectedType")
+        }
+        val TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement> {
             parameter<ConeKotlinType>("actualType")
             parameter<ConeKotlinType>("expectedType")
             parameter<String>("messageSuffix")
@@ -110,6 +114,10 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val JAVA_CLASS_ON_COMPANION by warning<PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
             parameter<ConeKotlinType>("actualType")
             parameter<ConeKotlinType>("expectedType")
+        }
+
+        val UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement>(PositioningStrategy.WHEN_EXPRESSION) {
+            parameter<ConeKotlinType>("subjectType")
         }
     }
 

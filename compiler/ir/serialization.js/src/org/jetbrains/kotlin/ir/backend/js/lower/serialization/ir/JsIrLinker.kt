@@ -14,24 +14,25 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.components.irOrFail
+import org.jetbrains.kotlin.library.isJsStdlib
+import org.jetbrains.kotlin.library.isWasmStdlib
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 class JsIrLinker(
-    private val currentModule: ModuleDescriptor?, messageCollector: MessageCollector, builtIns: IrBuiltIns, symbolTable: SymbolTable,
+    messageCollector: MessageCollector, builtIns: IrBuiltIns, symbolTable: SymbolTable,
     override val partialLinkageSupport: PartialLinkageSupportForLinker,
-    private val icData: ICData? = null,
     friendModules: Map<String, Collection<String>> = emptyMap(),
-    private val stubGenerator: DeclarationStubGenerator? = null
 ) : KotlinIrLinker(
-    currentModule = currentModule,
+    currentModule = null,
     messageCollector = messageCollector,
     builtIns = builtIns,
     symbolTable = symbolTable,
@@ -54,8 +55,10 @@ class JsIrLinker(
 
     override val moduleDependencyTracker: IrModuleDependencyTracker = IrModuleDependencyTrackerImpl()
 
-    override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
-        moduleDescriptor === moduleDescriptor.builtIns.builtInsModule
+    override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean {
+        val klib = (moduleDescriptor.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library ?: return false
+        return klib.isJsStdlib || klib.isWasmStdlib
+    }
 
     override fun createModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
@@ -64,10 +67,7 @@ class JsIrLinker(
     ): IrModuleDeserializer {
         require(klib != null) { "Expecting kotlin library" }
         val libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
-        return when (val lazyIrGenerator = stubGenerator) {
-            null -> JsModuleDeserializer(moduleDescriptor, klib.irOrFail, strategyResolver, libraryAbiVersion)
-            else -> JsLazyIrModuleDeserializer(moduleDescriptor, libraryAbiVersion, builtIns, lazyIrGenerator)
-        }
+        return JsModuleDeserializer(moduleDescriptor, klib.irOrFail, strategyResolver, libraryAbiVersion)
     }
 
     private val deserializedFilesInKlibOrder = mutableMapOf<IrModuleFragment, List<IrFile>>()
@@ -87,21 +87,9 @@ class JsIrLinker(
         }
     }
 
-    override fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer {
-        val currentModuleDeserializer = super.createCurrentModuleDeserializer(moduleFragment, dependencies)
-
-        icData?.let {
-            return CurrentModuleWithICDeserializer(currentModuleDeserializer, symbolTable, builtIns, it.icData) { ir ->
-                JsModuleDeserializer(currentModuleDeserializer.moduleDescriptor, ir, currentModuleDeserializer.strategyResolver, KotlinAbiVersion.CURRENT)
-            }
-        }
-        return currentModuleDeserializer
-    }
-
     val modules
         get() = deserializersForModules.values
             .map { it.moduleFragment }
-            .filter { it.descriptor !== currentModule }
 
 
     fun moduleDeserializer(moduleDescriptor: ModuleDescriptor): IrModuleDeserializer {

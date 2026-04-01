@@ -13,11 +13,13 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 
 @PublishedApi
 @ExcludedFromCodegen
+@UsedFromCompilerGeneratedCode
 internal fun <T> getContinuation(): Continuation<T> =
     implementedAsIntrinsic
 
 @PublishedApi
 @Suppress("UNCHECKED_CAST")
+@UsedFromCompilerGeneratedCode
 internal suspend fun <T> returnIfSuspended(argument: Any?): T =
     argument as T
 
@@ -27,20 +29,21 @@ internal fun <T> interceptContinuationIfNeeded(
     continuation: Continuation<T>
 ): Continuation<T> = context[ContinuationInterceptor]?.interceptContinuation(continuation) ?: continuation
 
-@UsedFromCompilerGeneratedCode
 @PublishedApi
 @DoNotInlineOnFirstStage
+@UsedFromCompilerGeneratedCode
 internal inline suspend fun getCoroutineContext(): CoroutineContext = getContinuation<Any?>().context
 
-@UsedFromCompilerGeneratedCode
 @PublishedApi
 @DoNotInlineOnFirstStage
+@UsedFromCompilerGeneratedCode
 internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(block: (Continuation<T>) -> Any?): T =
     returnIfSuspended<T>(block(getContinuation<T>()))
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <T> startCoroutineUninterceptedOrReturnIntrinsic0(
     f: (suspend () -> T),
     completion: Continuation<T>
@@ -51,6 +54,7 @@ internal fun <T> startCoroutineUninterceptedOrReturnIntrinsic0(
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <R, T> startCoroutineUninterceptedOrReturnIntrinsic1(
     f: (suspend R.() -> T),
     receiver: R,
@@ -62,6 +66,7 @@ internal fun <R, T> startCoroutineUninterceptedOrReturnIntrinsic1(
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <R, P, T> startCoroutineUninterceptedOrReturnIntrinsic2(
     f: (suspend R.(P) -> T),
     receiver: R,
@@ -73,6 +78,7 @@ internal fun <R, P, T> startCoroutineUninterceptedOrReturnIntrinsic2(
 
 @PublishedApi
 @SinceKotlin("1.3")
+@UsedFromCompilerGeneratedCode
 internal val EmptyContinuation: Continuation<Any?> = Continuation(EmptyCoroutineContext) { result ->
     val _ = result.getOrThrow()
 }

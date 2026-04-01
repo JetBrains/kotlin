@@ -1,9 +1,0 @@
-$TESTDATA_DIR$/compilationWarningExposureOfReferencesToInvisibleEntities.kt
--ir-output-dir
-$TEMP_DIR$
--ir-output-name
-out
--libraries
-libraries/stdlib/build/classes/kotlin/js/main
--Xwarning-level=NOTHING_TO_INLINE\:disabled
--Xklib-ir-inliner=full

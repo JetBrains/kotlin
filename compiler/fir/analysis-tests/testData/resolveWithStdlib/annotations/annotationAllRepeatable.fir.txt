@@ -1,0 +1,42 @@
+FILE: annotationAllRepeatable.kt
+    public final annotation class A : R|kotlin/Annotation| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(@CONSTRUCTOR_PARAMETER:R|A|() @ALL:R|A|() x: R|kotlin/Int|, @R|A|() @ALL:R|A|() y: R|kotlin/Int|, @ALL:R|A|() @R|A|() z: R|kotlin/Int|, @ALL:R|A|() w: R|kotlin/Int|, @ALL:R|A|() v: R|kotlin/Int|, @ALL:R|A|() t: R|kotlin/Int|, @ALL:R|A|() u: R|kotlin/Int|, @ALL:R|A|() s: R|kotlin/Int|, @ALL:R|A|() @ALL:R|A|() r: R|kotlin/Int|): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        @ALL:R|A|() field:@R|A|() public final val x: R|kotlin/Int| = R|<local>/x|
+            @R|A|() public get(): R|kotlin/Int|
+
+        @R|A|() @ALL:R|A|() field:@R|A|() public final val y: R|kotlin/Int| = R|<local>/y|
+            @R|A|() public get(): R|kotlin/Int|
+
+        @ALL:R|A|() @R|A|() field:@R|A|() public final val z: R|kotlin/Int| = R|<local>/z|
+            @R|A|() public get(): R|kotlin/Int|
+
+        @ALL:R|A|() field:@R|A|() public final val w: R|kotlin/Int| = R|<local>/w|
+            @PROPERTY_GETTER:R|A|() @R|A|() public get(): R|kotlin/Int|
+
+        @ALL:R|A|() field:@R|A|() public final var v: R|kotlin/Int| = R|<local>/v|
+            @R|A|() public get(): R|kotlin/Int|
+            @PROPERTY_SETTER:R|A|() public set(@R|A|() value: R|kotlin/Int|): R|kotlin/Unit|
+
+        @ALL:R|A|() field:@R|A|() public final var t: R|kotlin/Int| = R|<local>/t|
+            @R|A|() public get(): R|kotlin/Int|
+            public set(@SETTER_PARAMETER:R|A|() @R|A|() value: R|kotlin/Int|): R|kotlin/Unit|
+
+        @ALL:R|A|() field:@FIELD:R|A|() @R|A|() public final val u: R|kotlin/Int| = R|<local>/u|
+            @R|A|() public get(): R|kotlin/Int|
+
+        @PROPERTY:R|A|() @ALL:R|A|() field:@R|A|() public final val s: R|kotlin/Int| = R|<local>/s|
+            @R|A|() public get(): R|kotlin/Int|
+
+        @ALL:R|A|() @ALL:R|A|() field:@R|A|() @R|A|() public final val r: R|kotlin/Int| = R|<local>/r|
+            @R|A|() @R|A|() public get(): R|kotlin/Int|
+
+    }

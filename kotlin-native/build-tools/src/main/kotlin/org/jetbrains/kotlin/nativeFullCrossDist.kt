@@ -83,7 +83,7 @@ private fun Project.setupTaskToUnpackDistToCurrentDist(
 
     // this incantation makes it so that we will have something like build/unpackedDonorDarwinDist/<contents of dist>
     // rather than build/unpackedDonorDarwinDist/kotlin-native-macos-aarch65-2.0.255-SNAPSHOT/<contents of dist>
-    eachFile { relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray<String?>()) }
+    eachFile { relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray<String>()) }
     includeEmptyDirs = false
 }
 
@@ -107,9 +107,9 @@ fun getDarwinOnlyTargets(): Set<KonanTarget> {
 }
 
 private val Project.pathToDarwinDistProperty: String?
-    get() = kotlinBuildProperties.getOrNull(PATH_TO_DARWIN_DIST_PROPERTY) as? String
+    get() = kotlinBuildProperties.stringProperty(PATH_TO_DARWIN_DIST_PROPERTY).orNull
 private val Project.pathToHostDistProperty: String?
-    get() = kotlinBuildProperties.getOrNull(PATH_TO_HOST_DIST_PROPERTY) as? String
+    get() = kotlinBuildProperties.stringProperty(PATH_TO_HOST_DIST_PROPERTY).orNull
 
 private val Project.darwinDistFile: File
     get() = rootProject.rootDir.resolve(File(pathToDarwinDistProperty!!))

@@ -1,0 +1,31 @@
+Ann.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final annotation class Ann public constructor(x: kotlin.String = COMPILED_CODE) : kotlin.Annotation {
+      public final val x: kotlin.String = COMPILED_CODE /* compiled code */
+  }
+
+AnnotationOnFullNameBasedDestructuringKt.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public fun test1(x: Box): kotlin.Unit { /* compiled code */ }
+
+Box.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final data class Box public constructor(first: kotlin.String) {
+      public final val first: kotlin.String /* compiled code */
+
+      public final operator fun component1(): kotlin.String { /* compiled code */ }
+
+      public final fun copy(first: kotlin.String = COMPILED_CODE): Box { /* compiled code */ }
+
+      public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+
+      public open fun hashCode(): kotlin.Int { /* compiled code */ }
+
+      public open fun toString(): kotlin.String { /* compiled code */ }
+  }

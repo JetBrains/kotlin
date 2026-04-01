@@ -2,11 +2,13 @@ KtNameReferenceExpression(202,210): 'IntArray'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ctrl_click) fun IntArray(vararg content: kotlin.String): kotlin.Array<out kotlin.String>
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

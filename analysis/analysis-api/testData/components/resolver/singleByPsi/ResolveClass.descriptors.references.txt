@@ -1,0 +1,7 @@
+KtNameReferenceExpression(556,560): 'Test'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in Test) constructor()

@@ -1,15 +1,15 @@
 package one
 
-/* anchor --> */class A /* anchor --> */constructor(/* anchor --> */a: Int/* <-- */)/* <-- */ {
-    /* anchor --> */fun boo() {
+/* anchor (KtClass) --> */class A /* anchor (KtPrimaryConstructor) --> */constructor(/* anchor (KtParameter) --> */a: Int/* <-- */)/* <-- */ {
+    /* anchor (KtNamedFunction) --> */fun boo() {
         fun bar() {
 
         }
     }/* <-- */
 
-    /* anchor --> */val i: Int = 42/* <-- */
+    /* anchor (KtProperty) --> */val i: Int = 42/* <-- */
 
-    /* anchor --> */init {
+    /* anchor (KtClassInitializer) --> */init {
         fun foo() {
 
         }

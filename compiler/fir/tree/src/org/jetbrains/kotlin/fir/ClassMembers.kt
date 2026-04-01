@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 fun FirCallableSymbol<*>.dispatchReceiverClassTypeOrNull(): ConeClassLikeType? =
@@ -123,6 +125,19 @@ inline fun <reified D : FirCallableDeclaration> D.unwrapFakeOverrides(): D {
     } while (true)
 }
 
+inline fun <reified D : FirCallableDeclaration> D.unwrapFakeOverridesAccountingForExplicitBackingFields(): D {
+    var current = this
+
+    do {
+        // Explicit fields of intersection overrides point to the proper
+        // bases themselves, unlike other types of fake overrides.
+        if (current.isIntersectionOverride) return current
+
+        val next = current.originalIfFakeOverride() ?: return current
+        current = next
+    } while (true)
+}
+
 inline fun <reified D : FirCallableDeclaration> D.unwrapFakeOverridesOrDelegated(): D {
     var current = this
 
@@ -159,6 +174,9 @@ inline fun <reified S : FirCallableSymbol<*>> S.unwrapUseSiteSubstitutionOverrid
 }
 
 inline fun <reified S : FirCallableSymbol<*>> S.unwrapFakeOverrides(): S = fir.unwrapFakeOverrides().symbol as S
+
+inline fun <reified S : FirCallableSymbol<*>> S.unwrapFakeOverridesAccountingForExplicitBackingFields(): S =
+    fir.unwrapFakeOverridesAccountingForExplicitBackingFields().symbol as S
 
 inline fun <reified S : FirCallableSymbol<*>> S.unwrapSubstitutionOverrides(): S = fir.unwrapSubstitutionOverrides().symbol as S
 
@@ -262,3 +280,28 @@ private object UnnamedContextParameterNameKey : FirDeclarationDataKey()
 var FirValueParameter.generatedContextParameterName: Name? by FirDeclarationDataRegistry.data(UnnamedContextParameterNameKey)
 
 val FirValueParameterSymbol.generatedContextParameterName: Name? get() = fir.generatedContextParameterName
+
+
+private object LocalClassJvmTypeKey : FirDeclarationDataKey()
+
+/**
+ * Stores the FqName of the actual class produced by JVM backend for local classes (see `JvmInventNamesForLocalClasses`).
+ * Used for proper serialization of references to local classes in constant values (like annotation arguments).
+ */
+var FirClass.localClassJvmType: FqName? by FirDeclarationDataRegistry.data(LocalClassJvmTypeKey)
+val FirClassSymbol<*>.localClassJvmType: FqName? get() = fir.localClassJvmType
+
+private object FirCompanionBlockDataKey : FirDeclarationDataKey()
+
+class CompanionBlockInfo(
+    val validCompanionBlocks: List<KtSourceElement>,
+    val nestedCompanionBlocks: List<KtSourceElement>,
+) {
+    override fun toString(): String = "[valid=${validCompanionBlocks.size} nested=${nestedCompanionBlocks.size}]"
+}
+
+var FirClass.companionBlocks: CompanionBlockInfo? by FirDeclarationDataRegistry.data(FirCompanionBlockDataKey)
+
+private object FirIllegalCompanionBlockMemberKey : FirDeclarationDataKey()
+
+var FirDeclaration.isIllegalCompanionBlockMember: Boolean? by FirDeclarationDataRegistry.data(FirIllegalCompanionBlockMemberKey)

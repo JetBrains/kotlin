@@ -1,0 +1,5 @@
+KtArrayAccessExpression(146,152): 'm["a"]'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V
+    ]

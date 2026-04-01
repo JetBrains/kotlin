@@ -14,16 +14,19 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isMalformedExpandedType
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression.isArrayOfNullableNothing
-import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
 object FirArrayOfNullableNothingTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(typeRef: FirResolvedTypeRef) {
-        if (!LanguageFeature.NullableNothingInReifiedPosition.isEnabled()) return
+        if (LanguageFeature.NullableNothingInReifiedPosition.isDisabled()) return
         val coneType = typeRef.coneType
         val fullyExpandedType = coneType.fullyExpandedType()
 

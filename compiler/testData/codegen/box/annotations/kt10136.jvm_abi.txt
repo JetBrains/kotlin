@@ -1,9 +1,0 @@
-MODULE main
-	CLASS B.class
-		CLASS METADATA
-			CONSTRUCTOR <init>(Lkotlin/Array;)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(items: kotlin/Array<A> /* = ... */)
-					K2
-						(items: kotlin/Array<A> = [A()])

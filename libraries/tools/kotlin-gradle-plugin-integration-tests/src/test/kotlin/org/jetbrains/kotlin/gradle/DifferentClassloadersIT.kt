@@ -24,8 +24,7 @@ class DifferentClassloadersIT : KGPBaseTest() {
         project(
             "differentClassloaders",
             gradleVersion,
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build("publish", "-PmppProjectDependency=true") {
                 assertOutputDoesNotContain(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
@@ -41,7 +40,7 @@ class DifferentClassloadersIT : KGPBaseTest() {
             "differentClassloaders",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             setupDifferentClassloadersProject()
 
@@ -70,7 +69,7 @@ class DifferentClassloadersIT : KGPBaseTest() {
                     val specificProjectsReported = Regex("$MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING((?:'.*'(?:, )?)+)")
                         .find(output)!!.groupValues[1].split(", ").map { it.removeSurrounding("'") }.toSet()
 
-                    assertEquals(setOf(":mpp-lib", ":jvm-app", ":js-app"), specificProjectsReported)
+                    assertEquals(setOf(":mpp-lib", ":jvm-app"), specificProjectsReported)
                 }
             }
 
@@ -103,12 +102,6 @@ class DifferentClassloadersIT : KGPBaseTest() {
             it.checkedReplace(
                 "id \"org.jetbrains.kotlin.jvm\"",
                 "id \"org.jetbrains.kotlin.jvm\" version \"${TestVersions.Kotlin.CURRENT}\""
-            )
-        }
-        subProject("js-app").buildGradle.modify {
-            it.checkedReplace(
-                "id \"org.jetbrains.kotlin.js\"",
-                "id \"org.jetbrains.kotlin.js\" version \"${TestVersions.Kotlin.CURRENT}\""
             )
         }
 

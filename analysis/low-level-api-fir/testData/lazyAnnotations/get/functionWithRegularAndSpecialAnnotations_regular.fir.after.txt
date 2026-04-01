@@ -1,1 +1,1 @@
-@R|pack/MyAnno|[Types](count = Int(0)) @R|kotlin/jvm/JvmName|[Types](name = String(myName)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] i: R|kotlin/Int|): R|kotlin/String|
+@R|pack/MyAnno|[Types](count = Int(0) [evaluated = Int(0)]) @R|kotlin/jvm/JvmName|[Types](name = String(myName) [evaluated = String(myName)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] i: R|kotlin/Int|): R|kotlin/String|

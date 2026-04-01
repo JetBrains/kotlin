@@ -31,7 +31,7 @@ import p2.*
 }
 
 // FILE: explicitlyImportP1.kt
-import p1.<!API_NOT_AVAILABLE!>A<!>
+import p1.A
 import p2.*
 
 <!CONFLICTING_OVERLOADS!>fun test(a: A)<!> {

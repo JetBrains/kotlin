@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -950,7 +950,14 @@ public fun <T> Array<out T>.copyOf(newSize: Int): Array<T?> {
  */
 public actual fun ByteArray.copyOf(newSize: Int): ByteArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
-    return fillFrom(this, ByteArray(newSize))
+    val size = this.size
+    return when {
+        newSize < OPTIMAL_LOOP_COPY_THRESHOLD || size < OPTIMAL_LOOP_COPY_THRESHOLD -> fillFrom(this, ByteArray(newSize))
+        newSize > size -> ByteArray(newSize).also { copy ->
+            copy.asDynamic().set(this)
+        }
+        else -> this.asDynamic().slice(0, newSize)
+    }
 }
 
 /**
@@ -964,7 +971,14 @@ public actual fun ByteArray.copyOf(newSize: Int): ByteArray {
  */
 public actual fun ShortArray.copyOf(newSize: Int): ShortArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
-    return fillFrom(this, ShortArray(newSize))
+    val size = this.size
+    return when {
+        newSize < OPTIMAL_LOOP_COPY_THRESHOLD || size < OPTIMAL_LOOP_COPY_THRESHOLD -> fillFrom(this, ShortArray(newSize))
+        newSize > size -> ShortArray(newSize).also { copy ->
+            copy.asDynamic().set(this)
+        }
+        else -> this.asDynamic().slice(0, newSize)
+    }
 }
 
 /**
@@ -978,7 +992,14 @@ public actual fun ShortArray.copyOf(newSize: Int): ShortArray {
  */
 public actual fun IntArray.copyOf(newSize: Int): IntArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
-    return fillFrom(this, IntArray(newSize))
+    val size = this.size
+    return when {
+        newSize < OPTIMAL_LOOP_COPY_THRESHOLD || size < OPTIMAL_LOOP_COPY_THRESHOLD -> fillFrom(this, IntArray(newSize))
+        newSize > size -> IntArray(newSize).also { copy ->
+            copy.asDynamic().set(this)
+        }
+        else -> this.asDynamic().slice(0, newSize)
+    }
 }
 
 /**
@@ -990,9 +1011,18 @@ public actual fun IntArray.copyOf(newSize: Int): IntArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
+@OptIn(JsIntrinsic::class)
 public actual fun LongArray.copyOf(newSize: Int): LongArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
-    return fillFrom(this, LongArray(newSize))
+    if (!isLongCompiledToBigInt()) return fillFrom(this, LongArray(newSize))
+    val size = this.size
+    return when {
+        newSize < OPTIMAL_LOOP_COPY_THRESHOLD || size < OPTIMAL_LOOP_COPY_THRESHOLD -> fillFrom(this, LongArray(newSize))
+        newSize > size -> LongArray(newSize).also { copy ->
+            copy.asDynamic().set(this)
+        }
+        else -> this.asDynamic().slice(0, newSize)
+    }
 }
 
 /**
@@ -1006,7 +1036,14 @@ public actual fun LongArray.copyOf(newSize: Int): LongArray {
  */
 public actual fun FloatArray.copyOf(newSize: Int): FloatArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
-    return fillFrom(this, FloatArray(newSize))
+    val size = this.size
+    return when {
+        newSize < OPTIMAL_LOOP_COPY_THRESHOLD || size < OPTIMAL_LOOP_COPY_THRESHOLD -> fillFrom(this, FloatArray(newSize))
+        newSize > size -> FloatArray(newSize).also { copy ->
+            copy.asDynamic().set(this)
+        }
+        else -> this.asDynamic().slice(0, newSize)
+    }
 }
 
 /**
@@ -1020,7 +1057,14 @@ public actual fun FloatArray.copyOf(newSize: Int): FloatArray {
  */
 public actual fun DoubleArray.copyOf(newSize: Int): DoubleArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
-    return fillFrom(this, DoubleArray(newSize))
+    val size = this.size
+    return when {
+        newSize < OPTIMAL_LOOP_COPY_THRESHOLD || size < OPTIMAL_LOOP_COPY_THRESHOLD -> fillFrom(this, DoubleArray(newSize))
+        newSize > size -> DoubleArray(newSize).also { copy ->
+            copy.asDynamic().set(this)
+        }
+        else -> this.asDynamic().slice(0, newSize)
+    }
 }
 
 /**
@@ -1048,7 +1092,15 @@ public actual fun BooleanArray.copyOf(newSize: Int): BooleanArray {
  */
 public actual fun CharArray.copyOf(newSize: Int): CharArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
-    return withType("CharArray", fillFrom(this, CharArray(newSize)))
+    val size = this.size
+    val copy = when {
+        newSize < OPTIMAL_LOOP_COPY_THRESHOLD || size < OPTIMAL_LOOP_COPY_THRESHOLD -> fillFrom(this, CharArray(newSize))
+        newSize > size -> CharArray(newSize).also { copy ->
+            copy.asDynamic().set(this)
+        }
+        else -> this.asDynamic().slice(0, newSize)
+    }
+    return withType("CharArray", copy)
 }
 
 /**

@@ -2,6 +2,10 @@ KtNameReferenceExpression(208,213): 'sumOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun <T> Iterable<T>.sumOf(selector: (T) -> Int): Int
+    fun <T> Iterable<T>.sumOf(selector: (T) -> UInt): UInt>
     symbols:
       0: (in kotlin.collections) inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> kotlin.Int): kotlin.Int
       1: (in kotlin.collections) inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> kotlin.UInt): kotlin.UInt

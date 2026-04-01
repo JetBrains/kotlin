@@ -1,0 +1,113 @@
+KtFile: 'typeOperators.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(0,173): 'fun test(a: Any) {'
+  null
+
+KtParameterList(8,16): '(a: Any)'
+  null
+
+KtParameter(9,15): 'a: Any'
+  null
+
+KtTypeReference(12,15): 'Any'
+  null
+
+KtUserType(12,15): 'Any'
+  null
+
+KtNameReferenceExpression(12,15): 'Any'
+  null
+
+KtBlockExpression(17,173): '{'
+  null
+
+KtIsExpression(59,70): 'a is String'
+  null
+
+KtNameReferenceExpression(59,60): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: kotlin.Any
+    ]
+
+KtOperationReferenceExpression(61,63): 'is'
+  null
+
+KtTypeReference(64,70): 'String'
+  null
+
+KtUserType(64,70): 'String'
+  null
+
+KtNameReferenceExpression(64,70): 'String'
+  null
+
+KtIsExpression(75,87): 'a !is String'
+  null
+
+KtNameReferenceExpression(75,76): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: kotlin.Any
+    ]
+
+KtOperationReferenceExpression(77,80): '!is'
+  null
+
+KtTypeReference(81,87): 'String'
+  null
+
+KtUserType(81,87): 'String'
+  null
+
+KtNameReferenceExpression(81,87): 'String'
+  null
+
+KtBinaryExpressionWithTypeRHS(143,154): 'a as String'
+  null
+
+KtNameReferenceExpression(143,144): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: kotlin.Any
+    ]
+
+KtOperationReferenceExpression(145,147): 'as'
+  null
+
+KtTypeReference(148,154): 'String'
+  null
+
+KtUserType(148,154): 'String'
+  null
+
+KtNameReferenceExpression(148,154): 'String'
+  null
+
+KtBinaryExpressionWithTypeRHS(159,171): 'a as? String'
+  null
+
+KtNameReferenceExpression(159,160): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: kotlin.Any
+    ]
+
+KtOperationReferenceExpression(161,164): 'as?'
+  null
+
+KtTypeReference(165,171): 'String'
+  null
+
+KtUserType(165,171): 'String'
+  null
+
+KtNameReferenceExpression(165,171): 'String'
+  null

@@ -1,0 +1,109 @@
+@C(c = "c1")
+@D(d = "d1")
+@C(c = "c2")
+@D(d = "d2")
+/**
+ * @C(c = "c1")
+ * @D(d = "d1")
+ * @C(c = "c2")
+ * @D(d = "d2")
+ * public final class A : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class A {
+
+    public A() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@kotlin.annotation.Repeatable()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Repeatable(value = C.Container.class)
+/**
+ * @kotlin/annotation/Repeatable
+ * public final annotation class C : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(c: kotlin/String)
+ *
+ *   // getter: c()Ljava/lang/String;
+ *   public final val c: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface C {
+
+    public abstract java.lang.String c();
+
+    @kotlin.jvm.internal.RepeatableContainer()
+    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static abstract @interface Container {
+
+        public abstract C[] value();
+    }
+}
+
+////////////////////
+
+
+@java.lang.annotation.Repeatable(value = DContainer.class)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * @java/lang/annotation/Repeatable(value = DContainer::class)
+ * public final annotation class D : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(d: kotlin/String)
+ *
+ *   // getter: d()Ljava/lang/String;
+ *   public final val d: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface D {
+
+    public abstract java.lang.String d();
+}
+
+////////////////////
+
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class DContainer : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/Array;)V
+ *   public constructor(value: kotlin/Array<D>)
+ *
+ *   // getter: value()[LD;
+ *   public final val value: kotlin/Array<D>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface DContainer {
+
+    public abstract D[] value();
+}

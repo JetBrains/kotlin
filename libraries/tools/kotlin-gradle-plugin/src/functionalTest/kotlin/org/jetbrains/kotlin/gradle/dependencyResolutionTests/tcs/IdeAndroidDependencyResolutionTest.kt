@@ -28,7 +28,6 @@ class IdeAndroidDependencyResolutionTest {
     private val project = buildProject {
         enableDefaultStdlibDependency(true)
         enableDependencyVerification(false)
-        setMultiplatformAndroidSourceSetLayoutVersion(2)
         applyMultiplatformPlugin()
         plugins.apply("com.android.library")
         androidExtension.configureDefaults()

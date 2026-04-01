@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator.ClosureBuilder
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -108,6 +111,7 @@ val BOUND_RECEIVER_PARAMETER by IrDeclarationOriginImpl.Synthetic
  * }
  * ```
  */
+@PhasePrerequisites(SharedVariablesLowering::class, LocalDelegatedPropertiesLowering::class)
 open class LocalDeclarationsLowering(
     open val context: LoweringContext,
     val visibilityPolicy: VisibilityPolicy = VisibilityPolicy.DEFAULT,
@@ -364,7 +368,10 @@ open class LocalDeclarationsLowering(
 
                 val constructorContext = localClassConstructors[declaration] ?: return super.visitConstructor(declaration)
                 return constructorContext.transformedDeclaration.apply {
-                    this.body = declaration.body!!
+                    if (!context.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode)) {
+                        checkNotNull(declaration.body)
+                    }
+                    this.body = declaration.body
 
                     declaration.parameters.filter { it.defaultValue != null }.forEach { argument ->
                         oldParameterToNew[argument]!!.defaultValue = argument.defaultValue
@@ -619,7 +626,7 @@ open class LocalDeclarationsLowering(
             val constructorsByDelegationKinds: Map<ConstructorDelegationKind, List<LocalClassConstructorContext>> = constructors
                 .asSequence()
                 .map { localClassConstructors[it]!! }
-                .groupBy { it.declaration.delegationKind(context.irBuiltIns) }
+                .groupBy { it.declaration.delegationKind(context) }
 
             val constructorsCallingSuper = constructorsByDelegationKinds[ConstructorDelegationKind.CALLS_SUPER].orEmpty()
 
@@ -866,8 +873,9 @@ open class LocalDeclarationsLowering(
             val parametersForCapturedValues = capturedValues.map { capturedValue ->
                 val p = capturedValue.owner
                 buildValueParameter(newDeclaration) {
-                    startOffset = p.startOffset
-                    endOffset = p.endOffset
+                    // The offsets must be UNDEFINED because a local declaration could've been inlined from another file with its own file entry
+                    startOffset = UNDEFINED_OFFSET
+                    endOffset = UNDEFINED_OFFSET
                     origin =
                         if (p is IrValueParameter &&
                             p.kind in listOf(IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver) &&
@@ -1093,10 +1101,7 @@ open class LocalDeclarationsLowering(
             class Data(
                 val isInInlineFunction: Boolean,
                 val sourceFileWhenInlined: IrFileEntry? = null,
-            ) {
-                fun withInline(isInline: Boolean, sourceFileWhenInlined: IrFileEntry?): Data =
-                    if (isInline && !isInInlineFunction) Data(true, sourceFileWhenInlined) else this
-            }
+            )
 
             irElement.accept(object : IrVisitor<Unit, Data>() {
 
@@ -1107,9 +1112,9 @@ open class LocalDeclarationsLowering(
                 override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: Data) {
                     super.visitInlinedFunctionBlock(
                         inlinedBlock,
-                        data.withInline(
-                            inlinedBlock.isFunctionInlining(),
-                            inlinedBlock.inlinedFunctionFileEntry
+                        Data(
+                            isInInlineFunction = inlinedBlock.isFunctionInlining(),
+                            sourceFileWhenInlined = inlinedBlock.inlinedFunctionFileEntry
                         )
                     )
                 }
@@ -1140,13 +1145,10 @@ open class LocalDeclarationsLowering(
 
                 override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Data) {
                     if (declaration.visibility == DescriptorVisibilities.LOCAL) {
-                        localFunctions[declaration] = LocalFunctionContext(
-                            declaration,
-                            data.sourceFileWhenInlined,
-                        )
+                        localFunctions[declaration] = LocalFunctionContext(declaration, data.sourceFileWhenInlined)
                     }
 
-                    val newData = data.withInline(declaration.isInline, data.sourceFileWhenInlined)
+                    val newData = Data(declaration.isInline, data.sourceFileWhenInlined)
                     super.visitSimpleFunction(declaration, newData)
                 }
 

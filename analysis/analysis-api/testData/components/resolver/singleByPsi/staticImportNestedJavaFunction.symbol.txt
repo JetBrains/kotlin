@@ -1,0 +1,5 @@
+KtCallExpression(95,100): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Dependency.Nested.foo(): kotlin.Unit
+    ]

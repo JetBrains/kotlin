@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LL_FIR_DIVERGENCE
 // Checkers are run with Common session in Analysis API, so they can't see actualized declarations
 // LL_FIR_DIVERGENCE
@@ -20,15 +21,15 @@ expect annotation class MyObjcAction()
 class TestClass : NSAssertionHandler() {
     @OptIn(kotlinx.cinterop.BetaInteropApi::class)
     @MyObjcAction
-    fun String.foo() = println(this)
+    fun <!MUST_NOT_HAVE_EXTENSION_RECEIVER!>String<!>.foo() = println(this)
 
-    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
+    <!MUST_BE_UNIT_TYPE!>@OptIn(kotlinx.cinterop.BetaInteropApi::class)
     @MyObjcAction
-    fun foo() = 42
+    fun foo() = 42<!>
 
-    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
+    <!TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE!>@OptIn(kotlinx.cinterop.BetaInteropApi::class)
     @MyObjcAction
-    fun foo(a: String, b: String, c: String) = println(this)
+    fun foo(<!MUST_BE_OBJC_OBJECT_TYPE!>a: String<!>, <!MUST_BE_OBJC_OBJECT_TYPE!>b: String<!>, <!MUST_BE_OBJC_OBJECT_TYPE!>c: String<!>) = println(this)<!>
 
     @OptIn(kotlinx.cinterop.BetaInteropApi::class)
     @MyObjcAction

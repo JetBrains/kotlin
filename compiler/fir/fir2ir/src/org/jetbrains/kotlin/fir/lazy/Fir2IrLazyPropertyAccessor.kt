@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -53,9 +54,9 @@ class Fir2IrLazyPropertyAccessor(
         get() = firAccessor?.isInline == true
         set(_) = mutationNotSupported()
 
-    override var annotations: List<IrConstructorCall> by when {
+    override var annotations: List<IrAnnotation> by when {
         firAccessor != null -> createLazyAnnotations()
-        else -> lazyVar<List<IrConstructorCall>>(lock) { emptyList() }
+        else -> lazyVar<List<IrAnnotation>>(lock) { emptyList() }
     }
 
     override var name: Name

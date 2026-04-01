@@ -22,12 +22,12 @@ FILE fqName:foo fileName:/generatedFunctionWithDefaultParameter.kt
     annotations:
       MyAnnotation
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.Foo
-    CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.Key] CLASS name:Nested modality:FINAL visibility:public superTypes:[kotlin.Any]
+    CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.AdditionalMembersGeneratorKey] CLASS name:Nested modality:FINAL visibility:public superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.Foo.Nested
-      CONSTRUCTOR GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.Key] visibility:public returnType:foo.Foo.Nested
+      CONSTRUCTOR GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.AdditionalMembersGeneratorKey] visibility:public returnType:foo.Foo.Nested
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.Key] CLASS name:Nested modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.AdditionalMembersGeneratorKey] CLASS name:Nested modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
@@ -58,15 +58,15 @@ FILE fqName:foo fileName:/generatedFunctionWithDefaultParameter.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.Key] name:idWithDefault visibility:public modality:FINAL returnType:kotlin.String
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.AdditionalMembersGeneratorKey] name:idWithDefault visibility:public modality:FINAL returnType:kotlin.String
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.Foo
-      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.Key] kind:Regular name:x index:1 type:kotlin.String
+      VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.AdditionalMembersGeneratorKey] kind:Regular name:x index:1 type:kotlin.String
         EXPRESSION_BODY
           CONST String type=kotlin.String value="OK"
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun idWithDefault (x: kotlin.String): kotlin.String declared in foo.Foo'
           GET_VAR 'x: kotlin.String declared in foo.Foo.idWithDefault' type=kotlin.String origin=null
-    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.Key] name:materialize visibility:public modality:FINAL returnType:foo.Foo
+    FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.AdditionalMembersGenerator.AdditionalMembersGeneratorKey] name:materialize visibility:public modality:FINAL returnType:foo.Foo
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.Foo
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun materialize (): foo.Foo declared in foo.Foo'

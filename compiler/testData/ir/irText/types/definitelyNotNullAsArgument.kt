@@ -1,5 +1,8 @@
 // LANGUAGE: +DefinitelyNonNullableTypes
 
+// Exception in new-reflect implementation
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 interface I<T> {
     fun input(t: T)
     fun output(): T

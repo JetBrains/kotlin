@@ -1,0 +1,4 @@
+KtNameReferenceExpression(388,408): 'serializeFirstTarget'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'serializeFirstTarget'.>

@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import org.junit.jupiter.api.Assumptions
+import org.opentest4j.AssertionFailedError
+import org.opentest4j.ValueWrapper
 import java.io.File
 import kotlin.time.Duration
 
@@ -35,7 +37,9 @@ sealed interface TestRunCheck {
 
     sealed interface Result {
         data object Passed : Result
-        data class Failed(val reason: String) : Result
+        data class Failed(val reason: String, val cause: Throwable? = null) : Result {
+            override fun toString(): String = reason
+        }
     }
 
     sealed class ExecutionTimeout(val timeout: Duration) : TestRunCheck {
@@ -52,20 +56,14 @@ sealed interface TestRunCheck {
                     Result.Failed("Test is expected to fail with exceeded timeout, which hasn't happened.")
                 else Result.Passed
         }
-
-        // When we want the execution to stop on reaching the timeout, but it's not a failure.
-        // For example: stress tests, whose only check is that the execution did not crash.
-        class MayExceed(timeout: Duration) : ExecutionTimeout(timeout) {
-            override fun apply(testRun: TestRun, runResult: RunResult): Result {
-                return Result.Passed
-            }
-        }
     }
 
     sealed class ExitCode : TestRunCheck {
         data object AnyNonZero : ExitCode()
 
         data class Expected(val expectedExitCode: Int) : ExitCode()
+
+        data class SkipIfNot(val expectedExitCode: Int) : ExitCode()
 
         override fun apply(testRun: TestRun, runResult: RunResult): Result {
             // Don't check the exit code if it is unknown.
@@ -81,6 +79,10 @@ sealed interface TestRunCheck {
                     if (knownExitCode != expectedExitCode)
                         Result.Failed("Exit code is $knownExitCode while $expectedExitCode was expected.")
                     else Result.Passed
+                }
+                is SkipIfNot -> {
+                    Assumptions.assumeTrue(knownExitCode == expectedExitCode)
+                    Result.Passed
                 }
             }
         }
@@ -121,7 +123,7 @@ sealed interface TestRunCheck {
                 } else Result.Passed
             } catch (t: Throwable) {
                 if (t is Exception || t is AssertionError) {
-                    Result.Failed("Tested process output has not passed validation: ${t.message}")
+                    Result.Failed("Tested process output has not passed validation: ${t.message}", t)
                 } else {
                     throw t
                 }
@@ -135,7 +137,8 @@ sealed interface TestRunCheck {
 
                 checkNotNull(testReport) { "TestRun has TestFiltering enabled, but test report is null" }
 
-                if (testReport.isEmpty()) Result.Failed("No tests have been found. Test report is empty")
+                if (testReport.isEmpty())
+                    return Result.Failed("No tests have been found. Test report is empty")
 
                 testRun.runParameters.get<TestRunParameter.WithFilter> {
                     testReport.checkDisabled()

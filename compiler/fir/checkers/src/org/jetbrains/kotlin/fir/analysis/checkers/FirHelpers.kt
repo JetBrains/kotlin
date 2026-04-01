@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.resolve.AnnotationTargetList
 import org.jetbrains.kotlin.resolve.AnnotationTargetListForDeprecation
 import org.jetbrains.kotlin.resolve.AnnotationTargetLists
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
@@ -64,8 +65,6 @@ private val INLINE_ONLY_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(FqName("
 context(context: CheckerContext)
 fun FirClass.unsubstitutedScope(): FirTypeScope =
     this.unsubstitutedScope(
-        context.sessionHolder.session,
-        context.sessionHolder.scopeSession,
         withForcedTypeCalculator = true,
         memberRequiredPhase = FirResolvePhase.STATUS,
     )
@@ -292,9 +291,8 @@ fun isSubtypeForTypeMismatch(context: ConeInferenceContext, subtype: ConeKotlinT
  *
  * @param parentClassSymbol the contextual class for this query.
  */
-@OptIn(ScopeFunctionRequiresPrewarm::class)
+context(sessionHolder: SessionAndScopeSessionHolder) @OptIn(ScopeFunctionRequiresPrewarm::class)
 fun FirCallableSymbol<*>.getImplementationStatus(
-    sessionHolder: SessionAndScopeSessionHolder,
     parentClassSymbol: FirClassSymbol<*>
 ): ImplementationStatus {
     val containingClassSymbol = getContainingClassSymbol()
@@ -305,7 +303,7 @@ fun FirCallableSymbol<*>.getImplementationStatus(
     }
 
     if (symbol is FirIntersectionCallableSymbol) {
-        val dispatchReceiverScope = symbol.dispatchReceiverScope(sessionHolder.session, sessionHolder.scopeSession)
+        val dispatchReceiverScope = symbol.dispatchReceiverScope()
         val memberWithBaseScope = MemberWithBaseScope(symbol, dispatchReceiverScope)
         val nonSubsumed = memberWithBaseScope.getNonSubsumedOverriddenSymbols()
 
@@ -584,6 +582,14 @@ internal fun checkCondition(condition: FirExpression) {
     }
 }
 
+fun extractArgumentsTypeRefAndSource(qualifier: FirResolvedQualifier): List<FirTypeRefSource> {
+    return buildList {
+        for (typeArgument in qualifier.typeArguments) {
+            add(FirTypeRefSource((typeArgument as? FirTypeProjectionWithVariance)?.typeRef, typeArgument.source))
+        }
+    }
+}
+
 fun extractArgumentsTypeRefAndSource(typeRef: FirTypeRef?): List<FirTypeRefSource>? {
     if (typeRef !is FirResolvedTypeRef) return null
     val result = mutableListOf<FirTypeRefSource>()
@@ -600,6 +606,9 @@ fun extractArgumentsTypeRefAndSource(typeRef: FirTypeRef?): List<FirTypeRefSourc
         is FirFunctionTypeRef -> {
             val parameters = delegatedTypeRef.parameters
 
+            for (contextParameter in delegatedTypeRef.contextParameterTypeRefs) {
+                result.add(FirTypeRefSource(contextParameter, contextParameter.source))
+            }
             delegatedTypeRef.receiverTypeRef?.let { result.add(FirTypeRefSource(it, it.source)) }
             for (valueParameter in parameters) {
                 val valueParamTypeRef = valueParameter.returnTypeRef
@@ -655,11 +664,17 @@ fun FirFunctionSymbol<*>.isFunctionForExpectTypeFromCastFeature(): Boolean {
 private val FirCallableDeclaration.isMember get() = dispatchReceiverType != null
 
 @OptIn(SymbolInternals::class)
+context(sessionHolder: SessionHolder)
 fun getActualTargetList(container: FirBasedSymbol<*>): AnnotationTargetList {
-    return getActualTargetList(container.fir)
+    return getActualTargetList(container.fir, sessionHolder.session)
 }
 
+context(sessionHolder: SessionHolder)
 fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList {
+    return getActualTargetList(container, sessionHolder.session)
+}
+
+fun getActualTargetList(container: FirAnnotationContainer, session: FirSession): AnnotationTargetList {
     val annotated =
         if (container is FirBackingField) {
             when {
@@ -688,7 +703,11 @@ fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList
             when {
                 annotated.symbol is FirLocalPropertySymbol ->
                     when {
-                        annotated.name == SpecialNames.DESTRUCT -> TargetLists.T_DESTRUCTURING_DECLARATION
+                        annotated.name == SpecialNames.DESTRUCT -> if (session.languageVersionSettings.supportsFeature(LanguageFeature.LocalVariableTargetedAnnotationOnDestructuring)) {
+                            TargetLists.T_DESTRUCTURING_DECLARATION_NEW
+                        } else {
+                            TargetLists.T_DESTRUCTURING_DECLARATION
+                        }
                         annotated.isCatchParameter == true -> TargetLists.T_CATCH_PARAMETER
                         annotated.isForLoopParameter == true -> TargetLists.T_VALUE_PARAMETER_WITHOUT_VAL
                         else -> TargetLists.T_LOCAL_VARIABLE
@@ -697,10 +716,15 @@ fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList
                     if (annotated.source?.kind == KtFakeSourceElementKind.PropertyFromParameter) {
                         TargetLists.T_VALUE_PARAMETER_WITH_VAL
                     } else {
-                        TargetLists.T_MEMBER_PROPERTY(annotated.hasBackingField, annotated.delegate != null)
+                        TargetLists.T_MEMBER_PROPERTY(annotated.hasBackingField, annotated.delegate != null, isCompanionMember = false)
                     }
+                annotated.isCompanionBlockMember -> TargetLists.T_MEMBER_PROPERTY(
+                    backingField = annotated.hasBackingField,
+                    delegate = annotated.delegate != null,
+                    isCompanionMember = true
+                )
                 else ->
-                    TargetLists.T_TOP_LEVEL_PROPERTY(annotated.hasBackingField, annotated.delegate != null)
+                    TargetLists.T_TOP_LEVEL_PROPERTY(annotated.hasBackingField, annotated.delegate != null, isCompanionExtension = annotated.isCompanionExtension)
             }
         }
         is FirValueParameter -> {
@@ -716,7 +740,9 @@ fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList
         is FirNamedFunction -> {
             when {
                 annotated.status.visibility == Visibilities.Local -> TargetLists.T_LOCAL_FUNCTION
+                annotated.isCompanionBlockMember -> TargetLists.T_COMPANION_MEMBER_FUNCTION
                 annotated.isMember -> TargetLists.T_MEMBER_FUNCTION
+                annotated.isCompanionExtension -> TargetLists.T_COMPANION_EXTENSION_FUNCTION
                 else -> TargetLists.T_TOP_LEVEL_FUNCTION
             }
         }
@@ -931,7 +957,7 @@ fun FirResolvedQualifier.isStandalone(
 ): Boolean {
     val lastQualifiedAccess = context.callsOrAssignments.lastOrNull() as? FirQualifiedAccessExpression
     // Note: qualifier isn't standalone when it's in receiver (SomeClass.foo) or getClass (SomeClass::class) position
-    if (lastQualifiedAccess?.explicitReceiver === this || lastQualifiedAccess?.dispatchReceiver === this) return false
+    if (lastQualifiedAccess?.explicitReceiver === this || lastQualifiedAccess?.dispatchReceiver === this || lastQualifiedAccess?.extensionReceiver == this) return false
     val lastGetClass = context.getClassCalls.lastOrNull()
     if (lastGetClass?.argument === this) return false
     if (isExplicitParentOfResolvedQualifier()) return false
@@ -939,10 +965,12 @@ fun FirResolvedQualifier.isStandalone(
     return true
 }
 
+/**
+ * @return `true` for qualifiers that are explicit parents (receivers) for other qualifiers, e.g., for `Outer` in `Outer.Nested`
+ */
 context(context: CheckerContext)
 fun FirResolvedQualifier.isExplicitParentOfResolvedQualifier(): Boolean {
-    val secondToLastElement = context.containingElements.elementAtOrNull(context.containingElements.size - 2)
-    return secondToLastElement.let { it is FirResolvedQualifier && it.explicitParent == this }
+    return context.secondToLastContainer.let { it is FirResolvedQualifier && it.explicitParent == this }
 }
 
 fun isExplicitTypeArgumentSource(source: KtSourceElement?): Boolean =
@@ -994,7 +1022,7 @@ fun KtSourceElement?.requireFeatureSupport(
     feature: LanguageFeature,
     positioningStrategy: SourceElementPositioningStrategy? = null,
 ) {
-    if (!feature.isEnabled()) {
+    if (feature.isDisabled()) {
         reporter.reportOn(this, FirErrors.UNSUPPORTED_FEATURE, feature to context.languageVersionSettings, positioningStrategy)
     }
 }
@@ -1007,17 +1035,23 @@ fun FirElement.requireFeatureSupport(
     source.requireFeatureSupport(feature, positioningStrategy)
 }
 
+context(context: CheckerContext)
+internal val ConeKotlinType.hasStableIdentityForAtomicOperations: Boolean
+    get() = fullyExpandedType().unwrapToSimpleTypeUsingLowerBound().let {
+        !it.isPrimitiveOrNullablePrimitive && !it.isValueClass(context.session)
+    }
+
 context(context: CheckerContext, reporter: DiagnosticReporter)
-fun reportAtomicToPrimitiveProblematicAccess(
+fun checkAtomicCallReceiverForStableIdentity(
     type: ConeKotlinType,
     source: KtSourceElement?,
     atomicReferenceClassId: ClassId,
     appropriateCandidatesForArgument: Map<ClassId, ClassId>,
 ) {
     val expanded = type.fullyExpandedType()
-    val argument = expanded.typeArguments.firstOrNull()?.type?.unwrapToSimpleTypeUsingLowerBound() ?: return
+    val argument = expanded.typeArguments.firstOrNull()?.type ?: return
 
-    if (argument.isPrimitiveOrNullablePrimitive || argument.isValueClass(context.session)) {
+    if (!argument.hasStableIdentityForAtomicOperations) {
         val candidate = appropriateCandidatesForArgument[argument.classId]
         reporter.reportOn(source, FirErrors.ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY, atomicReferenceClassId, argument, candidate)
     }
@@ -1047,8 +1081,47 @@ fun FirResolvedQualifier.resolvedSymbolOrCompanionSymbol(): FirClassLikeSymbol<*
     }
 }
 
+context(context: SessionHolder)
+fun FirResolvedQualifier.resolvedCompanionSymbol(): FirClassLikeSymbol<*>? {
+    return symbol.takeIf { resolvedToCompanionObject }?.fullyExpandedClass()?.resolvedCompanionObjectSymbol
+}
+
 context(context: CheckerContext)
 fun FirExpression.isDispatchReceiver(): Boolean {
     val parentElement = context.containingElements.elementAtOrNull(context.containingElements.size - 2)
     return parentElement is FirQualifiedAccessExpression && parentElement.dispatchReceiver == this
+}
+
+/**
+ * Determines if there is a potential ambiguity in interpreting the given expression as an integer literal or an integer literal operator call.
+ *
+ * The problem is the integer literal (or operator call) might have an ambiguous type like
+ * ([Long] | [Int] | [Short] | [Byte]) or ([ULong] | [UInt] | [UShort] | [UByte]).
+ * The only resolution disambiguates it to a particular type that sometimes depends on the context (but in most cases it's [Int] and [UInt]).
+ * The `as Int`, `toInt`, `as Short`, `toShort` and other similar expressions
+ * *always* narrow down the ambiguous type to a particular type (specified on RHS) that prevents the integer type ascription by resolution.
+ *
+ * Since checkers don't have full-fledged info about the resolution, the redundancy diagnostics on integer literals should not be reported.
+ * The ambiguity check is only applicable to literals like `1` or `1U` but not to `1L` or `1UL`,
+ * because the latter ones already have unambiguous types ([Long] and [ULong] respectively).
+ * The literals for strict [Int], [UInt] types don't exist in Kotlin.
+ * The [Short], [Byte], [UShort], [UByte] types aren't expressible via literals at all.
+ *
+ * @param this the left-hand side expression to be checked (`lhs.toInt()`, `lhs as Int`, `lhs as Short`, etc.)
+ * @return `true` if it could cause ambiguity and neither [FirErrors.USELESS_CAST] nor [FirErrors.REDUNDANT_CALL_OF_CONVERSION_METHOD] should be reported.
+ */
+fun FirExpression.hasIntegerLiteralTypeAmbiguity(): Boolean {
+    // The leftmost argument defines the type of the entire integer operation.
+    // Moreover, the mixing of different integer types within a single integer operator call (for example, `2U * 4`) is prohibited.
+    fun unwrapLeftmostLiteralExpression(expression: FirExpression?): FirLiteralExpression? {
+        return when (expression) {
+            is FirLiteralExpression -> expression
+            is FirIntegerLiteralOperatorCall -> unwrapLeftmostLiteralExpression(expression.dispatchReceiver)
+            else -> null
+        }
+    }
+
+    val maybeIntegerLiteralExpression = unwrapLeftmostLiteralExpression(this)
+
+    return maybeIntegerLiteralExpression?.kind?.let { it == ConstantValueKind.Int || it == ConstantValueKind.UnsignedInt } == true
 }

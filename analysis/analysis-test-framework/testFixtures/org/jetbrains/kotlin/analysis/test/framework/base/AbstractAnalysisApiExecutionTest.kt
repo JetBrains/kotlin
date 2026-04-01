@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,12 +8,7 @@ package org.jetbrains.kotlin.analysis.test.framework.base
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
-import org.junit.jupiter.api.extension.AfterTestExecutionCallback
-import org.junit.jupiter.api.extension.BeforeTestExecutionCallback
-import org.junit.jupiter.api.extension.ExtendWith
-import org.junit.jupiter.api.extension.ExtensionContext
-import org.junit.jupiter.api.extension.ParameterContext
-import org.junit.jupiter.api.extension.ParameterResolver
+import org.junit.jupiter.api.extension.*
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.exists
@@ -43,10 +38,10 @@ import kotlin.io.path.exists
 @ExtendWith(AnalysisApiExecutionTestExtension::class)
 abstract class AbstractAnalysisApiExecutionTest(val testDirPathString: String) : AbstractAnalysisApiBasedTest() {
     @Deprecated("Handled by the test infrastructure. Avoid calling directly")
-    fun performTest(path: String, block: (TestServices, KtFile?, KtTestModule) -> Unit) {
+    fun performTest(path: String, block: (TestServices, KtFile?, KtTestModule?) -> Unit) {
         runTest(path) { testServices ->
-            val (mainFile, mainModule) = findMainFileAndModule(testServices)
-            block(testServices, mainFile, mainModule)
+            val moduleWithMainFile = findMainFileAndModule(testServices)
+            block(testServices, moduleWithMainFile?.mainFile, moduleWithMainFile?.module)
         }
     }
 }
@@ -60,7 +55,7 @@ private class AnalysisApiExecutionTestExtension : BeforeTestExecutionCallback, A
         )
     }
 
-    private class State(val testServices: TestServices, val mainFile: KtFile?, val mainModule: KtTestModule)
+    private class State(val testServices: TestServices, val mainFile: KtFile?, val mainModule: KtTestModule?)
 
     private var cachedState = ThreadLocal<State>()
 
@@ -98,6 +93,7 @@ private class AnalysisApiExecutionTestExtension : BeforeTestExecutionCallback, A
     private fun getTestFilePath(testDirPathString: String, testFileName: String): Path {
         return Paths.get(testDirPathString, "$testFileName.kt").takeIf { it.exists() }
             ?: Paths.get(testDirPathString, "$testFileName.kts").takeIf { it.exists() }
+            ?: Paths.get(testDirPathString, "$testFileName.repl.kts").takeIf { it.exists() }
             ?: Paths.get(testDirPathString, "$testFileName.kotlin_builtins").takeIf { it.exists() }
             ?: error("Cannot find test file $testFileName.kt(s) in $testDirPathString")
     }

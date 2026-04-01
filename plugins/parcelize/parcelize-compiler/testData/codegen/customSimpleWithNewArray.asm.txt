@@ -74,7 +74,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     public final static User$Companion access$getCompanion$p()
 
-    public int describeContents()
+    public final int describeContents()
 
     public final int getAge()
 
@@ -82,5 +82,5 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     public final java.lang.String getLastName()
 
-    public void writeToParcel(android.os.Parcel out, int flags)
+    public final void writeToParcel(android.os.Parcel dest, int flags)
 }

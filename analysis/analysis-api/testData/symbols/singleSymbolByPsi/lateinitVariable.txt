@@ -6,6 +6,7 @@ KaLocalVariableSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   isLateInit: true
   isVal: false
   location: LOCAL

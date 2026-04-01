@@ -13,7 +13,7 @@ class SomeClassImpl: SomeClass() {
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 1)
+@StabilityInferred(parameters = 0)
 class SomeClassImpl : SomeClass {
   @Composable
   override fun SomeFunction(%composer: Composer?, %changed: Int): Int {
@@ -29,5 +29,8 @@ class SomeClassImpl : SomeClass {
     %composer.endReplaceGroup()
     return tmp0
   }
-  static val %stable: Int = 0
+  val %stable: Int = SomeClass.%stable
+    get() {
+      return field
+    }
 }

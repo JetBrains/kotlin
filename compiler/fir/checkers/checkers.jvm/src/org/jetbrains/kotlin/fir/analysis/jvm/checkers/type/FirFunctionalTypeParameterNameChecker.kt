@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmNamesChecker
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 
 object FirFunctionalTypeParameterNameChecker : FirFunctionTypeRefChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(typeRef: FirFunctionTypeRef) {
         for (parameter in typeRef.parameters) {

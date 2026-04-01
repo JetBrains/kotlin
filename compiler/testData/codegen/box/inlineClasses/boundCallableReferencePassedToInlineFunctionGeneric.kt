@@ -1,7 +1,11 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
 
+// FILE: lib.kt
+inline fun foo(init: () -> String): String = init()
+
+// FILE: main.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class IcInt<T: Int>(val i: T) {
     fun simple(): String = i.toString()
@@ -51,8 +55,6 @@ fun testCapturedVars(): String {
             IcAny(4).let { foo(it::simple) } +
             IcOverIc(IcLong(5)).let { foo(it::simple) }
 }
-
-inline fun foo(init: () -> String): String = init()
 
 fun box(): String {
     val i = IcInt(3)

@@ -46,22 +46,25 @@ import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 import java.lang.annotation.Inherited
 import java.lang.reflect.Field
 import java.lang.reflect.Method
+import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
 import kotlin.jvm.internal.RepeatableContainer
-import kotlin.reflect.KClass
-import kotlin.reflect.KType
-import kotlin.reflect.KTypeParameter
-import kotlin.reflect.KVisibility
+import kotlin.reflect.*
 import kotlin.reflect.full.IllegalCallableAccessException
 import kotlin.reflect.jvm.internal.calls.createAnnotationInstance
 import kotlin.reflect.jvm.internal.types.AbstractKType
+import kotlin.reflect.jvm.jvmName
 
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")
 
@@ -94,10 +97,12 @@ internal fun ClassLoader.loadClass(kotlinClassId: ClassId, arrayDimensions: Int 
     val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(kotlinFqName) ?: kotlinClassId
     // Pseudo-classes like `kotlin/String.Companion` can be accessible from different class loaders. To ensure that we always use the
     // same class, we always load it from the stdlib's class loader.
-    val correctClassLoader =
-        if (javaClassId != kotlinClassId) Unit::class.java.safeClassLoader else this
+    val correctClassLoader = if (javaClassId != kotlinClassId) stdlibClassLoader else this
     return loadClass(correctClassLoader, javaClassId.packageFqName.asString(), javaClassId.relativeClassName.asString(), arrayDimensions)
 }
+
+internal val stdlibClassLoader: ClassLoader
+    get() = Unit::class.java.safeClassLoader
 
 private fun loadClass(classLoader: ClassLoader, packageName: String, className: String, arrayDimensions: Int): Class<*>? {
     if (packageName == "kotlin") {
@@ -293,26 +298,34 @@ internal fun Any?.asReflectFunction(): ReflectKFunction? = when (this) {
 }
 
 internal fun Any?.asReflectProperty(): ReflectKProperty<*>? = when (this) {
+    is LazyKProperty<*, *> -> delegate.asReflectProperty()
     is ReflectKProperty<*> -> this
-    is PropertyReference -> compute() as? ReflectKProperty
+    is PropertyReference -> compute().takeUnless { it === this }?.asReflectProperty()
     else -> null
 }
 
 internal fun Any?.asReflectCallable(): ReflectKCallable<*>? = when (this) {
+    is LazyKProperty<*, *> -> delegate.asReflectCallable()
     is ReflectKCallable<*> -> this
-    is CallableReference -> compute() as? ReflectKCallable<*>
+    is CallableReference -> compute().takeUnless { it === this }?.asReflectCallable()
     else -> null
 }
 
-internal val CallableDescriptor.instanceReceiverParameter: ReceiverParameterDescriptor?
-    get() = when {
-        this is ConstructorDescriptor -> dispatchReceiverParameter
-        dispatchReceiverParameter != null -> (containingDeclaration as ClassDescriptor).thisAsReceiverParameter
-        else -> null
+internal val DescriptorKCallable<*>.instanceReceiverParameter: ReceiverParameterDescriptor?
+    get() {
+        val descriptor = descriptor
+        return when {
+            overriddenStorage.isFakeOverride && isStatic -> null
+            overriddenStorage.isFakeOverride && !isStatic -> (this.container as? KClassImpl<*>)?.descriptor?.thisAsReceiverParameter
+            descriptor is ConstructorDescriptor -> descriptor.dispatchReceiverParameter
+            descriptor.dispatchReceiverParameter != null -> (descriptor.containingDeclaration as ClassDescriptor).thisAsReceiverParameter
+            else -> null
+        }
     }
 
 internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
     moduleAnchor: Class<*>,
+    containerSource: DeserializedContainerSource?,
     proto: M,
     nameResolver: NameResolver,
     typeTable: TypeTable,
@@ -329,9 +342,17 @@ internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
 
     val context = DeserializationContext(
         moduleData.deserialization, nameResolver, moduleData.module, typeTable, VersionRequirementTable.EMPTY, metadataVersion,
-        containerSource = null, parentTypeDeserializer = null, typeParameters = typeParameters
+        containerSource, parentTypeDeserializer = null, typeParameters,
     )
     return MemberDeserializer(context).createDescriptor(proto)
+}
+
+internal class LocalDelegatedPropertyFakeContainerSource(val container: KDeclarationContainerImpl) : DeserializedContainerSource {
+    override val incompatibility: IncompatibleVersionErrorData<*>? get() = null
+    override val preReleaseInfo: PreReleaseInfo get() = PreReleaseInfo.DEFAULT_VISIBLE
+    override val abiStability: DeserializedContainerAbiStability get() = DeserializedContainerAbiStability.STABLE
+    override val presentableString: String get() = "${this::class.java.simpleName}: $container"
+    override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }
 
 internal val KType.isInlineClassType: Boolean
@@ -353,8 +374,7 @@ internal fun defaultPrimitiveValue(type: Type): Any? =
         }
     } else null
 
-internal open class CreateKCallableVisitor(private val container: KDeclarationContainerImpl) :
-    DeclarationDescriptorVisitorEmptyBodies<DescriptorKCallable<*>, Unit>() {
+internal open class CreateKCallableVisitor(private val container: KDeclarationContainerImpl) : CreateKFunctionVisitor(container) {
     override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): DescriptorKCallable<*> {
         val receiverCount =
             if (descriptor.contextReceiverParameters.isNotEmpty())
@@ -364,22 +384,25 @@ internal open class CreateKCallableVisitor(private val container: KDeclarationCo
 
         when {
             descriptor.isVar -> when (receiverCount) {
-                -1 -> return DescriptorKMutablePropertyN<Any?>(container, descriptor)
-                0 -> return DescriptorKMutableProperty0<Any?>(container, descriptor)
-                1 -> return DescriptorKMutableProperty1<Any?, Any?>(container, descriptor)
-                2 -> return DescriptorKMutableProperty2<Any?, Any?, Any?>(container, descriptor)
+                -1 -> return DescriptorKMutablePropertyN<Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
+                0 -> return DescriptorKMutableProperty0<Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
+                1 -> return DescriptorKMutableProperty1<Any?, Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
+                2 -> return DescriptorKMutableProperty2<Any?, Any?, Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
             }
             else -> when (receiverCount) {
-                -1 -> return DescriptorKPropertyN<Any?>(container, descriptor)
-                0 -> return DescriptorKProperty0<Any?>(container, descriptor)
-                1 -> return DescriptorKProperty1<Any?, Any?>(container, descriptor)
-                2 -> return DescriptorKProperty2<Any?, Any?, Any?>(container, descriptor)
+                -1 -> return DescriptorKPropertyN<Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
+                0 -> return DescriptorKProperty0<Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
+                1 -> return DescriptorKProperty1<Any?, Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
+                2 -> return DescriptorKProperty2<Any?, Any?, Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
             }
         }
 
         throw KotlinReflectionInternalError("Unsupported property: $descriptor")
     }
+}
 
+internal open class CreateKFunctionVisitor(private val container: KDeclarationContainerImpl) :
+    DeclarationDescriptorVisitorEmptyBodies<DescriptorKCallable<*>, Unit>() {
     override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit): DescriptorKCallable<*> =
         DescriptorKFunction(container, descriptor)
 }
@@ -412,3 +435,72 @@ internal fun KType.isNullableType(): Boolean {
     val classifier = classifier
     return classifier is KTypeParameter && classifier.upperBounds.any { it.isNullableType() }
 }
+
+internal class FunctionJvmDescriptor(val parameters: List<String>, val returnType: String)
+
+internal fun parseJvmDescriptor(desc: String): FunctionJvmDescriptor {
+    val parameterTypes = arrayListOf<String>()
+
+    var begin = 1
+    while (desc[begin] != ')') {
+        var end = begin
+        while (desc[end] == '[') end++
+        @Suppress("SpellCheckingInspection")
+        when (desc[end]) {
+            in "VZCBSIFJD" -> end++
+            'L' -> end = desc.indexOf(';', begin) + 1
+            else -> throw KotlinReflectionInternalError("Unknown type prefix in the method signature: $desc")
+        }
+
+        parameterTypes.add(desc.substring(begin, end))
+        begin = end
+    }
+
+    val returnType = desc.substring(begin + 1)
+
+    return FunctionJvmDescriptor(parameterTypes, returnType)
+}
+
+/**
+ * Returns JVM descriptor, assuming that given KClass is not primitive or array
+ */
+internal fun KClass<*>.toJvmDescriptor(): String = "L${jvmName.replace('.', '/')};"
+
+internal val KParameter.isAlwaysBoxedByCompiler: Boolean
+    get() {
+        return this is ReflectKParameter && declaresDefaultValue && type.isInlineClassType &&
+                generateSequence(type) { it.unsubstitutedUnderlyingType() }.drop(1).any { it.isNullableType() }
+    }
+
+internal fun KType.unsubstitutedUnderlyingType(): KType? =
+    (classifier as? KClassImpl<*>)?.inlineClassUnderlyingType
+
+internal class FunctionJvmDescriptorLoaded(val parameters: List<Class<*>>, val returnType: Class<*>?)
+
+internal fun ClassLoader.parseAndLoadDescriptor(desc: String, loadReturnType: Boolean): FunctionJvmDescriptorLoaded {
+    val descriptor = parseJvmDescriptor(desc)
+
+    return FunctionJvmDescriptorLoaded(
+        descriptor.parameters.map { parseAndLoadType(it) },
+        if (loadReturnType) parseAndLoadType(descriptor.returnType) else null
+    )
+}
+
+private fun ClassLoader.parseAndLoadType(desc: String, begin: Int = 0, end: Int = desc.length): Class<*> =
+    when (desc[begin]) {
+        'L' -> loadClass(desc.substring(begin + 1, end - 1).replace('/', '.'))
+        '[' -> parseAndLoadType(desc, begin + 1, end).createArrayType()
+        'V' -> Void.TYPE
+        'Z' -> Boolean::class.java
+        'C' -> Char::class.java
+        'B' -> Byte::class.java
+        'S' -> Short::class.java
+        'I' -> Int::class.java
+        'F' -> Float::class.java
+        'J' -> Long::class.java
+        'D' -> Double::class.java
+        else -> throw KotlinReflectionInternalError("Unknown type prefix in the method signature: $desc")
+    }
+
+internal val Int.isPackagePrivate: Boolean
+    get() = !Modifier.isPublic(this) && !Modifier.isProtected(this) && !Modifier.isPrivate(this)

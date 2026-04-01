@@ -1,10 +1,12 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-import helpers.*
+// NO_CHECK_LAMBDA_INLINING
 // WITH_REFLECT
 // CHECK_NOT_CALLED: suspendInline_61zpoe$
 // CHECK_NOT_CALLED: suspendInline_6r51u9$
 // CHECK_NOT_CALLED: suspendInline
+// FILE: lib.kt
+import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
@@ -21,6 +23,11 @@ fun builder(c: suspend Controller.() -> Unit) {
 }
 
 class OK
+
+// FILE: main.kt
+import helpers.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 fun box(): String {
     var result = ""

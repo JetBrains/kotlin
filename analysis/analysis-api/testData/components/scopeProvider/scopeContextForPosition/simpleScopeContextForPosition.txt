@@ -113,6 +113,7 @@ scopes:
             isCrossinline: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
             isVal: true
@@ -204,6 +205,7 @@ scopes:
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isPrimary: true
         location: CLASS
         modality: FINAL
@@ -308,6 +310,7 @@ scopes:
             isCrossinline: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
             isVal: true
@@ -399,6 +402,7 @@ scopes:
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isPrimary: true
         location: CLASS
         modality: FINAL
@@ -430,6 +434,7 @@ scopes:
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isLateInit: false
         isVal: true
         location: LOCAL
@@ -460,6 +465,7 @@ scopes:
         isCrossinline: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
         isVal: true
@@ -488,6 +494,7 @@ scopes:
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isLateInit: false
         isVal: true
         location: LOCAL
@@ -550,6 +557,7 @@ scopes:
         isCrossinline: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
         isVal: true
@@ -574,6 +582,7 @@ scopes:
         compilerVisibility: Local
         isActual: false
         isExpect: false
+        isExternal: false
         isReified: false
         location: LOCAL
         modality: FINAL
@@ -676,6 +685,7 @@ scopes:
             compilerVisibility: Local
             isActual: false
             isExpect: false
+            isExternal: false
             isReified: false
             location: LOCAL
             modality: FINAL
@@ -698,6 +708,7 @@ scopes:
             isCrossinline: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
             isVal: true
@@ -757,6 +768,7 @@ scopes:
             isCrossinline: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
             isVal: true
@@ -848,6 +860,7 @@ scopes:
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isPrimary: true
         location: CLASS
         modality: FINAL
@@ -957,7 +970,7 @@ scopes:
         fqName: sun
         location: TOP_LEVEL
         origin: SOURCE
-    classifiers: 3
+    classifiers: 4
       KaNamedClassSymbol:
         annotations: []
         classId: A
@@ -1036,6 +1049,32 @@ scopes:
         ]
         typeParameters: []
         visibility: PUBLIC
+      KaNamedClassSymbol:
+        annotations: []
+        classId: JavaClass
+        classKind: CLASS
+        companionObject: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isData: false
+        isExpect: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        location: TOP_LEVEL
+        modality: OPEN
+        name: JavaClass
+        origin: JAVA_SOURCE
+        superTypes: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Any
+        ]
+        typeParameters: []
+        visibility: PUBLIC
     callables: 4
       KaNamedFunctionSymbol:
         annotations: []
@@ -1080,6 +1119,7 @@ scopes:
             isCrossinline: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
             isVal: true
@@ -1148,6 +1188,7 @@ scopes:
             isCrossinline: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
             isVal: true
@@ -1216,6 +1257,7 @@ scopes:
             isCrossinline: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
             isVal: true
@@ -1286,4 +1328,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 19
-

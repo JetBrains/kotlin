@@ -1,0 +1,5 @@
+error: unknown value for parameter -Xpartial-linkage-loglevel: 'invalid-log-level'. Value should be one of {silent, info, warning, error}
+error: failed to build cache for $BUILD_DIR$/main.klib.
+As a workaround, please try to disable incremental compilation (kotlin.incremental.native=false)
+
+Also, consider filing an issue with full Gradle log here: https://kotl.in/issue

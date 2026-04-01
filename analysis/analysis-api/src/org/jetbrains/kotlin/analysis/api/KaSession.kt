@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -145,7 +145,8 @@ public interface KaSession : KaLifetimeOwner,
     KaCompilerFacility,
     KaSubstitutorProvider,
     KaDataFlowProvider,
-    KaSourceProvider
+    KaSourceProvider,
+    KaKDocProvider
 {
     /**
      * The [KaModule] from whose perspective the analysis is performed. The use-site module defines the resolution scope of the [KaSession],
@@ -193,27 +194,27 @@ public fun KaSession.getModule(element: PsiElement): KaModule =
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val useSiteModule: KaModule
-    get() = with(s) { useSiteModule }
+    get() = with(session) { useSiteModule }
 
 /**
  * The [KaSession] of the current analysis context.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val useSiteSession: KaSession
-    get() = with(s) { useSiteSession }
+    get() = with(session) { useSiteSession }
 
 /**
  * Returns the restored [KaSymbol] (possibly a new symbol instance) if the pointer is still valid, or `null` otherwise.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun <S : KaSymbol> KaSymbolPointer<S>.restoreSymbol(): S? {
-    return with(s) {
+    return with(session) {
         restoreSymbol()
     }
 }
@@ -224,9 +225,9 @@ public fun <S : KaSymbol> KaSymbolPointer<S>.restoreSymbol(): S? {
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun <T : KaType> KaTypePointer<T>.restore(): T? {
-    return with(s) {
+    return with(session) {
         restore()
     }
 }

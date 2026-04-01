@@ -48,7 +48,11 @@ open class TypeCheckerState(
         return kotlinTypePreparator.prepareType(type)
     }
 
-    open fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean = true
+    /**
+     * `null` returned means that the regular algorithm should be used.
+     */
+    fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean? =
+        typeSystemContext.customSubtypingCallback?.invoke(subType, superType)
 
     protected var argumentsDepth = 0
 
@@ -271,7 +275,7 @@ object AbstractTypeChecker {
     ): Boolean {
         if (subType === superType) return true
 
-        if (!state.customIsSubtypeOf(subType, superType)) return false
+        state.customIsSubtypeOf(subType, superType)?.let { return it }
 
         return with(state) {
             with(state.typeSystemContext) {
@@ -421,41 +425,24 @@ object AbstractTypeChecker {
         if (c.areEqualTypeConstructors(subType.typeConstructor(), superConstructor) && superConstructor.parametersCount() == 0) return true
         if (superType.typeConstructor().isAnyConstructor()) return true
 
-        val supertypesWithSameConstructor = with(findCorrespondingSupertypes(state, subType, superConstructor)) {
-            // Note: in K1, we can have partially computed types here, like SomeType<NON COMPUTED YET>
-            // (see e.g. interClassesRecursion.kt from diagnostic tests)
-            // In this case we don't want to affect lazy computation in normal case (size <= 1), that's why we don't create a set
-            // (adding to a hash set requires hash-code calculation for each set element)
+        val supertypesWithSameConstructor = filterOutEquivalentSupertypesWithSameConstructor(
+            findCorrespondingSupertypes(state, subType, superConstructor)
+        )
 
-            if (size > 1 && (state.typeSystemContext as? TypeSystemInferenceExtensionContext)?.isK2 == true) {
-                // Here we want to filter out equivalent types to avoid unnecessary forking
-                mapTo(mutableSetOf()) { state.prepareType(it).asRigidType() ?: it }
-            } else {
-                // TODO: drop this branch together with K1 code
-                map { state.prepareType(it).asRigidType() ?: it }
-            }
-        }
         when (supertypesWithSameConstructor.size) {
             0 -> return hasNothingSupertype(subType) // todo Nothing & Array<Number> <: Array<String>
             1 -> return isSubtypeForSameConstructor(supertypesWithSameConstructor.first().asArgumentList(), superType)
 
             else -> { // at least 2 supertypes with same constructors. Such case is rare
-                val newArguments = ArgumentList(superConstructor.parametersCount())
-                var anyNonOutParameter = false
-                for (index in 0 until superConstructor.parametersCount()) {
-                    anyNonOutParameter = anyNonOutParameter || superConstructor.getParameter(index).getVariance() != TypeVariance.OUT
-                    if (anyNonOutParameter) continue
-                    val allProjections = supertypesWithSameConstructor.map {
-                        it.getArgumentOrNull(index)?.takeIf { it.getVariance() == TypeVariance.INV }?.getType()
-                            ?: error("Incorrect type: $it, subType: $subType, superType: $superType")
-                    }
-
-                    // todo discuss
-                    val intersection = c.intersectTypes(allProjections).asTypeArgument()
-                    newArguments.add(intersection)
+                if (isSubtypeForSameConstructorWithIntersectedTypeArguments(
+                        subType,
+                        superType,
+                        superConstructor,
+                        supertypesWithSameConstructor
+                    )
+                ) {
+                    return true
                 }
-
-                if (!anyNonOutParameter && isSubtypeForSameConstructor(newArguments, superType)) return true
 
                 return state.runForkingPoint {
                     for (subTypeArguments in supertypesWithSameConstructor) {
@@ -465,6 +452,66 @@ object AbstractTypeChecker {
             }
         }
     }
+
+    context(state: TypeCheckerState, c: TypeSystemContext)
+    private fun filterOutEquivalentSupertypesWithSameConstructor(
+        correspondingSupertypes: List<RigidTypeMarker>
+    ): Collection<RigidTypeMarker> {
+        if (correspondingSupertypes.size > 1 && (state.typeSystemContext as? TypeSystemInferenceExtensionContext)?.isK2 == true) {
+            // Here we want to filter out equivalent types to avoid unnecessary forking
+            val withoutEquivalent = correspondingSupertypes.mapTo(mutableSetOf()) { state.prepareType(it).asRigidType() ?: it }
+            if (withoutEquivalent.size == 1) {
+                return withoutEquivalent
+            } else {
+                // Additional filtering to drop EnhancedNullability (and maybe other attributes, see KT-83981)
+                // More precisely, here we keep withoutEquivalent set,
+                // but always drop one type from pairs like [Generic<Type> / Generic<@EnhancedNullability Type>]
+                val result = mutableSetOf<RigidTypeMarker>()
+                val cleanedSet = mutableSetOf<RigidTypeMarker>()
+                for (supertype in withoutEquivalent) {
+                    @OptIn(K2Only::class)
+                    val cleaned = state.kotlinTypePreparator.clearTypeFromUnnecessaryAttributes(supertype)
+                    if (cleanedSet.add(cleaned)) {
+                        result.add(supertype)
+                    }
+                }
+                return result
+            }
+        } else {
+            // Note: in K1, we can have partially computed types here, like SomeType<NON COMPUTED YET>
+            // (see e.g. interClassesRecursion.kt from diagnostic tests)
+            // In this case we don't want to affect lazy computation in normal case (size <= 1), that's why we don't create a set
+            // (adding to a hash set requires hash-code calculation for each set element)
+            // TODO: drop this branch together with K1 code (we could use then branch instead even if size == 1)
+            return correspondingSupertypes.map { state.prepareType(it).asRigidType() ?: it }
+        }
+    }
+
+    // TODO(KT-82633) try to get rid of it.
+    context(c: TypeSystemContext, state: TypeCheckerState)
+    private fun isSubtypeForSameConstructorWithIntersectedTypeArguments(
+        subType: RigidTypeMarker,
+        superType: RigidTypeMarker,
+        superConstructor: TypeConstructorMarker,
+        supertypesWithSameConstructor: Collection<RigidTypeMarker>,
+    ): Boolean {
+        val newArguments = ArgumentList(superConstructor.parametersCount())
+
+        for (index in 0 until superConstructor.parametersCount()) {
+            if (superConstructor.getParameter(index).getVariance() != TypeVariance.OUT) return false
+
+            val allProjections = supertypesWithSameConstructor.map { it ->
+                it.getArgumentOrNull(index)?.takeIf { argument -> argument.getVariance() == TypeVariance.INV }?.getType()
+                    ?: error("Incorrect type: $it, subType: $subType, superType: $superType")
+            }
+
+            val intersection = c.intersectTypes(allProjections).asTypeArgument()
+            newArguments.add(intersection)
+        }
+
+        return isSubtypeForSameConstructor(newArguments, superType)
+    }
+
 
     context(context: TypeSystemContext)
     private fun isTypeVariableAgainstStarProjectionForSelfType(

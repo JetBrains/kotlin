@@ -50,7 +50,7 @@ class IrTransformerForICTesting(private val context: IrPluginContext) : IrVisito
             val functionName = Name.identifier(argumentString.substringAfterLast('.'))
             CallableId(packageFqName, functionName)
         }
-        val functionToCall = context.referenceFunctions(callableId).singleOrNull()?.owner ?: return
+        val functionToCall = context.finderForSource(declaration.file).findFunctions(callableId).singleOrNull()?.owner ?: return
         val body = declaration.body as? IrBlockBody ?: return
         val functionCall = IrCallImpl(
             startOffset = UNDEFINED_OFFSET,
@@ -61,6 +61,5 @@ class IrTransformerForICTesting(private val context: IrPluginContext) : IrVisito
             superQualifierSymbol = null
         )
         body.statements.add(0, functionCall)
-        context.recordLookup(functionToCall, fromFile = declaration.file)
     }
 }

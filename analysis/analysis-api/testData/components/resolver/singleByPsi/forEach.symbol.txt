@@ -1,0 +1,5 @@
+KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/forEach(<extension receiver>: kotlin.collections.Iterable<T>, action: (T) -> kotlin.Unit): kotlin.Unit
+    ]

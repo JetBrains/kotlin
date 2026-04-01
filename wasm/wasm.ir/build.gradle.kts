@@ -1,31 +1,14 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import java.net.URI
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     kotlin("plugin.serialization")
     id("project-tests-convention")
 }
 
 repositories {
-    ivy {
-        url = URI("https://github.com/webassembly/testsuite/zipball/")
-        patternLayout {
-            artifact("[revision]")
-        }
-        metadataSources { artifact() }
-        content { includeModule("webassembly", "testsuite") }
-    }
-
-    ivy {
-        url = URI("https://github.com/webassembly/wabt/releases/download/")
-        patternLayout {
-            artifact("[revision]/[artifact]-[revision]-[classifier].[ext]")
-        }
-        metadataSources { artifact() }
-        content { includeModule("webassembly", "wabt") }
-    }
+    githubCommit("webassembly", "testsuite")
+    githubRelease("webassembly", "wabt", revisionPrefix = "")
 }
 
 val wabtDir = File(layout.buildDirectory.get().asFile, "wabt")
@@ -53,6 +36,7 @@ val testSuite by configurations.creating {
 
 dependencies {
     compileOnly(project(":core:util.runtime"))
+    implementation(project(":kotlin-util-io"))
 
     implementation(kotlinStdlib())
     implementation(kotlinxCollectionsImmutable())

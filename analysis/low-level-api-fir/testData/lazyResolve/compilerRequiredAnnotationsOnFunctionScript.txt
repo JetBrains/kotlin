@@ -223,7 +223,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(function)) @R|Anno|[Types](s = String(function)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun fooo([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|kotlin/Deprecated|[Types](message = String(a)) @R|Anno|[Types](s = String(a)) a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|kotlin/Deprecated|[Types](message = String(function) [evaluated = String(function)]) @R|Anno|[Types](s = String(function) [evaluated = String(function)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun fooo([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|kotlin/Deprecated|[Types](message = String(a) [evaluated = String(a)]) @R|Anno|[Types](s = String(a) [evaluated = String(a)]) a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 BODY_RESOLVE:
@@ -242,7 +242,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(function)) @R|Anno|[Types](s = String(function)) public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun fooo([ResolvedTo(BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](message = String(a)) @R|Anno|[Types](s = String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](message = String(function) [evaluated = String(function)]) @R|Anno|[Types](s = String(function) [evaluated = String(function)]) public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun fooo([ResolvedTo(BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](message = String(a) [evaluated = String(a)]) @R|Anno|[Types](s = String(a) [evaluated = String(a)]) a: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
 
@@ -262,6 +262,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(function)) @R|Anno|[Types](s = String(function)) public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun fooo([ResolvedTo(BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](message = String(a)) @R|Anno|[Types](s = String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](message = String(function) [evaluated = String(function)]) @R|Anno|[Types](s = String(function) [evaluated = String(function)]) public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun fooo([ResolvedTo(BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](message = String(a) [evaluated = String(a)]) @R|Anno|[Types](s = String(a) [evaluated = String(a)]) a: R|kotlin/Int|): R|kotlin/Unit| {
         }
 

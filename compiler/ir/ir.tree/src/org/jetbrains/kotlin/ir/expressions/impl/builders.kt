@@ -929,6 +929,36 @@ fun IrCallImplRaw(
 
 /**
  * Note: This functions requires [symbol] to be bound.
+ * If it may be not, use [IrAnnotationImplWithShape].
+ */
+fun IrAnnotationImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrConstructorSymbol,
+    typeArgumentsCount: Int,
+    constructorTypeArgumentsCount: Int,
+    origin: IrStatementOrigin? = null,
+    source: SourceElement = SourceElement.NO_SOURCE,
+): IrAnnotationImpl = IrAnnotationImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = origin,
+    constructorTypeArgumentsCount = constructorTypeArgumentsCount,
+    source = source,
+    // TODO(KT-74200): De-nullify.
+    classId = null,
+    argumentMapping = mapOf(),
+).apply {
+    initializeTargetShapeFromSymbol()
+    initializeEmptyTypeArguments(typeArgumentsCount)
+}
+
+/**
+ * Note: This functions requires [symbol] to be bound.
  * If it may be not, use [IrConstructorCallImplWithShape].
  */
 fun IrConstructorCallImpl(
@@ -951,6 +981,41 @@ fun IrConstructorCallImpl(
     source = source,
 ).apply {
     initializeTargetShapeFromSymbol()
+    initializeEmptyTypeArguments(typeArgumentsCount)
+}
+
+fun IrAnnotationImplWithShape(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrConstructorSymbol,
+    typeArgumentsCount: Int,
+    constructorTypeArgumentsCount: Int,
+    valueArgumentsCount: Int,
+    contextParameterCount: Int,
+    hasDispatchReceiver: Boolean,
+    hasExtensionReceiver: Boolean,
+    origin: IrStatementOrigin? = null,
+    source: SourceElement = SourceElement.NO_SOURCE,
+): IrAnnotationImpl = IrAnnotationImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = origin,
+    constructorTypeArgumentsCount = constructorTypeArgumentsCount,
+    source = source,
+    // TODO(KT-74200): De-nullify.
+    classId = null,
+    argumentMapping = mapOf(),
+).apply {
+    initializeTargetShapeExplicitly(
+        hasDispatchReceiver = hasDispatchReceiver,
+        hasExtensionReceiver = hasExtensionReceiver,
+        contextParameterCount = contextParameterCount,
+        regularParameterCount = valueArgumentsCount - contextParameterCount
+    )
     initializeEmptyTypeArguments(typeArgumentsCount)
 }
 
@@ -988,6 +1053,28 @@ fun IrConstructorCallImplWithShape(
     )
     initializeEmptyTypeArguments(typeArgumentsCount)
 }
+
+fun IrAnnotationImplRaw(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrConstructorSymbol,
+    constructorTypeArgumentsCount: Int,
+    origin: IrStatementOrigin?,
+    source: SourceElement,
+): IrAnnotationImpl = IrAnnotationImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = origin,
+    constructorTypeArgumentsCount = constructorTypeArgumentsCount,
+    source = source,
+    /// TODO(KT-74200): De-nullify.
+    classId = null,
+    argumentMapping = mapOf(),
+)
 
 /**
  * Does not initialize arguments (in neither new and old API).
@@ -1379,6 +1466,27 @@ fun IrCallImpl.Companion.fromSymbolOwner(
         superQualifierSymbol = null
     )
 
+fun IrAnnotationImpl.Companion.fromSymbolOwner(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    constructorSymbol: IrConstructorSymbol,
+    classTypeParametersCount: Int,
+    origin: IrStatementOrigin? = null,
+): IrAnnotationImpl {
+    val constructor = constructorSymbol.owner
+    val constructorTypeParametersCount = constructor.typeParameters.size
+    val totalTypeParametersCount = classTypeParametersCount + constructorTypeParametersCount
+
+    return IrAnnotationImpl(
+        startOffset, endOffset,
+        type,
+        constructorSymbol,
+        totalTypeParametersCount,
+        constructorTypeParametersCount,
+        origin = origin,
+    )
+}
 
 fun IrConstructorCallImpl.Companion.fromSymbolOwner(
     startOffset: Int,
@@ -1402,6 +1510,18 @@ fun IrConstructorCallImpl.Companion.fromSymbolOwner(
     )
 }
 
+fun IrAnnotationImpl.Companion.fromSymbolOwner(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    constructorSymbol: IrConstructorSymbol,
+    origin: IrStatementOrigin? = null,
+): IrAnnotationImpl {
+    val constructedClass = constructorSymbol.owner.parentAsClass
+    val classTypeParametersCount = constructedClass.typeParameters.size
+    return fromSymbolOwner(startOffset, endOffset, type, constructorSymbol, classTypeParametersCount, origin)
+}
+
 fun IrConstructorCallImpl.Companion.fromSymbolOwner(
     startOffset: Int,
     endOffset: Int,
@@ -1413,6 +1533,16 @@ fun IrConstructorCallImpl.Companion.fromSymbolOwner(
     val classTypeParametersCount = constructedClass.typeParameters.size
     return fromSymbolOwner(startOffset, endOffset, type, constructorSymbol, classTypeParametersCount, origin)
 }
+
+fun IrAnnotationImpl.Companion.fromSymbolOwner(
+    type: IrType,
+    constructorSymbol: IrConstructorSymbol,
+    origin: IrStatementOrigin? = null,
+): IrAnnotationImpl =
+    fromSymbolOwner(
+        UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, constructorSymbol, constructorSymbol.owner.parentAsClass.typeParameters.size,
+        origin
+    )
 
 fun IrConstructorCallImpl.Companion.fromSymbolOwner(
     type: IrType,

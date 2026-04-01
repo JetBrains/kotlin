@@ -88,7 +88,7 @@ abstract class AbstractFirKlibSessionFactory<CONTEXT> : FirAbstractSessionFactor
         return FirTypeDeserializer.FlexibleTypeFactory.Default
     }
 
-    protected open fun createAdditionalDependencyProviders(
+    open fun createAdditionalDependencyProviders(
         session: FirSession,
         moduleDataProvider: ModuleDataProvider,
         kotlinScopeProvider: FirKotlinScopeProvider,
@@ -153,4 +153,7 @@ abstract class AbstractFirKlibSessionFactory<CONTEXT> : FirAbstractSessionFactor
 
     override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
         get() = true
+
+    override val isFactoryForMetadataCompilation: Boolean
+        get() = false
 }

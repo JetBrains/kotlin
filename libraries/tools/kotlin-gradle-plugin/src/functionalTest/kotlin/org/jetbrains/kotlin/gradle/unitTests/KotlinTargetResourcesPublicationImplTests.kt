@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPub
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.overriddenGradleVersionForTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.util.*
-import org.junit.Test
+import kotlin.test.Test
 import java.io.File
 import kotlin.test.assertEquals
 

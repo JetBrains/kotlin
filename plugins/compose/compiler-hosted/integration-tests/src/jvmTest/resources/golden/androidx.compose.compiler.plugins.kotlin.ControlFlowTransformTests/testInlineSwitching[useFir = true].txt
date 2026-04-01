@@ -1,0 +1,81 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable fun Test(clicked: Boolean) {
+    thenIf(
+        condition = clicked,
+        ifTrue = {
+            val lambdaTrue = { }
+        },
+        ifFalse = {
+            remember { mutableStateOf(value = "Mock") }
+            val lambdaFalse = { }
+        },
+    )
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(clicked: Boolean, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)N(clicked):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(clicked)) 0b0100 else 0b0010
+  }
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    thenIf(clicked, {
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "C*<rememb...>,<{>:Test.kt")
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(false) {
+        mutableStateOf(
+          value = "Mock"
+        )
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+      val lambdaFalse = <block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp1_group = %composer.cache(false) {
+          {
+          }
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp1_group
+      }
+      %composer.endReplaceGroup()
+    }
+    ) {
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "C*<{>:Test.kt")
+      val lambdaTrue = <block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          {
+          }
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp0_group
+      }
+      %composer.endReplaceGroup()
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(clicked, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

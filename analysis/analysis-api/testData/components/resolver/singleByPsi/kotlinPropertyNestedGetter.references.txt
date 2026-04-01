@@ -2,5 +2,6 @@ KtNameReferenceExpression(53,61): 'instance'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in KtClass) val instance: KtSubClass

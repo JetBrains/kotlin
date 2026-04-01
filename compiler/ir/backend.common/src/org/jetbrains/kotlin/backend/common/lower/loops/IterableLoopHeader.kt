@@ -28,13 +28,16 @@ internal class IterableLoopHeader(
     override val consumesLoopVariableComponents = false
 
     override fun initializeIteration(
-        loopVariable: IrVariable?,
-        loopVariableComponents: Map<Int, IrVariable>,
+        loopVariables: List<IrVariable>,
+        loopVariableComponents: Map<Int, List<IrVariable>>,
         builder: DeclarationIrBuilder,
         backendContext: CommonBackendContext,
     ): List<IrStatement> =
         with(builder) {
-            // loopVariable = iteratorVar.next()
+            // loopVariable0 = iteratorVar.next()
+            // loopVariable1 = loopVariable0
+            // ...
+            // loopVariableN = loopVariable0
             val iteratorClass = headerInfo.iteratorVariable.type.getClass()!!
             val next =
                 irCall(iteratorClass.functions.first {
@@ -44,9 +47,10 @@ internal class IterableLoopHeader(
                 }
             // The call could be wrapped in an IMPLICIT_NOTNULL type-cast (see comment in ForLoopsLowering.gatherLoopVariableInfo()).
             // Find and replace the call to preserve any type-casts.
-            loopVariable?.initializer = loopVariable.initializer?.transform(InitializerCallReplacer(next), null)
+            loopVariables.firstOrNull()?.let { it.initializer = it.initializer?.transform(InitializerCallReplacer(next), null) }
+            loopVariables.drop(1).forEach { it.initializer = irGet(loopVariables.first()) }
             // Even if there is no loop variable, we always want to call `next()` for iterables and sequences.
-            listOf(loopVariable ?: next.coerceToUnitIfNeeded(next.type, context.irBuiltIns))
+            loopVariables.ifEmpty { listOf(next.coerceToUnitIfNeeded(next.type, context.irBuiltIns)) }
         }
 
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?): LoopReplacement = with(builder) {

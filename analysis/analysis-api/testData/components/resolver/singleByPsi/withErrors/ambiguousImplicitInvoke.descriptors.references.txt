@@ -2,6 +2,11 @@ KtNameReferenceExpression(134,135): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    resolvesByNamesViolations: 'invoke' !in [x]
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
+    local final operator fun Int.invoke(b: Boolean): Unit defined in call
+    local final operator fun Int.invoke(a: String): Unit defined in call>
     symbols:
       0: (in <local>: call) operator fun kotlin.Int.invoke(a: kotlin.String)
       1: (in <local>: call) operator fun kotlin.Int.invoke(b: kotlin.Boolean)
@@ -9,5 +14,6 @@ KtNameReferenceExpression(134,135): 'x'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

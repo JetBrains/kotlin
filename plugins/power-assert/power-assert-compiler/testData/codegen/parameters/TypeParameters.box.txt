@@ -1,0 +1,13 @@
+---
+requireNotNull(a as? String)
+               | |
+               1 null
+---
+---
+checkNotNull(a as? String)
+             | |
+             1 null
+---
+---OK---
+---OK---
+---OK---

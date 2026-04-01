@@ -1,6 +1,7 @@
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 // WITH_COROUTINES
+
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

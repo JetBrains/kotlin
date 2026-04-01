@@ -6,16 +6,15 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirVisibilityChecker
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
+import org.jetbrains.kotlin.fir.isIntersectionOverride
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.fir.types.isNullableNothing
 import org.jetbrains.kotlin.fir.types.makeConeTypeDefinitelyNotNullOrNotNull
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.fir.unwrapFakeOverridesAccountingForExplicitBackingFields
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private fun FirVisibilityChecker.isVisible(
@@ -182,15 +182,9 @@ private fun removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiver: FirEx
 }
 
 private fun FirMemberDeclaration.getBackingFieldIfApplicable(): FirBackingField? {
-    val field = (this as? FirProperty)?.getExplicitBackingField() ?: return null
-
-    // This check prevents resolving protected and
-    // public fields.
-    return when (field.visibility) {
-        Visibilities.PrivateToThis,
-        Visibilities.Private,
-        Visibilities.Internal -> field
-        else -> null
+    return when {
+        this !is FirProperty -> null
+        else -> this.unwrapFakeOverridesAccountingForExplicitBackingFields().getExplicitBackingField()
     }
 }
 

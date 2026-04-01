@@ -11,7 +11,6 @@ import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -22,20 +21,17 @@ import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.isKotlinFile
-import org.jetbrains.kotlin.incremental.js.*
 import org.jetbrains.kotlin.incremental.makeModuleFile
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.incremental.utils.TestLookupTracker
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.incremental.createTestingCompilerEnvironment
-import org.jetbrains.kotlin.jps.incremental.runJSCompiler
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
-import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.*
 
@@ -105,94 +101,6 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
         } finally {
             moduleFile.delete()
         }
-    }
-}
-
-abstract class AbstractK1JvmLookupTrackerTest : AbstractJvmLookupTrackerTest() {
-
-    override var filterBuiltins = true
-    override var distinguishPackageAndClassLookups = false
-
-    override fun setUp() {
-        super.setUp()
-        optionalVariantSuffix = OptionalVariantSuffix.K1
-    }
-
-    override fun configureAdditionalArgs(args: K2JVMCompilerArguments) {
-        args.languageVersion = "1.9"
-    }
-
-    override val buildLogFinder: BuildLogFinder
-        get() = BuildLogFinder(isGradleEnabled = false, isFirEnabled = false)
-}
-
-abstract class AbstractJsKlibLookupTrackerTest : AbstractJsLookupTrackerTest() {
-    override fun configureAdditionalArgs(args: K2JSCompilerArguments) {
-        args.irProduceKlibDir = true
-        args.outputDir = outDir.normalize().absolutePath
-        args.moduleName = "out"
-    }
-}
-
-abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
-    private var header: ByteArray? = null
-    private val packageParts: MutableMap<File, TranslationResultValue> = hashMapOf()
-    private val serializedIrFiles: MutableMap<File, IrTranslationResultValue> = hashMapOf()
-
-    override fun setUp() {
-        super.setUp()
-        header = null
-        packageParts.clear()
-        serializedIrFiles.clear()
-    }
-
-    override fun Services.Builder.registerAdditionalServices() {
-        if (header != null) {
-            register(
-                IncrementalDataProvider::class.java,
-                IncrementalDataProviderImpl(
-                    headerMetadata = header!!,
-                    compiledPackageParts = packageParts,
-                    metadataVersion = JsMetadataVersion.INSTANCE.toArray(),
-                    packageMetadata = emptyMap(), // TODO pass correct metadata
-                    serializedIrFiles = serializedIrFiles
-                )
-            )
-        }
-
-        register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())
-    }
-
-    override fun markDirty(removedAndModifiedSources: Iterable<File>) {
-        removedAndModifiedSources.forEach {
-            packageParts.remove(it)
-            serializedIrFiles.remove(it)
-        }
-    }
-
-    override fun processCompilationResults(outputItemsCollector: OutputItemsCollectorImpl, services: Services) {
-        val incrementalResults = services[IncrementalResultsConsumer::class.java] as IncrementalResultsConsumerImpl
-        header = incrementalResults.headerMetadata
-        packageParts.putAll(incrementalResults.packageParts)
-        serializedIrFiles.putAll(incrementalResults.irFileData)
-    }
-
-    protected open val jsStdlibFile: File
-        get() = PathUtil.kotlinPathsForDistDirectoryForTests.jsStdLibKlibPath
-
-    protected open fun configureAdditionalArgs(args: K2JSCompilerArguments) {
-    }
-
-    override fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any? {
-        val args = K2JSCompilerArguments().apply {
-            val libPaths = arrayListOf(jsStdlibFile.absolutePath) + (libraries ?: "").split(File.pathSeparator)
-            libraries = libPaths.joinToString(File.pathSeparator)
-            reportOutputFiles = true
-            freeArgs = filesToCompile.map { it.canonicalPath }
-            useFirLT = false
-        }
-        configureAdditionalArgs(args)
-        return runJSCompiler(args, env)
     }
 }
 

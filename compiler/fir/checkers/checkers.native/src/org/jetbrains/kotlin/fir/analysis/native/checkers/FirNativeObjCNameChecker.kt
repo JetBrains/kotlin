@@ -29,6 +29,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 
 object FirNativeObjCNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (declaration is FirValueParameter) return // those are checked with the FirFunction

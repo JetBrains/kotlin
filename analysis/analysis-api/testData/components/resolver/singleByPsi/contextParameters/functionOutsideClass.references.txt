@@ -2,6 +2,7 @@ KtNameReferenceExpression(205,214): 'funMember'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Base) context(a@A)
       fun funMember()

@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.text
 
 object FirJsPackageDirectiveChecker: FirFileChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     // inspired by FirJsNameCharsChecker.check()
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFile) {

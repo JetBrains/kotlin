@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("gradle-plugin-compiler-dependency-configuration")
 }
 
@@ -13,6 +12,15 @@ dependencies {
 
     constraints {
         api(libs.apache.commons.lang)
+    }
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "ch.qos.logback" && requested.name == "logback-core") {
+            useVersion("1.5.19")
+            because("CVE-2025-11226")
+        }
     }
 }
 

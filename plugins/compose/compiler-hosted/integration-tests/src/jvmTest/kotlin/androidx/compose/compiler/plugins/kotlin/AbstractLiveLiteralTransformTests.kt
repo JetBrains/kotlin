@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.junit.Assert.assertEquals
 
 abstract class AbstractLiveLiteralTransformTests(
@@ -49,37 +49,42 @@ abstract class AbstractLiveLiteralTransformTests(
                     with(ComposePluginRegistrar.Companion) {
                         registerCommonExtensions()
                     }
-                }
-                IrGenerationExtension.registerExtension(
-                    this,
-                    object : IrGenerationExtension {
-                        override fun generate(
-                            moduleFragment: IrModuleFragment,
-                            pluginContext: IrPluginContext,
-                        ) {
-                            val keyVisitor = DurableKeyVisitor(builtKeys)
-                            val stabilityInferencer = StabilityInferencer(
-                                pluginContext.moduleDescriptor,
-                                emptySet()
-                            )
-                            val featureFlags = FeatureFlags()
-                            val transformer = object : LiveLiteralTransformer(
-                                liveLiteralsEnabled || liveLiteralsV2Enabled,
-                                liveLiteralsV2Enabled,
-                                keyVisitor,
-                                pluginContext,
-                                ModuleMetricsImpl("temp", featureFlags) { stabilityInferencer.stabilityOf(it) },
-                                stabilityInferencer,
-                                featureFlags
+                    IrGenerationExtension.registerExtension(
+                        object : IrGenerationExtension {
+                            override fun generate(
+                                moduleFragment: IrModuleFragment,
+                                pluginContext: IrPluginContext,
                             ) {
-                                override fun makeKeySet(): MutableSet<String> {
-                                    return super.makeKeySet().also { builtKeys = it }
+                                val keyVisitor = DurableKeyVisitor(builtKeys)
+                                val stabilityInferencer = StabilityInferencer(
+                                    pluginContext.platform.isJvm(),
+                                    pluginContext.moduleDescriptor,
+                                    emptySet()
+                                )
+                                val featureFlags = FeatureFlags()
+                                val transformer = object : LiveLiteralTransformer(
+                                    liveLiteralsEnabled || liveLiteralsV2Enabled,
+                                    liveLiteralsV2Enabled,
+                                    keyVisitor,
+                                    pluginContext,
+                                    ModuleMetricsImpl("temp", featureFlags) { type, fileContainingDependent ->
+                                        stabilityInferencer.stabilityOf(
+                                            type,
+                                            fileContainingDependent
+                                        )
+                                    },
+                                    stabilityInferencer,
+                                    featureFlags
+                                ) {
+                                    override fun makeKeySet(): MutableSet<String> {
+                                        return super.makeKeySet().also { builtKeys = it }
+                                    }
                                 }
+                                transformer.lower(moduleFragment)
                             }
-                            transformer.lower(moduleFragment)
                         }
-                    }
-                )
+                    )
+                }
             }
         )
         return builtKeys.toList()

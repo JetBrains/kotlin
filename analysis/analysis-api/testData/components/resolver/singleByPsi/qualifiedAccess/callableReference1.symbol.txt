@@ -1,0 +1,5 @@
+KtNameReferenceExpression(69,71): 'AA'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/bar/baz/AA
+    ]

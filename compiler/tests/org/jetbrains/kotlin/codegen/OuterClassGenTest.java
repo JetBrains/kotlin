@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.FirParser;
 import org.jetbrains.kotlin.test.JvmCompilationUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
@@ -41,6 +42,16 @@ import java.util.Collections;
 import java.util.List;
 
 public class OuterClassGenTest extends CodegenTestCase {
+    @Override
+    public boolean getUseFir() {
+        return true;
+    }
+
+    @Override
+    public @NotNull FirParser getFirParser() {
+        return FirParser.LightTree;
+    }
+
     @NotNull
     @Override
     protected String getPrefix() {

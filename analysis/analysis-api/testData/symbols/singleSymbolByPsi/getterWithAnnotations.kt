@@ -1,4 +1,3 @@
-// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
 annotation class PropertyAnnotation
 annotation class FieldAnnotation
 annotation class GetAnnotation

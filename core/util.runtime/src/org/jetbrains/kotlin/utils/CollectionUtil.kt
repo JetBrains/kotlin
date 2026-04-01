@@ -97,3 +97,13 @@ fun <T> Collection<T>.closure(preserveOrder: Boolean = false, f: (T) -> Collecti
 
     return result
 }
+
+inline fun <T, K : Any, V : Any> Collection<T>.associateByNotNull(keySelector: (T) -> K?, valueTransform: (T) -> V?): Map<K, V> {
+    val destination = LinkedHashMap<K, V>(this.size)
+    for (element in this) {
+        val key = keySelector(element) ?: continue
+        val value = valueTransform(element) ?: continue
+        destination[key] = value
+    }
+    return destination
+}

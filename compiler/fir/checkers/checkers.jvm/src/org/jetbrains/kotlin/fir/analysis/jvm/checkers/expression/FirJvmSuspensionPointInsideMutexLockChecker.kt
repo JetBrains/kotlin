@@ -30,6 +30,9 @@ object FirJvmSuspensionPointInsideMutexLockChecker : FirFunctionCallChecker(MppC
     private val withLockCallableId = CallableId(FqName("kotlin.concurrent"), Name.identifier("withLock"))
     private val synchronizedBlockParamName = Name.identifier("block")
 
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         val symbol = expression.calleeReference.toResolvedCallableSymbol() ?: return

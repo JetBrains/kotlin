@@ -1,18 +1,20 @@
 package test.kotlin.jtests;
 
-import junit.framework.TestCase;
 import kotlin.jvm.functions.Function1;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.List;
 
 import static kotlin.collections.CollectionsKt.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Lets try using the Kotlin standard library from Java code
  */
-public class CollectionTest extends TestCase {
+public class CollectionTest {
 
+    @Test
     public void testCollections() throws Exception {
         List<String> list = arrayListOf("foo", "bar");
 

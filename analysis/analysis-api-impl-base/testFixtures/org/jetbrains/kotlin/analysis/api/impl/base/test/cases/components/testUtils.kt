@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.components.dispatchReceiverType
 import org.jetbrains.kotlin.analysis.api.components.render
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.useSiteSession
 import org.jetbrains.kotlin.analysis.api.utils.getApiKClassOf
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
+import org.jetbrains.kotlin.kdoc.psi.api.KDocCommentDescriptor
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -34,11 +36,14 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KVisibility
-import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.*
+import kotlin.reflect.jvm.jvmErasure
 
+@OptIn(KtNonPublicApi::class)
 context(_: KaSession)
 internal fun stringRepresentation(any: Any?): String = with(any) {
     fun KaType.render() = toString().replace('/', '.')
@@ -73,14 +78,14 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
         }
         is KaValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${returnType.render()}"
         // Receiver parameter should be rendered as it is because it is hard to cover it with tests overwise
-        is KaReceiverParameterSymbol -> DebugSymbolRenderer().render(useSiteSession, this)
+        is KaReceiverParameterSymbol -> KaDebugRenderer().render(useSiteSession, this)
         is KaParameterSymbol -> "$name: ${returnType.render()}"
         is KaTypeParameterSymbol -> this.nameOrAnonymous.asString()
         is KaEnumEntrySymbol -> callableId?.toString() ?: name.asString()
         is KaVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"
         is KaClassLikeSymbol -> classId?.toString() ?: nameOrAnonymous.asString()
         is KaPackageSymbol -> fqName.toString()
-        is KaSymbol -> DebugSymbolRenderer().render(useSiteSession, this)
+        is KaSymbol -> KaDebugRenderer().render(useSiteSession, this)
         is Boolean -> toString()
         is Map<*, *> -> if (isEmpty()) "{}" else entries.joinToString(
             separator = ",\n  ",
@@ -109,22 +114,48 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
         is Name -> asString()
         is CallableId -> toString()
         is KaCallableSignature<*> -> stringRepresentation(this)
+        is KDocCommentDescriptor -> buildString {
+            appendLine("<primary tag=\"${primaryTag.name}\" subject=\"${primaryTag.getSubjectName()}\">")
+            append(primaryTag.getContent())
+            additionalSections.forEach { section ->
+                appendLine()
+                appendLine("<section=\"${section.name}\" subject=\"${section.getSubjectName()}\">")
+                append(section.getContent())
+            }
+        }
         else -> buildString {
             val className = renderFrontendIndependentKClassNameOf(this@with)
             append(className)
 
-            this@with::class.memberProperties
-                .filter {
-                    it.name != "token" && it.visibility == KVisibility.PUBLIC && !it.hasAnnotation<Deprecated>()
+            val klass = this@with::class
+            klass.memberProperties
+                .filter { property ->
+                    property.visibility == KVisibility.PUBLIC &&
+                            !property.hasAnnotation<Deprecated>() &&
+                            property.name != "token" &&
+                            // The multi-call already renders all calls via other properties
+                            !(klass.isSubclassOf(KaMultiCall::class) && property.name == KaMultiCall::calls.name) &&
+                            /** The call is already covered as a part of [KaCompoundOperation.operationCall] */
+                            !(klass.isSubclassOf(KaCompoundAccessCall::class) && property.name == KaCompoundAccessCall::operationCall.name) &&
+                            /** This is already covered by [KaFunctionCall.valueArgumentMapping] and [KaFunctionCall.contextArguments] */
+                            !(klass.isSubclassOf(KaFunctionCall::class) && property.name == KaFunctionCall<*>::combinedArgumentMapping.name)
                 }.ifNotEmpty {
                     joinTo(this@buildString, separator = "\n  ", prefix = ":\n  ") { property ->
                         val name = property.name
 
                         @Suppress("UNCHECKED_CAST")
-                        val value = (property as KProperty1<Any, *>).get(this@with)?.let {
-                            if (className == "KaErrorCallInfo" && name == "candidateCalls") {
-                                sortedCalls(it as Collection<KaCall>)
-                            } else it
+                        val value = (property as KProperty1<Any, *>).get(this@with)?.let { value ->
+                            when {
+                                (KaErrorCallInfo::class.isSuperclassOf(klass) || KaCallResolutionError::class.isSuperclassOf(klass)) && name == "candidateCalls" -> {
+                                    sortedCalls(value as Collection<KaCall>)
+                                }
+
+                                KaSymbolResolutionError::class.isSuperclassOf(klass) && name == KaSymbolResolutionError::candidateSymbols.name -> {
+                                    sortedSymbols(value as Collection<KaSymbol>)
+                                }
+
+                                else -> value
+                            }
                         }
 
                         val valueAsString = value?.let { stringRepresentation(it).indented() }
@@ -218,19 +249,16 @@ internal fun sortedCalls(collection: Collection<KaCall>): Collection<KaCall> = c
     compareCalls(call1, call2)
 }
 
-internal fun KaCall.symbols(): List<KaSymbol> = when (this) {
-    is KaCompoundVariableAccessCall -> listOfNotNull(
-        variablePartiallyAppliedSymbol.symbol,
-        compoundOperation.operationPartiallyAppliedSymbol.symbol,
-    )
+internal fun KaCall.symbols(): List<KaSymbol> = (this as KaSingleOrMultiCall).symbols
 
-    is KaCompoundArrayAccessCall -> listOfNotNull(
-        getPartiallyAppliedSymbol.symbol,
-        setPartiallyAppliedSymbol.symbol,
-        compoundOperation.operationPartiallyAppliedSymbol.symbol,
-    )
+context(_: KaSession)
+internal fun sortedSymbols(collection: Collection<KaSymbol>): Collection<KaSymbol> = collection.sortedWith { symbol1, symbol2 ->
+    compareSymbols(symbol1, symbol2)
+}
 
-    is KaCallableMemberCall<*, *> -> listOf(symbol)
+context(_: KaSession)
+internal fun compareSymbols(symbol1: KaSymbol, symbol2: KaSymbol): Int {
+    return stringRepresentation(symbol1).compareTo(stringRepresentation(symbol2))
 }
 
 context(_: KaSession)
@@ -243,29 +271,108 @@ internal fun compareCalls(call1: KaCall, call2: KaCall): Int {
 context(_: KaSession)
 internal fun assertStableSymbolResult(
     testServices: TestServices,
-    firstCandidates: List<KaCallCandidateInfo>,
-    secondCandidates: List<KaCallCandidateInfo>,
+    firstCandidates: List<KaCallCandidate>,
+    secondCandidates: List<KaCallCandidate>,
 ) {
     val assertions = testServices.assertions
     assertions.assertEquals(firstCandidates.size, secondCandidates.size)
 
     for ((firstCandidate, secondCandidate) in firstCandidates.zip(secondCandidates)) {
         assertions.assertEquals(firstCandidate::class, secondCandidate::class)
-        assertStableResult(testServices, firstCandidate.candidate, secondCandidate.candidate)
+        assertStableResult(testServices, firstCandidate.candidate as KaCall, secondCandidate.candidate as KaCall)
         assertions.assertEquals(firstCandidate.isInBestCandidates, secondCandidate.isInBestCandidates)
 
         when (firstCandidate) {
-            is KaApplicableCallCandidateInfo -> {}
-            is KaInapplicableCallCandidateInfo -> {
+            is KaApplicableCallCandidate -> {}
+            is KaInapplicableCallCandidate -> {
                 assertStableResult(
                     testServices = testServices,
                     firstDiagnostic = firstCandidate.diagnostic,
-                    secondDiagnostic = (secondCandidate as KaInapplicableCallCandidateInfo).diagnostic,
+                    secondDiagnostic = (secondCandidate as KaInapplicableCallCandidate).diagnostic,
                 )
             }
         }
     }
 }
+
+context(_: KaSession)
+internal fun assertStableResult(
+    testServices: TestServices,
+    firstAttempt: KaSymbolResolutionAttempt?,
+    secondAttempt: KaSymbolResolutionAttempt?,
+) {
+    val assertions = testServices.assertions
+    if (firstAttempt == null || secondAttempt == null) {
+        assertions.assertEquals(firstAttempt, secondAttempt)
+        return
+    }
+
+    assertions.assertEquals(firstAttempt::class, secondAttempt::class)
+    if (firstAttempt is KaSymbolResolutionError) {
+        assertStableResult(
+            testServices = testServices,
+            firstDiagnostic = firstAttempt.diagnostic,
+            secondDiagnostic = (secondAttempt as KaSymbolResolutionError).diagnostic,
+        )
+    }
+
+    val firstSymbols = sortedSymbols(firstAttempt.symbols)
+    val secondSymbols = sortedSymbols(secondAttempt.symbols)
+    assertions.assertEquals(firstSymbols.size, secondSymbols.size)
+
+    for ((firstSymbol, secondSymbol) in firstSymbols.zip(secondSymbols)) {
+        assertions.assertEquals(firstSymbol, secondSymbol)
+    }
+}
+
+context(_: KaSession)
+internal fun assertStableResult(
+    testServices: TestServices,
+    symbolResolutionAttempt: KaSymbolResolutionAttempt?,
+    callResolutionAttempt: KaCallResolutionAttempt?,
+) {
+    val assertions = testServices.assertions
+
+    when (callResolutionAttempt) {
+        // Symbol resolution supports more cases than call resolution, so we check some guaranties only against it
+        null -> return
+
+        is KaCallResolutionError -> {
+            if (symbolResolutionAttempt !is KaSymbolResolutionError) {
+                testServices.assertions.fail {
+                    "${KaSymbolResolutionError::class.simpleName} is expected, but ${symbolResolutionAttempt?.let { it::class.simpleName }} is found"
+                }
+            }
+
+            assertStableResult(
+                testServices = testServices,
+                firstDiagnostic = callResolutionAttempt.diagnostic,
+                secondDiagnostic = symbolResolutionAttempt.diagnostic,
+            )
+        }
+
+        else -> {}
+    }
+
+    assertions.assertNotNull(symbolResolutionAttempt) {
+        "Inconsistency: ${callResolutionAttempt::class.simpleName} found, but ${KaSymbolResolutionAttempt::class.simpleName} is null"
+    }
+
+    val symbols = sortedSymbols(symbolResolutionAttempt!!.symbols)
+    val symbolsFromCall = sortedSymbols(callResolutionAttempt.calls.flatMap(KaSingleOrMultiCall::symbols))
+    assertions.assertEquals(expected = symbolsFromCall, actual = symbols)
+}
+
+/**
+ * The function returns a non-empty list of functions with the specified [functionName] and [receiverClass].
+ */
+internal fun KClass<KaResolver>.findSpecializedResolveFunctions(
+    functionName: String,
+    receiverClass: KClass<*>,
+): List<KFunction<*>> = declaredFunctions.filter {
+    it.name == functionName && it.extensionReceiverParameter?.type?.jvmErasure?.isSuperclassOf(receiverClass) == true
+}.ifEmpty { error("No '$functionName' function found for ${receiverClass.simpleName}") }
+
 
 context(_: KaSession)
 internal fun assertStableResult(testServices: TestServices, firstInfo: KaCallInfo?, secondInfo: KaCallInfo?) {
@@ -314,9 +421,38 @@ internal fun assertConsistency(testServices: TestServices, call: KaCall) {
     if (call !is KaCallableMemberCall<*, *>) return
 
     val assertions = testServices.assertions
-    val typeArgumentsMapping = call.typeArgumentsMapping
     val symbol = call.symbol
 
+    if (call is KaSingleCall<*, *>) {
+        val partiallyAppliedSymbol = call.partiallyAppliedSymbol
+        assertions.assertEquals(call.signature, partiallyAppliedSymbol.signature)
+        assertions.assertEquals(call.dispatchReceiver, partiallyAppliedSymbol.dispatchReceiver)
+        assertions.assertEquals(call.extensionReceiver, partiallyAppliedSymbol.extensionReceiver)
+        assertions.assertEquals(call.contextArguments, partiallyAppliedSymbol.contextArguments)
+    }
+
+    @Suppress("DEPRECATION")
+    if (call is KaSimpleFunctionCall) {
+        assertions.assertEquals(call is KaImplicitInvokeCall, call.isImplicitInvoke)
+    }
+
+    if (call is KaFunctionCall<*>) {
+        val combinedArgumentMapping = call.combinedArgumentMapping.toMutableMap()
+        for ((expression, parameterFromSpecificMap) in call.valueArgumentMapping + call.contextArgumentMapping) {
+            val parameterFromCombinedMap = combinedArgumentMapping.remove(expression)
+            assertions.assertNotNull(parameterFromCombinedMap) {
+                "Value argument for $parameterFromSpecificMap is not found in ${call::combinedArgumentMapping.name}: $combinedArgumentMapping"
+            }
+
+            assertions.assertEquals(parameterFromCombinedMap, parameterFromSpecificMap)
+        }
+
+        assertions.assertEquals(combinedArgumentMapping.size, 0) {
+            "Extra elements found in ${call::combinedArgumentMapping.name}: $combinedArgumentMapping"
+        }
+    }
+
+    val typeArgumentsMapping = call.typeArgumentsMapping
     val typeParameters = symbol.typeParameters
     for (parameterSymbol in typeParameters) {
         val mappedType = typeArgumentsMapping[parameterSymbol]

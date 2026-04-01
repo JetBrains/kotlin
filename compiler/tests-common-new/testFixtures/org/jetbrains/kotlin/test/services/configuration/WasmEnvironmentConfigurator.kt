@@ -1,15 +1,17 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.test.services.configuration
 
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
-import org.jetbrains.kotlin.constant.EvaluatedConstTracker
+import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.INFER_MAIN_MODULE
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
@@ -24,25 +26,35 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_NO_JS_TAG
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.model.ArtifactKinds
+import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmTarget
+import java.io.File
 
 abstract class WasmEnvironmentConfigurator(
     testServices: TestServices,
     protected val wasmTarget: WasmTarget,
-) : EnvironmentConfigurator(testServices) {
+) : EnvironmentConfigurator(testServices), KlibBasedEnvironmentConfigurator {
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(WasmEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives)
 
-    companion object : KlibBasedEnvironmentConfiguratorUtils {
-        fun getRuntimePathsForModule(target: WasmTarget): List<String> {
-            return listOf(stdlibPath(target), kotlinTestPath(target))
+    companion object {
+        fun getRuntimePathsForModule(target: WasmTarget, testServices: TestServices): List<String> {
+            return listOf(stdlibPath(target, testServices), kotlinTestPath(target, testServices))
         }
 
         fun kotlinTestPath(target: WasmTarget): String = System.getProperty("kotlin.${target.alias}.kotlin.test.path")!!
         fun stdlibPath(target: WasmTarget): String = System.getProperty("kotlin.${target.alias}.stdlib.path")!!
+
+        fun kotlinTestPath(target: WasmTarget, testServices: TestServices): String =
+            testServices.standardLibrariesPathProvider.fullWasmStdlib(target).absolutePath
+
+        fun stdlibPath(target: WasmTarget, testServices: TestServices): String =
+            testServices.standardLibrariesPathProvider.kotlinTestWasmKLib(target).absolutePath
 
         fun getMainModule(testServices: TestServices): TestModule {
             val modules = testServices.moduleStructure.modules
@@ -61,7 +73,7 @@ abstract class WasmEnvironmentConfigurator(
 
     override fun provideAdditionalAnalysisFlags(
         directives: RegisteredDirectives,
-        languageVersion: LanguageVersion
+        languageVersion: LanguageVersion,
     ): Map<AnalysisFlag<*>, Any?> {
         return super.provideAdditionalAnalysisFlags(directives, languageVersion).toMutableMap().also {
             it[allowFullyQualifiedNameInKClass] = WASM_DISABLE_FQNAME_IN_KCLASS !in directives
@@ -72,7 +84,9 @@ abstract class WasmEnvironmentConfigurator(
         configuration.moduleKind = ModuleKind.ES
         configuration.moduleName = module.name
 
+        configuration.put(JSConfigurationKeys.WASM_COMPILATION, true)
         configuration.put(WasmConfigurationKeys.WASM_TARGET, wasmTarget)
+        configuration.put(WasmConfigurationKeys.WASM_COMMAND_MODULE, wasmTarget == WasmTarget.WASI)
     }
 }
 
@@ -90,16 +104,16 @@ class WasmFirstStageEnvironmentConfigurator(
 
         val dependencies = module.regularDependencies.map { getKlibArtifactFile(testServices, it.dependencyModule.name).absolutePath }
         val friends = module.friendDependencies.map { getKlibArtifactFile(testServices, it.dependencyModule.name).absolutePath }
-        val libraries = getRuntimePathsForModule(wasmTarget) + dependencies + friends
+        val libraries = getRuntimePathsForModule(wasmTarget, testServices) + dependencies + friends
 
         configuration.libraries = libraries
         configuration.friendLibraries = friends
     }
 }
 
-class WasmSecondStageEnvironmentConfigurator(
+open class WasmSecondStageEnvironmentConfigurator(
     testServices: TestServices,
-    wasmTarget: WasmTarget
+    wasmTarget: WasmTarget,
 ) : WasmEnvironmentConfigurator(testServices, wasmTarget) {
     override val compilationStage: CompilationStage
         get() = CompilationStage.SECOND
@@ -111,6 +125,20 @@ class WasmSecondStageEnvironmentConfigurator(
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         super.configureCompilerConfiguration(configuration, module)
         val registeredDirectives = module.directives
+
+        val wasmTarget = configuration.wasmTarget
+
+        val runtimeKlibs: List<String> = getRuntimePathsForModule(wasmTarget, testServices)
+        val klibDependencies: List<String> = getKlibDependencies(module, testServices, DependencyRelation.RegularDependency)
+            .map { it.absolutePath }
+        val klibFriendDependencies: List<String> = getKlibDependencies(module, testServices, DependencyRelation.FriendDependency)
+            .map { it.absolutePath }
+        val klibArtifact = testServices.artifactsProvider.getArtifact(module, ArtifactKinds.KLib)
+        val mainModule = MainModule.Klib(klibArtifact.outputFile.absolutePath)
+        val mainPath = File(mainModule.libPath).canonicalPath
+        configuration.libraries = runtimeKlibs + klibDependencies + klibFriendDependencies + mainPath
+        configuration.friendLibraries = klibFriendDependencies
+        configuration.includes = mainPath
 
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ASSERTS, true)
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, true)
@@ -139,15 +167,28 @@ class WasmSecondStageEnvironmentConfigurator(
         configuration.put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, useNewExceptions)
         configuration.put(WasmConfigurationKeys.WASM_NO_JS_TAG, WASM_NO_JS_TAG in registeredDirectives)
         configuration.put(
+            WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX,
+            K2JSCompilerArguments().wasmInternalLocalVariablePrefix
+        )
+        configuration.put(
             WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION,
             FORCE_DEBUG_FRIENDLY_COMPILATION in registeredDirectives
-        )
-
-        val firstPhaseConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
-        configuration.putIfAbsent(
-            CommonConfigurationKeys.EVALUATED_CONST_TRACKER,
-            firstPhaseConfiguration.evaluatedConstTracker ?: EvaluatedConstTracker.create()
         )
     }
 }
 
+private class WasmJsCompilerConfigurationKeyEnablerConfigurator(
+    testServices: TestServices,
+    private val wasmConfigurationKey: CompilerConfigurationKey<Boolean>
+) : WasmSecondStageEnvironmentConfigurator(testServices, WasmTarget.JS) {
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        super.configureCompilerConfiguration(configuration, module)
+        configuration.put(wasmConfigurationKey, true)
+    }
+}
+
+fun TestConfigurationBuilder.enableByConfigurationKey(key: CompilerConfigurationKey<Boolean>) {
+    useConfigurators(
+        { WasmJsCompilerConfigurationKeyEnablerConfigurator(it, key) }
+    )
+}

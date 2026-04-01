@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.light.LightElement
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtElement
+import javax.swing.Icon
 
 abstract class KtLightElementBase(private var parent: PsiElement) : LightElement(parent.manager, KotlinLanguage.INSTANCE) {
     override fun toString() = "${this::class.simpleName.orEmpty()} of $parent"
@@ -22,6 +23,8 @@ abstract class KtLightElementBase(private var parent: PsiElement) : LightElement
     fun setParent(newParent: PsiElement) {
         parent = newParent
     }
+
+    override fun getElementIcon(flags: Int): Icon? = null
 
     override fun getText() = kotlinOrigin?.text ?: ""
     override fun getTextRange(): TextRange? = kotlinOrigin?.textRange

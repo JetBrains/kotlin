@@ -44,21 +44,20 @@ KtWhenExpression(121,173): 'when (s) {'
   null
 
 KtNameReferenceExpression(127,128): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = Some
-          symbol = s: Some
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = Some
+        symbol = s: Some
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(136,151): 'FIRST -> SECOND'
@@ -68,12 +67,12 @@ KtWhenConditionWithExpression(136,141): 'FIRST'
   null
 
 KtNameReferenceExpression(136,141): 'FIRST'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: FIRST>
 
 KtNameReferenceExpression(145,151): 'SECOND'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SECOND>
 
@@ -84,11 +83,11 @@ KtWhenConditionWithExpression(156,162): 'SECOND'
   null
 
 KtNameReferenceExpression(156,162): 'SECOND'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SECOND>
 
 KtNameReferenceExpression(166,171): 'FIRST'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: FIRST>

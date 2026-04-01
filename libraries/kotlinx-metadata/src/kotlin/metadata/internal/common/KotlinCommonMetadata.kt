@@ -4,14 +4,17 @@
  */
 package kotlin.metadata.internal.common
 
-import kotlin.metadata.*
-import kotlin.metadata.internal.toKmPackage
-import kotlin.metadata.internal.toKmClass
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.readBuiltinsPackageFragment
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import java.io.ByteArrayInputStream
-import kotlin.metadata.internal.extensions.*
+import kotlin.metadata.KmAnnotation
+import kotlin.metadata.KmClass
+import kotlin.metadata.KmPackage
+import kotlin.metadata.internal.extensions.KmModuleFragmentExtension
+import kotlin.metadata.internal.extensions.MetadataExtensions
+import kotlin.metadata.internal.toKmClass
+import kotlin.metadata.internal.toKmPackage
 
 /**
  * Reads metadata that is not from annotation nor from `.kotlin_module` file.
@@ -68,6 +71,11 @@ public class KmModuleFragment {
      * Classes in the module fragment.
      */
     public val classes: MutableList<KmClass> = ArrayList()
+
+    /**
+     * File-level annotations on the file that this module fragment represents.
+     */
+    public val fileAnnotations: MutableList<KmAnnotation> = ArrayList()
 
     internal val extensions: List<KmModuleFragmentExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createModuleFragmentExtensions)

@@ -15,7 +15,7 @@ internal fun CopySpec.remapJavaScriptSourceMapSourcePaths(destinationDir: File) 
             it.filter(
                 mapOf(
                     RewriteSourceMapFilterReader::srcSourceRoot.name to it.file.parentFile,
-                    RewriteSourceMapFilterReader::targetSourceRoot.name to destinationDir
+                    RewriteSourceMapFilterReader::targetSourceRoot.name to it.relativePath.getFile(destinationDir).parentFile
                 ),
                 RewriteSourceMapFilterReader::class.java
             )

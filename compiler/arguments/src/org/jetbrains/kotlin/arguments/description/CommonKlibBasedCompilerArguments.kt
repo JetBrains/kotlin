@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.dsl.base.*
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
+import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
+import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultTrue
@@ -15,7 +18,13 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
     compilerArgument {
         name = "Xklib-relative-path-base"
         compilerName = "relativePathBases"
-        description = "Provide a base path to compute the source's relative paths in klib (default is empty).".asReleaseDependent()
+        description = ReleaseDependent(
+            current = """Relativize all the paths stored in a klib using the given path prefixes.
+The supplied prefixes should be absolute paths to the directories containing the source code files.
+Note: The prefixes are applied in the same order as they are passed in this CLI argument.""",
+            KotlinReleaseVersion.v2_0_20..KotlinReleaseVersion.v2_3_20 to
+                    "Provide a base path to compute the source's relative paths in klib (default is empty)."
+        )
         valueType = StringArrayType.defaultNull
 
         lifecycle(
@@ -48,12 +57,28 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
     compilerArgument {
         name = "Xpartial-linkage"
         compilerName = "partialLinkageMode"
-        description = "Use partial linkage mode.".asReleaseDependent()
+        description = ReleaseDependent(
+            current = """
+                This option is deprecated and will be deleted in future versions.
+                The partial linkage engine is always turned on.
+                If you would like to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.
+            """.trimIndent(),
+            valueInVersions = mapOf(
+                KotlinReleaseVersion.v2_0_20..KotlinReleaseVersion.v2_3_20 to "Use partial linkage mode."
+            )
+
+        )
+
         valueType = StringType.defaultNull
+
         valueDescription = "{enable|disable}".asReleaseDependent()
+        additionalAnnotations(
+            Deprecated("This flag is deprecated")
+        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_0,
         )
     }
 
@@ -62,7 +87,10 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         compilerName = "partialLinkageLogLevel"
         description = "Define the compile-time log level for partial linkage.".asReleaseDependent()
         valueType = StringType.defaultNull
-        valueDescription = "{info|warning|error}".asReleaseDependent()
+        valueDescription = ReleaseDependent(
+            current = "{silent|info|warning|error}",
+            KotlinReleaseVersion.v2_0_20..KotlinReleaseVersion.v2_3_20 to "{info|warning|error}"
+        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
@@ -124,6 +152,17 @@ The only observable effect is that a custom ABI version is written to KLIB manif
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_0
+        )
+    }
+
+    compilerArgument {
+        name = "Xskip-library-special-compatibility-checks"
+        compilerName = "skipLibrarySpecialCompatibilityChecks"
+        description = "Skip library compatibility checks for stdlib and kotlin.test library.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0,
         )
     }
 }

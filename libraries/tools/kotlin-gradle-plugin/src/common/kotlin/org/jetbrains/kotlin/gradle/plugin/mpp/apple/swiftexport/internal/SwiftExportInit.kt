@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.toolingDiagnosticsContext
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -70,9 +71,8 @@ internal fun KotlinNativeTarget.exportedSwiftExportApiConfiguration(
     extendConfiguration: Configuration,
 ): Configuration =
     project.configurations.maybeCreateResolvable(exportedSwiftExportApiConfigurationName(buildType)) {
+        setInvisibleIfSupported()
         description = "Swift Export dependencies configuration for $name"
-        @Suppress("DEPRECATION")
-        isVisible = false
         extendsFrom(extendConfiguration)
         shouldResolveConsistentlyWith(extendConfiguration)
         usesPlatformOf(this@exportedSwiftExportApiConfiguration)
@@ -105,6 +105,6 @@ internal fun Project.validateSwiftExportModuleName(moduleName: String) =
 
 internal fun KotlinToolingDiagnosticsCollector.validateSwiftExportModuleName(project: Project, moduleName: String) {
     if (!moduleName.matches(Regex(SWIFT_EXPORT_MODULE_NAME_VALIDATION_PATTERN))) {
-        report(project, KotlinToolingDiagnostics.SwiftExportInvalidModuleName(moduleName))
+        report(project.toolingDiagnosticsContext, KotlinToolingDiagnostics.SwiftExportInvalidModuleName(moduleName))
     }
 }

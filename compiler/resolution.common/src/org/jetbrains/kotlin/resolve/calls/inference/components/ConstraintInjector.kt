@@ -254,8 +254,7 @@ class ConstraintInjector(
         val position: IncorporationConstraintPosition
     ) : TypeCheckerStateForConstraintSystem(
         c,
-        baseState.kotlinTypePreparator,
-        baseState.kotlinTypeRefiner
+        baseState,
     ), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
         constructor(c: Context, position: IncorporationConstraintPosition) : this(
             c.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true),
@@ -388,9 +387,6 @@ class ConstraintInjector(
                 )
 
             if (!isSubtypeOf(upperType)) {
-                // TODO: remove these additional workarounds for flexible types once
-                // LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible and K1 are removed
-                // shouldTryUseDifferentFlexibilityForUpperType should always be false
                 if (shouldTryUseDifferentFlexibilityForUpperType && upperType.isRigidType()) {
                     /*
                      * Please don't reuse this logic.

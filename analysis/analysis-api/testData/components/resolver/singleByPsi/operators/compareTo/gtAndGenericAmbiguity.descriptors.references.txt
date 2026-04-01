@@ -1,0 +1,10 @@
+KtOperationReferenceExpression(97,98): '>'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
+      0: (in ROOT) operator fun <R> R.compareTo(number: kotlin.Int): kotlin.Int
+      1: (in ROOT) operator fun <T> T.compareTo(int: kotlin.Int): kotlin.Int

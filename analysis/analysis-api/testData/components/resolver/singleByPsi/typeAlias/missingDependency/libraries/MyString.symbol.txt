@@ -1,0 +1,5 @@
+KtNameReferenceExpression(141,146): 'check'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      library2/MyInterface.check(<dispatch receiver>: library2.MyInterface, string: {library1.MyString=} kotlin.String): kotlin.Unit
+    ]

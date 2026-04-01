@@ -1,6 +1,8 @@
 // LANGUAGE: +ContextParameters
 // IGNORE_BACKEND_K1: ANY
 // SKIP_NODE_JS
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 
 open class A {
     fun instance() = true
@@ -12,16 +14,18 @@ open class A {
     }
 }
 
+inline fun call(f: () -> Boolean) = f()
+inline fun callExtension(f: A.() -> Boolean, receiver: A) = receiver.f()
+inline fun callParameter(f: (A) -> Boolean, parameter: A) = f(parameter)
+inline fun callContext(f: context(A) () -> Boolean, receiver: A) = f(receiver)
+
+// FILE: main.kt
+
 fun A.ext() = true
 val A.extProp get() = true
 
 fun A.Companion.companionExt() = true
 val A.Companion.companionExtProp get() = true
-
-inline fun call(f: () -> Boolean) = f()
-inline fun callExtension(f: A.() -> Boolean, receiver: A) = receiver.f()
-inline fun callParameter(f: (A) -> Boolean, parameter: A) = f(parameter)
-inline fun callContext(f: context(A) () -> Boolean, receiver: A) = f(receiver)
 
 fun box(): String {
     if (!call(A::instance)) return "Fail bound function 1"

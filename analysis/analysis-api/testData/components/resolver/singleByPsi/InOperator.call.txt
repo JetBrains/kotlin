@@ -1,7 +1,30 @@
 KtOperationReferenceExpression(69,71): 'in'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Foo()
+        isSafeNavigation = false
+        type = Foo
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /Foo.contains(<dispatch receiver>: Foo, v: kotlin.Int): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = v
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = v: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /Foo.contains
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         0 -> (KaVariableSignature:
           name = v
           receiverType = null
@@ -10,27 +33,3 @@ KtOperationReferenceExpression(69,71): 'in'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Foo()
-          isSafeNavigation = false
-          type = Foo
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /Foo.contains(<dispatch receiver>: Foo, v: kotlin.Int): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = v
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = v: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /Foo.contains
-      typeArgumentsMapping = {}

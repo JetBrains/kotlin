@@ -1,0 +1,447 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] outerClassAsSuper.kt
+    public abstract [ResolvedTo(RAW_FIR)] class ConstantValue<[ResolvedTo(RAW_FIR)] out T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] constructor<[ResolvedTo(RAW_FIR)] out T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ConstantValue.value] value: T): R|ConstantValue<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] get(): T
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class KClassValue : ConstantValue<KClassValue.Value> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KClassValue] constructor([ResolvedTo(RAW_FIR)] value: Value): R|KClassValue| {
+            LAZY_super<ConstantValue<KClassValue.Value>>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor(): R|KClassValue.Value| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] class NormalClass : Value {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NormalClass] constructor(): R|KClassValue.Value.NormalClass| {
+                    LAZY_super<Value>
+                }
+
+            }
+
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] outerClassAsSuper.kt
+    public abstract [ResolvedTo(RAW_FIR)] class ConstantValue<[ResolvedTo(RAW_FIR)] out T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] constructor<[ResolvedTo(RAW_FIR)] out T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ConstantValue.value] value: T): R|ConstantValue<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] get(): T
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class KClassValue : ConstantValue<KClassValue.Value> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KClassValue] constructor([ResolvedTo(RAW_FIR)] value: Value): R|KClassValue| {
+            LAZY_super<ConstantValue<KClassValue.Value>>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor(): R|KClassValue.Value| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] class NormalClass : Value {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NormalClass] constructor(): R|KClassValue.Value.NormalClass| {
+                    LAZY_super<Value>
+                }
+
+            }
+
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] outerClassAsSuper.kt
+    public abstract [ResolvedTo(RAW_FIR)] class ConstantValue<[ResolvedTo(RAW_FIR)] out T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] constructor<[ResolvedTo(RAW_FIR)] out T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ConstantValue.value] value: T): R|ConstantValue<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] get(): T
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class KClassValue : ConstantValue<KClassValue.Value> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KClassValue] constructor([ResolvedTo(RAW_FIR)] value: Value): R|KClassValue| {
+            LAZY_super<ConstantValue<KClassValue.Value>>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor(): R|KClassValue.Value| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class NormalClass : Value {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NormalClass] constructor(): R|KClassValue.Value.NormalClass| {
+                    LAZY_super<Value>
+                }
+
+            }
+
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] outerClassAsSuper.kt
+    public abstract [ResolvedTo(RAW_FIR)] class ConstantValue<[ResolvedTo(RAW_FIR)] out T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] constructor<[ResolvedTo(RAW_FIR)] out T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ConstantValue.value] value: T): R|ConstantValue<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] get(): T
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class KClassValue : ConstantValue<KClassValue.Value> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KClassValue] constructor([ResolvedTo(RAW_FIR)] value: Value): R|KClassValue| {
+            LAZY_super<ConstantValue<KClassValue.Value>>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor(): R|KClassValue.Value| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? [ResolvedTo(COMPANION_GENERATION)] class NormalClass : Value {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NormalClass] constructor(): R|KClassValue.Value.NormalClass| {
+                    LAZY_super<Value>
+                }
+
+            }
+
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] outerClassAsSuper.kt
+    public abstract [ResolvedTo(SUPER_TYPES)] class ConstantValue<[ResolvedTo(SUPER_TYPES)] out T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] constructor<[ResolvedTo(SUPER_TYPES)] out T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ConstantValue.value] value: T): R|ConstantValue<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] get(): T
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] class KClassValue : R|ConstantValue<KClassValue.Value>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KClassValue] constructor([ResolvedTo(RAW_FIR)] value: Value): R|KClassValue| {
+            LAZY_super<ConstantValue<R|KClassValue.Value|>>
+        }
+
+        public final? [ResolvedTo(SUPER_TYPES)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor(): R|KClassValue.Value| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? [ResolvedTo(SUPER_TYPES)] class NormalClass : R|KClassValue.Value| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NormalClass] constructor(): R|KClassValue.Value.NormalClass| {
+                    LAZY_super<Value>
+                }
+
+            }
+
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] outerClassAsSuper.kt
+    public abstract [ResolvedTo(SUPER_TYPES)] class ConstantValue<[ResolvedTo(SUPER_TYPES)] out T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] constructor<[ResolvedTo(SUPER_TYPES)] out T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ConstantValue.value] value: T): R|ConstantValue<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] get(): T
+
+    }
+    public final? [ResolvedTo(TYPES)] class KClassValue : R|ConstantValue<KClassValue.Value>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KClassValue] constructor([ResolvedTo(RAW_FIR)] value: Value): R|KClassValue| {
+            LAZY_super<ConstantValue<R|KClassValue.Value|>>
+        }
+
+        public final? [ResolvedTo(TYPES)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor(): R|KClassValue.Value| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? [ResolvedTo(TYPES)] class NormalClass : R|KClassValue.Value| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NormalClass] constructor(): R|KClassValue.Value.NormalClass| {
+                    LAZY_super<Value>
+                }
+
+            }
+
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] outerClassAsSuper.kt
+    public abstract [ResolvedTo(SUPER_TYPES)] class ConstantValue<[ResolvedTo(SUPER_TYPES)] out T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] constructor<[ResolvedTo(SUPER_TYPES)] out T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ConstantValue.value] value: T): R|ConstantValue<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] get(): T
+
+    }
+    public final [ResolvedTo(STATUS)] class KClassValue : R|ConstantValue<KClassValue.Value>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KClassValue] constructor([ResolvedTo(RAW_FIR)] value: Value): R|KClassValue| {
+            LAZY_super<ConstantValue<R|KClassValue.Value|>>
+        }
+
+        public final [ResolvedTo(STATUS)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor(): R|KClassValue.Value| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] class NormalClass : R|KClassValue.Value| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NormalClass] constructor(): R|KClassValue.Value.NormalClass| {
+                    LAZY_super<Value>
+                }
+
+            }
+
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] outerClassAsSuper.kt
+    public abstract [ResolvedTo(SUPER_TYPES)] class ConstantValue<[ResolvedTo(SUPER_TYPES)] out T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] constructor<[ResolvedTo(SUPER_TYPES)] out T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ConstantValue.value] value: T): R|ConstantValue<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] get(): T
+
+    }
+    public final [ResolvedTo(STATUS)] class KClassValue : R|ConstantValue<KClassValue.Value>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KClassValue] constructor([ResolvedTo(RAW_FIR)] value: Value): R|KClassValue| {
+            LAZY_super<ConstantValue<R|KClassValue.Value|>>
+        }
+
+        public final [ResolvedTo(STATUS)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor(): R|KClassValue.Value| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class NormalClass : R|KClassValue.Value| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NormalClass] constructor(): R|KClassValue.Value.NormalClass| {
+                    LAZY_super<Value>
+                }
+
+            }
+
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] outerClassAsSuper.kt
+    public abstract [ResolvedTo(SUPER_TYPES)] class ConstantValue<[ResolvedTo(SUPER_TYPES)] out T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] constructor<[ResolvedTo(SUPER_TYPES)] out T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ConstantValue.value] value: T): R|ConstantValue<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] get(): T
+
+    }
+    public final [ResolvedTo(STATUS)] class KClassValue : R|ConstantValue<KClassValue.Value>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KClassValue] constructor([ResolvedTo(RAW_FIR)] value: Value): R|KClassValue| {
+            LAZY_super<ConstantValue<R|KClassValue.Value|>>
+        }
+
+        public final [ResolvedTo(STATUS)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor(): R|KClassValue.Value| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(CONTRACTS)] class NormalClass : R|KClassValue.Value| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NormalClass] constructor(): R|KClassValue.Value.NormalClass| {
+                    LAZY_super<Value>
+                }
+
+            }
+
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] outerClassAsSuper.kt
+    public abstract [ResolvedTo(SUPER_TYPES)] class ConstantValue<[ResolvedTo(SUPER_TYPES)] out T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] constructor<[ResolvedTo(SUPER_TYPES)] out T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ConstantValue.value] value: T): R|ConstantValue<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] get(): T
+
+    }
+    public final [ResolvedTo(STATUS)] class KClassValue : R|ConstantValue<KClassValue.Value>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KClassValue] constructor([ResolvedTo(RAW_FIR)] value: Value): R|KClassValue| {
+            LAZY_super<ConstantValue<R|KClassValue.Value|>>
+        }
+
+        public final [ResolvedTo(STATUS)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor(): R|KClassValue.Value| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class NormalClass : R|KClassValue.Value| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NormalClass] constructor(): R|KClassValue.Value.NormalClass| {
+                    LAZY_super<Value>
+                }
+
+            }
+
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] outerClassAsSuper.kt
+    public abstract [ResolvedTo(SUPER_TYPES)] class ConstantValue<[ResolvedTo(SUPER_TYPES)] out T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] constructor<[ResolvedTo(SUPER_TYPES)] out T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ConstantValue.value] value: T): R|ConstantValue<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] get(): T
+
+    }
+    public final [ResolvedTo(STATUS)] class KClassValue : R|ConstantValue<KClassValue.Value>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KClassValue] constructor([ResolvedTo(RAW_FIR)] value: Value): R|KClassValue| {
+            LAZY_super<ConstantValue<R|KClassValue.Value|>>
+        }
+
+        public final [ResolvedTo(STATUS)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor(): R|KClassValue.Value| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(CONSTANT_EVALUATION)] class NormalClass : R|KClassValue.Value| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NormalClass] constructor(): R|KClassValue.Value.NormalClass| {
+                    LAZY_super<Value>
+                }
+
+            }
+
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] outerClassAsSuper.kt
+    public abstract [ResolvedTo(SUPER_TYPES)] class ConstantValue<[ResolvedTo(SUPER_TYPES)] out T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] constructor<[ResolvedTo(SUPER_TYPES)] out T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ConstantValue.value] value: T): R|ConstantValue<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ConstantValue] get(): T
+
+    }
+    public final [ResolvedTo(STATUS)] class KClassValue : R|ConstantValue<KClassValue.Value>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KClassValue] constructor([ResolvedTo(RAW_FIR)] value: Value): R|KClassValue| {
+            LAZY_super<ConstantValue<R|KClassValue.Value|>>
+        }
+
+        public final [ResolvedTo(STATUS)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor(): R|KClassValue.Value| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class NormalClass : R|KClassValue.Value| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NormalClass] constructor(): R|KClassValue.Value.NormalClass| {
+                    LAZY_super<Value>
+                }
+
+            }
+
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] outerClassAsSuper.kt
+    public abstract [ResolvedTo(STATUS)] class ConstantValue<[ResolvedTo(STATUS)] out T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ConstantValue] constructor<[ResolvedTo(STATUS)] out T>([ResolvedTo(STATUS)] [CorrespondingProperty=/ConstantValue.value] value: R|T|): R|ConstantValue<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public open [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|T| = R|<local>/value|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ConstantValue] get(): R|T|
+
+    }
+    public final [ResolvedTo(STATUS)] class KClassValue : R|ConstantValue<KClassValue.Value>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=KClassValue] constructor([ResolvedTo(STATUS)] value: R|KClassValue.Value|): R|KClassValue| {
+            LAZY_super<R|ConstantValue<KClassValue.Value>|>
+        }
+
+        public final [ResolvedTo(STATUS)] class Value : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor(): R|KClassValue.Value| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] class NormalClass : R|KClassValue.Value| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NormalClass] constructor(): R|KClassValue.Value.NormalClass| {
+                    super<R|KClassValue.Value|>()
+                }
+
+            }
+
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] outerClassAsSuper.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] class ConstantValue<[ResolvedTo(BODY_RESOLVE)] out T> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ConstantValue] constructor<[ResolvedTo(BODY_RESOLVE)] out T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/ConstantValue.value] value: R|T|): R|ConstantValue<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|T| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ConstantValue] get(): R|T|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class KClassValue : R|ConstantValue<KClassValue.Value>| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KClassValue] constructor([ResolvedTo(BODY_RESOLVE)] value: R|KClassValue.Value|): R|KClassValue| {
+            super<R|ConstantValue<KClassValue.Value>|>(R|<local>/value|)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] class Value : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Value] constructor(): R|KClassValue.Value| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] class NormalClass : R|KClassValue.Value| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NormalClass] constructor(): R|KClassValue.Value.NormalClass| {
+                    super<R|KClassValue.Value|>()
+                }
+
+            }
+
+        }
+
+    }

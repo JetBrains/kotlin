@@ -77,7 +77,7 @@ class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
             EnvironmentConfigFiles.JVM_CONFIG_FILES
         ).apply {
             // Activate Kotlin light class finder
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             JvmResolveUtil.analyze(this)
         }
     }

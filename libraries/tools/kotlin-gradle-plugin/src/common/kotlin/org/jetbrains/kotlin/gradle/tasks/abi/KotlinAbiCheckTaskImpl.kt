@@ -5,22 +5,28 @@
 
 package org.jetbrains.kotlin.gradle.tasks.abi
 
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.abi.tools.AbiTools
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain
+import org.jetbrains.kotlin.buildtools.api.abi.compareAbiTextFilesOperation
 import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_JVM_DUMP_EXTENSION
 import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
 
 @DisableCachingByDefault(because = "No output")
-internal abstract class KotlinAbiCheckTaskImpl : AbiToolsTask(), KotlinLegacyAbiCheckTask {
-    @get:InputFiles // InputFiles is used so as not to fall with an error if the reference directory does not exist https://github.com/gradle/gradle/issues/2016
+internal abstract class KotlinAbiCheckTaskImpl : AbiToolsTask() {
+    @get:Internal
+    abstract val referenceDir: DirectoryProperty
+
+    @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract override val referenceDir: DirectoryProperty
+    abstract val referenceDumps: ConfigurableFileCollection
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract override val actualDir: DirectoryProperty
+    abstract val actualDir: DirectoryProperty
 
     @get:Input
     val projectName: String = project.name
@@ -30,7 +36,7 @@ internal abstract class KotlinAbiCheckTaskImpl : AbiToolsTask(), KotlinLegacyAbi
     private val rootDir = project.rootDir
 
 
-    override fun runTools(tools: AbiTools) {
+    override fun runTools(abiValidationToolchain: AbiValidationToolchain, buildSession: KotlinToolchains.BuildSession) {
         val referenceDir = referenceDir.get().asFile
         val actualDir = actualDir.get().asFile
         val pathPrefix = if (projectPath == ":") ":" else "$projectPath:"
@@ -44,24 +50,23 @@ internal abstract class KotlinAbiCheckTaskImpl : AbiToolsTask(), KotlinLegacyAbi
             .filter { file -> file.isFile && file.name == jvmDumpName || file.name == klibDumpName }
             .toList()
 
-        val referenceDumps = referenceDir.walk()
-            .filter { file -> file.isFile && file.name == jvmDumpName || file.name == klibDumpName }
+        val referenceDumps = referenceDumps.files
+            .filter { it.exists() && it.isFile }
+            .map { it.absolutePath }
             .toMutableSet()
 
         actualDumps.forEach { actualDump ->
             val relative = actualDump.toRelativeString(actualDir)
             val referenceDump = referenceDir.resolve(relative)
-            if (referenceDumps.remove(referenceDump)) {
+            if (referenceDumps.remove(referenceDump.absolutePath)) {
+                val diffBuilder = StringBuilder()
+                val operation =
+                    abiValidationToolchain.compareAbiTextFilesOperation(diffBuilder, referenceDump.toPath(), actualDump.toPath())
+                buildSession.executeOperation(operation)
 
-                val diffSet = mutableSetOf<String>()
-                val diff = tools.filesDiff(
-                    referenceDump,
-                    actualDump
-                )
-                if (diff != null) diffSet.add(diff)
-                if (diffSet.isNotEmpty()) {
-                    val diffText = diffSet.joinToString("\n\n")
-                    errorBuilder.append("\n<<<ABI has changed>>>\n$diffText\n\n")
+                val diff = diffBuilder.toString()
+                if (diff.isNotEmpty()) {
+                    errorBuilder.append("\n<<<ABI has changed>>>\n$diff\n\n")
                 }
 
             } else {

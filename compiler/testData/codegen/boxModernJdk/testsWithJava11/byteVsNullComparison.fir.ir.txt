@@ -1,0 +1,164 @@
+FILE fqName:<root> fileName:/Generated_Box_Main.kt
+  FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:res type:kotlin.String [val]
+        CALL 'public final fun box (): kotlin.String declared in <root>' type=kotlin.String origin=null
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: GET_VAR 'val res: kotlin.String declared in <root>.main' type=kotlin.String origin=null
+              ARG arg1: CONST String type=kotlin.String value="OK"
+          then: THROW type=kotlin.Nothing
+            CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] kotlin.Any?) declared in java.lang.AssertionError' type=java.lang.AssertionError origin=null
+              ARG p0: GET_VAR 'val res: kotlin.String declared in <root>.main' type=kotlin.String origin=null
+FILE fqName:<root> fileName:/byteVsNullComparison.kt
+  FUN name:attempt visibility:public modality:FINAL returnType:kotlin.Unit [inline]
+    VALUE_PARAMETER kind:Regular name:name index:0 type:kotlin.String
+    VALUE_PARAMETER kind:Regular name:block index:1 type:kotlin.Function0<kotlin.Boolean>
+    BLOCK_BODY
+      CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
+        ARG message: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
+          ARG <this>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
+            ARG <this>: GET_VAR 'name: kotlin.String declared in <root>.attempt' type=kotlin.String origin=null
+            ARG other: CONST String type=kotlin.String value=": "
+          ARG other: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Boolean origin=INVOKE
+            ARG <this>: GET_VAR 'block: kotlin.Function0<kotlin.Boolean> declared in <root>.attempt' type=kotlin.Function0<kotlin.Boolean> origin=VARIABLE_AS_FUNCTION
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      CALL 'public final fun attempt (name: kotlin.String, block: kotlin.Function0<kotlin.Boolean>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        ARG name: CONST String type=kotlin.String value="bool"
+        ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Boolean> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Boolean
+            BLOCK_BODY
+              VAR name:value type:@[FlexibleNullability] kotlin.Boolean? [val]
+                CALL 'public final fun getNullAsPlatform <E> (e: E of <root>.getNullAsPlatform): @[FlexibleNullability] E of <root>.getNullAsPlatform? declared in <root>' type=@[FlexibleNullability] kotlin.Boolean? origin=null
+                  TYPE_ARG E: kotlin.Boolean
+                  ARG e: CONST Boolean type=kotlin.Boolean value=true
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Boolean declared in <root>.box'
+                CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  ARG arg0: GET_VAR 'val value: @[FlexibleNullability] kotlin.Boolean? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Boolean? origin=null
+                  ARG arg1: CONST Boolean type=kotlin.Boolean value=true
+      CALL 'public final fun attempt (name: kotlin.String, block: kotlin.Function0<kotlin.Boolean>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        ARG name: CONST String type=kotlin.String value="short"
+        ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Boolean> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Boolean
+            BLOCK_BODY
+              VAR name:value type:@[FlexibleNullability] kotlin.Short? [val]
+                CALL 'public final fun getNullAsPlatform <E> (e: E of <root>.getNullAsPlatform): @[FlexibleNullability] E of <root>.getNullAsPlatform? declared in <root>' type=@[FlexibleNullability] kotlin.Short? origin=null
+                  TYPE_ARG E: kotlin.Short
+                  ARG e: CALL 'public open fun toShort (): kotlin.Short declared in kotlin.Int' type=kotlin.Short origin=null
+                    ARG <this>: CONST Int type=kotlin.Int value=0
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Boolean declared in <root>.box'
+                CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  ARG arg0: BLOCK type=kotlin.Int? origin=SAFE_CALL
+                    VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:@[FlexibleNullability] kotlin.Short? [val]
+                      GET_VAR 'val value: @[FlexibleNullability] kotlin.Short? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Short? origin=null
+                    WHEN type=kotlin.Int? origin=null
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                          ARG arg0: GET_VAR 'val tmp_0: @[FlexibleNullability] kotlin.Short? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Short? origin=null
+                          ARG arg1: CONST Null type=kotlin.Nothing? value=null
+                        then: CONST Null type=kotlin.Nothing? value=null
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Short' type=kotlin.Int origin=null
+                          ARG <this>: GET_VAR 'val tmp_0: @[FlexibleNullability] kotlin.Short? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Short? origin=null
+                  ARG arg1: CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Short' type=kotlin.Int origin=null
+                    ARG <this>: CALL 'public open fun toShort (): kotlin.Short declared in kotlin.Int' type=kotlin.Short origin=null
+                      ARG <this>: CONST Int type=kotlin.Int value=0
+      CALL 'public final fun attempt (name: kotlin.String, block: kotlin.Function0<kotlin.Boolean>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        ARG name: CONST String type=kotlin.String value="char"
+        ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Boolean> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Boolean
+            BLOCK_BODY
+              VAR name:value type:@[FlexibleNullability] kotlin.Char? [val]
+                CALL 'public final fun getNullAsPlatform <E> (e: E of <root>.getNullAsPlatform): @[FlexibleNullability] E of <root>.getNullAsPlatform? declared in <root>' type=@[FlexibleNullability] kotlin.Char? origin=null
+                  TYPE_ARG E: kotlin.Char
+                  ARG e: CALL 'public open fun toChar (): kotlin.Char declared in kotlin.Int' type=kotlin.Char origin=null
+                    ARG <this>: CONST Int type=kotlin.Int value=0
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Boolean declared in <root>.box'
+                CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  ARG arg0: GET_VAR 'val value: @[FlexibleNullability] kotlin.Char? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Char? origin=null
+                  ARG arg1: CALL 'public open fun toChar (): kotlin.Char declared in kotlin.Int' type=kotlin.Char origin=null
+                    ARG <this>: CONST Int type=kotlin.Int value=0
+      CALL 'public final fun attempt (name: kotlin.String, block: kotlin.Function0<kotlin.Boolean>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        ARG name: CONST String type=kotlin.String value="long"
+        ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Boolean> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Boolean
+            BLOCK_BODY
+              VAR name:value type:@[FlexibleNullability] kotlin.Long? [val]
+                CALL 'public final fun getNullAsPlatform <E> (e: E of <root>.getNullAsPlatform): @[FlexibleNullability] E of <root>.getNullAsPlatform? declared in <root>' type=@[FlexibleNullability] kotlin.Long? origin=null
+                  TYPE_ARG E: kotlin.Long
+                  ARG e: CONST Long type=kotlin.Long value=0
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Boolean declared in <root>.box'
+                CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  ARG arg0: GET_VAR 'val value: @[FlexibleNullability] kotlin.Long? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Long? origin=null
+                  ARG arg1: CONST Long type=kotlin.Long value=0
+      CALL 'public final fun attempt (name: kotlin.String, block: kotlin.Function0<kotlin.Boolean>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        ARG name: CONST String type=kotlin.String value="int"
+        ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Boolean> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Boolean
+            BLOCK_BODY
+              VAR name:value type:@[FlexibleNullability] kotlin.Int? [val]
+                CALL 'public final fun getNullAsPlatform <E> (e: E of <root>.getNullAsPlatform): @[FlexibleNullability] E of <root>.getNullAsPlatform? declared in <root>' type=@[FlexibleNullability] kotlin.Int? origin=null
+                  TYPE_ARG E: kotlin.Int
+                  ARG e: CONST Int type=kotlin.Int value=0
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Boolean declared in <root>.box'
+                CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  ARG arg0: GET_VAR 'val value: @[FlexibleNullability] kotlin.Int? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Int? origin=null
+                  ARG arg1: CONST Int type=kotlin.Int value=0
+      CALL 'public final fun attempt (name: kotlin.String, block: kotlin.Function0<kotlin.Boolean>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        ARG name: CONST String type=kotlin.String value="byte"
+        ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Boolean> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Boolean
+            BLOCK_BODY
+              VAR name:value type:@[FlexibleNullability] kotlin.Byte? [val]
+                CALL 'public final fun getNullAsPlatform <E> (e: E of <root>.getNullAsPlatform): @[FlexibleNullability] E of <root>.getNullAsPlatform? declared in <root>' type=@[FlexibleNullability] kotlin.Byte? origin=null
+                  TYPE_ARG E: kotlin.Byte
+                  ARG e: CALL 'public open fun toByte (): kotlin.Byte declared in kotlin.Int' type=kotlin.Byte origin=null
+                    ARG <this>: CONST Int type=kotlin.Int value=0
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Boolean declared in <root>.box'
+                CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  ARG arg0: BLOCK type=kotlin.Int? origin=SAFE_CALL
+                    VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:@[FlexibleNullability] kotlin.Byte? [val]
+                      GET_VAR 'val value: @[FlexibleNullability] kotlin.Byte? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Byte? origin=null
+                    WHEN type=kotlin.Int? origin=null
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                          ARG arg0: GET_VAR 'val tmp_1: @[FlexibleNullability] kotlin.Byte? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Byte? origin=null
+                          ARG arg1: CONST Null type=kotlin.Nothing? value=null
+                        then: CONST Null type=kotlin.Nothing? value=null
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Byte' type=kotlin.Int origin=null
+                          ARG <this>: GET_VAR 'val tmp_1: @[FlexibleNullability] kotlin.Byte? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Byte? origin=null
+                  ARG arg1: CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Byte' type=kotlin.Int origin=null
+                    ARG <this>: CALL 'public open fun toByte (): kotlin.Byte declared in kotlin.Int' type=kotlin.Byte origin=null
+                      ARG <this>: CONST Int type=kotlin.Int value=0
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:getNullAsPlatform visibility:public modality:FINAL returnType:@[FlexibleNullability] E of <root>.getNullAsPlatform?
+    TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER kind:Regular name:e index:0 type:E of <root>.getNullAsPlatform
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun getNullAsPlatform <E> (e: E of <root>.getNullAsPlatform): @[FlexibleNullability] E of <root>.getNullAsPlatform? declared in <root>'
+        CALL 'public final fun first <T> (<this>: kotlin.collections.List<T of kotlin.collections.first>): T of kotlin.collections.first declared in kotlin.collections' type=@[FlexibleNullability] E of <root>.getNullAsPlatform? origin=null
+          TYPE_ARG T: @[FlexibleNullability] E of <root>.getNullAsPlatform?
+          ARG <this>: CALL 'public final fun also <T> (<this>: T of kotlin.also, block: kotlin.Function1<T of kotlin.also, kotlin.Unit>): T of kotlin.also declared in kotlin' type=kotlin.collections.MutableList<@[FlexibleNullability] E of <root>.getNullAsPlatform?> origin=null
+            TYPE_ARG T: kotlin.collections.MutableList<@[FlexibleNullability] E of <root>.getNullAsPlatform?>
+            ARG <this>: CALL 'public final fun toMutableList <T> (<this>: kotlin.collections.Collection<T of kotlin.collections.toMutableList>): kotlin.collections.MutableList<T of kotlin.collections.toMutableList> declared in kotlin.collections' type=kotlin.collections.MutableList<@[FlexibleNullability] E of <root>.getNullAsPlatform?> origin=null
+              TYPE_ARG T: @[FlexibleNullability] E of <root>.getNullAsPlatform?
+              ARG <this>: TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] E of <root>.getNullAsPlatform?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] E of <root>.getNullAsPlatform?>
+                CALL 'public open fun of <E> (p0: @[FlexibleNullability] E of java.util.List.of?): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] E of java.util.List.of?>? declared in java.util.List' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] E of <root>.getNullAsPlatform?>? origin=null
+                  TYPE_ARG E: @[FlexibleNullability] E of <root>.getNullAsPlatform?
+                  ARG p0: GET_VAR 'e: E of <root>.getNullAsPlatform declared in <root>.getNullAsPlatform' type=E of <root>.getNullAsPlatform origin=null
+            ARG block: FUN_EXPR type=kotlin.Function1<kotlin.collections.MutableList<@[FlexibleNullability] E of <root>.getNullAsPlatform?>, kotlin.Unit> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.collections.MutableList<@[FlexibleNullability] E of <root>.getNullAsPlatform?>
+                BLOCK_BODY
+                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                    CALL 'public abstract fun set (index: kotlin.Int, element: E of kotlin.collections.MutableList): E of kotlin.collections.MutableList declared in kotlin.collections.MutableList' type=@[FlexibleNullability] E of <root>.getNullAsPlatform? origin=null
+                      ARG <this>: GET_VAR 'it: kotlin.collections.MutableList<@[FlexibleNullability] E of <root>.getNullAsPlatform?> declared in <root>.getNullAsPlatform.<anonymous>' type=kotlin.collections.MutableList<@[FlexibleNullability] E of <root>.getNullAsPlatform?> origin=null
+                      ARG index: CONST Int type=kotlin.Int value=0
+                      ARG element: CONST Null type=kotlin.Nothing? value=null

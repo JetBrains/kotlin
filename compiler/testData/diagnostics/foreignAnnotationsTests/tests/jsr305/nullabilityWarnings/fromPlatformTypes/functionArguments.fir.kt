@@ -1,6 +1,6 @@
 // DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextParameters
 // JSR305_GLOBAL_REPORT: warn
 
 // FILE: J.java
@@ -15,7 +15,7 @@ public class J {
 // FILE: k.kt
 fun test() {
     foo(J.staticNN)
-    foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.staticN<!>)
+    foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.staticN<!>)
     foo(J.staticJ)
 
     bar(J.staticNN)
@@ -23,7 +23,7 @@ fun test() {
     bar(J.staticJ)
 
     with(J.staticNN) { baz() }
-    with(J.staticN) { <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>baz()<!> }
+    with(J.staticN) { <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>baz()<!> }
     with(J.staticJ) { baz() }
 
     with(J.staticNN) { qux() }
@@ -33,5 +33,5 @@ fun test() {
 
 fun foo(j: J) {}
 fun bar(j: J?) {}
-context(J) fun baz() {}
-context(J?) fun qux() {}
+context(_: J) fun baz() {}
+context(_: J?) fun qux() {}

@@ -1,20 +1,20 @@
 KtConstructorCalleeExpression(31,32): 'A'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaDelegatedConstructorCall:
-        argumentMapping = {}
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         kind = SUPER_CALL
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = A
-            symbol = <constructor>(): A
-            valueParameters = []
-            contextParameters = []
-            callableId = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = A
+          symbol = <constructor>(): A
+          valueParameters = []
+          contextParameters = []
+          callableId = null
         typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): A'.>

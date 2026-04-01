@@ -41,7 +41,7 @@ extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : Kotlin
         return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
     }
     public func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterator {
@@ -55,7 +55,7 @@ extension ExportedKotlinPackages.kotlin.collections.List where Self : KotlinRunt
     public func _get(
         index: Swift.Int32
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlin_collections_List_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+        return { switch kotlin_collections_List_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
     public func contains(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
@@ -116,13 +116,13 @@ extension ExportedKotlinPackages.kotlin.collections.ListIterator where Self : Ko
         return kotlin_collections_ListIterator_hasPrevious(self.__externalRCRef())
     }
     public func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlin_collections_ListIterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+        return { switch kotlin_collections_ListIterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
     public func nextIndex() -> Swift.Int32 {
         return kotlin_collections_ListIterator_nextIndex(self.__externalRCRef())
     }
     public func previous() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlin_collections_ListIterator_previous(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+        return { switch kotlin_collections_ListIterator_previous(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
     public func previousIndex() -> Swift.Int32 {
         return kotlin_collections_ListIterator_previousIndex(self.__externalRCRef())

@@ -14,6 +14,6 @@ private val reflections = Reflections("org.jetbrains.kotlin")
 fun getCompilerArgumentImplementations(): List<KClass<out CommonToolArguments>> {
     return reflections.getSubTypesOf(CommonToolArguments::class.java)
         .map { it.kotlin }
-        .filter { !it.isAbstract }
+        .filter { !it.isAbstract && !it.isSealed }
         .filterNot { it.isInner }
 }

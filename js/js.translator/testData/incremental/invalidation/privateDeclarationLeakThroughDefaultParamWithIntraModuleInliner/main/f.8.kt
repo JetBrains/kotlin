@@ -1,9 +1,9 @@
 private object Obj {
-    val x = "8"
-
-    override fun toString() = x
+    inline val x get() = "8"
 }
 
-internal inline fun foo(lambda: () -> String = { "$Obj" } ): String {
+private inline fun bar() = Obj.x
+
+internal inline fun foo(lambda: () -> String = ::bar): String {
     return lambda()
 }

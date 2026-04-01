@@ -127,7 +127,7 @@ class ModelDumpAndReadTest {
         assertEquals("17", arguments.jvmTarget)
         assertTrue(arguments.reportOutputFiles)
         // optIn maps to list/array
-        assertTrue(arguments.optIn?.contains("kotlin.ExperimentalStdlibApi") == true)
+        assertTrue(arguments.optIn.contains("kotlin.ExperimentalStdlibApi"))
         assertEquals(listOf(src1.absolutePath, src2.absolutePath), arguments.freeArgs)
     }
 

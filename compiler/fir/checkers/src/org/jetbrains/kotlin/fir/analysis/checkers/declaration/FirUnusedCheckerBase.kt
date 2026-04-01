@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -26,35 +25,23 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
     context(context: CheckerContext)
     abstract fun isEnabled(): Boolean
 
-    /**
-     * If this function returns true, a corresponding warning should be issued using [reporter].
-     * If this function returns false, the visitor continues to visit the children of [expression].
-     */
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    abstract fun reportUnusedExpressionIfNeeded(
-        expression: FirExpression,
-        hasSideEffects: Boolean,
-        source: KtSourceElement?,
-    ): Boolean
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    protected open fun createVisitor(): UsageVisitorBase =
-        UsageVisitorBase(context, reporter)
+    protected abstract fun createVisitor(): UsageVisitorBase
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (!isEnabled()) return
+        if (context.isContractBody) return
         val visitor = createVisitor()
         when (declaration) {
             // A "used" FirBlock is one that uses the last statement as an implicit return.
             // If the containing element of the block is an FirFunction or FirAnonymousInitializer, the block is unused.
             // All other FirBlocks are considered used.
-            is FirReplSnippet -> declaration.body.acceptChildren(visitor, UsageState.Used)
             is FirCodeFragment -> declaration.block.acceptChildren(visitor, UsageState.Used)
             is FirAnonymousInitializer -> declaration.body?.acceptChildren(visitor, UsageState.Unused)
+            is FirAnonymousFunction -> { /* Visitor checks anonymous functions in-place */ }
             is FirFunction -> {
-                val lastStatementUsed = declaration is FirAnonymousFunction && declaration.isLambda
-                declaration.body?.accept(visitor, if (lastStatementUsed) UsageState.Used else UsageState.Unused)
+                declaration.body?.accept(visitor, UsageState.Unused)
             }
 
             // Variables are special as they have an FirExpression as the entry point, which is always used.
@@ -67,30 +54,32 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
         }
     }
 
-    protected enum class UsageState {
-        Used,
-        Unused,
+    protected sealed interface UsageState {
+        data object Used : UsageState
+        data object Unused : UsageState
+        data object UnusedFromCoercion : UsageState
+        data class UsedInReturn(val returnExpression: FirReturnExpression) : UsageState
+
+        fun isUnused(): Boolean = this == Unused || this == UnusedFromCoercion
     }
 
-    protected open inner class UsageVisitorBase(
+    protected abstract inner class UsageVisitorBase(
         protected val context: CheckerContext,
         protected val reporter: DiagnosticReporter,
     ) : FirDefaultVisitor<Unit, UsageState>() {
+
+        abstract fun checkExpression(expression: FirExpression, data: UsageState)
+        
         override fun visitElement(element: FirElement, data: UsageState) {
-            if (element is FirDeclaration) return // The checker handles nested declarations.
-
-            val source = element.source
-            if (
-                data == UsageState.Unused &&
-                element is FirExpression &&
-                source != null
-            ) {
-                context(context, reporter) {
-                    if (reportUnusedExpressionIfNeeded(element, element.hasSideEffect(), source)) return
-                }
+            if (element is FirDeclaration) return // The checker handles nested declarations, see FirUnusedCheckerBase.check
+            if (element is FirExpression && element.source != null) {
+                checkExpression(element, data)
             }
-
             element.acceptChildren(this, UsageState.Used)
+        }
+
+        override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: UsageState) {
+            anonymousFunction.body?.accept(this, if (anonymousFunction.isLambda) UsageState.Used else UsageState.Unused)
         }
 
         override fun visitAnnotation(annotation: FirAnnotation, data: UsageState) {
@@ -119,17 +108,20 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
         }
 
         override fun visitBlock(block: FirBlock, data: UsageState) {
+            if (block is FirContractCallBlock) return
             // Increment and decrement operators are always considered used (because they have a side effect).
             if (block.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) return
-            // Function contract blocks can be ignored.
-            if (block is FirContractCallBlock) return
 
             val statements = block.statements
             val lastIndex = statements.lastIndex
             for (i in statements.indices) {
                 val statement = statements[i]
-                val isImplicitReturn = i == lastIndex && !block.isUnitCoerced
-                statement.accept(this, if (isImplicitReturn) data else UsageState.Unused)
+                val isUsed = when {
+                    block.isUnitCoerced -> UsageState.UnusedFromCoercion
+                    i == lastIndex -> data // is implicit return
+                    else -> UsageState.Unused
+                }
+                statement.accept(this, isUsed)
             }
         }
 
@@ -155,7 +147,7 @@ private val FirStatement.isUnitBlock: Boolean
  * Note: ***be conservative***. Indicating an [FirExpression] is side-effect-free should only be
  * done for elements, which when removed from the code, won't impact the behavior of the code.
  */
-private fun FirExpression.hasSideEffect(): Boolean {
+internal fun FirExpression.hasSideEffect(): Boolean {
     return when (this) {
         // Literals and references that are known to be side-effect-free.
         is FirLiteralExpression,

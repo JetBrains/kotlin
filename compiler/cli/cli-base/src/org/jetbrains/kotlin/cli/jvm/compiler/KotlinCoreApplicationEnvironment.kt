@@ -102,6 +102,7 @@ class KotlinCoreApplicationEnvironment private constructor(
         @Deprecated(
             message = "The `unitTestMode` flag is deprecated in favor of `KotlinCoreApplicationEnvironmentMode` configuration.",
             replaceWith = ReplaceWith("create(parentDisposable, KotlinCoreApplicationEnvironmentMode.fromUnitTestModeFlag(unitTestMode))"),
+            level = DeprecationLevel.ERROR,
         )
         fun create(
             parentDisposable: Disposable,

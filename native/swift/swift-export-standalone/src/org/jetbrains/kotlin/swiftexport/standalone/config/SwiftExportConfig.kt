@@ -22,7 +22,7 @@ public data class SwiftExportConfig(
     val outputPath: Path,
     val stableDeclarationsOrder: Boolean = false,
     val renderDocComments: Boolean = false,
-    val enableCoroutinesSupport: Boolean,
+    val enableCoroutinesSupport: Boolean = false,
     val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath),
     val konanTarget: KonanTarget,
     val errorTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,
@@ -31,6 +31,7 @@ public data class SwiftExportConfig(
 ) {
     val moduleForPackagesName: String = "ExportedKotlinPackages"
     val runtimeSupportModuleName: String = "KotlinRuntimeSupport"
+    val coroutineSupportModuleName: String = "KotlinCoroutineSupport"
     val runtimeModuleName: String = "KotlinRuntime"
 
     val stdlibInputModule: InputModule by lazy { createInputModuleForStdlib(distribution) }

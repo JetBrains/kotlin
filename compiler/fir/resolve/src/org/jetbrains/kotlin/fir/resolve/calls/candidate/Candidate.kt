@@ -11,17 +11,14 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
-import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpressionCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpressionCopy
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
-import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.stages.CheckContextArguments
+import org.jetbrains.kotlin.fir.resolve.calls.stages.MapArguments
 import org.jetbrains.kotlin.fir.resolve.calls.stages.TypeArgumentMapping
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -130,15 +127,24 @@ class Candidate(
         }
     }
 
+    data class FunctionConversionDescription(
+        val isFromSimpleToCustom: Boolean,
+        val expectedType: ConeKotlinType,
+    ) {
+        fun toKind(): FirFunctionConversionKind.BetweenFunctionTypes =
+            FirFunctionConversionKind.BetweenFunctionTypes(isFromSimpleToCustom)
+    }
+
     /**
      * Expressions in this set are arguments of the call that have function kind conversion applied (e.g., suspend conversion).
      */
-    var argumentsWithFunctionKindConversion: HashSet<FirExpression>? = null
+    var argumentsWithFunctionKindConversion: MutableMap<FirExpression, FunctionConversionDescription>? = null
         private set
 
-    fun addFunctionKindConversionOfArgument(element: FirExpression) {
-        val set = argumentsWithFunctionKindConversion ?: HashSet<FirExpression>().also { argumentsWithFunctionKindConversion = it }
-        set += element
+    fun addFunctionKindConversionOfArgument(element: FirExpression, kind: FunctionConversionDescription) {
+        val map = argumentsWithFunctionKindConversion ?: HashMap<FirExpression, FunctionConversionDescription>()
+            .also { argumentsWithFunctionKindConversion = it }
+        map[element] = kind
     }
 
     var samConversionInfosOfArguments: HashMap<FirExpression, FirSamResolver.SamConversionInfo>? = null
@@ -173,6 +179,8 @@ class Candidate(
     override val argumentMapping: LinkedHashMap<ConeResolutionAtom, FirValueParameter>
         get() = _argumentMapping ?: error("Argument mapping is not initialized yet")
 
+    var usesCoercionToUnitInLambda: Boolean = false
+
     fun initializeArgumentMapping(
         arguments: List<ConeResolutionAtom>,
         argumentMapping: LinkedHashMap<ConeResolutionAtom, FirValueParameter>,
@@ -187,6 +195,14 @@ class Candidate(
         _argumentMapping = argumentMapping
     }
 
+    /**
+     * The arguments of a contextual implicit `invoke` candidate contain stub expressions for the implicitly passed
+     * context arguments between the [MapArguments] and [CheckContextArguments] stages.
+     *
+     * These expressions are always the first in the [arguments] list.
+     *
+     * This function replaces these stub arguments with the given [newArgumentPrefix] and updates the [argumentMapping] accordingly.
+     */
     @UpdatingCandidateInvariants
     fun replaceArgumentPrefix(newArgumentPrefix: List<ConeResolutionAtom>) {
         val remainingArguments = arguments.subList(newArgumentPrefix.size, arguments.size)
@@ -197,7 +213,7 @@ class Candidate(
         }
 
         for (argument in remainingArguments) {
-            newArgumentMapping[argument] = argumentMapping.getValue(argument)
+            argumentMapping[argument]?.let { newArgumentMapping[argument] = it }
         }
 
         val newArguments = newArgumentPrefix + remainingArguments
@@ -214,11 +230,11 @@ class Candidate(
 
     // ---------------------------------------- Postponed atoms ----------------------------------------
 
-    private val _postponedAtoms: MutableList<ConePostponedResolvedAtom> = mutableListOf()
-    val postponedAtoms: List<ConePostponedResolvedAtom> get() = _postponedAtoms
+    val postponedAtoms: List<ConePostponedResolvedAtom>
+        field = mutableListOf()
 
     fun addPostponedAtom(atom: ConePostponedResolvedAtom) {
-        _postponedAtoms += atom
+        postponedAtoms += atom
     }
 
     // ------------------------ Context-sensitively resolved arguments ------------------------------------
@@ -265,12 +281,11 @@ class Candidate(
     override val applicability: CandidateApplicability
         get() = lowestApplicability
 
-    private val _diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
     override val diagnostics: List<ResolutionDiagnostic>
-        get() = _diagnostics
+        field = mutableListOf()
 
     fun addDiagnostic(diagnostic: ResolutionDiagnostic) {
-        _diagnostics += diagnostic
+        diagnostics += diagnostic
         if (diagnostic.applicability < lowestApplicability) {
             lowestApplicability = diagnostic.applicability
         }
@@ -404,6 +419,3 @@ class Candidate(
         return "$okOrFail($step): $symbol"
     }
 }
-
-val Candidate.fullyAnalyzed: Boolean
-    get() = passedStages == callInfo.callKind.resolutionSequence.size

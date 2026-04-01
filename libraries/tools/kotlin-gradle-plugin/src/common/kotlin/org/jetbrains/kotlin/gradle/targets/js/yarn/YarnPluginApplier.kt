@@ -20,9 +20,6 @@ import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension
-import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
-import org.jetbrains.kotlin.gradle.tasks.CleanDataTask.Companion.deprecationMessage
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.detachedResolvable
 import org.jetbrains.kotlin.gradle.utils.getExecOperations
@@ -119,20 +116,22 @@ internal class YarnPluginApplier(
             nodeJs.env
         ).disallowChanges()
 
+        @Suppress("DEPRECATION")
         project.tasks.register(
             platformDisambiguate.extensionName(
-                "yarn" + CleanDataTask.NAME_SUFFIX,
+                "yarn" + org.jetbrains.kotlin.gradle.tasks.CleanDataTask.NAME_SUFFIX,
                 prefix = null
             ),
-            CleanDataTask::class.java
+            org.jetbrains.kotlin.gradle.tasks.CleanDataTask::class.java
         ) {
             it.doFirst {
-                it.logger.warn(deprecationMessage(it.path))
+                it.logger.warn(org.jetbrains.kotlin.gradle.tasks.CleanDataTask.Companion.deprecationMessage(it.path))
             }
 
             it.cleanableStoreProvider = yarnSpec
                 .installationDirectory
-                .map { CleanableStore.Companion[it.asFile.path] }
+                .map { org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore.Companion[it.asFile.path] }
+
             it.description = "Clean unused local yarn version"
         }
 

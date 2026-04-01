@@ -1,8 +1,8 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl
 
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter.ArgumentName
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBy
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.DataFrameCallableId
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
@@ -15,7 +15,7 @@ fun <T> AbstractInterpreter<T>.dataFrame(
 
 fun <T> AbstractInterpreter<T>.type(
     name: ArgumentName? = null,
-): ExpectedArgumentProvider<TypeApproximation> = arg(name, lens = Interpreter.ReturnType)
+): ExpectedArgumentProvider<ColumnType> = arg(name, lens = Interpreter.ReturnType)
 
 fun <T, E : Enum<E>> AbstractInterpreter<T>.enum(
     name: ArgumentName? = null,

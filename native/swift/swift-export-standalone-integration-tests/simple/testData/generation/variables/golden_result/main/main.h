@@ -33,15 +33,31 @@ int32_t __root___baz_get();
 
 void * __root___foo_get();
 
-void __root___foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * newValue);
+_Bool __root___foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * newValue);
 
 void * __root___lateinit_foo_get();
 
-void __root___lateinit_foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * newValue);
+_Bool __root___lateinit_foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * newValue);
+
+int32_t inline_barGet_get();
+
+_Bool inline_barGet_set__TypesOfArguments__Swift_Int32__(int32_t newValue);
+
+int32_t inline_barSet_get();
+
+_Bool inline_barSet_set__TypesOfArguments__Swift_Int32__(int32_t newValue);
+
+int32_t inline_bar_get();
+
+_Bool inline_bar_set__TypesOfArguments__Swift_Int32__(int32_t newValue);
+
+NSString * inline_fooGet_get();
+
+NSString * inline_foo_get();
 
 int32_t namespace_main_bar_get();
 
-void namespace_main_bar_set__TypesOfArguments__Swift_Int32__(int32_t newValue);
+_Bool namespace_main_bar_set__TypesOfArguments__Swift_Int32__(int32_t newValue);
 
 int32_t namespace_main_foo_get();
 

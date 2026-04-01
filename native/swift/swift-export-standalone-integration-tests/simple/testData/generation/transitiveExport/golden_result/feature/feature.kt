@@ -8,24 +8,26 @@ import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("oh_my_kotlin_FeatureA_init_allocate")
 public fun oh_my_kotlin_FeatureA_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<oh.my.kotlin.FeatureA>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<oh.my.kotlin.FeatureA>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("oh_my_kotlin_FeatureA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun oh_my_kotlin_FeatureA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun oh_my_kotlin_FeatureA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, oh.my.kotlin.FeatureA())
+    val _result = run { kotlin.native.internal.initInstance(____kt, oh.my.kotlin.FeatureA()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("oh_my_kotlin_FeatureB_init_allocate")
 public fun oh_my_kotlin_FeatureB_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<oh.my.kotlin.FeatureB>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<oh.my.kotlin.FeatureB>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("oh_my_kotlin_FeatureB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun oh_my_kotlin_FeatureB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun oh_my_kotlin_FeatureB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, oh.my.kotlin.FeatureB())
+    val _result = run { kotlin.native.internal.initInstance(____kt, oh.my.kotlin.FeatureB()) }
+    return run { _result; true }
 }

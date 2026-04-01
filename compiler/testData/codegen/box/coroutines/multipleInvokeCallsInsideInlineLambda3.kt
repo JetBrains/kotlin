@@ -1,5 +1,7 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
@@ -61,6 +63,7 @@ inline fun run(b: () -> Unit) {
     b()
 }
 
+// FILE: main.kt
 fun box(): String {
     var x = "O"
 

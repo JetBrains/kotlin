@@ -264,115 +264,35 @@ Use `Edit Configurations` in dropdown menu with your run/debug configurations an
 Ensure the port is `5005`.
 Now just run this configuration. It’ll attach and let the compiler run.
 
-## Developing Kotlin/Native runtime in CLion
+## Working with C++ code in CLion
 
-It's possible to use CLion to develop C++ runtime code efficiently and to have navigation in C++ code.
-To open runtime code in CLion as project and use all provided features of CLion, use a compilation database.
-It lets CLion detect project files and extract all the necessary compiler information, such as include paths and compilation flags.
-To generate a compilation database for the Kotlin/Native runtime, run the Gradle task
-`./gradlew :kotlin-native:compdb`.
-This task generates `<path_to_kotlin>/kotlin-native/compile_commands.json` file that should be opened in CLion as project.
-Other developer tools also can use generated compilation database, but then `clangd` tool should be installed manually.
+It's possible to use CLion to work on C++ code used in Kotlin/Native: 
+- Kotlin/Native runtime found in `kotlin-native/runtime`
+- extensions for llvm found in `kotlin-native/libllvmext` and `kotlin-native/llvmDebugInfoC`
+- extensions for libclang found in `kotlin-native/libclangext`
+- support code for JVM<->C++ bindings in `kotlin-native/Interop/Runtime`
+- a tool to analyze minidumps used in Compiler Tests on macOS in `kotlin-native/tools/minidump-analyzer`
 
-Also, it's possible to build Kotlin/Native runtime with dwarf debug information, which can be useful for debugging.
-To do this you should add `kotlin.native.isNativeRuntimeDebugInfoEnabled=true` line to `local.properties` file. Note, that changing
-this property requires clean compiler rebuild with gradle daemon restart.
+C++ code support is done via Compilation Database. It lets CLion detect project files and extract all the necessary compiler information, such as include paths and compilation flags.
 
-Unfortunately, this feature works quite unstable because of using several llvm versions simultaneously,
-so it's need to be additionally enabled while compiling application with `-Xbinary=stripDebugInfoFromNativeLibs=false`
-compiler flag or corresponding setting in gradle build script. After doing this, Kotlin/Native runtime in application
+To generate the Compilation Database, run `./gradlew :kotlin-native:compdb`.
+This task generates `<path_to_kotlin>/kotlin-native/compile_commands.json` file that should be opened in CLion as a project.
+Other developer tools can also use the generated Compilation Database, but may require a manual installation of `clangd` LSP.
+
+### Kotlin/Native runtime specifics
+
+It's possible to build Kotlin/Native runtime with dwarf debug information, which can be useful for debugging.
+To do this you should add `kotlin.native.isNativeRuntimeDebugInfoEnabled=true` line to `local.properties` file.
+
+Unfortunately, this feature might work unstable, so it's need to be additionally enabled while
+compiling an application with `-Xbinary=stripDebugInfoFromNativeLibs=false` compiler flag or
+the corresponding setting in the Gradle build script. After doing this, Kotlin/Native runtime in application
 is debuggable in CLion, with Attach to process tool.
 
 
  ## Performance measurement
- ### Pre-requisite
-  **konanRun** task needs built compiler and platform POSIX libs. To test against working tree make sure to run
 
-    ./gradlew :kotlin-native:dist :kotlin-native:distPlatformLibs
-
- ### Run tests
- To measure performance of Kotlin/Native compiler on existing benchmarks:
- 
-    cd kotlin-native/performance
-    ../../gradlew :konanRun
- 
- **konanRun** task can be run separately for one/several benchmark applications:
- 
-    cd kotlin-native/performance
-    ../../gradlew :cinterop:konanRun
-    
- **konanRun** task has parameter `filter` which allows to run only some subset of benchmarks:
- 
-    cd kotlin-native/performance
-    ../../gradlew :cinterop:konanRun --filter=struct,macros
-    ../../gradlew :ring:konanRun --filter=Euler.problem9,ForLoops.charArrayIndicesLoop
-    
- Or you can use `filterRegex` if you want to specify the filter as regexes:
- 
-    cd kotlin-native/performance
-    ../../gradlew :ring:konanRun --filterRegex=String.*,Loop.*
-    
- There us also verbose mode to follow progress of running benchmarks
- 
-    cd kotlin-native/performance
-    ../../gradlew :cinterop:konanRun --verbose
-    
-    > Task :performance:cinterop:konanRun
-    [DEBUG] Warm up iterations for benchmark macros
-    [DEBUG] Running benchmark macros
-    ...
-    
- There are also tasks for running benchmarks on JVM (pay attention, some benchmarks e.g. cinterop benchmarks can't be run on JVM)
- 
-    cd kotlin-native/performance
-    ../../gradlew :jvmRun
-
- You can use the `compilerArgs` property to pass flags to the compiler used to compile the benchmarks:
-
-    cd kotlin-native/performance
-    ../../gradlew :konanRun -PcompilerArgs="--time -g"
-
- ### Analyze the results
- Files with results of benchmarks run are saved in `kotlin-native/performance/build` folder: `nativeReport.json` for konanRun and `jvmReport.json` for jvmRun.
- You can change the output filename by setting the `nativeJson` property for konanRun and `jvmJson` for jvmRun:
-
-    cd kotlin-native/performance
-    ../../gradlew :ring:konanRun --filter=String.*,Loop.* -PnativeJson=stringsAndLoops.json
-
- To compare different results use benchmarksAnalyzer tool:
-
-    ./gradlew macos_arm64PlatformLibs  # use target of your laptop here instead
-    cd kotlin-native/tools/benchmarksAnalyzer
-    ../../../gradlew build
-    ./build/bin/<target>/benchmarksAnalyzerReleaseExecutable/benchmarksAnalyzer.kexe <file1> <file2>
-    
- Tool has several renders which allow produce output report in different forms (text, html, etc.). To set up render use flag `--render/-r`.
- Output can be redirected to file with flag `--output/-o`.
- To get detailed information about supported options, please use `--help/-h`.
- 
- Analyzer tool can compare both local files and files placed on Artifactory/TeamCity.
- 
- File description stored on Artifactory
- 
-    artifactory:<build number>:<target (Linux|Windows10|MacOSX)>:<filename>
-    
- Example
-    
-    artifactory:1.2-dev-7942:Windows10:nativeReport.json
-    
- File description stored on TeamCity
-  
-     teamcity:<build locator>:<filename>
-     
- Example
-     
-     teamcity:id:42491947:nativeReport.json
-     
- Pay attention, user and password information(with flag `-u <username>:<password>`) should be provided to get data from TeamCity.
-
- By default analyzing tool splits benchmarks into stable and unstable taking information from database. If you have no connection to inner network please use `-f` flag.
-
-    ./benchmarksAnalyzer.kexe -f <file1> <file2>
+See [the performance project](performance/README.md) for details on the micro-benchmarking setup.
 
 ## LLVM
 

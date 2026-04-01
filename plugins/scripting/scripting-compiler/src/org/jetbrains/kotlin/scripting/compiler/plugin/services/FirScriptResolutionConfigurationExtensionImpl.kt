@@ -15,28 +15,36 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.extensions.FirScriptResolutionConfigurationExtension
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.scripting.compiler.plugin.fir.scriptCompilationConfiguration
+import org.jetbrains.kotlin.scripting.resolve.toSourceCode
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.defaultImports
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 
 class FirScriptResolutionConfigurationExtensionImpl(
     session: FirSession,
-    @Suppress("UNUSED_PARAMETER") hostConfiguration: ScriptingHostConfiguration
 ) : FirScriptResolutionConfigurationExtension(session) {
 
     override fun getScriptDefaultImports(script: FirScript): List<FirImport>? {
         val scriptSession = script.moduleData.session
         val scriptFile = scriptSession.firProvider.getFirScriptContainerFile(script.symbol) ?: return emptyList()
         val scriptSourceFile = scriptFile.sourceFile?.toSourceCode() ?: return emptyList()
-        val compilationConfiguration = session.getScriptCompilationConfiguration(scriptSourceFile, getDefault = { null }) ?: return emptyList()
+        @Suppress("DEPRECATION")
+        val compilationConfiguration = script.scriptCompilationConfiguration
+            ?: session.getScriptCompilationConfiguration(scriptSourceFile, getDefault = { null }) ?: return emptyList()
 
         return compilationConfiguration[ScriptCompilationConfiguration.defaultImports]
             .firImportsFromDefaultImports(script.source.fakeElement(KtFakeSourceElementKind.ImplicitImport))
     }
 
     companion object {
+        fun getFactory(): Factory {
+            return Factory { session -> FirScriptResolutionConfigurationExtensionImpl(session) }
+        }
+
+        @Deprecated("Use other getFactory methods. This one left only for transitional compatibility")
         fun getFactory(hostConfiguration: ScriptingHostConfiguration): Factory {
-            return Factory { session -> FirScriptResolutionConfigurationExtensionImpl(session, hostConfiguration) }
+            return Factory { session -> FirScriptResolutionConfigurationExtensionImpl(session) }
         }
     }
 }

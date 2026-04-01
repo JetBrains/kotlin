@@ -24,15 +24,17 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 
 object FirJvmPackageNameAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
-
     private val jvmPackageNameClassId = ClassId.topLevel(FqName("kotlin.jvm.JvmPackageName"))
+
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirAnnotation) {
         val lookupTag = expression.annotationTypeRef.coneType.classLikeLookupTagIfAny ?: return
         if (lookupTag.classId != jvmPackageNameClassId) return
 
-        val nameValue = expression.getStringArgument(StandardNames.NAME, context.session) ?: return
+        val nameValue = expression.getStringArgument(StandardNames.NAME) ?: return
         if (nameValue.isEmpty()) {
             reporter.reportOn(expression.source, FirJvmErrors.JVM_PACKAGE_NAME_CANNOT_BE_EMPTY)
         } else if (!isValidJavaFqName(nameValue)) {

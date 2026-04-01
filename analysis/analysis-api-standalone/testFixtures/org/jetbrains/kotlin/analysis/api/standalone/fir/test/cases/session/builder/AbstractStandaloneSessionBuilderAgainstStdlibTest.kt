@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.buil
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
+import org.jetbrains.kotlin.analysis.api.standalone.fir.test.AbstractStandaloneTest
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
-import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.junit.jupiter.api.Assertions
 import java.nio.file.Path
 
-abstract class AbstractStandaloneSessionBuilderAgainstStdlibTest : TestWithDisposable() {
+abstract class AbstractStandaloneSessionBuilderAgainstStdlibTest : AbstractStandaloneTest() {
+    override val suiteName: String
+        get() = "sessionBuilder"
+
     protected fun doTestKotlinStdLibResolve(
         targetPlatform: TargetPlatform, platformStdlibPath: Path,
         additionalStdlibRoots: List<Path> = emptyList(),

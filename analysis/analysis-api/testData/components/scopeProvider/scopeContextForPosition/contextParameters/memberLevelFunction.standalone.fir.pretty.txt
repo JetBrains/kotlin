@@ -67,13 +67,13 @@ scopes:
     constructors: 1
       constructor()
 
-  ExplicitSimpleImportingScope, index = 5
+  ExplicitSimpleImportingScope, index = 6
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 6
+  PackageMemberScope, index = 7
     packages: 0
     classifiers: 2
       class A
@@ -81,15 +81,14 @@ scopes:
     callables: 0
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 7
-
   DefaultSimpleImportingScope, index = 8
 
-  ExplicitStarImportingScope, index = 9
+  DefaultSimpleImportingScope, index = 9
+
+  ExplicitStarImportingScope, index = 10
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 10
-
+  DefaultStarImportingScope, index = 11

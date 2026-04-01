@@ -1,0 +1,42 @@
+callTypeA: ---
+TypeC:
+TypeB:
+type.describe(1 == 2)
+|               |
+TypeD           false
+---
+callTypeB: ---
+TypeC:
+TypeB:
+type.describe(1 == 2)
+|               |
+TypeD           false
+---
+callTypeC: ---
+TypeC:
+TypeB:
+type.describe(1 == 2)
+|               |
+TypeD           false
+---
+callTypeD: ---
+TypeC:
+TypeB:
+type.describe(1 == 2)
+|               |
+TypeD           false
+---
+callTypeE: ---
+TypeE:
+TypeC:
+TypeB:
+TypeC().describe(value)
+|                |
+TypeC            false
+---
+callTypeF: ---
+TypeF:
+type.describe(1 == 2)
+|               |
+TypeF           false
+---

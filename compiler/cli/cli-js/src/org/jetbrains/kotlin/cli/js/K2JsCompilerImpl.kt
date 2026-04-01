@@ -5,35 +5,25 @@
 
 package org.jetbrains.kotlin.cli.js
 
-import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.cli.common.*
-import org.jetbrains.kotlin.cli.common.ExitCode.*
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.pipeline.web.js.JsBackendPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.js.JsConfigurationUpdater
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.config.phaseConfig
-import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.LoweredIr
+import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
+import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
+import org.jetbrains.kotlin.ir.backend.js.compile
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputsBuilt
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsCodeGenerator
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.*
-import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
-import java.io.File
 
 class Ir2JsTransformer private constructor(
     val module: ModulesStructure,
     val messageCollector: MessageCollector,
+    val configuration: CompilerConfiguration,
     val mainCallArguments: List<String>?,
     val keep: Set<String>,
     val dceRuntimeDiagnostic: String?,
@@ -44,24 +34,6 @@ class Ir2JsTransformer private constructor(
     val minimizedMemberNames: Boolean,
 ) {
     constructor(
-        arguments: K2JSCompilerArguments,
-        module: ModulesStructure,
-        messageCollector: MessageCollector,
-        mainCallArguments: List<String>?,
-    ) : this(
-        module,
-        messageCollector,
-        mainCallArguments,
-        keep = arguments.irKeep?.split(",")?.filterNot { it.isEmpty() }?.toSet() ?: emptySet(),
-        dceRuntimeDiagnostic = arguments.irDceRuntimeDiagnostic,
-        safeExternalBoolean = arguments.irSafeExternalBoolean,
-        safeExternalBooleanDiagnostic = arguments.irSafeExternalBooleanDiagnostic,
-        granularity = arguments.granularity,
-        dce = arguments.irDce,
-        minimizedMemberNames = arguments.irMinimizedMemberNames,
-    )
-
-    constructor(
         configuration: CompilerConfiguration,
         module: ModulesStructure,
         messageCollector: MessageCollector,
@@ -69,6 +41,7 @@ class Ir2JsTransformer private constructor(
     ) : this(
         module,
         messageCollector,
+        configuration,
         mainCallArguments,
         keep = configuration.keep.toSet(),
         dceRuntimeDiagnostic = configuration.dceRuntimeDiagnostic,
@@ -89,12 +62,12 @@ class Ir2JsTransformer private constructor(
             keep = keep,
             dceRuntimeDiagnostic = RuntimeDiagnostic.resolve(
                 dceRuntimeDiagnostic,
-                messageCollector
+                configuration
             ),
             safeExternalBoolean = safeExternalBoolean,
             safeExternalBooleanDiagnostic = RuntimeDiagnostic.resolve(
                 safeExternalBooleanDiagnostic,
-                messageCollector
+                configuration
             ),
             granularity = granularity,
         )
@@ -116,122 +89,5 @@ class Ir2JsTransformer private constructor(
             .also {
                 performanceManager?.notifyPhaseFinished(PhaseType.Backend)
             }
-    }
-}
-
-internal class K2JsCompilerImpl(
-    arguments: K2JSCompilerArguments,
-    configuration: CompilerConfiguration,
-    moduleName: String,
-    outputName: String,
-    outputDir: File,
-    messageCollector: MessageCollector,
-    performanceManager: PerformanceManager?,
-) : K2JsCompilerImplBase(
-    arguments = arguments,
-    configuration = configuration,
-    moduleName = moduleName,
-    outputName = outputName,
-    outputDir = outputDir,
-    messageCollector = messageCollector,
-    performanceManager = performanceManager
-) {
-    override fun checkTargetArguments(): ExitCode? {
-        if (arguments.targetVersion == null) {
-            messageCollector.report(ERROR, "Unsupported ECMA version: ${arguments.target}")
-            return COMPILATION_ERROR
-        }
-
-        if (arguments.script) {
-            messageCollector.report(ERROR, "K/JS does not support Kotlin script (*.kts) files")
-            return COMPILATION_ERROR
-        }
-
-        if (arguments.freeArgs.isEmpty() && !(incrementalCompilationIsEnabledForJs(arguments))) {
-            if (arguments.version) {
-                return OK
-            }
-            if (arguments.includes.isNullOrEmpty()) {
-                messageCollector.report(ERROR, "Specify at least one source file or directory", null)
-                return COMPILATION_ERROR
-            }
-        }
-
-        return null
-    }
-
-    @K1Deprecation
-    override fun tryInitializeCompiler(rootDisposable: Disposable): KotlinCoreEnvironment? {
-        JsConfigurationUpdater.fillConfiguration(configuration, arguments)
-        if (messageCollector.hasErrors()) return null
-
-        val environmentForJS =
-            KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
-        val sourcesFiles = environmentForJS.getSourceFiles()
-        if (sourcesFiles.isEmpty() && (!incrementalCompilationIsEnabledForJs(arguments)) && arguments.includes.isNullOrEmpty()) {
-            messageCollector.report(ERROR, "No source files", null)
-            return null
-        }
-
-        performanceManager?.apply {
-            targetDescription = moduleName
-            outputKind = configuration.moduleKind?.name
-            addSourcesStats(sourcesFiles.size, environmentForJS.countLinesOfCode(sourcesFiles))
-            notifyPhaseFinished(PhaseType.Initialization)
-        }
-
-        return environmentForJS
-    }
-
-    override fun compileWithIC(
-        icCaches: IcCachesArtifacts,
-        targetConfiguration: CompilerConfiguration,
-        moduleKind: ModuleKind?
-    ): ExitCode {
-        JsBackendPipelinePhase.compileIncrementally(
-            icCaches,
-            configuration,
-            WebArtifactConfiguration(
-                moduleKind ?: return INTERNAL_ERROR,
-                moduleName,
-                outputDir,
-                outputName,
-                arguments.granularity,
-                arguments.dtsStrategy
-            )
-        )
-        @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
-        performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // It should be `notifyPhaseFinished(PhaseMeasurementType.TranslationToIr)`, but it's not always started
-        return OK
-    }
-
-    override fun compileNoIC(mainCallArguments: List<String>?, module: ModulesStructure, moduleKind: ModuleKind?): ExitCode {
-        if (!arguments.irProduceJs) {
-            @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
-            performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // It should be `notifyPhaseFinished(PhaseMeasurementType.TranslationToIr)`, but it's not always started
-            return OK
-        }
-
-        JsConfigurationUpdater.checkWasmArgumentsUsage(arguments, messageCollector)
-
-        configuration.phaseConfig = createPhaseConfig(arguments).also {
-            if (arguments.listPhases) it.list(getJsLowerings(configuration))
-        }
-        val ir2JsTransformer = Ir2JsTransformer(arguments, module, messageCollector, mainCallArguments)
-        val outputs = JsBackendPipelinePhase.compileNonIncrementally(
-            messageCollector,
-            ir2JsTransformer,
-            WebArtifactConfiguration(
-                // moduleKind for JS compilation is always not null (see [JsConfigurationUpdater.fillConfiguration])
-                moduleKind!!,
-                moduleName,
-                outputDir,
-                outputName,
-                arguments.granularity,
-                arguments.dtsStrategy,
-            )
-        )
-
-        return if (outputs != null) OK else INTERNAL_ERROR
     }
 }

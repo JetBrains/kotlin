@@ -7,20 +7,12 @@ package org.jetbrains.kotlin.lombok
 
 import org.jetbrains.kotlin.lombok.LombokDirectives.ENABLE_LOMBOK
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest
+import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
+import org.jetbrains.kotlin.test.preprocessors.ConfigCommentTransformerPreprocessor
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
 
 // ---------------------------- box ----------------------------
-
-open class AbstractIrBlackBoxCodegenTestForLombok : AbstractIrBlackBoxCodegenTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.enableLombok()
-    }
-}
 
 open class AbstractFirLightTreeBlackBoxCodegenTestForLombok : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -30,13 +22,6 @@ open class AbstractFirLightTreeBlackBoxCodegenTestForLombok : AbstractFirLightTr
 }
 
 // ---------------------------- diagnostics ----------------------------
-
-open class AbstractDiagnosticTestForLombok : AbstractDiagnosticTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.enableLombok()
-    }
-}
 
 open class AbstractFirPsiDiagnosticTestForLombok : AbstractFirPsiDiagnosticTest() {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -55,4 +40,5 @@ fun TestConfigurationBuilder.enableLombok() {
     useConfigurators(::LombokEnvironmentConfigurator)
     useAdditionalSourceProviders(::LombokAdditionalSourceFileProvider)
     useCustomRuntimeClasspathProviders(::LombokRuntimeClassPathProvider)
+    useSourcePreprocessor(::ConfigCommentTransformerPreprocessor)
 }

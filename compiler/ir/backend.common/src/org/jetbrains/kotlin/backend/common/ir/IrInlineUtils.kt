@@ -107,11 +107,19 @@ private fun IrBody.move(
 }, null)
 
 // TODO use a generic inliner (e.g. JS/Native's FunctionInlining.Inliner)
-// Inline simple function calls without type parameters, default parameters, or varargs.
-fun IrFunction.inline(target: IrDeclarationParent, arguments: List<IrValueDeclaration> = listOf()): IrReturnableBlock =
-    IrReturnableBlockImpl(startOffset, endOffset, returnType, IrReturnableBlockSymbolImpl(), null).apply {
-        statements += body!!.move(this@inline, target, symbol, parameters.zip(arguments).toMap()).statements
+/** Inline simple function calls without type parameters, default parameters, or varargs.
+ * If [moveBody] is true, moves the body into the inlined callsite, otherwise copies it there.
+ */
+fun IrFunction.inline(
+    target: IrDeclarationParent,
+    arguments: List<IrValueDeclaration> = emptyList(),
+    moveBody: Boolean = true,
+): IrReturnableBlock {
+    val body = this.body!!.let { if (moveBody) it else it.deepCopyWithSymbols(target) }
+    return IrReturnableBlockImpl(startOffset, endOffset, returnType, IrReturnableBlockSymbolImpl(), null).apply {
+        statements += body.move(this@inline, target, symbol, parameters.zip(arguments).toMap()).statements
     }
+}
 
 fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDeclaration> = listOf()): IrExpression =
     when (this) {

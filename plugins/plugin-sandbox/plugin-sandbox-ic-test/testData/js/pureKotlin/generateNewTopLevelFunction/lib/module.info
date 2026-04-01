@@ -1,0 +1,10 @@
+STEP 0:
+    modifications:
+        U : A.0.kt -> A.kt
+        U : lib.0.kt -> lib.kt
+    added file: A.kt, lib.kt, __GENERATED__CALLABLES__.kt
+STEP 1:
+    modifications:
+        U : B.1.kt -> B.kt
+    added file: B.kt
+    modified ir: __GENERATED__CALLABLES__.kt

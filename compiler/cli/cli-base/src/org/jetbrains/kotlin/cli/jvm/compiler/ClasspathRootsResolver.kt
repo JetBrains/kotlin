@@ -23,11 +23,9 @@ import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.light.LightJavaModule
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRootBase
@@ -36,6 +34,10 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
+import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.cli.reportLog
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
@@ -49,7 +51,7 @@ import kotlin.LazyThreadSafetyMode.NONE
 
 class ClasspathRootsResolver(
     private val psiManager: PsiManager,
-    private val messageCollector: MessageCollector?,
+    private val configuration: CompilerConfiguration,
     private val additionalModules: List<String>,
     private val contentRootToVirtualFile: (JvmContentRootBase) -> VirtualFile?,
     private val javaModuleFinder: CliJavaModuleFinder,
@@ -108,7 +110,7 @@ class ClasspathRootsResolver(
                 result += JavaRoot(root, JavaRoot.RootType.SOURCE, packagePrefix?.let { prefix ->
                     if (isValidJavaFqName(prefix)) FqName(prefix)
                     else null.also {
-                        report(STRONG_WARNING, "Invalid package prefix name is ignored: $prefix")
+                        reportWarning("Invalid package prefix name is ignored: $prefix")
                     }
                 })
             }
@@ -189,7 +191,7 @@ class ClasspathRootsResolver(
             val originalFile = VfsUtilCore.virtualToIoFile(root)
             val moduleName = LightJavaModule.moduleName(originalFile.nameWithoutExtension)
             if (moduleName.isEmpty()) {
-                report(ERROR, "Cannot infer automatic module name for the file", VfsUtilCore.getVirtualFileForJar(root) ?: root)
+                reportError("Cannot infer automatic module name for the file", VfsUtilCore.getVirtualFileForJar(root) ?: root)
                 return null
             }
             return JavaModule.Automatic(moduleName, moduleRoot)
@@ -219,7 +221,7 @@ class ClasspathRootsResolver(
         val manifestFile = jarRoot.findChild("META-INF")?.findChild("MANIFEST.MF")
         return try {
             manifestFile?.inputStream?.let(::Manifest)?.mainAttributes
-        } catch (e: IOException) {
+        } catch (_: IOException) {
             null
         }
     }
@@ -230,7 +232,7 @@ class ClasspathRootsResolver(
         val sourceModules = modules.filterIsInstance<JavaModule.Explicit>().filter(JavaModule::isSourceModule)
         if (sourceModules.size > 1) {
             for (module in sourceModules) {
-                report(ERROR, "Too many source module declarations found", module.moduleInfoFile)
+                reportError("Too many source module declarations found", module.moduleInfoFile)
             }
             return
         }
@@ -246,8 +248,8 @@ class ClasspathRootsResolver(
                 val thisFile = module.getRootFile()
                 val existingFile = existing.getRootFile()
                 val atExistingPath = if (existingFile == null) "" else " at: ${existingFile.path}"
-                report(
-                    STRONG_WARNING, "The root is ignored because a module with the same name '${module.name}' " +
+                reportWarning(
+                    "The root is ignored because a module with the same name '${module.name}' " +
                             "has been found earlier on the module path$atExistingPath", thisFile
                 )
             }
@@ -258,7 +260,7 @@ class ClasspathRootsResolver(
         val sourceModule = sourceModules.singleOrNull()
         val addAllModulePathToRoots = "ALL-MODULE-PATH" in additionalModules
         if (addAllModulePathToRoots && sourceModule != null) {
-            report(ERROR, "-Xadd-modules=ALL-MODULE-PATH can only be used when compiling the unnamed module")
+            reportError("-Xadd-modules=ALL-MODULE-PATH can only be used when compiling the unnamed module")
             return
         }
 
@@ -280,20 +282,19 @@ class ClasspathRootsResolver(
             }
         }
 
-        report(LOGGING, "Loading modules: $allDependencies")
+        log("Loading modules: $allDependencies")
 
         for (moduleName in allDependencies) {
             val module = javaModuleFinder.findModule(moduleName)
             if (module == null) {
-                report(ERROR, "Module $moduleName cannot be found in the module graph")
+                reportError("Module $moduleName cannot be found in the module graph")
             } else {
                 result.addAll(module.getJavaModuleRoots())
             }
         }
 
         if (requireStdlibModule && sourceModule != null && !javaModuleGraph.reads(sourceModule.name, KOTLIN_STDLIB_MODULE_NAME)) {
-            report(
-                ERROR,
+            reportError(
                 "The Kotlin standard library is not found in the module graph. " +
                         "Please ensure you have the 'requires $KOTLIN_STDLIB_MODULE_NAME' clause in your module definition",
                 sourceModule.moduleInfoFile
@@ -301,15 +302,22 @@ class ClasspathRootsResolver(
         }
     }
 
-    private fun report(severity: CompilerMessageSeverity, message: String, file: VirtualFile? = null) {
-        if (messageCollector == null) {
-            throw IllegalStateException("${if (file != null) file.path + ":" else ""}$severity: $message (no MessageCollector configured)")
-        }
-        if (severity == ERROR && !reportErrors) return
-        messageCollector.report(
-            severity, message,
-            if (file == null) null else CompilerMessageLocation.create(MessageUtil.virtualFileToPath(file))
-        )
+    private fun reportError(message: String, file: VirtualFile? = null) {
+        if (!reportErrors) return
+        report(CliDiagnostics.CLASSPATH_RESOLUTION_ERROR, message, file)
+    }
+
+    private fun reportWarning(message: String, file: VirtualFile? = null) {
+        report(CliDiagnostics.CLASSPATH_RESOLUTION_WARNING, message, file)
+    }
+
+    private fun report(factory: KtSourcelessDiagnosticFactory, message: String, file: VirtualFile? = null) {
+        val location = file?.let { CompilerMessageLocation.create(MessageUtil.virtualFileToPath(it)) }
+        configuration.report(factory, message, location)
+    }
+
+    private fun log(message: String) {
+        configuration.reportLog(message)
     }
 
     private companion object {

@@ -9,13 +9,11 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 
 @Suppress("unused")
 class InlineConstTrackerImpl : InlineConstTracker {
-    private val inlineConst = hashMapOf<String, MutableSet<ConstantRef>>()
-
     val inlineConstMap: Map<String, Collection<ConstantRef>>
-        get() = inlineConst
+        field = hashMapOf<String, MutableSet<ConstantRef>>()
 
     override fun report(filePath: String, owner: String, name: String, constType: String) {
-        inlineConst.getOrPut(filePath) { hashSetOf() }.add(ConstantRef(owner, name, constType))
+        inlineConstMap.getOrPut(filePath) { hashSetOf() }.add(ConstantRef(owner, name, constType))
     }
 }
 

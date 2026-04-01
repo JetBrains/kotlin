@@ -1,9 +1,0 @@
-MODULE main
-	CLASS Foo.class
-		CLASS METADATA
-			CONSTRUCTOR <init>([I[ILkotlin/Array;Lkotlin/Array;[D)V
-				Property: class.metadata.constructor.valueParameters
-					K1
-						(a: kotlin/IntArray /* = ... */, b: kotlin/IntArray /* = ... */, c: kotlin/Array<kotlin/String> /* = ... */, d: kotlin/Array<kotlin/reflect/KClass<*>> /* = ... */, e: kotlin/DoubleArray /* = ... */)
-					K2
-						(a: kotlin/IntArray = [], b: kotlin/IntArray = [1, 2, 3], c: kotlin/Array<kotlin/String> = ["/"], d: kotlin/Array<kotlin/reflect/KClass<*>> = [kotlin/Int::class, kotlin/Array<kotlin/Int::class>], e: kotlin/DoubleArray = [1.0])

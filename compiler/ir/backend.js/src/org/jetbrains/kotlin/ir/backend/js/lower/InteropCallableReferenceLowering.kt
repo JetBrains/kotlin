@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.backend.common.functionReferenceLinkageError
 import org.jetbrains.kotlin.backend.common.functionReferenceReflectedName
-import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
+import org.jetbrains.kotlin.backend.common.lower.LocalDelegatedPropertiesLowering
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -17,6 +18,8 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionWithGeneratorsLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -45,6 +48,13 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 /**
  * Interop layer for function references and lambdas.
  */
+@PhasePrerequisites(
+    JsSuspendFunctionsLowering::class,
+    JsSuspendFunctionWithGeneratorsLowering::class,
+    LocalDeclarationsLowering::class,
+    LocalDelegatedPropertiesLowering::class,
+    JsCallableReferenceLowering::class
+)
 class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
     val generateInlineAnonymousFunctions: Boolean
@@ -381,12 +391,18 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                 }
 
                 outerReceiverMapping[expression.symbol]?.let {
+                    val receiver = it.receiver?.deepCopyWithSymbols()?.apply {
+                        val oldReceiver = expression.receiver ?: return@apply
+                        startOffset = oldReceiver.startOffset
+                        endOffset = oldReceiver.endOffset
+                    }
+
                     return IrGetFieldImpl(
                         expression.startOffset,
                         expression.endOffset,
                         it.symbol,
                         it.type,
-                        it.receiver?.deepCopyWithSymbols()
+                        receiver
                     )
                 }
 
@@ -552,22 +568,13 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             IrFunctionExpressionImpl(startOffset, endOffset, lambdaType, lambdaDeclaration, JsStatementOrigins.CALLABLE_REFERENCE_CREATE)
         }
 
-        val functionReferenceLinkageError = lambdaInfo.lambdaClass.functionReferenceLinkageError
         val functionReferenceReflectedName = lambdaInfo.lambdaClass.functionReferenceReflectedName
 
-        if (functionReferenceLinkageError != null || functionReferenceReflectedName != null || lambdaDeclaration.isSuspend) {
+        if (functionReferenceReflectedName != null || lambdaDeclaration.isSuspend) {
             val tmpVar = JsIrBuilder.buildVar(functionExpression.type, factoryFunction, "l", initializer = functionExpression)
             statements.add(tmpVar)
 
-            if (functionReferenceLinkageError != null) {
-                statements.add(
-                    JsIrBuilder.buildCall(context.symbols.throwLinkageErrorInCallableNameSymbol).apply {
-                        arguments[0] = JsIrBuilder.buildGetValue(tmpVar.symbol)
-                        arguments[1] =
-                            functionReferenceLinkageError.toIrConst(context.irBuiltIns.stringType, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-                    }
-                )
-            } else if (functionReferenceReflectedName != null) {
+            if (functionReferenceReflectedName != null) {
                 statements.add(
                     setDynamicProperty(
                         tmpVar.symbol,
@@ -575,6 +582,59 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                         functionReferenceReflectedName.toIrConst(context.irBuiltIns.stringType, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
                     )
                 )
+                val superCall = constructor.body?.statements
+                    ?.filterIsInstance<IrDelegatingConstructorCallImpl>()
+                    ?.firstOrNull()
+                if (superCall != null) {
+                    val (flags, arity, id) = superCall.arguments
+                    statements.add(
+                        setDynamicProperty(
+                            tmpVar.symbol,
+                            Namer.KCALLABLE_FLAGS,
+                            flags?.shallowCopy()?.apply {
+                                startOffset = UNDEFINED_OFFSET
+                                endOffset = UNDEFINED_OFFSET
+                            } ?: compilationException("'flags' is expected to be passed to a parent constructor", superCall)
+                        )
+                    )
+                    statements.add(
+                        setDynamicProperty(
+                            tmpVar.symbol,
+                            Namer.KCALLABLE_ARITY,
+                            arity?.shallowCopy()?.apply {
+                                startOffset = UNDEFINED_OFFSET
+                                endOffset = UNDEFINED_OFFSET
+                            } ?: compilationException("'arity' is expected to be passed to a parent constructor", superCall)
+                        )
+                    )
+                    val providerIdConst = id?.shallowCopy()?.apply {
+                        startOffset = UNDEFINED_OFFSET
+                        endOffset = UNDEFINED_OFFSET
+                    } ?: compilationException("'id' is expected to be passed to a parent constructor", superCall)
+
+                    statements.add(
+                        setDynamicProperty(
+                            tmpVar.symbol,
+                            Namer.KCALLABLE_ID,
+                            JsIrBuilder.buildCall(context.symbols.signatureIdSymbol).apply {
+                                arguments[0] = providerIdConst
+                            },
+                        )
+                    )
+                    if (factoryFunction.parameters.any()) {
+                        statements.add(
+                            setDynamicProperty(
+                                tmpVar.symbol,
+                                Namer.KCALLABLE_BOUND_VALUES,
+                                JsIrBuilder.buildArray(
+                                    factoryFunction.parameters.map { JsIrBuilder.buildGetValue(it.symbol) },
+                                    context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.anyNType),
+                                    context.irBuiltIns.anyNType
+                                )
+                            )
+                        )
+                    }
+                }
             }
 
             if (lambdaDeclaration.isSuspend) {

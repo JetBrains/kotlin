@@ -14,30 +14,28 @@ import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.CollectAdditionalSourceFilesExtension
 import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptConfigurationsProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptReportSink
-import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.JvmStandardReplFactoryExtension
-import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ReplLoweringExtension
-import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptLoweringExtension
-import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingCollectAdditionalSourcesExtension
-import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingProcessSourcesBeforeCompilingExtension
-import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingIrExplainGenerationExtension
+import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.*
+import org.jetbrains.kotlin.scripting.compiler.plugin.fir.CollectAdditionalScriptSourcesExtension
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys.ENABLE_SCRIPT_EXPLANATION_OPTION
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.extensions.ScriptExtraImportsProviderExtension
 import org.jetbrains.kotlin.scripting.extensions.ScriptingResolveExtension
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
@@ -65,9 +63,6 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
             // TODO: add jdk path and other params if needed
         }
         withClassloadingProblemsReporting(messageCollector) {
-            if (configuration.get(ENABLE_SCRIPT_EXPLANATION_OPTION, false)) {
-                IrGenerationExtension.registerExtension(project, ScriptingIrExplainGenerationExtension(project))
-            }
             CompilerConfigurationExtension.registerExtension(project, ScriptingCompilerConfigurationExtension(project, hostConfiguration))
             CollectAdditionalSourcesExtension.registerExtension(project, ScriptingCollectAdditionalSourcesExtension(project))
             ProcessSourcesBeforeCompilingExtension.registerExtension(project, ScriptingProcessSourcesBeforeCompilingExtension(project))
@@ -76,12 +71,24 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
             ReplFactoryExtension.registerExtensionIfRequired(project, JvmStandardReplFactoryExtension())
 
             project.registerService(ScriptDefinitionProvider::class.java, CliScriptDefinitionProvider())
-            project.registerService(ScriptConfigurationsProvider::class.java, CliScriptConfigurationsProvider(project))
+            project.registerService(
+                ScriptConfigurationsProvider::class.java,
+                CliScriptConfigurationsProvider(project) {
+                    ScriptDefinitionProvider.getInstance(project)
+                        ?: error("Unable to get script definition: ScriptDefinitionProvider is not configured.")
+                }
+            )
             SyntheticResolveExtension.registerExtension(project, ScriptingResolveExtension())
             ExtraImportsProviderExtension.registerExtension(project, ScriptExtraImportsProviderExtension())
 
-            IrGenerationExtension.registerExtension(project, ScriptLoweringExtension())
-            IrGenerationExtension.registerExtension(project, ReplLoweringExtension())
+            with(configuration.extensionsStorage!!) {
+                if (configuration.get(ENABLE_SCRIPT_EXPLANATION_OPTION, false)) {
+                    IrGenerationExtension.registerExtension(ScriptingIrExplainGenerationExtension(project))
+                }
+
+                IrGenerationExtension.registerExtension(ScriptLoweringExtension())
+                IrGenerationExtension.registerExtension(ReplLoweringExtension())
+            }
 
             if (messageCollector != null) {
                 project.registerService(ScriptReportSink::class.java, CliScriptReportSink(messageCollector))
@@ -95,17 +102,15 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
 class ScriptingK2CompilerPluginRegistrar : CompilerPluginRegistrar() {
     companion object {
         fun registerComponents(extensionStorage: ExtensionStorage, compilerConfiguration: CompilerConfiguration) = with(extensionStorage) {
-            val hostConfiguration = (compilerConfiguration.scriptingHostConfiguration as? ScriptingHostConfiguration)
-                ?: ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
-                    // TODO: add jdk path and other params if needed
-                }
-            FirExtensionRegistrarAdapter.registerExtension(FirScriptingCompilerExtensionRegistrar(hostConfiguration, compilerConfiguration))
-            FirExtensionRegistrarAdapter.registerExtension(FirScriptingSamWithReceiverExtensionRegistrar())
+            FirExtensionRegistrar.registerExtension(FirScriptingCompilerExtensionRegistrar(compilerConfiguration))
+            FirExtensionRegistrar.registerExtension(FirScriptingSamWithReceiverExtensionRegistrar())
         }
     }
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         registerComponents(this, configuration)
+
+        CollectAdditionalSourceFilesExtension.registerExtension(CollectAdditionalScriptSourcesExtension())
     }
 
     override val pluginId: String get() = KOTLIN_SCRIPTING_PLUGIN_ID

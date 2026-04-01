@@ -1,0 +1,418 @@
+public final class org/jetbrains/kotlin/name/CallableId {
+	public static final field Companion Lorg/jetbrains/kotlin/name/CallableId$Companion;
+	public fun <init> (Lorg/jetbrains/kotlin/name/ClassId;Lorg/jetbrains/kotlin/name/Name;)V
+	public fun <init> (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/name/Name;)V
+	public fun <init> (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/name/FqName;)V
+	public fun <init> (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/name/Name;)V
+	public fun <init> (Lorg/jetbrains/kotlin/name/Name;)V
+	public fun <init> (Lorg/jetbrains/kotlin/name/Name;Lorg/jetbrains/kotlin/name/FqName;)V
+	public final fun asFqNameForDebugInfo ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun asSingleFqName ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun copy (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/name/CallableId;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCallableName ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getClassId ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getClassName ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getPackageName ()Lorg/jetbrains/kotlin/name/FqName;
+	public fun hashCode ()I
+	public final fun isLocal ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/name/CallableId$Companion {
+	public final fun getPACKAGE_FQ_NAME_FOR_LOCAL ()Lorg/jetbrains/kotlin/name/FqName;
+}
+
+public final class org/jetbrains/kotlin/name/CallableIdKt {
+	public static final fun getPackageName (Lorg/jetbrains/kotlin/name/CallableId;)Lorg/jetbrains/kotlin/name/FqName;
+	public static final fun isLocal (Lorg/jetbrains/kotlin/name/CallableId;)Z
+	public static final fun withClassId (Lorg/jetbrains/kotlin/name/CallableId;Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/name/CallableId;
+}
+
+public final class org/jetbrains/kotlin/name/ClassId {
+	public static final field Companion Lorg/jetbrains/kotlin/name/ClassId$Companion;
+	public fun <init> (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/name/FqName;Z)V
+	public fun <init> (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/name/Name;)V
+	public final fun asFqNameString ()Ljava/lang/String;
+	public final fun asSingleFqName ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun asString ()Ljava/lang/String;
+	public final fun component1 ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun component2 ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun component3 ()Z
+	public final fun copy (Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/name/FqName;Z)Lorg/jetbrains/kotlin/name/ClassId;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/name/ClassId;Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/name/FqName;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun createNestedClassId (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/name/ClassId;
+	public fun equals (Ljava/lang/Object;)Z
+	public static final fun fromString (Ljava/lang/String;)Lorg/jetbrains/kotlin/name/ClassId;
+	public static final fun fromString (Ljava/lang/String;Z)Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getOuterClassId ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getOutermostClassId ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getPackageFqName ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getParentClassId ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getRelativeClassName ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getShortClassName ()Lorg/jetbrains/kotlin/name/Name;
+	public fun hashCode ()I
+	public final fun isLocal ()Z
+	public final fun isNestedClass ()Z
+	public final fun startsWith (Lorg/jetbrains/kotlin/name/Name;)Z
+	public fun toString ()Ljava/lang/String;
+	public static final fun topLevel (Lorg/jetbrains/kotlin/name/FqName;)Lorg/jetbrains/kotlin/name/ClassId;
+}
+
+public final class org/jetbrains/kotlin/name/ClassId$Companion {
+	public final fun fromString (Ljava/lang/String;)Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun fromString (Ljava/lang/String;Z)Lorg/jetbrains/kotlin/name/ClassId;
+	public static synthetic fun fromString$default (Lorg/jetbrains/kotlin/name/ClassId$Companion;Ljava/lang/String;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun topLevel (Lorg/jetbrains/kotlin/name/FqName;)Lorg/jetbrains/kotlin/name/ClassId;
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/name/ClassIdBasedLocality : java/lang/annotation/Annotation {
+}
+
+public final class org/jetbrains/kotlin/name/FqName {
+	public static final field Companion Lorg/jetbrains/kotlin/name/FqName$Companion;
+	public static final field ROOT Lorg/jetbrains/kotlin/name/FqName;
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Lorg/jetbrains/kotlin/name/FqNameUnsafe;)V
+	public final fun asString ()Ljava/lang/String;
+	public final fun child (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/name/FqName;
+	public fun equals (Ljava/lang/Object;)Z
+	public static final fun fromSegments (Ljava/util/List;)Lorg/jetbrains/kotlin/name/FqName;
+	public fun hashCode ()I
+	public final fun isRoot ()Z
+	public final fun parent ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun pathSegments ()Ljava/util/List;
+	public final fun shortName ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun shortNameOrSpecial ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun startsWith (Lorg/jetbrains/kotlin/name/FqName;)Z
+	public final fun startsWith (Lorg/jetbrains/kotlin/name/Name;)Z
+	public fun toString ()Ljava/lang/String;
+	public final fun toUnsafe ()Lorg/jetbrains/kotlin/name/FqNameUnsafe;
+	public static final fun topLevel (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/name/FqName;
+}
+
+public final class org/jetbrains/kotlin/name/FqName$Companion {
+	public final fun fromSegments (Ljava/util/List;)Lorg/jetbrains/kotlin/name/FqName;
+	public final fun topLevel (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/name/FqName;
+}
+
+public final class org/jetbrains/kotlin/name/FqNameUnsafe {
+	public static final field Companion Lorg/jetbrains/kotlin/name/FqNameUnsafe$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public final fun asString ()Ljava/lang/String;
+	public final fun child (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/name/FqNameUnsafe;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public final fun isRoot ()Z
+	public final fun isSafe ()Z
+	public static final fun isValid (Ljava/lang/String;)Z
+	public final fun parent ()Lorg/jetbrains/kotlin/name/FqNameUnsafe;
+	public final fun pathSegments ()Ljava/util/List;
+	public final fun shortName ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun shortNameOrSpecial ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun startsWith (Lorg/jetbrains/kotlin/name/FqNameUnsafe;)Z
+	public final fun startsWith (Lorg/jetbrains/kotlin/name/Name;)Z
+	public final fun toSafe ()Lorg/jetbrains/kotlin/name/FqName;
+	public fun toString ()Ljava/lang/String;
+	public static final fun topLevel (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/name/FqNameUnsafe;
+}
+
+public final class org/jetbrains/kotlin/name/FqNameUnsafe$Companion {
+	public final fun isValid (Ljava/lang/String;)Z
+	public final fun topLevel (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/name/FqNameUnsafe;
+}
+
+public final class org/jetbrains/kotlin/name/Name : java/lang/Comparable {
+	public fun asString ()Ljava/lang/String;
+	public fun asStringStripSpecialMarkers ()Ljava/lang/String;
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo (Lorg/jetbrains/kotlin/name/Name;)I
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getIdentifier ()Ljava/lang/String;
+	public fun getIdentifierOrNullIfSpecial ()Ljava/lang/String;
+	public static fun guessByFirstCharacter (Ljava/lang/String;)Lorg/jetbrains/kotlin/name/Name;
+	public fun hashCode ()I
+	public static fun identifier (Ljava/lang/String;)Lorg/jetbrains/kotlin/name/Name;
+	public static fun identifierIfValid (Ljava/lang/String;)Lorg/jetbrains/kotlin/name/Name;
+	public fun isSpecial ()Z
+	public static fun isValidIdentifier (Ljava/lang/String;)Z
+	public static fun special (Ljava/lang/String;)Lorg/jetbrains/kotlin/name/Name;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/name/NameRenderingUtils {
+	public static final fun render (Lorg/jetbrains/kotlin/name/FqName;)Ljava/lang/String;
+	public static final fun render (Lorg/jetbrains/kotlin/name/FqNameUnsafe;)Ljava/lang/String;
+	public static final fun render (Lorg/jetbrains/kotlin/name/Name;Z)Ljava/lang/String;
+	public static synthetic fun render$default (Lorg/jetbrains/kotlin/name/Name;ZILjava/lang/Object;)Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/name/SpecialNames {
+	public static final field ANONYMOUS Lorg/jetbrains/kotlin/name/Name;
+	public static final field ANONYMOUS_FQ_NAME Lorg/jetbrains/kotlin/name/FqName;
+	public static final field ANONYMOUS_STRING Ljava/lang/String;
+	public static final field ARRAY Lorg/jetbrains/kotlin/name/Name;
+	public static final field DEFAULT_NAME_FOR_COMPANION_OBJECT Lorg/jetbrains/kotlin/name/Name;
+	public static final field DESTRUCT Lorg/jetbrains/kotlin/name/Name;
+	public static final field ENUM_GET_ENTRIES Lorg/jetbrains/kotlin/name/Name;
+	public static final field IMPLICIT_SET_PARAMETER Lorg/jetbrains/kotlin/name/Name;
+	public static final field INIT Lorg/jetbrains/kotlin/name/Name;
+	public static final field INSTANCE Lorg/jetbrains/kotlin/name/SpecialNames;
+	public static final field ITERATOR Lorg/jetbrains/kotlin/name/Name;
+	public static final field LOCAL Lorg/jetbrains/kotlin/name/Name;
+	public static final field NO_NAME_PROVIDED Lorg/jetbrains/kotlin/name/Name;
+	public static final field RECEIVER Lorg/jetbrains/kotlin/name/Name;
+	public static final field ROOT_PACKAGE Lorg/jetbrains/kotlin/name/Name;
+	public static final field SAFE_IDENTIFIER_FOR_NO_NAME Lorg/jetbrains/kotlin/name/Name;
+	public static final field THIS Lorg/jetbrains/kotlin/name/Name;
+	public static final field UNARY Lorg/jetbrains/kotlin/name/Name;
+	public static final field UNDERSCORE_FOR_UNUSED_VAR Lorg/jetbrains/kotlin/name/Name;
+	public static final field WHEN_SUBJECT Lorg/jetbrains/kotlin/name/Name;
+	public static final fun anonymousParameterName (I)Lorg/jetbrains/kotlin/name/Name;
+	public static final fun isAnonymousParameterName (Lorg/jetbrains/kotlin/name/Name;)Z
+	public final fun isSafeIdentifier (Lorg/jetbrains/kotlin/name/Name;)Z
+	public static final fun safeIdentifier (Ljava/lang/String;)Lorg/jetbrains/kotlin/name/Name;
+	public static final fun safeIdentifier (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/name/Name;
+	public static final fun subscribeOperatorIndex (I)Lorg/jetbrains/kotlin/name/Name;
+}
+
+public final class org/jetbrains/kotlin/name/StandardClassIds {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/name/StandardClassIds;
+	public final fun FunctionN (I)Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun KFunctionN (I)Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun KSuspendFunctionN (I)Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun SuspendFunctionN (I)Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun byName (Ljava/lang/String;)Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getAbstractMap ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getAllBuiltinTypes ()Ljava/util/Set;
+	public final fun getAnnotation ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getAnnotationRetention ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getAnnotationTarget ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getAny ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getArray ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getAtomicArray ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getAtomicArrayByPrimitive ()Ljava/util/Map;
+	public final fun getAtomicBoolean ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getAtomicByPrimitive ()Ljava/util/Map;
+	public final fun getAtomicInt ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getAtomicIntArray ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getAtomicLong ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getAtomicLongArray ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getAtomicReference ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getBASE_ANNOTATIONS_JVM_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_ANNOTATION_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_COLLECTIONS_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_CONCURRENT_ATOMICS_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_CONCURRENT_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_CONTRACTS_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_COROUTINES_INTRINSICS_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_COROUTINES_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_ENUMS_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_EXPERIMENTAL_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_INTERNAL_IR_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_INTERNAL_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_JS_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_JVM_FUNCTIONS_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_JVM_INTERNAL_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_JVM_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_KOTLIN_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_RANGES_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_REFLECT_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_SEQUENCES_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_TEST_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBASE_TEXT_PACKAGE ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getBoolean ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getBuiltInsPackages ()Ljava/util/Set;
+	public final fun getBuiltInsPackagesWithDefaultNamedImport ()Ljava/util/Set;
+	public final fun getByte ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getChar ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getCharIterator ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getCharRange ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getCharSequence ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getCloneable ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getCollection ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getComparable ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getConstantAllowedTypes ()Ljava/util/Set;
+	public final fun getContinuation ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getCoroutineContext ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getDeprecationLevel ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getDouble ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getElementTypeByPrimitiveArrayType ()Ljava/util/Map;
+	public final fun getElementTypeByUnsignedArrayType ()Ljava/util/Map;
+	public final fun getEnum ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getEnumEntries ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getFloat ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getFunction ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getInt ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getIntRange ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getIterable ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getIterator ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getKCallable ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getKClass ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getKFunction ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getKMutableProperty ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getKMutableProperty0 ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getKMutableProperty1 ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getKMutableProperty2 ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getKProperty ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getKProperty0 ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getKProperty1 ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getKProperty2 ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getKType ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getList ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getListIterator ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getLong ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getLongRange ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getMap ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getMapEntry ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getMutableCollection ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getMutableIterable ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getMutableIterator ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getMutableList ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getMutableListIterator ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getMutableMap ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getMutableMapEntry ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getMutableSet ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getNothing ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getNumber ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getPrimitiveArrayTypeByElementType ()Ljava/util/Map;
+	public final fun getPrimitiveTypes ()Ljava/util/Set;
+	public final fun getResult ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getSequence ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getSet ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getShort ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getSignedIntegerTypes ()Ljava/util/Set;
+	public final fun getString ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getSuspendFunction ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getThrowable ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getUByte ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getUInt ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getULong ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getUShort ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getUnit ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getUnsignedArrayTypeByElementType ()Ljava/util/Map;
+	public final fun getUnsignedTypes ()Ljava/util/Set;
+	public final fun reflectByName (Ljava/lang/String;)Lorg/jetbrains/kotlin/name/ClassId;
+}
+
+public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/name/StandardClassIds$Annotations;
+	public final fun getAccessibleLateinitPropertyLiteral ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getAssociatedObjectAnnotations ()Ljava/util/HashSet;
+	public final fun getAssociatedObjectKey ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getConsistentCopyVisibility ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getContextFunctionTypeParams ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getDeprecated ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getDeprecatedSinceKotlin ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getDslMarker ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getDynamicExtension ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getEnhancedNullability ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getExpectRefinement ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getExperimentalAssociatedObjects ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getExposedCopyVisibility ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getExtensionFunctionType ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getFlexibleArrayElementVariance ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getFlexibleMutability ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getFlexibleNullability ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getFunctionN ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getHidesMembers ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getIgnorableReturnValue ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getImplicitlyActualizedByJvmDeclaration ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getInlineOnly ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getIntrinsicConstEvaluation ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getIntroducedAt ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getJsExport ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getJsExportDefault ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getJsExportIgnore ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getJsNoDispatchReceiver ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getJsNoRuntime ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getJvmBuiltin ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getJvmName ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getJvmStatic ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getKotlinActual ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getMustBeDocumented ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getMustUseReturnValues ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getNoInfer ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getOnlyInputTypes ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getOptionalExpectation ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getPublishedApi ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getRawTypeAnnotation ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getRepeatable ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getRequireKotlin ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getRestrictsSuspension ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getRetention ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getSinceKotlin ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getSuppress ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getSuppressBytecodeGeneration ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getTarget ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getTest ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getTransient ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getUsedFromCompilerGeneratedCode ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getVolatile ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getWasExperimental ()Lorg/jetbrains/kotlin/name/ClassId;
+}
+
+public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations$ParameterNames {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/name/StandardClassIds$Annotations$ParameterNames;
+	public final fun getDeprecatedLevel ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getDeprecatedMessage ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getDeprecatedSinceKotlinErrorSince ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getDeprecatedSinceKotlinHiddenSince ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getDeprecatedSinceKotlinWarningSince ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getParameterNameName ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getRetentionValue ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getSinceKotlinVersion ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getSuppressNames ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getTargetAllowedTargets ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getValue ()Lorg/jetbrains/kotlin/name/Name;
+}
+
+public final class org/jetbrains/kotlin/name/StandardClassIds$Callables {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/name/StandardClassIds$Callables;
+	public final fun getAtomicArrayCompareAndExchangeAt ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getAtomicArrayCompareAndSetAt ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getAtomicReferenceCompareAndExchange ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getAtomicReferenceCompareAndSet ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getClone ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getContract ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getCoroutineContext ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getNot ()Lorg/jetbrains/kotlin/name/CallableId;
+	public final fun getSuspend ()Lorg/jetbrains/kotlin/name/CallableId;
+}
+
+public final class org/jetbrains/kotlin/name/StandardClassIds$Collections {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/name/StandardClassIds$Collections;
+	public final fun getBaseCollectionToMutableEquivalent ()Ljava/util/Map;
+	public final fun getMutableCollectionToBaseCollection ()Ljava/util/Map;
+}
+
+public class org/jetbrains/kotlin/renderer/KeywordStringsGenerated {
+	public static final field KEYWORDS Ljava/util/Set;
+}
+
+public final class org/jetbrains/kotlin/resolve/ImportPath {
+	public static final field Companion Lorg/jetbrains/kotlin/resolve/ImportPath$Companion;
+	public fun <init> (Lorg/jetbrains/kotlin/name/FqName;Z)V
+	public fun <init> (Lorg/jetbrains/kotlin/name/FqName;ZLorg/jetbrains/kotlin/name/Name;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/name/FqName;ZLorg/jetbrains/kotlin/name/Name;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun component2 ()Z
+	public final fun component3 ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun copy (Lorg/jetbrains/kotlin/name/FqName;ZLorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/resolve/ImportPath;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/resolve/ImportPath;Lorg/jetbrains/kotlin/name/FqName;ZLorg/jetbrains/kotlin/name/Name;ILjava/lang/Object;)Lorg/jetbrains/kotlin/resolve/ImportPath;
+	public fun equals (Ljava/lang/Object;)Z
+	public static final fun fromString (Ljava/lang/String;)Lorg/jetbrains/kotlin/resolve/ImportPath;
+	public final fun getAlias ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getFqName ()Lorg/jetbrains/kotlin/name/FqName;
+	public final fun getImportedName ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getPathStr ()Ljava/lang/String;
+	public final fun hasAlias ()Z
+	public fun hashCode ()I
+	public final fun isAllUnder ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/resolve/ImportPath$Companion {
+	public final fun fromString (Ljava/lang/String;)Lorg/jetbrains/kotlin/resolve/ImportPath;
+}
+

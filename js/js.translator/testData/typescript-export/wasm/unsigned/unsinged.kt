@@ -29,4 +29,4 @@ fun consumeUInt(x: UInt): String = x.toString()
 fun consumeULong(x: ULong): String = x.toString()
 
 @JsExport
-fun consumeFunction(fn: (String) -> UInt): UInt = fn("42")
+fun consumeFunction(fn: (string: String) -> UInt): UInt = fn("42")

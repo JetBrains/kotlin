@@ -1,0 +1,5 @@
+KtNameReferenceExpression(51,57): 'length'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val length: kotlin.Int
+    ]

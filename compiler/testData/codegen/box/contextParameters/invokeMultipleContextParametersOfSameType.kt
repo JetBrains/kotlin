@@ -1,6 +1,8 @@
 // IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +ContextParameters
 // ISSUE: KT-77541
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: ANY:2.2.0
+// ^^^ Fixed in 2.3.0-Beta1
 
 interface Scope {
     fun foo(c: Int)

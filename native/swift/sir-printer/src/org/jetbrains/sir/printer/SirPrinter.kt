@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.sir.util.accessors
 import org.jetbrains.sir.printer.impl.CBridgePrinter
 import org.jetbrains.sir.printer.impl.KotlinBridgePrinter
 import org.jetbrains.sir.printer.impl.SirAsSwiftSourcesPrinter
-import kotlin.collections.addAll
 
 public class SirPrinter(
     private val stableDeclarationsOrder: Boolean = true,
@@ -88,4 +87,4 @@ private fun collectBridges(container: SirDeclarationContainer): List<SirBridge> 
             .filterIsInstance<SirDeclarationContainer>()
             .flatMap { collectBridges(it) }
     )
-}
+}.distinct()

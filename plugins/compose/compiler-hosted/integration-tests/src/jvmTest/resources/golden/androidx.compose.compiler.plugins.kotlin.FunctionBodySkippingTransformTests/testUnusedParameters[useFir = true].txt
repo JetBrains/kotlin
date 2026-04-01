@@ -7,6 +7,10 @@ import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
 
 
+class Unstable(var count: Int)
+class Stable(val count: Int)
+interface MaybeStable
+
 @Composable
 fun Unskippable(a: Unstable, b: Stable, c: MaybeStable) {
     used(a)
@@ -26,6 +30,21 @@ fun Skippable3(a: Unstable, b: Stable, c: MaybeStable) { }
 // Transformed IR
 // ------------------------------------------
 
+@StabilityInferred(parameters = 0)
+class Unstable(var count: Int) {
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
+@StabilityInferred(parameters = 1)
+class Stable(val count: Int) {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
+interface MaybeStable
 @Composable
 fun Unskippable(a: Unstable, b: Stable, c: MaybeStable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)

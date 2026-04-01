@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.session.environment
 
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import java.io.File
+import java.nio.file.Path
 
 interface AbstractProjectFileSearchScope {
     val isEmpty: Boolean
@@ -54,6 +54,8 @@ interface AbstractProjectEnvironment {
     fun getSearchScopeBySourceFiles(files: Iterable<KtSourceFile>, allowOutOfProjectRoots: Boolean = false): AbstractProjectFileSearchScope
 
     fun getSearchScopeByDirectories(directories: Iterable<File>): AbstractProjectFileSearchScope
+
+    fun getSearchScopeByClassPath(paths: Iterable<Path>): AbstractProjectFileSearchScope
 
     fun getSearchScopeForProjectLibraries(): AbstractProjectFileSearchScope
 

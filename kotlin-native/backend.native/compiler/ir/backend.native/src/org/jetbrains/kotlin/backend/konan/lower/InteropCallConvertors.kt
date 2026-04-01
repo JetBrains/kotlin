@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.*
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 
 private class InteropCallContext(
-        val symbols: KonanSymbols,
+        val symbols: BackendNativeSymbols,
         val builder: IrBuilderWithScope,
         val failCompilation: (String) -> Nothing
 ) {
@@ -30,13 +30,13 @@ private class InteropCallContext(
 
     fun IrType.isNativePointed() = this.isNativePointed(symbols)
 
-    fun IrType.isSupportedReference() = this.isCStructFieldSupportedReferenceType(symbols)
+    fun IrType.isSupportedReference() = this.isCStructFieldSupportedReferenceType(irBuiltIns)
 
     val irBuiltIns: IrBuiltIns = builder.context.irBuiltIns
 }
 
 private inline fun <T> generateInteropCall(
-        symbols: KonanSymbols,
+        symbols: BackendNativeSymbols,
         builder: IrBuilderWithScope,
         noinline failCompilation: (String) -> Nothing,
         block: InteropCallContext.() -> T
@@ -103,7 +103,7 @@ private fun InteropCallContext.determineInMemoryType(type: IrType): IrType {
             symbols.unsignedToSignedOfSameBitWidth.getValue(classifier).owner.defaultType
         }
         // Assuming that _Bool is stored as single byte.
-        irBuiltIns.booleanClass -> symbols.byte.defaultType
+        irBuiltIns.booleanClass -> irBuiltIns.byteClass.defaultType
         else -> type
     }
 }
@@ -138,9 +138,9 @@ private fun InteropCallContext.castPrimitiveIfNeeded(
 private fun InteropCallContext.castToBoolean(sourceClass: IrClassSymbol, value: IrExpression): IrExpression {
     val (primitiveBinaryType, immZero) = when (sourceClass) {
         // Case of regular struct field.
-        symbols.byte -> PrimitiveBinaryType.BYTE to builder.irByte(0)
+        irBuiltIns.byteClass -> PrimitiveBinaryType.BYTE to builder.irByte(0)
         // Case of bitfield.
-        symbols.long -> PrimitiveBinaryType.LONG to builder.irLong(0)
+        irBuiltIns.longClass -> PrimitiveBinaryType.LONG to builder.irLong(0)
         else -> error("Unsupported cast to boolean from ${sourceClass.owner.name}")
     }
     val areEqualByValuesBytes = symbols.areEqualByValue.getValue(primitiveBinaryType)
@@ -159,9 +159,9 @@ private fun InteropCallContext.castToBoolean(sourceClass: IrClassSymbol, value: 
 private fun InteropCallContext.castFromBoolean(targetClass: IrClassSymbol, value: IrExpression): IrExpression {
     val (thenPart, elsePart) = when (targetClass) {
         // Case of regular struct field.
-        symbols.byte -> builder.irByte(1) to builder.irByte(0)
+        irBuiltIns.byteClass -> builder.irByte(1) to builder.irByte(0)
         // Case of bitfield.
-        symbols.long -> builder.irLong(1) to builder.irLong(0)
+        irBuiltIns.longClass -> builder.irLong(1) to builder.irLong(0)
         else -> error("Unsupported cast from boolean to ${targetClass.owner.name}")
     }
     return builder.irIfThenElse(targetClass.defaultType, value, thenPart, elsePart)
@@ -284,7 +284,7 @@ private fun InteropCallContext.readObjectiveCReferenceFromMemory(
  */
 internal fun tryGenerateInteropMemberAccess(
         callSite: IrCall,
-        symbols: KonanSymbols,
+        symbols: BackendNativeSymbols,
         builder: IrBuilderWithScope,
         failCompilation: (String) -> Nothing
 ): IrExpression? = when {

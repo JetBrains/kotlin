@@ -19,7 +19,7 @@ class AnnotationProcessorDependencyCollectorTest {
         val generated = listOf("GeneratedA.java", "GeneratedB.java", "GeneratedC.java").map { File(it).toURI() }
         generated.forEach { aggregating.add(it, emptyArray(), null) }
 
-        assertEquals(aggregating.getGeneratedToSources(), generated.map { File(it) to null }.toMap())
+        assertEquals(aggregating.getGeneratedToSources(), generated.associate { File(it) to null })
         assertEquals(aggregating.getRuntimeType(), RuntimeProcType.AGGREGATING)
     }
 

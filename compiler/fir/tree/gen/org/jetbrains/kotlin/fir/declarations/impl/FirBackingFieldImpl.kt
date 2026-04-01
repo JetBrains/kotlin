@@ -36,7 +36,6 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
-    override var deprecationsProvider: DeprecationsProvider,
     override val name: Name,
     override val isVar: Boolean,
     override val isVal: Boolean,
@@ -50,6 +49,8 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
         get() = propertySymbol.fir.isLocal
     override val receiverParameter: FirReceiverParameter?
         get() = null
+    override val deprecationsProvider: DeprecationsProvider
+        get() = EmptyDeprecationsProvider
     override val containerSource: DeserializedContainerSource?
         get() = null
     override val dispatchReceiverType: ConeSimpleKotlinType?
@@ -148,9 +149,7 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
 
     override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {}
 
-    override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
-        deprecationsProvider = newDeprecationsProvider
-    }
+    override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {}
 
     override fun replaceContextParameters(newContextParameters: List<FirValueParameter>) {}
 

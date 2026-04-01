@@ -1,4 +1,4 @@
-description 'Kotlin Script Runtime'
+description = 'Kotlin Script Runtime'
 
 apply plugin: 'kotlin'
 

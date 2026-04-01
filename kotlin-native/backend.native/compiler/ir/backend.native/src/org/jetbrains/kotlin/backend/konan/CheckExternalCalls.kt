@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.llvm.StaticData.Global
+import org.jetbrains.kotlin.backend.konan.llvm.objc.OBJC_RETAIN_AUTORELEASED_RETURN_VALUE
 import org.jetbrains.kotlin.library.uniqueName
 
 private fun LLVMValueRef.isLLVMBuiltin(): Boolean {
@@ -34,26 +34,26 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
 
     val getMethodImpl = llvm.externalNativeRuntimeFunction(
             "class_getMethodImplementation",
-            LlvmRetType(pointerType(functionType(llvm.voidType, false)), isObjectType = false),
-            listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(llvm.int8PtrType))
+            LlvmRetType(llvm.pointerType, isObjectType = false),
+            listOf(LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType))
     )
 
     val getClass = llvm.externalNativeRuntimeFunction(
             "object_getClass",
-            LlvmRetType(llvm.int8PtrType, isObjectType = false),
-            listOf(LlvmParamType(llvm.int8PtrType))
+            LlvmRetType(llvm.pointerType, isObjectType = false),
+            listOf(LlvmParamType(llvm.pointerType))
     )
 
     val getSuperClass = llvm.externalNativeRuntimeFunction(
             "class_getSuperclass",
-            LlvmRetType(llvm.int8PtrType, isObjectType = false),
-            listOf(LlvmParamType(llvm.int8PtrType))
+            LlvmRetType(llvm.pointerType, isObjectType = false),
+            listOf(LlvmParamType(llvm.pointerType))
     )
 
     val checkerFunction = llvm.externalNativeRuntimeFunction(
             "Kotlin_mm_checkStateAtExternalFunctionCall",
             LlvmRetType(llvm.voidType, isObjectType = false),
-            listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(llvm.int8PtrType), LlvmParamType(llvm.int8PtrType))
+            listOf(LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType))
     )
 
     private data class ExternalCallInfo(val name: String?, val calledPtr: LLVMValueRef)
@@ -66,7 +66,7 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
             return when {
                 LLVMIsAFunction(value) != null -> {
                     val valueOrSpecial = value.takeIf { !it.isLLVMBuiltin() }
-                            ?: LLVMConstIntToPtr(llvm.int64(CALLED_LLVM_BUILTIN), llvm.int8PtrType)!!
+                            ?: LLVMConstIntToPtr(llvm.int64(CALLED_LLVM_BUILTIN), llvm.pointerType)!!
                     ExternalCallInfo(value.name!!, valueOrSpecial).takeIf { value.isExternalFunction() }
                 }
                 LLVMIsACastInst(value) != null -> cleanCalledFunction(LLVMGetOperand(value, 0)!!)
@@ -97,7 +97,34 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
         for (call in calls) {
             val calleeInfo = call.getPossiblyExternalCalledFunction() ?: continue
             if (calleeInfo.name != null && isGoodFunction(calleeInfo.name)) continue
-            LLVMPositionBuilderBefore(builder, call)
+            val insertionPoint = if (calleeInfo.name == OBJC_RETAIN_AUTORELEASED_RETURN_VALUE) {
+                /*
+                We are about to generate some code around this call.
+                Generating it before the call is harmful:
+                the retainAutoreleasedReturnValue call is supposed to go right after another call,
+                and the latter detects the former and eliminates the matching autorelease operation.
+                Inserting anything in between would break this optimization.
+                So, here we go an alternative way: generate the instrumentation after the call and not before.
+                It is not perfect, but it is safe enough for this particular case, and the easiest option here.
+
+                For simplicity, we support handling here only 'call' instructions and not 'invoke'.
+                (invoke instructions are intertwined with basic blocks, so getting the next instruction requires more code).
+                The function doesn't throw, so nobody should generate "invokes" to it anyway.
+                */
+                check(LLVMIsACallInst(call) != null) { "Expected a call instruction, not invoke: ${llvm2string(call)}" }
+                val nextInstruction = LLVMGetNextInstruction(call)
+                check(nextInstruction != null) { "Expected a next instruction after ${llvm2string(call)}" }
+                nextInstruction
+            } else {
+                /*
+                Generate the instrumentation before the call. It is the safest option. For example,
+                - We check before calling, so we don't call the function if it is not allowed.
+                - For Objective-C method calls, the object is still alive, so we can safely get the method implementation.
+                  (The method itself may be 'release', which might destroy the object).
+                 */
+                call
+            }
+            LLVMPositionBuilderBefore(builder, insertionPoint)
             LLVMBuilderResetDebugLocation(builder)
             val callSiteDescription: String
             val calledName: String?
@@ -108,13 +135,12 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
                     if (LLVMGetNumArgOperands(call) < 2) continue
                     callSiteDescription = "$functionName (over objc_msgSend)"
                     calledName = null
-                    val firstArgI8Ptr = LLVMBuildBitCast(builder, LLVMGetArgOperand(call, 0), llvm.int8PtrType, "")!!
-                    val firstArgClassPtr = getClass.buildCall(builder, listOf(firstArgI8Ptr))
-                    val isNil = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntEQ, firstArgI8Ptr, LLVMConstNull(llvm.int8PtrType), "")
+                    val firstArg = LLVMGetArgOperand(call, 0)!!
+                    val firstArgClassPtr = getClass.buildCall(builder, listOf(firstArg))
+                    val isNil = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntEQ, firstArg, llvm.kNull, "")
                     val selector = LLVMGetArgOperand(call, 1)!!
-                    val calledPtrLlvmIfNotNilFunPtr = getMethodImpl.buildCall(builder, listOf(firstArgClassPtr, selector))
-                    val calledPtrLlvmIfNotNil = LLVMBuildBitCast(builder, calledPtrLlvmIfNotNilFunPtr, llvm.int8PtrType, "")
-                    val calledPtrLlvmIfNil = LLVMConstIntToPtr(llvm.int64(MSG_SEND_TO_NULL), llvm.int8PtrType)
+                    val calledPtrLlvmIfNotNil = getMethodImpl.buildCall(builder, listOf(firstArgClassPtr, selector))
+                    val calledPtrLlvmIfNil = LLVMConstIntToPtr(llvm.int64(MSG_SEND_TO_NULL), llvm.pointerType)
                     calledPtrLlvm = LLVMBuildSelect(builder, isNil, calledPtrLlvmIfNil, calledPtrLlvmIfNotNil, "")!!
                 }
                 "objc_msgSendSuper2" -> {
@@ -124,28 +150,25 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
                     // This is https://developer.apple.com/documentation/objectivec/objc_super?language=objc
                     // We don't want to look this type up, so let's just use our own struct.
                     // TODO: Do we need this with fresh LLVM?
-                    val superStructType = llvm.structType(llvm.int8PtrType, llvm.int8PtrType)
-                    val superStruct = LLVMGetArgOperand(call, 0).run {
-                        LLVMBuildBitCast(builder, this, pointerType(superStructType), "")!!
-                    }
+                    val superStructType = llvm.structType(llvm.pointerType, llvm.pointerType)
+                    val superStruct = LLVMGetArgOperand(call, 0)
                     val superClassPtrPtr = LLVMBuildStructGEP2(builder, superStructType, superStruct, 1, "")
-                    val superClassPtr = LLVMBuildLoad2(builder, llvm.int8PtrType, superClassPtrPtr, "")!!
+                    val superClassPtr = LLVMBuildLoad2(builder, llvm.pointerType, superClassPtrPtr, "")!!
                     val classPtr = getSuperClass.buildCall(builder, listOf(superClassPtr))
-                    val calledPtrLlvmFunPtr = getMethodImpl.buildCall(builder, listOf(classPtr, LLVMGetArgOperand(call, 1)!!))
-                    calledPtrLlvm = LLVMBuildBitCast(builder, calledPtrLlvmFunPtr, llvm.int8PtrType, "")!!
+                    calledPtrLlvm = getMethodImpl.buildCall(builder, listOf(classPtr, LLVMGetArgOperand(call, 1)!!))
                 }
                 else -> {
                     callSiteDescription = functionName
                     calledName = calleeInfo.name
                     calledPtrLlvm = when (val typeKind = LLVMGetTypeKind(calleeInfo.calledPtr.type)) {
-                        LLVMTypeKind.LLVMPointerTypeKind -> LLVMBuildBitCast(builder, calleeInfo.calledPtr, llvm.int8PtrType, "")!!
-                        LLVMTypeKind.LLVMIntegerTypeKind -> LLVMBuildIntToPtr(builder, calleeInfo.calledPtr, llvm.int8PtrType, "")!!
+                        LLVMTypeKind.LLVMPointerTypeKind -> calleeInfo.calledPtr
+                        LLVMTypeKind.LLVMIntegerTypeKind -> LLVMBuildIntToPtr(builder, calleeInfo.calledPtr, llvm.pointerType, "")!!
                         else -> TODO("Unsupported typeKind=${typeKind} of calledPtr=${llvm2string(calleeInfo.calledPtr)}")
                     }
                 }
             }
             val callSiteDescriptionLlvm = llvm.staticData.cStringLiteral(callSiteDescription).llvm
-            val calledNameLlvm = if (calledName == null) LLVMConstNull(llvm.int8PtrType)!! else llvm.staticData.cStringLiteral(calledName).llvm
+            val calledNameLlvm = if (calledName == null) llvm.kNull else llvm.staticData.cStringLiteral(calledName).llvm
             checkerFunction.buildCall(builder, listOf(callSiteDescriptionLlvm, calledNameLlvm, calledPtrLlvm))
         }
         LLVMDisposeBuilder(builder)
@@ -175,6 +198,9 @@ internal fun checkLlvmModuleExternalCalls(generationState: NativeGenerationState
 
     val ignoredFunctions = (llvm.runtimeAnnotationMap["no_external_calls_check"] ?: emptyList())
 
+    // Note: the code for `goodFunctions` assumes that runtime LLVM IR is included in the current module,
+    // which is true only when the compiler caches are disabled.
+    // But this is anyway only an optimization, so it is safe to use the empty list as a fallback.
     val goodFunctions = staticData.getGlobal("Kotlin_callsCheckerGoodFunctionNames")?.getInitializer()?.run {
         getOperands(this).map {
             val global = if (generationState.config.useLlvmOpaquePointers) {
@@ -205,11 +231,11 @@ internal fun addFunctionsListSymbolForChecker(generationState: NativeGenerationS
 
     val functions = getFunctions(llvm.module)
             .filter { !it.isExternalFunction() }
-            .map { constPointer(it).bitcast(llvm.int8PtrType) }
+            .map { constPointer(it) }
             .toList()
 
     val libName = context.config.libraryToCache?.klib?.uniqueName ?: context.config.moduleId
-    staticData.placeGlobalConstArray(libName.knownFunctionsGlobalName, llvm.int8PtrType, functions, isExported = true)
+    staticData.placeGlobalConstArray(libName.knownFunctionsGlobalName, llvm.pointerType, functions, isExported = true)
     staticData.placeGlobal(libName.knownFunctionsCountGlobalName, llvm.constInt32(functions.size), isExported = true)
 
     if (generationState.config.isFinalBinary) {
@@ -217,11 +243,11 @@ internal fun addFunctionsListSymbolForChecker(generationState: NativeGenerationS
                 .filter { context.config.cachedLibraries.isLibraryCached(it) }
                 .map { it.uniqueName } + listOf(libName)
 
-        val allFunctionListsArray = libraryNames.map { it.knownFunctionsGlobalName }.exportedGlobalPointerArray(staticData, llvm.int8PtrPtrType)
-        val allFunctionSizesListsArray = libraryNames.map { it.knownFunctionsCountGlobalName }.exportedGlobalPointerArray(staticData, llvm.int32PtrType)
+        val allFunctionListsArray = llvm.exportedGlobalPointerArray(staticData, libraryNames.map { it.knownFunctionsGlobalName })
+        val allFunctionSizesListsArray = llvm.exportedGlobalPointerArray(staticData, libraryNames.map { it.knownFunctionsCountGlobalName })
 
-        staticData.getOrCreateExportedGlobal(llvm.voidPtrPtrType, functionListGlobal).setInitializer(allFunctionListsArray)
-        staticData.getOrCreateExportedGlobal(llvm.int32PtrPtrType, functionListSizesGlobal).setInitializer(allFunctionSizesListsArray)
+        staticData.getOrCreateExportedGlobal(llvm.pointerType, functionListGlobal).setInitializer(allFunctionListsArray)
+        staticData.getOrCreateExportedGlobal(llvm.pointerType, functionListSizesGlobal).setInitializer(allFunctionSizesListsArray)
         staticData.getOrCreateExportedGlobal(llvm.int32Type, functionListSizesSizeGlobal).setInitializer(llvm.constInt32(libraryNames.size))
     }
     verifyModule(llvm.module)
@@ -237,7 +263,7 @@ private val String.knownFunctionsCountGlobalName
 private fun KotlinStaticData.getOrCreateExportedGlobal(type: LLVMTypeRef, name: String) =
         staticData.getGlobal(name) ?: staticData.createGlobal(type, name, isExported = true)
 
-private fun List<String>.exportedGlobalPointerArray(staticData: KotlinStaticData, elemType: LLVMTypeRef) =
-        staticData.placeGlobalConstArray("", elemType, this.map {
-            staticData.getOrCreateExportedGlobal(elemType, it).pointer.bitcast(elemType)
+private fun CodegenLlvmHelpers.exportedGlobalPointerArray(staticData: KotlinStaticData, values: List<String>) =
+        staticData.placeGlobalConstArray("", pointerType, values.map {
+            staticData.getOrCreateExportedGlobal(pointerType, it).pointer
         })

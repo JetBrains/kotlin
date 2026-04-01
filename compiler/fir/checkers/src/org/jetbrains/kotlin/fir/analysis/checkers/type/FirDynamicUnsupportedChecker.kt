@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 object FirDynamicUnsupportedChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
     const val MESSAGE: String = "Dynamic type is only supported in Kotlin JS."
 
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(typeRef: FirResolvedTypeRef) {
         // It's assumed this checker is only called

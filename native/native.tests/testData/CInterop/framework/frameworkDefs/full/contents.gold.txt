@@ -7,20 +7,26 @@ library {
     package {
 
       public final var pod1: kotlin/Int
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "pod1")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_pod1_getter")
         public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "pod1")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_pod1_setter")
         public final /* non-default */ external set(value: kotlin/Int)
 
       public final var pod1A: kotlin/Int
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "pod1A")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_pod1A_getter")
         public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "pod1A")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod13_pod1A_setter")
         public final /* non-default */ external set(value: kotlin/Int)
 
       public final var pod1_umbrella: kotlin/Int
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "pod1_umbrella")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod14_pod1_umbrella_getter")
         public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "pod1_umbrella")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod15_pod1_umbrella_setter")
         public final /* non-default */ external set(value: kotlin/Int)
     }

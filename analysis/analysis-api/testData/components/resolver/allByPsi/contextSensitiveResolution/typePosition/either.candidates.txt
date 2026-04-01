@@ -269,21 +269,20 @@ KtNameReferenceExpression(314,318): 'Left'
   NO_CANDIDATES
 
 KtNameReferenceExpression(322,329): 'default'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = default
-          receiverType = null
-          returnType = A
-          symbol = default: A
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = default
+        receiverType = null
+        returnType = A
+        symbol = default: A
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -303,50 +302,50 @@ KtNameReferenceExpression(337,342): 'Right'
   NO_CANDIDATES
 
 KtNameReferenceExpression(346,351): 'value'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaImplicitReceiverValue:
-            symbol = KaReceiverParameterSymbol:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
+            receiverParameter: null
+            returnType: KaUsualClassType:
               annotations: []
-              callableId: null
-              compilerVisibility: Public
-              contextReceivers: []
-              isActual: false
-              isExpect: false
-              isExtension: false
-              isVal: true
-              location: LOCAL
-              modality: FINAL
-              name: <receiver>
-              origin: SOURCE
-              owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
-              receiverParameter: null
-              returnType: KaUsualClassType:
-                annotations: []
-                typeArguments: [
-                  KaTypeParameterType:
-                    annotations: []
-                    type: E
-                  KaTypeParameterType:
-                    annotations: []
-                    type: A
-                ]
-                type: Either<E, A>
-              visibility: PUBLIC
-            type = Either<E, A>
-          type = Either.Right<A>
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = A
-          symbol = val value: A
-          contextParameters = []
-          callableId = /Either.Right.value
-      simpleAccess = Read
+              typeArguments: [
+                KaTypeParameterType:
+                  annotations: []
+                  type: E
+                KaTypeParameterType:
+                  annotations: []
+                  type: A
+              ]
+              type: Either<E, A>
+            visibility: PUBLIC
+          type = Either<E, A>
+        type = Either.Right<A>
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = value
+        receiverType = null
+        returnType = A
+        symbol = val value: A
+        contextParameters = []
+        callableId = /Either.Right.value
       typeArgumentsMapping = {}
     isInBestCandidates = true

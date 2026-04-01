@@ -1,7 +1,7 @@
 KT element: KtClass
 KT element text:
 public interface KotlinInterface<T1> : JavaInterface<T1> {
-    public abstract fun doSmth(x: T1 & Any): T1 & Any
+    public abstract fun doSmth(x: T1 & kotlin.Any): T1 & kotlin.Any
 }
 FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind

@@ -22,6 +22,10 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.exists
+import kotlin.io.path.readText
+import kotlin.test.assertTrue
 
 // We temporarily disable it for windows until a proper fix is found for this issue:
 // https://youtrack.jetbrains.com/issue/KT-60138/NativeDownloadAndPlatformLibsIT-fails-on-Windows-OS
@@ -32,7 +36,7 @@ import kotlin.io.path.appendText
 @NativeGradlePluginTests
 @Deprecated(
     message =
-    """
+        """
     This is deprecated test class with regression checks for old downloading logic.
     We support it during migration to kotlin native toolchain.
     If you want to add test here, be sure that you have added similar test with `-Pkotlin.native.toolchain.enabled=true`.
@@ -60,7 +64,8 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
 
 
     // KT-71497: Generation of native distribution is not Configuration Cache friendly
-    private fun BuildOptions.disableConfigurationCacheForNativeDistGeneration() = copy(configurationCache = ConfigurationCacheValue.DISABLED)
+    private fun BuildOptions.disableConfigurationCacheForNativeDistGeneration() =
+        copy(configurationCache = ConfigurationCacheValue.DISABLED)
 
     @AfterEach
     fun afterEach() {
@@ -255,6 +260,48 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
                 assertOutputContains("Unpack Kotlin/Native compiler to ")
                 assertOutputDoesNotContain(generateRegex)
             }
+        }
+    }
+
+    @DisplayName("Test downloadKotlinNativeDistribution task")
+    @GradleTest
+    fun downloadPrebuiltNativeBundleWithTask(gradleVersion: GradleVersion, @TempDir localBuildCacheDir: Path) {
+
+        val buildOptions = defaultBuildOptions.copy(
+            nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                version = TestVersions.Kotlin.STABLE_RELEASE,
+            ),
+            buildCacheEnabled = true
+        )
+
+        nativeProject("native-simple-project", gradleVersion, buildOptions = buildOptions) {
+            enableLocalBuildCache(localBuildCacheDir)
+
+            build(
+                "downloadKotlinNativeDistribution"
+            ) {
+                assertTasksExecuted(":downloadKotlinNativeDistribution")
+            }
+
+            val nativePrebuildPath = Path.of(projectPath.resolve("build/konan.txt").readText())
+            assertTrue(nativePrebuildPath.exists())
+            nativePrebuildPath.startsWith(buildOptions.konanDataDir!!)
+            nativePrebuildPath.deleteRecursively()
+
+            build("clean")
+
+            val konanDir = projectPath.resolve(".konan")
+            build(
+                "downloadKotlinNativeDistribution", buildOptions = buildOptions.copy(
+                    konanDataDir = konanDir
+                )
+            ) {
+                assertTasksExecuted(":downloadKotlinNativeDistribution")
+            }
+
+            val nativePrebuildPathForNewKonanDir = Path.of(projectPath.resolve("build/konan.txt").readText())
+            assertTrue(nativePrebuildPathForNewKonanDir.exists())
+            nativePrebuildPathForNewKonanDir.startsWith(konanDir)
         }
     }
 

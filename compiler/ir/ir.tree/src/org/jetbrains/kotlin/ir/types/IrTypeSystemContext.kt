@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -345,7 +345,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         contextParameterCount: Int,
         attributes: List<AnnotationMarker>?
     ): IrSimpleType {
-        val ourAnnotations = attributes?.memoryOptimizedFilterIsInstance<IrConstructorCall>()
+        val ourAnnotations = attributes?.memoryOptimizedFilterIsInstance<IrAnnotation>()
         require(ourAnnotations?.size == attributes?.size)
         return IrSimpleTypeImpl(
             constructor as IrClassifierSymbol,
@@ -528,10 +528,11 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
 
     override fun newTypeCheckerState(
+        typeSystemContext: TypeSystemContext,
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean,
         dnnTypesEqualToFlexible: Boolean,
-    ): TypeCheckerState = createIrTypeCheckerState(this)
+    ): TypeCheckerState = createIrTypeCheckerState(typeSystemContext)
 
     override fun KotlinTypeMarker.isUninferredParameter(): Boolean = false
     override fun KotlinTypeMarker.withNullability(nullable: Boolean): KotlinTypeMarker {

@@ -123,7 +123,7 @@ fun compileIr(
     val sortedModuleDependencies = irLinker.moduleDependencyTracker.reverseTopoOrder(moduleDependencies)
 
     val allModules = when (mainModule) {
-        is MainModule.SourceFiles -> sortedModuleDependencies.all + listOf(moduleFragment)
+        is MainModule.SourceFiles -> error("Main module must be klib")
         is MainModule.Klib -> sortedModuleDependencies.all
     }
 
@@ -145,7 +145,7 @@ fun compileIr(
             lowerPreservingTags(allModules, context, it)
         } ?: run {
             val phaserState = PhaserState()
-            getJsLowerings(configuration).forEachIndexed { _, lowering ->
+            jsLowerings.forEachIndexed { _, lowering ->
                 allModules.forEach { module ->
                     lowering.invoke(context.phaseConfig, phaserState, context, module)
                 }

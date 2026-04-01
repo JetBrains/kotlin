@@ -1,0 +1,14 @@
+KT element: KtScript
+Resolve target: scriptRepl.repl.kts -> <snippet-scriptRepl.repl.kts>
+FIR:
+  REPL_SNIPPET: <snippet-scriptRepl.repl.kts>
+      public final object ScriptRepl_repl : R|kotlin/Any| {
+          public ScriptRepl_repl.constructor(): R|ScriptRepl_repl| {
+              super<R|kotlin/Any|>()
+          }
+
+          public final fun $$eval(): <implicit> { LAZY_BLOCK }
+
+          public? final? fun scriptFun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+      }

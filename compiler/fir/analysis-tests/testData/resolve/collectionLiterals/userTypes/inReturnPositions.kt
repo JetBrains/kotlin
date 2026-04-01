@@ -14,35 +14,35 @@ fun returnBoolean() = true
 fun <V> myNullableList(): MyList<V>? = null
 fun myNullableListInt() = myNullableList<Int>()
 
-fun returnCollectionWithNoExpectedType() = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>
+fun returnCollectionWithNoExpectedType() = <!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>
 fun returnMyListInt(): MyList<Int> = [1, 2, 3]
 fun <A> returnMyEmptyList(): MyList<A> = []
-fun <B> returnMyListWithStrings(): MyList<B> = <!RETURN_TYPE_MISMATCH!>["1", "2", "3"]<!>
+fun <B> returnMyListWithStrings(): MyList<B> = [<!ARGUMENT_TYPE_MISMATCH!>"1"<!>, <!ARGUMENT_TYPE_MISMATCH!>"2"<!>, <!ARGUMENT_TYPE_MISMATCH!>"3"<!>]
 fun <C> returnMyListOf(c: C): MyList<C> = [c]
 fun returnUnit() {
-    return <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>
+    return <!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>
 }
 fun returnWrappedInRunLike() = runLikeListInt { [1, 2, 3] }
-fun returnWrappedInRunLikeWrongType() = runLikeListInt { <!RETURN_TYPE_MISMATCH!>["1", "2", "3"]<!> }
+fun returnWrappedInRunLikeWrongType() = runLikeListInt { [<!ARGUMENT_TYPE_MISMATCH!>"1"<!>, <!ARGUMENT_TYPE_MISMATCH!>"2"<!>, <!ARGUMENT_TYPE_MISMATCH!>"3"<!>] }
 fun returnWrappedInRunLikeWrongExpectedType(): MyList<String> = <!RETURN_TYPE_MISMATCH!>runLikeListInt { [1, 2, 3] }<!>
-fun returnWrappedInGenericRunLike() = <!CANNOT_INFER_PARAMETER_TYPE!>runLike<!> { <!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[1, 2, 3]<!> }
+fun returnWrappedInGenericRunLike() = runLike { [1, 2, 3] }
 fun returnWrappedInGenericRunLikeWithExpectedType(): MyList<Int> = runLike { [1, 2, 3] }
-fun returnWrappedInGenericRunLikeWithWrongExpectedType(): MyList<String> = runLike { <!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!> }
-fun <D> returnWrappedInGenericRunLikeWithTypeParameter(d: D) = <!CANNOT_INFER_PARAMETER_TYPE!>runLike<!> { <!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[d, d, d]<!> }
+fun returnWrappedInGenericRunLikeWithWrongExpectedType(): MyList<String> = runLike { [<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>] }
+fun <D> returnWrappedInGenericRunLikeWithTypeParameter(d: D) = runLike { [d, d, d] }
 fun <E> returnWrappedInGenericRunLikeWithTypeParameterAndExpectedType(e: E): MyList<E> = runLike { [e, e, e] }
 
 val property: MyList<Int> get() = [1, 2, 3]
-val propertyWithWrongType: MyList<String> get() = <!RETURN_TYPE_MISMATCH!>[1, 2, 3]<!>
+val propertyWithWrongType: MyList<String> get() = [<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>]
 val <F> F.genericProperty: MyList<F> get() = []
-val <G> G.genericPropertyWithStrings: MyList<G> get() = <!RETURN_TYPE_MISMATCH!>["1", "2", "3"]<!>
+val <G> G.genericPropertyWithStrings: MyList<G> get() = [<!ARGUMENT_TYPE_MISMATCH!>"1"<!>, <!ARGUMENT_TYPE_MISMATCH!>"2"<!>, <!ARGUMENT_TYPE_MISMATCH!>"3"<!>]
 
 fun returnIfElse(): MyList<Any> = if (returnBoolean()) [1, 2, 3] else ["1", "2", "3"]
-fun returnIfElseWithWrongExpectedType(): MyList<Int> = <!RETURN_TYPE_MISMATCH!>if (returnBoolean()) [1, 2, 3] else ["1", "2", "3"]<!>
+fun returnIfElseWithWrongExpectedType(): MyList<Int> = if (returnBoolean()) [1, 2, 3] else [<!ARGUMENT_TYPE_MISMATCH!>"1"<!>, <!ARGUMENT_TYPE_MISMATCH!>"2"<!>, <!ARGUMENT_TYPE_MISMATCH!>"3"<!>]
 fun <H> returnIfElseWithGenericExpectedType(h: H): MyList<H> = if (returnBoolean()) [] else [h]
 fun returnIfElseWithRunLike(): MyList<Int> = if (returnBoolean()) runLike { [1, 2, 3] } else runLikeListInt { [] }
 
 fun returnInElvis(): MyList<Int> = myNullableList() ?: []
-fun returnInElvisNoExpectedType() = <!CANNOT_INFER_PARAMETER_TYPE!>myNullableList<!>() ?: <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>
+fun returnInElvisNoExpectedType() = <!CANNOT_INFER_PARAMETER_TYPE!>myNullableList<!>() ?: <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>
 fun returnInElvisListInt() = myNullableListInt() ?: []
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, elvisExpression, functionDeclaration, functionalType, getter,

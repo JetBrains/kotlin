@@ -1,6 +1,6 @@
 FILE: scriptStatementLevelDestructuringWithAnnotation.kts
     SCRIPT: <script-scriptStatementLevelDestructuringWithAnnotation.kts>
 
-        init { LAZY_BLOCK }
+        [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }

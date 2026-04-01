@@ -128,7 +128,8 @@ tasks.withType<Test>().configureEach {
                     )
                 } else if (file.extension == "jar") {
                     listOf(
-                        """permission java.io.FilePermission "${file.absolutePath}", "read";""",
+                        // JvmCompilationUtils.compileJavaFiles uses embedded javaCompiler if no jdkHome is set, and it opens dependencies
+                        """permission java.io.FilePermission "${file.absolutePath}", "read,write";""",
                         """permission java.io.FilePermission "${file.absolutePath}/-", "read";""",
                         """permission java.io.FilePermission "${file.parentFile.absolutePath}", "read";""",
                     )
@@ -143,12 +144,12 @@ tasks.withType<Test>().configureEach {
                         """permission java.io.FilePermission "${file.parentFile.absolutePath}/-", "read,write";""",
                         """permission java.io.FilePermission "${file.parentFile.absolutePath}", "read";""",
                     )
-                } else if (file != null) {
+                } else {
                     val parents = parentsReadPermission(file)
                     listOf(
                         """permission java.io.FilePermission "${file.absolutePath}", "read";""",
                     ) + parents
-                } else emptyList()
+                }
             }
 
             val allPermissionsForGradleRoDepCache = System.getenv("GRADLE_RO_DEP_CACHE")?.let {
@@ -199,11 +200,15 @@ tasks.withType<Test>().configureEach {
                                     """permission java.net.SocketPermission "download.jetbrains.com:443", "connect,resolve";""", // DependencyDownloader.kt
                                     """permission java.net.SocketPermission "download-cdn.jetbrains.com:443", "connect,resolve";""", // DependencyDownloader.kt
                                     """permission java.net.SocketPermission "repo.labs.intellij.net:443", "connect,resolve";""", // DependencyDownloader.kt
+                                    // add link permission to load `libcallbacks.dylib`, via possible invocation of `JvmUtilsKt.createTempDirWithLibrary()` which invokes `Files.createLink()`
+                                    // This happens in case of `catch (e: UnsatisfiedLinkError)` in `JvmUtilsKt.tryLoadKonanLibrary()`
+                                    // with message `Native Library <...>/kotlin-native/dist/konan/nativelib/libcallbacks.dylib already loaded in another classloader`
+                                    """permission java.nio.file.LinkPermission "hard";""",
                                 )
                                 if (nativeHome.isPresent) {
                                     konanPermissions.add("""permission java.io.FilePermission "${nativeHome.get()}/-" , "read,write,delete";""")
                                 }
-                                if (testInputsCheck.useXcode.get()) {
+                                if (OperatingSystem.current().isMacOsX) {
                                     // Should we consider those files inputs? I need to think about the execute permission
                                     // in any case I need to check where those paths come from to avoid hardcoding
                                     konanPermissions.addAll(
@@ -232,6 +237,14 @@ tasks.withType<Test>().configureEach {
                                 """permission java.io.FilePermission "${getJDKFromToolchain(service, version)}/-", "read,execute";"""
                             }).joinToString("\n    ")
                         )
+                        .replace(
+                            "{{flight_recorder}}",
+                            buildString {
+                                if (testInputsCheck.allowFlightRecorder.get()) {
+                                    append("""permission jdk.jfr.FlightRecorderPermission "registerEvent";""")
+                                }
+                            }
+                        )
                         .replace("{{gradle_user_home}}", """$gradleUserHomeDir""")
                         .replace("{{all_permissions_for_gradle_ro_dep_cache}}", allPermissionsForGradleRoDepCache ?: "")
                         .replace(
@@ -256,6 +269,18 @@ tasks.withType<Test>().configureEach {
                                     append("""permission java.io.FilePermission "${it.get()}", "execute";""")
                                 }
                             }
+                        )
+                        .replace(
+                            "{{js}}",
+                            buildString {
+                                d8Executable?.let {
+                                    append("""permission java.io.FilePermission "${it.get()}", "execute";""")
+                                }
+                            }
+                        )
+                        .replace(
+                            "{{extra_permissions}}",
+                            testInputsCheck.extraPermissions.get().joinToString("\n")
                         )
 
                 )

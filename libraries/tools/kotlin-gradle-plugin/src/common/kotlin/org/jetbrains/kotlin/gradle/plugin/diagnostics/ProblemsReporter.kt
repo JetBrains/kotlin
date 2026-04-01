@@ -11,7 +11,9 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.problems.*
 import org.gradle.internal.cc.base.logger
 import org.jetbrains.kotlin.gradle.plugin.VariantImplementationFactories
+import org.jetbrains.kotlin.gradle.utils.decamelize
 import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import javax.inject.Inject
 
 internal interface ProblemsReporter {
@@ -46,11 +48,11 @@ internal fun ProblemReporter.report(
     try {
         when (renderedDiagnostic) {
             is ReportedDiagnostic.Message -> report(
-                ProblemId.create(diagnostic.id, diagnostic.name, diagnostic.group.toProblemGroup())
+                ProblemId.create(diagnostic.id.decamelize(), diagnostic.name, diagnostic.group.toProblemGroup())
             ) { fillSpec(it, null) }
             is ReportedDiagnostic.Throwable -> throwing(
                 renderedDiagnostic.throwable,
-                ProblemId.create(diagnostic.id, diagnostic.name, diagnostic.group.toProblemGroup())
+                ProblemId.create(diagnostic.id.decamelize(), diagnostic.name, diagnostic.group.toProblemGroup())
             ) { fillSpec(it, renderedDiagnostic.throwable) }
         }
     } catch (e: NoSuchMethodError) {
@@ -106,7 +108,7 @@ internal fun ProblemSpec.defaultSpecConfiguration(diagnostic: ToolingDiagnostic,
 
 // Create own implementation of ProblemGroup. In gradle 8.13 there will be a static factory method for creating ProblemGroup
 internal fun DiagnosticGroup.toProblemGroup(): ProblemGroup = ProblemGroup.create(
-    groupId,
+    groupId.toLowerCaseAsciiOnly(),
     displayName,
     parent?.toProblemGroup()
 )

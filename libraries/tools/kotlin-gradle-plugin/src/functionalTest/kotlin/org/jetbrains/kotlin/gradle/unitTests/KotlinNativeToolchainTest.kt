@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.Assume
+import org.junit.jupiter.api.Assumptions
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -63,7 +63,7 @@ class KotlinNativeToolchainTest {
 
     private fun prepareProjectWithEnabledKlibsCrossCompilation(): Project {
         // we support all apple targets on MacOs, so this test should run only on Windows and Linux
-        Assume.assumeTrue(!HostManager.hostIsMac)
+        Assumptions.assumeTrue(!HostManager.hostIsMac)
 
         val project = buildProjectWithMPP {
             setUpKotlinNativeToolchainWithStableVersion()

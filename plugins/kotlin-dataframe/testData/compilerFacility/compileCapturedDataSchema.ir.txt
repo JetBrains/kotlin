@@ -1,0 +1,25 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:fragment.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL returnType:org.jetbrains.kotlinx.dataframe.DataFrame<test.SourceKt.test.test$lambda$0.DataFrameOf_84>
+        VALUE_PARAMETER kind:Regular name:p0 index:0 type:org.jetbrains.kotlinx.dataframe.DataFrame<test.SourceKt.test.test$lambda$0.DataFrameOf_84>
+        EXPRESSION_BODY
+          BLOCK type=org.jetbrains.kotlinx.dataframe.DataFrame<test.SourceKt.test.test$lambda$0.DataFrameOf_84> origin=null
+            CALL 'public final fun filter <T> (<this>: org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.filter>, predicate: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.DataRow<T of org.jetbrains.kotlinx.dataframe.api.filter>, @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.DataRow<T of org.jetbrains.kotlinx.dataframe.api.filter>, kotlin.Boolean>): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.filter> [inline] declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<test.SourceKt.test.test$lambda$0.DataFrameOf_84> origin=null
+              TYPE_ARG T: test.SourceKt.test.test$lambda$0.DataFrameOf_84
+              ARG <this>: GET_VAR 'p0: org.jetbrains.kotlinx.dataframe.DataFrame<test.SourceKt.test.test$lambda$0.DataFrameOf_84> declared in <root>.CodeFragment.run' type=org.jetbrains.kotlinx.dataframe.DataFrame<test.SourceKt.test.test$lambda$0.DataFrameOf_84> origin=null
+              ARG predicate: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.DataRow<test.SourceKt.test.test$lambda$0.DataFrameOf_84>, org.jetbrains.kotlinx.dataframe.DataRow<test.SourceKt.test.test$lambda$0.DataFrameOf_84>, kotlin.Boolean> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Boolean
+                  VALUE_PARAMETER kind:ExtensionReceiver name:$this$filter index:0 type:org.jetbrains.kotlinx.dataframe.DataRow<test.SourceKt.test.test$lambda$0.DataFrameOf_84>
+                  VALUE_PARAMETER kind:Regular name:it index:1 type:org.jetbrains.kotlinx.dataframe.DataRow<test.SourceKt.test.test$lambda$0.DataFrameOf_84>
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun <anonymous> ($this$filter: org.jetbrains.kotlinx.dataframe.DataRow<test.SourceKt.test.test$lambda$0.DataFrameOf_84>, it: org.jetbrains.kotlinx.dataframe.DataRow<test.SourceKt.test.test$lambda$0.DataFrameOf_84>): kotlin.Boolean declared in <root>.CodeFragment.run'
+                      CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                        ARG arg0: CALL 'public final fun <get-col> (<this>: org.jetbrains.kotlinx.dataframe.DataRow<test.SourceKt.test.test$lambda$0.DataFrameOf_84I>): kotlin.Int declared in test.SourceKt.test.test$lambda$0.Scope0' type=kotlin.Int origin=GET_PROPERTY
+                          ARG <this>(index:0): CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.SourceKt.test.test$lambda$0.Scope0' type=test.SourceKt.test.test$lambda$0.Scope0 origin=null
+                          ARG <this>(index:1): GET_VAR '$this$filter: org.jetbrains.kotlinx.dataframe.DataRow<test.SourceKt.test.test$lambda$0.DataFrameOf_84> declared in <root>.CodeFragment.run.<anonymous>' type=org.jetbrains.kotlinx.dataframe.DataRow<test.SourceKt.test.test$lambda$0.DataFrameOf_84> origin=IMPLICIT_ARGUMENT
+                        ARG arg1: CONST Int type=kotlin.Int value=1

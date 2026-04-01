@@ -38,7 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] smartCastProperty.kt
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit| {
             when () {
                 (R|<local>/c| is R|kotlin/Int|) ->  {
-                    context(R|<local>/c|) R|/bar|()
+                    <Ambiguity: bar, [/bar, /bar]>#()
                 }
             }
 

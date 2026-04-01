@@ -1,6 +1,6 @@
 // WITH_STDLIB
-// JVM_ABI_K1_K2_DIFF: KT-63984
 
+// FILE: lib.kt
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 class ArrayDeque<E> : AbstractMutableList<E> {
     private var head: Int = 0
@@ -105,7 +105,7 @@ class ArrayDeque<E> : AbstractMutableList<E> {
     }
 }
 
-
+// FILE: main.kt
 fun box(): String {
     val ad = ArrayDeque(listOf("X", "Z", "O", "K"))
     ad.removeAll(listOf("X", "Z"))

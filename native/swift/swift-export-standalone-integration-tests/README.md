@@ -15,4 +15,5 @@ To update test data in bulk, use the following command:
 ```
 ./gradlew :native:swift:swift-export-standalone-integration-tests:external:test --tests "org.jetbrains.kotlin.swiftexport.standalone.test.ExternalProjectGenerationTests" -Pkotlin.test.update.test.data=true
 ./gradlew :native:swift:swift-export-standalone-integration-tests:simple:test --tests "org.jetbrains.kotlin.swiftexport.standalone.test.SwiftExportWithResultValidationTest" -Pkotlin.test.update.test.data=true
+./gradlew :native:swift:swift-export-standalone-integration-tests:coroutines:test --tests "org.jetbrains.kotlin.swiftexport.standalone.test.SwiftExportCoroutinesWithResultValidationTest" -Pkotlin.test.update.test.data=true
 ```

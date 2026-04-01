@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.inline
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.lower.inline.KlibSyntheticAccessorGenerator
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ExplicitApiMode
@@ -38,6 +39,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * - It's not designed to work with the JVM backend because the visibility rules on JVM are stricter.
  * - By the point it's executed, all _private_ inline functions have already been inlined.
  */
+@PhasePrerequisites(
+    OuterThisInInlineFunctionsSpecialAccessorLowering::class,
+    FunctionInlining::class, // only private inlining is required
+)
 class SyntheticAccessorLowering(private val context: LoweringContext, isExecutedOnFirstPhase: Boolean = false) : FileLoweringPass {
     /**
      * Whether the visibility of a generated accessor should be narrowed from _public_ to _internal_ if an accessor is only used

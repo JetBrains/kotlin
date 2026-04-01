@@ -5,7 +5,6 @@ description = "Kotlin \"main\" script definition"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 val jarBaseName = the<BasePluginExtension>().archivesName
@@ -22,14 +21,8 @@ val proguardLibraryJars by configurations.creating {
     }
 }
 
-val embedded by configurations
-
-val relocatedJarContents by configurations.creating {
-    extendsFrom(embedded)
-}
-
 dependencies {
-    compileOnly(project(":compiler:cli-common"))
+    compileOnly(project(":compiler:cli-base"))
     compileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
     compileOnly(project(":kotlin-scripting-dependencies-maven"))
     runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
@@ -53,8 +46,6 @@ dependencies {
     proguardLibraryJars(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     proguardLibraryJars(project(":kotlin-compiler"))
 
-    relocatedJarContents(mainSourceSet.output)
-
     testImplementation(project(":kotlin-scripting-dependencies"))
     testImplementation(libs.junit4)
 }
@@ -68,8 +59,10 @@ publish()
 
 noDefaultJar()
 
+val embeddedConfiguration = configurations.named("embedded")
 val relocatedJar by task<ShadowJar> {
-    configurations = listOf(relocatedJarContents)
+    configurations.set(setOf(embeddedConfiguration.get()))
+    from(mainSourceSet.output)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDirectory.set(layout.buildDirectory.dir("libs"))
     archiveClassifier.set("before-proguard")

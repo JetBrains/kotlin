@@ -8,6 +8,7 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 /** Concat regular Array's and TypedArray's into an Array.
  */
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <T> arrayConcat(vararg args: T): T {
     val len = args.size
     val typed = js("Array(len)").unsafeCast<Array<T>>()
@@ -25,6 +26,7 @@ internal fun <T> arrayConcat(vararg args: T): T {
 /** Concat primitive arrays. Main use: prepare vararg arguments.
  */
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <T> primitiveArrayConcat(vararg args: T): T {
     var size_local = 0
     for (i in 0 .. (args.size - 1)) {

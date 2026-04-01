@@ -12,7 +12,7 @@ public @interface JavaAnn {
 }
 
 // FILE: test.kt
-@<!INAPPLICABLE_ALL_TARGET!>all<!>:Default
+@<!INAPPLICABLE_ALL_TARGET("elements other than properties")!>all<!>:Default
 package p
 
 import JavaAnn
@@ -46,7 +46,7 @@ annotation class Default
 @Target(AnnotationTarget.CLASS)
 annotation class Inapplicable
 
-@<!INAPPLICABLE_ALL_TARGET!>all<!>:Default
+@<!INAPPLICABLE_ALL_TARGET("elements other than properties")!>all<!>:Default
 class My(
     @all:ParamOnly
     @all:ParamProperty
@@ -74,7 +74,7 @@ class My(
     @all:JavaAnn
     var varFromConstructor: Int,
 
-    @<!INAPPLICABLE_ALL_TARGET!>all<!>:Default
+    @<!INAPPLICABLE_ALL_TARGET("constructor parameters without corresponding property (consider adding val/var)")!>all<!>:Default
     param: Int,
 ) {
     <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@all:ParamOnly<!>
@@ -175,22 +175,22 @@ class My(
         get() = 6
         set(param) {}
 
-    @<!INAPPLICABLE_ALL_TARGET!>all<!>:ParamOnly
-    @<!INAPPLICABLE_ALL_TARGET!>all<!>:ParamProperty
-    @<!INAPPLICABLE_ALL_TARGET!>all<!>:ParamField
-    @<!INAPPLICABLE_ALL_TARGET!>all<!>:PropertyField
-    @<!INAPPLICABLE_ALL_TARGET!>all<!>:ParamPropertyField
-    @<!INAPPLICABLE_ALL_TARGET!>all<!>:GetterSetter
-    @<!INAPPLICABLE_ALL_TARGET!>all<!>:ParamGetter
-    @<!INAPPLICABLE_ALL_TARGET!>all<!>:ParamGetterSetter
-    @<!INAPPLICABLE_ALL_TARGET!>all<!>:Default
-    @<!INAPPLICABLE_ALL_TARGET!>all<!>:Inapplicable
-    @<!INAPPLICABLE_ALL_TARGET!>all<!>:JavaAnn
+    @<!INAPPLICABLE_ALL_TARGET("delegated properties")!>all<!>:ParamOnly
+    @<!INAPPLICABLE_ALL_TARGET("delegated properties")!>all<!>:ParamProperty
+    @<!INAPPLICABLE_ALL_TARGET("delegated properties")!>all<!>:ParamField
+    @<!INAPPLICABLE_ALL_TARGET("delegated properties")!>all<!>:PropertyField
+    @<!INAPPLICABLE_ALL_TARGET("delegated properties")!>all<!>:ParamPropertyField
+    @<!INAPPLICABLE_ALL_TARGET("delegated properties")!>all<!>:GetterSetter
+    @<!INAPPLICABLE_ALL_TARGET("delegated properties")!>all<!>:ParamGetter
+    @<!INAPPLICABLE_ALL_TARGET("delegated properties")!>all<!>:ParamGetterSetter
+    @<!INAPPLICABLE_ALL_TARGET("delegated properties")!>all<!>:Default
+    @<!INAPPLICABLE_ALL_TARGET("delegated properties")!>all<!>:Inapplicable
+    @<!INAPPLICABLE_ALL_TARGET("delegated properties")!>all<!>:JavaAnn
     val delegatedVal: Int by lazy { 7 }
 
-    @<!INAPPLICABLE_ALL_TARGET!>all<!>:Default
-    fun foo(@<!INAPPLICABLE_ALL_TARGET!>all<!>:Default param: Int): <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@all:Default<!> Int {
-        @<!INAPPLICABLE_ALL_TARGET!>all<!>:Default val x = 8
+    @<!INAPPLICABLE_ALL_TARGET("elements other than properties")!>all<!>:Default
+    fun foo(@<!INAPPLICABLE_ALL_TARGET("value parameters, only properties are allowed")!>all<!>:Default param: Int): <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@all:Default<!> Int {
+        @<!INAPPLICABLE_ALL_TARGET("local properties, only member or top-level properties are allowed")!>all<!>:Default val x = 8
         val y = <!WRONG_ANNOTATION_TARGET!>@all:Default<!> x
         val z = object {
             @all:Default val bar: Int = 0
@@ -198,12 +198,12 @@ class My(
         return y
     }
 
-    @<!INAPPLICABLE_ALL_TARGET!>all<!>:Default
-    constructor(@<!INAPPLICABLE_ALL_TARGET!>all<!>:Default param: Int): this(0, 1, 2)
+    @<!INAPPLICABLE_ALL_TARGET("elements other than properties")!>all<!>:Default
+    constructor(@<!INAPPLICABLE_ALL_TARGET("constructor parameters without corresponding property (consider adding val/var)")!>all<!>:Default param: Int): this(0, 1, 2)
 
     var withIllegal: Int = 9
-        @<!INAPPLICABLE_ALL_TARGET!>all<!>:Default get() = field
-        @<!INAPPLICABLE_ALL_TARGET!>all<!>:Default set(@<!INAPPLICABLE_ALL_TARGET!>all<!>:Default param) {}
+        @<!INAPPLICABLE_ALL_TARGET("elements other than properties")!>all<!>:Default get() = field
+        @<!INAPPLICABLE_ALL_TARGET("elements other than properties")!>all<!>:Default set(@<!INAPPLICABLE_ALL_TARGET!>all<!>:Default param) {}
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetAll, anonymousObjectExpression, classDeclaration,

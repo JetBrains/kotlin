@@ -55,10 +55,7 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
             }
             build(
                 "build",
-                buildOptions = defaultBuildOptions.copy(
-                    // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                    isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-                )
+                buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
             )
         }
     }
@@ -68,22 +65,20 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
     @DisplayName("works in MPP") // aka KT-56131
     fun testBrokenTcaInMpp(gradleVersion: GradleVersion) {
         project("new-mpp-lib-with-tests", gradleVersion) {
-            assert("apply plugin: 'kotlin-multiplatform'" in buildGradle.readText())
+            assert("id(\"org.jetbrains.kotlin.multiplatform\")" in buildGradle.readText())
+            assert(("group = 'com.example'") in buildGradle.readText())
             buildGradle.modify {
                 it.replace(
-                    "apply plugin: 'kotlin-multiplatform'",
+                    "group = 'com.example'",
                     """
                         tasks.whenTaskAdded {} // break lazy initialization of all tasks
-                        apply plugin: 'kotlin-multiplatform'
+                        group = 'com.example'
                     """.trimIndent()
                 )
             }
             build(
                 "build",
-                buildOptions = defaultBuildOptions.copy(
-                    // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                    isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-                )
+                buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
             )
         }
     }
@@ -102,10 +97,7 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
             )
             build(
                 "build",
-                buildOptions = defaultBuildOptions.copy(
-                    // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                    isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-                )
+                buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
             ) {
                 assertDirectoryInProjectDoesNotExist("build")
 

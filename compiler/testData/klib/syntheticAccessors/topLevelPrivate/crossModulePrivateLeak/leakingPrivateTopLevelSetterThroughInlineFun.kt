@@ -1,4 +1,3 @@
-// JVM_ABI_K1_K2_DIFF
 // MODULE: lib
 // FILE: a.kt
 var privateSetterVarA = 0

@@ -2,5 +2,6 @@ KtOperationReferenceExpression(184,186): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Child) override operator fun equals(other: kotlin.Any?): kotlin.Boolean

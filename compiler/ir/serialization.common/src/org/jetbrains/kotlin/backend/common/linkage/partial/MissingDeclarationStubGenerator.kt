@@ -35,14 +35,13 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
         createEmptyExternalPackageFragment(ErrorUtils.errorModule, FqName.ROOT)
     }
 
-    private val stubbedSymbols = hashSetOf<IrSymbol>()
-
-    val allStubbedSymbols: Set<IrSymbol> get() = stubbedSymbols
+    val allStubbedSymbols: Set<IrSymbol>
+        field = hashSetOf<IrSymbol>()
 
     fun getDeclaration(symbol: IrSymbol): IrDeclaration {
         require(!symbol.isBound)
 
-        stubbedSymbols.add(symbol)
+        allStubbedSymbols.add(symbol)
 
         return when (symbol) {
             is IrClassSymbol -> generateClass(symbol)

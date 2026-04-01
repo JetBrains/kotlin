@@ -8,18 +8,18 @@ package org.jetbrains.kotlin.gradle.unitTests.uklibs
 import org.jetbrains.kotlin.gradle.testing.generateFixtureIfMissing
 import org.jetbrains.kotlin.gradle.unitTests.uklibs.GradleMetadataComponent.Variant
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectoriesIgnoringDotFiles
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
-import org.junit.Test
+import org.junit.jupiter.api.io.TempDir
+import kotlin.test.Test
+import java.io.File
 
 class GenerateMockRepositoryTest {
 
-    @get:Rule
-    val temporaryFolder = TemporaryFolder()
+    @field:TempDir
+    lateinit var temporaryFolder: File
 
     @Test
     fun test() {
-        val expected = java.io.File(System.getProperty("resourcesPath")).resolve("GenerateMockRepositoryTest")
+        val expected = File(System.getProperty("resourcesPath")).resolve("GenerateMockRepositoryTest")
         val generated = generateMockRepository(
             temporaryFolder,
             gradleComponents = listOf(

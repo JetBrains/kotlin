@@ -787,7 +787,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 atWhenStart.setCustomEdgeTokenBinders(PrecedingDocCommentsBinder.INSTANCE, TrailingCommentsBinder.INSTANCE);
             }
             else {
-                atWhenStart.drop();
+                atWhenStart.rollbackTo();
                 parseExpression();
             }
 

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.konan.InteropFqNames
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
-import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
@@ -46,7 +45,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal interface KotlinStubs {
     val irBuiltIns: IrBuiltIns
     val typeSystem: IrTypeSystemContext
-    val symbols: KonanSymbols
+    val symbols: BackendNativeSymbols
     val target: KonanTarget
     val language: String
 
@@ -81,7 +80,8 @@ private class KotlinToCCallBuilder(
 
     val cBridgeName = stubs.getUniqueCName("knbridge")
 
-    val symbols: KonanSymbols get() = stubs.symbols
+    val symbols: BackendNativeSymbols get() = stubs.symbols
+    val irBuiltIns: IrBuiltIns get() = stubs.irBuiltIns
 
     val bridgeCallBuilder = KotlinCallBuilder(irBuilder, symbols)
     val bridgeBuilder = KotlinCBridgeBuilder(irBuilder.startOffset, irBuilder.endOffset, cBridgeName, stubs, isKotlinToC = true, foreignExceptionMode)
@@ -240,6 +240,126 @@ internal fun KotlinStubs.generateCCall(
     return result
 }
 
+internal fun KotlinStubs.generateCGlobalDirectAccess(
+        expression: IrCall, builder: IrBuilderWithScope,
+        foreignExceptionMode: ForeignExceptionMode.Mode = ForeignExceptionMode.default
+): IrExpression {
+    val callBuilder = KotlinToCCallBuilder(builder, this, isObjCMethod = false, foreignExceptionMode)
+
+    val callee = expression.symbol.owner
+    check(callee.isAccessor) { callee.render() }
+
+    // Indicates that this getter returns not a value of the global, but a pointer to the global.
+    val isPointer = callee.hasAnnotation(RuntimeNames.cGlobalAccessPointer)
+
+    // Describes how to pass the getter result or the setter argument between C and Kotlin.
+    val valuePassing = if (isPointer) {
+        check(callee.isGetter) { callee.render() }
+        // The generated stub body is going to declare the global type as `char`,
+        // so we need to return `char*` to Kotlin.
+        val cType = CTypes.pointer(CTypes.char)
+        TrivialValuePassing(callee.returnType, cType)
+    } else {
+        // Extract the Kotlin property type:
+        val type = callee.correspondingPropertySymbol?.owner?.getter?.returnType ?: error(callee.render())
+
+        callBuilder.state.mapType(
+                type,
+                retained = false,
+                variadic = false,
+                location = expression,
+        )
+    }
+
+    // Now we declare the C global and generate the access.
+
+    val globalCType = if (isPointer) {
+        // We are going to use only the pointer to the global, so we can declare the global with any type,
+        // not necessarily matching its original type as parsed in cinterop.
+        // `char` is fine and simple:
+        CTypes.char
+    } else {
+        valuePassing.cType
+    }
+
+    // Now we declare the actual global using a generated unique name and specifying the real binary name with the
+    // `__asm` attribute.
+    // The reasoning and consequences are basically the same as in `generateCCall(direct = true)`.
+    val globalName = this.getUniqueCName("targetGlobal")
+    val globalSymbolName = callee.getAnnotationArgumentValue<String>(RuntimeNames.cGlobalAccess, "name")!!
+    val globalSymbolNameLiteral = quoteAsCStringLiteral(globalSymbolName)
+    callBuilder.state.addC(listOf("extern ${globalCType.render(globalName)} __asm($globalSymbolNameLiteral);"))
+
+    // And now generate the actual access and pass the value between C and Kotlin:
+    val result: IrExpression = when {
+        isPointer -> with(valuePassing) {
+            check(expression.arguments.isEmpty()) { expression.dump() }
+            callBuilder.returnValue("&$globalName")
+        }
+        callee.isGetter -> with(valuePassing) {
+            check(expression.arguments.isEmpty()) { expression.dump() }
+            callBuilder.returnValue(globalName)
+            // A great hack is hidden here.
+            // For Objective-C references, `valuePassing` is an `ObjCReferenceValuePassing`.
+            // It uses `void*` as its `cType`, and not an `id`.
+            // It means that the stub has a read of a `void*` global and the Obj-C compiler doesn't involve any ARC.
+            // Luckily, we don't need it here: the Kotlin code calling the C stub is going to immediately do proper
+            // retaining (see `ObjCReferenceValuePassing.bridgedToKotlin`).
+            //
+            // We could theoretically rework ObjCReferenceValuePassing instead and make it use `id`.
+            // But that's undesirable, because:
+            // 1. The change would affect other (non-experimental) usages of it, prompting additional verification.
+            // 2. For all usages no ARC is actually needed, so we would need to rely on Clang optimizations to keep
+            //    the compiled stubs ARC-free.
+            //
+            // TODO: KT-82011 a global with Objective-C reference type may have a non-strong ownership,
+            //  which requires different handling here.
+        }
+        callee.isSetter -> {
+            val kotlinValue = expression.arguments.singleOrNull() ?: error(expression.dump())
+            val cValue = with(valuePassing) {
+                callBuilder.passValue(kotlinValue) ?: error(expression.dump())
+            }
+            val assignment = if (valuePassing is ObjCReferenceValuePassing) {
+                // Now things are getting tricky.
+                // For handling Obj-C reference getters above, we didn't need any ARC,
+                // so we could continue using `void*` as is.
+                // But the setter writes the value into the global, which does require ARC:
+                // we need to release the old value and retain the new value.
+                //
+                // Of all different ways to achieve that, this one seems the easiest:
+                // cast the global pointer to `__strong id*`, cast the value to `id`, do the store.
+                // That way we delegate all the necessary ARC to Clang without affecting other usages of
+                // `ObjCReferenceValuePassing`.
+                //
+                // When casting the global pointer, we need to cast it to `void*` first,
+                // since Clang prohibits casting `void**` to `id*`.
+                check(globalCType == CTypes.voidPtr && cValue.type == CTypes.voidPtr) { callee.render() }
+                " *(__strong id *)(void*)&$globalName = (__bridge id)(${cValue.expression});"
+                // TODO: KT-82011 a global with Objective-C reference type may have a non-strong ownership,
+                //  which requires different handling here.
+            } else {
+                "$globalName = ${cValue.expression};"
+            }
+            with(VoidReturning) {
+                callBuilder.returnValue(assignment)
+            }
+        }
+        else -> {
+            error(callee.render())
+        }
+    }
+
+    val libraryName = callee.getPackageFragment().konanLibrary.let {
+        require(it?.isCInteropLibrary() == true) { "Expected a function from a cinterop library: ${callee.render()}" }
+        it.uniqueName
+    }
+
+    callBuilder.finishBuilding(libraryName)
+
+    return result
+}
+
 private fun KotlinToCCallBuilder.addArguments(arguments: List<IrExpression?>, callee: IrFunction) {
     val parameters = callee.parameters.filter { it.kind == IrParameterKind.Regular }
     arguments.forEachIndexed { index, argument ->
@@ -269,7 +389,7 @@ private fun KotlinToCCallBuilder.addVariadicArguments(
         with(irBuilder) {
             val argumentTypes = unwrapVariadicArguments(elements).map { it.type }
             argumentTypes.forEachIndexed { index, type ->
-                val argument = irCall(symbols.arrayGet[symbols.array]!!, symbols.any.defaultType.makeNullable()).apply {
+                val argument = irCall(symbols.arrayGet[irBuiltIns.arrayClass]!!, irBuiltIns.anyClass.defaultType.makeNullable()).apply {
                     arguments[0] = irGet(variable)
                     arguments[1] = irInt(index)
                 }.implicitCastIfNeededTo(type)
@@ -286,7 +406,7 @@ private fun KotlinToCCallBuilder.unwrapVariadicArguments(
         is IrExpression -> listOf(it)
         is IrSpreadElement -> {
             val expression = it.expression
-            require(expression is IrCall && expression.symbol == symbols.arrayOf) { stubs.renderCompilerError(it) }
+            require(expression is IrCall && expression.symbol == irBuiltIns.arrayOf) { stubs.renderCompilerError(it) }
             handleArgumentForVarargParameter(expression.arguments[0]) { _, elements ->
                 unwrapVariadicArguments(elements)
             }
@@ -493,12 +613,12 @@ internal fun KotlinStubs.generateObjCCall(
     +result
 }
 
-internal fun IrBuilderWithScope.getObjCClass(symbols: KonanSymbols, symbol: IrClassSymbol): IrExpression {
+internal fun IrBuilderWithScope.getObjCClass(symbols: BackendNativeSymbols, symbol: IrClassSymbol): IrExpression {
     require(!symbol.owner.isObjCMetaClass())
     return irCall(symbols.interopGetObjCClass, symbols.nativePtrType, listOf(symbol.starProjectedType))
 }
 
-private fun IrBuilderWithScope.irNullNativePtr(symbols: KonanSymbols) = irCall(symbols.getNativeNullPtr.owner)
+private fun IrBuilderWithScope.irNullNativePtr(symbols: BackendNativeSymbols) = irCall(symbols.getNativeNullPtr.owner)
 
 private class CCallbackBuilder(
         val state: CBridgeGenState,
@@ -508,7 +628,7 @@ private class CCallbackBuilder(
 
     val stubs: KotlinStubs get() = state.stubs
     val irBuiltIns: IrBuiltIns get() = stubs.irBuiltIns
-    val symbols: KonanSymbols get() = stubs.symbols
+    val symbols: BackendNativeSymbols get() = stubs.symbols
 
     private val cBridgeName = stubs.getUniqueCName("knbridge")
 
@@ -714,12 +834,12 @@ private fun KotlinToCCallBuilder.mapCalleeFunctionParameter(
         classifier?.isClassWithFqName(InteropFqNames.cValues.toUnsafe()) == true || // Note: this should not be accepted, but is required for compatibility
                 classifier?.isClassWithFqName(InteropFqNames.cValuesRef.toUnsafe()) == true -> CValuesRefArgumentPassing(type)
 
-        classifier == symbols.string && (variadic || parameter?.isCStringParameter() == true) -> {
+        classifier == irBuiltIns.stringClass && (variadic || parameter?.isCStringParameter() == true) -> {
             require(!variadic || !isObjCMethod) { stubs.renderCompilerError(argument) }
             CStringArgumentPassing()
         }
 
-        classifier == symbols.string && parameter?.isWCStringParameter() == true ->
+        classifier == irBuiltIns.stringClass && parameter?.isWCStringParameter() == true ->
             WCStringArgumentPassing()
 
         else -> state.mapFunctionParameterType(
@@ -756,7 +876,7 @@ private fun CBridgeGenState.mapBlockType(
         location: IrElement
 ): ObjCBlockPointerValuePassing = with(stubs) {
     require(type is IrSimpleType) { renderCompilerError(location) }
-    require(type.classifier == symbols.functionN(type.arguments.size - 1)) { renderCompilerError(location) }
+    require(type.classifier == irBuiltIns.functionN(type.arguments.size - 1).symbol) { renderCompilerError(location) }
 
     val returnTypeArgument = type.arguments.last()
     require(returnTypeArgument is IrTypeProjection) { renderCompilerError(location) }
@@ -878,7 +998,7 @@ private abstract class SimpleValuePassing : ValuePassing {
     open fun IrBuilderWithScope.kotlinCallbackResultToBridged(expression: IrExpression): IrExpression =
             kotlinToBridged(expression)
 
-    abstract fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: KonanSymbols): IrExpression
+    abstract fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: BackendNativeSymbols): IrExpression
     abstract fun bridgedToC(expression: String): String
     abstract fun cToBridged(expression: String): String
 
@@ -924,7 +1044,7 @@ private class TrivialValuePassing(val kotlinType: IrType, override val cType: CT
         get() = cType
 
     override fun IrBuilderWithScope.kotlinToBridged(expression: IrExpression): IrExpression = expression
-    override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: KonanSymbols): IrExpression = expression
+    override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: BackendNativeSymbols): IrExpression = expression
     override fun bridgedToC(expression: String): String = expression
     override fun cToBridged(expression: String): String = expression
 }
@@ -942,7 +1062,7 @@ private class BooleanValuePassing(override val cType: CType, private val irBuilt
 
     override fun IrBuilderWithScope.bridgedToKotlin(
             expression: IrExpression,
-            symbols: KonanSymbols
+            symbols: BackendNativeSymbols
     ): IrExpression = irNot(irCall(symbols.areEqualByValue[PrimitiveBinaryType.BYTE]!!.owner).apply {
         arguments[0] = expression
         arguments[1] = IrConstImpl.byte(startOffset, endOffset, irBuiltIns.byteType, 0)
@@ -995,7 +1115,7 @@ private class StructValuePassing(private val kotlinClass: IrClass, override val 
         readCValue(irGet(kotlinPointed), symbols)
     }
 
-    private fun IrBuilderWithScope.readCValue(kotlinPointed: IrExpression, symbols: KonanSymbols): IrExpression =
+    private fun IrBuilderWithScope.readCValue(kotlinPointed: IrExpression, symbols: BackendNativeSymbols): IrExpression =
         irCallWithSubstitutedType(symbols.interopCValueRead.owner, listOf(kotlinPointedType)).apply {
             arguments[0] = kotlinPointed
             arguments[1] = getTypeObject()
@@ -1051,7 +1171,7 @@ private class CEnumValuePassing(
         return with(baseValuePassing) { kotlinToBridged(value) }
     }
 
-    override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: KonanSymbols): IrExpression {
+    override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: BackendNativeSymbols): IrExpression {
         val companionClass = enumClass.declarations.filterIsInstance<IrClass>().single { it.isCompanion }
         val byValue = companionClass.simpleFunctions().single { it.name.asString() == "byValue" }
 
@@ -1066,7 +1186,7 @@ private class CEnumValuePassing(
 }
 
 private class ObjCReferenceValuePassing(
-        private val symbols: KonanSymbols,
+        private val symbols: BackendNativeSymbols,
         private val type: IrType,
         private val retained: Boolean
 ) : SimpleValuePassing() {
@@ -1100,7 +1220,7 @@ private class ObjCReferenceValuePassing(
         // TODO: optimize by using specialized Kotlin-to-ObjC converter.
     }
 
-    override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: KonanSymbols): IrExpression =
+    override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: BackendNativeSymbols): IrExpression =
             convertPossiblyRetainedObjCPointer(symbols, retained, expression) {
                 irCallWithSubstitutedType(symbols.interopInterpretObjCPointerOrNull, listOf(type)).apply {
                     arguments[0] = it
@@ -1113,7 +1233,7 @@ private class ObjCReferenceValuePassing(
 }
 
 private fun IrBuilderWithScope.convertPossiblyRetainedObjCPointer(
-        symbols: KonanSymbols,
+        symbols: BackendNativeSymbols,
         retained: Boolean,
         pointer: IrExpression,
         convert: (IrExpression) -> IrExpression
@@ -1209,7 +1329,7 @@ private class ObjCBlockPointerValuePassing(
                 arguments[0] = expression
             }
 
-    override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: KonanSymbols): IrExpression =
+    override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: BackendNativeSymbols): IrExpression =
             irLetS(expression) { blockPointerVarSymbol ->
                 val blockPointerVar = blockPointerVarSymbol.owner
                 irIfThenElse(
@@ -1297,7 +1417,7 @@ private class ObjCBlockPointerValuePassing(
         constructorParameter.parent = constructor
 
         constructor.body = irBuiltIns.createIrBuilder(constructor.symbol).irBlockBody(startOffset, endOffset) {
-            +irDelegatingConstructorCall(symbols.any.owner.constructors.single())
+            +irDelegatingConstructorCall(irBuiltIns.anyClass.owner.constructors.single())
             +irSetField(irGet(irClass.thisReceiver!!), blockHolderField,
                     irCall(symbols.interopCreateObjCObjectHolder.owner).apply {
                         arguments[0] = irGet(constructorParameter)

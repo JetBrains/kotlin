@@ -2636,4 +2636,75 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             }
         """
     )
+
+    // Regression test for b/479646393
+    @Test
+    fun testInlineSwitching() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable fun Test(clicked: Boolean) {
+                thenIf(
+                    condition = clicked,
+                    ifTrue = {
+                        val lambdaTrue = { }
+                    },
+                    ifFalse = {
+                        remember { mutableStateOf(value = "Mock") }
+                        val lambdaFalse = { }
+                    },
+                )
+            }
+        """,
+        extra = """
+            inline fun thenIf(
+                condition: Boolean,
+                ifFalse: () -> Unit,
+                ifTrue: () -> Unit,
+            ) = if (condition) {
+                ifTrue()
+            } else {
+                ifFalse()
+            }
+        """
+    )
+
+    // Regression test for b/479646393
+    @Test
+    fun testInlineSwitchingEarlyReturn() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable fun Test(clicked: Boolean) {
+                Modifier.thenIf(
+                    condition = clicked,
+                    ifTrue = {
+                       clickable { println(clicked) }
+                    },
+                    ifFalse = {
+                        remember { mutableStateOf(value = "Mock") }
+                        if (clicked) {
+                            return
+                        }
+                        clickable { println(clicked) }
+                    },
+                )
+            }
+        """,
+        extra = """
+            object Modifier
+
+            inline fun Modifier.thenIf(
+                condition: Boolean,
+                ifFalse: Modifier.() -> Modifier,
+                ifTrue: Modifier.() -> Modifier,
+            ) = if (condition) {
+                ifTrue()
+            } else {
+                ifFalse()
+            }
+            
+            fun Modifier.clickable(f: () -> Unit): Modifier = this
+        """
+    )
 }

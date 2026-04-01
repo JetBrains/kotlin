@@ -22,15 +22,13 @@ import kotlin.native.internal.ref.disposeExternalRCRef
 import kotlin.native.internal.ref.releaseExternalRCRef
 
 @ExportForCppRuntime
-// KT-81154: Fine-tune KlibIrValidationBeforeLoweringPhase/IrVisibilityValidator or split CEnumByValueFunctionGenerator, to get rid of @PublishedApi here,
-// since ThrowNullPointerException() is not used by compiler during 1st compilation stage
-@PublishedApi
 @UsedFromCompilerGeneratedCode
 internal fun ThrowNullPointerException(): Nothing {
     throw NullPointerException()
 }
 
 @ExportForCppRuntime
+@UsedFromCompilerGeneratedCode
 internal fun ThrowIndexOutOfBoundsException(): Nothing {
     throw IndexOutOfBoundsException()
 }
@@ -67,6 +65,7 @@ internal fun ThrowInvalidReceiverTypeException(klass: KClass<*>): Nothing {
 }
 
 @ExportForCppRuntime
+@UsedFromCompilerGeneratedCode
 internal fun ThrowArithmeticException() : Nothing {
     throw ArithmeticException()
 }
@@ -87,21 +86,25 @@ internal fun ThrowNoWhenBranchMatchedException(): Nothing {
 }
 
 @ExportForCppRuntime
+@UsedFromCompilerGeneratedCode
 internal fun ThrowIllegalArgumentException() : Nothing {
     throw IllegalArgumentException()
 }
 
 @ExportForCppRuntime
+@UsedFromCompilerGeneratedCode
 internal fun ThrowIllegalArgumentExceptionWithMessage(message: String) : Nothing {
     throw IllegalArgumentException(message)
 }
 
 @ExportForCppRuntime
+@UsedFromCompilerGeneratedCode
 internal fun ThrowIllegalStateException() : Nothing {
     throw IllegalStateException()
 }
 
 @ExportForCppRuntime
+@UsedFromCompilerGeneratedCode
 internal fun ThrowIllegalStateExceptionWithMessage(message:String) : Nothing {
     throw IllegalStateException(message)
 }

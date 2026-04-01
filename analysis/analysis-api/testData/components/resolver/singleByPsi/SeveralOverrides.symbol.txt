@@ -1,0 +1,5 @@
+KtNameReferenceExpression(110,113): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /C.foo(<dispatch receiver>: C): kotlin.Unit
+    ]

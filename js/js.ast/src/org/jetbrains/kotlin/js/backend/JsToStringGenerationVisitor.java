@@ -27,6 +27,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private static final char[] CHARS_CONSTRUCTOR = "constructor".toCharArray();
     private static final char[] CHARS_CONTINUE = "continue".toCharArray();
     private static final char[] CHARS_YIELD = "yield".toCharArray();
+    private static final char[] CHARS_YIELD_STAR = "yield*".toCharArray();
     private static final char[] CHARS_DEBUGGER = "debugger".toCharArray();
     private static final char[] CHARS_DEFAULT = "default".toCharArray();
     private static final char[] CHARS_DO = "do".toCharArray();
@@ -41,6 +42,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private static final char[] CHARS_SET = "set".toCharArray();
     private static final char[] CHARS_IF = "if".toCharArray();
     private static final char[] CHARS_IN = "in".toCharArray();
+    private static final char[] CHARS_OF = "of".toCharArray();
     private static final char[] CHARS_NEW = "new".toCharArray();
     private static final char[] CHARS_NULL = "null".toCharArray();
     private static final char[] CHARS_RETURN = "return".toCharArray();
@@ -53,9 +55,34 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private static final char[] CHARS_TRUE = "true".toCharArray();
     private static final char[] CHARS_TRY = "try".toCharArray();
     private static final char[] CHARS_VAR = "var".toCharArray();
+    private static final char[] CHARS_LET = "let".toCharArray();
+    private static final char[] CHARS_CONST = "const".toCharArray();
     private static final char[] CHARS_WHILE = "while".toCharArray();
+    private static final char[] CHARS_ELLIPSIS = "...".toCharArray();
     private static final char[] HEX_DIGITS = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    private static final Map<Character, Integer> COMMON_ESCAPE_MAPPING = createCommonEscapeMapping();
+    private static final Map<Character, Integer> STRING_ESCAPE_MAPPING = createStringEscapeMapping();
+    private static final Map<Character, Integer> TEMPLATE_ESCAPE_MAPPING = createTemplateEscapeMapping();
+    private static Map<Character, Integer> createCommonEscapeMapping() {
+        Map<Character, Integer> mapping = new HashMap<>();
+        mapping.put('\b', (int) 'b');
+        mapping.put('\f', (int) 'f');
+        mapping.put('\n', (int) 'n');
+        mapping.put('\r', (int) 'r');
+        mapping.put('\t', (int) 't');
+        mapping.put('\\', (int) '\\');
+        return mapping;
+    }
+    private static Map<Character, Integer> createStringEscapeMapping() {
+        Map<Character, Integer> mapping = new HashMap<>(COMMON_ESCAPE_MAPPING);
+        return mapping;
+    }
+    private static Map<Character, Integer> createTemplateEscapeMapping() {
+        Map<Character, Integer> mapping = new HashMap<>(COMMON_ESCAPE_MAPPING);
+        mapping.put('$', (int) '$');
+        return mapping;
+    }
     @NotNull
     private final SourceLocationConsumer sourceLocationConsumer;
 
@@ -72,7 +99,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
      * . The difference is that we quote with either &quot; or &apos; depending on
      * which one is used less inside the string.
      */
-    @SuppressWarnings({"ConstantConditions", "UnnecessaryFullyQualifiedName", "JavadocReference"})
+    @SuppressWarnings({"ConstantConditions", "JavadocReference"})
     public static CharSequence javaScriptString(CharSequence chars, boolean forceDoubleQuote) {
         int n = chars.length();
         int quoteCount = 0;
@@ -93,69 +120,59 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         char quoteChar = (quoteCount < aposCount || forceDoubleQuote) ? '"' : '\'';
         result.append(quoteChar);
+        escapeString(chars, quoteChar, result, STRING_ESCAPE_MAPPING);
+        result.append(quoteChar);
+        escapeClosingTags(result);
+        return result;
+    }
 
-        for (int i = 0; i < n; i++) {
+    private static void escapeString(CharSequence chars, char quoteChar, StringBuilder result, Map<Character, Integer> escapeMapping) {
+        for (int i = 0; i < chars.length(); i++) {
             char c = chars.charAt(i);
 
-            if (' ' <= c && c <= '~' && c != quoteChar && c != '\\') {
+            if (c == quoteChar) {
+                result.append('\\');
+                result.append(quoteChar);
+                continue;
+            }
+
+            if (' ' <= c && c <= '~' && c != '\\' && !escapeMapping.containsKey(c)) {
                 // an ordinary print character (like C isprint())
                 result.append(c);
                 continue;
             }
 
-            int escape = -1;
-            switch (c) {
-                case '\b':
-                    escape = 'b';
-                    break;
-                case '\f':
-                    escape = 'f';
-                    break;
-                case '\n':
-                    escape = 'n';
-                    break;
-                case '\r':
-                    escape = 'r';
-                    break;
-                case '\t':
-                    escape = 't';
-                    break;
-                case '"':
-                    escape = '"';
-                    break; // only reach here if == quoteChar
-                case '\'':
-                    escape = '\'';
-                    break; // only reach here if == quoteChar
-                case '\\':
-                    escape = '\\';
-                    break;
-            }
+            Integer escape = escapeMapping.get(c);
 
-            if (escape >= 0) {
+            if (escape != null && escape >= 0) {
                 // an \escaped sort of character
                 result.append('\\');
-                result.append((char) escape);
+                result.append((char) escape.intValue());
+                continue;
+            }
+
+            int hexSize;
+            if (c < 256) {
+                // 2-digit hex
+                result.append("\\x");
+                hexSize = 2;
             }
             else {
-                int hexSize;
-                if (c < 256) {
-                    // 2-digit hex
-                    result.append("\\x");
-                    hexSize = 2;
-                }
-                else {
-                    // Unicode.
-                    result.append("\\u");
-                    hexSize = 4;
-                }
-                // append hexadecimal form of ch left-padded with 0
-                for (int shift = (hexSize - 1) * 4; shift >= 0; shift -= 4) {
-                    int digit = 0xf & (c >> shift);
-                    result.append(HEX_DIGITS[digit]);
-                }
+                // Unicode.
+                result.append("\\u");
+                hexSize = 4;
+            }
+            // append hexadecimal form of ch left-padded with 0
+            for (int shift = (hexSize - 1) * 4; shift >= 0; shift -= 4) {
+                int digit = 0xf & (c >> shift);
+                result.append(HEX_DIGITS[digit]);
             }
         }
-        result.append(quoteChar);
+    }
+
+    private static CharSequence escapeTemplateStringSegment(CharSequence chars) {
+        StringBuilder result = new StringBuilder();
+        escapeString(chars, '`', result, TEMPLATE_ESCAPE_MAPPING);
         escapeClosingTags(result);
         return result;
     }
@@ -356,6 +373,36 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         popSourceInfo();
     }
 
+    @Override
+    public void visitYieldStar(@NotNull JsYieldStar x) {
+        pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
+
+        p.print(CHARS_YIELD_STAR);
+
+        JsExpression expression = x.getExpression();
+
+        if (expression != null) {
+            space();
+            accept(x.getExpression());
+        }
+
+        printCommentsAfterNode(x);
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitSpread(@NotNull JsSpread x) {
+        pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
+
+        ellipsis();
+        printPair(x, x.getExpression());
+
+        printCommentsAfterNode(x);
+        popSourceInfo();
+    }
+
     private void continueOrBreakLabel(JsContinue x) {
         JsNameRef label = x.getLabel();
         if (label != null) {
@@ -407,7 +454,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         p.print(CHARS_CATCH);
         space();
         leftParen();
-        nameDef(x.getParameter().getName());
+        accept(x.getParameter().getAssignable());
 
         rightParen();
         space();
@@ -623,6 +670,15 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitForIn(@NotNull JsForIn x) {
+        visitIterableLoop(x, CHARS_IN);
+    }
+
+    @Override
+    public void visitForOf(@NotNull JsForOf x) {
+        visitIterableLoop(x, CHARS_OF);
+    }
+
+    private void visitIterableLoop(@NotNull JsIterableLoop x, char[] separatorChars) {
         pushSourceInfo(x.getSource());
         printCommentsBeforeNode(x);
 
@@ -630,28 +686,33 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         space();
         leftParen();
 
-        if (x.getIterVarName() != null) {
-            var();
-            space();
-            nameDef(x.getIterVarName());
+        JsAssignable assignable = x.getBindingAssignable();
+        JsVars.Variant variant = x.getBindingVarVariant();
+        JsExpression bindingExpression = x.getBindingExpression();
+        JsExpression iterableExpression = x.getIterableExpression();
 
-            if (x.getIterExpression() != null) {
+        if (assignable != null && variant != null) {
+            varModifier(variant);
+            space();
+            accept(assignable);
+
+            if (bindingExpression != null) {
                 space();
                 assignment();
                 space();
-                accept(x.getIterExpression());
+                accept(bindingExpression);
             }
         }
         else {
             // Just a name ref.
             //
-            accept(x.getIterExpression());
+            accept(bindingExpression);
         }
 
         space();
-        p.print(CHARS_IN);
+        p.print(separatorChars);
         space();
-        accept(x.getObjectExpression());
+        accept(iterableExpression);
 
         rightParen();
 
@@ -687,7 +748,9 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         sourceLocationConsumer.pushSourceInfo(null);
         for (JsParameter param : parameters) {
             notFirst = sepCommaSpace(notFirst);
+            printCommentsBeforeNode(param);
             accept(param);
+            printCommentsAfterNode(param);
         }
         sourceLocationConsumer.popSourceInfo();
         rightParen();
@@ -769,8 +832,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         printCommentsBeforeNode(x);
 
         p.print(CHARS_CLASS);
-        space();
         if (x.getName() != null) {
+            space();
             nameOf(x);
         }
 
@@ -970,6 +1033,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         printExpressions(x.getArguments());
         rightParen();
 
+        // When using class expressions as construction expressions, they reset this from default 'true' to 'false',
+        // which produces invalid code due to the next statements ambiguity.
+        needSemi = true;
+
         printCommentsAfterNode(x);
         popSourceInfo();
     }
@@ -1047,30 +1114,37 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
             pushSourceInfo(item.getSource());
 
-            JsExpression labelExpr = item.getLabelExpr();
+            if (item instanceof JsPropertyInitializer.Spread) {
+                JsExpression expression = ((JsPropertyInitializer.Spread)item).getExpression();
+                ellipsis();
+                accept(expression);
+            } else if (item instanceof JsPropertyInitializer.KeyValue) {
+                JsPropertyInitializer.KeyValue keyValue = (JsPropertyInitializer.KeyValue)item;
+                JsExpression labelExpr = keyValue.getLabelExpr();
 
-            if (labelExpr instanceof JsStringLiteral) {
-                JsStringLiteral stringLiteral = (JsStringLiteral) labelExpr;
-                String value = stringLiteral.getValue();
-                if (IdentifierPolicyKt.isValidES5Identifier(value)) {
-                    String escaped = IdentifierPolicyKt.getRESERVED_KEYWORDS().contains(value) ? "'" + value + "'" : value;
-                    labelExpr = new JsNameRef(escaped).withMetadataFrom(stringLiteral);
+                if (labelExpr instanceof JsStringLiteral) {
+                    JsStringLiteral stringLiteral = (JsStringLiteral) labelExpr;
+                    String value = stringLiteral.getValue();
+                    if (IdentifierPolicyKt.isValidES5Identifier(value)) {
+                        String escaped = IdentifierPolicyKt.getRESERVED_KEYWORDS().contains(value) ? "'" + value + "'" : value;
+                        labelExpr = new JsNameRef(escaped).withMetadataFrom(stringLiteral);
+                    }
+                    accept(labelExpr);
+                } else if (labelExpr instanceof JsNumberLiteral || labelExpr instanceof JsBigIntLiteral) {
+                    accept(labelExpr);
+                } else {
+                    leftSquare();
+                    accept(labelExpr);
+                    rightSquare();
                 }
-                accept(labelExpr);
-            } else if (labelExpr instanceof JsNumberLiteral || labelExpr instanceof JsBigIntLiteral) {
-                accept(labelExpr);
-            } else {
-                leftSquare();
-                accept(labelExpr);
-                rightSquare();
-            }
-            _colon();
-            space();
-            JsExpression valueExpr = item.getValueExpr();
-            boolean wasEnclosed = parenPushIfCommaExpression(valueExpr);
-            accept(valueExpr);
-            if (wasEnclosed) {
-                rightParen();
+                _colon();
+                space();
+                JsExpression valueExpr = keyValue.getValueExpr();
+                boolean wasEnclosed = parenPushIfCommaExpression(valueExpr);
+                accept(valueExpr);
+                if (wasEnclosed) {
+                    rightParen();
+                }
             }
 
             popSourceInfo();
@@ -1090,7 +1164,25 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitParameter(@NotNull JsParameter x) {
         pushSourceInfo(x.getSource());
-        nameOf(x);
+
+        if (x.isRest()) {
+            ellipsis();
+        }
+
+        accept(x.getAssignable());
+
+        JsExpression defaultValue = x.getDefaultValue();
+        if (defaultValue != null) {
+            space();
+            assignment();
+            space();
+            boolean wasEnclosed = parenPushIfCommaExpression(defaultValue);
+            accept(defaultValue);
+            if (wasEnclosed) {
+                rightParen();
+            }
+        }
+
         popSourceInfo();
     }
 
@@ -1173,6 +1265,43 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         p.print(javaScriptString(x.getValue()));
 
         printCommentsAfterNode(x);
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitTemplateString(@NotNull JsTemplateStringLiteral x) {
+        pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
+
+        accept(x.getTag());
+
+        p.print('`');
+        for (JsExpression segment : x.getSegments()) {
+            accept(segment);
+        }
+        p.print('`');
+
+        printCommentsAfterNode(x);
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitTemplateSegmentString(@NotNull JsTemplateStringLiteral.Segment.StringLiteral x) {
+        pushSourceInfo(x.getSource());
+
+        p.print(escapeTemplateStringSegment(x.getValue()));
+
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitTemplateSegmentInterpolation(@NotNull JsTemplateStringLiteral.Segment.Interpolation x) {
+        pushSourceInfo(x.getSource());
+
+        p.print("${");
+        accept(x.getExpression());
+        p.print('}');
+
         popSourceInfo();
     }
 
@@ -1260,7 +1389,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         pushSourceInfo(var.getSource());
         printCommentsBeforeNode(var);
 
-        nameOf(var);
+        accept(var.getAssignable());
         JsExpression initExpr = var.getInitExpression();
         if (initExpr != null) {
             space();
@@ -1282,7 +1411,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         pushSourceInfo(vars.getSource());
         printCommentsBeforeNode(vars);
 
-        var();
+        varModifier(vars.getVariant());
         space();
         boolean sep = false;
         for (JsVar var : vars) {
@@ -1483,6 +1612,82 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
 
         p.print(javaScriptString(jsImport.getModule()));
+    }
+
+    @Override
+    public void visitNamedAssignable(@NotNull JsAssignable.Named assignable) {
+        nameDef(assignable.getName());
+    }
+
+    @Override
+    public void visitArrayPatternAssignable(@NotNull JsAssignable.ArrayPattern pattern) {
+        pushSourceInfo(pattern.getSource());
+        printCommentsBeforeNode(pattern);
+
+        p.print('[');
+
+        boolean notFirst = false;
+        for (JsBindingArrayItem item : pattern.getElements()) {
+            notFirst = sepCommaSpace(notFirst);
+
+            if (item instanceof JsBindingArrayItem.Hole) {
+                continue;
+            }
+
+            JsBindingElement element = ((JsBindingArrayItem.Element) item).getElement();
+            visitBindingElement(element);
+        }
+
+        p.print(']');
+
+        printCommentsAfterNode(pattern);
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitObjectPatternAssignable(@NotNull JsAssignable.ObjectPattern pattern) {
+        pushSourceInfo(pattern.getSource());
+        printCommentsBeforeNode(pattern);
+
+        p.print('{');
+
+        boolean notFirst = false;
+        for (JsBindingProperty property : pattern.getProperties()) {
+            notFirst = sepCommaSpace(notFirst);
+
+            JsExpression propertyName = property.getPropertyName();
+            JsBindingElement element = property.getElement();
+
+            if (propertyName != null) {
+                propertyName.accept(this);
+                _colon();
+                space();
+            }
+
+            visitBindingElement(element);
+        }
+
+        p.print('}');
+
+        printCommentsAfterNode(pattern);
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitBindingElement(@NotNull JsBindingElement element) {
+        if (element.isSpread()) {
+            ellipsis();
+        }
+
+        element.getTarget().accept(this);
+
+        JsExpression defaultValue = element.getDefaultValue();
+        if (defaultValue != null) {
+            space();
+            assignment();
+            space();
+            accept(defaultValue);
+        }
     }
 
     private void newline() {
@@ -1810,11 +2015,29 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         return false;
     }
 
+    private void varModifier(JsVars.Variant variant) {
+        switch (variant) {
+            case Var: var(); break;
+            case Let: let(); break;
+            case Const: _const(); break;
+        }
+    }
+
     private void var() {
         p.print(CHARS_VAR);
+    }
+
+    private void let() {
+        p.print(CHARS_LET);
+    }
+
+    private void _const() {
+        p.print(CHARS_CONST);
     }
 
     private void _while() {
         p.print(CHARS_WHILE);
     }
+
+    private void ellipsis() { p.print(CHARS_ELLIPSIS); }
 }

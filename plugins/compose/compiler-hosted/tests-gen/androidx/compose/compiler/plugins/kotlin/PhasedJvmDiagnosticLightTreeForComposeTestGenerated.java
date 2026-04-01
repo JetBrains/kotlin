@@ -18,6 +18,10 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/compose/compiler-hosted/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class PhasedJvmDiagnosticLightTreeForComposeTestGenerated extends AbstractPhasedJvmDiagnosticLightTreeForComposeTest {
+  private void run(String fileName) {
+    runTest("plugins/compose/compiler-hosted/testData/diagnostics/" + fileName);
+  }
+
   @Test
   public void testAllFilesPresentInDiagnostics() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/compose/compiler-hosted/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -26,24 +30,24 @@ public class PhasedJvmDiagnosticLightTreeForComposeTestGenerated extends Abstrac
   @Test
   @TestMetadata("applierComposeUI.kt")
   public void testApplierComposeUI() {
-    runTest("plugins/compose/compiler-hosted/testData/diagnostics/applierComposeUI.kt");
+    run("applierComposeUI.kt");
   }
 
   @Test
   @TestMetadata("noOverrideWarning.kt")
   public void testNoOverrideWarning() {
-    runTest("plugins/compose/compiler-hosted/testData/diagnostics/noOverrideWarning.kt");
+    run("noOverrideWarning.kt");
   }
 
   @Test
   @TestMetadata("targetWarnings.kt")
   public void testTargetWarnings() {
-    runTest("plugins/compose/compiler-hosted/testData/diagnostics/targetWarnings.kt");
+    run("targetWarnings.kt");
   }
 
   @Test
   @TestMetadata("targetWarningsOtherModule.kt")
   public void testTargetWarningsOtherModule() {
-    runTest("plugins/compose/compiler-hosted/testData/diagnostics/targetWarningsOtherModule.kt");
+    run("targetWarningsOtherModule.kt");
   }
 }

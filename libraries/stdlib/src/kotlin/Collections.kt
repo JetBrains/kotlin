@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -260,13 +260,20 @@ public expect interface List<out E> : Collection<E> {
     // List Iterators
     /**
      * Returns a list iterator over the elements in this list (in proper sequence).
+     *
+     * If the list needs to be iterated starting from a specific index,
+     * a [listIterator] overload accepting the [Int] parameter could be used instead
+     * of using this function and manually iterating until the required index is reached.
+     *
+     * @sample samples.collections.Collections.Lists.listIterator
      */
     public fun listIterator(): ListIterator<E>
 
     /**
      * Returns a list iterator over the elements in this list (in proper sequence), starting at the specified [index].
      *
-     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than or equal to [size] of this list.
+     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than [size] of this list.
+     * @sample samples.collections.Collections.Lists.listIteratorWithIndex
      */
     public fun listIterator(index: Int): ListIterator<E>
 
@@ -521,6 +528,10 @@ public expect interface MutableSet<E> : Set<E>, MutableCollection<E> {
  * It is also implementation-specific how [Map] handles `null` keys and values: some [Map] implementations may support them, while
  * other may not. It is recommended to explicitly define key/value nullability policy when implementing [Map].
  *
+ * [Map] does not guarantee any particular order for iteration over its keys, values, or entries. However, particular implementations
+ * are free to have fixed iteration order, like "smaller", in some sense, keys are visited prior to "larger". In this case,
+ * it is recommended to explicitly document ordering guarantees for the [Map] implementation.
+ *
  * Unlike [Collection] implementations, [Map] implementations must override [Any.toString], [Any.equals] and [Any.hashCode] functions
  * and provide implementations such that:
  * - [Map.toString] should return a string containing string representation of contained key-value pairs in iteration order.
@@ -531,7 +542,7 @@ public expect interface MutableSet<E> : Set<E>, MutableCollection<E> {
  *   hash codes corresponding to a key and a value:
  *   ```kotlin
  *   var hashCode: Int = 0
- *   for ((k, v) in entries) hashCode += k.hashCode() ^ v.hashCode()
+ *   for ((k, v) in entries) hashCode += k.hashCode() xor v.hashCode()
  *   ```
  *
  * Functions in this interface support only read-only access to the map; read-write access is supported through
@@ -611,8 +622,21 @@ public expect interface Map<K, out V> {
     /**
      * Represents a key/value pair held by a [Map].
      *
-     * Map entries are not supposed to be stored separately or used long after they are obtained.
+     * Map entries obtained from the iteration of [Map.entries] set are not supposed to be stored separately or
+     * used long after they are obtained.
      * The behavior of an entry is unspecified if the backing map has been modified after the entry was obtained.
+     *
+     * To create an immutable entry not connected to any map, one can use [Map.Entry.copy] function.
+     *
+     * [Entry] implementations must override [Any.toString], [Any.equals] and [Any.hashCode] functions
+     * and provide implementations such that:
+     * - [Entry.toString] should return a string representation of the key-value pair in form of `key=value`.
+     * - [Entry.equals] should consider any two instances of [Entry] equal if their keys are equal and values are equal.
+     * - [Entry.hashCode] should be computed as exclusive or (XOR) of
+     *   hash codes corresponding to a key and a value: `key.hashCode() xor value.hashCode()`
+     *
+     * @param K the type of the entry key. The entry is covariant in its key type.
+     * @param V the type of the entry value. The entry is covariant in its value type.
      */
     public interface Entry<out K, out V> {
         /**
@@ -707,8 +731,15 @@ public expect interface MutableMap<K, V> : Map<K, V> {
     /**
      * Represents a key/value pair held by a [MutableMap].
      *
-     * Map entries are not supposed to be stored separately or used long after they are obtained.
-     * The behavior of an entry is unspecified if the backing map has been modified after the entry was obtained.
+     * Map entries obtained from the iteration of [MutableMap.entries] set are not supposed to be stored separately or
+     * used long after they are obtained.
+     * The behavior of an entry is unspecified if the backing map has been modified after the entry was obtained,
+     * except when the map was modified through the [setValue] method.
+     *
+     * To create an immutable entry not connected to any map, one can use [Map.Entry.copy] function.
+     *
+     * @param K the type of the entry key. The entry is invariant in its key type.
+     * @param V the type of the entry value. The entry is invariant in its value type.
      */
     public interface MutableEntry<K, V> : Map.Entry<K, V> {
         /**

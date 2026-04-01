@@ -1,0 +1,5 @@
+KtOperationReferenceExpression(58,65): 'infixOp'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /infixOp(<extension receiver>: kotlin.Int, rhs: kotlin.String): kotlin.Unit
+    ]

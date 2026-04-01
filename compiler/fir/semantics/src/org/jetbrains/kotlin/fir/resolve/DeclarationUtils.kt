@@ -24,6 +24,9 @@ fun FirClassLikeSymbol<FirClassLikeDeclaration>.getContainingDeclaration(session
     return session.firProvider.getContainingClass(this)
 }
 
+val FirClassLikeSymbol<*>.classTypeParameterSymbols: List<FirTypeParameterSymbol>
+    get() = typeParameterSymbols.filter { it.containingDeclarationSymbol is FirClassLikeSymbol }
+
 // TODO(KT-66349) Investigate and fix the contract.
 //  - Why aren't we supporting nested `inner` classes?
 //  - Why are we traversing super types?

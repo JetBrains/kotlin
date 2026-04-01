@@ -37,7 +37,10 @@ sealed interface TargetLanguage {
     object ObjC : TargetLanguage
 }
 
-object Field
+sealed interface Field {
+    object StrongRef : Field
+    object WeakRef : Field
+}
 
 object Parameter
 

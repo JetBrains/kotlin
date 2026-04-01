@@ -1,4 +1,12 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// FILE: J.java
+public class J {
+    public static <T> T identity(T t) {
+        return t;
+    }
+}
+
+// FILE: test.kt
 interface In<in T>
 interface Out<out T>
 interface Inv<T>
@@ -38,6 +46,9 @@ interface Test<in I, out O, P> {
     fun neOk33(): Inv<<!SYNTAX!><!>>
     fun neOk34(): Inv<<!UNRESOLVED_REFERENCE!>C<!>>
     fun neOk35(): Inv<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><P, P><!>
+
+    fun neOk36(): <!TYPE_VARIANCE_CONFLICT_ERROR!>I & Any<!>
+    <!TYPE_VARIANCE_CONFLICT_ERROR!>fun neOk37(i: I)<!> = J.identity(i)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, in, inProjection, interfaceDeclaration, nullableType, out, outProjection,

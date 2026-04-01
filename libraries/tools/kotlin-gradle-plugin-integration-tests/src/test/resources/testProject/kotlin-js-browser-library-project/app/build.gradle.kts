@@ -1,11 +1,22 @@
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
-dependencies {
-    implementation(kotlin("stdlib-js"))
-    implementation(project(":lib"))
-    testImplementation(kotlin("test-js"))
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation(kotlin("stdlib-js"))
+                implementation(project(":lib"))
+            }
+        }
+
+        jsTest {
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
+        }
+    }
 }
 
 kotlin {

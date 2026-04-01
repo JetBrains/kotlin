@@ -15,6 +15,16 @@ import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 abstract class FirModifierRenderer {
+    interface StaticPolicy {
+        fun renderStatic(memberDeclaration: FirDeclaration): String?
+
+        object Default : StaticPolicy {
+            override fun renderStatic(memberDeclaration: FirDeclaration): String? {
+                return "static"
+            }
+        }
+    }
+
     internal lateinit var components: FirRendererComponents
     protected val printer: FirPrinter get() = components.printer
 

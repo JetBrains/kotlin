@@ -1,0 +1,71 @@
+<caret_1>:
+  KDocName(8,10): 'AA'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in ROOT) class AA(abc: kotlin.String)
+
+<caret_2>:
+  KDocName(13,16): 'abc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in AA) var abc: kotlin.String
+
+<caret_3>:
+  KDocName(35,37): 'AA'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in ROOT) class AA(abc: kotlin.String)
+
+<caret_4>:
+  KDocName(40,43): 'abc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in AA) var abc: kotlin.String
+
+<caret_5>:
+  KDocName(130,132): 'AA'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in ROOT) class AA(abc: kotlin.String)
+
+<caret_6>:
+  KDocName(135,139): 'some'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        some: kotlin.Int
+
+<caret_7>:
+  KDocName(162,164): 'AA'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        (in ROOT) class AA(abc: kotlin.String)
+
+<caret_8>:
+  KDocName(167,171): 'some'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
+      symbols:
+        some: kotlin.Int

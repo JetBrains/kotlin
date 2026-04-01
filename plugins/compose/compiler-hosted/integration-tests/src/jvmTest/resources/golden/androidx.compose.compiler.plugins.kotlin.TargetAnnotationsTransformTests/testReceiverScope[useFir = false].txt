@@ -49,7 +49,10 @@ object LocalBoxScopeInstance : LocalBoxScope {
   override fun Modifier.align(alignment: Alignment): Modifier {
     return Companion
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 val localBoxMeasurePolicy: MeasurePolicy = MeasurePolicy { <unused var>: List<Measurable>, constraints: Constraints ->
   %this%MeasurePolicy.layout(

@@ -16,8 +16,7 @@ import java.util.jar.JarFile
 
 data class RuntimeVersions(val implementationVersion: ApiVersion?, val requireKotlinVersion: ApiVersion?) {
     companion object {
-        val MINIMAL_SUPPORTED_VERSION = ApiVersion.parse("1.0-M1-SNAPSHOT")!!
-        val MINIMAL_VERSION_FOR_INLINE_CLASSES = ApiVersion.parse("1.1-M1-SNAPSHOT")!!
+        val MINIMAL_SUPPORTED_VERSION = ApiVersion.parse("1.3.0")!!
     }
 
     fun currentCompilerMatchRequired(): Boolean {
@@ -47,12 +46,6 @@ object CommonVersionReader {
         val version = getJarAttribute(runtimeLibraryPath, Attributes.Name.IMPLEMENTATION_VERSION)?.let(ApiVersion.Companion::parse)
         val kotlinVersion = getJarAttribute(runtimeLibraryPath, REQUIRE_KOTLIN_VERSION)?.let(ApiVersion.Companion::parse)
         return RuntimeVersions(version, kotlinVersion)
-    }
-
-    fun canSupportInlineClasses(currentVersion: RuntimeVersions?): Boolean {
-        if (currentVersion == null) return true
-        val implVersion = currentVersion.implementationVersion ?: return false
-        return implVersion >= RuntimeVersions.MINIMAL_VERSION_FOR_INLINE_CLASSES
     }
 
     private fun getJarAttribute(file: File, attribute: Attributes.Name): String? {

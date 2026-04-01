@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.Assume
 import kotlin.test.Test
 
 class DefaultHierarchySetupDiagnosticTest {

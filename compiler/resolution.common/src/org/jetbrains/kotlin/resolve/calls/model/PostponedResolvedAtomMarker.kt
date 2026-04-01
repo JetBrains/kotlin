@@ -30,13 +30,17 @@ interface PostponedResolvedAtomMarker {
     val analyzed: Boolean
 }
 
+interface CollectionLiteralAtomMarker : PostponedResolvedAtomMarker
+
 interface PostponedAtomWithRevisableExpectedType : PostponedResolvedAtomMarker {
     val revisedExpectedType: KotlinTypeMarker?
 
     fun reviseExpectedType(expectedType: KotlinTypeMarker)
 }
 
-interface PostponedCallableReferenceMarker : PostponedAtomWithRevisableExpectedType
+interface PostponedCallableReferenceMarker : PostponedAtomWithRevisableExpectedType {
+    val needsResolution get() = !analyzed
+}
 
 interface LambdaWithTypeVariableAsExpectedTypeMarker : PostponedAtomWithRevisableExpectedType {
     val parameterTypesFromDeclaration: List<KotlinTypeMarker?>?

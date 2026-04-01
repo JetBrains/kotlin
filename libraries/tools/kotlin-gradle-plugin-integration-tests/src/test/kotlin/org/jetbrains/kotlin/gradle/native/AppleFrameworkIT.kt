@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -214,6 +216,42 @@ class AppleFrameworkIT : KGPBaseTest() {
             buildAndFail(":shared:embedAndSignAppleFrameworkForXcode") {
                 assertOutputContains("Please run the embedAndSignAppleFrameworkForXcode task from Xcode")
                 assertOutputDoesNotContain("ConfigurationCacheProblemsException: Configuration cache problems found in this build")
+            }
+        }
+    }
+
+    @DisplayName("embedAndSignAppleFrameworkForXcode fails for missing configured architecture")
+    @OptIn(EnvironmentalVariablesOverride::class)
+    @GradleTest
+    fun shouldFailWhenXcodeRequestsArchitectureNotConfiguredInGradle(
+        gradleVersion: GradleVersion,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosSimulatorArm64().binaries.framework()
+                }
+            }
+
+            val environmentVariables = EnvironmentalVariables(
+                "CONFIGURATION" to "Debug",
+                "SDK_NAME" to "iphonesimulator",
+                "ARCHS" to "arm64 x86_64",
+                "TARGET_BUILD_DIR" to projectPath.absolutePathString(),
+                "FRAMEWORKS_FOLDER_PATH" to "build/xcode-derived",
+                "BUILT_PRODUCTS_DIR" to iosBuildProductsDir().absolutePathString(),
+            )
+
+            buildAndFail(
+                ":embedAndSignAppleFrameworkForXcode",
+                environmentVariables = environmentVariables,
+            ) {
+                assertTasksFailed(":validateArchitecturesForEmbedAndSignAppleFrameworkForXcode")
+                assertHasDiagnostic(KotlinToolingDiagnostics.XcodeArchitectureNotConfiguredInGradle)
+                assertOutputContains("ios_x64")
             }
         }
     }
@@ -558,17 +596,6 @@ class AppleFrameworkIT : KGPBaseTest() {
                 environmentVariables = environmentVariables
             ) {
                 assertOutputContains("/sharedAppleFramework/shared/src/commonMain/kotlin/com/github/jetbrains/myapplication/Greeting.kt:7:2: error: Syntax error: Expecting a top level declaration")
-            }
-        }
-    }
-
-    @DisplayName("Frameworks can be consumed from other gradle project")
-    @GradleTest
-    fun shouldCheckFrameworksCanBeConsumedFromOtherGradleProjects(gradleVersion: GradleVersion) {
-        nativeProject("consumableAppleFrameworks", gradleVersion) {
-            build(":consumer:help") {
-                assertOutputContains("RESOLUTION_SUCCESS")
-                assertOutputDoesNotContain("RESOLUTION_FAILURE")
             }
         }
     }

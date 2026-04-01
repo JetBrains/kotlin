@@ -3,18 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests
+package org.jetbrains.kotlin.buildtools.tests
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertNoOutputSetChanges
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assumptions
@@ -61,7 +61,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
 
     private fun runMixedModuleTest(strategyConfig: CompilerExecutionStrategyConfiguration, useTrackedModules: Boolean) {
         scenario(strategyConfig) {
-            val compilerArgumentsConf: (JvmCompilationOperation) -> Unit = {
+            val compilerArgumentsConf: (JvmCompilationOperation.Builder) -> Unit = {
                 it.compilerArguments[VERBOSE] = true
             }
             val module1 = if (useTrackedModules) {
@@ -72,9 +72,9 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
 
             module1.replaceFileWithVersion("main.kt", "add-argument")
             module1.replaceFileWithVersion("apkg/AClass.java", "add-argument")
-            module1.compile { module, scenarioModule ->
-                assertCompiledSources(module, "main.kt", "bpkg/BClass.kt")
-                assertOutputs(module, "bpkg/MainKt.class", "bpkg/BClass.class")
+            module1.compile {
+                assertCompiledSources("main.kt", "bpkg/BClass.kt")
+                assertOutputs("bpkg/MainKt.class", "bpkg/BClass.class")
                 if (strategyConfig.first::class.simpleName != "KotlinToolchainsV1Adapter") { // v1 is not producing some logs and that's expected
                     val count = if (useTrackedModules) {
                         1
@@ -104,14 +104,14 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
             module1.createPredefinedFile("secret.kt", "new-file")
             module1.replaceFileWithVersion("bar.kt", "add-default-argument")
             module1.deleteFile("baz.kt")
-            module1.compile { module, scenarioModule ->
-                assertCompiledSources(module, "secret.kt", "bar.kt")
+            module1.compile {
+                assertCompiledSources("secret.kt", "bar.kt")
                 // SecretKt is added, BazKt is removed
-                assertOutputs(module, "SecretKt.class", "Bar.class", "FooKt.class")
+                assertOutputs("SecretKt.class", "Bar.class", "FooKt.class")
             }
-            module2.compile { module, scenarioModule ->
-                assertCompiledSources(module, "b.kt")
-                assertNoOutputSetChanges(module, scenarioModule)
+            module2.compile {
+                assertCompiledSources( "b.kt")
+                assertNoOutputSetChanges()
             }
         }
     }

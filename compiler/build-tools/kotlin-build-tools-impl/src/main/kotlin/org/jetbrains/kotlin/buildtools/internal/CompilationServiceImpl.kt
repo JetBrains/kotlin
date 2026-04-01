@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.buildtools.internal
 
@@ -102,7 +102,7 @@ internal object CompilationServiceImpl : CompilationService {
         check(compilationConfig is JvmCompilationConfigurationImpl) {
             "Initial JVM compilation configuration object must be acquired from the `makeJvmCompilationConfiguration` method."
         }
-        val loggerAdapter = KotlinLoggerMessageCollectorAdapter(compilationConfig.logger)
+        val loggerAdapter = KotlinLoggerMessageCollectorAdapter(compilationConfig.logger, DefaultCompilerMessageRenderer, warningsAsErrors = false)
         val kotlinFilenameExtensions =
             (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + compilationConfig.kotlinScriptFilenameExtensions)
         val (filteredSources, unknownSources) = sources.partition { it.isJavaFile() || it.isKotlinFile(kotlinFilenameExtensions) }
@@ -184,8 +184,8 @@ internal object CompilationServiceImpl : CompilationService {
                 val classpathChanges =
                     (aggregatedIcConfiguration as AggregatedIcConfiguration<ClasspathSnapshotBasedIncrementalCompilationApproachParameters>).classpathChanges
                 val buildReporter = BuildReporter(
-                    icReporter = BuildToolsApiBuildICReporter(loggerAdapter.kotlinLogger, options.rootProjectDir),
-                    buildMetricsReporter = DoNothingBuildMetricsReporter
+                    icReporter = BuildToolsApiBuildICReporter(loggerAdapter.kotlinLogger, options.rootProjectDir, null),
+                    buildMetricsReporter = DoNothingBuildMetricsReporter,
                 )
                 val verifiedPreciseJavaTracking = parsedArguments.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = options.preciseJavaTrackingEnabled)
                 val icFeatures = options.extractIncrementalCompilationFeatures().copy(

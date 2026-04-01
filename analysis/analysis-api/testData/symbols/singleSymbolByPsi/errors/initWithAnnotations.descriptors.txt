@@ -3,6 +3,7 @@ KaClassInitializerSymbol:
   compilerVisibility: Local
   isActual: false
   isExpect: false
+  isExternal: false
   location: CLASS
   modality: FINAL
   origin: SOURCE

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.appendText
 
 @DisplayName("KotlinNativeLink task tests")
@@ -56,38 +55,6 @@ internal class KotlinNativeLinkIT : KGPBaseTest() {
                 extractNativeTasksCommandLineArgumentsFromOutput(":linkReleaseExecutableHost") {
                     assertCommandLineArgumentsContain("-e", "main")
                     assertNoDuplicates()
-                }
-            }
-        }
-    }
-
-    @DisplayName("KT-60839: should provide correct default value for -Xpartial-linkage")
-    @GradleTest
-    @OsCondition(
-        supportedOn = [OS.LINUX, OS.MAC], // Don't run it on Windows. Caches are not supported there yet.
-        enabledOnCI = [OS.LINUX]
-    )
-    fun defaultValueForPartialLinkage(gradleVersion: GradleVersion) {
-        nativeProject(
-            "kt-60839-native-link-cache-builder",
-            gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                // KT-60839 only reproduces when the build cache is enabled,
-                // but we must ignore it when running this test in order to
-                // ensure we actually try to pass -Xpartial-linkage to konanc.
-                buildCacheEnabled = true,
-                freeArgs = defaultBuildOptions.freeArgs + "--rerun-tasks",
-                nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                    // Required as this only reproduces from CacheBuilder.
-                    cacheOrchestration = "gradle"
-                )
-            ),
-        ) {
-
-            // Must be an unoptimized debug build.
-            build("linkDebugTestHost") {
-                extractNativeTasksCommandLineArgumentsFromOutput(":linkDebugTestHost") {
-                    assertCommandLineArgumentsContain("-Xpartial-linkage=ENABLE")
                 }
             }
         }

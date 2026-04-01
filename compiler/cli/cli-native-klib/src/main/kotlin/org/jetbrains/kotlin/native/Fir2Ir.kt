@@ -5,28 +5,23 @@
 
 package org.jetbrains.kotlin.native
 
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
-import org.jetbrains.kotlin.backend.konan.KonanCompilationException
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.isEmpty
-import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.backend.DelicateDeclarationStorageApi
+import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
+import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
-import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
@@ -36,62 +31,30 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.superTypes
+import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.isNativeStdlib
-import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 
-private val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
-
-fun PhaseContext.fir2Ir(
-        input: FirOutput.Full,
+fun NativeFirstStagePhaseContext.fir2Ir(
+        input: AllModulesFrontendOutput,
 ): Fir2IrOutput {
-    var builtInsModule: KotlinBuiltIns? = null
-
-    val resolvedLibraries = config.resolvedLibraries.getFullResolvedList()
+    val loadedKlibs = config.loadedKlibs
     val configuration = config.configuration
-    val librariesDescriptors = resolvedLibraries.map { resolvedLibrary ->
-        val storageManager = LockBasedStorageManager("ModulesStructure")
-
-        val moduleDescriptor = KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-                resolvedLibrary.library,
-                configuration.languageVersionSettings,
-                storageManager,
-                builtInsModule,
-                packageAccessHandler = null,
-                lookupTracker = LookupTracker.DO_NOTHING
-        )
-
-        val isBuiltIns = moduleDescriptor.isNativeStdlib()
-        if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
-
-        moduleDescriptor
-    }
-
-    librariesDescriptors.forEach { moduleDescriptor ->
-        // Yes, just to all of them.
-        moduleDescriptor.setDependencies(ArrayList(librariesDescriptors))
-    }
     val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-    val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
+    val diagnosticsReporter = DiagnosticsCollectorImpl()
 
     val fir2IrConfiguration = Fir2IrConfiguration.forKlibCompilation(configuration, diagnosticsReporter)
-    val actualizedResult = input.firResult.convertToIrAndActualize(
-            NativeFir2IrExtensions,
-            fir2IrConfiguration,
-            IrGenerationExtension.getInstances(config.project),
-            irMangler = KonanManglerIr,
-            visibilityConverter = Fir2IrVisibilityConverter.Default,
-            kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
-            specialAnnotationsProvider = null,
-            extraActualDeclarationExtractorsInitializer = { emptyList() },
-            typeSystemContextProvider = ::IrTypeSystemContextImpl,
-    ).also {
-        (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
-    }
-    assert(actualizedResult.irModuleFragment.name.isSpecial) {
-        "`${actualizedResult.irModuleFragment.name}` must be Name.special, since it's required by KlibMetadataModuleDescriptorFactoryImpl.createDescriptorOptionalBuiltIns()"
-    }
+    val actualizedResult = input.convertToIrAndActualize(
+        NativeFir2IrExtensions,
+        fir2IrConfiguration,
+        config.configuration.getCompilerExtensions(IrGenerationExtension),
+        irMangler = KonanManglerIr,
+        visibilityConverter = Fir2IrVisibilityConverter.Default,
+        kotlinBuiltIns = DefaultBuiltIns.Instance,
+        specialAnnotationsProvider = null,
+        extraActualDeclarationExtractorsInitializer = { emptyList() },
+        typeSystemContextProvider = ::IrTypeSystemContextImpl,
+    )
 
     @OptIn(DelicateDeclarationStorageApi::class)
     val usedPackages = buildSet {
@@ -125,30 +88,31 @@ fun PhaseContext.fir2Ir(
     }.toList()
 
 
-    val usedLibraries = librariesDescriptors.zip(resolvedLibraries).filter { (module, _) ->
-        usedPackages.any { !module.packageFragmentProviderForModuleContentWithoutDependencies.isEmpty(it) }
-    }.map { it.second }.toSet()
+    val usedLibraries = loadedKlibs.all.filter { library ->
+        val header = parseModuleHeader(library.metadata.moduleHeaderData)
 
-    resolvedLibraries.find { it.library.isNativeStdlib }?.let {
+        val nonEmptyPackageNames = buildSet {
+            addAll(header.packageFragmentNameList)
+            removeAll(header.emptyPackageList)
+        }
+
+        usedPackages.any { it.asString() in nonEmptyPackageNames }
+    }.toSet()
+
+    loadedKlibs.all.find { it.isNativeStdlib }?.let {
         require(usedLibraries.contains(it)) {
             "Internal error: stdlib must be in usedLibraries, if it's in resolvedLibraries"
         }
     }
 
-    val symbols = createKonanSymbols(actualizedResult.irBuiltIns)
+    val symbols = PreSerializationNativeSymbols.Impl(actualizedResult.irBuiltIns)
 
-    val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+    val renderDiagnosticNames = configuration.renderDiagnosticInternalName
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
 
     if (diagnosticsReporter.hasErrors) {
-        throw KonanCompilationException("Compilation failed: there were some diagnostics during fir2ir")
+        throw CompilationErrorException("Compilation failed: there were some diagnostics during fir2ir")
     }
 
-    return Fir2IrOutput(input.firResult, symbols, actualizedResult, usedLibraries)
-}
-
-private fun PhaseContext.createKonanSymbols(
-        irBuiltIns: IrBuiltIns,
-): KonanSymbols {
-    return KonanSymbols(this, irBuiltIns, this.config.configuration)
+    return Fir2IrOutput(input, symbols, actualizedResult, usedLibraries)
 }

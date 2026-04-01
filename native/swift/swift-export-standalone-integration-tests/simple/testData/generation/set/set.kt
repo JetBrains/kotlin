@@ -18,3 +18,8 @@ fun testOptSetInt(s: Set<Int>?) = s
 
 fun testSetNothing(s: Set<Nothing>) = s
 fun testSetOptNothing(s: Set<Nothing?>) = s
+
+interface Foo
+
+val testSetFoo: Set<Foo> = emptySet()
+fun testSetFooParam(s: Set<Foo>) = s

@@ -177,7 +177,7 @@ fun unboxedTypeOfInlineClass(boxedType: Type, state: GenerationState): Type? {
 }
 
 fun getMultiFieldValueClassUnboxInfo(boxedType: Type, state: GenerationState): MultiFieldValueClassUnboxInfo? {
-    if (!state.config.supportMultiFieldValueClasses) return null
+    if (!state.config.supportJvmInlineMultiFieldValueClasses) return null
 
     val descriptor =
         state.jvmBackendClassResolver.resolveToClassDescriptors(boxedType).singleOrNull()?.takeIf { it.isMultiFieldValueClass() }

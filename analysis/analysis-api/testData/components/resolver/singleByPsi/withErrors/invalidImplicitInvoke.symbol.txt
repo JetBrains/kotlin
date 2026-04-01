@@ -1,0 +1,6 @@
+KtDotQualifiedExpression(53,61): 's.action'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+    ]
+    diagnostic = ERROR<FUNCTION_CALL_EXPECTED: Function invocation 'action(...)' expected.>

@@ -1,0 +1,179 @@
+STATUS:
+TARGET: public final override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=m2/MyClass.prop] val prop: R|kotlin/Any?|
+    private final [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirBackingFieldSymbol <local>/field), SubstitutedOverrideOriginalKey=<local>/field] backing field field: <implicit>
+    public [ResolvedTo(STATUS)] [ContainingClassKey=MyImpl] get(): R|kotlin/Any?|
+
+FILE: [ResolvedTo(IMPORTS)] implicitSubstitutedBackingField.kt
+    public abstract [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] x: R|kotlin/collections/MutableList<T>|): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val prop: R|kotlin/Any?|
+            private final [ResolvedTo(STATUS)] backing field field: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
+
+    }
+    public final [ResolvedTo(STATUS)] class MyImpl : R|m2/MyClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyImpl] constructor(): R|m2/MyImpl| {
+            LAZY_super<R|m2/MyClass<kotlin/Int>|>
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+TARGET: public final override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [SubstitutedOverrideOriginalKey=m2/MyClass.prop] val prop: R|kotlin/Any?|
+    private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirBackingFieldSymbol <local>/field), SubstitutedOverrideOriginalKey=<local>/field] backing field field: <implicit>
+    public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyImpl] get(): R|kotlin/Any?|
+
+FILE: [ResolvedTo(IMPORTS)] implicitSubstitutedBackingField.kt
+    public abstract [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] x: R|kotlin/collections/MutableList<T>|): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val prop: R|kotlin/Any?|
+            private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] backing field field: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
+
+    }
+    public final [ResolvedTo(STATUS)] class MyImpl : R|m2/MyClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyImpl] constructor(): R|m2/MyImpl| {
+            LAZY_super<R|m2/MyClass<kotlin/Int>|>
+        }
+
+    }
+
+CONTRACTS:
+TARGET: public final override [ResolvedTo(CONTRACTS)] [SubstitutedOverrideOriginalKey=m2/MyClass.prop] val prop: R|kotlin/Any?|
+    private final [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirBackingFieldSymbol <local>/field), SubstitutedOverrideOriginalKey=<local>/field] backing field field: <implicit>
+    public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyImpl] get(): R|kotlin/Any?|
+
+FILE: [ResolvedTo(IMPORTS)] implicitSubstitutedBackingField.kt
+    public abstract [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] x: R|kotlin/collections/MutableList<T>|): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONTRACTS)] val prop: R|kotlin/Any?|
+            private final [ResolvedTo(CONTRACTS)] backing field field: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
+
+    }
+    public final [ResolvedTo(STATUS)] class MyImpl : R|m2/MyClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyImpl] constructor(): R|m2/MyImpl| {
+            LAZY_super<R|m2/MyClass<kotlin/Int>|>
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+TARGET: public final override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=m2/MyClass.prop] val prop: R|kotlin/Any?|
+    private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=<local>/field] backing field field: R|kotlin/collections/MutableList<kotlin/Int>|
+    public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyImpl] get(): R|kotlin/Any?|
+
+FILE: [ResolvedTo(IMPORTS)] implicitSubstitutedBackingField.kt
+    public abstract [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] x: R|kotlin/collections/MutableList<T>|): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/Any?|
+            private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
+
+    }
+    public final [ResolvedTo(STATUS)] class MyImpl : R|m2/MyClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyImpl] constructor(): R|m2/MyImpl| {
+            LAZY_super<R|m2/MyClass<kotlin/Int>|>
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+TARGET: public final override [ResolvedTo(CONSTANT_EVALUATION)] [SubstitutedOverrideOriginalKey=m2/MyClass.prop] val prop: R|kotlin/Any?|
+    private final [ResolvedTo(CONSTANT_EVALUATION)] [SubstitutedOverrideOriginalKey=<local>/field] backing field field: R|kotlin/collections/MutableList<kotlin/Int>|
+    public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyImpl] get(): R|kotlin/Any?|
+
+FILE: [ResolvedTo(IMPORTS)] implicitSubstitutedBackingField.kt
+    public abstract [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] x: R|kotlin/collections/MutableList<T>|): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] val prop: R|kotlin/Any?|
+            private final [ResolvedTo(CONSTANT_EVALUATION)] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
+
+    }
+    public final [ResolvedTo(STATUS)] class MyImpl : R|m2/MyClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyImpl] constructor(): R|m2/MyImpl| {
+            LAZY_super<R|m2/MyClass<kotlin/Int>|>
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+TARGET: public final override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=m2/MyClass.prop] val prop: R|kotlin/Any?|
+    private final [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=<local>/field] backing field field: R|kotlin/collections/MutableList<kotlin/Int>|
+    public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyImpl] get(): R|kotlin/Any?|
+
+FILE: [ResolvedTo(IMPORTS)] implicitSubstitutedBackingField.kt
+    public abstract [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] x: R|kotlin/collections/MutableList<T>|): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/Any?|
+            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
+
+    }
+    public final [ResolvedTo(STATUS)] class MyImpl : R|m2/MyClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyImpl] constructor(): R|m2/MyImpl| {
+            LAZY_super<R|m2/MyClass<kotlin/Int>|>
+        }
+
+    }
+
+BODY_RESOLVE:
+TARGET: public final override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=m2/MyClass.prop] val prop: R|kotlin/Any?|
+    private final [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=<local>/field] backing field field: R|kotlin/collections/MutableList<kotlin/Int>|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyImpl] get(): R|kotlin/Any?|
+
+FILE: [ResolvedTo(IMPORTS)] implicitSubstitutedBackingField.kt
+    public abstract [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] x: R|kotlin/collections/MutableList<T>|): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/Any?|
+            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
+
+    }
+    public final [ResolvedTo(STATUS)] class MyImpl : R|m2/MyClass<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyImpl] constructor(): R|m2/MyImpl| {
+            LAZY_super<R|m2/MyClass<kotlin/Int>|>
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] implicitSubstitutedBackingField.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] class MyClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/collections/MutableList<T>|): R|m2/MyClass<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Any?|
+            private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class MyImpl : R|m2/MyClass<kotlin/Int>| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyImpl] constructor(): R|m2/MyImpl| {
+            super<R|m2/MyClass<kotlin/Int>|>(Null(null)!!)
+        }
+
+    }

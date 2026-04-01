@@ -1,17 +1,29 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // OPT_IN: kotlin.js.ExperimentalJsExport
-// RENDER_DIAGNOSTICS_MESSAGES
+// RENDER_DIAGNOSTIC_ARGUMENTS
 // DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
+// LANGUAGE: +AllowInterfaceNestedClassesInJsExport +AllowNamedCompanionForJsExport +JsAllowExportingValueClasses
 
 package foo
 
 <!WRONG_EXPORTED_DECLARATION("inline function with reified type parameters")!>@JsExport
 inline fun <reified T> inlineReifiedFun(x: Any)<!> = x is T
 
-<!WRONG_EXPORTED_DECLARATION("suspend function")!>@JsExport
-suspend fun suspendFun()<!> { }
+@JsExport
+suspend fun suspendFun() { }
 
 <!WRONG_EXPORTED_DECLARATION("extension property")!>@JsExport
 val String.extensionProperty<!>
+    get() = this.length
+
+<!WRONG_EXPORTED_DECLARATION("property with context parameters")!>@JsExport
+context(x: Int)
+val propertyWithContext<!>
+    get() = x
+
+<!WRONG_EXPORTED_DECLARATION("extension property")!>@JsExport
+context(x: Int)
+val String.extensionPropertyWithContext<!>
     get() = this.length
 
 @JsExport
@@ -32,30 +44,37 @@ interface InterfaceWithCompanion {
 
 @JsExport
 interface InterfaceWithNamedCompanion {
-    companion <!NAMED_COMPANION_IN_EXPORTED_INTERFACE!>object Named<!> {
+    companion object Named {
         fun foo() = 42
     }
 }
 
 @JsExport
 interface OuterInterface {
-    class <!WRONG_EXPORTED_DECLARATION("nested class inside exported interface")!>Nested<!>
+    class Nested
 }
 
 @JsExport
-value class <!WRONG_EXPORTED_DECLARATION("value class")!>A(val a: Int)<!>
+value class A(val a: Int)
 
 @JsExport
-inline class <!WRONG_EXPORTED_DECLARATION("value class")!>B(val b: Int)<!>
+inline class B(val b: Int)
 
 @JsExport
-<!INCOMPATIBLE_MODIFIERS("inline; value")!>inline<!> <!INCOMPATIBLE_MODIFIERS("value; inline")!>value<!> class <!WRONG_EXPORTED_DECLARATION("value class")!>C(val c: Int)<!>
+<!INCOMPATIBLE_MODIFIERS("inline; value")!>inline<!> <!INCOMPATIBLE_MODIFIERS("value; inline")!>value<!> class C(val c: Int)
 
 <!MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE!>@JsExport.Default
-<!INCOMPATIBLE_MODIFIERS("value; inline")!>value<!> <!INCOMPATIBLE_MODIFIERS("inline; value")!>inline<!> class <!WRONG_EXPORTED_DECLARATION("value class")!>D(val d: Int)<!><!>
+<!INCOMPATIBLE_MODIFIERS("value; inline")!>value<!> <!INCOMPATIBLE_MODIFIERS("inline; value")!>inline<!> class D(val d: Int)<!>
 
 @JsExport
 external interface ExternalInterface
+
+@JsExport
+external interface ExternalInterfaceWithCompanion {
+    companion <!WRONG_EXPORTED_DECLARATION("external companion object")!>object<!> {
+        fun foo(): String
+    }
+}
 
 <!MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE!>@JsExport.Default
 external interface DefaultExternalInterface<!>

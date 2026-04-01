@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.common.serialization.IrModuleDependencyTrackerImpl
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.wasm.export.ExportModelGenerator
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
+import org.jetbrains.kotlin.backend.wasm.ic.overrideBuiltInsSignatures
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.JsCodeSnippet
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmServiceImportExportKind
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
 import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.backend.wasm.utils.DwarfGenerator
@@ -31,33 +30,45 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.js.config.generateDts
+import org.jetbrains.kotlin.js.config.sourceMap
+import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
+import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.util.PerformanceManager
-import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmDebug
+import org.jetbrains.kotlin.wasm.config.wasmGenerateDwarf
+import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
+import org.jetbrains.kotlin.wasm.config.wasmNoJsTag
+import org.jetbrains.kotlin.wasm.ir.ByteWriterWithOffsetWrite
+import org.jetbrains.kotlin.wasm.ir.WasmBinaryData
+import org.jetbrains.kotlin.wasm.ir.WasmBinaryData.Companion.writeTo
 import org.jetbrains.kotlin.wasm.ir.WasmExport
+import org.jetbrains.kotlin.wasm.ir.WasmModule
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import org.jetbrains.kotlin.wasm.ir.debug.DebugInformationGeneratorImpl
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
+data class DynamicJsModule(
+    val name: String,
+    val content: String,
+)
+
 class WasmCompilerResult(
     val wat: String?,
-    val jsUninstantiatedWrapper: String?,
     val jsWrapper: String,
-    val wasm: ByteArray,
+    val wasm: WasmBinaryData,
     val debugInformation: DebugInformation?,
     val dts: String?,
     val useDebuggerCustomFormatters: Boolean,
-    val jsBuiltinsPolyfillsWrapper: String?,
+    val dynamicJsModules: List<DynamicJsModule>,
     val baseFileName: String,
 )
 
@@ -69,18 +80,15 @@ class DebugInformation(
 data class LoweredIrWithExtraArtifacts(
     val loweredIr: List<IrModuleFragment>,
     val backendContext: WasmBackendContext,
-    val typeScriptFragment: TypeScriptFragment?
+    val typeScriptFragment: TypeScriptFragment?,
+    val moduleDependencies: (IrModuleFragment) -> Set<IrModuleFragment>,
 )
 
 fun compileToLoweredIr(
     irModuleInfo: IrModuleInfo,
     mainModule: MainModule,
     configuration: CompilerConfiguration,
-    performanceManager: PerformanceManager?,
     exportedDeclarations: Set<FqName> = emptySet(),
-    generateTypeScriptFragment: Boolean,
-    propertyLazyInitialization: Boolean,
-    disableCrossFileOptimisations: Boolean = false,
 ): LoweredIrWithExtraArtifacts {
     val (moduleFragment, moduleDependencies, irBuiltIns, symbolTable, irLinker) = irModuleInfo
 
@@ -90,7 +98,6 @@ fun compileToLoweredIr(
         irBuiltIns = irBuiltIns,
         symbolTable = symbolTable,
         irModuleFragment = moduleFragment,
-        propertyLazyInitialization = propertyLazyInitialization,
         configuration = configuration,
     )
 
@@ -101,7 +108,7 @@ fun compileToLoweredIr(
     val sortedModuleDependencies = irLinker.moduleDependencyTracker.reverseTopoOrder(moduleDependencies)
 
     val allModules = when (mainModule) {
-        is MainModule.SourceFiles -> sortedModuleDependencies.all + moduleFragment
+        is MainModule.SourceFiles -> error("Main module must be klib")
         is MainModule.Klib -> sortedModuleDependencies.all
     }
 
@@ -115,37 +122,45 @@ fun compileToLoweredIr(
         for (file in module.files)
             markExportedDeclarations(context, file, exportedDeclarations)
 
-    val typeScriptFragment = runIf(generateTypeScriptFragment) {
+    val typeScriptFragment = runIf(configuration.generateDts) {
         val exportModel = ExportModelGenerator(context).generateExport(allModules)
         val exportModelToDtsTranslator = ExportModelToTsDeclarations(ModuleKind.ES)
         val fragment = exportModelToDtsTranslator.generateTypeScriptFragment(exportModel.declarations)
         TypeScriptFragment(exportModelToDtsTranslator.generateTypeScript("", listOf(fragment)))
     }
-    performanceManager?.notifyPhaseFinished(PhaseType.TranslationToIr)
 
-    performanceManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-        lowerPreservingTags(
-            allModules,
-            context,
-            context.irFactory.stageController as WholeWorldStageController,
-            disableCrossFileOptimisations = disableCrossFileOptimisations,
-        )
+    lowerPreservingTags(
+        allModules,
+        context,
+        context.irFactory.stageController as WholeWorldStageController,
+    )
+
+    overrideBuiltInsSignatures(context)
+
+    val dependencyTracker = irLinker.moduleDependencyTracker as IrModuleDependencyTrackerImpl
+    val stdlibFragment = allModules.first { it.kotlinLibrary?.isWasmStdlib == true }
+    allModules.forEach { module ->
+        dependencyTracker.trackDependency(module, stdlibFragment)
     }
 
-    return LoweredIrWithExtraArtifacts(allModules, context, typeScriptFragment)
+    return LoweredIrWithExtraArtifacts(
+        loweredIr = allModules,
+        backendContext = context,
+        typeScriptFragment = typeScriptFragment,
+        moduleDependencies = dependencyTracker::getAllDependencies
+    )
 }
 
 fun lowerPreservingTags(
     modules: Iterable<IrModuleFragment>,
     context: WasmBackendContext,
     controller: WholeWorldStageController,
-    disableCrossFileOptimisations: Boolean,
 ) {
     // Lower all the things
     controller.currentStage = 0
 
     val phaserState = PhaserState()
-    val wasmLowerings = getWasmLowerings(context.configuration, disableCrossFileOptimisations)
+    val wasmLowerings = wasmLowerings
 
     wasmLowerings.forEachIndexed { i, lowering ->
         controller.currentStage = i + 1
@@ -159,58 +174,97 @@ fun lowerPreservingTags(
 
 data class WasmModuleDependencyImport(val name: String, val fileName: String)
 
-fun compileWasm(
-    wasmCompiledFileFragments: List<WasmCompiledFileFragment>,
-    moduleName: String,
-    configuration: CompilerConfiguration,
-    typeScriptFragment: TypeScriptFragment?,
-    baseFileName: String,
-    emitNameSection: Boolean,
-    generateWat: Boolean,
-    generateSourceMaps: Boolean,
-    useDebuggerCustomFormatters: Boolean,
-    generateDwarf: Boolean,
-    stdlibModuleNameForImport: String? = null,
-    dependencyModules: Set<WasmModuleDependencyImport> = emptySet(),
-    initializeUnit: Boolean = true,
-    singleModulePreloadJs: String? = null,
-): WasmCompilerResult {
+internal const val wasmInitializeExportName = "_initialize"
+internal const val wasmStartExportName = "_start"
+internal const val jsBuiltinsModulePrefix = "wasm:"
+internal const val importedStringConstants = "'"
+
+private fun String.normalizeEmptyLines(): String {
+    return this.replace(Regex("\n\\s*\n+"), "\n\n")
+}
+
+class MultimoduleCompileOptions(
+    val stdlibModuleNameForImport: String?,
+    val dependencyModules: Set<WasmModuleDependencyImport>,
+    val initializeUnit: Boolean,
+)
+
+class WasmIrModuleConfiguration(
+    val wasmCompiledFileFragments: List<WasmCompiledFileFragment>,
+    val configuration: CompilerConfiguration,
+    val moduleName: String,
+    val baseFileName: String,
+    val typeScriptFragment: TypeScriptFragment?,
+    val multimoduleOptions: MultimoduleCompileOptions?,
+)
+
+fun linkWasmIr(moduleConfiguration: WasmIrModuleConfiguration): WasmModule {
+    val wasmCompiledFileFragments = moduleConfiguration.wasmCompiledFileFragments
+
+    val configuration = moduleConfiguration.configuration
+
     val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
 
+    val exceptionTagType: ExceptionTagType = when {
+        configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS) ->
+            ExceptionTagType.TRAP
+        isWasmJsTarget -> ExceptionTagType.JS_TAG
+        else -> ExceptionTagType.WASM_TAG
+    }
+
+    val multimoduleParameters = moduleConfiguration.multimoduleOptions
+
     val wasmCompiledModuleFragment = WasmCompiledModuleFragment(
-        wasmCompiledFileFragments,
-        configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS),
-        isWasmJsTarget,
+        wasmCompiledFileFragments = wasmCompiledFileFragments,
+        isWasmJsTarget = isWasmJsTarget
     )
 
-    val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments(stdlibModuleNameForImport, initializeUnit)
+    val wasmCommandModuleInitialization = configuration.get(WasmConfigurationKeys.WASM_COMMAND_MODULE) ?: false
 
-    val dwarfGeneratorForBinary = runIf(generateDwarf) {
+    return wasmCompiledModuleFragment.linkWasmCompiledFragments(
+        multimoduleOptions = multimoduleParameters,
+        exceptionTagType = exceptionTagType,
+        wasmCommandModuleInitialization = wasmCommandModuleInitialization,
+    )
+}
+
+fun compileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration, linkedModule: WasmModule): WasmCompilerResult {
+    val baseFileName = moduleConfiguration.baseFileName
+    val configuration = moduleConfiguration.configuration
+    val wasmCompiledFileFragments = moduleConfiguration.wasmCompiledFileFragments
+    val multimoduleParameters = moduleConfiguration.multimoduleOptions
+    val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
+
+    val wasmStartFunctionDefined = linkedModule.exports.any { it.name == wasmStartExportName }
+    val wasmInitializeFunctionDefined = linkedModule.exports.any { it.name == wasmInitializeExportName }
+
+    val dwarfGeneratorForBinary = runIf(configuration.wasmGenerateDwarf) {
         DwarfGenerator()
     }
-    val sourceMapGeneratorForBinary = runIf(generateSourceMaps) {
+    val sourceMapGeneratorForBinary = runIf(configuration.sourceMap) {
         SourceMapGenerator("$baseFileName.wasm", configuration)
     }
-    val sourceMapGeneratorForText = runIf(generateWat && generateSourceMaps) {
+
+    val sourceMapGeneratorForText = runIf(configuration.wasmGenerateWat && configuration.sourceMap) {
         SourceMapGenerator("$baseFileName.wat", configuration)
     }
 
-    val wat = if (generateWat) {
-        val watGenerator = WasmIrToText(sourceMapGeneratorForText)
-        watGenerator.appendWasmModule(linkedModule)
+    val wat = if (configuration.wasmGenerateWat) {
+        val watGenerator = WasmIrToText(linkedModule, sourceMapGeneratorForText)
+        watGenerator.appendWasmModule()
         watGenerator.toString()
     } else {
         null
     }
 
-    val os = ByteArrayOutputStream()
+    val writer = ByteWriterWithOffsetWrite()
 
     val wasmIrToBinary =
         WasmIrToBinary(
-            os,
+            writer,
             linkedModule,
-            moduleName,
-            emitNameSection,
+            moduleConfiguration.moduleName,
+            configuration.wasmDebug,
             DebugInformationGeneratorImpl.createIfNeeded(
                 sourceMapGenerator = sourceMapGeneratorForBinary,
                 dwarfGenerator = dwarfGeneratorForBinary,
@@ -219,73 +273,124 @@ fun compileWasm(
 
     wasmIrToBinary.appendWasmModule()
 
-    val byteArray = os.toByteArray()
-    val jsUninstantiatedWrapper: String?
     val jsWrapper: String
-    val jsBuiltinsPolyfillsWrapper: String?
+    val dynamicJsModules = mutableListOf<DynamicJsModule>()
 
     if (isWasmJsTarget) {
         val jsModuleImports = mutableSetOf<String>()
         val jsFuns = mutableSetOf<JsCodeSnippet>()
         val jsModuleAndQualifierReferences = mutableSetOf<JsModuleAndQualifierReference>()
+        val jsPolyfills = mutableListOf<String>()
         wasmCompiledFileFragments.forEach { fragment ->
-            jsModuleImports.addAll(fragment.jsModuleImports.values.distinct())
-            jsFuns.addAll(fragment.jsFuns.values)
-            jsModuleAndQualifierReferences.addAll(fragment.jsModuleAndQualifierReferences)
+            (fragment as? WasmCompiledCodeFileFragment)?.linkerData?.let { linkerData ->
+                jsModuleImports.addAll(linkerData.jsModuleImports.values.distinct())
+                jsFuns.addAll(linkerData.jsFuns.values)
+                jsModuleAndQualifierReferences.addAll(linkerData.jsModuleAndQualifierReferences)
+                jsPolyfills.addAll(linkerData.jsBuiltinsPolyfills.values)
+            }
         }
 
-        val useJsTag = !configuration.getBoolean(WasmConfigurationKeys.WASM_NO_JS_TAG)
+        if (jsPolyfills.isNotEmpty()) {
+            dynamicJsModules.add(
+                DynamicJsModule(
+                    name = "js-builtins",
+                    content = jsPolyfills.joinToString("\n")
+                )
+            )
+        }
 
-        jsUninstantiatedWrapper = generateAsyncJsWrapper(
-            jsModuleImports,
-            jsFuns,
-            dependencyModules,
-            "./$baseFileName.wasm",
-            jsModuleAndQualifierReferences,
-            useJsTag,
-            baseFileName,
-            singleModulePreloadJs,
+        val wholeProgramMode: Boolean
+        val isStdlibModule: Boolean
+        val stdlibModule: WasmModuleDependencyImport?
+        if (multimoduleParameters != null) {
+            wholeProgramMode = false
+            val stdlibModuleNameForImport = multimoduleParameters.stdlibModuleNameForImport
+            isStdlibModule = stdlibModuleNameForImport == null
+            stdlibModule = multimoduleParameters.dependencyModules.find { it.name == stdlibModuleNameForImport }
+        } else {
+            wholeProgramMode = true
+            isStdlibModule = false
+            stdlibModule = null
+        }
+
+        val importObject = generateImportObject(
+            jsModuleImports = jsModuleImports,
+            jsModuleAndQualifierReferences = jsModuleAndQualifierReferences,
+            dependencyModules = multimoduleParameters?.dependencyModules ?: emptySet(),
+            baseFileName = baseFileName,
+            jsFuns = jsFuns,
+            stdlibModule = stdlibModule,
+            isStdlibModule = isStdlibModule,
+            useJsTag = !configuration.wasmNoJsTag,
+            wholeProgramMode = wholeProgramMode
         )
-        jsWrapper = generateEsmExportsWrapper(
-            "./$baseFileName.uninstantiated.mjs",
-            linkedModule.exports,
-            useDebuggerCustomFormatters,
+
+        if (importObject.isNotEmpty()) {
+            dynamicJsModules.add(
+                DynamicJsModule(
+                    name = "import-object",
+                    content = importObject
+                )
+            )
+        }
+
+        jsWrapper = generateWebAssemblyJsInstanceInitializer(
+            jsModuleImports = jsModuleImports,
+            wasmFilePath = "./$baseFileName.wasm",
+            exports = linkedModule.exports,
+            useDebuggerCustomFormatters = configuration.useDebuggerCustomFormatters,
+            baseFileName = baseFileName,
+            isStdlibModule = isStdlibModule,
+            wholeProgramMode = wholeProgramMode,
+            wasmStartFunctionDefined = wasmStartFunctionDefined,
+            wasmInitializeFunctionDefined = wasmInitializeFunctionDefined
         )
-        jsBuiltinsPolyfillsWrapper = wasmCompiledFileFragments.flatMap { fragment ->
-            fragment.jsBuiltinsPolyfills.values.toList()
-        }.joinToString("\n").takeIf { it.isNotEmpty() }
+
     } else {
-        jsUninstantiatedWrapper = null
         jsWrapper =
-            wasmCompiledModuleFragment.generateAsyncWasiWrapper("./$baseFileName.wasm", linkedModule.exports, useDebuggerCustomFormatters)
-        jsBuiltinsPolyfillsWrapper = null
+            generateAsyncWasiWrapper(
+                wasmFilePath = "./$baseFileName.wasm",
+                exports = linkedModule.exports,
+                useDebuggerCustomFormatters = configuration.useDebuggerCustomFormatters,
+                wasmStartFunctionDefined = wasmStartFunctionDefined,
+                wasmInitializeFunctionDefined = wasmInitializeFunctionDefined
+            )
     }
 
     return WasmCompilerResult(
         wat = wat,
-        jsUninstantiatedWrapper = jsUninstantiatedWrapper,
-        jsWrapper = jsWrapper,
-        wasm = byteArray,
+        jsWrapper = jsWrapper.normalizeEmptyLines(),
+        wasm = writer.getBinaryData(),
         debugInformation = DebugInformation(
             sourceMapGeneratorForBinary?.generate(),
             sourceMapGeneratorForText?.generate(),
         ),
-        dts = typeScriptFragment?.raw,
-        useDebuggerCustomFormatters = useDebuggerCustomFormatters,
-        jsBuiltinsPolyfillsWrapper = jsBuiltinsPolyfillsWrapper,
+        dts = moduleConfiguration.typeScriptFragment?.raw,
+        useDebuggerCustomFormatters = configuration.useDebuggerCustomFormatters,
+        dynamicJsModules = dynamicJsModules.map { it.copy(content = it.content.normalizeEmptyLines()) },
         baseFileName = baseFileName,
     )
 }
 
 //language=js
-fun WasmCompiledModuleFragment.generateAsyncWasiWrapper(
+fun generateAsyncWasiWrapper(
     wasmFilePath: String,
     exports: List<WasmExport<*>>,
-    useCustomFormatters: Boolean
-): String = """
+    useDebuggerCustomFormatters: Boolean,
+    wasmStartFunctionDefined: Boolean,
+    wasmInitializeFunctionDefined: Boolean
+): String {
+    val mainFunctionCall = if (wasmInitializeFunctionDefined)
+        "wasi.initialize(wasmInstance);"
+    else if (wasmStartFunctionDefined)
+        "wasi.start(wasmInstance);"
+    else
+        "wasi.finalizeBindings(wasmInstance);"
+
+    return """
 import { WASI } from 'wasi';
 import { argv, env } from 'node:process';
-${if (useCustomFormatters) "import \"./custom-formatters.js\"" else ""}
+${if (useDebuggerCustomFormatters) "import \"./custom-formatters.js\"" else ""}
 
 const wasi = new WASI({ version: 'preview1', args: argv, env, });
 
@@ -295,71 +400,53 @@ const wasmBuffer = fs.readFileSync(url.fileURLToPath(import.meta.resolve('$wasmF
 const wasmModule = new WebAssembly.Module(wasmBuffer);
 const wasmInstance = new WebAssembly.Instance(wasmModule, wasi.getImportObject());
 
-wasi.initialize(wasmInstance);
+$mainFunctionCall
 
 const exports = wasmInstance.exports
-${generateExports(exports)}
+${generateExports(exports, wholeProgramMode = false, isStdlibModule = false)}
 """
+}
 
-fun generateAsyncJsWrapper(
+fun generateImportObject(
     jsModuleImports: Set<String>,
-    jsFuns: Set<JsCodeSnippet>,
-    dependenciesModules: Set<WasmModuleDependencyImport>,
-    wasmFilePath: String,
-    jsModuleAndQualifierReferences: Set<JsModuleAndQualifierReference>,
-    useJsTag: Boolean,
+    jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference>,
+    dependencyModules: Set<WasmModuleDependencyImport>,
     baseFileName: String,
-    singleModulePreloadJs: String?,
+    stdlibModule: WasmModuleDependencyImport?,
+    jsFuns: Set<JsCodeSnippet>,
+    isStdlibModule: Boolean,
+    useJsTag: Boolean,
+    wholeProgramMode: Boolean
 ): String {
+    val stdlibModuleOrWholeProgramMode = isStdlibModule || wholeProgramMode
+
+    val imports = generateJsImports(
+        jsModuleImports,
+        jsModuleAndQualifierReferences,
+        dependencyModules,
+        baseFileName,
+        stdlibModuleOrWholeProgramMode,
+        stdlibModule,
+    )
 
     val jsCodeBody = jsFuns.joinToString(",\n") {
         "${it.importName.owner.toJsStringLiteral()} : ${it.jsCode}"
     }
-
-    val jsCodeBodyIndented = jsCodeBody.prependIndent("        ")
-
-    val imports = jsModuleImports
-        .toList()
-        .sorted()
-        .joinToString("") {
-            val moduleSpecifier = it.toJsStringLiteral()
-            "        $moduleSpecifier: imports[$moduleSpecifier],\n"
-        }
-
-    val allModuleImports = jsModuleImports + jsModuleAndQualifierReferences.mapNotNull { it.module }
-    val importModuleLoaders = allModuleImports.joinToString("\n") {
-        val moduleSpecifier = it.toJsStringLiteral()
-        buildString {
-            append("    imports[$moduleSpecifier] = imports[$moduleSpecifier] ?? await import(")
-            append(if (it.contains("wasm:")) "\'./${baseFileName}.js-builtins.mjs\'" else moduleSpecifier)
-            append(");")
-        }
-    }
-
-    val dependenciesImports = dependenciesModules
-        .joinToString("") {
-            val moduleSpecifier = it.name.toJsStringLiteral()
-            "        $moduleSpecifier: imports[$moduleSpecifier],\n"
-        }
-
-    val dependenciesLoaders = dependenciesModules
-        .joinToString("") { import ->
-            val moduleSpecifier = import.name.toJsStringLiteral()
-            "    imports[$moduleSpecifier] = imports[$moduleSpecifier] ?? (await (await import('./${import.fileName}.uninstantiated.mjs')).instantiate(imports, true)).exports;\n"
-        }
+    val jsCodeBodyIndented = jsCodeBody.prependIndent("    ")
 
     val referencesToQualifiedAndImportedDeclarations = jsModuleAndQualifierReferences
         .map {
             val module = it.module
             val qualifier = it.qualifier
             buildString {
-                append("    const ")
+                append("const ")
                 append(it.jsReference)
                 append(" = ")
                 if (module != null) {
-                    append("imports[${module.toJsStringLiteral()}]")
-                    if (qualifier != null)
+                    append(JsModuleAndQualifierReference.encode(module))
+                    if (qualifier != null) {
                         append(".")
+                    }
                 }
                 if (qualifier != null) {
                     append(qualifier)
@@ -368,142 +455,269 @@ fun generateAsyncJsWrapper(
             }
         }.sorted()
         .joinToString("\n")
-    //language=js
-    val pathJsStringLiteral = wasmFilePath.toJsStringLiteral()
 
-    val builtinsList = jsModuleImports.filter { it.startsWith("wasm:") }.map { "${it.removePrefix("wasm:")}" }
-    val options = "{ builtins: ['${builtinsList.joinToString(", ")}'] }"
-
-    return """
-export async function instantiate(imports={}, runInitializer=true) {
-    imports['_cachedJsObjects_'] = imports['_cachedJsObjects_'] ?? new WeakMap();
-    const cachedJsObjects = imports['_cachedJsObjects_'];
-
-    // ref must be non-null
-    function getCachedJsObject(ref, ifNotCached) {
+    val wasmTagInitialization =
+        if (stdlibModuleOrWholeProgramMode)
+            """
+            const wasmJsTag = ${if (useJsTag) "WebAssembly.JSTag" else "void 0"};
+            const wasmTag = wasmJsTag ?? new WebAssembly.Tag({ parameters: ['externref'] });
+        """.trimIndent()
+        else
+            ""
+    val getCachedJsObject =
+        if (stdlibModuleOrWholeProgramMode)
+            """
+    const cachedJsObjects = new WeakMap();
+    ${if (isStdlibModule) "export " else ""}function getCachedJsObject(ref, ifNotCached) {
         if (typeof ref !== 'object' && typeof ref !== 'function') return ifNotCached;
         const cached = cachedJsObjects.get(ref);
         if (cached !== void 0) return cached;
         cachedJsObjects.set(ref, ifNotCached);
         return ifNotCached;
     }
-${singleModulePreloadJs ?: ""}
-$dependenciesLoaders
-$importModuleLoaders
+            """.trimIndent()
+        else
+            ""
+
+    val importObject = generateImportObjectBody(jsModuleImports, dependencyModules)
+
+    return """
+$imports
+$wasmTagInitialization
+
+// Placed here to give access to it from externals (js_code)
+let wasmExports;
+let require;
+
+if (typeof process !== 'undefined' && process.release.name === 'node') {
+    const module = await import(/* webpackIgnore: true */'node:module');
+    const importMeta = import.meta;
+    require = module.default.createRequire(importMeta.url);
+}
+
+export function setWasmExports(exports) {
+    wasmExports = exports;
+}
 
 $referencesToQualifiedAndImportedDeclarations
 
-    ${
-        // Save WebAssembly.JSTag into a local variable to work around [a problem in JavaScriptCore](https://bugs.webkit.org/show_bug.cgi?id=297126), 
-        // which doesn't allow us to check if JSTag is used as a tag inside a wasm module.
-        ""
-    }const wasmJsTag = ${if (useJsTag) "WebAssembly.JSTag" else "void 0"};
-    const wasmTag = wasmJsTag ?? new WebAssembly.Tag({ parameters: ['externref'] });
+$getCachedJsObject
 
-    const js_code = {
+const js_code = {
 $jsCodeBodyIndented
-    }
-    
-    // Placed here to give access to it from externals (js_code)
-    let wasmInstance;
-    let require; 
-    let wasmExports;
-
-    const isNodeJs = (typeof process !== 'undefined') && (process.release.name === 'node');
-    const isDeno = !isNodeJs && (typeof Deno !== 'undefined')
-    const isStandaloneJsVM =
-        !isDeno && !isNodeJs && (
-            typeof d8 !== 'undefined' // V8
-            || typeof inIon !== 'undefined' // SpiderMonkey
-            || typeof jscOptions !== 'undefined' // JavaScriptCore
-        );
-    const isBrowser = !isNodeJs && !isDeno && !isStandaloneJsVM && (typeof window !== 'undefined' || typeof self !== 'undefined');
-    
-    if (!isNodeJs && !isDeno && !isStandaloneJsVM && !isBrowser) {
-      throw "Supported JS engine not detected";
-    }
-
-    const wasmFilePath = $pathJsStringLiteral;
-
-    const importObject = {
-        js_code,
-        intrinsics: {
-            tag: wasmTag
-        },
-$imports
-$dependenciesImports
-    };
-    
-    try {
-      if (isNodeJs) {
-        const module = await import(/* webpackIgnore: true */'node:module');
-        const importMeta = import.meta;
-        require = module.default.createRequire(importMeta.url);
-        const fs = require('fs');
-        const url = require('url');
-        const filepath = import.meta.resolve(wasmFilePath);
-        const wasmBuffer = fs.readFileSync(url.fileURLToPath(filepath));
-        const wasmModule = new WebAssembly.Module(wasmBuffer);
-        wasmInstance = new WebAssembly.Instance(wasmModule, importObject, $options);
-      }
-      
-      if (isDeno) {
-        const path = await import(/* webpackIgnore: true */'https://deno.land/std/path/mod.ts');
-        const binary = Deno.readFileSync(path.fromFileUrl(import.meta.resolve(wasmFilePath)));
-        const module = await WebAssembly.compile(binary);
-        wasmInstance = await WebAssembly.instantiate(module, importObject, $options);
-      }
-      
-      if (isStandaloneJsVM) {
-        const wasmBuffer = read(wasmFilePath, 'binary');
-        const wasmModule = new WebAssembly.Module(wasmBuffer);
-        wasmInstance = new WebAssembly.Instance(wasmModule, importObject, $options);
-      }
-      
-      if (isBrowser) {
-        wasmInstance = (await WebAssembly.instantiateStreaming(fetch(new URL($pathJsStringLiteral,import.meta.url).href), importObject, $options)).instance;
-      }
-    } catch (e) {
-      if (e instanceof WebAssembly.CompileError) {
-        let text = `Please make sure that your runtime environment supports the latest version of Wasm GC and Exception-Handling proposals.
-For more information, see https://kotl.in/wasm-help
-`;
-        if (isBrowser) {
-          console.error(text);
-        } else {
-          const t = "\n" + text;
-          if (typeof console !== "undefined" && console.log !== void 0) 
-            console.log(t);
-          else 
-            print(t);
-        }
-      }
-      throw e;
-    }
-    
-    wasmExports = wasmInstance.exports;
-    if (runInitializer) {
-        wasmExports._initialize();
-    }
-
-    return { instance: wasmInstance,  exports: wasmExports };
-}
-"""
 }
 
-fun generateEsmExportsWrapper(
-    asyncWrapperFileName: String,
-    exports: List<WasmExport<*>>,
-    useCustomFormatters: Boolean,
+const StringConstantsProxy = new Proxy({}, {
+  get(_, prop) { return prop; }
+});
+
+${if (stdlibModuleOrWholeProgramMode) "export { wasmTag as __TAG };" else ""}
+
+$importObject
+    """
+}
+
+fun generateJsImports(
+    jsModuleImports: Set<String>,
+    jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference>,
+    dependencyModules: Set<WasmModuleDependencyImport>,
+    baseFileName: String,
+    stdlibModuleOrWholeProgramMode: Boolean,
+    stdlibModule: WasmModuleDependencyImport?,
 ): String {
+    val dependenciesImports = dependencyModules
+        .map {
+            val importVariableString = JsModuleAndQualifierReference.encode(it.name)
+            "\'./${it.fileName}.mjs\'" to importVariableString
+        }
+
+    val importedModules = jsModuleImports
+        .map {
+            val moduleSpecifier = it.toJsStringLiteral().toString()
+            val importVariableString = JsModuleAndQualifierReference.encode(it)
+            moduleSpecifier to importVariableString
+        }
+
+    val referencesToImportedDeclarations = jsModuleAndQualifierReferences
+        .filter { it.module != null }
+        .map {
+            val module = it.module!!
+            val stringLiteral = module.toJsStringLiteral().toString()
+            stringLiteral to JsModuleAndQualifierReference.encode(module)
+        }
+
+    val allModules = (importedModules + referencesToImportedDeclarations + dependenciesImports)
+        .distinctBy {
+            it.first
+        }.sortedBy { it.first }
+
+    val importsImportedSection = allModules.joinToString("\n") {
+        buildString {
+            append("import * as ")
+            append(it.second)
+            append(" from ")
+            append(if (it.first.contains(jsBuiltinsModulePrefix)) "\'./${baseFileName}.js-builtins.mjs\'" else it.first)
+            append(";")
+        }
+    }
+
+    val orderedDependenciesImports =
+        dependenciesImports.distinctBy { it.first }.sortedBy { it.first }
+
+    val importsDependenciesExportsSection = orderedDependenciesImports.joinToString("\n") {
+        "import { __ALL_EXPORTS as ${it.second}__ALL_EXPORTS } from ${it.first};"
+    }
+
     /*language=js */
     return """
-import { instantiate } from ${asyncWrapperFileName.toJsStringLiteral()};
-${if (useCustomFormatters) "import \"./custom-formatters.js\"" else ""}
+$importsImportedSection
+$importsDependenciesExportsSection
+${if (!stdlibModuleOrWholeProgramMode) "import { __TAG as wasmTag, getCachedJsObject } from \'./${stdlibModule!!.fileName}.mjs\'" else ""}
+""".trimIndent()
+}
 
-const exports = (await instantiate({
-})).exports;
-${generateExports(exports)}
+fun generateImportObjectBody(
+    jsModuleImports: Set<String>,
+    dependencyModules: Set<WasmModuleDependencyImport>,
+): String {
+
+    val dependencyImports = dependencyModules
+        .map {
+            val moduleSpecifier = it.name.toJsStringLiteral().toString()
+            val importVariableString = JsModuleAndQualifierReference.encode(it.name)
+            moduleSpecifier to importVariableString
+        }.joinToString("") {
+            "    ${it.first}: ${it.second}__ALL_EXPORTS,\n"
+        }
+
+    val jsImports = jsModuleImports
+        .map {
+            val moduleSpecifier = it.toJsStringLiteral().toString()
+            val importVariableString = JsModuleAndQualifierReference.encode(it)
+            moduleSpecifier to importVariableString
+        }.joinToString("") {
+            "    ${it.first}: ${it.second},\n"
+        }
+
+    val imports = dependencyImports + jsImports
+
+    return """
+export const importObject = {
+    js_code,
+    intrinsics: {
+        tag: wasmTag
+    },
+    "$importedStringConstants": StringConstantsProxy,
+$imports};
+    """.trimIndent()
+}
+
+fun generateWebAssemblyJsInstanceInitializer(
+    jsModuleImports: Set<String>,
+    wasmFilePath: String,
+    exports: List<WasmExport<*>>,
+    useDebuggerCustomFormatters: Boolean,
+    baseFileName: String,
+    isStdlibModule: Boolean,
+    wholeProgramMode: Boolean,
+    wasmStartFunctionDefined: Boolean,
+    wasmInitializeFunctionDefined: Boolean
+): String {
+
+    val commonStdlibExports = if (isStdlibModule) ", getCachedJsObject, __TAG as wasmTag" else ""
+
+    val mainFunctionCall = if (wasmStartFunctionDefined)
+        "exports.$wasmStartExportName();"
+    else if (wasmInitializeFunctionDefined)
+        "exports.$wasmInitializeExportName();"
+    else
+        ""
+
+    val staticImports = """
+${if (useDebuggerCustomFormatters) "import \"./custom-formatters.js\"" else ""}
+import { importObject, setWasmExports$commonStdlibExports } from './${baseFileName}.import-object.mjs'
+    """.trimIndent()
+
+    val builtinsList = jsModuleImports.filter { it.startsWith(jsBuiltinsModulePrefix) }.map { it.removePrefix(jsBuiltinsModulePrefix) }
+
+    val pathJsStringLiteral = wasmFilePath.toJsStringLiteral()
+
+    return """
+$staticImports
+
+let wasmInstance;
+
+const isNodeJs = (typeof process !== 'undefined') && (process.release.name === 'node');
+const isDeno = !isNodeJs && (typeof Deno !== 'undefined')
+const isStandaloneJsVM =
+    !isDeno && !isNodeJs && (
+        typeof d8 !== 'undefined' // V8
+        || typeof inIon !== 'undefined' // SpiderMonkey
+        || typeof jscOptions !== 'undefined' // JavaScriptCore
+    );
+const isBrowser = !isNodeJs && !isDeno && !isStandaloneJsVM && (typeof window !== 'undefined' || typeof self !== 'undefined');
+
+if (!isNodeJs && !isDeno && !isStandaloneJsVM && !isBrowser) {
+  throw "Supported JS engine not detected";
+}
+
+const wasmFilePath = $pathJsStringLiteral;
+const wasmOptions = { builtins: ['${builtinsList.joinToString(", ")}'], importedStringConstants: "$importedStringConstants" }
+
+try {
+  if (isNodeJs) {
+    const module = await import(/* webpackIgnore: true */'node:module');
+    const importMeta = import.meta;
+    const require = module.default.createRequire(importMeta.url);
+    const fs = require('fs');
+    const url = require('url');
+    const filepath = import.meta.resolve(wasmFilePath);
+    const wasmBuffer = fs.readFileSync(url.fileURLToPath(filepath));
+    const wasmModule = new WebAssembly.Module(wasmBuffer, wasmOptions);
+    wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
+  }
+
+  if (isDeno) {
+    const path = await import(/* webpackIgnore: true */'https://deno.land/std/path/mod.ts');
+    const binary = Deno.readFileSync(path.fromFileUrl(import.meta.resolve(wasmFilePath)));
+    const module = await WebAssembly.compile(binary, wasmOptions);
+    wasmInstance = await WebAssembly.instantiate(module, importObject);
+  }
+
+  if (isStandaloneJsVM) {
+    const importMeta = import.meta;
+    const filepath = importMeta.url.replace(/\.mjs$/, '.wasm');
+    const wasmBuffer = read(filepath, 'binary');
+    const wasmModule = new WebAssembly.Module(wasmBuffer, wasmOptions);
+    wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
+  }
+
+  if (isBrowser) {
+    wasmInstance = (await WebAssembly.instantiateStreaming(fetch(new URL($pathJsStringLiteral,import.meta.url).href), importObject, wasmOptions)).instance;
+  }
+} catch (e) {
+  if (e instanceof WebAssembly.CompileError) {
+    let text = `Please make sure that your runtime environment supports the latest version of Wasm GC and Exception-Handling proposals.
+For more information, see https://kotl.in/wasm-help
+`;
+    if (isBrowser) {
+      console.error(text);
+    } else {
+      const t = "\n" + text;
+      if (typeof console !== "undefined" && console.log !== void 0)
+        console.log(t);
+      else
+        print(t);
+    }
+  }
+  throw e;
+}
+
+const exports = wasmInstance.exports
+setWasmExports(exports);
+$mainFunctionCall
+
+${generateExports(exports, wholeProgramMode, isStdlibModule)}
 """
 }
 
@@ -517,11 +731,8 @@ fun writeCompilationResult(
     if (result.wat != null) {
         File(dir, "$fileNameBase.wat").writeText(result.wat)
     }
-    File(dir, "$fileNameBase.wasm").writeBytes(result.wasm)
+    result.wasm.writeTo(File(dir, "$fileNameBase.wasm"))
 
-    if (result.jsUninstantiatedWrapper != null) {
-        File(dir, "$fileNameBase.uninstantiated.mjs").writeText(result.jsUninstantiatedWrapper)
-    }
     File(dir, "$fileNameBase.mjs").writeText(result.jsWrapper)
 
     result.debugInformation?.sourceMapForBinary?.let {
@@ -549,8 +760,8 @@ fun writeCompilationResult(
         File(dir, "$fileNameBase.d.mts").writeText(result.dts)
     }
 
-    if (result.jsBuiltinsPolyfillsWrapper != null) {
-        File(dir, "${fileNameBase}.js-builtins.mjs").writeText(result.jsBuiltinsPolyfillsWrapper)
+    for (dynamicJsModule in result.dynamicJsModules) {
+        File(dir, "${fileNameBase}.${dynamicJsModule.name}.mjs").writeText(dynamicJsModule.content)
     }
 }
 
@@ -558,7 +769,11 @@ private val WasmExport<*>.isWasmInternalUsageExport
     get() = name.startsWith(JsInteropFunctionsLowering.CALL_FUNCTION) ||
             WasmServiceImportExportKind.entries.any { name.startsWith(it.prefix) }
 
-fun generateExports(exports: List<WasmExport<*>>): String {
+fun generateExports(
+    exports: List<WasmExport<*>>,
+    wholeProgramMode: Boolean,
+    isStdlibModule: Boolean,
+): String {
     // TODO: necessary to move export check onto common place
     val exportNames = exports
         .filterNot { it.isWasmInternalUsageExport }
@@ -568,7 +783,7 @@ fun generateExports(exports: List<WasmExport<*>>): String {
         .ifNotEmpty {
             """
             |export const {
-                |${joinToString(",\n") { it.name }}
+            |${joinToString(",\n") { it.name }.prependIndent("    ")}
             |} = exports
             """.trimMargin()
         }
@@ -582,18 +797,36 @@ fun generateExports(exports: List<WasmExport<*>>): String {
             /*language=js */
             """
             |const {
-                |${joinToString(",\n") { "'${it.second}': ${it.first}" }}
+            |${joinToString(",\n") { "'${it.second}': ${it.first}" }.prependIndent("    ")}
             |} = exports
             |
             |export {
-                |${joinToString(",\n") { "${it.first} as '${it.second}'" }}
+            |${joinToString(",\n") { "${it.first} as '${it.second}'" }.prependIndent("    ")}
             |}
             """.trimMargin()
         }
         .orEmpty()
 
+    val commonStdlibExports =
+        if (isStdlibModule)
+            """
+            |    wasmTag as __TAG,
+            |    getCachedJsObject,
+            """.trimMargin()
+        else
+            ""
+
+    val exportsStructureSingleModule = """
+        |export {
+        |    exports as __ALL_EXPORTS,
+        |$commonStdlibExports
+        |}
+    """.trimMargin()
+
     /*language=js */
     return """
+${if (!wholeProgramMode) exportsStructureSingleModule else ""}
+
 $regularlyExportedVariables
 $escapedExportedVariables
 """

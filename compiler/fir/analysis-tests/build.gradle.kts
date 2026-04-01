@@ -5,7 +5,6 @@
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("d8-configuration")
     id("share-foreign-java-nullability-annotations")
     id("java-test-fixtures")
@@ -36,7 +35,6 @@ dependencies {
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir2ir:jvm-backend"))
 
     testFixturesApi(intellijCore())
@@ -49,7 +47,8 @@ dependencies {
     testRuntimeOnly("com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion") { isTransitive = false }
     testRuntimeOnly(toolsJar())
 
-    jakartaAnnotationsClasspath(commonDependency("jakarta.annotation", "jakarta.annotation-api"))
+    thirdPartyAnnotationsClasspath(commonDependency("jakarta.annotation", "jakarta.annotation-api"))
+    thirdPartyAnnotationsClasspath(commonDependency("io.vertx", "vertx-codegen"))
 }
 
 sourceSets {
@@ -69,7 +68,6 @@ projectTests {
         )
     ) {
         useJUnitPlatform()
-        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
     }
 
     testGenerator("org.jetbrains.kotlin.test.TestGeneratorForFirAnalysisTestsKt", generateTestsInBuildDirectory = true)
@@ -87,6 +85,7 @@ projectTests {
     withScriptingPlugin()
     withMockJdkRuntime()
     withStdlibCommon()
+    withStdlibWeb()
     withAnnotations()
     withThirdPartyJsr305()
     withThirdPartyAnnotations()

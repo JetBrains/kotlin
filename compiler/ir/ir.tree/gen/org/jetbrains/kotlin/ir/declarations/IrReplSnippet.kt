@@ -8,10 +8,8 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReplSnippetSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
@@ -38,12 +36,8 @@ abstract class IrReplSnippet : IrDeclarationBase(), IrDeclarationWithName, IrDec
      */
     abstract var stateObject: IrClassSymbol?
 
-    abstract var body: IrBody
-
-    abstract var returnType: IrType?
-
     /**
-     * Contains link to the IrClass symbol to which this snippet should be lowered on the appropriate stage.
+     * Contains link to the IrClass symbol to which this snippet was lowered.
      */
     abstract var targetClass: IrClassSymbol?
 
@@ -52,11 +46,9 @@ abstract class IrReplSnippet : IrDeclarationBase(), IrDeclarationWithName, IrDec
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         receiverParameters.forEach { it.accept(visitor, data) }
-        body.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         receiverParameters = receiverParameters.transformIfNeeded(transformer, data)
-        body = body.transform(transformer, data)
     }
 }

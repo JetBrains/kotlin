@@ -8,6 +8,7 @@ KaAnonymousFunctionSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   location: LOCAL
   modality: FINAL
   origin: SOURCE
@@ -19,6 +20,7 @@ KaAnonymousFunctionSymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isVal: true
     location: LOCAL
     modality: FINAL
@@ -58,6 +60,7 @@ KaAnonymousFunctionSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   location: LOCAL
   modality: FINAL
   origin: SOURCE
@@ -69,6 +72,7 @@ KaAnonymousFunctionSymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isVal: true
     location: LOCAL
     modality: FINAL
@@ -108,6 +112,8 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
+    isNotDefault: false
     isVal: false
     location: PROPERTY
     modality: FINAL
@@ -138,6 +144,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: true
     isOverride: false
@@ -152,6 +159,7 @@ KaKotlinPropertySymbol:
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isVal: true
       location: LOCAL
       modality: FINAL
@@ -207,6 +215,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isVal: true
     location: LOCAL
     modality: FINAL
@@ -237,6 +246,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: true
     isOverride: false
@@ -255,6 +265,7 @@ KaKotlinPropertySymbol:
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true
@@ -282,6 +293,7 @@ KaKotlinPropertySymbol:
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isVal: true
       location: LOCAL
       modality: FINAL
@@ -316,6 +328,7 @@ KaKotlinPropertySymbol:
         isCrossinline: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
         isVal: true
@@ -348,10 +361,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: AccessorsAllowedKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getProp
   javaSetterName: setProp
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: prop
 
@@ -397,6 +408,7 @@ KaConstructorSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   isPrimary: true
   location: CLASS
   modality: FINAL
@@ -423,6 +435,8 @@ KaConstructorSymbol:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
+          isNotDefault: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -457,6 +471,7 @@ KaConstructorSymbol:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isInline: false
           isNotDefault: false
           isOverride: false
@@ -514,10 +529,8 @@ KaConstructorSymbol:
         getContainingJvmClassName: Status.Error
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
-        getterDeprecationStatus: null
         javaGetterName: getMessage
         javaSetterName: null
-        setterDeprecationStatus: null
         isInline: false
         importableFqName: null
       hasDeclaredDefaultValue: false
@@ -526,6 +539,7 @@ KaConstructorSymbol:
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true
@@ -627,6 +641,7 @@ KaAnonymousFunctionSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   location: LOCAL
   modality: FINAL
   origin: SOURCE
@@ -638,6 +653,7 @@ KaAnonymousFunctionSymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isVal: true
     location: LOCAL
     modality: FINAL
@@ -677,6 +693,8 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
+    isNotDefault: false
     isVal: true
     location: PROPERTY
     modality: FINAL
@@ -707,6 +725,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: true
     isOverride: false
@@ -721,6 +740,7 @@ KaKotlinPropertySymbol:
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isVal: true
       location: LOCAL
       modality: FINAL
@@ -776,6 +796,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isVal: true
     location: LOCAL
     modality: FINAL
@@ -804,10 +825,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: AccessorsAllowedKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: isError
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: isError
 
@@ -821,6 +840,7 @@ KaAnonymousFunctionSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   location: LOCAL
   modality: FINAL
   origin: SOURCE
@@ -832,6 +852,7 @@ KaAnonymousFunctionSymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isVal: true
     location: LOCAL
     modality: FINAL
@@ -871,6 +892,8 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
+    isNotDefault: false
     isVal: true
     location: PROPERTY
     modality: FINAL
@@ -899,6 +922,7 @@ KaKotlinPropertySymbol:
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isVal: true
       location: LOCAL
       modality: FINAL
@@ -933,6 +957,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: true
     isOverride: false
@@ -982,9 +1007,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: AccessorsAllowedKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: isContextError
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: isContextError

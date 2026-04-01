@@ -13,7 +13,6 @@ import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.annotations
 import org.jetbrains.kotlin.konan.file.unzipTo
 import org.jetbrains.kotlin.konan.file.zipDirAs
-import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
@@ -28,7 +27,11 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.components.metadata
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.writer.KlibWriter
+import org.jetbrains.kotlin.library.writer.includeMetadata
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
@@ -39,7 +42,7 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 // See KT-59030.
 @Tag("partial-linkage")
 @EnforcedHostTarget
-@UsePartialLinkage(UsePartialLinkage.Mode.ENABLED_WITH_ERROR)
+@UsePartialLinkage(UsePartialLinkage.Mode.ERROR)
 class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
     // This test relies on static caches. So, run it along with other PL tests but only when caches are enabled.
     @BeforeEach
@@ -84,20 +87,16 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
 
         // Write the patched library.
         val patchedLibraryTmpDir = KFile(patchedLibraryFile.path + "-tmp")
-        buildLibrary(
-            natives = emptyList(),
-            included = emptyList(),
-            linkDependencies = emptyList(),
-            metadata = patchedMetadata,
-            ir = null, // It will be copied from the original library anyway.
-            versions = oldLibrary.versions,
-            target = HostManager.host,
-            output = patchedLibraryTmpDir.path,
-            moduleName = oldLibrary.uniqueName,
-            nopack = true,
-            shortName = oldLibrary.shortName,
-            manifestProperties = oldLibrary.manifestProperties,
-        )
+
+        KlibWriter {
+            manifest {
+                moduleName(oldLibrary.uniqueName)
+                versions(oldLibrary.versions)
+                platformAndTargets(BuiltInsPlatform.NATIVE, HostManager.host.name)
+            }
+            includeMetadata(patchedMetadata)
+            // Note: The IR will be copied from the original library anyway.
+        }.writeTo(patchedLibraryTmpDir.path)
 
         // Unzip the original library.
         val originalLibraryTmpDir = KFile(originalLibraryFile.path + "-tmp")
@@ -144,7 +143,7 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
 
             // Write back the metadata.
             return with(moduleMetadata.write()) {
-                SerializedMetadata(module = header, fragments, fragmentNames)
+                SerializedMetadata(module = header, fragments, fragmentNames, MetadataVersion.INSTANCE.toArray())
             }
         }
 

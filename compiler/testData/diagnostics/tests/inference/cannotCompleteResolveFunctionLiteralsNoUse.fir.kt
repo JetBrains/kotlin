@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 package f
 
 fun <R> h(i: Int, a: Any, r: R, f: (Boolean) -> Int) = 1

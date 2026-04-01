@@ -1,0 +1,41 @@
+<caret_1>:
+  KtNameReferenceExpression(115,124): 'something'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        var something: kotlin.Int
+      ]
+
+<caret_2>:
+  KtNameReferenceExpression(140,149): 'something'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        var something: kotlin.Int
+      ]
+
+<caret_3>:
+  KtNameReferenceExpression(168,177): 'something'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        var something: kotlin.Int
+      ]
+
+<caret_4>:
+  KtNameReferenceExpression(197,206): 'something'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        var something: kotlin.Int
+      ]
+
+<caret_5>:
+  KtNameReferenceExpression(225,234): 'something'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        var something: kotlin.Int
+      ]
+
+<caret_6>:
+  KtNameReferenceExpression(240,249): 'something'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        var something: kotlin.Int
+      ]

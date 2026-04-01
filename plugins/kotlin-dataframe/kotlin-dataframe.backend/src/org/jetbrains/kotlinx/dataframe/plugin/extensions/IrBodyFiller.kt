@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlinx.dataframe.DataColumn
 import org.jetbrains.kotlinx.dataframe.columns.ColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
@@ -68,25 +68,44 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         }
         val getter = declaration.getter ?: return declaration
 
-        val constructors = context.referenceConstructors(ClassId(FqName("kotlin.jvm"), Name.identifier("JvmName")))
+        val finder = context.finderForBuiltins()
+        val constructors = finder.findConstructors(ClassId(FqName("kotlin.jvm"), Name.identifier("JvmName")))
         val jvmName = constructors.single { it.owner.parameters.size == 1 }
         val getterExtensionReceiver = getter.parameters.single { it.kind == IrParameterKind.ExtensionReceiver }
         val marker = ((getterExtensionReceiver.type as IrSimpleType).arguments.single() as IrSimpleType).classOrFail.owner
         val jvmNameArg = "${marker.nestedName()}_${declaration.name.identifier}"
         getter.annotations = listOf(
-            IrConstructorCallImpl(-1, -1, jvmName.owner.returnType, jvmName, 0, 1)
+            IrAnnotationImpl(-1, -1, jvmName.owner.returnType, jvmName, 0, 1)
                 .also {
                     it.arguments[0] = IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, jvmNameArg)
                 }
         )
         val returnType = getter.returnType
+        val typeOp = generateColumnAccessCall(
+            receiver = IrGetValueImpl(-1, -1, getterExtensionReceiver.symbol), declaration, returnType, marker
+        )
+        val returnExpression = IrReturnImpl(-1, -1, returnType, getter.symbol, typeOp)
+        getter.apply {
+            body = factory.createBlockBody(-1, -1, listOf(returnExpression))
+        }
+
+        return declaration
+    }
+
+    private fun generateColumnAccessCall(
+        receiver: IrExpression,
+        property: IrProperty,
+        returnType: IrType,
+        marker: IrClass?,
+    ): IrTypeOperatorCall {
+        val finder = context.finderForBuiltins()
         val isDataColumn = returnType.classFqName?.asString()?.let {
             it == DataColumn::class.qualifiedName!! || it == ColumnGroup::class.qualifiedName!!
         } ?: false
 
         val get = if (isDataColumn) {
-            context
-                .referenceFunctions(COLUMNS_SCOPE_ID)
+            finder
+                .findFunctions(COLUMNS_SCOPE_ID)
                 .single {
                     it.owner.hasShape(
                         dispatchReceiver = true,
@@ -95,8 +114,8 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
                     )
                 }
         } else {
-            context
-                .referenceFunctions(DATA_ROW_ID)
+            finder
+                .findFunctions(DATA_ROW_ID)
                 .single {
                     it.owner.hasShape(
                         dispatchReceiver = true,
@@ -107,21 +126,15 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         }
 
         val call = IrCallImpl(-1, -1, context.irBuiltIns.anyNType, get, 0).also {
-            val thisSymbol: IrValueSymbol = getterExtensionReceiver.symbol
-            it.arguments[0] = IrGetValueImpl(-1, -1, thisSymbol)
-            val columnName = marker.properties.firstOrNull { it.name == declaration.name }
+            val columnName = marker?.properties?.firstOrNull { it.name == property.name }
                 ?.getAnnotationArgumentValue<String>(Names.COLUMN_NAME_ANNOTATION.asSingleFqName(), Names.COLUMN_NAME_ARGUMENT.identifier)
-            val arg = columnName ?: declaration.name.identifier
+            val arg = columnName ?: property.name.identifier
+
+            it.arguments[0] = receiver
             it.arguments[1] = IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, arg)
         }
 
-        val typeOp = IrTypeOperatorCallImpl(-1, -1, returnType, IrTypeOperator.CAST, returnType, call)
-        val returnExpression = IrReturnImpl(-1, -1, returnType, getter.symbol, typeOp)
-        getter.apply {
-            body = factory.createBlockBody(-1, -1, listOf(returnExpression))
-        }
-
-        return declaration
+        return IrTypeOperatorCallImpl(-1, -1, returnType, IrTypeOperator.CAST, returnType, call)
     }
 
     private fun IrDeclarationWithName.nestedName() = buildString { computeNestedName(this@nestedName, this) }
@@ -142,39 +155,43 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
     // Implicit receivers injected by org.jetbrains.kotlinx.dataframe.plugin.extensions.ReturnTypeBasedReceiverInjector
     // don't "exist": they are used for resolve, but there's no value on the stack.
     // We need to find all calls that use them as arguments and generate valid code
-
     override fun visitCall(expression: IrCall): IrExpression {
         val origin = expression.symbol.owner.origin
         if (expression.origin == IrStatementOrigin.GET_PROPERTY && origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == DataFramePlugin) {
-            val type = expression.symbol.owner.parameters.getOrNull(0)?.type
-            if (type != null && isScope(type)) {
-                val constructor = type.classOrFail.constructors.single()
-                expression.arguments[0] = IrConstructorCallImpl(-1, -1, type, constructor, 0, 0)
+            val receiverType = expression.symbol.owner.parameters.getOrNull(0)?.type
+            if (receiverType != null) {
+                if (receiverType.isScope()) {
+                    val constructor = receiverType.classOrFail.constructors.single()
+                    expression.arguments[0] = IrConstructorCallImpl(-1, -1, receiverType, constructor, 0, 0)
+                } else if (expression.arguments.size == 1) {
+                    return inlineExtensionProperty(receiverType, extensionPropertyCall = expression)
+                }
+
             }
             return super.visitCall(expression)
         }
         return super.visitCall(expression)
     }
 
-    override fun visitErrorCallExpression(expression: IrErrorCallExpression): IrExpression {
-        if (!isScope(expression.type)) {
-            return expression
-        }
-        return expression.replaceWithConstructorCall()
-    }
+    private fun inlineExtensionProperty(
+        receiverType: IrType,
+        extensionPropertyCall: IrCall,
+    ): IrTypeOperatorCall = generateColumnAccessCall(
+        receiver = extensionPropertyCall.arguments.getOrNull(0)?.transform(this, null)
+            ?: errorWithAttachment("Generated property with unexpected shape") {
+                withEntry("Expression", extensionPropertyCall) { it.render() }
+                withEntry("Symbol", extensionPropertyCall.symbol.owner) { it.render() }
+            },
+        extensionPropertyCall.symbol.owner.correspondingPropertySymbol!!.owner,
+        extensionPropertyCall.type,
+        marker = ((receiverType as IrSimpleType).arguments[0] as IrSimpleType).classOrFail.owner
+    )
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun isScope(type: IrType): Boolean {
-        val origin = (type.classifierOrNull?.owner as? IrClass)?.origin ?: return false
+    private fun IrType.isScope(): Boolean {
+        val origin = (classifierOrNull?.owner as? IrClass)?.origin ?: return false
         val fromPlugin = origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey is DataFramePlugin
-        val scopeReference = type.classFqName?.shortName()?.asString()?.startsWith("Scope") ?: false
+        val scopeReference = classFqName?.shortName()?.asString()?.startsWith("Scope") ?: false
         return fromPlugin || scopeReference
-    }
-
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun IrExpression.replaceWithConstructorCall(): IrConstructorCallImpl {
-        val constructor = type.getClass()!!.constructors.toList().single()
-        return IrConstructorCallImpl(-1, -1, type, constructor.symbol, 0, 0)
     }
 }
 

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlinx.dataframe.api.single
 import org.jetbrains.kotlinx.dataframe.impl.aggregation.aggregators.Aggregator
 import org.jetbrains.kotlinx.dataframe.impl.aggregation.aggregators.Aggregators
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.utils.isPrimitiveOrMixedNumber
 import org.jetbrains.kotlinx.dataframe.plugin.utils.isSelfComparable
@@ -91,7 +91,7 @@ private fun Arguments.createColumnWithUpdatedType(
     column: SimpleDataColumn,
     statisticAggregator: Aggregator<*, *>,
 ): SimpleCol {
-    val originalType = column.type.type
+    val originalType = column.type.coneType
     val inputKType = originalType.asPrimitiveToKTypeOrNull()
     // we can only get KTypes of primitives, keep the original type otherwise
         ?: return simpleColumnOf(column.name, originalType)
@@ -105,9 +105,9 @@ private fun Arguments.createColumnWithUpdatedType(
     return simpleColumnOf(column.name, updatedType)
 }
 
-internal val skipNaN = true
-internal val ddofDefault: Int = 1
-internal val percentileArg: Double = 30.0
+internal const val skipNaN = true
+internal const val ddofDefault: Int = 1
+internal const val percentileArg: Double = 30.0
 internal val sum = Aggregators.sum(skipNaN)
 internal val mean = Aggregators.mean(skipNaN)
 internal val std = Aggregators.std(skipNaN, ddofDefault)
@@ -120,7 +120,7 @@ internal val percentile = Aggregators.percentile(percentileArg, skipNaN)
 internal val Arguments.numericStatisticsDefaultColumns: ColumnsResolver
     get() = columnsResolver {
         cols {
-            (it.single() as Marker).type.isPrimitiveOrMixedNumber(session)
+            (it.single() as ColumnType).coneType.isPrimitiveOrMixedNumber(session)
         }
     }
 
@@ -128,12 +128,12 @@ internal val Arguments.numericStatisticsDefaultColumns: ColumnsResolver
 internal val Arguments.comparableStatisticsDefaultColumns: ColumnsResolver
     get() = columnsResolver {
         cols {
-            (it.single() as Marker).type.isSelfComparable(session)
+            (it.single() as ColumnType).coneType.isSelfComparable(session)
         }
     }
 
 /** Returns `true` if this column is of type `DataColumn<T>` where `T : Comparable<T & Any>` */
-internal fun SimpleDataColumn.isIntraComparable(session: FirSession): Boolean = type.type.isSelfComparable(session)
+internal fun SimpleDataColumn.isIntraComparable(session: FirSession): Boolean = type.coneType.isSelfComparable(session)
 
 /** Adds to the schema only numerical columns. */
 abstract class Aggregator0(val aggregator: Aggregator<*, *>) : AbstractSchemaModificationInterpreter() {

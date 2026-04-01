@@ -6,6 +6,7 @@
 
 package kotlin.collections
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.js.collections.*
 
 private class JsArrayView<E> : JsArray<E>()
@@ -15,26 +16,32 @@ private fun UNSUPPORTED_OPERATION() {
 }
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <E> createListFrom(array: JsReadonlyArray<E>): List<E> =
     ArrayList<E>(array.asDynamic().slice().unsafeCast<Array<Any?>>()).build()
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <E> createMutableListFrom(array: JsReadonlyArray<E>): MutableList<E> =
     ArrayList<E>(array.asDynamic().slice().unsafeCast<Array<Any?>>())
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <E> createSetFrom(set: JsReadonlySet<E>): Set<E> =
     buildSetInternal { forEach({ _, value, _ -> add(value) }, set) }
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <E> createMutableSetFrom(set: JsReadonlySet<E>): MutableSet<E> =
     LinkedHashSet<E>().apply { forEach({ _, value, _ -> add(value) }, set) }
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <K, V> createMapFrom(map: JsReadonlyMap<K, V>): Map<K, V> =
     buildMapInternal { forEach({ value, key, _ -> put(key, value) }, map) }
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <K, V> createMutableMapFrom(map: JsReadonlyMap<K, V>): MutableMap<K, V> =
     LinkedHashMap<K, V>().apply { forEach({ value, key, _ -> put(key, value) }, map) }
 
@@ -224,18 +231,18 @@ private fun <K, V> createJsMapViewWith(
 private fun <T> createJsIteratorFrom(iterator: Iterator<T>, transform: (T) -> dynamic = { it }): dynamic {
     val iteratorNext = { iterator.next() }
     val iteratorHasNext = { iterator.hasNext() }
-    val jsIterator = js(
-        """
-        {
-            next: function() {
-                var result = { done: !iteratorHasNext() };
-                if (!result.done) result.value = transform(iteratorNext());
-                return result;
-            }
-        }
-        """
-    )
-    js("jsIterator[Symbol.iterator] = function() { return this; }")
+    val iteratorConstructor = js("typeof Iterator === 'function' ? Iterator : Object")
+    val jsIterator = js("Object.create(iteratorConstructor.prototype)")
+
+    js("""
+        jsIterator.next = function() {
+            var result = { done: !iteratorHasNext() };
+            if (!result.done) result.value = transform(iteratorNext());
+            return result;
+        };
+        jsIterator[Symbol.iterator] = function() { return this; };
+    """)
+
     return jsIterator
 }
 

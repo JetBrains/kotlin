@@ -11,6 +11,15 @@ private class PC {
     val p = 1
 }
 
+class A private constructor() {
+    internal inline fun internalInlineFunction() = ::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_ERROR!>A<!>
+}
+
+private fun Int.privateExtensionFun() {}
+
+private val String.privateVal: String
+    get() = this
+
 internal inline fun test() {
     ::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_ERROR!>f<!>
     ::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_ERROR!>p<!>
@@ -27,6 +36,9 @@ internal inline fun test() {
             ::p
         }
     }
+
+    Int::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_ERROR!>privateExtensionFun<!>
+    String::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_ERROR!>privateVal<!>
 }
 
 class C {

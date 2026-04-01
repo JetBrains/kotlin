@@ -1,10 +1,29 @@
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.konan.target.HostManager
+
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("d8-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
+
+// WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
+val nativeTargetName = HostManager.host.name
+val sandboxAnnotationsNativeRuntimeForTests by configurations.creating {
+    attributes {
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
+        attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+    }
+}
+
+val sandboxPluginForTests by configurations.creating
 
 dependencies {
     compileOnly(project(":compiler:fir:cones"))
@@ -24,54 +43,57 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
     testFixturesApi(testFixtures(project(":js:js.tests")))
-    testFixturesApi(project(":compiler:fir:checkers"))
-    testFixturesApi(project(":compiler:fir:checkers:checkers.jvm"))
-    testFixturesApi(project(":compiler:fir:checkers:checkers.js"))
-    testFixturesApi(project(":compiler:fir:checkers:checkers.native"))
-    testFixturesApi(project(":compiler:fir:checkers:checkers.wasm"))
     testFixturesApi(project(":compiler:fir:plugin-utils"))
     testFixturesImplementation(testFixtures(project(":tools:kotlinp-jvm")))
 
-    testRuntimeOnly(project(":core:descriptors.runtime"))
-    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
-
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
-    testRuntimeOnly(intellijJDom())
-    testRuntimeOnly(libs.intellij.fastutil)
+    testFixturesApi(testFixtures(project(":native:native.tests")))
 
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 
     testRuntimeOnly(toolsJar())
+
+    sandboxAnnotationsNativeRuntimeForTests(project(":plugins:plugin-sandbox:plugin-annotations"))
+    sandboxPluginForTests(project(":plugins:plugin-sandbox"))
 }
 
 optInToExperimentalCompilerApi()
 optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
-    "main" {
-        projectDefault()
-    }
-    "test" {
-        generatedTestDir()
-    }
-    "testFixtures" {
-        projectDefault()
-    }
+    "main" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
-        dependsOn(":dist")
-        workingDir = rootDir
-        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
-    }.also { confugureFirPluginAnnotationsDependency(it) }
+        useJsIrBoxTests(buildDir = layout.buildDirectory)
+        useJUnitPlatform {
+            excludeTags("sandbox-native")
+        }
+    }
 
-    testGenerator("org.jetbrains.kotlin.plugin.sandbox.TestGeneratorKt")
+    nativeTestTask(
+        taskName = "nativeTest",
+        tag = "sandbox-native", // Include all tests with the "sandbox-native" tag
+        requirePlatformLibs = false,
+        customTestDependencies = listOf(sandboxAnnotationsNativeRuntimeForTests),
+        compilerPluginDependencies = listOf(sandboxPluginForTests)
+    )
+
+    testGenerator("org.jetbrains.kotlin.plugin.sandbox.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
+    withTestJar()
+    withStdlibCommon()
+    withJsRuntime()
+    withPluginSandboxAnnotations()
+
+    testData(project(":plugins:plugin-sandbox").isolated, "testData")
+    testData(project(":js:js.translator").isolated, "testData/_commonFiles")
 }

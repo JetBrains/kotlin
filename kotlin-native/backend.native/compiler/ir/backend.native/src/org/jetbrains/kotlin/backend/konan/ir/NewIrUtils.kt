@@ -18,8 +18,19 @@ import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 import org.jetbrains.kotlin.utils.atMostOne
 
-internal fun IrExpression.isBoxOrUnboxCall() =
-        (this is IrCall && symbol.owner.origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION)
+internal fun IrFunction.isBoxOrUnbox(): Boolean =
+        origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
+                && name.asString().let { it.endsWith("-box>") || it.endsWith("-unbox>") }
+
+internal fun IrFunction.isUnbox(): Boolean =
+        origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
+                && name.asString().endsWith("-unbox>")
+
+internal fun IrFunction.isBox(): Boolean =
+        origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
+                && name.asString().endsWith("-box>")
+
+internal fun IrExpression.isBoxOrUnboxCall() = this is IrCall && symbol.owner.isBoxOrUnbox()
 
 internal val IrCall.actualCallee: IrSimpleFunction
     get() {

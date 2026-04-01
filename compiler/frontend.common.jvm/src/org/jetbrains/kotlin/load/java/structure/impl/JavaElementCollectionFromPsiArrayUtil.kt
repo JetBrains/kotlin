@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.load.java.structure.impl
 
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
@@ -44,7 +45,16 @@ internal fun packages(
     packages: Array<PsiPackage>,
     scope: GlobalSearchScope,
     sourceFactory: JavaElementSourceFactory,
-): Collection<JavaPackage> = packages.convert { psi -> JavaPackageImpl(sourceFactory.createPsiSource(psi), scope) }
+    annotationsProvider: JavaAnnotationProvider?,
+): Collection<JavaPackage> = packages
+    .convert { psi ->
+        JavaPackageImpl(
+            psiPackageSource = sourceFactory.createPsiSource(psi),
+            scope = scope,
+            mayHaveAnnotations = true,
+            annotationsProvider = annotationsProvider
+        )
+    }
 
 internal fun methods(methods: Collection<PsiMethod>, sourceFactory: JavaElementSourceFactory): Collection<JavaMethod> =
     methods.convert { JavaMethodImpl(sourceFactory.createPsiSource(it)) }

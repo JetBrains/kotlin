@@ -1,0 +1,5 @@
+KtOperationReferenceExpression(106,108): '=='
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]

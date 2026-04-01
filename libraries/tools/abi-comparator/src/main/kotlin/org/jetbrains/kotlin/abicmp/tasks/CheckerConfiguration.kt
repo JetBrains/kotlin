@@ -62,6 +62,7 @@ private val allFunctionMetadataCheckers = listOf(
         it.contextParameters.map { it.type }.stringifyTypeListSorted()
     },
     functionMetadataPropertyChecker("modifiers") { printFunctionModifiers(it) },
+    // NB: return value status is intentionally not included here, it does not affect the ABI
     functionMetadataPropertyChecker("typeParameters") { it.typeParameters.stringifyTypeParameters() },
     functionMetadataPropertyChecker("receiverParameterType") {
         it.receiverParameterType?.let(::printType) ?: PROPERTY_VAL_STUB

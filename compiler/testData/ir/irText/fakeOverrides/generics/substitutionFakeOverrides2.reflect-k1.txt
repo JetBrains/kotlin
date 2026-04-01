@@ -1,0 +1,73 @@
+KClass: abstract interface A1 : I1, J1, Any
+  members:
+    public open operator fun A1.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun A1.foo(kotlin.String): kotlin.Unit
+    public open fun A1.hashCode(): kotlin.Int
+    public open fun A1.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract interface A2 : I2, J2, Any
+  members:
+    public open operator fun A2.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun A2.foo(kotlin.String): kotlin.Unit
+    public abstract fun A2.foo(kotlin.String): kotlin.Unit
+    public open fun A2.hashCode(): kotlin.Int
+    public open fun A2.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract interface A3 : I3, J3, Any
+  members:
+    public open operator fun A3.equals(kotlin.Any?): kotlin.Boolean
+    public open fun A3.foo(kotlin.Int): kotlin.Unit
+    public abstract fun A3.foo(kotlin.String): kotlin.Unit
+    public open fun A3.hashCode(): kotlin.Int
+    public open fun A3.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract interface I1 : Any
+  members:
+    public open operator fun I1<T>.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun I1<T>.foo(T): kotlin.Unit
+    public open fun I1<T>.hashCode(): kotlin.Int
+    public open fun I1<T>.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun I1<T>.foo(T): kotlin.Unit
+KClass: abstract interface I2 : Any
+  members:
+    public open operator fun I2<T>.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun I2<T>.foo(T): kotlin.Unit
+    public abstract fun I2<T>.foo(kotlin.String): kotlin.Unit
+    public open fun I2<T>.hashCode(): kotlin.Int
+    public open fun I2<T>.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun I2<T>.foo(T): kotlin.Unit
+    public abstract fun I2<T>.foo(kotlin.String): kotlin.Unit
+KClass: abstract interface I3 : Any
+  members:
+    public open operator fun I3<T>.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun I3<T>.foo(T): kotlin.Unit
+    public abstract fun I3<T>.foo(kotlin.String): kotlin.Unit
+    public open fun I3<T>.hashCode(): kotlin.Int
+    public open fun I3<T>.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun I3<T>.foo(T): kotlin.Unit
+    public abstract fun I3<T>.foo(kotlin.String): kotlin.Unit
+KClass: abstract interface J1 : Any
+  members:
+    public open operator fun J1.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun J1.foo(kotlin.String): kotlin.Unit
+    public open fun J1.hashCode(): kotlin.Int
+    public open fun J1.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun J1.foo(kotlin.String): kotlin.Unit
+KClass: abstract interface J2 : Any
+  members:
+    public open operator fun J2.equals(kotlin.Any?): kotlin.Boolean
+    public open fun J2.hashCode(): kotlin.Int
+    public open fun J2.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract interface J3 : Any
+  members:
+    public open operator fun J3.equals(kotlin.Any?): kotlin.Boolean
+    public open fun J3.foo(kotlin.Int): kotlin.Unit
+    public open fun J3.hashCode(): kotlin.Int
+    public open fun J3.toString(): kotlin.String
+  declaredMembers:
+    public open fun J3.foo(kotlin.Int): kotlin.Unit

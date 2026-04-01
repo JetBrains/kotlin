@@ -26,11 +26,11 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.renderer.render
 
 fun KtPsiFactory.createExpressionByPattern(@NonNls pattern: String, @NonNls vararg args: Any, reformat: Boolean = true): KtExpression =
     createByPattern(pattern, *args, reformat = reformat) { createExpression(it) }
@@ -113,10 +113,6 @@ private val SUPPORTED_ARGUMENT_TYPES = listOf(
     PsiChildRangeArgumentType
 )
 
-@get:TestOnly
-@set:TestOnly
-var CREATE_BY_PATTERN_MAY_NOT_REFORMAT = false
-
 fun <TElement : KtElement> createByPattern(
     pattern: String,
     vararg args: Any,
@@ -179,9 +175,6 @@ fun <TElement : KtElement> createByPattern(
     val codeStyleManager = CodeStyleManager.getInstance(project)
 
     if (reformat) {
-        if (CREATE_BY_PATTERN_MAY_NOT_REFORMAT) {
-            throw java.lang.IllegalArgumentException("Reformatting is not allowed in the current context; please change the invocation to use reformat=false")
-        }
         val stringPlaceholderRanges = allPlaceholders.asSequence()
             .filter { args[it.key] is String }
             .flatMap { it.value }

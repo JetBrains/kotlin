@@ -1,8 +1,14 @@
-@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
+@file:OptIn(
+    kotlinx.cinterop.ExperimentalForeignApi::class,
+    kotlin.native.runtime.NativeRuntimeApi::class,
+    kotlin.experimental.ExperimentalNativeApi::class
+)
+
 package ktlib
 
 import cinterop.*
 import kotlin.native.concurrent.Worker
+import kotlin.native.ref.WeakReference
 
 interface KotlinIndexAccess {
    fun loadKotlinField(index: Int): Any?
@@ -12,13 +18,13 @@ interface KotlinIndexAccess {
 private fun Any.loadField(index: Int) = when (this) {
     is KotlinIndexAccess -> loadKotlinField(index)
     is ObjCIndexAccessProtocol -> loadObjCField(index)
-    else -> error("Invalid loadField call")
+    else -> error("Invalid loadField call " + this)
 }
 
 private fun Any.storeField(index: Int, value: Any?) = when (this) {
     is KotlinIndexAccess -> storeKotlinField(index, value)
     is ObjCIndexAccessProtocol -> storeObjCField(index, value)
-    else -> error("Invalid storeField call")
+    else -> error("Invalid storeField call " + this)
 }
 
 object WorkerTerminationProcessor {
@@ -41,14 +47,16 @@ private fun spawnThread(block: () -> Unit) {
 }
 
 private inline fun call(localsCount: Int, blockLocalsCount: Int, block: (Int) -> Any?): Any? {
+    if (terminationRequest) return null
     val nextLocalsCount = localsCount + blockLocalsCount
-    if (nextLocalsCount > 500) {
+    if (nextLocalsCount > 200) {
         return null
     }
     return block(nextLocalsCount)
 }
 
 var allocBlocker: Boolean = false
+var terminationRequest: Boolean = false
 
 fun performGC() { kotlin.native.runtime.GC.collect() }
 
@@ -57,7 +65,8 @@ private inline fun alloc(block: () -> Any?): Any? {
     return null
 }
 
-class Class0(var f0: Any?) : KotlinIndexAccess {
+class Class0(f0: Any?) : KotlinIndexAccess {
+    var f0: Any? = f0
     override fun loadKotlinField(index: Int): Any? {
         return when (index % 1) {
             0 -> f0

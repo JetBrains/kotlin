@@ -37,17 +37,19 @@ public final class test/SomeClass : java/lang/Object, android/os/Parcelable {
 
     public void <init>()
 
-    public int describeContents()
+    public final int describeContents()
 
-    public void writeToParcel(android.os.Parcel out, int flags) {
+    public final void writeToParcel(android.os.Parcel dest, int flags) {
         LABEL (L0)
           ALOAD (1)
-          LDC (out)
+          LDC (dest)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (1)
           ICONST_1
           INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
-          RETURN
         LABEL (L1)
+        LINENUMBER (10)
+          RETURN
+        LABEL (L2)
     }
 }

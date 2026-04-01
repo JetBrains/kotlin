@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface Algebra<T> {
     operator fun T.plus(other: T): T
 }
@@ -30,3 +31,6 @@ fun test_2(a1: A, a2: A, cond: Boolean) {
 
     a1 <!UNRESOLVED_REFERENCE!>+<!> a2 // error
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+interfaceDeclaration, nullableType, operator, typeParameter */

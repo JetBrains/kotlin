@@ -2,5 +2,9 @@ KtOperationReferenceExpression(189,191): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      0: (in Foo) operator fun <K2, V2> MyMap<K2, V2>.set(k: K2, v: V2)
+      1: (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+    resolveToSymbols:
       (in Foo) operator fun <K2, V2> MyMap<K2, V2>.set(k: K2, v: V2)

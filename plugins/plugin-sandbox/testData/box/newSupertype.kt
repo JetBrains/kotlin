@@ -1,4 +1,3 @@
-
 package foo
 
 import org.jetbrains.kotlin.plugin.sandbox.MyInterfaceSupertype

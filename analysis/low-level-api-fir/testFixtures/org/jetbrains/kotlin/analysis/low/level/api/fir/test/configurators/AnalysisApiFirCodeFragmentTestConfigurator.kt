@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtCodeFragm
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.DependencyKindModuleStructureTransformer
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.configureLibraryCompilationSupport
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 class AnalysisApiFirCodeFragmentTestConfigurator(
-    analyseInDependentSession: Boolean
+    analyseInDependentSession: Boolean,
+    override val defaultTargetPlatform: TargetPlatform = defaultTargetPlatformValue
 ) : AnalysisApiFirSourceLikeTestConfigurator(analyseInDependentSession) {
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         super.configureTest(builder, disposable)

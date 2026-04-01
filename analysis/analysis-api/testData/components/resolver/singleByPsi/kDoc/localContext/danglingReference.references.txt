@@ -1,0 +1,7 @@
+KDocName(57,60): 'foo'
+  KDocReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in <local>: foo) val foo: kotlin.String

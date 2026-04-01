@@ -3,6 +3,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in test) fun kotlin.Any.ext()
 
@@ -11,6 +12,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         0: (in dep2) class Foo
         1: (in dep1) class Foo
@@ -20,6 +22,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         0: (in dep2) fun dep2.Foo.depExtShared()
         1: (in dep1) fun dep1.Foo.depExtShared()
@@ -29,6 +32,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         0: (in dep2) class Foo
         1: (in dep1) class Foo
@@ -38,6 +42,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in dep1) fun dep1.Foo.depExt1()
 
@@ -46,6 +51,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in dep1) class Foo
 
@@ -54,6 +60,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in dep2) fun dep2.Foo.depExt2()
 
@@ -62,6 +69,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in dep2) class Foo
 
@@ -70,6 +78,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in dep1) class Foo
 
@@ -78,5 +87,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in dep2) class Foo

@@ -1,0 +1,7 @@
+KtValueArgument(26,30): '"13"'
+  KtDefaultAnnotationArgumentReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)

@@ -30,12 +30,23 @@ interface NpmApiExecution<out T : PackageManagerEnvironment> : Serializable {
     )
 
     fun resolveRootProject(
-        services: ServiceRegistry,
         logger: Logger,
         nodeJs: NodeJsEnvironment,
         packageManagerEnvironment: @UnsafeVariance T,
         cliArgs: List<String>,
     )
+
+    @Deprecated(
+        "Removed unused `services` parameter. Schedule for removal in Kotlin 2.6.",
+        ReplaceWith("resolveRootProject(logger, nodeJs, packageManagerEnvironment, cliArgs)"),
+    )
+    fun resolveRootProject(
+        services: ServiceRegistry,
+        logger: Logger,
+        nodeJs: NodeJsEnvironment,
+        packageManagerEnvironment: @UnsafeVariance T,
+        cliArgs: List<String>,
+    ) = resolveRootProject(logger, nodeJs, packageManagerEnvironment, cliArgs)
 
     fun prepareTooling(dir: File)
 
@@ -63,7 +74,7 @@ data class NodeJsEnvironment(
 internal fun asNodeJsEnvironment(
     rootPackageDirectory: Provider<Directory>,
     packageManager: Provider<NpmApiExecution<PackageManagerEnvironment>>,
-    nodeJsEnv: NodeJsEnv
+    nodeJsEnv: NodeJsEnv,
 ) = NodeJsEnvironment(
     rootPackageDirectory,
     nodeJsEnv.executable,

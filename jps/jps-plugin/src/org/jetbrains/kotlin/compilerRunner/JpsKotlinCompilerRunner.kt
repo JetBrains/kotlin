@@ -200,16 +200,19 @@ class JpsKotlinCompilerRunner {
     private fun withAdditionalCompilerArgs(compilerArgs: CommonCompilerArguments): Array<String> {
         val allArgs = ArgumentUtils.convertArgumentsToStringList(compilerArgs) +
                 (compilerSettings?.additionalArgumentsAsList ?: emptyList())
-        return filterDuplicatedCompilerPluginOptions(allArgs).toTypedArray()
+        return allArgs
+            .filterDuplicatedCompilerPluginOptions()
+            .filterDuplicatedWarningLevel()
+            .toTypedArray()
     }
 
     /*
     * This function filters duplicates of -P plugin:<pluginId>:<optionName>=<value> in the compiler arguments
-    * */
-    private fun filterDuplicatedCompilerPluginOptions(compilerArguments: List<String>): List<String> {
+    */
+    private fun List<String>.filterDuplicatedCompilerPluginOptions(): List<String> {
         val filteredArguments = mutableListOf<String>()
         val knownPluginOptions = mutableSetOf<String>()
-        val argumentsIterator = compilerArguments.iterator()
+        val argumentsIterator = this.iterator()
 
         while (argumentsIterator.hasNext()) {
             val argument = argumentsIterator.next()
@@ -228,6 +231,20 @@ class JpsKotlinCompilerRunner {
         }
 
         return filteredArguments
+    }
+
+    /**
+     * Removes duplicate `-Xwarning-level` arguments from a compiler argument list,
+     * keeping only the first occurrence of each unique `-Xwarning-level=<diagnostic>:<level>` entry
+     */
+    private fun List<String>.filterDuplicatedWarningLevel(): List<String> {
+        val warningLevelArgumentsAccumulator = mutableSetOf<String>()
+        return filter {
+            if (it.startsWith("-Xwarning-level")) {
+                return@filter warningLevelArgumentsAccumulator.add(it)
+            }
+            return@filter true
+        }
     }
 
     private fun reportCategories(verbose: Boolean): Array<Int> {
@@ -328,6 +345,8 @@ class JpsKotlinCompilerRunner {
         }
 
     @TestOnly
-    fun filterDuplicatedCompilerPluginOptionsForTest(compilerArguments: List<String>): List<String> =
-        filterDuplicatedCompilerPluginOptions(compilerArguments)
+    fun List<String>.filterDuplicatedCompilerPluginOptionsForTest(): List<String> = filterDuplicatedCompilerPluginOptions()
+
+    @TestOnly
+    fun List<String>.filterDuplicatedWarningLevelForTest(): List<String> = filterDuplicatedWarningLevel()
 }

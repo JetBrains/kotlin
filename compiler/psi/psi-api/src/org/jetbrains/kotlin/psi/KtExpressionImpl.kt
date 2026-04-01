@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.psi.psiUtil.parentSubstitute
 
 abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtExpression {
 
@@ -22,12 +23,16 @@ abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtExpressi
         return replaceExpression(this, newElement) { super.replace(it) }
     }
 
+    // HasPlatformType is used to preserve the flexible type to not break source compatibility
+    @Suppress("DEPRECATION", "HasPlatformType")
+    override fun getParent() = parentSubstitute ?: super.getParent()
+
     companion object {
         fun replaceExpression(
             expression: KtExpression,
             newElement: PsiElement,
             reformat: Boolean = true,
-            rawReplaceHandler: (PsiElement) -> PsiElement
+            rawReplaceHandler: (PsiElement) -> PsiElement,
         ): PsiElement {
             val parent = expression.parent
 

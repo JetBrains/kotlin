@@ -13,7 +13,7 @@ should follow [this specification](https://github.com/Kotlin/dokka/tree/1.9.20/d
 
 To generate the API reference, run:
 ```shell
-$ ./gradlew :gradle:documentation:dokkaKotlinlangDocumentation -Pteamcity=true
+$ ./gradlew :gradle:documentation:dokkaGenerate -Pteamcity=true
 ```
 
 Once build is finished - API reference is available in `build/documentation/kotlinlang` directory.

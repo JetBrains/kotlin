@@ -15,7 +15,6 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
@@ -28,17 +27,14 @@ import java.io.File
 import javax.inject.Inject
 
 internal val RegisterBuildKotlinToolingMetadataTask = KotlinProjectSetupAction {
-    if (!project.kotlinPropertiesProvider.enableKotlinToolingMetadataArtifact) return@KotlinProjectSetupAction
     buildKotlinToolingMetadataTask
 }
 
 /**
- * The default task managed by the Kotlin Gradle plugin or `null` if the task is disabled.
- * @see [PropertiesProvider.enableKotlinToolingMetadataArtifact]
+ * The default task managed by the Kotlin Gradle plugin.
  */
-internal val Project.buildKotlinToolingMetadataTask: TaskProvider<BuildKotlinToolingMetadataTask.FromKotlinExtension>?
+internal val Project.buildKotlinToolingMetadataTask: TaskProvider<BuildKotlinToolingMetadataTask.FromKotlinExtension>
     get() {
-        if (!kotlinPropertiesProvider.enableKotlinToolingMetadataArtifact) return null
         val taskName = BuildKotlinToolingMetadataTask.defaultTaskName
         return locateOrRegisterTask(taskName) { task ->
             task.group = "build"
@@ -63,8 +59,7 @@ abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
     companion object {
         /**
          * The name of the default task managed by the Kotlin Gradle plugin.
-         * If enabled, the Kotlin Gradle plugin will automatically register and manage a task with that name.
-         * @see PropertiesProvider.enableKotlinToolingMetadataArtifact
+         * The Kotlin Gradle plugin will automatically register and manage a task with that name.
          */
         const val defaultTaskName: String = "buildKotlinToolingMetadata"
     }

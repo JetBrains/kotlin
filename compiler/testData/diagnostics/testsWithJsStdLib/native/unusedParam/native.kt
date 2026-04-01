@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 external fun foo(a: String): Int = definedExternally
 
 external class Bar(b: Int, c: Char) {

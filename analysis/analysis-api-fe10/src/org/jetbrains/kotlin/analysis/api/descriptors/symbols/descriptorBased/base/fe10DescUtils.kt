@@ -300,7 +300,7 @@ internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KaType {
                 return KaFe10IntersectionType(unwrappedType, typeConstructor.supertypes, analysisContext)
             }
 
-            return when (val typeDeclaration = typeConstructor.declarationDescriptor) {
+            when (val typeDeclaration = typeConstructor.declarationDescriptor) {
                 is FunctionClassDescriptor -> KaFe10FunctionType(unwrappedType, typeDeclaration, analysisContext)
                 is ClassifierDescriptorWithTypeParameters -> KaFe10UsualClassType(unwrappedType, typeDeclaration, analysisContext)
                 else -> {

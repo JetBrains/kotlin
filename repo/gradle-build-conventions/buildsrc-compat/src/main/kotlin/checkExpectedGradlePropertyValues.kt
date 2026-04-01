@@ -14,35 +14,26 @@ import org.gradle.api.Project
  * Some developers (and QA) will need to be very clear about the value of this property.
  *
  * In order to get notified about the value of the property changing, it is possible to define the same property in
- * ~/.gradle/gradle.properties with a given `.kotlin_build.expected_value` suffix to ensure the value.
+ * ~/.gradle/gradle.properties with a given `kotlin_build.expected_value.` prefix to ensure the value.
  *
  * e.g. if a developer set's
  *
- * `defaultSnapshotVersion.kotlin_build.expected_value=1.6.255-SNAPSHOT` and the value gets bumped to `2.3.255-SNAPSHOT` after pulling from master,
+ * `kotlin_build.expected_value=defaultSnapshotVersion=1.6.255-SNAPSHOT` and the value gets bumped to `2.4.255-SNAPSHOT` after pulling from master,
  * the developer will notice this during project configuration phase.
  */
 fun Project.checkExpectedGradlePropertyValues() {
-    val expectSuffix = ".kotlin_build.expected_value"
-    val expectKeys = properties.keys.filter { it.endsWith(expectSuffix) }
-
-    val issues = expectKeys.mapNotNull { expectKey ->
-        val actualKey = expectKey.removeSuffix(expectSuffix)
-        val expectedValue = properties[expectKey]?.toString() ?: return@mapNotNull null
-
-        if (!properties.containsKey(actualKey))
-            return@mapNotNull MissingProperty(actualKey, expectedValue)
-
-        val actualValue = properties[actualKey].toString()
-
-        if (expectedValue != actualValue)
-            return@mapNotNull UnexpectedPropertyValue(actualKey, expectedValue, actualValue)
-
-        null
-    }.toSet()
-
-    if (issues.isEmpty()) {
-        return
+    val expectPrefix = "kotlin_build.expected_value."
+    val issues = providers.gradlePropertiesPrefixedBy(expectPrefix).get().mapNotNull { (prefixedKey, expectedValue) ->
+        val actualKey = prefixedKey.removePrefix(expectPrefix)
+        val actualValue = providers.gradleProperty(actualKey).orNull
+        when {
+            actualValue == null -> MissingProperty(actualKey, expectedValue)
+            actualValue != expectedValue -> UnexpectedPropertyValue(actualKey, expectedValue, actualValue)
+            else -> null
+        }
     }
+
+    if (issues.isEmpty()) return
 
     val unexpectedPropertyValues = issues.filterIsInstance<UnexpectedPropertyValue>()
     val missingProperties = issues.filterIsInstance<MissingProperty>()

@@ -300,14 +300,15 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
     private fun sameInstanceOfReceiver(
         useSiteReceiverExpression: FirExpression?,
         declarationSiteReceiverOwnerSymbol: FirBasedSymbol<*>?
-    ): Boolean = when {
-        declarationSiteReceiverOwnerSymbol == null || useSiteReceiverExpression == null -> false
-        useSiteReceiverExpression is FirThisReceiverExpression ->
-            useSiteReceiverExpression.calleeReference.boundSymbol == declarationSiteReceiverOwnerSymbol
-        useSiteReceiverExpression is FirPropertyAccessExpression ->
+    ): Boolean = when (val unwrappedReceiver = useSiteReceiverExpression?.unwrapSmartcastExpression()) {
+        null -> false
+        else if declarationSiteReceiverOwnerSymbol == null -> false
+        is FirThisReceiverExpression ->
+            unwrappedReceiver.calleeReference.boundSymbol == declarationSiteReceiverOwnerSymbol
+        is FirPropertyAccessExpression ->
             declarationSiteReceiverOwnerSymbol is FirValueParameterSymbol
                     && declarationSiteReceiverOwnerSymbol.isContextParameter()
-                    && useSiteReceiverExpression.toResolvedCallableSymbol() == declarationSiteReceiverOwnerSymbol
+                    && unwrappedReceiver.toResolvedCallableSymbol() == declarationSiteReceiverOwnerSymbol
         else -> false
     }
 

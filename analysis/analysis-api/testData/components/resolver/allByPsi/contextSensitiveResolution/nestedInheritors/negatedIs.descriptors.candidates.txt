@@ -74,21 +74,20 @@ KtWhenExpression(187,325): 'when(s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(192,193): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = Simple
-          symbol = s: Simple
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = Simple
+        symbol = s: Simple
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -120,88 +119,84 @@ KtWhenConditionWithExpression(230,230): ''
   NO_CANDIDATES
 
 KtPrefixExpression(231,248): '!USELESS_IS_CHECK'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = USELESS_IS_CHECK
-          isSafeNavigation = false
-          type = ERROR_TYPE
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
-          valueParameters = []
-          contextParameters = []
-          callableId = /<Error class: unknown class>.<Error function>
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = USELESS_IS_CHECK
+        isSafeNavigation = false
+        type = ERROR_TYPE
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+        valueParameters = []
+        contextParameters = []
+        callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = USELESS_IS_CHECK
+        isSafeNavigation = false
+        type = ERROR_TYPE
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = USELESS_IS_CHECK
-          isSafeNavigation = false
-          type = ERROR_TYPE
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = <Error property>
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = var <Error property>: ERROR_TYPE
-          contextParameters = []
-          callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = <Error property>
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = var <Error property>: ERROR_TYPE
+        contextParameters = []
+        callableId = /<Error class: unknown class>.<Error property>
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
 KtOperationReferenceExpression(231,232): '!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = USELESS_IS_CHECK
-          isSafeNavigation = false
-          type = ERROR_TYPE
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
-          valueParameters = []
-          contextParameters = []
-          callableId = /<Error class: unknown class>.<Error function>
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = USELESS_IS_CHECK
+        isSafeNavigation = false
+        type = ERROR_TYPE
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+        valueParameters = []
+        contextParameters = []
+        callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = USELESS_IS_CHECK
+        isSafeNavigation = false
+        type = ERROR_TYPE
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = USELESS_IS_CHECK
-          isSafeNavigation = false
-          type = ERROR_TYPE
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = <Error property>
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = var <Error property>: ERROR_TYPE
-          contextParameters = []
-          callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = <Error property>
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = var <Error property>: ERROR_TYPE
+        contextParameters = []
+        callableId = /<Error class: unknown class>.<Error property>
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
@@ -257,88 +252,84 @@ KtWhenConditionWithExpression(284,284): ''
   NO_CANDIDATES
 
 KtPrefixExpression(285,308): '!REDUNDANT_ELSE_IN_WHEN'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = REDUNDANT_ELSE_IN_WHEN
-          isSafeNavigation = false
-          type = ERROR_TYPE
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
-          valueParameters = []
-          contextParameters = []
-          callableId = /<Error class: unknown class>.<Error function>
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = REDUNDANT_ELSE_IN_WHEN
+        isSafeNavigation = false
+        type = ERROR_TYPE
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+        valueParameters = []
+        contextParameters = []
+        callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = REDUNDANT_ELSE_IN_WHEN
+        isSafeNavigation = false
+        type = ERROR_TYPE
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = REDUNDANT_ELSE_IN_WHEN
-          isSafeNavigation = false
-          type = ERROR_TYPE
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = <Error property>
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = var <Error property>: ERROR_TYPE
-          contextParameters = []
-          callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = <Error property>
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = var <Error property>: ERROR_TYPE
+        contextParameters = []
+        callableId = /<Error class: unknown class>.<Error property>
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
 KtOperationReferenceExpression(285,286): '!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = REDUNDANT_ELSE_IN_WHEN
-          isSafeNavigation = false
-          type = ERROR_TYPE
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
-          valueParameters = []
-          contextParameters = []
-          callableId = /<Error class: unknown class>.<Error function>
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = REDUNDANT_ELSE_IN_WHEN
+        isSafeNavigation = false
+        type = ERROR_TYPE
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+        valueParameters = []
+        contextParameters = []
+        callableId = /<Error class: unknown class>.<Error function>
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = REDUNDANT_ELSE_IN_WHEN
+        isSafeNavigation = false
+        type = ERROR_TYPE
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = REDUNDANT_ELSE_IN_WHEN
-          isSafeNavigation = false
-          type = ERROR_TYPE
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = <Error property>
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = var <Error property>: ERROR_TYPE
-          contextParameters = []
-          callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = <Error property>
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = var <Error property>: ERROR_TYPE
+        contextParameters = []
+        callableId = /<Error class: unknown class>.<Error property>
       typeArgumentsMapping = {}
     isInBestCandidates = false
 

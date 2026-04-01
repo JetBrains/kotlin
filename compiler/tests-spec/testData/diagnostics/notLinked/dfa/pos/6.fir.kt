@@ -336,17 +336,17 @@ fun case_18(a: DeepObject.A.B.C.D.E.F.G.J?, b: Boolean) {
     val x = null
     val y = null
 
-    if (a != (if (b) x else y) || x !== a) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!><!UNSAFE_CALL!>.<!>funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.funNullableAny()
+    if (a != (if (b) x else y) || <!SENSELESS_COMPARISON!>x !== a<!>) {
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J")!>a<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J")!>a<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J")!>a<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J")!>a<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J")!>a<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J")!>a<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J")!>a<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J")!>a<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J")!>a<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J")!>a<!>.funNullableAny()
     }
 }
 
@@ -1114,16 +1114,16 @@ fun case_63(x: Any?, b: Boolean) {
     if (x is Number?) {
         if (x !== when (b) { true -> z1; false -> z2; <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> z3 }) {
             if (x is Int?) {
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.propT
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!><!UNSAFE_CALL!>.<!>propAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.propNullableT
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.propNullableAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.funT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!><!UNSAFE_CALL!>.<!>funAny()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.funNullableT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.funNullableAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.equals(null)
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.propT
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.propAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.propNullableT
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.propNullableAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.funT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.funAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.funNullableT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.funNullableAny()
             }
         }
     }
@@ -1185,16 +1185,16 @@ fun case_66(x: Any?, z1: Nothing?, z2: Nothing?, b: Boolean) {
             if (x is ClassLevel3?) {
                 if (x != if (b) { z1 } else { z2 } && x is ClassLevel4?) {
                     if (x is ClassLevel5?) {
-                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!>
-                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
-                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!>.propT
-                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!><!UNSAFE_CALL!>.<!>propAny
-                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!>.propNullableT
-                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!>.propNullableAny
-                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!>.funT()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!><!UNSAFE_CALL!>.<!>funAny()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!>.funNullableT()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!>.funNullableAny()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>
+                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.equals(null)
+                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.propT
+                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.propAny
+                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.propNullableT
+                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.propNullableAny
+                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.funT()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.funAny()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.funNullableT()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.funNullableAny()
                     }
                 }
             }
@@ -1246,16 +1246,16 @@ fun case_68(x: Any?, z: Nothing?) {
  */
 fun case_69(x: Any?, z: Nothing?) {
     if (x is ClassLevel1? && x is ClassLevel2? && x is ClassLevel3? && x is ClassLevel4? && x != try { z } catch (e: Exception) { z } && x is ClassLevel5?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!><!UNSAFE_CALL!>.<!>funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5?")!>x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5")!>x<!>.funNullableAny()
     }
 }
 
@@ -1325,12 +1325,12 @@ fun case_72(t: Any?, z1: Nothing?) {
     <!CAN_BE_VAL!>var<!> z2 = null
 
     if (t is Interface1? && t != z1 ?: z2 && t is Interface2?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>t<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>t<!><!UNSAFE_CALL!>.<!>itest1()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>t<!><!UNSAFE_CALL!>.<!>itest2()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>t<!><!UNSAFE_CALL!>.<!>itest()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2")!>t<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2")!>t<!>.itest1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2")!>t<!>.itest2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2")!>t<!>.itest()
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!><!UNSAFE_CALL!>.<!>itest1(); <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!><!UNSAFE_CALL!>.<!>itest2() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2")!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2")!>it<!>.itest1(); <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2")!>it<!>.itest2() }
     }
 }
 

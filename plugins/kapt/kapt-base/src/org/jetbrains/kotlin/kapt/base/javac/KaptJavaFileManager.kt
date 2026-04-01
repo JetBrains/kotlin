@@ -26,6 +26,7 @@ class KaptJavaFileManager(context: Context, private val shouldRecordFileRead: Bo
     }
 
     var rootsToFilter = emptySet<File>()
+
     // TODO (gavra): store these more efficiently by package (requires some changes to type collection).
     var typeToIgnore = emptySet<String>()
 
@@ -115,8 +116,7 @@ class KaptJavaFileManager(context: Context, private val shouldRecordFileRead: Bo
             "jar", "zip" -> false
             else -> {
                 val typeName = packageName?.let { "$it." } + File(fileObject.toUri()).name.dropLast(".class".length)
-
-                return typeToIgnore.contains(typeName)
+                typeName in typeToIgnore
             }
         }
     }
@@ -146,7 +146,7 @@ class KaptJavaFileManager(context: Context, private val shouldRecordFileRead: Bo
 
     companion object {
         internal fun preRegister(context: Context, shouldRecordFileRead: Boolean) {
-            context.put(JavaFileManager::class.java, Context.Factory { KaptJavaFileManager(it, shouldRecordFileRead) })
+            context.put(JavaFileManager::class.java) { KaptJavaFileManager(it, shouldRecordFileRead) }
         }
     }
 }

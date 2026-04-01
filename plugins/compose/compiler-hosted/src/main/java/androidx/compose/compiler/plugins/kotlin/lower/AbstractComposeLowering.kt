@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
@@ -51,7 +50,6 @@ import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -62,6 +60,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.library.metadata.DeserializedSourceFile
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.JvmStandardClassIds.Annotations
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -78,12 +77,14 @@ abstract class AbstractComposeLowering(
 ) : IrElementTransformerVoid(), ModuleLoweringPass {
     protected val builtIns = context.irBuiltIns
 
+    private val finderForBuiltins = context.finderForBuiltins()
+
     protected val composerIrClass =
-        context.referenceClass(ComposeClassIds.Composer)?.owner
+        finderForBuiltins.findClass(ComposeClassIds.Composer)?.owner
             ?: error("Cannot find the Composer class in the classpath")
 
     protected val composableIrClass =
-        context.referenceClass(ComposeClassIds.Composable)?.owner
+        finderForBuiltins.findClass(ComposeClassIds.Composable)?.owner
             ?: error("Cannot find the Composable annotation class in the classpath")
 
     fun getTopLevelClass(classId: ClassId): IrClassSymbol {
@@ -92,7 +93,7 @@ abstract class AbstractComposeLowering(
     }
 
     fun getTopLevelClassOrNull(classId: ClassId): IrClassSymbol? {
-        return context.referenceClass(classId)
+        return finderForBuiltins.findClass(classId)
     }
 
     fun getTopLevelFunction(callableId: CallableId): IrSimpleFunctionSymbol {
@@ -101,15 +102,15 @@ abstract class AbstractComposeLowering(
     }
 
     fun getTopLevelFunctionOrNull(callableId: CallableId): IrSimpleFunctionSymbol? {
-        return context.referenceFunctions(callableId).firstOrNull()
+        return finderForBuiltins.findFunctions(callableId).firstOrNull()
     }
 
     fun getTopLevelFunctions(callableId: CallableId): List<IrSimpleFunctionSymbol> {
-        return context.referenceFunctions(callableId).toList()
+        return finderForBuiltins.findFunctions(callableId).toList()
     }
 
     fun getTopLevelPropertyGetter(callableId: CallableId): IrFunctionSymbol {
-        val propertySymbol = context.referenceProperties(callableId).firstOrNull()
+        val propertySymbol = finderForBuiltins.findProperties(callableId).firstOrNull()
             ?: error("Property was not found ${callableId.asSingleFqName()}")
         return propertySymbol.owner.getter!!.symbol
     }
@@ -366,7 +367,7 @@ abstract class AbstractComposeLowering(
     }
 
     protected fun IrType.binaryOperator(name: Name, paramType: IrType): IrFunctionSymbol {
-        return context.referenceFunctions(CallableId(this.classOrFail.owner.classId!!, name))
+        return finderForBuiltins.findFunctions(CallableId(this.classOrFail.owner.classId!!, name))
             .single {
                 it.owner.hasShape(
                     dispatchReceiver = true,
@@ -568,6 +569,7 @@ abstract class AbstractComposeLowering(
     )
 
     protected fun irForLoop(
+        parent: IrDeclarationParent,
         elementType: IrType,
         subject: IrExpression,
         loopBody: (IrValueDeclaration) -> IrExpression,
@@ -623,7 +625,9 @@ abstract class AbstractComposeLowering(
                         isVar = false,
                         name = "value",
                         irType = elementType
-                    )
+                    ).also {
+                        it.parent = parent
+                    }
                     condition = irCall(
                         symbol = hasNextSymbol.symbol,
                         origin = IrStatementOrigin.FOR_LOOP_HAS_NEXT,
@@ -813,14 +817,19 @@ abstract class AbstractComposeLowering(
     )
 
     private fun IrClass.getMetadataStabilityGetterFun(): IrSimpleFunctionSymbol? {
-        val suitableFunctions = context.referenceFunctions(CallableId(this.packageFqName!!, uniqueStabilityGetterName()))
+        val suitableFunctions = finderForBuiltins.findFunctions(CallableId(this.packageFqName!!, uniqueStabilityGetterName()))
         return suitableFunctions.firstOrNull()
     }
 
     private fun IrClass.getRuntimeStabilityValue(): IrExpression? {
         if (context.platform.isJvm()) {
-            val stableField = this.makeStabilityFieldJvm()
-            return irGetField(stableField)
+            if (origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB) {
+                val stableField = buildStabilityPropJvm(buildGetter = false).backingField!!
+                return irGetField(stableField)
+            } else {
+                val stableField = buildStabilityPropJvm(buildGetter = true).backingField!!
+                return irCall(stableField.correspondingPropertySymbol!!.owner.getter!!)
+            }
         } else {
             // since k2.0.10 compiler plugin adds special getter function that should be visible in metadata declarations
             val stabilityGetter = getMetadataStabilityGetterFun()
@@ -833,8 +842,8 @@ abstract class AbstractComposeLowering(
             val classKotlinVersion =
                 ((this as? Fir2IrLazyClass)?.fir?.klibSourceFile as? DeserializedSourceFile)?.library?.versions?.compilerVersion
             if (classKotlinVersion != null && classKotlinVersion.startsWith("1.9")) {
-                val stableField = this.buildStabilityProp(false)
-                val backingField = stableField.backingField!!
+                val prop = this.buildStabilityPropNonJvm(false)
+                val backingField = prop.backingField!!
 
                 return irGetField(backingField)
             }
@@ -850,22 +859,11 @@ abstract class AbstractComposeLowering(
     }
 
     internal fun IrClass.makeStabilityField(): IrField {
-        return if (context.platform.isJvm()) {
-            makeStabilityFieldJvm()
+        val prop = if (context.platform.isJvm()) {
+            buildStabilityPropJvm(buildGetter = true)
         } else {
-            makeStabilityFieldNonJvm()
+            buildStabilityPropNonJvm(buildGetter = true)
         }
-    }
-
-    private fun IrClass.makeStabilityFieldJvm(): IrField {
-        return buildStabilityField(ComposeNames.StabilityFlag).also { stabilityField ->
-            stabilityField.parent = this@makeStabilityFieldJvm
-            declarations += stabilityField
-        }
-    }
-
-    private fun IrClass.makeStabilityFieldNonJvm(): IrField {
-        val prop = this.buildStabilityProp(true)
         return prop.backingField!!
     }
 
@@ -878,10 +876,48 @@ abstract class AbstractComposeLowering(
             isFinal = true
             type = context.irBuiltIns.intType
             visibility = if (context.platform.isJvm()) DescriptorVisibilities.PUBLIC else DescriptorVisibilities.PRIVATE
+        }.also {
+            if (context.platform.isJvm()) {
+                // This tells the Kotlin compiler to avoid generating JVM bytecode for this field's
+                // getter and to replace invocations of this field's getter with direct field
+                // accesses. The relevant Kotlin compiler logic is in `JvmPropertiesLowering`.
+                it.annotations = listOf(jvmField()!!)
+            }
         }
     }
 
-    private fun IrClass.buildStabilityProp(buildGetter: Boolean): IrProperty {
+    private fun IrClass.buildStabilityPropJvm(buildGetter: Boolean): IrProperty {
+        val propName = ComposeNames.StabilityFlag
+        val existingProp = declarations.firstOrNull {
+            it is IrProperty && it.name == propName
+        } as? IrProperty
+        if (existingProp != null) {
+            return existingProp
+        }
+
+        val stabilityField = buildStabilityField(ComposeNames.StabilityFlag).also {
+            it.parent = this
+        }
+
+        val property = context.irFactory.buildProperty {
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
+            name = propName
+            visibility = this@buildStabilityPropJvm.visibility
+        }.also { property ->
+            stabilityField.correspondingPropertySymbol = property.symbol
+            property.backingField = stabilityField
+            addChild(property)
+        }
+
+        if (buildGetter) {
+            this.buildStabilityGetterJvm(property)
+        }
+
+        return property
+    }
+
+    private fun IrClass.buildStabilityPropNonJvm(buildGetter: Boolean): IrProperty {
         val parent = this.getPackageFragment()
 
         val propName = this.uniqueStabilityPropertyName()
@@ -900,7 +936,7 @@ abstract class AbstractComposeLowering(
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             name = propName
-            visibility = this@buildStabilityProp.visibility
+            visibility = this@buildStabilityPropNonJvm.visibility
         }.also { property ->
             property.parent = parent
             stabilityField.correspondingPropertySymbol = property.symbol
@@ -909,13 +945,35 @@ abstract class AbstractComposeLowering(
         }
 
         if (buildGetter) {
-            this.buildStabilityGetter(property, parent)
+            this.buildStabilityGetterNonJvm(property, parent)
         }
 
         return property
     }
 
-    private fun IrClass.buildStabilityGetter(stabilityProp: IrProperty, parent: IrPackageFragment) {
+    private fun IrClass.buildStabilityGetterJvm(stabilityProp: IrProperty) {
+        val getterName = uniqueStabilityGetterName()
+
+        val stabilityField = stabilityProp.backingField!!
+
+        context.irFactory.buildFun {
+            startOffset = this@buildStabilityGetterJvm.startOffset
+            endOffset = this@buildStabilityGetterJvm.endOffset
+            name = getterName
+            returnType = stabilityField.type
+            visibility = this@buildStabilityGetterJvm.visibility
+            origin = IrDeclarationOrigin.GeneratedByPlugin(ComposeCompilerKey)
+        }.also { fn ->
+            stabilityProp.getter = fn
+            fn.correspondingPropertySymbol = stabilityProp.symbol
+            fn.parent = stabilityProp.parent
+            fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
+                +irReturn(irGetField(stabilityField))
+            }
+        }
+    }
+
+    private fun IrClass.buildStabilityGetterNonJvm(stabilityProp: IrProperty, parent: IrPackageFragment) {
         val getterName = uniqueStabilityGetterName()
 
         val stabilityField = stabilityProp.backingField!!
@@ -924,11 +982,11 @@ abstract class AbstractComposeLowering(
         // but `registerFunctionAsMetadataVisible` is not working for field getter for some reason
         // and there is no api to register properties as metadata-visible
         val stabilityGetter = context.irFactory.buildFun {
-            startOffset = this@buildStabilityGetter.startOffset
-            endOffset = this@buildStabilityGetter.endOffset
+            startOffset = this@buildStabilityGetterNonJvm.startOffset
+            endOffset = this@buildStabilityGetterNonJvm.endOffset
             name = getterName
             returnType = stabilityField.type
-            visibility = this@buildStabilityGetter.visibility
+            visibility = this@buildStabilityGetterNonJvm.visibility
             origin = IrDeclarationOrigin.GeneratedByPlugin(ComposeCompilerKey)
         }.also { fn ->
             fn.parent = parent
@@ -950,7 +1008,13 @@ abstract class AbstractComposeLowering(
         context.metadataDeclarationRegistrar.registerFunctionAsMetadataVisible(stabilityGetter)
     }
 
-    fun IrExpression.isStatic(): Boolean {
+    /**
+     * Returns whether this expression is static.
+     *
+     * @param fileContainingDependent The file containing the element that depends on the returned
+     * result.
+     */
+    fun IrExpression.isStatic(fileContainingDependent: IrFile?): Boolean {
         return when (this) {
             // A constant by definition is static
             is IrConst -> true
@@ -959,18 +1023,18 @@ abstract class AbstractComposeLowering(
             // Getting a companion object or top level object can be considered static if the
             // type of that object is Stable. (`Modifier` for instance is a common example)
             is IrGetObjectValue -> {
-                if (symbol.owner.isCompanion) true
-                else stabilityInferencer.stabilityOf(type).knownStable()
+                if (symbol.owner.isObject) true
+                else stabilityInferencer.stabilityOf(type, fileContainingDependent).knownStable()
             }
 
-            is IrConstructorCall -> isStatic()
-            is IrCall -> isStatic()
+            is IrConstructorCall -> isStatic(fileContainingDependent)
+            is IrCall -> isStatic(fileContainingDependent)
             is IrGetValue -> {
                 when (val owner = symbol.owner) {
                     is IrVariable -> {
                         // If we have an immutable variable whose initializer is also static,
                         // then we can determine that the variable reference is also static.
-                        !owner.isVar && owner.initializer?.isStatic() == true
+                        !owner.isVar && owner.initializer?.isStatic(fileContainingDependent) == true
                     }
 
                     else -> false
@@ -994,18 +1058,26 @@ abstract class AbstractComposeLowering(
         }
     }
 
-    private fun IrConstructorCall.isStatic(): Boolean {
+    /**
+     * Returns whether this expression is static.
+     *
+     * @param fileContainingDependent The file containing the element that depends on the returned
+     * result.
+     */
+    private fun IrConstructorCall.isStatic(fileContainingDependent: IrFile?): Boolean {
         // special case constructors of inline classes as static if their underlying
         // value is static.
         if (type.isInlineClassType()) {
-            return stabilityInferencer.stabilityOf(type.unboxInlineClass()).knownStable() &&
-                    arguments[0]?.isStatic() == true
+            return stabilityInferencer.stabilityOf(
+                type.unboxInlineClass(), fileContainingDependent
+            ).knownStable() &&
+                    arguments[0]?.isStatic(fileContainingDependent) == true
         }
 
         // If a type is immutable, then calls to its constructor are static if all of
         // the provided arguments are static.
         if (symbol.owner.parentAsClass.hasAnnotationSafe(ComposeFqNames.Immutable)) {
-            return areAllArgumentsStatic()
+            return areAllArgumentsStatic(fileContainingDependent)
         }
         return false
     }
@@ -1028,7 +1100,13 @@ abstract class AbstractComposeLowering(
             IrStatementOrigin.LTEQ
         )
 
-    private fun IrCall.isStatic(): Boolean {
+    /**
+     * Returns whether this expression is static.
+     *
+     * @param fileContainingDependent The file containing the element that depends on the returned
+     * result.
+     */
+    private fun IrCall.isStatic(fileContainingDependent: IrFile?): Boolean {
         val function = symbol.owner
         val fqName = function.kotlinFqName
         return when {
@@ -1040,13 +1118,15 @@ abstract class AbstractComposeLowering(
                 // if the property is a top level constant, then it is static.
                 if (prop.isConst) return true
 
-                val typeIsStable = stabilityInferencer.stabilityOf(type).knownStable()
-                val receiversAreStatic = arguments.all { it?.isStatic() != false }
+                val typeIsStable = stabilityInferencer.stabilityOf(type, fileContainingDependent).knownStable()
+                val receiversAreStatic = arguments.all { it?.isStatic(fileContainingDependent) != false }
 
-                // if we see that the property is read-only with a default getter and a
-                // stable return type , then reading the property can also be considered
-                // static if this is a top level property or the subject is also static.
-                if (!prop.isVar &&
+                // If we see that the property is defined in [fileContainingDependent], and is
+                // read-only with a default getter and a stable return type, then reading the
+                // property can also be considered static if this is a top level property or the
+                // subject is also static.
+                if (prop.fileOrNull == fileContainingDependent &&
+                    !prop.isVar &&
                     prop.getter?.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR &&
                     typeIsStable &&
                     receiversAreStatic
@@ -1075,14 +1155,14 @@ abstract class AbstractComposeLowering(
                 val isStableOperator = fqName.topLevelName() == "kotlin" ||
                         function.hasAnnotation(ComposeFqNames.Stable)
 
-                val typeIsStable = stabilityInferencer.stabilityOf(type).knownStable()
+                val typeIsStable = stabilityInferencer.stabilityOf(type, fileContainingDependent).knownStable()
                 if (!typeIsStable) return false
 
                 if (!isStableOperator) {
                     return false
                 }
 
-                getArgumentsWithIr().all { it.second.isStatic() }
+                getArgumentsWithIr().all { it.second.isStatic(fileContainingDependent) }
             }
 
             origin == null -> {
@@ -1094,7 +1174,7 @@ abstract class AbstractComposeLowering(
                     val expectedArgumentsCount = 1 + syntheticRememberParams // 1 for lambda
                     if (
                         arguments.size == expectedArgumentsCount &&
-                        stabilityInferencer.stabilityOf(type).knownStable()
+                        stabilityInferencer.stabilityOf(type, fileContainingDependent).knownStable()
                     ) {
                         return true
                     }
@@ -1120,18 +1200,25 @@ abstract class AbstractComposeLowering(
                     val isStable = symbol.owner.hasAnnotation(ComposeFqNames.Stable)
                     if (!isStable) return false
 
-                    val typeIsStable = stabilityInferencer.stabilityOf(type).knownStable()
+                    val typeIsStable =
+                        stabilityInferencer.stabilityOf(type, fileContainingDependent).knownStable()
                     if (!typeIsStable) return false
                 }
 
-                areAllArgumentsStatic()
+                areAllArgumentsStatic(fileContainingDependent)
             }
 
             else -> false
         }
     }
 
-    private fun IrMemberAccessExpression<*>.areAllArgumentsStatic(): Boolean {
+    /**
+     * Returns whether all arguments passed to this expression are static.
+     *
+     * @param fileContainingDependent The file containing the element that depends on the returned
+     * result.
+     */
+    private fun IrMemberAccessExpression<*>.areAllArgumentsStatic(fileContainingDependent: IrFile?): Boolean {
         // getArguments includes the receivers!
         return getArgumentsWithIr().all { (_, argExpression) ->
             when (argExpression) {
@@ -1143,10 +1230,10 @@ abstract class AbstractComposeLowering(
                 // array implementation detail and check whether all of the parameters sent in the
                 // varargs are static on their own.
                 is IrVararg -> argExpression.elements.all { varargElement ->
-                    (varargElement as? IrExpression)?.isStatic() ?: false
+                    (varargElement as? IrExpression)?.isStatic(fileContainingDependent) ?: false
                 }
 
-                else -> argExpression.isStatic()
+                else -> argExpression.isStatic(fileContainingDependent)
             }
         }
     }
@@ -1268,6 +1355,7 @@ abstract class AbstractComposeLowering(
     fun irChanged(
         currentComposer: IrExpression,
         value: IrExpression,
+        fileContainingValue: IrFile?,
         inferredStable: Boolean,
         compareInstanceForFunctionTypes: Boolean,
         compareInstanceForUnstableValues: Boolean,
@@ -1283,7 +1371,7 @@ abstract class AbstractComposeLowering(
         // boxing in a different way.
         val expr = value.unboxValueIfInline().ordinalIfEnum()
         val type = expr.type
-        val stability = stabilityInferencer.stabilityOf(value)
+        val stability = stabilityInferencer.stabilityOf(value, fileContainingDependent = fileContainingValue)
 
         val primitiveDescriptor = type.toPrimitiveType()
             .let { changedPrimitiveFunctions[it] }
@@ -1319,7 +1407,7 @@ abstract class AbstractComposeLowering(
     private val irEnumOrdinal =
         context.irBuiltIns.enumClass.owner.properties.single { it.name.asString() == "ordinal" }.getter!!
 
-    private val protobufEnumClassId = ClassId.fromString("com/google/protobuf/Internal/EnumLite")
+    private val protobufEnumClassId = ClassId.fromString("com/google/protobuf/Internal.EnumLite")
 
     private fun IrExpression.ordinalIfEnum(): IrExpression {
         val cls = type.classOrNull?.owner
@@ -1584,6 +1672,13 @@ abstract class AbstractComposeLowering(
     protected val IrFunction.hasNonSkippableAnnotation: Boolean
         get() = hasAnnotation(ComposeFqNames.NonSkippableComposable)
 
+    private val jvmFieldIrClass =
+        if (context.platform.isJvm()) {
+            getTopLevelClass(Annotations.JvmField).owner
+        } else {
+            null
+        }
+
     private val jvmSyntheticIrClass =
         if (context.platform.isJvm()) {
             getTopLevelClass(
@@ -1605,21 +1700,28 @@ abstract class AbstractComposeLowering(
     private val hiddenDeprecationLevel = deprecationLevelIrClass.declarations.filterIsInstance<IrEnumEntry>()
         .single { it.name.toString() == "HIDDEN" }.symbol
 
+    private fun jvmField() = jvmFieldIrClass?.let {
+        IrAnnotationImpl.fromSymbolOwner(
+            type = it.defaultType,
+            constructorSymbol = it.constructors.first().symbol
+        )
+    }
+
     private fun jvmSynthetic() = jvmSyntheticIrClass?.let {
-        IrConstructorCallImpl.fromSymbolOwner(
+        IrAnnotationImpl.fromSymbolOwner(
             type = it.defaultType,
             constructorSymbol = it.constructors.first().symbol
         )
     }
 
     private fun hiddenFromObjC() = hiddenFromObjCIrClass?.let {
-        IrConstructorCallImpl.fromSymbolOwner(
+        IrAnnotationImpl.fromSymbolOwner(
             type = it.defaultType,
             constructorSymbol = it.constructors.first().symbol
         )
     }
 
-    private fun hiddenDeprecated(message: String) = IrConstructorCallImpl.fromSymbolOwner(
+    private fun hiddenDeprecated(message: String) = IrAnnotationImpl.fromSymbolOwner(
         type = deprecatedIrClass.defaultType,
         constructorSymbol = deprecatedIrClass.constructors.first { it.owner.isPrimary }
     ).also {

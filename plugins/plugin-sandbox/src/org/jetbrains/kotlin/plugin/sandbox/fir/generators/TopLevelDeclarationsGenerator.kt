@@ -11,12 +11,8 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
-import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
-import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
+import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
-import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.plugin.createTopLevelFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -49,12 +45,13 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
             argument.value as? String
         }
         val function = createTopLevelFunction(
-            Key,
+            TopLevelDeclarationsGeneratorKey,
             callableId,
             session.builtinTypes.stringType.coneType,
             containingFileName = containingFileName,
         ) {
             valueParameter(Name.identifier("value"), matchedClassSymbol.constructStarProjectedType())
+            withGeneratedDefaultBody()
         }
         return listOf(function.symbol)
     }
@@ -78,7 +75,7 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
         }
     }
 
-    object Key : GeneratedDeclarationKey()
+    data object TopLevelDeclarationsGeneratorKey : GeneratedDeclarationKey()
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(PREDICATE)

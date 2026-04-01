@@ -1,0 +1,6 @@
+KT element: KtPrimaryConstructor
+Resolve target: primaryConstructorRepl.repl.kts -> <snippet-primaryConstructorRepl.repl.kts> -> PrimaryConstructorRepl_repl -> WithConstructor -> constructor
+FIR:
+  public? constructor(x: Int): R|PrimaryConstructorRepl_repl.WithConstructor| {
+      LAZY_super<R|kotlin/Any|>
+  }

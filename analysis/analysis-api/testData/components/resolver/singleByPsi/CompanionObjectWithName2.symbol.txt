@@ -1,0 +1,5 @@
+KtNameReferenceExpression(58,64): 'sample'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      my/sample/Inner.Inner
+    ]

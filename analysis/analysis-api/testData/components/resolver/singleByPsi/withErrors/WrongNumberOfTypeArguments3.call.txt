@@ -1,20 +1,19 @@
 KtNameReferenceExpression(51,53): 'DD'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {}
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = foo.DD<T, T2>
-            symbol = <constructor>(): foo.DD<T, T2>
-            valueParameters = []
-            contextParameters = []
-            callableId = null
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = foo.DD<T, T2>
+          symbol = <constructor>(): foo.DD<T, T2>
+          valueParameters = []
+          contextParameters = []
+          callableId = null
         typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.constant.ConstantValue;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtProperty;
@@ -27,6 +30,35 @@ import java.io.IOException;
 public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStubImpl, KtProperty> {
     public KtPropertyElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtProperty.class, KotlinPropertyStub.class);
+    }
+
+    /**
+     * We want to build stubs for all non-local properties to make them indexable
+     */
+    @Override
+    public boolean shouldCreateStub(ASTNode node) {
+        ASTNode parentNode = node.getTreeParent();
+        IElementType parentElementType = parentNode.getElementType();
+
+        // Simple check for non-local properties inside classes and files
+        if (parentElementType == KtStubElementTypes.CLASS_BODY || parentElementType == KtFileElementType.INSTANCE) {
+            return true;
+        }
+
+        // Simple check for local and non-local properties inside blocks
+        if (parentElementType == KtStubBasedElementTypes.BLOCK) {
+            IElementType grandparentElementType = parentNode.getTreeParent().getElementType();
+            if (grandparentElementType == KtStubElementTypes.SCRIPT) {
+                return true;
+            }
+
+            if (grandparentElementType == KtStubElementTypes.FUNCTION || grandparentElementType == KtStubElementTypes.PROPERTY_ACCESSOR) {
+                return false;
+            }
+        }
+
+        // Fallback for psi-based check
+        return !((KtProperty)node.getPsi()).isLocal();
     }
 
     @NotNull
@@ -49,7 +81,8 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStubI
                 KtPsiUtilKt.safeFqNameForLazyResolve(psi),
                 /* constantInitializer = */ null,
                 /* origin = */ null,
-                /* hasBackingField = */ null
+                /* hasBackingField = */ null,
+                /* kdocText = */ null
         );
     }
 
@@ -72,7 +105,8 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStubI
 
         KotlinStubOrigin.serialize(stub.getOrigin(), dataStream);
 
-        StubUtils.writeNullableBoolean$psi_impl(dataStream, stub.getHasBackingField());
+        StubUtils.writeNullableBoolean(dataStream, stub.getHasBackingField());
+        StubUtils.serializeKdocText(dataStream, stub.getKdocText());
     }
 
     @NotNull
@@ -92,7 +126,8 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStubI
 
         ConstantValue<?> constantInitializer = KotlinConstantValueKt.deserializeConstantValue(dataStream);
         KotlinStubOrigin stubOrigin = KotlinStubOrigin.deserialize(dataStream);
-        Boolean hasBackingFiled = StubUtils.readNullableBoolean$psi_impl(dataStream);
+        Boolean hasBackingFiled = StubUtils.readNullableBoolean(dataStream);
+        String kdocText = StubUtils.deserializeKdocText(dataStream);
         return new KotlinPropertyStubImpl(
                 (StubElement<?>) parentStub,
                 name,
@@ -106,7 +141,8 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStubI
                 fqName,
                 constantInitializer,
                 stubOrigin,
-                hasBackingFiled
+                hasBackingFiled,
+                kdocText
         );
     }
 

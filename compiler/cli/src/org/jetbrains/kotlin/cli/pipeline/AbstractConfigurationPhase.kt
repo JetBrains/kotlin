@@ -12,15 +12,15 @@ import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_COMMA
 import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_K2_REGISTRAR_NAME
 import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_REGISTRAR_NAME
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.plugins.extractPluginClasspathAndOptions
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
+import org.jetbrains.kotlin.cli.reportInfo
+import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -43,29 +43,32 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
     val configurationUpdaters: List<ConfigurationUpdater<A>>
 ) : PipelinePhase<ArgumentsPipelineArtifact<A>, ConfigurationPipelineArtifact>(name, preActions, postActions) {
     override fun executePhase(input: ArgumentsPipelineArtifact<A>): ConfigurationPipelineArtifact? {
-        val configuration = CompilerConfiguration()
+        val configuration = input.configuration
         configuration.setupCommonConfiguration(input)
 
         for (filler in configurationUpdaters) {
             filler.fillConfiguration(input, configuration)
         }
 
-        return ConfigurationPipelineArtifact(configuration, input.diagnosticCollector, input.rootDisposable)
+        if (input.arguments.printConfiguration || input.arguments.verbose) {
+            configuration.reportInfo(configuration.toString())
+        }
+
+        return ConfigurationPipelineArtifact(configuration, input.rootDisposable)
     }
 
     protected abstract fun createMetadataVersion(versionArray: IntArray): BinaryVersion
     protected open fun provideCustomScriptingPluginOptions(arguments: A): List<String> = emptyList()
 
     private fun CompilerConfiguration.setupCommonConfiguration(input: ArgumentsPipelineArtifact<A>) {
-        val (arguments, _, _, messageCollector, performanceManager) = input
-        this.messageCollector = messageCollector
+        val (arguments, _, _, _, performanceManager) = input
         perfManager = performanceManager
         printVersion = arguments.version
         // TODO(KT-73711): move script-related configuration to JVM CLI
         scriptMode = arguments.script
         replMode = arguments.repl
         setupCommonArguments(arguments, ::createMetadataVersion)
-        val paths = computeKotlinPaths(messageCollector, arguments)?.also {
+        val paths = computeKotlinPaths(this, arguments)?.also {
             kotlinPaths = it
         }
         loadCompilerPlugins(paths, input, this)
@@ -105,8 +108,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
                 if (missingJars.isEmpty()) {
                     scriptingPluginClasspath.addAll(0, jars.map { it.canonicalPath })
                 } else {
-                    configuration.messageCollector.report(
-                        LOGGING,
+                    configuration.reportLog(
                         "Scripting plugin will not be loaded: not all required jars are present in the classpath (missing files: $missingJars)"
                     )
                 }
@@ -146,7 +148,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
                 true
             } else false
         } catch (e: Throwable) {
-            configuration.messageCollector.report(LOGGING, "Exception on loading scripting plugin: $e")
+            configuration.reportLog("Exception on loading scripting plugin: $e")
             false
         }
     }
@@ -161,3 +163,4 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         }
     }
 }
+

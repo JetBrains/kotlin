@@ -5,31 +5,53 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.resolution
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedVariableSymbol
-import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess
-import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaReceiverValue
+import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
-
 @KaImplementationDetail
 class KaBaseSimpleVariableAccessCall(
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
-    typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
-    simpleAccess: KaSimpleVariableAccess,
-    isContextSensitive: Boolean,
-) : KaSimpleVariableAccessCall {
-    private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> = typeArgumentsMapping
-    private val backingSimpleAccess: KaSimpleVariableAccess = simpleAccess
-    private val backingIsContextSensitive: Boolean = isContextSensitive
+    private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
+    private val backingKind: KaVariableAccessCall.Kind,
+    private val backingIsContextSensitive: Boolean,
+) : @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall {
     override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
-    override val partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
+    @Deprecated("Use the content of the `partiallyAppliedSymbol` directly instead")
+    override val partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>
+        get() = withValidityAssertion { backingPartiallyAppliedSymbol }
+
+    override val signature: KaVariableSignature<KaVariableSymbol>
+        get() = withValidityAssertion { backingPartiallyAppliedSymbol.signature }
+
+    override val dispatchReceiver: KaReceiverValue?
+        get() = withValidityAssertion { backingPartiallyAppliedSymbol.dispatchReceiver }
+
+    override val extensionReceiver: KaReceiverValue?
+        get() = withValidityAssertion { backingPartiallyAppliedSymbol.extensionReceiver }
+
+    @KaExperimentalApi
+    override val contextArguments: List<KaReceiverValue>
+        get() = withValidityAssertion { backingPartiallyAppliedSymbol.contextArguments }
+
     override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> get() = withValidityAssertion { backingTypeArgumentsMapping }
-    override val simpleAccess: KaSimpleVariableAccess get() = withValidityAssertion { backingSimpleAccess }
+
+    override val kind: KaVariableAccessCall.Kind
+        get() = withValidityAssertion { backingKind }
+
+    @Suppress("DEPRECATION")
+    @Deprecated("Use 'kind' instead", replaceWith = ReplaceWith("kind"))
+    override val simpleAccess: org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess
+        get() = withValidityAssertion { backingKind as org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess }
+
     override val isContextSensitive: Boolean get() = withValidityAssertion { backingIsContextSensitive }
 }

@@ -255,7 +255,7 @@ internal class KaFirTypeProvider(
                                 resolutionFacade, FirResolvePhase.TYPES
                             )?.fir
                         }
-                        else -> return null
+                        else -> null
                     }
                 }
 

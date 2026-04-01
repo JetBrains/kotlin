@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
 import org.jetbrains.kotlin.backend.wasm.utils.WasmInlineClassesUtils
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.PropertyLazyInitialization
 import org.jetbrains.kotlin.ir.backend.js.ReflectionSymbols
@@ -26,11 +28,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.js.config.propertyLazyInitialization
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
@@ -41,7 +43,6 @@ class WasmBackendContext(
     override val irBuiltIns: IrBuiltIns,
     override val symbolTable: SymbolTable,
     val irModuleFragment: IrModuleFragment,
-    propertyLazyInitialization: Boolean,
     override val configuration: CompilerConfiguration,
 ) : JsCommonBackendContext {
     val phaseConfig = configuration.phaseConfig ?: PhaseConfig()
@@ -93,13 +94,16 @@ class WasmBackendContext(
 
     override val internalPackageFqn = FqName("kotlin.wasm")
 
-    val wasmSymbols: WasmSymbols = WasmSymbols(irBuiltIns, configuration)
+    val wasmSymbols: BackendWasmSymbols = BackendWasmSymbols(irBuiltIns, configuration)
     override val symbols = wasmSymbols
     override val sharedVariablesManager = KlibSharedVariablesManager(wasmSymbols)
     override val reflectionSymbols: ReflectionSymbols get() = wasmSymbols.reflectionSymbols
 
     override val propertyLazyInitialization: PropertyLazyInitialization =
-        PropertyLazyInitialization(enabled = propertyLazyInitialization, eagerInitialization = wasmSymbols.eagerInitialization)
+        PropertyLazyInitialization(
+            enabled = configuration.propertyLazyInitialization,
+            eagerInitialization = wasmSymbols.eagerInitialization
+        )
 
     override val shouldGenerateHandlerParameterForDefaultBodyFun: Boolean
         get() = true
@@ -113,7 +117,10 @@ class WasmBackendContext(
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
         configuration.partialLinkageConfig,
         irBuiltIns,
-        configuration.messageCollector
+        KtDiagnosticReporterWithImplicitIrBasedContext(
+            configuration.diagnosticsCollector,
+            configuration.languageVersionSettings,
+        )
     )
 
     override val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()

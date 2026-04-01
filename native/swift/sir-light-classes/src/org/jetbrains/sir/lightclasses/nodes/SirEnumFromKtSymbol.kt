@@ -8,8 +8,6 @@ package org.jetbrains.sir.lightclasses.nodes
 import org.jetbrains.kotlin.analysis.api.components.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirAttribute
 import org.jetbrains.kotlin.sir.SirBridge
 import org.jetbrains.kotlin.sir.SirDeclaration
@@ -17,6 +15,7 @@ import org.jetbrains.kotlin.sir.SirDeclarationParent
 import org.jetbrains.kotlin.sir.SirEnum
 import org.jetbrains.kotlin.sir.SirEnumCase
 import org.jetbrains.kotlin.sir.SirFunction
+import org.jetbrains.kotlin.sir.SirFunctionBridge
 import org.jetbrains.kotlin.sir.SirFunctionBody
 import org.jetbrains.kotlin.sir.SirInit
 import org.jetbrains.kotlin.sir.SirNominalType
@@ -42,13 +41,14 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.providers.withSessions
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.baseBridgeName
 import org.jetbrains.sir.lightclasses.utils.bridgeFqName
-import org.jetbrains.sir.lightclasses.utils.forBridge
 import org.jetbrains.sir.lightclasses.utils.relocatedDeclarationNamePrefix
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
@@ -112,20 +112,44 @@ private class SirEnumFromKtSymbol(
         failableInitFromInteger(),
     )
 
+    private val ordinalBridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
+        val enumFqName = ktSymbol.classId!!.asSingleFqName()
+        generateFunctionBridge(
+            baseBridgeName = enumFqName.baseBridgeName + "_ordinal",
+            explicitParameters = emptyList(),
+            returnType = SirNominalType(SirSwiftModule.int32),
+            kotlinFqName = enumFqName.child(Name.identifier("ordinal")),
+            selfParameter = SirParameter(
+                argumentName = "self",
+                type = SirNominalType(this@SirEnumFromKtSymbol),
+            ),
+            contextParameters = emptyList(),
+            extensionReceiverParameter = null,
+            errorParameter = null,
+            isAsync = false,
+        )
+    }
+
     private fun kotlinBaseInitDeclaration(): SirDeclaration = buildInitCopy(KotlinRuntimeModule.kotlinBaseDesignatedInit) {
         origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol))
         parameters[0] = SirParameter(
             argumentName = "__externalRCRefUnsafe",
             type = unsafeMutableRawPointerFlexibleType()
         )
+        val ordinalBridges = this@SirEnumFromKtSymbol.withSessions {
+            ordinalBridgeProxy?.createSirBridges { buildCall("") }.orEmpty()
+        }
+        bridges.addAll(ordinalBridges)
+        val ordinalBridgeName = ordinalBridges.filterIsInstance<SirFunctionBridge>().first().name
         val separator = "\n                    "
+        var index = 0
         val caseSelector = cases.joinToString(separator = separator) {
-            "case ${it.nativeCaseRepresentation(ktSymbol)}: self = .${it.name}"
+            "case ${index++}: self = .${it.name}"
         } + defaultBranch(separator)
         body = SirFunctionBody(
             listOf(
                 """
-                    switch __externalRCRefUnsafe {
+                    switch $ordinalBridgeName(__externalRCRefUnsafe) {
                     $caseSelector
                     }
                 """.trimIndent()
@@ -138,7 +162,7 @@ private class SirEnumFromKtSymbol(
         returnType = unsafeMutableRawPointerFlexibleType()
         val separator = "\n                    "
         val caseSelector = cases.joinToString(separator = separator) {
-            "case .${it.name}: ${it.nativeCaseRepresentation(ktSymbol)}"
+            "case .${it.name}: ${it.nativeCaseRepresentation()}"
         } + defaultBranch(separator)
         body = SirFunctionBody(
             listOf(
@@ -248,6 +272,7 @@ internal fun createSirEnumCaseFromKtSymbol(
     sirSession
 )
 
+
 private class SirEnumCaseFromKtSymbol(
     override val ktSymbol: KaEnumEntrySymbol,
     override val sirSession: SirSession,
@@ -267,36 +292,19 @@ private class SirEnumCaseFromKtSymbol(
     override val attributes: List<SirAttribute>
         get() = emptyList()
 
-    fun nativeCaseRepresentation(enumSymbol: KaNamedClassSymbol): String =
-        "${enumSymbol.classId!!.underscoredRepresentation()}_$name()"
-
-    private fun ClassId.underscoredRepresentation(): String = buildString {
-        if (!packageFqName.isRoot) {
-            appendUnderscoredRepresentation(packageFqName)
-            append("_")
-        }
-        appendUnderscoredRepresentation(relativeClassName)
-    }
-
-    private fun StringBuilder.appendUnderscoredRepresentation(fqName: FqName) {
-        if (fqName.isRoot) return
-        val parent = fqName.parent()
-        if (!parent.isRoot) {
-            appendUnderscoredRepresentation(parent)
-            append("_")
-        }
-        append(fqName.shortName().asString())
-    }
+    fun nativeCaseRepresentation(): String =
+        "${ktSymbol.callableId!!.asSingleFqName().baseBridgeName}()"
 
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
         val fqName = bridgeFqName ?: return@lazyWithSessions null
-        val baseName = fqName.forBridge.joinToString("_")
+        val baseName = fqName.baseBridgeName
         generateFunctionBridge(
             baseBridgeName = baseName,
             explicitParameters = emptyList(),
-            returnType = SirType.Companion.any,
+            returnType = SirType.any,
             kotlinFqName = fqName,
             selfParameter = null,
+            contextParameters = emptyList(),
             extensionReceiverParameter = null,
             errorParameter = null,
             isAsync = false,
@@ -304,8 +312,8 @@ private class SirEnumCaseFromKtSymbol(
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
-        listOfNotNull(bridgeProxy?.createSirBridge {
+        bridgeProxy?.createSirBridges {
             buildCall("")
-        })
+        }.orEmpty()
     }
 }

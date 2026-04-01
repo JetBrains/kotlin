@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporter
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.DefaultCompilerDiagnosticsProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.DefaultProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.internal.*
@@ -91,8 +93,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         addKotlinCompilerConfiguration(project)
 
         project.configurations.maybeCreateResolvable(PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
-            @Suppress("DEPRECATION")
-            isVisible = false
+            setInvisibleIfSupported()
             addGradlePluginMetadataAttributes(project)
         }
 
@@ -166,6 +167,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         factories.putIfAbsent(
             ProblemsReporter.Factory::class,
             DefaultProblemsReporter.Factory()
+        )
+
+        factories.putIfAbsent(
+            CompilerDiagnosticsProblemsReporter.Factory::class,
+            DefaultCompilerDiagnosticsProblemsReporter.Factory()
         )
 
         factories.putIfAbsent(
@@ -249,8 +255,7 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
         project.logger.info("Using Kotlin Gradle Plugin $pluginVariant variant")
 
         project.configurations.maybeCreateResolvable(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
-            @Suppress("DEPRECATION")
-            isVisible = false
+            setInvisibleIfSupported()
             isTransitive = false
             addGradlePluginMetadataAttributes(project)
         }

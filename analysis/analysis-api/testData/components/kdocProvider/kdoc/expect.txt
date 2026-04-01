@@ -1,0 +1,21 @@
+----------/main(): kotlin.Unit--------------------------------------------------
+null
+
+----------val f: Foo------------------------------------------------------------
+null
+
+----------<constructor>(): Foo--------------------------------------------------
+null
+
+----------/Foo.documented(<dispatch receiver>: Foo): kotlin.Unit----------------
+<primary tag="null" subject="null">
+Actual KDoc
+<section="null" subject="null">
+Actual KDoc
+
+----------/Foo.undocumented(<dispatch receiver>: Foo): kotlin.Unit--------------
+<primary tag="null" subject="null">
+Expect KDoc
+<section="null" subject="null">
+Expect KDoc
+

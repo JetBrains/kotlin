@@ -24,9 +24,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterVsNested.kt
         public abstract [ResolvedTo(BODY_RESOLVE)] val z: <ERROR TYPE REF: Wrong number of type arguments>
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] get(): <ERROR TYPE REF: Wrong number of type arguments>
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Some : R|test/My.T<T>| {
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Some] constructor(): R|test/My.Some| {
-                LAZY_super<R|test/My.T<T>|>
+        public final [ResolvedTo(BODY_RESOLVE)] class Some : R|test/My.T<T>| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Some] constructor(): R|test/My.Some| {
+                R|test/My<T>|this@R|test/My|.super<R|test/My.T<T>|>()
             }
 
         }

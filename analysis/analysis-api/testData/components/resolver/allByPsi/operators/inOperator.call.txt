@@ -1,0 +1,280 @@
+KtFile: 'inOperator.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,75): 'class Container {'
+  null
+
+KtClassBody(16,75): '{'
+  null
+
+KtNamedFunction(22,73): 'operator fun contains(element: Int): Boolean = true'
+  null
+
+KtDeclarationModifierList(22,30): 'operator'
+  null
+
+KtParameterList(43,57): '(element: Int)'
+  null
+
+KtParameter(44,56): 'element: Int'
+  null
+
+KtTypeReference(53,56): 'Int'
+  null
+
+KtUserType(53,56): 'Int'
+  null
+
+KtNameReferenceExpression(53,56): 'Int'
+  null
+
+KtTypeReference(59,66): 'Boolean'
+  null
+
+KtUserType(59,66): 'Boolean'
+  null
+
+KtNameReferenceExpression(59,66): 'Boolean'
+  null
+
+KtConstantExpression(69,73): 'true'
+  null
+
+KtNamedFunction(77,138): 'fun test() {'
+  null
+
+KtParameterList(85,87): '()'
+  null
+
+KtBlockExpression(88,138): '{'
+  null
+
+KtProperty(94,113): 'val c = Container()'
+  null
+
+KtCallExpression(102,113): 'Container()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Container
+        symbol = <constructor>(): Container
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(102,111): 'Container'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Container
+        symbol = <constructor>(): Container
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(111,113): '()'
+  null
+
+KtBinaryExpression(118,124): '1 in c'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = c
+        isSafeNavigation = false
+        type = Container
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /Container.contains(<dispatch receiver>: Container, element: kotlin.Int): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = element
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = element: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /Container.contains
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = element
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = element: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtConstantExpression(118,119): '1'
+  null
+
+KtOperationReferenceExpression(120,122): 'in'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = c
+        isSafeNavigation = false
+        type = Container
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /Container.contains(<dispatch receiver>: Container, element: kotlin.Int): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = element
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = element: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /Container.contains
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = element
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = element: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(123,124): 'c'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = c
+        receiverType = null
+        returnType = Container
+        symbol = val c: Container
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtBinaryExpression(129,136): '2 !in c'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = c
+        isSafeNavigation = false
+        type = Container
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /Container.contains(<dispatch receiver>: Container, element: kotlin.Int): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = element
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = element: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /Container.contains
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = element
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = element: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtConstantExpression(129,130): '2'
+  null
+
+KtOperationReferenceExpression(131,134): '!in'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = c
+        isSafeNavigation = false
+        type = Container
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /Container.contains(<dispatch receiver>: Container, element: kotlin.Int): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = element
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = element: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /Container.contains
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = element
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = element: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(135,136): 'c'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = c
+        receiverType = null
+        returnType = Container
+        symbol = val c: Container
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}

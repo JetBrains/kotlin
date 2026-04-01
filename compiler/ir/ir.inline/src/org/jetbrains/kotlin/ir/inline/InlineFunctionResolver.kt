@@ -37,12 +37,9 @@ enum class InlineMode {
 }
 
 abstract class InlineFunctionResolver() {
-    protected open fun shouldSkipBecauseOfCallSite(expression: IrMemberAccessExpression<IrFunctionSymbol>) = false
-
     protected abstract fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction?
 
     fun getFunctionDeclarationToInline(expression: IrMemberAccessExpression<IrFunctionSymbol>): IrFunction? {
-        if (shouldSkipBecauseOfCallSite(expression)) return null
         return getFunctionDeclaration(expression.symbol)
     }
 }

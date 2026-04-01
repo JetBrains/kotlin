@@ -1,21 +1,27 @@
-package org.jetbrains.kotlin.codegen.forTestCompile/*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+package org.jetbrains.kotlin.codegen.forTestCompile
 
 // This file is duplicated at repo/gradle-build-conventions/project-tests-convention/src/main/kotlin/TestCompilePaths.kt
 object TestCompilePaths {
     const val KOTLIN_FULL_STDLIB_PATH: String = "kotlin.full.stdlib.path"
+    const val KOTLIN_FULL_STDLIB_SOURCES_PATH: String = "kotlin.full.stdlib.sources.path"
     const val KOTLIN_MINIMAL_STDLIB_PATH: String = "kotlin.minimal.stdlib.path"
     const val KOTLIN_TEST_JAR_PATH: String = "kotlin.test.jar.path"
     const val KOTLIN_REFLECT_JAR_PATH: String = "kotlin.reflect.jar.path"
     const val KOTLIN_SCRIPT_RUNTIME_PATH: String = "kotlin.script.runtime.path"
     const val KOTLIN_COMMON_STDLIB_PATH: String = "kotlin.common.stdlib.path"
     const val KOTLIN_ANNOTATIONS_PATH: String = "kotlin.annotations.path"
+    const val KOTLIN_WEB_STDLIB_KLIB_PATH: String = "kotlin.web.stdlib.path"
     const val KOTLIN_JS_STDLIB_KLIB_PATH: String = "kotlin.js.stdlib.klib.path"
     const val KOTLIN_JS_REDUCED_STDLIB_PATH: String = "kotlin.js.reduced.stdlib.path"
     const val KOTLIN_JS_KOTLIN_TEST_KLIB_PATH: String = "kotlin.js.kotlin.test.klib.path"
     const val KOTLIN_SCRIPTING_PLUGIN_CLASSPATH = "kotlin.scriptingPlugin.classpath"
+    const val KOTLIN_TEST_SCRIPT_DEFINITION_CLASSPATH = "kotlin.script.test.script.definition.classpath"
+    const val KOTLIN_DIST_PATH = "kotlin.dist.path"
     const val KOTLIN_MOCKJDK_RUNTIME_PATH = "kotlin.mockJDK.runtime.path"
     const val KOTLIN_MOCKJDKMODIFIED_RUNTIME_PATH = "kotlin.mockJDKModified.runtime.path"
     const val KOTLIN_MOCKJDK_ANNOTATIONS_PATH = "kotlin.mockJDK.annotations.path"
@@ -24,4 +30,6 @@ object TestCompilePaths {
     const val KOTLIN_THIRDPARTY_JAVA9_ANNOTATIONS_PATH = "third-party/java9-annotations"
     const val KOTLIN_THIRDPARTY_JSR305_PATH = "third-party/jsr305"
     const val KOTLIN_TESTDATA_ROOTS = "kotlin.testData.roots"
+    const val PLUGIN_SANDBOX_ANNOTATIONS_JAR_PATH: String = "firPluginAnnotations.jvm.path"
+    const val PLUGIN_SANDBOX_ANNOTATIONS_JS_KLIB_PATH: String = "firPluginAnnotations.js.path"
 }

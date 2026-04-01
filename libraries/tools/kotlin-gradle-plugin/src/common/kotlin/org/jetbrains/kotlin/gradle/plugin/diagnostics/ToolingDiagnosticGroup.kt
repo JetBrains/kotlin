@@ -96,6 +96,49 @@ internal sealed interface DiagnosticGroup {
         object Misconfiguration : Kgp(Category.MISCONFIGURATION)
         object Experimental : Kgp(Category.EXPERIMENTAL)
     }
+
+    /**
+     * Represents a hierarchical structure of diagnostic groups related to compiler diagnostics.
+     */
+    sealed class Compiler(
+        private val category: String? = null,
+    ) : Base() {
+        override val groupId: String = when (category) {
+            Category.ERROR, Category.WARNING -> "${GroupId.COMPILER}:$category"
+            else -> GroupId.COMPILER
+        }
+
+        override val parent: DiagnosticGroup = KotlinDiagnosticGroup
+
+        override val displayName: String
+            get() = buildString {
+                append("Kotlin Compiler")
+                category?.let {
+                    append(" ${Category.getDisplayName(it)}")
+                }
+            }
+
+        override val groupPath: String = buildString {
+            append(parent.groupPath)
+            append(":")
+            append(groupId.lowercase(Locale.getDefault()))
+        }
+
+        private object Category {
+            const val ERROR = "ERROR"
+            const val WARNING = "WARNING"
+
+            fun getDisplayName(category: String): String = when (category) {
+                ERROR -> "Error"
+                WARNING -> "Warning"
+                else -> throw IllegalArgumentException("Unknown category: $category")
+            }
+        }
+
+        object Default : Compiler()
+        object Error : Compiler(Category.ERROR)
+        object Warning : Compiler(Category.WARNING)
+    }
 }
 
 /**
@@ -109,4 +152,5 @@ internal sealed interface DiagnosticGroup {
 private object GroupId {
     const val KOTLIN = "KOTLIN"
     const val KGP = "KGP"
+    const val COMPILER = "COMPILER"
 }

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
-import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.native.interop.indexer.*
 
 interface Imports {
@@ -26,7 +26,7 @@ interface Imports {
 }
 
 
-class PackageInfo(val name: String, val library: KonanLibrary)
+class PackageInfo(val name: String, val library: KotlinLibrary)
 
 class ImportsImpl(internal val headerIdToPackage: Map<HeaderId, PackageInfo>) : Imports {
 
@@ -40,9 +40,9 @@ class ImportsImpl(internal val headerIdToPackage: Map<HeaderId, PackageInfo>) : 
     override fun isImported(headerId: HeaderId) =
             headerId in headerIdToPackage
 
-    private val accessedLibraries = mutableSetOf<KonanLibrary>()
+    private val accessedLibraries = mutableSetOf<KotlinLibrary>()
 
-    val requiredLibraries: Set<KonanLibrary>
+    val requiredLibraries: Set<KotlinLibrary>
         get() = accessedLibraries.toSet()
 }
 

@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.code
 
 import junit.framework.TestCase
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.load.java.JvmAbi
 import java.lang.reflect.Field
-import java.lang.reflect.Member
 import java.lang.reflect.Modifier
 import kotlin.reflect.jvm.javaField
 
@@ -28,46 +26,6 @@ class ReflectionCodeSanityTest : TestCase() {
 
     private fun loadClass(name: String): Class<*> =
         classLoader.loadClass("kotlin.reflect.jvm.internal.$name")
-
-    private fun collectClassesWithSupers(vararg names: String): Set<Class<*>> {
-        val result = linkedSetOf<Class<*>>()
-        fun addClassToCheck(klass: Class<*>) {
-            if (result.add(klass)) {
-                klass.superclass?.let(::addClassToCheck)
-            }
-        }
-
-        for (name in names) {
-            addClassToCheck(loadClass(name))
-        }
-
-        return result
-    }
-
-    fun testNoDelegatedPropertiesInKClassAndKProperties() {
-        val badMembers = linkedSetOf<Member>()
-        for (klass in collectClassesWithSupers(
-            "KClassImpl",
-            "DescriptorKMutableProperty0",
-            "DescriptorKMutableProperty1",
-            "DescriptorKMutableProperty2",
-            "KotlinKMutableProperty0",
-        )) {
-            badMembers.addAll(klass.declaredFields.filter { it.name.endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) })
-            badMembers.addAll(klass.declaredMethods.filter { it.name.endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) })
-        }
-
-        if (badMembers.isNotEmpty()) {
-            fail(
-                "The members listed below appear to be delegates for properties.\n" +
-                        "It's highly not recommended to use property delegates in reflection.jvm because a KProperty instance\n" +
-                        "is created for each delegated property and that makes the initialization sequence of reflection\n" +
-                        "implementation classes unpredictable and leads to a deadlock or ExceptionInInitializerError.\n\n" +
-                        "Please un-delegate the corresponding properties:\n\n" +
-                        badMembers.joinToString("\n")
-            )
-        }
-    }
 
     fun testMaxAllowedFields() {
         // The following classes are instantiated a lot in Kotlin applications, and thus they should be optimized as good as possible.

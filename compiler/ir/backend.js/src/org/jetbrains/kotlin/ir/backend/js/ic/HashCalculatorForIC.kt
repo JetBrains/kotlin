@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
+import org.jetbrains.kotlin.backend.common.linkage.partial.PARTIAL_LINKAGE_CONFIGURATION
+import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -133,7 +134,7 @@ private class HashCalculatorForIC(private val checkForClassStructuralChanges: Bo
         collection.forEach { f(it) }
     }
 
-    fun <T> updateConfigKeys(config: CompilerConfiguration, keys: List<CompilerConfigurationKey<out T>>, valueUpdater: (T) -> Unit) {
+    fun <T : Any> updateConfigKeys(config: CompilerConfiguration, keys: List<CompilerConfigurationKey<T>>, valueUpdater: (T) -> Unit) {
         updateForEach(keys) { key ->
             update(key.toString())
             val value = config.get(key)
@@ -200,8 +201,7 @@ internal class ICHasher(checkForClassStructuralChanges: Boolean = false) {
             hashCalculator.update(value)
         }
 
-        hashCalculator.updateConfigKeys(config, listOf(PartialLinkageConfig.KEY)) { value: PartialLinkageConfig ->
-            hashCalculator.update(value.mode.ordinal)
+        hashCalculator.updateConfigKeys(config, listOf(PARTIAL_LINKAGE_CONFIGURATION)) { value: PartialLinkageConfig ->
             hashCalculator.update(value.logLevel.ordinal)
         }
 

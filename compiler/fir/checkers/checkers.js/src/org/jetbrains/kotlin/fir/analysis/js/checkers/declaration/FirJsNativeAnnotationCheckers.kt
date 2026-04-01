@@ -15,11 +15,13 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
-internal object FirJsNativeInvokeChecker :
-    FirWebCommonAbstractNativeAnnotationChecker(
-        JsStandardClassIds.Annotations.JsNativeInvoke,
-        FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN
-    )
+internal object FirJsNativeInvokeChecker : FirWebCommonAbstractNativeAnnotationChecker(
+    JsStandardClassIds.Annotations.JsNativeInvoke,
+    FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN
+) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+}
 
 internal abstract class FirJsAbstractNativeIndexerChecker(
     requiredAnnotation: ClassId,
@@ -29,6 +31,9 @@ internal abstract class FirJsAbstractNativeIndexerChecker(
     requiredAnnotation,
     FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN
 ) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirNamedFunction) {
         super.check(declaration)
@@ -75,6 +80,9 @@ internal abstract class FirJsAbstractNativeIndexerChecker(
 }
 
 internal object FirJsNativeGetterChecker : FirJsAbstractNativeIndexerChecker(JsStandardClassIds.Annotations.JsNativeGetter, "getter", 1) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirNamedFunction) {
         if (!hasRequiredAnnotation(declaration)) return
@@ -87,6 +95,9 @@ internal object FirJsNativeGetterChecker : FirJsAbstractNativeIndexerChecker(JsS
 }
 
 internal object FirJsNativeSetterChecker : FirJsAbstractNativeIndexerChecker(JsStandardClassIds.Annotations.JsNativeSetter, "setter", 2) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirNamedFunction) {
         if (!hasRequiredAnnotation(declaration)) return

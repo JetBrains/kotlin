@@ -58,10 +58,14 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
         return list.getParameters();
     }
 
+    /**
+     * @deprecated Use {@link KtModifierList#getContextParameterList()} (via {@link #getModifierList()}) instead. This method is obsolete and exists for compatibility reasons only.
+     */
+    @Deprecated
     @Nullable
     public KtContextReceiverList getContextReceiverList() {
         KtModifierList modifierList = getModifierList();
-        return modifierList == null ? null : modifierList.getContextReceiverList();
+        return modifierList == null ? null : (KtContextReceiverList) modifierList.getContextParameterList();
     }
 
     /**
@@ -71,12 +75,18 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
      * Valid code may have only either empty or one {@link KtContextReceiverList},
      * so {@link #getContextReceiverList } is preferable.
      *
+     * @deprecated Use {@link KtModifierList#getContextParameterLists()} (via {@link #getModifierList()}) instead. This method is obsolete and exists for compatibility reasons only.
+     *
      * @return a non-null list of {@link KtContextReceiverList} defined in the associated modifier list.
      * Returns an empty list if no context receiver lists are present.
      */
+    @Deprecated
+    @SuppressWarnings("unchecked")
     @NotNull
     public List<KtContextReceiverList> getContextReceiverLists() {
         KtModifierList modifierList = getModifierList();
-        return modifierList == null ? Collections.emptyList() : modifierList.getContextReceiverLists();
+        return modifierList == null
+               ? Collections.emptyList()
+               : (List<KtContextReceiverList>) (List<?>) modifierList.getContextParameterLists();
     }
 }

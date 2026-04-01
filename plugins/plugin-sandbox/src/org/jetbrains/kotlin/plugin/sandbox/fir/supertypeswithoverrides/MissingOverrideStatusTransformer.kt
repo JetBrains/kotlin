@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.types.isAny
-import org.jetbrains.kotlin.fir.types.isResolved
+import org.jetbrains.kotlin.fir.types.hasResolvedType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -118,7 +118,7 @@ class SimpleAddSupertypeExtension(session: FirSession): FirSupertypeGenerationEx
     private fun FirGetClassCall.resolvedClassArgumentTarget(
         typeResolver: TypeResolveService
     ): ConeKotlinType? {
-        if (isResolved) {
+        if (hasResolvedType) {
             return (argument as? FirClassReferenceExpression?)?.classTypeRef?.coneTypeOrNull
         }
         val source = source ?: return null

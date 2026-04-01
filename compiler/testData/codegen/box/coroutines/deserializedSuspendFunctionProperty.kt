@@ -1,6 +1,8 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-// JVM_ABI_K1_K2_DIFF: KT-68087
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: ANY:1.9
+// ^^^KT-64148 is fixed in 2.0.0-Beta3
+
 // MODULE: m1
 // FILE: m1.kt
 typealias GivenLambda<ParentGivenType, GivenType> =

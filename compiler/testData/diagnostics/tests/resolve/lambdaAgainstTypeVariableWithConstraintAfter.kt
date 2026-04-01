@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-58310
 // LANGUAGE: +CheckLambdaAgainstTypeVariableContradictionInResolution
+// LATEST_LV_DIFFERENCE
 
 class Inv<T>
 

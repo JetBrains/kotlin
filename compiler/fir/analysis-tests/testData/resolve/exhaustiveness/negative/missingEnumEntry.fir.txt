@@ -13,7 +13,7 @@ FILE: missingEnumEntry.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<SomeEnum>|
-            public get(): R|kotlin/enums/EnumEntries<SomeEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<SomeEnum>|
 
     }
     public final fun test_1(enum: R|SomeEnum|): R|kotlin/Unit| {

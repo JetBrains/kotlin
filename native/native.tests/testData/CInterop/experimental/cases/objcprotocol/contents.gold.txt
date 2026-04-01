@@ -7,7 +7,7 @@ library {
     // class name: dependency/MyProtocolProtocol
     // class name: dependency/MyProtocolProtocolMeta
 
-    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_dependency0_MyProtocol")
+    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_dependency0_MyProtocol", binaryName = "MyProtocol")
     @kotlinx/cinterop/ExperimentalForeignApi
     public abstract interface dependency/MyProtocolProtocol : kotlinx/cinterop/ObjCObject {
 
@@ -27,7 +27,7 @@ library {
         public final /* non-default */ external set(value: kotlin/Any?)
     }
 
-    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_dependency0_MyProtocol")
+    @kotlinx/cinterop/ExternalObjCClass(protocolGetter = "kniprot_dependency0_MyProtocol", binaryName = "MyProtocol")
     @kotlinx/cinterop/ExperimentalForeignApi
     public abstract interface dependency/MyProtocolProtocolMeta : kotlinx/cinterop/ObjCClass /* = kotlinx/cinterop/ObjCObjectMeta^ */ {
 

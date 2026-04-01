@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 import com.intellij.lang.LighterASTTokenNode
 import com.intellij.psi.TokenType
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.projectionKindAsString
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirDynamicUnsupportedChecker
 import org.jetbrains.kotlin.fir.analysis.getChild
@@ -165,6 +168,7 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
 
             // see EagerResolveOfCallableReferences
             is UnsuccessfulCallableReferenceArgument -> null
+            is UnsuccessfulCollectionLiteralArgument -> null
 
             is MultipleContextReceiversApplicableForExtensionReceivers ->
                 FirErrors.AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER.createOn(qualifiedAccessSource ?: source, session)
@@ -317,7 +321,20 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
                 session
             )
 
-            else -> genericDiagnostic
+            is InaccessibleFromClassHeader -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(
+                qualifiedAccessSource ?: source,
+                "<this>",
+                session,
+            )
+
+            UnsupportedCompanionBlockOrExtensionCall -> FirErrors.UNSUPPORTED_FEATURE.createOn(
+                qualifiedAccessSource ?: source,
+                LanguageFeature.CompanionBlocksAndExtensions to session.languageVersionSettings,
+                session,
+                positioningStrategy = SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED,
+            )
+
+            else -> genericDiagnostic.takeIf { candidate.symbol !is FirSyntheticFunctionSymbol }
         }
     }.distinct()
     return if (diagnostics.size > 1) {
@@ -334,17 +351,13 @@ private fun ConeConstraintSystemHasContradiction.mapSystemHasContradictionError(
     qualifiedAccessSource: KtSourceElement?,
 ): List<KtDiagnostic> {
     val errors = candidate.errors
-    return buildList {
-        for (error in errors) {
-            addIfNotNull(
-                error.mapConstraintSystemError(
-                    source,
-                    qualifiedAccessSource,
-                    session,
-                    candidate,
-                )
-            )
-        }
+    return errors.mapNotNull { error ->
+        error.mapConstraintSystemError(
+            source,
+            qualifiedAccessSource,
+            session,
+            candidate,
+        )
     }.ifEmpty {
         // Check if we already have some other reported error
         if (errors.any { error ->
@@ -360,7 +373,7 @@ private fun ConeConstraintSystemHasContradiction.mapSystemHasContradictionError(
                     // - return type of some synthetic call (if/try/!!/?:)
                     // - type argument of some qualified access
                     // ...or, we have a delegated constructor call with an error reported separately,
-                    // see ConstraintSystemError.toDiagnostic, branch isNotEnoughInformationForTypeParameter
+                    // see `ConstraintSystemError.mapConstraintSystemError`, branch `is NotEnoughInformationForTypeParameter<*>`
                     is NotEnoughInformationForTypeParameter<*> -> error.typeVariable is ConeTypeParameterBasedTypeVariable ||
                             // ... or, we will report a diagnostic on this type inside ErrorNodeDiagnosticCollectorComponent
                             (error.resolvedAtom as? FirAnonymousFunction)?.containsErrorType() == true
@@ -574,8 +587,6 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     is ConePlaceholderProjectionInQualifierResolution -> FirErrors.PLACEHOLDER_PROJECTION_IN_QUALIFIER.createOn(source, session)
     is ConeWrongNumberOfTypeArgumentsError ->
         FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.createOn(this.source, this.desiredCount, this.symbol, session)
-    is ConeTypeArgumentsNotAllowedOnPackageError ->
-        FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.createOn(this.source, "for packages", session)
     is ConeTypeArgumentsForOuterClassWhenNestedReferencedError ->
         FirErrors.TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED.createOn(this.source, session)
     is ConeNestedClassAccessedViaInstanceReference ->
@@ -653,7 +664,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     is ConeDynamicUnsupported -> FirErrors.UNSUPPORTED.createOn(source, FirDynamicUnsupportedChecker.MESSAGE, session)
     is ConeContextParameterWithDefaultValue -> FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT.createOn(source, session)
     is ConeCyclicTypeBound -> null // reported in FirCyclicTypeBoundsChecker
-    is ConeUnsupportedCollectionLiteralType -> FirErrors.UNSUPPORTED_COLLECTION_LITERAL_TYPE.createOn(source, session)
+    is ConeCollectionLiteralAmbiguity -> FirErrors.AMBIGUOUS_COLLECTION_LITERAL.createOn(source, candidatesWithOf, session)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 
@@ -704,10 +715,17 @@ private fun inapplicableNullableReceiver(
             )
         }
     }
-    return if (source?.kind == KtFakeSourceElementKind.ArrayAccessNameReference) {
-        FirErrors.UNSAFE_CALL.createOn(source, rootCause.actualType, receiverExpression, session)
-    } else {
-        FirErrors.UNSAFE_CALL.createOn(qualifiedAccessSource ?: source, rootCause.actualType, receiverExpression, session)
+
+    return when {
+        candidate.callInfo.callSite is FirCallableReferenceAccess -> {
+            FirErrors.UNSAFE_CALLABLE_REFERENCE.createOn(qualifiedAccessSource ?: source, rootCause.actualType, session)
+        }
+        source?.kind == KtFakeSourceElementKind.ArrayAccessNameReference -> {
+            FirErrors.UNSAFE_CALL.createOn(source, rootCause.actualType, receiverExpression, session)
+        }
+        else -> {
+            FirErrors.UNSAFE_CALL.createOn(qualifiedAccessSource ?: source, rootCause.actualType, receiverExpression, session)
+        }
     }
 }
 
@@ -802,6 +820,14 @@ private fun ConstraintSystemError.mapConstraintSystemError(
     session: FirSession,
     candidate: AbstractCallCandidate<*>,
 ): KtDiagnostic? {
+    // This error is always reported as CANNOT_INFER_PARAMETER_TYPE except (!) delegated constructor calls
+    //  and `arrayOf` calls transformed to collection literals (including if they themselves originate from collection literals,
+    //  see KT-82684)
+    fun isUnreportedNotEnoughInformationForTypeParameter(): Boolean {
+        return candidate.symbol is FirConstructorSymbol && candidate.callInfo.callSite is FirDelegatedConstructorCall
+                || source?.kind == KtFakeSourceElementKind.ErrorExpressionForTransformedArrayOf
+    }
+
     val typeContext = session.typeContext
     return when (this) {
         is NewConstraintError -> {
@@ -857,19 +883,17 @@ private fun ConstraintSystemError.mapConstraintSystemError(
             }
         }
 
-        // Always reported as CANNOT_INFER_PARAMETER_TYPE except (!) delegated constructor calls
-        is NotEnoughInformationForTypeParameter<*> -> if (candidate.symbol is FirConstructorSymbol &&
-            candidate.callInfo.callSite is FirDelegatedConstructorCall
-        ) {
-            val lookupTag = this.typeVariable.asCone().typeConstructor.originalTypeParameter?.asCone()
-            if (lookupTag != null) {
-                FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(
-                    source,
-                    lookupTag.typeParameterSymbol,
-                    session
-                )
+        is NotEnoughInformationForTypeParameter<*> ->
+            if (isUnreportedNotEnoughInformationForTypeParameter()) {
+                val lookupTag = this.typeVariable.asCone().typeConstructor.originalTypeParameter?.asCone()
+                if (lookupTag != null) {
+                    FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(
+                        source,
+                        lookupTag.typeParameterSymbol,
+                        session
+                    )
+                } else null
             } else null
-        } else null
 
         is InferredEmptyIntersection -> {
             fun AbstractCallCandidate<*>.sourceOfCallToSymbolWith(
@@ -1004,6 +1028,7 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement?): KtDiagnos
         DiagnosticKind.IllegalProjectionUsage -> FirErrors.ILLEGAL_PROJECTION_USAGE
         DiagnosticKind.MissingStdlibClass -> FirErrors.MISSING_STDLIB_CLASS
         DiagnosticKind.IntLiteralOutOfRange -> FirErrors.INT_LITERAL_OUT_OF_RANGE
+        DiagnosticKind.IntLiteralWithLeadingZeros -> FirErrors.INT_LITERAL_WITH_LEADING_ZEROS
         DiagnosticKind.FloatLiteralOutOfRange -> FirErrors.FLOAT_LITERAL_OUT_OF_RANGE
         DiagnosticKind.WrongLongSuffix -> FirErrors.WRONG_LONG_SUFFIX
         DiagnosticKind.UnsignedNumbersAreNotPresent -> FirErrors.UNSIGNED_LITERAL_WITHOUT_DECLARATIONS_ON_CLASSPATH
@@ -1029,53 +1054,69 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement?): KtDiagnos
     }
 }
 
+private fun FirSession.toDiagnosticContext(): DiagnosticBaseContext {
+    // Data class is required to preserve structural equality of KtDiagnostics.
+    data class SessionWrapper(
+        override val session: FirSession
+    ) : DiagnosticBaseContext, SessionHolder {
+        override val languageVersionSettings: LanguageVersionSettings
+            get() = session.languageVersionSettings
+    }
 
-@OptIn(InternalDiagnosticFactoryMethod::class)
-private fun KtDiagnosticFactory0.createOn(
-    element: KtSourceElement?,
-    session: FirSession,
-): KtSimpleDiagnostic? {
-    return on(element.requireNotNull(), positioningStrategy = null, session.languageVersionSettings)
+    return SessionWrapper(this)
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <A> KtDiagnosticFactory1<A>.createOn(
+internal fun KtDiagnosticFactory0.createOn(
+    element: KtSourceElement?,
+    session: FirSession,
+    positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
+): KtSimpleDiagnostic? {
+    return on(element.requireNotNull(), positioningStrategy, session.toDiagnosticContext())
+}
+
+@OptIn(InternalDiagnosticFactoryMethod::class)
+internal fun <A> KtDiagnosticFactory1<A>.createOn(
     element: KtSourceElement?,
     a: A,
     session: FirSession,
+    positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
 ): KtDiagnosticWithParameters1<A>? {
-    return on(element.requireNotNull(), a, positioningStrategy = null, session.languageVersionSettings)
+    return on(element.requireNotNull(), a, positioningStrategy, session.toDiagnosticContext())
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <A, B> KtDiagnosticFactory2<A, B>.createOn(
+internal fun <A, B> KtDiagnosticFactory2<A, B>.createOn(
     element: KtSourceElement?,
     a: A,
     b: B,
     session: FirSession,
+    positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
 ): KtDiagnosticWithParameters2<A, B>? {
-    return on(element.requireNotNull(), a, b, positioningStrategy = null, session.languageVersionSettings)
+    return on(element.requireNotNull(), a, b, positioningStrategy, session.toDiagnosticContext())
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <A, B, C> KtDiagnosticFactory3<A, B, C>.createOn(
+internal fun <A, B, C> KtDiagnosticFactory3<A, B, C>.createOn(
     element: KtSourceElement?,
     a: A,
     b: B,
     c: C,
     session: FirSession,
+    positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
 ): KtDiagnosticWithParameters3<A, B, C>? {
-    return on(element.requireNotNull(), a, b, c, positioningStrategy = null, session.languageVersionSettings)
+    return on(element.requireNotNull(), a, b, c, positioningStrategy, session.toDiagnosticContext())
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
-private fun <A, B, C, D> KtDiagnosticFactory4<A, B, C, D>.createOn(
+internal fun <A, B, C, D> KtDiagnosticFactory4<A, B, C, D>.createOn(
     element: KtSourceElement?,
     a: A,
     b: B,
     c: C,
     d: D,
     session: FirSession,
+    positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
 ): KtDiagnosticWithParameters4<A, B, C, D>? {
-    return on(element.requireNotNull(), a, b, c, d, positioningStrategy = null, session.languageVersionSettings)
+    return on(element.requireNotNull(), a, b, c, d, positioningStrategy, session.toDiagnosticContext())
 }

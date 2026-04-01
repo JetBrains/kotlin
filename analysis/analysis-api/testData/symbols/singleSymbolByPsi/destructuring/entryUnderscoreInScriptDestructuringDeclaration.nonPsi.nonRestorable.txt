@@ -1,0 +1,99 @@
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: null
+  callableId: /<unused var>
+  compilerVisibility: Public
+  contextParameters: []
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isInline: false
+    isNotDefault: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: SOURCE
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    valueParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: KaFileSymbol(entryUnderscoreInScriptDestructuringDeclaration.kts)
+    getContainingJvmClassName: null
+    getContainingModule: KaScriptModule "Script entryUnderscoreInScriptDestructuringDeclaration.kts"
+    deprecationStatus: null
+    importableFqName: null
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: KaNonConstantInitializerValue(_)
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  location: TOP_LEVEL
+  modality: FINAL
+  name: <unused var>
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  setter: null
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(entryUnderscoreInScriptDestructuringDeclaration.kts)
+  getContainingJvmClassName: null
+  getContainingModule: KaScriptModule "Script entryUnderscoreInScriptDestructuringDeclaration.kts"
+  deprecationStatus: null
+  javaGetterName: <no name provided>
+  javaSetterName: null
+  isInline: false
+  importableFqName: <unused var>
+
+KaPropertyGetterSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: Public
+  contextReceivers: []
+  hasStableParameterNames: true
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInline: false
+  isNotDefault: false
+  isOverride: false
+  location: PROPERTY
+  modality: FINAL
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  valueParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(entryUnderscoreInScriptDestructuringDeclaration.kts)
+  getContainingJvmClassName: null
+  getContainingModule: KaScriptModule "Script entryUnderscoreInScriptDestructuringDeclaration.kts"
+  deprecationStatus: null
+  importableFqName: null

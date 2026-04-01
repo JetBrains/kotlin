@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
 import org.jetbrains.kotlin.fir.deserialization.buildFirConstant
 import org.jetbrains.kotlin.fir.deserialization.replaceName
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.builder.toConeType
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
@@ -25,7 +26,16 @@ class FirJvmConstDeserializer(
         propertyProto: ProtoBuf.Property, callableId: CallableId, nameResolver: NameResolver, isUnsigned: Boolean,
     ): FirExpression? {
         if (!Flags.HAS_CONSTANT.get(propertyProto.flags)) return null
-        constantCache[callableId]?.let { return it }
+        constantCache[callableId]?.let {
+            if (it.kind.isUnsigned != isUnsigned) {
+                // It's necessary because binaryClass.visitMembers loads constants
+                // using isUnsigned flag from the first constant of the loaded class
+                val newKind = if (isUnsigned) it.kind.toUnsigned() else it.kind.toSigned()
+                it.replaceKind(newKind)
+                it.replaceConeTypeOrNull(newKind.toConeType())
+            }
+            return it
+        }
 
         binaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
             override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? = null

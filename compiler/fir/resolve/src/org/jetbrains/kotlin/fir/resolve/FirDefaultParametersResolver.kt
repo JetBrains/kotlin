@@ -31,11 +31,13 @@ class FirDefaultParametersResolver : FirSessionComponent {
             is FirActualizingScope,
             is FirAbstractImportingScope -> {
                 val containingClass = function.getContainingClass() ?: return false
+                val containingClassSymbol = containingClass.symbol
                 containingClass.scopeForClass(
                     ConeSubstitutor.Empty,
                     session,
                     scopeSession,
-                    containingClass.symbol.toLookupTag(),
+                    memberOwnerClass = containingClassSymbol,
+                    memberOwnerLookupTag = containingClassSymbol.toLookupTag(),
                     memberRequiredPhase = null,
                 )
             }

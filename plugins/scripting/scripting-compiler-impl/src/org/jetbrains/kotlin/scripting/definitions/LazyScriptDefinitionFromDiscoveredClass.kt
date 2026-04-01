@@ -10,22 +10,17 @@ import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.*
 import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.jvm
 
 class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     private val baseHostConfiguration: ScriptingHostConfiguration,
     private val annotationsFromAsm: ArrayList<BinAnnData>,
     private val className: String,
     private val classpath: List<File>,
+    private val classLoader: ClassLoader,
     private val messageReporter: MessageReporter
 ) : ScriptDefinition.FromConfigurationsBase() {
-
-    constructor(
-        baseHostConfiguration: ScriptingHostConfiguration,
-        classBytes: ByteArray,
-        className: String,
-        classpath: List<File>,
-        messageReporter: MessageReporter
-    ) : this(baseHostConfiguration, loadAnnotationsFromClass(classBytes), className, classpath, messageReporter)
 
     private val definition: kotlin.script.experimental.host.ScriptDefinition by lazy(LazyThreadSafetyMode.PUBLICATION) {
         messageReporter(
@@ -36,13 +31,16 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
             createScriptDefinitionFromTemplate(
                 KotlinType(className),
                 baseHostConfiguration.with {
-                    if (classpath.isNotEmpty()) {
-                        configurationDependencies.append(JvmDependency(classpath))
+                    jvm {
+                        if (classpath.isNotEmpty()) {
+                            configurationDependencies.append(JvmDependency(classpath))
+                            baseClassLoader(classLoader)
+                        }
                     }
                 },
                 LazyScriptDefinitionFromDiscoveredClass::class
             )
-        } catch (ex: ClassNotFoundException) {
+        } catch (_: ClassNotFoundException) {
             messageReporter(ScriptDiagnostic.Severity.ERROR, "Cannot find script definition class $className")
             InvalidScriptDefinition
         } catch (ex: Exception) {
@@ -69,7 +67,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     }
 
     override val name: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        annotationsFromAsm.find { it.name == KotlinScript::class.java.simpleName!! }?.args?.find { it.name == "name" }?.value
+        annotationsFromAsm.find { it.name == KotlinScript::class.java.simpleName }?.args?.find { it.name == "name" }?.value
             ?: super.name
     }
 }

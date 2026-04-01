@@ -106,8 +106,13 @@ static OBJ_GETTER(Konan_ObjCInterop_getWeakReference, KRef ref) {
 }
 
 static void Konan_ObjCInterop_initWeakReference(KRef ref, id objcPtr) {
-  KotlinObjCWeakReference* objcRef = [KotlinObjCWeakReference new];
-  objc_storeWeak(&objcRef->referred, objcPtr);
+  KotlinObjCWeakReference* objcRef;
+  {
+    // objc_storeWeak can grab a global lock, so it needs Native state to avoid dealdlocks.
+    ThreadStateGuard guard(kotlin::ThreadState::kNative);
+    objcRef = [KotlinObjCWeakReference new];
+    objc_storeWeak(&objcRef->referred, objcPtr);
+  }
   ref->SetAssociatedObject(objcRef);
 }
 

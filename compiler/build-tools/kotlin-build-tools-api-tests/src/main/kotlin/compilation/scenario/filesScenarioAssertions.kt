@@ -3,56 +3,62 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
+package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.CompilationOutcome
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
 
 /**
  * This assertion has side effects modifying the expected total outputs list!
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
-fun CompilationOutcome.assertAddedOutputs(module: Module, scenarioModule: ScenarioModule, vararg addedOutputs: String) {
-    assertAddedOutputs(module, scenarioModule, addedOutputs.toSet())
+context(module: Module, scenarioModule: ScenarioModule)
+fun CompilationOutcome.assertAddedOutputs(vararg addedOutputs: String) {
+    assertAddedOutputs(addedOutputs.toSet())
 }
 
 /**
  * This assertion has side effects modifying the expected total outputs list!
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
-fun CompilationOutcome.assertAddedOutputs(module: Module, scenarioModule: ScenarioModule, addedOutputs: Set<String>) {
-    val outputs = requireScenarioModuleImpl(scenarioModule).outputs
+context(module: Module, scenarioModule: ScenarioModule)
+fun CompilationOutcome.assertAddedOutputs(addedOutputs: Set<String>) {
+    val outputs = requireScenarioModuleImpl().outputs
     outputs.addAll(addedOutputs)
-    assertOutputs(module, outputs)
+    assertOutputs(outputs)
 }
 
 /**
  * This assertion has side effects modifying the expected total outputs list!
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
-fun CompilationOutcome.assertRemovedOutputs(module: Module, scenarioModule: ScenarioModule, vararg removedOutputs: String) {
-    assertRemovedOutputs(module, scenarioModule, removedOutputs.toSet())
+context(module: Module, scenarioModule: ScenarioModule)
+fun CompilationOutcome.assertRemovedOutputs(vararg removedOutputs: String) {
+    assertRemovedOutputs(removedOutputs.toSet())
 }
 
 /**
  * This assertion has side effects modifying the expected total outputs list!
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
-fun CompilationOutcome.assertRemovedOutputs(module: Module, scenarioModule: ScenarioModule, removedOutputs: Set<String>) {
-    val outputs = requireScenarioModuleImpl(scenarioModule).outputs
+context(module: Module, scenarioModule: ScenarioModule)
+fun CompilationOutcome.assertRemovedOutputs(removedOutputs: Set<String>) {
+    val outputs = requireScenarioModuleImpl().outputs
     val notPresentOutputs = removedOutputs - outputs
     assert(notPresentOutputs.isEmpty()) {
         "The following files were expected to be removed, however they weren't even produced: $notPresentOutputs"
     }
     outputs.removeAll(removedOutputs)
-    assertOutputs(module, outputs)
+    assertOutputs(outputs)
 }
 
-fun CompilationOutcome.assertNoOutputSetChanges(module: Module, scenarioModule: ScenarioModule) {
-    val outputs = requireScenarioModuleImpl(scenarioModule).outputs
-    assertOutputs(module, outputs)
+context(module: Module, scenarioModule: ScenarioModule)
+fun CompilationOutcome.assertNoOutputSetChanges() {
+    val outputs = requireScenarioModuleImpl().outputs
+    assertOutputs(outputs)
 }
 
-private fun requireScenarioModuleImpl(scenarioModule: ScenarioModule) =
+context(scenarioModule: ScenarioModule)
+private fun requireScenarioModuleImpl() =
     (scenarioModule as? BaseScenarioModule ?: error("Expected an instance of ${BaseScenarioModule::class.simpleName}}"))

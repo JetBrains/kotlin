@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_CLASS_ID
 
 object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     @OptIn(SuspiciousValueClassCheck::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {

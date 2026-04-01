@@ -23,12 +23,12 @@ fun box() {
 }
 
 // METHOD : UnderscoreNamesKt$box$1.invoke(LA;Ljava/lang/String;I)Ljava/lang/String;
-// VARIABLE : NAME=x TYPE=D INDEX=4
-// VARIABLE : NAME=y TYPE=C INDEX=6
-// VARIABLE : NAME=q TYPE=Ljava/lang/String; INDEX=16
-// VARIABLE : NAME=d TYPE=C INDEX=11
-// VARIABLE : NAME=_ TYPE=Ljava/lang/String; INDEX=10
-// VARIABLE : NAME=c TYPE=C INDEX=9
-// VARIABLE : NAME=a TYPE=D INDEX=7
-// VARIABLE : NAME=this TYPE=LUnderscoreNamesKt$box$1; INDEX=0
-// VARIABLE : NAME=w TYPE=I INDEX=3
+// VARIABLE : NAME=_ TYPE=Ljava/lang/String;
+// VARIABLE : NAME=a TYPE=D
+// VARIABLE : NAME=c TYPE=C
+// VARIABLE : NAME=d TYPE=C
+// VARIABLE : NAME=q TYPE=Ljava/lang/String;
+// VARIABLE : NAME=this TYPE=LUnderscoreNamesKt$box$1;
+// VARIABLE : NAME=w TYPE=I
+// VARIABLE : NAME=x TYPE=D
+// VARIABLE : NAME=y TYPE=C

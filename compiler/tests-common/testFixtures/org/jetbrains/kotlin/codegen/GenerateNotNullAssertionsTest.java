@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.FirParser;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
@@ -29,6 +30,16 @@ import java.io.File;
 
 // TODO Remove this class once general multi-module bytecode text tests are implemented.
 public class GenerateNotNullAssertionsTest extends CodegenTestCase {
+    @Override
+    public boolean getUseFir() {
+        return true;
+    }
+
+    @Override
+    public @NotNull FirParser getFirParser() {
+        return FirParser.LightTree;
+    }
+
     @NotNull
     @Override
     protected String getPrefix() {

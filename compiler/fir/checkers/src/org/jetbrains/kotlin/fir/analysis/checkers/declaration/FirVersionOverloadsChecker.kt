@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
@@ -125,7 +126,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
 
         for ((i, param) in declaration.valueParameters.withIndex()) {
             val versionAnnotation = param.getAnnotationByClassId(StandardClassIds.Annotations.IntroducedAt, context.session)
-            val version = versionAnnotation?.getStringArgument(versionArgument, context.session)?.let(::MavenComparableVersion)
+            val version = versionAnnotation?.getStringArgument(versionArgument)?.let(::MavenComparableVersion)
 
             // after one @IntroducedAt, only trailing lambdas may not be optional
             if (version == null) {
@@ -147,7 +148,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
                 param.isVal && declaration is FirConstructor && containingClassSymbol?.isInlineOrValue == true ->
                     reporter.reportOn(versionAnnotation.source, FirErrors.INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER)
 
-                param.defaultValue == null ->
+                param.defaultValue == null && !declaration.isActual ->
                     reporter.reportOn(versionAnnotation.source, FirErrors.INVALID_VERSIONING_ON_NON_OPTIONAL)
             }
 

@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -9,11 +9,14 @@ dependencies {
     api(project(":compiler:ir.interpreter"))
     api(project(":compiler:ir.serialization.common"))
     api(project(":compiler:ir.validation"))
-    compileOnly(project(":compiler:frontend")) // this dependency is needed because of `IrPluginContext` exposing K1 frontend as deprecated.
+    implementation(project(":core:compiler.common.native"))
+    implementation(project(":compiler:frontend.common-psi")) // required for error reporting
     compileOnly(intellijCore())
 
     testImplementation(kotlinTest("junit"))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
+
+    testFixturesImplementation(kotlinTest("junit"))
 }
 
 optInToUnsafeDuringIrConstructionAPI()
@@ -21,5 +24,6 @@ optInToUnsafeDuringIrConstructionAPI()
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
 

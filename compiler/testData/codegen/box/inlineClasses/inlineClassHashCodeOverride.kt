@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +CustomEqualsInValueClasses
 // CHECK_BYTECODE_LISTING
 
 OPTIONAL_JVM_INLINE_ANNOTATION

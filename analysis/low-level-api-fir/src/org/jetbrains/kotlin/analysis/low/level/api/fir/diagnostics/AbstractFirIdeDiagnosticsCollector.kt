@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
 import com.intellij.util.SmartFMap
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.LLCheckersFactory.Provider.Companion.filterToCheckersMapUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
@@ -38,15 +39,15 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmTypeCheckers
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeTypeCheckers
-import org.jetbrains.kotlin.fir.analysis.wasm.checkers.WasmBaseDeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.wasm.checkers.WasmBaseExpressionCheckers
-import org.jetbrains.kotlin.fir.analysis.wasm.checkers.WasmBaseTypeCheckers
+import org.jetbrains.kotlin.fir.analysis.wasm.checkers.*
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
+import org.jetbrains.kotlin.platform.wasm.isWasmJs
+import org.jetbrains.kotlin.platform.wasm.isWasmWasi
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
 internal abstract class AbstractLLFirDiagnosticsCollector(
@@ -74,7 +75,7 @@ internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponen
     private val expressionCheckersProvider = Provider(session, ::createExpressionCheckers)
     private val typeCheckersProvider = Provider(session, ::createTypeCheckers)
 
-    fun createComponents(filter: DiagnosticCheckerFilter, reporter: DiagnosticReporter): DiagnosticCollectorComponents {
+    fun createComponents(filter: DiagnosticCheckerFilter, reporter: PendingDiagnosticReporter): DiagnosticCollectorComponents {
         val declarationCheckers = declarationCheckersProvider.getOrCreateCheckers(filter)
         val expressionCheckers = expressionCheckersProvider.getOrCreateCheckers(filter)
         val typeCheckers = typeCheckersProvider.getOrCreateCheckers(filter)
@@ -150,9 +151,8 @@ internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponen
                 platform.isJs() -> add(JsDeclarationCheckers)
                 platform.isWasm() -> {
                     add(WasmBaseDeclarationCheckers)
-                    // TODO, KT-71596: Add proper selection of either of the following two
-                    // add(WasmJsDeclarationCheckers)
-                    // add(WasmWasiDeclarationCheckers)
+                    if (platform.isWasmJs()) add(WasmJsDeclarationCheckers)
+                    if (platform.isWasmWasi()) add(WasmWasiDeclarationCheckers)
                 }
                 platform.isNative() -> add(NativeDeclarationCheckers)
                 else -> {}
@@ -177,8 +177,7 @@ internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponen
                 platform.isJs() -> add(JsExpressionCheckers)
                 platform.isWasm() -> {
                     add(WasmBaseExpressionCheckers)
-                    // TODO, KT-71596
-                    // add(WasmJsExpressionCheckers)
+                    if (platform.isWasmJs()) add(WasmJsExpressionCheckers)
                 }
                 platform.isNative() -> add(NativeExpressionCheckers)
                 else -> {

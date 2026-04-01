@@ -2,10 +2,20 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+public protocol Bar: KotlinRuntime.KotlinBase {
+}
+@objc(_Bar)
+package protocol _Bar {
+}
 public func testMapAnyLong(
     m: [Swift.AnyHashable: Swift.Int64]
 ) -> [Swift.AnyHashable: Swift.Int64] {
     return __root___testMapAnyLong__TypesOfArguments__Swift_Dictionary_Swift_AnyHashable_Swift_Int64___(Dictionary(uniqueKeysWithValues: m.map { key, value in (key, NSNumber(value: value) )})) as! Swift.Dictionary<Swift.AnyHashable,Swift.Int64>
+}
+public func testMapBarKey(
+    m: Swift.Never
+) -> Swift.Never {
+    fatalError()
 }
 public func testMapIntString(
     m: [Swift.Int32: Swift.String]
@@ -51,4 +61,10 @@ public func testStarMap(
     m: [Swift.AnyHashable: any KotlinRuntimeSupport._KotlinBridgeable]
 ) -> [Swift.AnyHashable: any KotlinRuntimeSupport._KotlinBridgeable] {
     return __root___testStarMap__TypesOfArguments__Swift_Dictionary_Swift_AnyHashable_anyU20KotlinRuntimeSupport__KotlinBridgeable___(m) as! Swift.Dictionary<Swift.AnyHashable,any KotlinRuntimeSupport._KotlinBridgeable>
+}
+extension MapExport.Bar where Self : KotlinRuntimeSupport._KotlinBridgeable {
+}
+extension MapExport.Bar {
+}
+extension KotlinRuntimeSupport._KotlinExistential: MapExport.Bar where Wrapped : MapExport._Bar {
 }

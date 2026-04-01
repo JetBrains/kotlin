@@ -17,23 +17,23 @@ fun test() {
     val platformJ = J.staticJ
 
     if (platformNN) {}
-    if (<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>) {}
+    if (<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>) {}
     if (platformJ) {}
 
     while (platformNN) {}
-    while (<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>) {}
+    while (<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>) {}
     while (platformJ) {}
 
     do {} while (platformNN)
-    do {} while (<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>)
+    do {} while (<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>)
     do {} while (platformJ)
 
     platformNN && false
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!> && false
+    <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!> && false
     platformJ && false
 
     platformNN || false
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!> || false
+    <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!> || false
     platformJ || false
 
     !platformNN

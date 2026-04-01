@@ -1,3 +1,5 @@
+import org.gradle.plugin.compatibility.compatibility
+
 plugins {
     id("gradle-plugin-common-configuration")
 }
@@ -15,6 +17,12 @@ gradlePlugin {
             displayName = "Kotlin compiler plugin for kotlinx.atomicfu library"
             description = displayName
             implementationClass = "org.jetbrains.kotlinx.atomicfu.gradle.AtomicfuKotlinGradleSubplugin"
+
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
     }
 }

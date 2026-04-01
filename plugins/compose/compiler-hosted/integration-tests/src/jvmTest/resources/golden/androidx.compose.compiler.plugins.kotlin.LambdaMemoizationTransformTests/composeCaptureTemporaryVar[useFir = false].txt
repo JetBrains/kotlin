@@ -62,7 +62,10 @@ data class ChatRequestConfig(val a: Int = 10) {
     }
     return true
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @Composable
 fun TextField(onValueChange: Function1<String, Unit>, %composer: Composer?, %changed: Int) {

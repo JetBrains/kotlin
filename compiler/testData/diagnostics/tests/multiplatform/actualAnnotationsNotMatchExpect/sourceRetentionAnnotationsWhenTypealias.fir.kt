@@ -23,7 +23,7 @@ class SourceAvailableImpl {
     fun foo() {}
 }
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias SourceAvailable = SourceAvailableImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias SourceAvailable = SourceAvailableImpl
 
 actual typealias FromLib = <!TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION_WARNING!>kotlin.SinceKotlin<!>
 

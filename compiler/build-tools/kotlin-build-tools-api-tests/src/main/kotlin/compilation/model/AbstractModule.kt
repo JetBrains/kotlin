@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
+package org.jetbrains.kotlin.buildtools.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException
 
 private class CompilationOutcomeImpl(
     rawLogLines: Map<LogLevel, Collection<String>>,
-    override val actualResult: CompilationResult
+    override val actualResult: CompilationResult?,
 ) : CompilationOutcome {
     private val _logLines by lazy {
         rawLogLines.mapValues { (_, lines) -> lines.toList() }
@@ -33,7 +33,7 @@ private class CompilationOutcomeImpl(
 
     var maxLogLevel: LogLevel = LogLevel.ERROR
         private set
-    var expectedResult = CompilationResult.COMPILATION_SUCCESS
+    var expectedResult: CompilationResult? = CompilationResult.COMPILATION_SUCCESS
         private set
 
     override fun requireLogLevel(logLevel: LogLevel) {
@@ -44,7 +44,7 @@ private class CompilationOutcomeImpl(
         expectedResult = CompilationResult.COMPILATION_ERROR
     }
 
-    override fun expectCompilationResult(compilationResult: CompilationResult) {
+    override fun expectCompilationResult(compilationResult: CompilationResult?) {
         expectedResult = compilationResult
     }
 }
@@ -52,7 +52,7 @@ private class CompilationOutcomeImpl(
 data class AbstractModuleCacheKey(
     val moduleName: String,
     val dependencies: List<DependencyScenarioDslCacheKey>,
-    val compilationArguments: (JvmCompilationOperation) -> Unit,
+    val compilationArguments: (JvmCompilationOperation.Builder) -> Unit,
 ) : DependencyScenarioDslCacheKey
 
 abstract class AbstractModule(
@@ -61,7 +61,7 @@ abstract class AbstractModule(
     val moduleDirectory: Path,
     val dependencies: List<Dependency>,
     override val defaultStrategyConfig: ExecutionPolicy,
-    final override val moduleCompilationConfigAction: (JvmCompilationOperation) -> Unit,
+    final override val moduleCompilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
 ) : Module {
     override val sourcesDirectory: Path
         get() = moduleDirectory.resolve("src")
@@ -84,24 +84,60 @@ abstract class AbstractModule(
     override val scenarioDslCacheKey =
         AbstractModuleCacheKey(moduleName, dependencies.map { it.scenarioDslCacheKey }, moduleCompilationConfigAction)
 
+    override fun compileAndThrow(
+        strategyConfig: ExecutionPolicy,
+        forceOutput: LogLevel?,
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
+        compilationAction: (JvmCompilationOperation) -> Unit,
+        assertions: context(Module) CompilationOutcome.(Throwable) -> Unit,
+    ): Throwable {
+        val kotlinLogger = TestKotlinLogger()
+        try {
+            compileImpl(strategyConfig, compilationConfigAction, compilationAction, kotlinLogger)
+        } catch (e: Throwable) {
+            processOutcome(kotlinLogger, null, {
+                expectCompilationResult(null)
+                assertions(e)
+            }, forceOutput)
+            return e
+        }
+        throw AssertionError("Compilation was successful, but expected failure")
+    }
+
     override fun compile(
         strategyConfig: ExecutionPolicy,
         forceOutput: LogLevel?,
-        compilationConfigAction: (JvmCompilationOperation) -> Unit,
-        assertions: CompilationOutcome.(Module) -> Unit,
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
+        compilationAction: (JvmCompilationOperation) -> Unit,
+        assertions: context(Module) CompilationOutcome.() -> Unit
     ): CompilationResult {
         val kotlinLogger = TestKotlinLogger()
-        val result = compileImpl(strategyConfig, compilationConfigAction, kotlinLogger)
+        val result = compileImpl(
+            strategyConfig = strategyConfig,
+            compilationConfigAction = compilationConfigAction,
+            compilationAction = compilationAction,
+            kotlinLogger = kotlinLogger
+        )
+        processOutcome(kotlinLogger, result, assertions, forceOutput)
+        return result
+    }
+
+    private fun processOutcome(
+        kotlinLogger: TestKotlinLogger,
+        result: CompilationResult?,
+        assertions: context(Module) CompilationOutcome.() -> Unit,
+        forceOutput: LogLevel?,
+    ) {
         val outcome = CompilationOutcomeImpl(kotlinLogger.logMessagesByLevel, result)
         try {
-            assertions(outcome, this)
+            assertions(outcome)
             assertEquals(outcome.expectedResult, result) {
                 "Compilation result is unexpected"
             }
             if (forceOutput != null) {
                 kotlinLogger.printBuildOutput(forceOutput)
             }
-        } catch (e: AssertionError) {
+        } catch (e: Throwable) {
             val maxLogLevel = if (forceOutput != null) {
                 maxOf(forceOutput, outcome.maxLogLevel)
             } else {
@@ -110,12 +146,12 @@ abstract class AbstractModule(
             kotlinLogger.printBuildOutput(maxLogLevel)
             throw e
         }
-        return result
     }
 
     protected abstract fun compileImpl(
         strategyConfig: ExecutionPolicy,
-        compilationConfigAction: (JvmCompilationOperation) -> Unit,
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
+        compilationAction: (JvmCompilationOperation) -> Unit,
         kotlinLogger: TestKotlinLogger,
     ): CompilationResult
 

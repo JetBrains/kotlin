@@ -1,0 +1,28 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.buildtools.api.arguments
+
+import java.nio.file.Path
+
+public class CompilerPluginOption(public val key: String, public val value: String)
+
+public enum class CompilerPluginPartialOrderRelation {
+    BEFORE,
+    AFTER,
+}
+
+public class CompilerPluginPartialOrder(
+    public val relation: CompilerPluginPartialOrderRelation,
+    public val otherPluginId: String
+)
+
+public open class CompilerPlugin(
+    public val pluginId: String,
+    public val classpath: List<Path>,
+    public val rawArguments: List<CompilerPluginOption>,
+    public val orderingRequirements: Set<CompilerPluginPartialOrder>,
+)
+

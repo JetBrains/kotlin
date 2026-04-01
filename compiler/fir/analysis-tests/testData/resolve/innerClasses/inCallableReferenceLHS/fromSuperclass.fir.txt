@@ -1,0 +1,72 @@
+FILE: fromSuperclass.kt
+    public abstract class A<X> : R|kotlin/Any| {
+        public constructor<X>(): R|A<X>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Inner<Outer(X)> : R|kotlin/Any| {
+            public A<X>.constructor(): R|A.Inner<X>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+            }
+
+            public final val bar: R|kotlin/Int| = Int(42)
+                public get(): R|kotlin/Int|
+
+        }
+
+        public final fun baz(): R|kotlin/Unit| {
+        }
+
+    }
+    public final object B : R|A<kotlin/String>| {
+        private constructor(): R|B| {
+            super<R|A<kotlin/String>|>()
+        }
+
+        public final val refFoo: R|A.Inner<kotlin/String>.() -> kotlin/Unit| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.foo: R|kotlin/Unit|>|
+            public get(): R|A.Inner<kotlin/String>.() -> kotlin/Unit|
+
+        public final val refBar: R|A.Inner<kotlin/String>.() -> kotlin/Int| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.bar: R|kotlin/Int|>|
+            public get(): R|A.Inner<kotlin/String>.() -> kotlin/Int|
+
+        public final val kRefFoo: R|kotlin/reflect/KFunction1<A.Inner<*>, kotlin/Unit>| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.foo: R|kotlin/Unit|>|
+            public get(): R|kotlin/reflect/KFunction1<A.Inner<*>, kotlin/Unit>|
+
+        public final val kRefBar: R|kotlin/reflect/KProperty1<A.Inner<*>, kotlin/Int>| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.bar: R|kotlin/Int|>|
+            public get(): R|kotlin/reflect/KProperty1<A.Inner<*>, kotlin/Int>|
+
+        public final val refIncorrect: R|A.Inner<kotlin/String>.() -> kotlin/Unit| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.foo: R|kotlin/Unit|>|
+            public get(): R|A.Inner<kotlin/String>.() -> kotlin/Unit|
+
+        public final val kRefIncorrect: R|kotlin/reflect/KFunction1<A.Inner<*>, kotlin/Unit>| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.foo: R|kotlin/Unit|>|
+            public get(): R|kotlin/reflect/KFunction1<A.Inner<*>, kotlin/Unit>|
+
+        public final class Nested : R|kotlin/Any| {
+            public constructor(): R|B.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val refFoo: R|A.Inner<*>.() -> kotlin/Unit| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.foo: R|kotlin/Unit|>|
+                public get(): R|A.Inner<*>.() -> kotlin/Unit|
+
+            public final val refBar: R|A.Inner<*>.() -> kotlin/Int| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.bar: R|kotlin/Int|>|
+                public get(): R|A.Inner<*>.() -> kotlin/Int|
+
+            public final val kRefFoo: R|kotlin/reflect/KFunction1<A.Inner<*>, kotlin/Unit>| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.foo: R|kotlin/Unit|>|
+                public get(): R|kotlin/reflect/KFunction1<A.Inner<*>, kotlin/Unit>|
+
+            public final val kRefBar: R|kotlin/reflect/KProperty1<A.Inner<*>, kotlin/Int>| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.bar: R|kotlin/Int|>|
+                public get(): R|kotlin/reflect/KProperty1<A.Inner<*>, kotlin/Int>|
+
+            public final val refIncorrect: R|A.Inner<*>.() -> kotlin/Unit| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.foo: R|kotlin/Unit|>|
+                public get(): R|A.Inner<*>.() -> kotlin/Unit|
+
+            public final val kRefIncorrect: R|kotlin/reflect/KFunction1<A.Inner<*>, kotlin/Unit>| = Q|A.Inner|::R|SubstitutionOverride</A.Inner.foo: R|kotlin/Unit|>|
+                public get(): R|kotlin/reflect/KFunction1<A.Inner<*>, kotlin/Unit>|
+
+        }
+
+    }

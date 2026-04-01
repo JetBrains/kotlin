@@ -18,6 +18,9 @@ public final class kotlin/metadata/Attributes {
 	public static final fun getModality (Lkotlin/metadata/KmFunction;)Lkotlin/metadata/Modality;
 	public static final fun getModality (Lkotlin/metadata/KmProperty;)Lkotlin/metadata/Modality;
 	public static final fun getModality (Lkotlin/metadata/KmPropertyAccessorAttributes;)Lkotlin/metadata/Modality;
+	public static final fun getReturnValueStatus (Lkotlin/metadata/KmConstructor;)Lkotlin/metadata/ReturnValueStatus;
+	public static final fun getReturnValueStatus (Lkotlin/metadata/KmFunction;)Lkotlin/metadata/ReturnValueStatus;
+	public static final fun getReturnValueStatus (Lkotlin/metadata/KmProperty;)Lkotlin/metadata/ReturnValueStatus;
 	public static final fun getVisibility (Lkotlin/metadata/KmClass;)Lkotlin/metadata/Visibility;
 	public static final fun getVisibility (Lkotlin/metadata/KmConstructor;)Lkotlin/metadata/Visibility;
 	public static final fun getVisibility (Lkotlin/metadata/KmFunction;)Lkotlin/metadata/Visibility;
@@ -99,6 +102,9 @@ public final class kotlin/metadata/Attributes {
 	public static final fun setNullable (Lkotlin/metadata/KmType;Z)V
 	public static final fun setOperator (Lkotlin/metadata/KmFunction;Z)V
 	public static final fun setReified (Lkotlin/metadata/KmTypeParameter;Z)V
+	public static final fun setReturnValueStatus (Lkotlin/metadata/KmConstructor;Lkotlin/metadata/ReturnValueStatus;)V
+	public static final fun setReturnValueStatus (Lkotlin/metadata/KmFunction;Lkotlin/metadata/ReturnValueStatus;)V
+	public static final fun setReturnValueStatus (Lkotlin/metadata/KmProperty;Lkotlin/metadata/ReturnValueStatus;)V
 	public static final fun setSecondary (Lkotlin/metadata/KmConstructor;Z)V
 	public static final fun setSuspend (Lkotlin/metadata/KmFunction;Z)V
 	public static final fun setSuspend (Lkotlin/metadata/KmType;Z)V
@@ -134,6 +140,9 @@ public abstract interface annotation class kotlin/metadata/ExperimentalAnnotatio
 }
 
 public abstract interface annotation class kotlin/metadata/ExperimentalContextReceivers : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class kotlin/metadata/ExperimentalMustUseStatus : java/lang/annotation/Annotation {
 }
 
 public final class kotlin/metadata/KmAnnotation {
@@ -361,6 +370,7 @@ public final class kotlin/metadata/KmClass : kotlin/metadata/KmDeclarationContai
 	public fun <init> ()V
 	public final fun getAnnotations ()Ljava/util/List;
 	public final fun getCompanionObject ()Ljava/lang/String;
+	public final fun getCompilerPluginMetadata ()Ljava/util/Map;
 	public final fun getConstructors ()Ljava/util/List;
 	public final fun getContextReceiverTypes ()Ljava/util/List;
 	public final fun getEnumEntries ()Ljava/util/List;
@@ -432,6 +442,7 @@ public final class kotlin/metadata/KmConstantValue {
 public final class kotlin/metadata/KmConstructor {
 	public fun <init> ()V
 	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getCompilerPluginMetadata ()Ljava/util/Map;
 	public final fun getValueParameters ()Ljava/util/List;
 	public final fun getVersionRequirements ()Ljava/util/List;
 }
@@ -483,6 +494,7 @@ public final class kotlin/metadata/KmEffectType : java/lang/Enum {
 	public static final field CALLS Lkotlin/metadata/KmEffectType;
 	public static final field RETURNS_CONSTANT Lkotlin/metadata/KmEffectType;
 	public static final field RETURNS_NOT_NULL Lkotlin/metadata/KmEffectType;
+	public static final field RETURNS_RESULT_OF Lkotlin/metadata/KmEffectType;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/metadata/KmEffectType;
 	public static fun values ()[Lkotlin/metadata/KmEffectType;
@@ -519,6 +531,7 @@ public final class kotlin/metadata/KmFunction {
 	public field returnType Lkotlin/metadata/KmType;
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getCompilerPluginMetadata ()Ljava/util/Map;
 	public final fun getContextParameters ()Ljava/util/List;
 	public final fun getContextReceiverTypes ()Ljava/util/List;
 	public final fun getContract ()Lkotlin/metadata/KmContract;
@@ -554,6 +567,7 @@ public final class kotlin/metadata/KmProperty {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getAnnotations ()Ljava/util/List;
 	public final fun getBackingFieldAnnotations ()Ljava/util/List;
+	public final fun getCompilerPluginMetadata ()Ljava/util/Map;
 	public final fun getContextParameters ()Ljava/util/List;
 	public final fun getContextReceiverTypes ()Ljava/util/List;
 	public final fun getDelegateFieldAnnotations ()Ljava/util/List;
@@ -599,6 +613,7 @@ public final class kotlin/metadata/KmTypeAlias {
 	public field underlyingType Lkotlin/metadata/KmType;
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getCompilerPluginMetadata ()Ljava/util/Map;
 	public final fun getExpandedType ()Lkotlin/metadata/KmType;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getTypeParameters ()Ljava/util/List;
@@ -733,6 +748,15 @@ public final class kotlin/metadata/Modality : java/lang/Enum {
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/metadata/Modality;
 	public static fun values ()[Lkotlin/metadata/Modality;
+}
+
+public final class kotlin/metadata/ReturnValueStatus : java/lang/Enum {
+	public static final field EXPLICITLY_IGNORABLE Lkotlin/metadata/ReturnValueStatus;
+	public static final field MUST_USE Lkotlin/metadata/ReturnValueStatus;
+	public static final field UNSPECIFIED Lkotlin/metadata/ReturnValueStatus;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/metadata/ReturnValueStatus;
+	public static fun values ()[Lkotlin/metadata/ReturnValueStatus;
 }
 
 public final class kotlin/metadata/Visibility : java/lang/Enum {

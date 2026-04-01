@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import jdk.nashorn.internal.objects.NativeFunction.function
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.diagnostics.rendering.parameters
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -46,14 +44,16 @@ private class ExportedCollectionsInfo(context: JsIrBackendContext) {
     )
 
     val exportableSymbols = setOf(
-        context.symbols.list,
-        context.symbols.mutableList,
-        context.symbols.set,
-        context.symbols.mutableSet,
-        context.symbols.map,
-        context.symbols.mutableMap,
+        context.irBuiltIns.listClass,
+        context.irBuiltIns.mutableListClass,
+        context.irBuiltIns.setClass,
+        context.irBuiltIns.mutableSetClass,
+        context.irBuiltIns.mapClass,
+        context.irBuiltIns.mutableMapClass,
     )
 }
+
+val CONVERTERS_TO_JS_COLLECTIONS by IrDeclarationOriginImpl.Regular
 
 // TODO: Remove the lowering and move annotations into stdlib after solving problem with tests on KLIB
 class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
@@ -84,6 +84,8 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
             declaration.declarations.forEach {
                 if (!it.shouldIncludeInInterfaceExport()) {
                     it.excludeFromJsExport()
+                } else {
+                    it.origin = CONVERTERS_TO_JS_COLLECTIONS
                 }
             }
 
@@ -94,12 +96,12 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
     }
 
     private val typesToItsFactoryMethods = hashMapOf(
-        context.symbols.list to FactoryMethod("fromJsArray", context.symbols.jsCreateListFrom),
-        context.symbols.mutableList to FactoryMethod("fromJsArray", context.symbols.jsCreateMutableListFrom),
-        context.symbols.set to FactoryMethod("fromJsSet", context.symbols.jsCreateSetFrom),
-        context.symbols.mutableSet to FactoryMethod("fromJsSet", context.symbols.jsCreateMutableSetFrom),
-        context.symbols.map to FactoryMethod("fromJsMap", context.symbols.jsCreateMapFrom),
-        context.symbols.mutableMap to FactoryMethod("fromJsMap", context.symbols.jsCreateMutableMapFrom)
+        context.irBuiltIns.listClass to FactoryMethod("fromJsArray", context.symbols.jsCreateListFrom),
+        context.irBuiltIns.mutableListClass to FactoryMethod("fromJsArray", context.symbols.jsCreateMutableListFrom),
+        context.irBuiltIns.setClass to FactoryMethod("fromJsSet", context.symbols.jsCreateSetFrom),
+        context.irBuiltIns.mutableSetClass to FactoryMethod("fromJsSet", context.symbols.jsCreateMutableSetFrom),
+        context.irBuiltIns.mapClass to FactoryMethod("fromJsMap", context.symbols.jsCreateMapFrom),
+        context.irBuiltIns.mutableMapClass to FactoryMethod("fromJsMap", context.symbols.jsCreateMutableMapFrom)
     )
 
     private fun IrClass.addCompanionWithJsFactoryFunction() {
@@ -135,7 +137,7 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
             visibility = DescriptorVisibilities.PUBLIC,
             isInline = false,
             isExpect = false,
-            returnType = factoryMethodForTheCollectionSymbol.owner.returnType,
+            returnType = null,
             modality = Modality.FINAL,
             symbol = IrSimpleFunctionSymbolImpl(),
             isTailrec = false,
@@ -146,8 +148,11 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
         ).also {
             it.addJsStatic()
             it.parent = companionObject
-            it.copyValueAndTypeParametersFrom(factoryMethodForTheCollectionSymbol.owner)
-            it.parameters = listOfNotNull(companionObject.thisReceiver?.copyTo(it)) + it.nonDispatchParameters
+            val original = factoryMethodForTheCollectionSymbol.owner
+            val substitutionMap = it.copyFunctionSignatureFrom(original)
+            val thisReceiver = companionObject.thisReceiver
+            it.parameters =
+                listOfNotNull(thisReceiver?.copyTo(it, type = thisReceiver.type.substitute(substitutionMap))) + it.nonDispatchParameters
             it.body = context.createIrBuilder(it.symbol).run {
                 irBlockBody(it) {
                     +irReturn(
@@ -190,21 +195,21 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
         if (this is IrSimpleFunction) {
             correspondingPropertySymbol?.owner?.excludeFromJsExport()
         }
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsExportIgnoreCtor)
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsExportIgnoreCtor)
     }
 
     private fun IrDeclarationWithName.addJsName() {
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsNameCtor).apply {
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsNameCtor).apply {
             arguments[0] = "Kt${name.asString()}".toIrConst(context.irBuiltIns.stringType)
         }
     }
 
     private fun IrDeclarationWithName.addJsStatic() {
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsStatic)
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsStatic)
     }
 
     private fun IrDeclaration.markWithJsImplicitExport() {
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsImplicitExportCtor).apply {
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsImplicitExportCtor).apply {
             arguments[0] = true.toIrConst(context.irBuiltIns.booleanType)
         }
     }

@@ -1,0 +1,5 @@
+kotlin/collections/List<kotlin/collections/Map<@R|A|()  kotlin/String, @R|B|()  kotlin/collections/List<@R|C|()  kotlin/Int>>>
+
+SmallStack[0, 0, -1] for A
+SmallStack[0, 1, -1] for B
+SmallStack[0, 1, 0] for C

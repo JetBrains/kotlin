@@ -192,8 +192,8 @@ fun case_13(x: <!UNRESOLVED_REFERENCE!>otherpackage<!>.Case13?) =
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>if (<!DEPRECATED_IDENTITY_EQUALS!>(x == null !is Boolean) !== true<!>) {
         throw Exception()
     } else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>.equals(x)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.equals(x)
     }<!>
 
 // TESTCASE NUMBER: 14

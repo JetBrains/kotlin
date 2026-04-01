@@ -2,5 +2,6 @@ KtNameReferenceExpression(76,79): 'sub'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open val sub: JavaSubClass!

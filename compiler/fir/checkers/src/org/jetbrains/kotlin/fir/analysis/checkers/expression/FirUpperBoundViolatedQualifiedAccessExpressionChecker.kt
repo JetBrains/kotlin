@@ -5,16 +5,21 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.typeChangeRelatedTo
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -37,24 +42,8 @@ object FirUpperBoundViolatedQualifiedAccessExpressionChecker : FirQualifiedAcces
             is FirResolvedNamedReference -> calleeReference.toResolvedCallableSymbol()
             else -> null
         }
-
-        val typeArguments: List<ConeTypeProjection>
-        val typeParameters: List<FirTypeParameterSymbol>
-
-        if (calleeSymbol is FirConstructorSymbol && calleeSymbol.typeAliasConstructorInfo?.originalConstructor != null) {
-            val constructedType = expression.resolvedType.fullyExpandedType()
-            // Updating arguments with source information after expanding the type seems extremely brittle as it relies on identity equality
-            // of the expression type arguments and the expanded type arguments. This cannot be applied before expanding the type because it
-            // seems like the type is already expended.
-            typeArguments = constructedType.typeArguments.map {
-                it.withSourceRecursive(expression)
-            }
-
-            typeParameters = constructedType.toRegularClassSymbol()?.typeParameterSymbols ?: return
-        } else {
-            typeArguments = expression.typeArguments.toTypeArgumentsWithSourceInfo()
-            typeParameters = calleeSymbol?.typeParameterSymbols ?: return
-        }
+        val typeArguments: List<ConeTypeProjection> = expression.typeArguments.toTypeArgumentsWithSourceInfo()
+        val typeParameters: List<FirTypeParameterSymbol> = calleeSymbol?.typeParameterSymbols ?: return
 
         // Neither common calls nor type alias constructor calls may contain projections
         // That should be checked somewhere else
@@ -70,11 +59,66 @@ object FirUpperBoundViolatedQualifiedAccessExpressionChecker : FirQualifiedAcces
             context.session,
         )
 
-        checkUpperBoundViolated(
-            typeParameters,
-            typeArguments,
-            substitutor,
-            fallbackSource = expression.source,
+        val typeArgumentsAfterArgumentInteractionsFix = when {
+            LanguageFeature.ReportUpperBoundViolatedInCallArgumentInteractions.isDisabled() -> typeArguments.map {
+                val projectionType = it.type ?: return@map it
+                val typeChange = projectionType.typeChangeRelatedTo(LanguageFeature.ReportUpperBoundViolatedInCallArgumentInteractions)
+                typeChange?.newType?.withAttributes(projectionType.attributes)?.let(it::replaceType) ?: it
+            }
+            else -> null
+        }
+        val substitutorAfterArgumentInteractionsFix = typeArgumentsAfterArgumentInteractionsFix?.let {
+            createSubstitutorForUpperBoundViolationCheck(
+                typeParameters,
+                typeArgumentsAfterArgumentInteractionsFix,
+                context.session,
+            )
+        }
+
+        context(reporter: DiagnosticReporter)
+        fun runTheCheck(
+            substitutor: ConeSubstitutor,
+            typeArguments: List<ConeTypeProjection>,
+            mustRelaxDueToArgumentInteractionsBug: Boolean,
+        ) {
+            val typeAliasConstructorInfo = (calleeSymbol as? FirConstructorSymbol)?.typeAliasConstructorInfo
+
+            if (typeAliasConstructorInfo != null) {
+                val typealiasType: ConeClassLikeType = typeAliasConstructorInfo.typeAliasSymbol.defaultType()
+                checkUpperBoundViolated(
+                    typeRef = null,
+                    // Return types of constructors obtained from typealiases (e.g., `TA()`) remain expanded even when
+                    // `aliasedTypeExpansionGloballyEnabled == false`, hence the workaround instead of `abbreviatedTypeOrSelf`.`
+                    // See: `TypeAliasConstructorsSubstitutingScope.createTypealiasConstructor` and `typeAliasConstructorCrazyProjections.fir.kt`.
+                    notExpandedType = substitutor.substituteOrSelf(typealiasType) as ConeClassLikeType,
+                    fallbackSource = expression.source,
+                    mustRelaxDueToArgumentInteractionsBug = mustRelaxDueToArgumentInteractionsBug,
+                )
+            } else {
+                checkUpperBoundViolated(
+                    typeParameters,
+                    typeArguments,
+                    substitutor,
+                    fallbackSource = expression.source,
+                    isTypealiasExpansion = false,
+                    mustRelaxDueToArgumentInteractionsBug = mustRelaxDueToArgumentInteractionsBug,
+                )
+            }
+        }
+
+        if (substitutorAfterArgumentInteractionsFix == null) {
+            runTheCheck(substitutor, typeArguments, mustRelaxDueToArgumentInteractionsBug = false)
+            return
+        }
+
+        val wereAnyErrors = detectErrorDiagnosticsReported {
+            runTheCheck(substitutor, typeArguments, mustRelaxDueToArgumentInteractionsBug = false)
+        }
+
+        runTheCheck(
+            substitutorAfterArgumentInteractionsFix,
+            typeArgumentsAfterArgumentInteractionsFix,
+            mustRelaxDueToArgumentInteractionsBug = !wereAnyErrors,
         )
     }
 
@@ -94,3 +138,23 @@ object FirUpperBoundViolatedQualifiedAccessExpressionChecker : FirQualifiedAcces
         }
     }
 }
+
+private class ErrorDiagnosticDetector : DiagnosticReporter() {
+    override var hasErrors = false
+        private set
+
+    override var hasWarningsForWError: Boolean = false
+        private set
+
+    override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
+        val severity = diagnostic?.severity ?: return
+        hasErrors = hasErrors || severity.isError
+        hasWarningsForWError = hasWarningsForWError || severity.isErrorWhenWError
+    }
+}
+
+private inline fun detectErrorDiagnosticsReported(block: context(DiagnosticReporter) () -> Unit): Boolean =
+    with(ErrorDiagnosticDetector()) {
+        block()
+        hasErrors
+    }

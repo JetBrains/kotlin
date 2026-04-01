@@ -167,6 +167,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
     }
 
     private val symbols = context.symbols
+    private val irBuiltIns = context.irBuiltIns
     private val intPlusInt = context.irBuiltIns.intPlusSymbol
 
     private fun arrayType(type: IrType): ArrayHandle {
@@ -234,7 +235,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                 values: List<IrConstantValue>): IrConstantValue
     }
 
-    inner class ReferenceArrayHandle : ArrayHandle(symbols.array) {
+    inner class ReferenceArrayHandle : ArrayHandle(irBuiltIns.arrayClass) {
         override fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression {
             return builder.irCall(singleParameterConstructor).apply {
                 typeArguments[0] = elementType
@@ -288,10 +289,10 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                 when (it) {
                     is IrConstantPrimitive -> {
                         val castedConst = when (it.value.kind) {
-                            IrConstKind.Byte -> IrConstImpl.byte(it.startOffset, it.endOffset, symbols.byte.defaultType, it.value.value as Byte)
-                            IrConstKind.Short -> IrConstImpl.short(it.startOffset, it.endOffset, symbols.short.defaultType, it.value.value as Short)
-                            IrConstKind.Int -> IrConstImpl.int(it.startOffset, it.endOffset, symbols.int.defaultType, it.value.value as Int)
-                            IrConstKind.Long -> IrConstImpl.long(it.startOffset, it.endOffset, symbols.long.defaultType, it.value.value as Long)
+                            IrConstKind.Byte -> IrConstImpl.byte(it.startOffset, it.endOffset, irBuiltIns.byteType, it.value.value as Byte)
+                            IrConstKind.Short -> IrConstImpl.short(it.startOffset, it.endOffset, irBuiltIns.shortType, it.value.value as Short)
+                            IrConstKind.Int -> IrConstImpl.int(it.startOffset, it.endOffset, irBuiltIns.intType, it.value.value as Int)
+                            IrConstKind.Long -> IrConstImpl.long(it.startOffset, it.endOffset, irBuiltIns.longType, it.value.value as Long)
                             else -> error("Unsupported unsigned constant")
                         }
                         builder.irConstantPrimitive(castedConst)
@@ -315,7 +316,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
     private val primitiveArrayHandles = PrimitiveType.values().associate { it to PrimitiveArrayHandle(it) }
 
     private val unsignedArrayHandles = UnsignedType.values().mapNotNull { unsignedType ->
-        symbols.unsignedTypesToUnsignedArrays[unsignedType]?.let {
+        irBuiltIns.unsignedTypesToUnsignedArrays[unsignedType]?.let {
             val primitiveType = when (unsignedType) {
                 UnsignedType.UBYTE -> PrimitiveType.BYTE
                 UnsignedType.USHORT -> PrimitiveType.SHORT

@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
-val foo = 1.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toInt()<!>
+val foo = 1.toInt()
 
 typealias IntAlias = Int
 val aliased: IntAlias = 1

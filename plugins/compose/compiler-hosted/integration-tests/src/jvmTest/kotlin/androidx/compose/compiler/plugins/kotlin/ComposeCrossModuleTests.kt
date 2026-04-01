@@ -1280,6 +1280,50 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         )
     }
 
+    // regression test for https://issuetracker.google.com/issues/461766771
+    @Test
+    fun testLegacyOpenFunctionWithDefaultFalsePositives() {
+        assumeTrue(useFir)
+        compile(
+            mapOf(
+                "Base" to mapOf(
+                    "base/Base.kt" to """
+                    package base
+
+                    import androidx.compose.runtime.Composable
+
+                    interface Modifier {
+                        companion object : Modifier
+                    }
+
+                    interface I {
+                        @Composable fun Content(modifier: Modifier = Modifier)
+                    }
+
+                    class C1() : I {
+                        @Composable
+                        override fun Content(modifier: Modifier) {}
+                    }
+                    """
+                ),
+                "Main" to mapOf(
+                    "Main.kt" to """
+                    package main
+
+                    import androidx.compose.runtime.Composable
+                    import base.C1
+                    import base.Modifier
+
+                    class C2() : C1() {
+                        @Composable
+                        override fun Content(modifier: Modifier) {}
+                    }
+                    """
+                )
+            )
+        )
+    }
+
     // regression test for https://issuetracker.google.com/issues/345261077
     @Test
     fun composableInferredReturnType() {
@@ -1491,6 +1535,40 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
                     """
                 )
             )
+        )
+    }
+
+    @Test
+    fun testStablePropertyCodegen() {
+        compile(
+            mapOf(
+                "Main" to mapOf(
+                    "extra.kt" to """
+                        package main
+                        
+                        class A
+                    """,
+                    "main.kt" to """
+                        package main
+                        
+                        class B(val a: A)
+                    """
+                )
+            ),
+            validate = {
+                assertFalse(
+                    it.contains("main_A%stableprop_getter()"),
+                    message = "Getters should not be generated for %stable fields",
+                )
+                assertFalse(
+                    it.contains("main_B%stableprop_getter()"),
+                    message = "Getters should not be generated for %stable fields",
+                )
+                assertTrue(
+                    "The B.%stable field initializer should directly access A.%stable",
+                    it.contains("GETSTATIC main/A.%stable : I"),
+                )
+            }
         )
     }
 

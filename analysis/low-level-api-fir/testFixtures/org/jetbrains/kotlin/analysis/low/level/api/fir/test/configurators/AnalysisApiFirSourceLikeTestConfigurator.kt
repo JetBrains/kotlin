@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.Analys
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.FirStandaloneServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
+import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
@@ -27,7 +28,9 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.ExternalAnnotationsEnvironmentConfigurator
 
-abstract class AnalysisApiFirSourceLikeTestConfigurator(override val analyseInDependentSession: Boolean) : AnalysisApiTestConfigurator() {
+abstract class AnalysisApiFirSourceLikeTestConfigurator(
+    override val analyseInDependentSession: Boolean,
+) : AnalysisApiTestConfigurator() {
     override val analysisApiMode: AnalysisApiMode get() = AnalysisApiMode.Ide
     override val frontendKind: FrontendKind get() = FrontendKind.Fir
 
@@ -42,7 +45,13 @@ abstract class AnalysisApiFirSourceLikeTestConfigurator(override val analyseInDe
     }
 
     override val testPrefixes: List<String>
-        get() = if (analyseInDependentSession) listOf("dependent.fir") else emptyList()
+        get() {
+            return if (!analyseInDependentSession) {
+                super.testPrefixes
+            } else {
+                super.testPrefixes.withAdditionalVariant("dependent.fir")
+            }
+        }
 
     override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>> = listOf(
         AnalysisApiBaseTestServiceRegistrar,

@@ -70,7 +70,7 @@ class VersionChecker(val context: IrPluginContext, private val messageCollector:
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     fun check(skipIfRuntimeNotFound: Boolean = false): VersionCheckerResult {
-        val versionClass = context.referenceClass(ComposeClassIds.ComposeVersion)
+        val versionClass = context.finderForBuiltins().findClass(ComposeClassIds.ComposeVersion)
         if (versionClass == null) {
             // If it is a Compose app, it will depend on Compose runtime. Therefore, we must be
             // able to find ComposeVersion. If it is a non-Compose app, we skip this IR lowering.
@@ -89,7 +89,7 @@ class VersionChecker(val context: IrPluginContext, private val messageCollector:
             // classpath anywhere. But also for dev03-dev15 there wasn't any ComposeVersion class at
             // all, so we check for the presence of the Composer class here to try and check for the
             // case that an older version of Compose runtime is available.
-            val composerClass = context.referenceClass(ComposeClassIds.Composer)
+            val composerClass = context.finderForBuiltins().findClass(ComposeClassIds.Composer)
             if (composerClass != null) {
                 outdatedRuntimeWithUnknownVersionNumber()
             } else {

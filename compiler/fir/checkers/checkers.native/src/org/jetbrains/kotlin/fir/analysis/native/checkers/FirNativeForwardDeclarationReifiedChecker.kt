@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.type
 
 object FirNativeForwardDeclarationReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Platform) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
         val calleeReference = expression.calleeReference

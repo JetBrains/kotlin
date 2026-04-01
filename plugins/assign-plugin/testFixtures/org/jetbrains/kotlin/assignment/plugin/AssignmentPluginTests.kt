@@ -6,53 +6,35 @@
 package org.jetbrains.kotlin.assignment.plugin
 
 import org.jetbrains.kotlin.assignment.plugin.AssignmentDirectives.ENABLE_ASSIGNMENT
-import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.assignment.plugin.k2.FirAssignmentPluginExtensionRegistrar
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.registerExtension
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 // ------------------------ diagnostics ------------------------
-
-abstract class AbstractAssignmentPluginDiagnosticTest : AbstractDiagnosticTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configurePlugin()
-        builder.configureDiagnostics()
-    }
-}
 
 abstract class AbstractFirPsiAssignmentPluginDiagnosticTest : AbstractFirPsiDiagnosticTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurePlugin()
         builder.configureDiagnostics()
-        builder.configurationForClassicAndFirTestsAlongside()
     }
 }
 
 // ------------------------ codegen ------------------------
-
-open class AbstractIrBlackBoxCodegenTestAssignmentPlugin : AbstractIrBlackBoxCodegenTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configurePlugin()
-    }
-}
 
 open class AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -95,7 +77,7 @@ class AssignmentPluginEnvironmentConfigurator(testServices: TestServices) : Envi
         if (ENABLE_ASSIGNMENT !in module.directives) return
         AssignResolutionAltererExtension.Companion.registerExtension(CliAssignPluginResolutionAltererExtension(TEST_ANNOTATIONS))
         StorageComponentContainerContributor.registerExtension(AssignmentComponentContainerContributor(TEST_ANNOTATIONS))
-        FirExtensionRegistrarAdapter.registerExtension(FirAssignmentPluginExtensionRegistrar(TEST_ANNOTATIONS))
+        FirExtensionRegistrar.registerExtension(FirAssignmentPluginExtensionRegistrar(TEST_ANNOTATIONS))
     }
 }
 

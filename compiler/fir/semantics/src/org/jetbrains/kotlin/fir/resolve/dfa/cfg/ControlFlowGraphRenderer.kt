@@ -232,7 +232,7 @@ private class ControlFlowGraphRenderer(
         .replace("&", "&amp;")
         .replace(">", "&gt;")
         .replace("<", "&lt;")
-        .replace("\n", "<BR/>")
+        .replace(System.lineSeparator(), "<BR/>")
 }
 
 data class ControlFlowGraphRenderOptions(

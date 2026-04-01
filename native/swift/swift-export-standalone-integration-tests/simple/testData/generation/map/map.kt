@@ -16,3 +16,7 @@ fun testMapNothingOptNothing(m: Map<Nothing, Nothing?>) = m
 fun testMapOptNothingNothing(m: Map<Nothing?, Nothing>) = m
 
 fun testStarMap(m: Map<*, *>) = m
+
+interface Bar
+
+fun testMapBarKey(m: Map<Bar, Int>) = m

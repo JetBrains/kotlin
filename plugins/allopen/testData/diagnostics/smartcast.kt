@@ -19,6 +19,6 @@ class Test(
         println(<!SMARTCAST_IMPOSSIBLE!>publicProp<!>.length)
         println(<!SMARTCAST_IMPOSSIBLE!>protectedProp<!>.length)
         println(<!SMARTCAST_IMPOSSIBLE!>internalProp<!>.length)
-        println(<!DEBUG_INFO_SMARTCAST!>privateProp<!>.length)
+        println(privateProp.length)
     }
 }

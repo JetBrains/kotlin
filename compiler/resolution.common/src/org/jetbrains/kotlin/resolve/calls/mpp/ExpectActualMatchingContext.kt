@@ -160,6 +160,8 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
 
     val CallableSymbolMarker.hasStableParameterNames: Boolean
 
+    val CallableSymbolMarker.shouldMatchByParameterNames: Boolean
+
     val CallableSymbolMarker.isJavaField: Boolean
     val CallableSymbolMarker.canBeActualizedByJavaField: Boolean
 

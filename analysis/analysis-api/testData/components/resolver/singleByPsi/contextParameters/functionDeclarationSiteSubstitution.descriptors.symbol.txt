@@ -1,0 +1,5 @@
+KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Another.foo(<dispatch receiver>: Base<kotlin.Long>, rp1: kotlin.Long, rp2: kotlin.String): kotlin.Unit
+    ]

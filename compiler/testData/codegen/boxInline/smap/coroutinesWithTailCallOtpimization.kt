@@ -7,11 +7,9 @@ interface SuspendRunnable {
     suspend fun run()
 }
 
-inline suspend fun inlineMe4(c: suspend () -> Unit) {
-    c()
-}
+inline suspend fun inlineMe4(c: suspend () -> String)  = c()
 
-inline suspend fun inlineMe14(crossinline c: suspend () -> Unit) = inlineMe4(c)
+inline suspend fun inlineMe14(crossinline c: suspend () -> String) = inlineMe4(c)
 
 // FILE: box.kt
 import kotlin.coroutines.*
@@ -23,14 +21,14 @@ open class EmptyContinuation(override val context: CoroutineContext = EmptyCorou
     }
 }
 
-fun builder(c: suspend () -> Unit) {
+fun builder(c: suspend () -> String) {
     c.startCoroutine(EmptyContinuation)
 }
 
 fun box(): String {
     builder {
         inlineMe14 {
-
+            "OK"
         }
     }
 

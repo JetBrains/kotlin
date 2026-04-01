@@ -50,9 +50,11 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrVisitorV
     }
 
     private inner class AnnotationsAdder : IrVisitorVoid() {
-        val annotationClass = context.referenceClass(annotationToAddId)?.takeIf { it.owner.isAnnotationClass }
-        val simpleAnnotationClass = context.referenceClass(simpleAnnotationId)?.takeIf { it.owner.isAnnotationClass }
-        val arrayAnnotationClass = context.referenceClass(arrayAnnotationId)?.takeIf { it.owner.isAnnotationClass }
+        val finder = context.finderForBuiltins()
+
+        val annotationClass = finder.findClass(annotationToAddId)?.takeIf { it.owner.isAnnotationClass }
+        val simpleAnnotationClass = finder.findClass(simpleAnnotationId)?.takeIf { it.owner.isAnnotationClass }
+        val arrayAnnotationClass = finder.findClass(arrayAnnotationId)?.takeIf { it.owner.isAnnotationClass }
 
         override fun visitElement(element: IrElement, data: Nothing?) {}
 
@@ -72,7 +74,7 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrVisitorV
             val simpleAnnotationClass = simpleAnnotationClass ?: return
             val arrayAnnotationClass = arrayAnnotationClass ?: return
             val annotationConstructor = annotationClass.owner.constructors.first()
-            val annotationCall = IrConstructorCallImpl.fromSymbolOwner(
+            val annotationCall = IrAnnotationImpl.fromSymbolOwner(
                 type = annotationClass.defaultType,
                 constructorSymbol = annotationConstructor.symbol
             ).also {
@@ -91,7 +93,7 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrVisitorV
                     context.irBuiltIns.arrayClass.typeWith(arrayAnnotationClass.defaultType),
                     arrayAnnotationClass.defaultType,
                     0.rangeTo(2).map { i ->
-                        IrConstructorCallImpl.fromSymbolOwner(
+                        IrAnnotationImpl.fromSymbolOwner(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
                             arrayAnnotationClass.defaultType,
@@ -103,7 +105,7 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrVisitorV
                                 context.irBuiltIns.arrayClass.typeWith(simpleAnnotationClass.defaultType),
                                 simpleAnnotationClass.defaultType,
                                 0.rangeUntil(i).map { j ->
-                                    IrConstructorCallImpl.fromSymbolOwner(
+                                    IrAnnotationImpl.fromSymbolOwner(
                                         UNDEFINED_OFFSET,
                                         UNDEFINED_OFFSET,
                                         simpleAnnotationClass.defaultType,

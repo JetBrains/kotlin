@@ -1,0 +1,6 @@
+KtOperationReferenceExpression(250,252): '+='
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.plus(<dispatch receiver>: MyClass, v: MyClass): MyClass,
+      /MyClass.set(<dispatch receiver>: MyClass, i: kotlin.Int, v: MyClass): kotlin.Unit
+    ]

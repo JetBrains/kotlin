@@ -1,70 +1,4 @@
-FILE fqName:<root> fileName:/capturedSelfInsideIntersection.kt
-  CLASS CLASS name:EntityImpl modality:OPEN visibility:public superTypes:[<root>.GraphQlTester.Entity<D of <root>.EntityImpl, <root>.EntityImpl<D of <root>.EntityImpl>>]
-    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.EntityImpl<D of <root>.EntityImpl>
-    TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public returnType:<root>.EntityImpl<D of <root>.EntityImpl> [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:EntityImpl modality:OPEN visibility:public superTypes:[<root>.GraphQlTester.Entity<D of <root>.EntityImpl, <root>.EntityImpl<D of <root>.EntityImpl>>]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.GraphQlTester.Entity
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.GraphQlTester.Entity
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      overridden:
-        public open fun toString (): kotlin.String declared in <root>.GraphQlTester.Entity
-    FUN name:isEqualTo visibility:public modality:OPEN returnType:T of <root>.EntityImpl.isEqualTo
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.EntityImpl<D of <root>.EntityImpl>] reified:false
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.EntityImpl<D of <root>.EntityImpl>
-      VALUE_PARAMETER kind:Regular name:expected index:1 type:kotlin.Any?
-      overridden:
-        public abstract fun isEqualTo <T> (expected: kotlin.Any?): T of <root>.GraphQlTester.Entity.isEqualTo declared in <root>.GraphQlTester.Entity
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun isEqualTo <T> (expected: kotlin.Any?): T of <root>.EntityImpl.isEqualTo declared in <root>.EntityImpl'
-          TYPE_OP type=T of <root>.EntityImpl.isEqualTo origin=CAST typeOperand=T of <root>.EntityImpl.isEqualTo
-            GET_VAR '<this>: <root>.EntityImpl<D of <root>.EntityImpl> declared in <root>.EntityImpl.isEqualTo' type=<root>.EntityImpl<D of <root>.EntityImpl> origin=null
-  CLASS CLASS name:PathImpl modality:FINAL visibility:public superTypes:[<root>.GraphQlTester.Path]
-    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.PathImpl
-    CONSTRUCTOR visibility:public returnType:<root>.PathImpl [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PathImpl modality:FINAL visibility:public superTypes:[<root>.GraphQlTester.Path]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.GraphQlTester.Path
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.GraphQlTester.Path
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      overridden:
-        public open fun toString (): kotlin.String declared in <root>.GraphQlTester.Path
-    FUN name:entity visibility:public modality:OPEN returnType:<root>.GraphQlTester.Entity<E of <root>.PathImpl.entity, *>
-      TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any] reified:false
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.PathImpl
-      VALUE_PARAMETER kind:Regular name:entityType index:1 type:kotlin.reflect.KClass<E of <root>.PathImpl.entity>
-      overridden:
-        public abstract fun entity <E> (entityType: kotlin.reflect.KClass<E of <root>.GraphQlTester.Path.entity>): <root>.GraphQlTester.Entity<E of <root>.GraphQlTester.Path.entity, *> declared in <root>.GraphQlTester.Path
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun entity <E> (entityType: kotlin.reflect.KClass<E of <root>.PathImpl.entity>): <root>.GraphQlTester.Entity<E of <root>.PathImpl.entity, *> declared in <root>.PathImpl'
-          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.EntityImpl' type=<root>.EntityImpl<E of <root>.PathImpl.entity> origin=null
-            TYPE_ARG (of class) D: E of <root>.PathImpl.entity
-    FUN name:valueIsNull visibility:public modality:OPEN returnType:<root>.PathImpl
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.PathImpl
-      overridden:
-        public abstract fun valueIsNull (): <root>.GraphQlTester.Path declared in <root>.GraphQlTester.Path
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun valueIsNull (): <root>.PathImpl declared in <root>.PathImpl'
-          GET_VAR '<this>: <root>.PathImpl declared in <root>.PathImpl.valueIsNull' type=<root>.PathImpl origin=null
+FILE fqName:<root> fileName:/lib.kt
   CLASS INTERFACE name:GraphQlTester modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.GraphQlTester
     CLASS INTERFACE name:Entity modality:ABSTRACT visibility:public superTypes:[<root>.GraphQlTester.Traversable]
@@ -137,14 +71,6 @@ FILE fqName:<root> fileName:/capturedSelfInsideIntersection.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
-    BLOCK_BODY
-      CALL 'public final fun isEqualTo <U> (<this>: <root>.GraphQlTester.Path, expected: U of <root>.isEqualTo?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        TYPE_ARG U: kotlin.Int
-        ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.PathImpl' type=<root>.PathImpl origin=null
-        ARG expected: CONST Int type=kotlin.Int value=42
-      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CONST String type=kotlin.String value="OK"
   FUN name:isEqualTo visibility:public modality:FINAL returnType:kotlin.Unit [inline]
     TYPE_PARAMETER name:U index:0 variance: superTypes:[kotlin.Any] reified:true
     VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.GraphQlTester.Path
@@ -167,3 +93,78 @@ FILE fqName:<root> fileName:/capturedSelfInsideIntersection.kt
                 ARG <this>: GET_VAR '<this>: <root>.GraphQlTester.Path declared in <root>.isEqualTo' type=<root>.GraphQlTester.Path origin=IMPLICIT_ARGUMENT
                 ARG entityType: CLASS_REFERENCE 'TYPE_PARAMETER name:U index:0 variance: superTypes:[kotlin.Any] reified:true' type=kotlin.reflect.KClass<U of <root>.isEqualTo>
               ARG expected: GET_VAR 'expected: U of <root>.isEqualTo? declared in <root>.isEqualTo' type=U of <root>.isEqualTo? origin=null
+FILE fqName:<root> fileName:/main.kt
+  CLASS CLASS name:EntityImpl modality:OPEN visibility:public superTypes:[<root>.GraphQlTester.Entity<D of <root>.EntityImpl, <root>.EntityImpl<D of <root>.EntityImpl>>]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.EntityImpl<D of <root>.EntityImpl>
+    TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR visibility:public returnType:<root>.EntityImpl<D of <root>.EntityImpl> [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:EntityImpl modality:OPEN visibility:public superTypes:[<root>.GraphQlTester.Entity<D of <root>.EntityImpl, <root>.EntityImpl<D of <root>.EntityImpl>>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.GraphQlTester.Entity
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.GraphQlTester.Entity
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.GraphQlTester.Entity
+    FUN name:isEqualTo visibility:public modality:OPEN returnType:T of <root>.EntityImpl.isEqualTo
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.EntityImpl<D of <root>.EntityImpl>] reified:false
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.EntityImpl<D of <root>.EntityImpl>
+      VALUE_PARAMETER kind:Regular name:expected index:1 type:kotlin.Any?
+      overridden:
+        public abstract fun isEqualTo <T> (expected: kotlin.Any?): T of <root>.GraphQlTester.Entity.isEqualTo declared in <root>.GraphQlTester.Entity
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun isEqualTo <T> (expected: kotlin.Any?): T of <root>.EntityImpl.isEqualTo declared in <root>.EntityImpl'
+          TYPE_OP type=T of <root>.EntityImpl.isEqualTo origin=CAST typeOperand=T of <root>.EntityImpl.isEqualTo
+            GET_VAR '<this>: <root>.EntityImpl<D of <root>.EntityImpl> declared in <root>.EntityImpl.isEqualTo' type=<root>.EntityImpl<D of <root>.EntityImpl> origin=null
+  CLASS CLASS name:PathImpl modality:FINAL visibility:public superTypes:[<root>.GraphQlTester.Path]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.PathImpl
+    CONSTRUCTOR visibility:public returnType:<root>.PathImpl [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PathImpl modality:FINAL visibility:public superTypes:[<root>.GraphQlTester.Path]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.GraphQlTester.Path
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.GraphQlTester.Path
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.GraphQlTester.Path
+    FUN name:entity visibility:public modality:OPEN returnType:<root>.GraphQlTester.Entity<E of <root>.PathImpl.entity, *>
+      TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any] reified:false
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.PathImpl
+      VALUE_PARAMETER kind:Regular name:entityType index:1 type:kotlin.reflect.KClass<E of <root>.PathImpl.entity>
+      overridden:
+        public abstract fun entity <E> (entityType: kotlin.reflect.KClass<E of <root>.GraphQlTester.Path.entity>): <root>.GraphQlTester.Entity<E of <root>.GraphQlTester.Path.entity, *> declared in <root>.GraphQlTester.Path
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun entity <E> (entityType: kotlin.reflect.KClass<E of <root>.PathImpl.entity>): <root>.GraphQlTester.Entity<E of <root>.PathImpl.entity, *> declared in <root>.PathImpl'
+          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.EntityImpl' type=<root>.EntityImpl<E of <root>.PathImpl.entity> origin=null
+            TYPE_ARG (of class) D: E of <root>.PathImpl.entity
+    FUN name:valueIsNull visibility:public modality:OPEN returnType:<root>.PathImpl
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.PathImpl
+      overridden:
+        public abstract fun valueIsNull (): <root>.GraphQlTester.Path declared in <root>.GraphQlTester.Path
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun valueIsNull (): <root>.PathImpl declared in <root>.PathImpl'
+          GET_VAR '<this>: <root>.PathImpl declared in <root>.PathImpl.valueIsNull' type=<root>.PathImpl origin=null
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      CALL 'public final fun isEqualTo <U> (<this>: <root>.GraphQlTester.Path, expected: U of <root>.isEqualTo?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        TYPE_ARG U: kotlin.Int
+        ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.PathImpl' type=<root>.PathImpl origin=null
+        ARG expected: CONST Int type=kotlin.Int value=42
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"

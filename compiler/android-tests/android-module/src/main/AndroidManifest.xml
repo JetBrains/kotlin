@@ -4,6 +4,5 @@
           android:versionCode="1"
           android:versionName="1.0">
   <application>
-    <uses-library android:name="android.test.runner" />
   </application>
 </manifest>

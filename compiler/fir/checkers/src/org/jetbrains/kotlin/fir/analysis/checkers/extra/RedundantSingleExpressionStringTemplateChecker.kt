@@ -48,7 +48,7 @@ object RedundantSingleExpressionStringTemplateChecker : FirStringConcatenationCa
 
     private fun PsiElement.stringParentChildrenCount(): Int? {
         return when (val parent = parent) {
-            is KtStringTemplateExpression -> return parent.children.size
+            is KtStringTemplateExpression -> parent.children.size
             null -> null
             else -> parent.stringParentChildrenCount()
         }

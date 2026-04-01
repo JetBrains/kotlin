@@ -1,0 +1,7 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public fun main(): kotlin.Unit { /* compiled code */ }
+
+@kotlin.annotation.Retention @kotlin.annotation.Target public final annotation class Ann public constructor() : kotlin.Annotation {
+}

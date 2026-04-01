@@ -18,6 +18,10 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/plugins-interactions-testing/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 public class PluginInteractionFirBlackBoxCodegenTestGenerated extends AbstractPluginInteractionFirBlackBoxCodegenTest {
+  private void run(String fileName) {
+    runTest("plugins/plugins-interactions-testing/testData/box/" + fileName);
+  }
+
   @Test
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugins-interactions-testing/testData/box"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -26,12 +30,18 @@ public class PluginInteractionFirBlackBoxCodegenTestGenerated extends AbstractPl
   @Test
   @TestMetadata("noArgAndSupertypesGenerator.kt")
   public void testNoArgAndSupertypesGenerator() {
-    runTest("plugins/plugins-interactions-testing/testData/box/noArgAndSupertypesGenerator.kt");
+    run("noArgAndSupertypesGenerator.kt");
   }
 
   @Test
   @TestMetadata("parcelizeAndSupertypesGenerator.kt")
   public void testParcelizeAndSupertypesGenerator() {
-    runTest("plugins/plugins-interactions-testing/testData/box/parcelizeAndSupertypesGenerator.kt");
+    run("parcelizeAndSupertypesGenerator.kt");
+  }
+
+  @Test
+  @TestMetadata("powerAssertAndTopLevelGenerator.kt")
+  public void testPowerAssertAndTopLevelGenerator() {
+    run("powerAssertAndTopLevelGenerator.kt");
   }
 }

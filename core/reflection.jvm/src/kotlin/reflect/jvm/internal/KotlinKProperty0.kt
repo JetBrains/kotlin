@@ -6,25 +6,27 @@
 package kotlin.reflect.jvm.internal
 
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.jvm.internal.CallableReference
 import kotlin.metadata.KmProperty
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0
 
 internal open class KotlinKProperty0<out V>(
     container: KDeclarationContainerImpl, signature: String, rawBoundReceiver: Any?, kmProperty: KmProperty,
-) : KotlinKProperty<V>(container, signature, rawBoundReceiver, kmProperty), KProperty0<V> {
-    private val _getter: Lazy<Getter<V>> = lazy(PUBLICATION) { Getter(this) }
-
-    override val getter: Getter<V> get() = _getter.value
+    overriddenStorage: KCallableOverriddenStorage,
+) : KotlinKProperty<V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage), KProperty0<V> {
+    override val getter: Getter<V> by lazy(PUBLICATION) { Getter(this) }
 
     override fun get(): V = getter.call()
 
-    override fun getDelegate(): Any? {
-        checkLocalDelegatedPropertyOrAccessor()
-        return null
-    }
+    private val delegateValue = lazy(PUBLICATION) { getDelegateImpl(computeDelegateSource(), null, null) }
+
+    override fun getDelegate(): Any? = delegateValue.value
 
     override fun invoke(): V = get()
+
+    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
+        KotlinKProperty0(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage)
 
     class Getter<out R>(override val property: KotlinKProperty0<R>) : KotlinKProperty.Getter<R>(), KProperty0.Getter<R> {
         override fun invoke(): R = property.get()
@@ -33,12 +35,14 @@ internal open class KotlinKProperty0<out V>(
 
 internal class KotlinKMutableProperty0<V>(
     container: KDeclarationContainerImpl, signature: String, rawBoundReceiver: Any?, kmProperty: KmProperty,
-) : KotlinKProperty0<V>(container, signature, rawBoundReceiver, kmProperty), KMutableProperty0<V> {
-    private val _setter: Lazy<Setter<V>> = lazy(PUBLICATION) { Setter(this) }
-
-    override val setter: Setter<V> get() = _setter.value
+    overriddenStorage: KCallableOverriddenStorage = KCallableOverriddenStorage.EMPTY,
+) : KotlinKProperty0<V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage), KMutableProperty0<V> {
+    override val setter: Setter<V> by lazy(PUBLICATION) { Setter(this) }
 
     override fun set(value: V): Unit = setter.call(value)
+
+    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
+        KotlinKMutableProperty0(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage)
 
     class Setter<R>(override val property: KotlinKMutableProperty0<R>) : KotlinKProperty.Setter<R>(), KMutableProperty0.Setter<R> {
         override fun invoke(value: R): Unit = property.set(value)

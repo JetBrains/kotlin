@@ -1,0 +1,27 @@
+fun box(): String {
+  return runAll(tests = [to<String, Function0<Unit>>(/* <this> = "test1", */ that = local fun <anonymous>() {
+    test1()
+  }
+)])
+}
+
+suspend fun getFalse(): Boolean {
+  return false
+}
+
+fun test1() {
+  runBlocking<Unit>(block = local suspend fun <anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Boolean = run<Boolean>(block = local fun <anonymous>(): Boolean {
+        return getFalse()
+      }
+)
+      assert(value = tmp0_Explain, lazyMessage = local fun <anonymous>(): String {
+        return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 174, source = "        assert(run { getFalse() })", arguments = listOf<Argument>(elements = [Argument(startOffset = 15, endOffset = 33, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 15, endOffset = 33, displayOffset = 15, value = tmp0_Explain)]))])) */)
+      }
+)
+    }
+  }
+)
+}
+

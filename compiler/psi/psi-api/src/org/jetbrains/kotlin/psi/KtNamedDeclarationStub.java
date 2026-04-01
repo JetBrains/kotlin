@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,12 +27,12 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.psi.utils.OperatorTokens;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Set;
 
-abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends KtDeclarationStub<T> implements KtNamedDeclaration {
+public abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends KtDeclarationStub<T> implements KtNamedDeclaration {
     public KtNamedDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }
@@ -81,7 +81,7 @@ abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends
     );
 
     private static boolean shouldDropOperatorKeyword(String oldName, String newName) {
-        return !OperatorConventions.isConventionName(Name.identifier(newName)) ||
+        return !OperatorTokens.isConventionName(Name.identifier(newName)) ||
                FUNCTIONLIKE_CONVENTIONS.contains(oldName) != FUNCTIONLIKE_CONVENTIONS.contains(newName);
     }
 

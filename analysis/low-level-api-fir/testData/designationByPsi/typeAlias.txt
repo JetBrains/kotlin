@@ -1,0 +1,4 @@
+KT element: KtTypeAlias
+Resolve target: typeAlias.kt -> MyAlias
+FIR:
+  public final typealias MyAlias = String

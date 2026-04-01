@@ -16,7 +16,7 @@
 TestKt {
     file: Test.kt
     App(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
-        RestartGroup { key: <key>, line: 4 }
+        Root { key: <key>, line: 4 }
     App$lambda$0(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
         Root { key: <key>, line: 6 }
 }
@@ -25,8 +25,8 @@ TestKt {
 TestKt {
     file: Test.kt
     App(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
-        RestartGroup { key: <key>, line: 4 }
         Root { key: null, line: 4 }
+        RestartGroup { key: <key>, line: 4 }
     App$lambda$0(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
         Root { key: <key>, line: 6 }
 }

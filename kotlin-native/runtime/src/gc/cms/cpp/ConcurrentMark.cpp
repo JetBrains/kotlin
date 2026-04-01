@@ -80,27 +80,32 @@ void gc::mark::ConcurrentMark::markInSTW() {
 
     // Mutator threads might release their internal batch at a pretty arbitrary moment (during a barrier execution with overflow).
     // So there are not so many reliable ways to track releases of new work.
-    // The number of batches sharad inside a parallel processor may only grow,
+    // The number of batches shared inside a parallel processor may only grow,
     // we use this number to decide when to finish the mark.
     auto everSharedBatches = parallelProcessor_->batchesEverShared();
-    size_t iter = 0;
-    bool terminateInSTW = false;
-    do {
-        GCLogDebug(gcHandle().getEpoch(), "Building mark closure (attempt #%zu)", iter);
+
+    bool terminateInSTW = true;
+    for (uint32_t iter = 0; iter < compiler::concurrentMarkMaxIterations(); ++iter) {
+        GCLogDebug(gcHandle().getEpoch(), "Building mark closure (attempt #%u)", iter);
         Mark<MarkTraits>(gcHandle(), mainWorker);
-
-        RuntimeCheck(iter <= compiler::concurrentMarkMaxIterations(), "Failed to terminate mark in STW in a single iteration");
-        ++iter;
-        if (iter == compiler::concurrentMarkMaxIterations()) {
-            GCLogWarning(gcHandle().getEpoch(), "Finishing mark closure in STW after (%zu concurrent attempts)", iter);
-            stopTheWorld(gcHandle(), "GC stop the world: concurrent mark took too long");
-            terminateInSTW = true;
+        if (tryTerminateMark(everSharedBatches)) {
+            terminateInSTW = false; // successfully terminated mark phase concurrently
+            break;
         }
-    } while (!tryTerminateMark(everSharedBatches));
+    }
+    if (terminateInSTW) {
+        GCLogWarning(gcHandle().getEpoch(), "Finishing mark closure in STW after %u concurrent attempts",
+            compiler::concurrentMarkMaxIterations());
+        stopTheWorld(gcHandle(), "GC stop the world: concurrent mark took too long");
+        flushMutatorQueues(); // No need for mark termination lock: STW is stronger than it
+        Mark<MarkTraits>(gcHandle(), mainWorker);
+        // Weak processing expects barriers in the correct state even in STW
+        barriers::switchToWeakProcessingBarriers();
+    }
 
-    // By this point mutator mark queues may not be populated anymore.
-    // However, some threads may still try to enqueue a marked object, before they observe the barrier disablement.
-    // Thus, mark queue destruction takes place only later below.
+    // By this point mutator mark queues cannot be populated anymore.
+    // However, some threads may still try to enqueue a marked object before they observe the barriers were disabled.
+    // Thus, mark queue destruction takes place only later below (in STW).
 
     gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle(), mm::ExternalRCRefRegistry::instance());
 
@@ -146,7 +151,7 @@ bool gc::mark::ConcurrentMark::tryTerminateMark(std::size_t& everSharedBatches) 
     flushMutatorQueues();
 
     // After the mutators have been forced to flush their local queues,
-    // there is only on possibility for this counter to remain the same as on a previous iteration:
+    // there is only one possibility for this counter to remain the same as on a previous iteration:
     // 1. Mutator local queues are empty,
     // 2. AND were empty before the flush request was made,
     // 3. AND the last attempt at completing mark closure encountered 0 new objects // FIXME this is actually redundant
@@ -156,7 +161,7 @@ bool gc::mark::ConcurrentMark::tryTerminateMark(std::size_t& everSharedBatches) 
         parallelProcessor_->resetForNewWork();
         return false;
     }
-    RuntimeAssert(nowSharedBatches == everSharedBatches, "This number must decrease");
+    RuntimeAssert(nowSharedBatches == everSharedBatches, "This number must never decrease");
 
     barriers::switchToWeakProcessingBarriers();
     return true;

@@ -12,7 +12,7 @@ FILE: [ResolvedTo(IMPORTS)] jvmFieldAnnotationOnConstructorProperty.kt
             LAZY_super<R|A|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var addCommaWarning: R|kotlin/Boolean| = R|<local>/addCommaWarning|
+        @<ERROR TYPE REF: Symbol not found for JvmField>[Types]() public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var addCommaWarning: R|kotlin/Boolean| = R|<local>/addCommaWarning|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] set([ResolvedTo(STATUS)] value: R|kotlin/Boolean|): R|kotlin/Unit|
 

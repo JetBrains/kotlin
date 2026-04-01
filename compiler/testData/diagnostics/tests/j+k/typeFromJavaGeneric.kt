@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible
+// LANGUAGE: -DontMakeExplicitNullableJavaTypeArgumentsFlexible
 
 // FILE: JavaGeneric.java
 public class JavaGeneric<T> {

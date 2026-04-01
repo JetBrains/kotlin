@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.gcfuzzing.translation
 
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.*
+import kotlin.time.Duration
 
 class KotlinOutput(
     val filename: String,
@@ -40,11 +41,17 @@ private class KotlinTranslationContext(
         contents.apply {
             raw(
                 """
-            |@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
+            |@file:OptIn(
+            |    kotlinx.cinterop.ExperimentalForeignApi::class,
+            |    kotlin.native.runtime.NativeRuntimeApi::class,
+            |    kotlin.experimental.ExperimentalNativeApi::class
+            |)
+            |
             |package ${config.moduleName}
             |
             |import ${config.cinteropModuleName}.*
             |import kotlin.native.concurrent.Worker
+            |import kotlin.native.ref.WeakReference
             |
             |interface KotlinIndexAccess {
             |   fun loadKotlinField(index: Int): Any?
@@ -54,13 +61,13 @@ private class KotlinTranslationContext(
             |private fun Any.loadField(index: Int) = when (this) {
             |    is KotlinIndexAccess -> loadKotlinField(index)
             |    is ObjCIndexAccessProtocol -> loadObjCField(index)
-            |    else -> error("Invalid loadField call")
+            |    else -> error("Invalid loadField call " + this)
             |}
             |
             |private fun Any.storeField(index: Int, value: Any?) = when (this) {
             |    is KotlinIndexAccess -> storeKotlinField(index, value)
             |    is ObjCIndexAccessProtocol -> storeObjCField(index, value)
-            |    else -> error("Invalid storeField call")
+            |    else -> error("Invalid storeField call " + this)
             |}
             |
             |object WorkerTerminationProcessor {
@@ -83,6 +90,7 @@ private class KotlinTranslationContext(
             |}
             |
             |private inline fun call(localsCount: Int, blockLocalsCount: Int, block: (Int) -> Any?): Any? {
+            |    if (terminationRequest) return null
             |    val nextLocalsCount = localsCount + blockLocalsCount
             |    if (nextLocalsCount > ${config.maximumStackDepth}) {
             |        return null
@@ -91,6 +99,7 @@ private class KotlinTranslationContext(
             |}
             |
             |var allocBlocker: Boolean = false
+            |var terminationRequest: Boolean = false
             |
             |fun performGC() { kotlin.native.runtime.GC.collect() }
             |
@@ -114,11 +123,35 @@ private class KotlinTranslationContext(
         translateMainFunction(program.mainBody)
     }
 
-    private fun translateGlobalDefinition(definition: Definition.Global) {
-        contents.lineEnd {
-            if (!scopeResolver.isExported(definition)) append("private ")
-            append("var ${scopeResolver.computeName(definition)}: Any? = null")
+    private fun translateField(field: Field, name: String, init: String, isPrivate: Boolean) {
+        val backingName = "${name}Impl"
+        when (field) {
+            is Field.StrongRef -> {
+                contents.lineEnd {
+                    if (isPrivate) append("private ")
+                    append("var $name: Any? = $init")
+                }
+            }
+            is Field.WeakRef -> {
+                val asWeak = "?.let { WeakReference(it) }"
+                contents.lineEnd("private var $backingName: WeakReference<Any>? = $init$asWeak")
+                contents.lineEnd {
+                    if (isPrivate) append("private ")
+                    append("var ${name}: Any?")
+                }
+                contents.lineEnd("    get() = $backingName?.value")
+                contents.lineEnd("    set(value) { $backingName = value$asWeak }")
+            }
         }
+    }
+
+    private fun translateGlobalDefinition(definition: Definition.Global) {
+        translateField(
+            definition.field,
+            scopeResolver.computeName(definition),
+            "null",
+            !scopeResolver.isExported(definition)
+        )
     }
 
     private fun translateClassDefinition(definition: Definition.Class) {
@@ -127,12 +160,21 @@ private class KotlinTranslationContext(
             append("class ${scopeResolver.computeName(definition)}")
             parens {
                 definition.fields.forEachIndexed { index, _ ->
-                    arg("var f${index}: Any?")
+                    arg("f${index}: Any?")
                 }
             }
             append(" : KotlinIndexAccess")
         }
         contents.braces {
+            definition.fields.forEachIndexed { index, field ->
+                val name = "f${index}"
+                translateField(
+                    field,
+                    name,
+                    name,
+                    false
+                )
+            }
             contents.line("override fun loadKotlinField(index: Int): Any?")
             contents.braces {
                 if (definition.fields.isEmpty()) {

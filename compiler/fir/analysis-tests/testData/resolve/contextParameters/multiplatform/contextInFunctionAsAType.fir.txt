@@ -20,53 +20,7 @@ FILE: common.kt
     public final expect fun expectContextActualValueParam(a: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
     public final expect fun expectValueParamActualContext(a: R|(A) -> kotlin/Unit|): R|(A) -> kotlin/Unit|
     public final expect fun expectExtensionActualContext(a: R|A.() -> kotlin/Unit|): R|A.() -> kotlin/Unit|
-FILE: jvm.kt
-    public final actual fun typeMatch(a: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit| {
-        ^typeMatch R|<local>/a|
-    }
-    public final actual fun actualWithoutContext(a: R|() -> kotlin/Unit|): R|() -> kotlin/Unit| {
-        ^actualWithoutContext R|<local>/a|
-    }
-    public final actual fun expectWithoutContext(a: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit| {
-        ^expectWithoutContext R|<local>/a|
-    }
-    public final actual fun mismatchedContext(a: R|@ContextFunctionTypeParams(2) context(A, C) () -> kotlin/Unit|): R|@ContextFunctionTypeParams(2) context(A, C) () -> kotlin/Unit| {
-        ^mismatchedContext R|<local>/a|
-    }
-    public final actual fun expectContextActualExtension(a: R|A.() -> kotlin/Unit|): R|A.() -> kotlin/Unit| {
-        ^expectContextActualExtension R|<local>/a|
-    }
-    public final actual fun expectContextActualValueParam(a: R|(A) -> kotlin/Unit|): R|(A) -> kotlin/Unit| {
-        ^expectContextActualValueParam R|<local>/a|
-    }
-    public final actual fun expectValueParamActualContext(a: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit| {
-        ^expectValueParamActualContext R|<local>/a|
-    }
-    public final actual fun expectExtensionActualContext(a: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit| {
-        ^expectExtensionActualContext R|<local>/a|
-    }
 Module: m2-jvm
-FILE: common.kt
-    public final class A : R|kotlin/Any| {
-        public constructor(): R|A| {
-            super<R|kotlin/Any|>()
-        }
-
-    }
-    public final class C : R|kotlin/Any| {
-        public constructor(): R|C| {
-            super<R|kotlin/Any|>()
-        }
-
-    }
-    public final expect fun typeMatch(a: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
-    public final expect fun actualWithoutContext(a: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
-    public final expect fun expectWithoutContext(a: R|() -> kotlin/Unit|): R|() -> kotlin/Unit|
-    public final expect fun mismatchedContext(a: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
-    public final expect fun expectContextActualExtension(a: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
-    public final expect fun expectContextActualValueParam(a: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|
-    public final expect fun expectValueParamActualContext(a: R|(A) -> kotlin/Unit|): R|(A) -> kotlin/Unit|
-    public final expect fun expectExtensionActualContext(a: R|A.() -> kotlin/Unit|): R|A.() -> kotlin/Unit|
 FILE: jvm.kt
     public final actual fun typeMatch(a: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit|): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit| {
         ^typeMatch R|<local>/a|

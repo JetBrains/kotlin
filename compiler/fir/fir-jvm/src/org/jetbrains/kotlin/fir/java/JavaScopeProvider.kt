@@ -100,7 +100,7 @@ object JavaScopeProvider : FirScopeProvider() {
         return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
             val declaredScope = buildDeclaredMemberScope(useSiteSession, regularClass)
             val superTypes = if (regularClass.isThereLoopInSupertypes(useSiteSession))
-                listOf(StandardClassIds.Any.constructClassLikeType(emptyArray(), isMarkedNullable = false))
+                listOf(StandardClassIds.Any.constructClassLikeType())
             else
                 lookupSuperTypes(
                     regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession, substituteTypes = true

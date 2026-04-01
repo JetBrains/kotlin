@@ -16,6 +16,11 @@ extension ExportedKotlinPackages.list2 {
     @objc(_MyList)
     package protocol _MyList: ExportedKotlinPackages.kotlin.collections._List {
     }
+    public static func testListOptAny(
+        l: any ExportedKotlinPackages.list2.MyList
+    ) -> any ExportedKotlinPackages.list2.MyList {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: list2_testListOptAny__TypesOfArguments__anyU20ExportedKotlinPackages_list2_MyList__(l.__externalRCRef())) as! any ExportedKotlinPackages.list2.MyList
+    }
     public static func testStarList(
         l: any ExportedKotlinPackages.list2.MyList
     ) -> any ExportedKotlinPackages.list2.MyList {

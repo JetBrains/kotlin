@@ -15,7 +15,6 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
             FirJvmNameChecker,
             FirJvmExposeBoxedChecker,
             FirJvmDefaultChecker,
-            FirJvmFunctionDelegateMemberNameClashChecker,
             FirJvmStaticChecker,
             FirRepeatableAnnotationChecker,
             FirJvmInvalidAndDangerousCharactersChecker,
@@ -46,6 +45,11 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
     override val classLikeCheckers: Set<FirClassLikeChecker>
         get() = setOf(
             FirJvmConflictsChecker,
+        )
+
+    override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker>
+        get() = setOf(
+            FirJvmFunctionDelegateMemberNameClashChecker,
         )
 
     override val propertyCheckers: Set<FirPropertyChecker>

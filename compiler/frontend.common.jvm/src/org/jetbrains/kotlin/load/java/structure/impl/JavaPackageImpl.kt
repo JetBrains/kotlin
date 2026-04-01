@@ -18,14 +18,17 @@ package org.jetbrains.kotlin.load.java.structure.impl
 
 import com.intellij.psi.PsiPackage
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class JavaPackageImpl(
-    psiPackageSource: JavaElementPsiSource<PsiPackage>, private val scope: GlobalSearchScope,
+    psiPackageSource: JavaElementPsiSource<PsiPackage>,
+    private val scope: GlobalSearchScope,
     private val mayHaveAnnotations: Boolean = true,
+    private val annotationsProvider: JavaAnnotationProvider?,
 ) : JavaElementImpl<PsiPackage>(psiPackageSource), JavaPackage, MapBasedJavaAnnotationOwner {
 
     override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> {
@@ -37,17 +40,20 @@ class JavaPackageImpl(
     }
 
     override val subPackages: Collection<JavaPackage>
-        get() = packages(psi.getSubPackages(scope), scope, sourceFactory)
+        get() = packages(psi.getSubPackages(scope), scope, sourceFactory, annotationsProvider)
 
     override val fqName: FqName
         get() = FqName(psi.qualifiedName)
 
     override val annotations: Collection<JavaAnnotation>
-        get() =
-            if (mayHaveAnnotations)
-                org.jetbrains.kotlin.load.java.structure.impl.annotations(psi.annotationList?.annotations.orEmpty(), sourceFactory)
-            else
-                emptyList()
+        get() {
+            if (!mayHaveAnnotations) {
+                return emptyList()
+            }
+
+            annotationsProvider?.getPackageAnnotations(this)?.let { return it }
+            return annotations(psi.annotationList?.annotations.orEmpty(), sourceFactory)
+        }
 
     override val annotationsByFqName: Map<FqName?, JavaAnnotation> by buildLazyValueForMap()
 }

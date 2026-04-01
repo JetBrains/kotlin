@@ -1,4 +1,4 @@
-import Enum
+import EnumModule
 import KotlinRuntime
 import Testing
 
@@ -25,6 +25,8 @@ func testEnums() throws {
 
     try #require(consumeEnumAsAny(arg: Enum.a) == 3)
     try #require(consumeEnumAsAny(arg: Enum.b) == 7)
+
+    try #require(EnumModule.enum() == Enum.a)
 }
 
 func consumeEnumAsAny(arg: Any) throws -> Int {

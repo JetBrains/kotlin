@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.WasmStandardClassIds
 
 object FirWasmImportAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         val annotation: FirAnnotation =

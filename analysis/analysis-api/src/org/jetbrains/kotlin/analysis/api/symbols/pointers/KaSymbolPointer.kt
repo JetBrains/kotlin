@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.symbols.pointers
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.utils.relfection.renderAsDataClassToString
+import org.jetbrains.kotlin.analysis.utils.reflection.renderAsDataClassToString
 
 /**
  * [KaSymbolPointer] allows to point to a [KaSymbol] and later retrieve it in another [KaSession]. A pointer is necessary because

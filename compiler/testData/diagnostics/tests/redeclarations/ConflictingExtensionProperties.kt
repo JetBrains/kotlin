@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextParameters
 // FIR_IDENTICAL
 package foo
 
@@ -28,32 +27,32 @@ val <T : Any> List<T>.sameNamedGenericsListDifferentBounds: String get() = ""
 val <T> List<T>.differentlyNamedGenericsListDifferentBounds: Int get() = 0
 val <R : Any> List<R>.differentlyNamedGenericsListDifferentBounds: String get() = ""
 
-context(Int) val <!REDECLARATION!>simpleContextReceivers<!>: Int get() = 0
-context(Int) val <!REDECLARATION!>simpleContextReceivers<!>: Int get() = 0
+context(_: Int) val <!REDECLARATION!>simpleContextReceivers<!>: Int get() = 0
+context(_: Int) val <!REDECLARATION!>simpleContextReceivers<!>: Int get() = 0
 
-context(Int) val differentTypesContextReceivers: Int get() = 0
-context(String) val differentTypesContextReceivers: Int get() = 0
+context(_: Int) val differentTypesContextReceivers: Int get() = 0
+context(_: String) val differentTypesContextReceivers: Int get() = 0
 
-context(T) val <T> <!REDECLARATION!>sameNamedGenericsContextReceivers<!>: Int get() = 0
-context(T) val <T> <!REDECLARATION!>sameNamedGenericsContextReceivers<!>: Int get() = 0
+context(_: T) val <T> <!REDECLARATION!>sameNamedGenericsContextReceivers<!>: Int get() = 0
+context(_: T) val <T> <!REDECLARATION!>sameNamedGenericsContextReceivers<!>: Int get() = 0
 
-context(T) val <T> <!REDECLARATION!>differentlyNamedGenericsContextReceivers<!>: Int get() = 0
-context(R) val <R> <!REDECLARATION!>differentlyNamedGenericsContextReceivers<!>: Int get() = 0
+context(_: T) val <T> <!REDECLARATION!>differentlyNamedGenericsContextReceivers<!>: Int get() = 0
+context(_: R) val <R> <!REDECLARATION!>differentlyNamedGenericsContextReceivers<!>: Int get() = 0
 
-context(T) val <T> sameNamedGenericsDifferentBoundsContextReceivers: Int get() = 0
-context(T) val <T : Any> sameNamedGenericsDifferentBoundsContextReceivers: String get() = ""
+context(_: T) val <T> sameNamedGenericsDifferentBoundsContextReceivers: Int get() = 0
+context(_: T) <!CONTEXTUAL_OVERLOAD_SHADOWED!>val <T : Any> sameNamedGenericsDifferentBoundsContextReceivers: String<!> get() = ""
 
-context(T) val <T> differentlyNamedGenericsDifferentBoundsContextReceivers: Int get() = 0
-context(R) val <R : Any> differentlyNamedGenericsDifferentBoundsContextReceivers: String get() = ""
+context(_: T) val <T> differentlyNamedGenericsDifferentBoundsContextReceivers: Int get() = 0
+context(_: R) <!CONTEXTUAL_OVERLOAD_SHADOWED!>val <R : Any> differentlyNamedGenericsDifferentBoundsContextReceivers: String<!> get() = ""
 
-context(List<T>) val <T> sameNamedGenericsListDifferentBoundsContextReceivers: Int get() = 0
-context(List<T>) val <T : Any> sameNamedGenericsListDifferentBoundsContextReceivers: String get() = ""
+context(_: List<T>) val <T> sameNamedGenericsListDifferentBoundsContextReceivers: Int get() = 0
+context(_: List<T>) <!CONTEXTUAL_OVERLOAD_SHADOWED!>val <T : Any> sameNamedGenericsListDifferentBoundsContextReceivers: String<!> get() = ""
 
-context(List<T>) val <T> differentlyNamedGenericsListDifferentBoundsContextReceivers: Int get() = 0
-context(List<R>) val <R : Any> differentlyNamedGenericsListDifferentBoundsContextReceivers: String get() = ""
+context(_: List<T>) val <T> differentlyNamedGenericsListDifferentBoundsContextReceivers: Int get() = 0
+context(_: List<R>) <!CONTEXTUAL_OVERLOAD_SHADOWED!>val <R : Any> differentlyNamedGenericsListDifferentBoundsContextReceivers: String<!> get() = ""
 
 val Int.extensionVsContextReceiver: Int get() = 0
-context(Int) val extensionVsContextReceiver: String get() = ""
+context(_: Int) val extensionVsContextReceiver: String get() = ""
 
 class C {
     val Int.<!REDECLARATION!>simple<!>: Int get() = 0
@@ -80,32 +79,32 @@ class C {
     val <T> List<T>.differentlyNamedGenericsListDifferentBounds: Int get() = 0
     val <R : Any> List<R>.differentlyNamedGenericsListDifferentBounds: String get() = ""
 
-    context(Int) val <!REDECLARATION!>simpleContextReceivers<!>: Int get() = 0
-    context(Int) val <!REDECLARATION!>simpleContextReceivers<!>: Int get() = 0
+    context(_: Int) val <!REDECLARATION!>simpleContextReceivers<!>: Int get() = 0
+    context(_: Int) val <!REDECLARATION!>simpleContextReceivers<!>: Int get() = 0
 
-    context(Int) val differentTypesContextReceivers: Int get() = 0
-    context(String) val differentTypesContextReceivers: Int get() = 0
+    context(_: Int) val differentTypesContextReceivers: Int get() = 0
+    context(_: String) val differentTypesContextReceivers: Int get() = 0
 
-    context(T) val <T> <!REDECLARATION!>sameNamedGenericsContextReceivers<!>: Int get() = 0
-    context(T) val <T> <!REDECLARATION!>sameNamedGenericsContextReceivers<!>: Int get() = 0
+    context(_: T) val <T> <!REDECLARATION!>sameNamedGenericsContextReceivers<!>: Int get() = 0
+    context(_: T) val <T> <!REDECLARATION!>sameNamedGenericsContextReceivers<!>: Int get() = 0
 
-    context(T) val <T> <!REDECLARATION!>differentlyNamedGenericsContextReceivers<!>: Int get() = 0
-    context(R) val <R> <!REDECLARATION!>differentlyNamedGenericsContextReceivers<!>: Int get() = 0
+    context(_: T) val <T> <!REDECLARATION!>differentlyNamedGenericsContextReceivers<!>: Int get() = 0
+    context(_: R) val <R> <!REDECLARATION!>differentlyNamedGenericsContextReceivers<!>: Int get() = 0
 
-    context(T) val <T> sameNamedGenericsDifferentBoundsContextReceivers: Int get() = 0
-    context(T) val <T : Any> sameNamedGenericsDifferentBoundsContextReceivers: String get() = ""
+    context(_: T) val <T> sameNamedGenericsDifferentBoundsContextReceivers: Int get() = 0
+    context(_: T) <!CONTEXTUAL_OVERLOAD_SHADOWED!>val <T : Any> sameNamedGenericsDifferentBoundsContextReceivers: String<!> get() = ""
 
-    context(T) val <T> differentlyNamedGenericsDifferentBoundsContextReceivers: Int get() = 0
-    context(R) val <R : Any> differentlyNamedGenericsDifferentBoundsContextReceivers: String get() = ""
+    context(_: T) val <T> differentlyNamedGenericsDifferentBoundsContextReceivers: Int get() = 0
+    context(_: R) <!CONTEXTUAL_OVERLOAD_SHADOWED!>val <R : Any> differentlyNamedGenericsDifferentBoundsContextReceivers: String<!> get() = ""
 
-    context(List<T>) val <T> sameNamedGenericsListDifferentBoundsContextReceivers: Int get() = 0
-    context(List<T>) val <T : Any> sameNamedGenericsListDifferentBoundsContextReceivers: String get() = ""
+    context(_: List<T>) val <T> sameNamedGenericsListDifferentBoundsContextReceivers: Int get() = 0
+    context(_: List<T>) <!CONTEXTUAL_OVERLOAD_SHADOWED!>val <T : Any> sameNamedGenericsListDifferentBoundsContextReceivers: String<!> get() = ""
 
-    context(List<T>) val <T> differentlyNamedGenericsListDifferentBoundsContextReceivers: Int get() = 0
-    context(List<R>) val <R : Any> differentlyNamedGenericsListDifferentBoundsContextReceivers: String get() = ""
+    context(_: List<T>) val <T> differentlyNamedGenericsListDifferentBoundsContextReceivers: Int get() = 0
+    context(_: List<R>) <!CONTEXTUAL_OVERLOAD_SHADOWED!>val <R : Any> differentlyNamedGenericsListDifferentBoundsContextReceivers: String<!> get() = ""
 
     val Int.extensionVsContextReceiver: Int get() = 0
-    context(Int) val extensionVsContextReceiver: String get() = ""
+    context(_: Int) val extensionVsContextReceiver: String get() = ""
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, nullableType, propertyDeclaration,

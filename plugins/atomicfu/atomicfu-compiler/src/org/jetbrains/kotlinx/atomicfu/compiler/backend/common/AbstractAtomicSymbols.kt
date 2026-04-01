@@ -8,8 +8,8 @@ package org.jetbrains.kotlinx.atomicfu.compiler.backend.common
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
@@ -32,11 +32,11 @@ abstract class AbstractAtomicSymbols(
     abstract val atomicLongArrayClassSymbol: IrClassSymbol
     abstract val atomicRefArrayClassSymbol: IrClassSymbol
 
-    val volatileAnnotationConstructorCall: IrConstructorCall
+    val volatileAnnotation: IrAnnotation
         get() {
             val volatileAnnotationConstructor = volatileAnnotationClass.primaryConstructor
                 ?: error("Missing constructor in Volatile annotation class")
-            return IrConstructorCallImpl.fromSymbolOwner(volatileAnnotationConstructor.returnType, volatileAnnotationConstructor.symbol)
+            return IrAnnotationImpl.fromSymbolOwner(volatileAnnotationConstructor.returnType, volatileAnnotationConstructor.symbol)
         }
 
     val invoke0Symbol = irBuiltIns.functionN(0).getSimpleFunction("invoke")!!
@@ -53,7 +53,7 @@ abstract class AbstractAtomicSymbols(
     )
 
     val arrayOfNulls by lazy {
-        context.referenceFunctions(CallableId(FqName("kotlin"), Name.identifier("arrayOfNulls"))).first()
+        context.finderForBuiltins().findFunctions(CallableId(FqName("kotlin"), Name.identifier("arrayOfNulls"))).first()
     }
 
     private val ATOMIC_ARRAY_TYPES: Set<IrClassSymbol> by lazy {

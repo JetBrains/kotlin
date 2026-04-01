@@ -17,6 +17,8 @@ import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner.Companion.normalizeForFlagFile
 import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporter
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.kotlinErrorsDir
 import org.jetbrains.kotlin.gradle.utils.kotlinSessionsDir
@@ -51,11 +53,23 @@ abstract class GradleCompileTaskProvider @Inject constructor(
 
     @get:Internal
     val projectName: Provider<String> = objectFactory
+        .property(project.name)
+
+    @get:Internal
+    val projectPath: Provider<String> = objectFactory
+        .property(project.path)
+
+    @get:Internal
+    val rootProjectName: Provider<String> = objectFactory
         .property(project.rootProject.name.normalizeForFlagFile())
 
     @get:Internal
     val buildModulesInfo: Provider<out IncrementalModuleInfoProvider> = objectFactory
         .property(incrementalModuleInfoProvider)
+
+    @get:Internal
+    internal val compilerDiagnosticsProblemsReporterFactory: Provider<CompilerDiagnosticsProblemsReporter.Factory> = objectFactory
+        .property(project.variantImplementationFactoryProvider<CompilerDiagnosticsProblemsReporter.Factory>().get())
 
     @get:Internal
     val errorsFiles: SetProperty<File> = objectFactory

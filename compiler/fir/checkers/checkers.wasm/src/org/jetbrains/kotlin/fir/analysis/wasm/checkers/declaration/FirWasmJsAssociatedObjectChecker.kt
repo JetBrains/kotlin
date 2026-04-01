@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 
 object FirWasmJsAssociatedObjectChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (declaration !is FirClass) return

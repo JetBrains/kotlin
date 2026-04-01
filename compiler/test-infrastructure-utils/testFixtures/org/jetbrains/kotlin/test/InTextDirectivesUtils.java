@@ -26,10 +26,9 @@ public final class InTextDirectivesUtils {
     public static final String DIRECTIVES_FILE_NAME = "directives.txt";
 
     public static final String IGNORE_BACKEND_DIRECTIVE_PREFIX = "// IGNORE_BACKEND: ";
-    public static final String IGNORE_BACKEND_K1_DIRECTIVE_PREFIX = "// IGNORE_BACKEND_K1: ";
     public static final String IGNORE_BACKEND_K2_DIRECTIVE_PREFIX = "// IGNORE_BACKEND_K2: ";
 
-    public static final String[] IGNORE_BACKEND_DIRECTIVE_PREFIXES = { IGNORE_BACKEND_DIRECTIVE_PREFIX, IGNORE_BACKEND_K1_DIRECTIVE_PREFIX };
+    public static final String[] IGNORE_BACKEND_DIRECTIVE_PREFIXES = { IGNORE_BACKEND_DIRECTIVE_PREFIX, IGNORE_BACKEND_K2_DIRECTIVE_PREFIX };
 
     public static final String TARGET_BACKEND_DIRECTIVE_PREFIX = "// TARGET_BACKEND: ";
     public static final String DORT_TARGET_EXACT_BACKEND_DIRECTIVE_PREFIX = "// DONT_TARGET_EXACT_BACKEND: ";

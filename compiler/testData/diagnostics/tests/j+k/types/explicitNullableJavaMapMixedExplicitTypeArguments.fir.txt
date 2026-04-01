@@ -1,0 +1,15 @@
+FILE: Test.kt
+    public final fun takeString(x: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final fun takeNullableString(x: R|kotlin/String?|): R|kotlin/Unit| {
+    }
+    public final fun test(m1: R|kotlin/collections/Map<kotlin/String, kotlin/String?>|, m2: R|kotlin/collections/Map<kotlin/String, kotlin/String>|): R|kotlin/Unit| {
+        lval a: R|kotlin/collections/Map<kotlin/String, kotlin/String?>| = Q|JavaMaps|.R|/JavaMaps.id*s|<R|kotlin/String!|, R|kotlin/String?|>(R|<local>/m1|)
+        lval b: R|kotlin/collections/Map<kotlin/String, kotlin/String>| = Q|JavaMaps|.R|/JavaMaps.id*s|<R|kotlin/String!|, R|kotlin/String!|>(R|<local>/m2|)
+        lval v1: R|kotlin/String?| = Q|JavaMaps|.R|/JavaMaps.get*s|<R|kotlin/String!|, R|kotlin/String?|>(R|<local>/m1|, String(k))
+        lval v2: R|kotlin/String| = Q|JavaMaps|.R|/JavaMaps.get*s|<R|kotlin/String!|, R|kotlin/String!|>(R|<local>/m2|, String(k))
+        R|/takeNullableString|(Q|JavaMaps|.R|/JavaMaps.get*s|<R|kotlin/String!|, R|kotlin/String?|>(R|<local>/m1|, String(k)))
+        R|/takeString<Inapplicable(UNSAFE_CALL): /takeString>#|(Q|JavaMaps|.R|/JavaMaps.get*s|<R|kotlin/String!|, R|kotlin/String?|>(R|<local>/m1|, String(k)))
+        lval badValue: R|kotlin/String| = Q|JavaMaps|.R|/JavaMaps.get*s|<R|kotlin/String!|, R|kotlin/String?|>(R|<local>/m1|, String(k))
+        lval badMap: R|kotlin/collections/Map<kotlin/String, kotlin/String>| = Q|JavaMaps|.R|/JavaMaps.id*s|<R|kotlin/String!|, R|kotlin/String?|>(R|<local>/m1|)
+    }

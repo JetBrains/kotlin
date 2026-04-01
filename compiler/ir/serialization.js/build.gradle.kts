@@ -1,6 +1,11 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+    id("test-inputs-check")
+    id("project-tests-convention")
+}
+
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
 }
 
 dependencies {
@@ -13,13 +18,18 @@ dependencies {
     implementation(project(":compiler:fir:fir-serialization"))
     implementation(project(":wasm:wasm.config"))
     implementation(project(":compiler:cli-base"))
+    implementation(project(":core:compiler.common.wasm"))
 
     compileOnly(intellijCore())
-    compileOnly(project(":compiler:cli-common"))
+
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(testFixtures(project(":compiler:tests-common-new")))
+    testImplementation(testFixtures(project(":compiler:ir.serialization.common")))
 }
 
 optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { projectDefault() }
+    "test" { projectDefault() }
 }

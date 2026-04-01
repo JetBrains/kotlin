@@ -1,41 +1,12 @@
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 
 plugins {
     `maven-publish`
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 val jsStdlibSources = "${projectDir}/../stdlib/js/src"
-
-val kotlinStdlibJs by configurations.creating {
-    isCanBeResolved = true
-    isCanBeConsumed = false
-    attributes {
-        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-        attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
-        attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
-        // the workaround below for KT-65266 expects a packed artifact
-        val klibPackagingAttribute = Attribute.of("org.jetbrains.kotlin.klib.packaging", String::class.java)
-        attribute(klibPackagingAttribute, "packed")
-    }
-}
-
-dependencies {
-    kotlinStdlibJs(kotlinStdlib())
-}
-
-// Workaround for #KT-65266
-val prepareFriendStdlibJs = tasks.register<Zip>("prepareFriendStdlibJs") {
-    dependsOn(kotlinStdlibJs)
-    from { zipTree(kotlinStdlibJs.singleFile).matching { exclude("META-INF/MANIFEST.MF") } }
-    destinationDirectory = layout.buildDirectory.map { it.dir("libs") }
-    archiveFileName = "friend-kotlin-stdlib-js.klib"
-}
 
 @Suppress("UNUSED_VARIABLE")
 kotlin {
@@ -43,8 +14,8 @@ kotlin {
     js()
 
     sourceSets {
-        val main by getting {
-            if (!kotlinBuildProperties.isInIdeaSync) {
+        jsMain {
+            if (!kotlinBuildProperties.isInIdeaSync.get()) {
                 kotlin.srcDir("$jsStdlibSources/org.w3c")
                 kotlin.srcDir("$jsStdlibSources/kotlinx")
                 kotlin.srcDir("$jsStdlibSources/kotlin/browser")
@@ -64,13 +35,11 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile>().configureEa
             "-opt-in=kotlin.ExperimentalMultiplatform",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
         )
-    val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
+    val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames.get())
     if (renderDiagnosticNames) {
         compilerOptions.freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
     }
-    dependsOn(prepareFriendStdlibJs)
-    libraries.setFrom(prepareFriendStdlibJs)
-    friendPaths.setFrom(libraries)
+    friendPaths.from(libraries)
     compilerOptions.allWarningsAsErrors.set(true)
 }
 
@@ -81,7 +50,8 @@ val emptyJavadocJar by tasks.registering(Jar::class) {
 publishing {
     publications {
         val mavenPublication = register<MavenPublication>("maven") {
-            from(components["kotlin"])
+            // FIXME: Remove customized publication in KT-83065
+            from(kotlin.js().components.single())
             configureKotlinPomAttributes(project, "Kotlin DOM API compatibility library", packaging = "klib")
         }
         withType<MavenPublication> {

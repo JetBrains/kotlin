@@ -1,9 +1,10 @@
 KtPostfixExpression(31,34): 'i++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
             expression = i
@@ -17,11 +18,15 @@ KtPostfixExpression(31,34): 'i++'
             valueParameters = []
             contextParameters = []
             callableId = kotlin/Int.inc
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {}
         precedence = POSTFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      variableCall = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
+        isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = i
           receiverType = null
@@ -29,4 +34,5 @@ KtPostfixExpression(31,34): 'i++'
           symbol = var i: kotlin.Int
           contextParameters = []
           callableId = null
+        typeArgumentsMapping = {}
     isInBestCandidates = true

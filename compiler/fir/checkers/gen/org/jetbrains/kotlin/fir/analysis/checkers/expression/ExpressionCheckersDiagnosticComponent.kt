@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 @OptIn(CheckersComponentInternal::class)
 class ExpressionCheckersDiagnosticComponent(
     session: FirSession,
-    reporter: DiagnosticReporter,
+    reporter: PendingDiagnosticReporter,
     private val checkers: ExpressionCheckers,
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
-    constructor(session: FirSession, reporter: DiagnosticReporter, mppKind: MppCheckerKind) : this(
+    constructor(session: FirSession, reporter: PendingDiagnosticReporter, mppKind: MppCheckerKind) : this(
         session,
         reporter,
         when (mppKind) {
@@ -85,6 +85,22 @@ class ExpressionCheckersDiagnosticComponent(
 
     override fun visitBlock(block: FirBlock, data: CheckerContext) {
         checkers.allBlockCheckers.check(block, data)
+    }
+
+    override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: CheckerContext) {
+        checkers.allReplDeclarationReferenceCheckers.check(replDeclarationReference, data)
+    }
+
+    override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: CheckerContext) {
+        checkers.allReplPropertyInitializerCheckers.check(replPropertyInitializer, data)
+    }
+
+    override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: CheckerContext) {
+        checkers.allReplPropertyDelegateCheckers.check(replPropertyDelegate, data)
+    }
+
+    override fun visitReplExpressionReference(replExpressionReference: FirReplExpressionReference, data: CheckerContext) {
+        checkers.allReplExpressionReferenceCheckers.check(replExpressionReference, data)
     }
 
     override fun visitAnnotation(annotation: FirAnnotation, data: CheckerContext) {
@@ -175,8 +191,8 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allBasicExpressionCheckers.check(varargArgumentsExpression, data)
     }
 
-    override fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(samConversionExpression, data)
+    override fun visitFunctionTypeConversionExpression(functionTypeConversionExpression: FirFunctionTypeConversionExpression, data: CheckerContext) {
+        checkers.allBasicExpressionCheckers.check(functionTypeConversionExpression, data)
     }
 
     override fun visitWrappedExpression(wrappedExpression: FirWrappedExpression, data: CheckerContext) {

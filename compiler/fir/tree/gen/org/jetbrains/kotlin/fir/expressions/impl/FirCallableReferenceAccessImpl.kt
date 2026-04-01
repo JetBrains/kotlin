@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -41,6 +38,7 @@ internal class FirCallableReferenceAccessImpl(
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var calleeReference: FirNamedReference,
     override var hasQuestionMarkAtLHS: Boolean,
+    override var errorArgumentList: FirArgumentList?,
 ) : FirCallableReferenceAccess() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -55,6 +53,7 @@ internal class FirCallableReferenceAccessImpl(
             extensionReceiver?.accept(visitor, data)
         }
         calleeReference.accept(visitor, data)
+        errorArgumentList?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccessImpl {
@@ -69,6 +68,7 @@ internal class FirCallableReferenceAccessImpl(
             extensionReceiver = extensionReceiver?.transform(transformer, data)
         }
         transformCalleeReference(transformer, data)
+        transformErrorArgumentList(transformer, data)
         return this
     }
 
@@ -94,6 +94,11 @@ internal class FirCallableReferenceAccessImpl(
 
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccessImpl {
         calleeReference = calleeReference.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformErrorArgumentList(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccessImpl {
+        errorArgumentList = errorArgumentList?.transform(transformer, data)
         return this
     }
 
@@ -145,5 +150,9 @@ internal class FirCallableReferenceAccessImpl(
 
     override fun replaceHasQuestionMarkAtLHS(newHasQuestionMarkAtLHS: Boolean) {
         hasQuestionMarkAtLHS = newHasQuestionMarkAtLHS
+    }
+
+    override fun replaceErrorArgumentList(newErrorArgumentList: FirArgumentList?) {
+        errorArgumentList = newErrorArgumentList
     }
 }

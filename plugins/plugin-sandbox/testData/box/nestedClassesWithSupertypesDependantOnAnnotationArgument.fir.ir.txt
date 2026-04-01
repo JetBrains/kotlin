@@ -21,9 +21,9 @@ FILE fqName:<root> fileName:/nestedClassesWithSupertypesDependantOnAnnotationArg
           CONST String type=kotlin.String value="OK"
   CLASS INTERFACE name:Some modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     annotations:
-      AddNestedClassesBasedOnArgument(kClass = CLASS_REFERENCE 'CLASS INTERFACE name:A modality:ABSTRACT visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.A>)
+      AddNestedClassesBasedOnArgument(kClass = A::class)
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Some
-    CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.NestedClassGeneratorWithSupertypesDependantOnAnnotationArgument.Key] INTERFACE name:Generated modality:ABSTRACT visibility:public superTypes:[<root>.A]
+    CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.NestedClassGeneratorWithSupertypesDependantOnAnnotationArgument.NestedClassGeneratorWithSupertypesDependantOnAnnotationArgumentGeneratorKey] INTERFACE name:Generated modality:ABSTRACT visibility:public superTypes:[<root>.A]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Some.Generated
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any

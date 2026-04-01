@@ -1,9 +1,12 @@
+// WITH_PLATFORM_LIBS
+
 import kotlin.test.*
 import kotlin.experimental.*
 import kotlin.native.concurrent.*
 import kotlin.native.ref.*
 import kotlin.native.runtime.*
 import kotlinx.cinterop.*
+import platform.posix.*
 
 @ExperimentalForeignApi
 class Data {
@@ -63,7 +66,13 @@ val weakReference = WeakReference(Data())
 
 @Test
 @OptIn(ExperimentalNativeApi::class, NativeRuntimeApi::class, ExperimentalForeignApi::class)
-fun dumpToStdOut() {
+fun dumpToFile() {
+    val file = requireNotNull(tmpfile()) { "Could not open temporary file" }
+    val fd = fileno(file)
+    assertTrue(fd > -1, "Failed to obtain a temporary file descriptor")
+
     val local = Data()
-    assertTrue(Debugging.dumpMemory(1))
+    assertTrue(Debugging.dumpMemory(fd.toLong()))
+
+    fclose(file)
 }

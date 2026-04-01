@@ -35,8 +35,8 @@ internal object KaptTypeMapper {
         override fun preprocessType(kotlinType: KotlinType): KotlinType? = null
     }
 
-    fun mapType(type: KotlinType, mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type =
-        mapType(type, AsmTypeFactory, mode, configuration, null)
+    fun mapType(type: KotlinType): Type =
+        mapType(type, AsmTypeFactory, TypeMappingMode.DEFAULT, configuration, null)
 
     fun mapKClassValue(kClassValue: KClassValue): Type {
         val value = kClassValue.value

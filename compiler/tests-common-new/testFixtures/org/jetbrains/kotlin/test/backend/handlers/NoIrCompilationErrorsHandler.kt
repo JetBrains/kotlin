@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.BackendInputHandler
@@ -30,7 +29,7 @@ class NoIrCompilationErrorsHandler(testServices: TestServices) : BackendInputHan
         get() = listOf(service(::DiagnosticsService))
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        val diagnosticsByFilePath = info.diagnosticReporter.diagnosticsByFilePath
+        val diagnosticsByFilePath = info.diagnosticReporter.diagnosticsByFile
         val diagnosticsService = testServices.diagnosticsService
 
         for ((file, diagnostics) in diagnosticsByFilePath) {
@@ -39,9 +38,10 @@ class NoIrCompilationErrorsHandler(testServices: TestServices) : BackendInputHan
                     diagnostic.severity == Severity.ERROR &&
                     diagnosticsService.shouldRenderDiagnostic(module, diagnostic.factoryName, diagnostic.severity)
                 ) {
-                    val severity = AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity).toString().toLowerCaseAsciiOnly()
+                    val factoryName = diagnostic.factoryName
+                    val severity = diagnostic.severity.toCompilerMessageSeverity().toString().toLowerCaseAsciiOnly()
                     val message = diagnostic.renderMessage()
-                    error("/$file:${diagnostic.firstRange}: $severity: $message")
+                    error("/${file?.path}:[$factoryName] ${diagnostic.firstRange}: $severity: $message")
                 }
             }
         }

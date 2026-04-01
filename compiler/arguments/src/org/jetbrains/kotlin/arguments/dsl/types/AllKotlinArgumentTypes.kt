@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.arguments.dsl.types
 
 import kotlinx.serialization.Serializable
-import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsExplicitApiModeSerializer
-import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsJvmTargetSerializer
-import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsKlibIrInlinerModeSerializer
-import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsReturnValueCheckerModeSerializer
-import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsKotlinVersionSerializer
+import org.jetbrains.kotlin.arguments.serialization.json.*
 
 /**
  * Class containing all non-primitive compiler argument types which are serialized in more detailed form.
@@ -32,4 +28,44 @@ class AllKotlinArgumentTypes {
 
     @Serializable(with = AllDetailsKlibIrInlinerModeSerializer::class)
     val klibIrInlinerMode = KlibIrInlinerMode.entries.toSet()
+
+    @Serializable(with = AllDetailsJvmDefaultModeSerializer::class)
+    val jvmDefaultMode = JvmDefaultMode.entries.toSet()
+
+    @Serializable(with = AllDetailsAbiStabilityModeSerializer::class)
+    val abiStabilityMode = AbiStabilityMode.entries.toSet()
+
+    @Serializable(with = AllDetailsAssertionsModeSerializer::class)
+    val assertionsMode = AssertionsMode.entries.toSet()
+
+    @Serializable(with = AllDetailsJspecifyAnnotationsModeSerializer::class)
+    val jspecifyAnnotationsMode = JspecifyAnnotationsMode.entries.toSet()
+
+    @Serializable(with = AllDetailsLambdasModeSerializer::class)
+    val lambdasMode = LambdasMode.entries.toSet()
+
+    @Serializable(with = AllDetailsSamConversionsModeSerializer::class)
+    val samConversionsMode = SamConversionsMode.entries.toSet()
+
+    @Serializable(with = AllDetailsStringConcatModeSerializer::class)
+    val stringConcatMode = StringConcatMode.entries.toSet()
+
+    @Serializable(with = AllDetailsCompatqualAnnotationsModeSerializer::class)
+    val compatqualAnnotationsMode = CompatqualAnnotationsMode.entries.toSet()
+
+    @Serializable(with = AllDetailsWhenExpressionsModeSerializer::class)
+    val whenExpressionsMode = WhenExpressionsMode.entries.toSet()
+
+    @Serializable(with = AllDetailsJdkReleaseSerializer::class)
+    val jdkRelease = JdkRelease.entries.toSet()
+
+    @Serializable(with = AllDetailsAnnotationDefaultTargetModeSerializer::class)
+    val annotationDefaultTarget = AnnotationDefaultTargetMode.entries.toSet()
+
+    @Serializable(with = AllDetailsNameBasedDestructuringModeSerializer::class)
+    val nameBasedDestructuring = NameBasedDestructuringMode.entries.toSet()
+
+    @Serializable(with = AllDetailsVerifyIrModeSerializer::class)
+    val verifyIrMode = VerifyIrMode.entries.toSet()
+
 }

@@ -6,6 +6,7 @@ KaJavaFieldSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   isStatic: true
   isVal: false
   location: CLASS

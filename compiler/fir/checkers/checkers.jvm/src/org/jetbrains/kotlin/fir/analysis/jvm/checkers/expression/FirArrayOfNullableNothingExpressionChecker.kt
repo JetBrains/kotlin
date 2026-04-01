@@ -14,18 +14,17 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.isArrayTypeOrNullableArrayType
-import org.jetbrains.kotlin.fir.types.isNullableNothing
-import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.type
+import org.jetbrains.kotlin.fir.types.*
 
 object FirArrayOfNullableNothingExpressionChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
-        if (!LanguageFeature.NullableNothingInReifiedPosition.isEnabled()) return
+        if (LanguageFeature.NullableNothingInReifiedPosition.isDisabled()) return
         val resolvedType = expression.resolvedType
         checkTypeAndTypeArguments(resolvedType, expression.calleeReference.source)
     }

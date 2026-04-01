@@ -1,6 +1,7 @@
 // LANGUAGE: +ContextParameters
 // IGNORE_BACKEND_K1: ANY
 
+// FILE: lib.kt
 class A
 
 class Example {
@@ -8,6 +9,7 @@ class Example {
     inline fun fn(x: Int) {}
 }
 
+// FILE: main.kt
 fun test() {
     with(A()) {
         Example().fn(1)

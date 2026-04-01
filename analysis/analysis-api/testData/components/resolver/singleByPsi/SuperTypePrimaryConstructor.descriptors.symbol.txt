@@ -1,0 +1,5 @@
+KtNameReferenceExpression(31,32): 'A'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): A
+    ]

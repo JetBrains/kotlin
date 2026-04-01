@@ -1,0 +1,35 @@
+<caret_1>:
+  KDocName(652,662): 'funWarning'
+    NO_CANDIDATES
+
+<caret_2>:
+  KDocName(668,677): 'funHidden'
+    NO_CANDIDATES
+
+<caret_3>:
+  KDocName(683,691): 'funError'
+    NO_CANDIDATES
+
+<caret_4>:
+  KDocName(697,709): 'ClassWarning'
+    NO_CANDIDATES
+
+<caret_5>:
+  KDocName(715,726): 'ClassHidden'
+    NO_CANDIDATES
+
+<caret_6>:
+  KDocName(732,742): 'ClassError'
+    NO_CANDIDATES
+
+<caret_7>:
+  KDocName(748,759): 'propWarning'
+    NO_CANDIDATES
+
+<caret_8>:
+  KDocName(765,775): 'propHidden'
+    NO_CANDIDATES
+
+<caret_9>:
+  KDocName(781,790): 'propError'
+    NO_CANDIDATES

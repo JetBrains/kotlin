@@ -2,5 +2,9 @@ KtNameReferenceExpression(31,36): 'Array'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<OTHER_ERROR: Inapplicable candidate>
     symbols:
+      (in kotlin.Array) constructor <T>(size: kotlin.Int, init: (kotlin.Int) -> T)
+    resolveToSymbols:
       (in kotlin) class Array<T> : kotlin.Cloneable, java.io.Serializable

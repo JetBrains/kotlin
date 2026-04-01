@@ -1,0 +1,41 @@
+/incorrectCollections.kt:(197,201): error: Null cannot be a value of a non-null type 'uninferred T (of fun <T> listOf)'.
+
+/incorrectCollections.kt:(237,241): error: Null cannot be a value of a non-null type 'uninferred T (of fun <T> mutableListOf)'.
+
+/incorrectCollections.kt:(269,270): error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
+
+/incorrectCollections.kt:(305,323): error: Argument type mismatch: actual type is 'CharSequence', but 'String' was expected.
+
+/incorrectCollections.kt:(353,355): error: Argument type mismatch: actual type is 'Long', but 'Int' was expected.
+
+/incorrectCollections.kt:(357,359): error: Argument type mismatch: actual type is 'Long', but 'Int' was expected.
+
+/incorrectCollections.kt:(361,363): error: Argument type mismatch: actual type is 'Long', but 'Int' was expected.
+
+/incorrectCollections.kt:(399,401): error: Argument type mismatch: actual type is 'List<uninferred T (of fun <T> listOf)>', but 'Int' was expected.
+
+/incorrectCollections.kt:(399,401): error: Cannot infer type for type parameter 'T'. Specify it explicitly.
+
+/incorrectCollections.kt:(427,429): error: Argument type mismatch: actual type is 'List<uninferred T (of fun <T> listOf)>', but 'Int' was expected.
+
+/incorrectCollections.kt:(427,429): error: Cannot infer type for type parameter 'T'. Specify it explicitly.
+
+/incorrectCollections.kt:(455,458): error: Argument type mismatch: actual type is 'Double', but 'Long' was expected.
+
+/incorrectCollections.kt:(485,498): error: Argument type mismatch: actual type is 'Int', but 'Short' was expected.
+
+/incorrectCollections.kt:(582,586): error: Argument type mismatch: actual type is 'Unit', but 'Boolean' was expected.
+
+/incorrectCollections.kt:(613,636): error: Argument type mismatch: actual type is 'java.lang.Float', but 'kotlin.Float' was expected.
+
+/incorrectCollections.kt:(621,636): warning: This class is not recommended for use in Kotlin. Use 'kotlin.Float' instead.
+
+/incorrectCollections.kt:(664,666): error: Argument type mismatch: actual type is 'Int', but 'Double' was expected.
+
+/incorrectCollections.kt:(699,701): error: Argument type mismatch: actual type is 'Int', but 'UInt' was expected.
+
+/incorrectCollections.kt:(728,731): error: Argument type mismatch: actual type is 'Long', but 'ULong' was expected.
+
+/incorrectCollections.kt:(759,771): error: Argument type mismatch: actual type is 'Short', but 'UShort' was expected.
+
+/incorrectCollections.kt:(798,800): error: Argument type mismatch: actual type is '() -> Unit', but 'UByte' was expected.

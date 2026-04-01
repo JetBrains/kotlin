@@ -21,6 +21,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.repository.ComponentDependency;
+import org.jetbrains.kotlin.cli.CompilerConfigurationCreationKt;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
@@ -159,7 +160,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
         try {
             MavenPluginLogMessageCollector messageCollector = new MavenPluginLogMessageCollector(getLog());
 
-            CompilerConfiguration configuration = new CompilerConfiguration();
+            CompilerConfiguration configuration = CompilerConfigurationCreationKt.create(CompilerConfiguration.Companion);
 
             configuration.put(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
             configuration.put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, true);

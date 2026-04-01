@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckersDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckersDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckersDiagnosticComponent
-import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 import org.jetbrains.kotlin.fir.analysis.collectors.CliDiagnosticsCollector
+import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
 object DiagnosticComponentsFactory {
     private fun createAllDiagnosticComponents(
         session: FirSession,
-        reporter: DiagnosticReporter,
+        reporter: PendingDiagnosticReporter,
         mppKind: MppCheckerKind,
     ): DiagnosticCollectorComponents {
         val regularComponents = buildList {

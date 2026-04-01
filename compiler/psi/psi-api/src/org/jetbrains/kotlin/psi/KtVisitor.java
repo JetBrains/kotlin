@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -107,6 +107,11 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitKtElement(classBody, data);
     }
 
+    @KtExperimentalApi
+    public R visitCompanionBlock(@NotNull KtCompanionBlock companionBlock, D data) {
+        return visitKtElement(companionBlock, data);
+    }
+
     public R visitModifierList(@NotNull KtModifierList list, D data) {
         return visitKtElement(list, data);
     }
@@ -167,8 +172,16 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitSuperTypeListEntry(specifier, data);
     }
 
+    /**
+     * The visitor returns null since {@link KtContextReceiverList} invoke both {@link #visitContextParameterList} and {@link #visitContextReceiverList}.
+     * Because of this, the visitor implementation must not implement both methods at the same time.
+     */
     public R visitContextReceiverList(@NotNull KtContextReceiverList contextReceiverList, D data) {
-        return visitKtElement(contextReceiverList, data);
+        return null;
+    }
+
+    public R visitContextParameterList(@NotNull KtContextParameterList contextParameterList, D data) {
+        return visitKtElement(contextParameterList, data);
     }
 
     public R visitContextReceiver(@NotNull KtContextReceiver contextReceiver, D data) {
@@ -423,6 +436,10 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitTypeElement(type, data);
     }
 
+    /**
+     * @deprecated This method is obsolete because {@link KtSelfType} is obsolete.
+     */
+    @Deprecated
     public R visitSelfType(@NotNull KtSelfType type, D data) {
         return visitTypeElement(type, data);
     }

@@ -19,3 +19,6 @@ class A {
     lateinit var f: A
 }
 
+
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: A.class[foo;y]

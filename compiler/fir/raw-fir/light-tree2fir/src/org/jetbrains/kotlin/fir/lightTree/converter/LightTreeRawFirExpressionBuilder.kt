@@ -194,6 +194,7 @@ class LightTreeRawFirExpressionBuilder(
             }
         }
 
+
         val expressionSource = lambdaExpression.toFirSourceElement()
         val target: FirFunctionTarget
         val anonymousFunction = buildAnonymousFunction {
@@ -618,15 +619,30 @@ class LightTreeRawFirExpressionBuilder(
         var hasQuestionMarkAtLHS = false
         var firReceiverExpression: FirExpression? = null
         lateinit var namedReference: FirNamedReference
-        callableReferenceExpression.forEachChildren {
-            when (it.tokenType) {
+        var errorArgumentListNode: LighterASTNode? = null
+
+        for (child in callableReferenceExpression.getChildrenAsArray()) {
+            if (child == null) break
+            when (child.tokenType) {
                 COLONCOLON -> isReceiver = false
                 QUEST -> hasQuestionMarkAtLHS = true
-                else -> if (it.isExpression()) {
+
+                // In invalid code like `::foo(args)`, the argument list is parsed
+                // inside an ERROR_ELEMENT child of the callable reference expression
+                TokenType.ERROR_ELEMENT -> {
+                    for (errorChild in child.getChildrenAsArray()) {
+                        if (errorChild?.tokenType == VALUE_ARGUMENT_LIST) {
+                            errorArgumentListNode = errorChild
+                            break
+                        }
+                    }
+                }
+
+                else -> if (child.isExpression()) {
                     if (isReceiver) {
-                        firReceiverExpression = getAsFirExpression(it, "Incorrect receiver expression")
+                        firReceiverExpression = getAsFirExpression(child, "Incorrect receiver expression")
                     } else {
-                        namedReference = createSimpleNamedReference(it.toFirSourceElement(), it)
+                        namedReference = createSimpleNamedReference(child.toFirSourceElement(), child)
                     }
                 }
             }
@@ -637,6 +653,12 @@ class LightTreeRawFirExpressionBuilder(
             calleeReference = namedReference
             explicitReceiver = firReceiverExpression
             this.hasQuestionMarkAtLHS = hasQuestionMarkAtLHS
+            errorArgumentListNode?.let {
+                errorArgumentList = buildArgumentList {
+                    source = it.toFirSourceElement()
+                    arguments += convertValueArguments(it)
+                }
+            }
         }
     }
 
@@ -1711,7 +1733,9 @@ class LightTreeRawFirExpressionBuilder(
         script: LighterASTNode,
         scriptSource: KtSourceElement,
         fileName: String,
-        setup: FirReplSnippetBuilder.() -> Unit,
+        snippetSetup: FirReplSnippetBuilder.() -> Unit,
+        functionBodySetup: FirBlockBuilder.() -> Unit,
+        statementsSetup: MutableList<FirElement>.() -> Unit,
     ): FirReplSnippet {
         shouldNotBeCalled()
     }

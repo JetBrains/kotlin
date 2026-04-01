@@ -1,3 +1,19 @@
-(Full dump is not available: Parent of element (TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:true) is not initialized.
-Please assign it explicitly or use utility such as IrElement.patchDeclarationParents().)
 MODULE_FRAGMENT
+  FILE fqName:<root> fileName:fragment.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL returnType:kotlin.String
+        EXPRESSION_BODY
+          BLOCK type=kotlin.String origin=null
+            CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
+              ARG <this>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
+                ARG <this>: CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.reflect.KClass' type=kotlin.String origin=null
+                  ARG <this>: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                    CLASS_REFERENCE 'TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:true' type=kotlin.reflect.KClass<T1 of <root>.Foo1Kt.foo1>
+                ARG other: CONST String type=kotlin.String value="_"
+              ARG other: CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.reflect.KClass' type=kotlin.String origin=null
+                ARG <this>: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                  CLASS_REFERENCE 'TYPE_PARAMETER name:T2 index:1 variance: superTypes:[kotlin.Any?] reified:true' type=kotlin.reflect.KClass<T2 of <root>.Foo1Kt.foo1>

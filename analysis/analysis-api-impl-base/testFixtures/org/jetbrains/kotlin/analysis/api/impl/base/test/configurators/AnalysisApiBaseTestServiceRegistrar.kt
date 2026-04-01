@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.configurators
 
+import com.intellij.diagnostic.PluginException
+import com.intellij.diagnostic.PluginProblemReporter
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
@@ -167,7 +169,7 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             registerService(KotlinDeclarationProviderMerger::class.java, KotlinStandaloneDeclarationProviderMerger(project))
             registerService(
                 KotlinPackageProviderFactory::class.java,
-                KotlinStandalonePackageProviderFactory(project, testKtFiles + ktFilesForBinaries)
+                KotlinStandalonePackageProviderFactory(project, testKtFiles + ktFilesForBinaries, sharedBinaryRoots),
             )
             registerService(KotlinPackageProviderMerger::class.java, KotlinStandalonePackageProviderMerger(project))
         }
@@ -205,5 +207,14 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
 
             registerExtension(ClsDecompilerImpl(), LoadingOrder.FIRST, applicationDisposable)
         }
+
+        // To properly handle exceptions from the stub builder
+        @Suppress("UnstableApiUsage")
+        application.registerService(
+            PluginProblemReporter::class.java,
+            PluginProblemReporter { errorMessage, cause, _ ->
+                PluginException(errorMessage, cause, null)
+            },
+        )
     }
 }

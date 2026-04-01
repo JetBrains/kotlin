@@ -1,0 +1,17 @@
+<caret_1>:
+  KDocName(14,18): 'this'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: null
+      symbols:
+        Nothing (Unresolved reference)
+
+<caret_2>:
+  KDocName(32,36): 'this'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      attempt: null
+      symbols:
+        Nothing (Unresolved reference)

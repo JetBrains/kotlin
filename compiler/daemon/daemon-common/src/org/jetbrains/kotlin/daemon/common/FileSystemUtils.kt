@@ -83,3 +83,4 @@ object FileSystem {
     }
 }
 
+internal const val MEGABYTE: Long = 1 shl 20

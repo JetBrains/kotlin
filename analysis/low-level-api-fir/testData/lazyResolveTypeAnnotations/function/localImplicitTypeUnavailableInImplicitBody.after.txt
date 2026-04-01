@@ -1,72 +1,72 @@
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>>?
   context -> FirNamedFunctionSymbol second/check
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>
   context -> FirNamedFunctionSymbol second/check
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String
   context -> FirNamedFunctionSymbol second/check
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>>?
   context -> FirNamedFunctionSymbol second/check
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>
   context -> FirNamedFunctionSymbol second/check
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String
   context -> FirNamedFunctionSymbol second/check
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>>?
   context -> FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>
   context -> FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String
   context -> FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>>?
   context -> FirNamedFunctionSymbol <local>/bar
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>
   context -> FirNamedFunctionSymbol <local>/bar
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String
   context -> FirNamedFunctionSymbol <local>/bar
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>>?
   context -> FirNamedFunctionSymbol <local>/foo
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>
   context -> FirNamedFunctionSymbol <local>/foo
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String
   context -> FirNamedFunctionSymbol <local>/foo
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>>?
   context -> FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>
   context -> FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
-@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String
   context -> FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
@@ -81,14 +81,14 @@ FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailableInImplicitBody.kt
 
     }
     public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> lambda([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| { LAZY_BLOCK }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun check(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| {
-        ^check R|second/lambda|<R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lambda@fun <anonymous>(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| <inline=NoInline>  {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun check(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>>?| {
+        ^check R|second/lambda|<R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>>?|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lambda@fun <anonymous>(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>>?| <inline=NoInline>  {
             local final [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
                 public [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|<local>/A| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final [ResolvedTo(RAW_FIR)] fun bar(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| {
+                public final [ResolvedTo(RAW_FIR)] fun bar(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>>?| {
                     ^bar this@R|<local>/A|.R|<local>/A.B.B|().R|<local>/foo|()
                 }
 
@@ -97,7 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailableInImplicitBody.kt
                         super<R|kotlin/Any|>()
                     }
 
-                    public final [ResolvedTo(RAW_FIR)] fun foo(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| {
+                    public final [ResolvedTo(RAW_FIR)] fun foo(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|) [evaluated = <getClass>(Q|<local>/A.B.C|)])  kotlin/String>>?| {
                         ^foo Null(null)
                     }
 

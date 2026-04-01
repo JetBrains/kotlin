@@ -1,10 +1,11 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.build.foreign.CheckForeignClassUsageTask
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
-    id("org.jetbrains.kotlinx.binary-compatibility-validator")
+    id("kotlin-git.gradle-build-conventions.foreign-class-usage-checker")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 kotlin {
@@ -14,6 +15,9 @@ kotlin {
 dependencies {
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
+    compileOnly(project(":core:language.model"))
+    compileOnly(project(":core:language.targets"))
+    compileOnly(project(":core:language.version-settings"))
     compileOnly(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:backend"))
     compileOnly(project(":core:compiler.common"))
@@ -29,37 +33,42 @@ dependencies {
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 
     testImplementation(testFixtures(project(":compiler:psi:psi-api")))
     testImplementation(testFixtures(project(":compiler:tests-common")))
 }
 
+private val stableNonPublicMarkers = listOf(
+    "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+    "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+    "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+    "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+    "org.jetbrains.kotlin.analysis.api.KaPlatformInterface", // Platform interface is not stable yet
+    "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
+)
+
 kotlin {
     explicitApi()
+
+    @OptIn(ExperimentalAbiValidation::class)
+    abiValidation {
+        filters {
+            exclude.annotatedWith.addAll(stableNonPublicMarkers)
+        }
+    }
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" { none() }
 }
-
-apiValidation {
-    nonPublicMarkers += listOf(
-        "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
-        "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
-        "org.jetbrains.kotlin.analysis.api.KaIdeApi",
-        "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
-        "org.jetbrains.kotlin.analysis.api.KaPlatformInterface", // Platform interface is not stable yet
-        "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
-    )
-}
-
-testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        workingDir = rootDir
-    }
+    testCodebaseTask()
+}
 
-    withJvmStdlibAndReflect()
+val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {
+    outputFile = file("api/analysis-api.foreign")
+    nonPublicMarkers.addAll(stableNonPublicMarkers)
 }

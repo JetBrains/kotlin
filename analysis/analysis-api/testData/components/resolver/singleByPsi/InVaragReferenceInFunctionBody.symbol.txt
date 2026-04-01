@@ -1,0 +1,5 @@
+KtNameReferenceExpression(64,65): 'a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      vararg a: test.A
+    ]

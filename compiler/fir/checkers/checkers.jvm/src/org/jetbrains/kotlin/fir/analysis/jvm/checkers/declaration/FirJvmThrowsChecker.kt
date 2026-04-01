@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds.THROWS_ANNOTATION_CLASS_ID
 
 object FirJvmThrowsChecker : FirFunctionChecker(MppCheckerKind.Platform) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
         val session = context.session

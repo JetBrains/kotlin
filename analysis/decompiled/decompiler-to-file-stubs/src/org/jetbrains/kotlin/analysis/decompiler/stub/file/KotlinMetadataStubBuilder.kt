@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,11 +19,7 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
-import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
-import org.jetbrains.kotlin.serialization.deserialization.ClassDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
-import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.deserialization.getClassId
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
 import java.io.IOException
@@ -81,9 +77,8 @@ abstract class KotlinMetadataStubBuilder : ClsStubBuilder() {
                         original = ProtoBasedClassDataFinder(file.proto, nameResolver, file.version),
                         file = virtualFile,
                     ),
-                    annotationLoader = AnnotationLoaderForStubBuilderImpl(protocol),
+                    annotationLoader = MetadataClsAnnotationLoader(protocol),
                     virtualFileForDebug = virtualFile,
-                    serializationProtocol = protocol,
                 )
 
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))

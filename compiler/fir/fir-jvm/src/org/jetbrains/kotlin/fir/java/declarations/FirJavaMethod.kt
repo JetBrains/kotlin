@@ -211,7 +211,6 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
     lateinit var symbol: FirNamedFunctionSymbol
     override val annotations: MutableList<FirAnnotation> get() = shouldNotBeCalled()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
-    var isStatic: Boolean by Delegates.notNull()
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
     var isFromSource: Boolean by Delegates.notNull()
     var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList

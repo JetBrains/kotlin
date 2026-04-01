@@ -1,0 +1,5 @@
+KtOperationReferenceExpression(138,140): '--'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.dec(<dispatch receiver>: MyClass): MyClass
+    ]

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,9 +35,9 @@ public interface KaEvaluator : KaSessionComponent {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KtExpression.evaluate(): KaConstantValue? {
-    return with(s) {
+    return with(session) {
         evaluate()
     }
 }
@@ -49,9 +49,9 @@ public fun KtExpression.evaluate(): KaConstantValue? {
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KtExpression.evaluateAsAnnotationValue(): KaAnnotationValue? {
-    return with(s) {
+    return with(session) {
         evaluateAsAnnotationValue()
     }
 }

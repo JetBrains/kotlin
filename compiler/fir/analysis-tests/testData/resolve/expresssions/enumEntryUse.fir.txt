@@ -23,7 +23,7 @@ FILE: enumEntryUse.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<TestEnum>|
-            public get(): R|kotlin/enums/EnumEntries<TestEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<TestEnum>|
 
     }
     public final fun use(some: R|kotlin/Any?|): R|kotlin/Unit| {

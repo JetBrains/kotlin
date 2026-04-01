@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.testhelpers.StubLogger
 import org.jetbrains.kotlin.util.assertThrows
-import org.junit.Before
 import java.io.File
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -30,7 +30,7 @@ class KotlinJavaToolchainJavaVersionConvertTest {
         objects.newInstance<KotlinJvmCompilerOptionsDefault>()
     }
 
-    @Before
+    @BeforeTest
     fun setUp() {
         val project = ProjectBuilder.builder().build()
         objects = project.objects

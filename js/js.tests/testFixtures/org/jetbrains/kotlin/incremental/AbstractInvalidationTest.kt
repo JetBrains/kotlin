@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,13 +10,30 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.backend.common.phaser.then
+import org.jetbrains.kotlin.cli.common.allowNoSourceFiles
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.createPerformanceManagerFor
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
+import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.FrontendFilesForPluginsGenerationPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.PipelineContext
+import org.jetbrains.kotlin.cli.pipeline.PipelineStepException
+import org.jetbrains.kotlin.cli.pipeline.web.WebFir2IrPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.WebFrontendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.WebKlibInliningPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.phaser.invokeToplevel
 import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinLibraryFile
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinSourceFileMap
@@ -36,7 +53,10 @@ import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assumptions
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.PrintStream
+import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
@@ -75,6 +95,9 @@ abstract class AbstractInvalidationTest(
     protected abstract val rootDisposable: TestDisposable
 
     protected abstract val environment: KotlinCoreEnvironment
+
+    protected open val librariesToExcludeFromStats
+        get() = setOf(stdlibKLib, kotlinTestKLib)
 
     @AfterEach
     protected fun disposeEnvironment() {
@@ -162,6 +185,8 @@ abstract class AbstractInvalidationTest(
     ): CompilerConfiguration {
         val copy = environment.configuration.copy()
         copy.moduleName = moduleName
+        copy.perModuleOutputName = moduleName
+        copy.outputName = moduleName
         copy.moduleKind = moduleKind
         copy.propertyLazyInitialization = true
         copy.sourceMap = true
@@ -255,7 +280,7 @@ abstract class AbstractInvalidationTest(
                 )
                 configuration.enableKlibRelativePaths(moduleSourceDir)
                 outputKlibFile.delete()
-                buildKlib(configuration, module, moduleSourceDir, outputKlibFile)
+                buildKlib(projStepId, buildDir, configuration, moduleSourceDir, outputKlibFile)
             }
 
             val dtsFile = moduleStep.expectedDTS.ifNotEmpty {
@@ -275,7 +300,7 @@ abstract class AbstractInvalidationTest(
             stats: KotlinSourceFileMap<EnumSet<DirtyFileState>>,
             testInfo: List<TestStepInfo>
         ) {
-            val gotStats = stats.filter { it.key.path != stdlibKLib && it.key.path != kotlinTestKLib }
+            val gotStats = stats.filter { it.key.path !in librariesToExcludeFromStats }
 
             val checkedLibs = mutableSetOf<KotlinLibraryFile>()
 
@@ -310,7 +335,8 @@ abstract class AbstractInvalidationTest(
         }
 
         protected fun prepareExternalJsFiles(): MutableList<String> {
-            return testDir.filesInDir.mapNotNullTo(mutableListOf(MODULE_EMULATION_FILE)) { file ->
+            val moduleEmulationPath = ForTestCompileRuntime.transformTestDataPath(MODULE_EMULATION_FILE)
+            return testDir.filesInDir.mapNotNullTo(mutableListOf(moduleEmulationPath.absolutePath)) { file ->
                 file.takeIf { it.name.isAllowedJsFile() }?.readText()?.let { jsCode ->
                     val externalModule = jsDir.resolve(file.name)
                     externalModule.writeAsJsModule(jsCode, file.nameWithoutExtension)
@@ -384,10 +410,53 @@ abstract class AbstractInvalidationTest(
 
     protected open fun isIgnoredTest(projectInfo: ProjectInfo) = projectInfo.muted
 
-    protected abstract fun buildKlib(
+    protected open fun createPhaseConfig(stepId: Int, buildDir: File): PhaseConfig = PhaseConfig()
+
+    private fun buildKlib(
+        stepId: Int,
+        buildDir: File,
         configuration: CompilerConfiguration,
-        moduleName: String,
         sourceDir: File,
         outputKlibFile: File,
-    )
+    ) {
+        val outputStream = ByteArrayOutputStream()
+        val messageCollector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.PLAIN_FULL_PATHS, true)
+        val performanceManager = createPerformanceManagerFor(configuration.targetPlatform ?: error("Expected a target platform"))
+        val phaseConfig = createPhaseConfig(stepId, buildDir)
+
+        configuration.messageCollector = messageCollector
+        configuration.addSourcesFromDir(sourceDir)
+        configuration.produceKlibFile = true
+        configuration.outputDir = outputKlibFile.parentFile
+        configuration.phaseConfig = phaseConfig
+        configuration.renderDiagnosticInternalName = true
+        configuration.allowNoSourceFiles = true
+
+        val klibSerializationCompoundPhase = WebFrontendPipelinePhase then
+                FrontendFilesForPluginsGenerationPipelinePhase() then
+                WebFir2IrPipelinePhase then
+                WebKlibInliningPipelinePhase then
+                WebKlibSerializationPipelinePhase
+
+        try {
+            klibSerializationCompoundPhase.invokeToplevel(
+                phaseConfig,
+                context = PipelineContext(
+                    performanceManager,
+                    kaptMode = false,
+                ),
+                input = ConfigurationPipelineArtifact(configuration, rootDisposable),
+            )
+        } catch (_: PipelineStepException) {
+            // Some pipeline step did not produce any output because of an error.
+            // Check for an error below.
+        }
+
+        CheckCompilationErrors.CheckDiagnosticCollector.reportToMessageCollector(configuration)
+
+        if (messageCollector.hasErrors()) {
+            val messages = outputStream.toByteArray().toString(Charset.forName("UTF-8"))
+            throw AssertionError("The following errors occurred serializing test klib:\n$messages")
+        }
+    }
 }

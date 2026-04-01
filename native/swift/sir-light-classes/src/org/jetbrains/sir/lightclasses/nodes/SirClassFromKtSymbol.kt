@@ -1,16 +1,17 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
+import org.jetbrains.kotlin.analysis.api.components.KaStandardTypeClassIds
 import org.jetbrains.kotlin.analysis.api.components.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.components.containingModule
 import org.jetbrains.kotlin.analysis.api.components.expandedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildInitCopy
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -103,7 +104,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
 
     override val superClass: SirNominalType? by lazyWithSessions {
         ktSymbol.superTypes.filterIsInstanceAnd<KaClassType> {
-            it.isRegularClass && it.classId != DefaultTypeClassIds.ANY
+            it.isRegularClass && it.classId != KaStandardTypeClassIds.ANY
         }.firstOrNull()?.let {
             it.symbol.toSir().allDeclarations.firstIsInstanceOrNull<SirClass>()
                 ?.also { ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name)) }
@@ -130,7 +131,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
         visibility = SirVisibility.PACKAGE // Hide from users, but not from other Swift Export modules.
         isOverride = true
         body = SirFunctionBody(listOf(
-                "super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)"
+                "super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);"
             ))
     }.also { it.parent = this }
 
@@ -171,11 +172,13 @@ internal abstract class SirAbstractClassFromKtSymbol(
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
-        listOfNotNull(sirSession.generateTypeBridge(
-            ktSymbol.classId?.asSingleFqName()?.pathSegments()?.map { it.toString() } ?: emptyList(),
-            swiftFqName = swiftFqName,
-            swiftSymbolName = objcClassSymbolName,
-        ))
+        listOfNotNull(
+            sirSession.generateTypeBridge(
+                ktSymbol.classId?.asSingleFqName(),
+                swiftFqName = swiftFqName,
+                swiftSymbolName = objcClassSymbolName,
+            )
+        )
     }
 }
 
@@ -219,10 +222,8 @@ internal class SirObjectAccessorVariableFromKtSymbol(
         override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
         override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
         override val isAsync: Boolean get() = false
-        override val fqName: List<String>? by lazyWithSessions {
-            ktSymbol
-                .classId?.asSingleFqName()
-                ?.pathSegments()?.map { it.toString() }
+        override val fqName: FqName? by lazyWithSessions {
+            ktSymbol.classId?.asSingleFqName()
                 ?: return@lazyWithSessions null
         }
     }

@@ -20,6 +20,6 @@ FILE: classInSupertypeForEnum.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<B>|
-            public get(): R|kotlin/enums/EnumEntries<B>|
+            public static get(): R|kotlin/enums/EnumEntries<B>|
 
     }

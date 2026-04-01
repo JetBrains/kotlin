@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -54,7 +54,8 @@ projectTests {
             taskName = "codegenTarget${targetInTestClass}Jvm${jvm}Test",
             jUnitMode = JUnitMode.JUnit5,
             maxMetaspaceSizeMb = 1024,
-            skipInLocalBuild = false
+            skipInLocalBuild = false,
+            defineJDKEnvVariables = listOf(jdk, JdkMajorVersion.JDK_11_0)
         ) {
             val testName = "JvmTarget${targetInTestClass}OnJvm${jvm}"
             filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.$testName")
@@ -62,6 +63,10 @@ projectTests {
             javaLauncher.set(project.getToolchainLauncherFor(jdk))
 
             systemProperty("kotlin.test.default.jvm.target", "${if (target <= 8) "1." else ""}$target")
+            if (jdk.majorVersion >= 17 && kotlinBuildProperties.isTeamcityBuild.get()) {
+                // Reduce parallelism on JDK 17+ to allow test tasks to have more memory to avoid OOM (KTI-2491), likely caused by KT-69758.
+                systemProperty("junit.jupiter.execution.parallel.config.fixed.threshold", 4)
+            }
             body()
             doFirst {
                 logger.warn("Running tests with $target target and ${javaLauncher.get().metadata.installationPath.asFile}")

@@ -1,5 +1,3 @@
-import org.gradle.internal.os.OperatingSystem
-
 plugins {
     kotlin("jvm")
     id("java-test-fixtures")
@@ -36,6 +34,7 @@ projectTests {
     testData(project(":compiler").isolated, "testData/ir")
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/loadJava")
+    testData(project(":native:native.tests").isolated, "testData/codegen")
     testData(project(":native:native.tests").isolated, "testData/klib")
     testData(project(":native:native.tests").isolated, "testData/irProvidersMismatch")
     testData(project(":native:native.tests").isolated, "testData/oneStageCompilation")
@@ -50,10 +49,6 @@ projectTests {
         // With JDK 11, some JVM args are required to silence the warnings caused by that:
         jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
 
-        extensions.configure<TestInputsCheckExtension> {
-            isNative.set(true)
-            useXcode.set(OperatingSystem.current().isMacOsX)
-        }
         // nativeTest sets workingDir to rootDir so here we need to override it
         workingDir = projectDir
         systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)

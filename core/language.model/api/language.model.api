@@ -1,0 +1,37 @@
+public final class org/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget : java/lang/Enum {
+	public static final field ALL Lorg/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget;
+	public static final field CONSTRUCTOR_PARAMETER Lorg/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget;
+	public static final field FIELD Lorg/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget;
+	public static final field FILE Lorg/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget;
+	public static final field PROPERTY Lorg/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget;
+	public static final field PROPERTY_DELEGATE_FIELD Lorg/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget;
+	public static final field PROPERTY_GETTER Lorg/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget;
+	public static final field PROPERTY_SETTER Lorg/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget;
+	public static final field RECEIVER Lorg/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget;
+	public static final field SETTER_PARAMETER Lorg/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getRenderName ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget;
+	public static fun values ()[Lorg/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget;
+}
+
+public final class org/jetbrains/kotlin/types/Variance : java/lang/Enum {
+	public static final field INVARIANT Lorg/jetbrains/kotlin/types/Variance;
+	public static final field IN_VARIANCE Lorg/jetbrains/kotlin/types/Variance;
+	public static final field OUT_VARIANCE Lorg/jetbrains/kotlin/types/Variance;
+	public final fun allowsPosition (Lorg/jetbrains/kotlin/types/Variance;)Z
+	public final fun getAllowsInPosition ()Z
+	public final fun getAllowsOutPosition ()Z
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getLabel ()Ljava/lang/String;
+	public final fun opposite ()Lorg/jetbrains/kotlin/types/Variance;
+	public final fun superpose (Lorg/jetbrains/kotlin/types/Variance;)Lorg/jetbrains/kotlin/types/Variance;
+	public fun toString ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/types/Variance;
+	public static fun values ()[Lorg/jetbrains/kotlin/types/Variance;
+}
+
+public abstract interface class org/jetbrains/kotlin/utils/DescriptionAware {
+	public abstract fun getDescription ()Ljava/lang/String;
+}
+

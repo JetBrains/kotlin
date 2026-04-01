@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.types.impl
 
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -44,7 +44,7 @@ abstract class IrDelegatedSimpleType : IrSimpleType() {
         get() = delegate.nullability
     override val arguments: List<IrTypeArgument>
         get() = delegate.arguments
-    override val annotations: List<IrConstructorCall>
+    override val annotations: List<IrAnnotation>
         get() = delegate.annotations
 
     override fun equals(other: Any?): Boolean = delegate == other
@@ -57,7 +57,7 @@ private class IrSimpleTypeImpl(
     classifier: IrClassifierSymbol,
     nullability: SimpleTypeNullability,
     override val arguments: List<IrTypeArgument>,
-    override val annotations: List<IrConstructorCall>,
+    override val annotations: List<IrAnnotation>,
 ) : IrAbstractSimpleType(classifier, nullability) {
 }
 
@@ -65,7 +65,7 @@ private class IrSimpleTypeOnlyClassifierImpl(
     classifier: IrClassifierSymbol,
     nullability: SimpleTypeNullability,
 ) : IrAbstractSimpleType(classifier, nullability) {
-    override val annotations: List<IrConstructorCall> get() = emptyList()
+    override val annotations: List<IrAnnotation> get() = emptyList()
     override val arguments: List<IrTypeArgument> get() = emptyList()
 }
 
@@ -73,7 +73,7 @@ private class IrSimpleTypeFullImpl(
     classifier: IrClassifierSymbol,
     nullability: SimpleTypeNullability,
     override val arguments: List<IrTypeArgument>,
-    override val annotations: List<IrConstructorCall>,
+    override val annotations: List<IrAnnotation>,
     override val originalKotlinType: KotlinType?,
 ) : IrAbstractSimpleType(classifier, nullability)
 
@@ -82,7 +82,7 @@ fun IrSimpleTypeImpl(
     classifier: IrClassifierSymbol,
     hasQuestionMark: Boolean,
     arguments: List<IrTypeArgument>,
-    annotations: List<IrConstructorCall>
+    annotations: List<IrAnnotation>
 ): IrSimpleType = IrSimpleTypeImpl(
     classifier, SimpleTypeNullability.fromHasQuestionMark(hasQuestionMark), arguments, annotations
 )
@@ -91,7 +91,7 @@ fun IrSimpleTypeImpl(
     classifier: IrClassifierSymbol,
     nullability: SimpleTypeNullability,
     arguments: List<IrTypeArgument>,
-    annotations: List<IrConstructorCall>,
+    annotations: List<IrAnnotation>,
     originalKotlinType: KotlinType? = null,
 ): IrSimpleType {
     val realNullability = if (classifier !is IrTypeParameterSymbol && nullability == SimpleTypeNullability.NOT_SPECIFIED)
@@ -131,7 +131,7 @@ class IrSimpleTypeBuilder {
     var classifier: IrClassifierSymbol? = null
     var nullability = SimpleTypeNullability.NOT_SPECIFIED
     var arguments: List<IrTypeArgument> = emptyList()
-    var annotations: List<IrConstructorCall> = emptyList()
+    var annotations: List<IrAnnotation> = emptyList()
 
     var captureStatus: CaptureStatus? = null
     var capturedLowerType: IrType? = null

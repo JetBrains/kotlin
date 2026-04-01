@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirCallableDeclarationChecker
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
@@ -18,13 +19,15 @@ import org.jetbrains.kotlin.fir.declarations.utils.isFun
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.Name
 
-object FirJvmFunctionDelegateMemberNameClashChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+object FirJvmFunctionDelegateMemberNameClashChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
     private val functionDelegateName: Name = Name.identifier("functionDelegate")
     private val getFunctionDelegateName: Name = Name.identifier("getFunctionDelegate")
 
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(declaration: FirDeclaration) {
-        if (declaration !is FirCallableDeclaration) return
+    override fun check(declaration: FirCallableDeclaration) {
         val containingClassSymbol = declaration.getContainingClassSymbol() as? FirRegularClassSymbol ?: return
         if (!containingClassSymbol.isFun) return
         if (declaration.symbol.isExtension || (declaration as? FirFunction)?.valueParameters?.isNotEmpty() == true) return

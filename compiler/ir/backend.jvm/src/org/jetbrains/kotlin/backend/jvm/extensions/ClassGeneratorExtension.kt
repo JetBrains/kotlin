@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.extensions
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -17,8 +17,9 @@ import org.jetbrains.org.objectweb.asm.*
  * It's preferable for compiler plugins to use [IrGenerationExtension] to implement IR-based logic. This extension point is more low-level.
  */
 interface ClassGeneratorExtension {
-    companion object : ProjectExtensionDescriptor<ClassGeneratorExtension>(
-        "org.jetbrains.kotlin.classGeneratorExtension", ClassGeneratorExtension::class.java
+    companion object : ExtensionPointDescriptor<ClassGeneratorExtension>(
+        name = "org.jetbrains.kotlin.classGeneratorExtension",
+        extensionClass = ClassGeneratorExtension::class.java,
     )
 
     /**

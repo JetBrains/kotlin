@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.native
 
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
-import org.jetbrains.kotlin.fir.pipeline.FirResult
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
+import org.jetbrains.kotlin.library.KotlinLibrary
 
 data class Fir2IrOutput(
-    val firResult: FirResult,
-    val symbols: KonanSymbols,
+    val frontendOutput: AllModulesFrontendOutput,
+    val symbols: PreSerializationNativeSymbols,
     val fir2irActualizedResult: Fir2IrActualizedResult,
-    val usedLibraries: Set<KotlinResolvedLibrary>
+    val usedLibraries: Set<KotlinLibrary>,
 )

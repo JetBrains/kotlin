@@ -7,6 +7,8 @@ fun fromDifferentModule() = a + b
 
 // MODULE: b(a)
 // FILE: b.kt
+import kotlin.coroutines.*
+
 context(s: String)
 fun simple1() = s
 
@@ -35,12 +37,38 @@ fun stringIdentity(s: String) = s
 context(c: String)
 fun contextAndValue(s: String) = c + s
 
+context(c1: String, c2: String)
+fun contextAndValue2(s1: String, s2: String) = c1 + c2 + s1 + s2
+
 fun interface Fun {
     fun invoke(): String
 }
 
 context(f: Fun)
 fun samConversion() = f.invoke()
+
+context(f: suspend () -> String)
+fun suspendConversion(): String {
+    var result = ""
+    f.startCoroutine(Continuation(EmptyCoroutineContext) { result = it.getOrThrow() })
+    return result
+}
+
+fun interface SuspendFun {
+    suspend fun invoke(): String
+}
+
+context(f: SuspendFun)
+fun samWithSuspendConversion(): String {
+    var result = ""
+    suspend { f.invoke() }.startCoroutine(Continuation(EmptyCoroutineContext) { result = it.getOrThrow() })
+    return result
+}
+
+context(s: String)
+fun overload() = "OK"
+
+fun overload(s: CharSequence) = "NOT OK"
 
 fun box(): String {
     if (simple1(s = "OK") != "OK") return "FAIL 1"
@@ -59,28 +87,55 @@ fun box(): String {
         if (generic2(t = "OK") != 1) return "FAIL 12"
     }
 
-    if (lambda(f = { "OK" }) != "OK") return "FAIL 13"
+    with("NOT OK") {
+        context(s: String)
+        fun local(): String {
+            if (simple1(s = "OK") != "OK") return "FAIL 13"
+            if (generic1(t = "OK") != "OK") return "FAIL 14"
+            return "OK"
+        }
+        local().let { if (it != "OK") return it }
+        if (simple1(s = "OK") != "OK") return "FAIL 15"
+        if (generic1(t = "OK") != "OK") return "FAIL 16"
+    }
 
-    if (genericLambda<String>(f = { "OK" }) != "OK") return "FAIL 14"
-    if (genericLambda<String>(f = ::getString) != "OK") return "FAIL 15"
+    if (lambda(f = { "OK" }) != "OK") return "FAIL 17"
 
-    if (genericLambda<String>("OK", f = { it }) != "OK") return "FAIL 16"
-    if (genericLambda<String>("OK", f = ::stringIdentity) != "OK") return "FAIL 17"
-    if (genericLambda("OK", f = { it }) != "OK") return "FAIL 18"
-    if (genericLambda("OK", f = ::stringIdentity) != "OK") return "FAIL 19"
+    if (genericLambda<String>(f = { "OK" }) != "OK") return "FAIL 18"
+    if (genericLambda<String>(f = ::getString) != "OK") return "FAIL 19"
 
-    if (contextAndValue(s = "K", c = "O") != "OK") return "FAIL 20"
-    if (contextAndValue(c = "O", s = "K") != "OK") return "FAIL 21"
+    if (genericLambda<String>("OK", f = { it }) != "OK") return "FAIL 20"
+    if (genericLambda<String>("OK", f = ::stringIdentity) != "OK") return "FAIL 21"
+    if (genericLambda("OK", f = { it }) != "OK") return "FAIL 22"
+    if (genericLambda("OK", f = ::stringIdentity) != "OK") return "FAIL 23"
+
+    if (contextAndValue(s = "K", c = "O") != "OK") return "FAIL 24"
+    if (contextAndValue(c = "O", s = "K") != "OK") return "FAIL 25"
 
     // test side effects
     var i = 0
-    if (contextAndValue(s = run { i = 1; "K" }, c = run { if (i == 1) "O" else "!" }) != "OK") return "FAIL 22"
-    if (contextAndValue(c = run { i = 2; "O" }, s = run { if (i == 2) "K" else "!" }) != "OK") return "FAIL 23"
+    if (contextAndValue(s = run { i = 1; "K" }, c = run { if (i == 1) "O" else "!" }) != "OK") return "FAIL 26"
+    if (contextAndValue(c = run { i = 2; "O" }, s = run { if (i == 2) "K" else "!" }) != "OK") return "FAIL 27"
 
-    if (fromDifferentModule(a = "O", b = "K") != "OK") return "FAIL 24"
-    if (fromDifferentModule(b = "K", a = "O") != "OK") return "FAIL 25"
+    i = 0
+    if (contextAndValue2(
+        run { if (i == 0) { i = 1; "1" } else "X" },
+        c2 = run { if (i == 1) { i = 2; "2" } else "X" },
+        s2 = run { if (i == 2) { i = 3; "3" } else "X" },
+        c1 = run { if (i == 3) { i = 4; "4" } else "X" },
+    ) != "4213") return "FAIL 28"
 
-    if (samConversion(f = { "OK" }) != "OK") return "FAIL 26"
+    if (fromDifferentModule(a = "O", b = "K") != "OK") return "FAIL 29"
+    if (fromDifferentModule(b = "K", a = "O") != "OK") return "FAIL 30"
+
+    if (samConversion(f = { "OK" }) != "OK") return "FAIL 31"
+    val okFunction: () -> String = { "OK" }
+    if (suspendConversion(f = { "OK" }) != "OK") return "FAIL 32"
+    if (suspendConversion(f = okFunction) != "OK") return "FAIL 32"
+    if (samWithSuspendConversion(f = { "OK" }) != "OK") return "FAIL 32"
+    if (samWithSuspendConversion(f = okFunction) != "OK") return "FAIL 32"
+
+    if (overload(s = "OK") != "OK") return "FAIL 35"
 
     return "OK"
 }

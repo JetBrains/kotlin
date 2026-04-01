@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportOncePerGradleBuild
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.toolingDiagnosticsContext
 
 internal val DeprecatedMppGradlePropertiesMigrationSetupAction = KotlinProjectSetupAction {
     checkAndReportDeprecatedMppProperties(project)
@@ -35,7 +36,7 @@ private fun checkAndReportDeprecatedMppProperties(project: Project) {
     if (usedProperties.isEmpty()) return
 
     project.kotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(
-        project,
+        project.toolingDiagnosticsContext,
         KotlinToolingDiagnostics.PreHMPPFlagsError(usedProperties)
     )
 }

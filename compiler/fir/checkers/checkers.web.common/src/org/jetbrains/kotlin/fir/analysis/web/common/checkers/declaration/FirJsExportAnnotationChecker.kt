@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -14,10 +15,16 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.utils.isExplicitlyMarkedAsExported
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirJsExportAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         val jsExport = declaration.getAnnotationByClassId(StandardClassIds.Annotations.jsExport, context.session)
@@ -26,6 +33,14 @@ object FirJsExportAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.
 
         if (declaration !is FirFile && !context.isTopLevel) {
             reporter.reportOn(jsExport.source, FirWebCommonErrors.NESTED_JS_EXPORT)
+            return
+        }
+
+        if (declaration is FirMemberDeclaration
+            && declaration.symbol.isExplicitlyMarkedAsExported(context.session)
+            && declaration.visibility != Visibilities.Public
+        ) {
+            reporter.reportOn(jsExport.source, FirWebCommonErrors.WRONG_JS_EXPORT_TARGET_VISIBILITY)
         }
     }
 }

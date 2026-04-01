@@ -10,6 +10,8 @@ import kotlinx.coroutines.*
 
 object Foo
 
+fun testPrimitiveProducedLambda(): suspend ()->Int = ::testPrimitive
+
 suspend fun testPrimitive(): Int {
     delay(33L)
     return 42
@@ -28,4 +30,42 @@ suspend fun testObject(): Foo {
 suspend fun testCustom(): String {
     delay(33L)
     return "Hello, World!"
+}
+
+suspend fun callAfter(delay: Long, callback: () -> Int): Int {
+    delay(delay)
+    return callback()
+}
+
+suspend fun cancelAfter(delay: Long): Int {
+    delay(delay)
+    val reason = CancellationException("Cancelled after $delay")
+    currentCoroutineContext().cancel(reason)
+    throw reason
+}
+
+suspend fun cancelSilentlyAfter(delay: Long, callback: () -> Int): Int {
+    delay(delay)
+    currentCoroutineContext().cancel()
+    return callback()
+}
+
+suspend fun cancelImmediately(): Int {
+    val reason = CancellationException("Cancelled")
+    currentCoroutineContext().cancel(reason)
+    throw reason
+}
+
+suspend fun throwAfter(delay: Long, message: String): Int {
+    delay(delay)
+    error(message)
+}
+
+suspend fun throwImmediately(message: String): Int {
+    error(message)
+}
+
+suspend fun throwNonException(message: String): Int {
+    class NonExceptionThrowable(message: String) : Throwable(message)
+    throw NonExceptionThrowable(message)
 }

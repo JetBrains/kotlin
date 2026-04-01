@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.util.*
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class UKlibKotlinTestJsResolution {

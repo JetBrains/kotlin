@@ -198,11 +198,11 @@ class BinaryJavaClass(
 
         val type = signatureParser.parseTypeString(StringCharacterIterator(signature ?: desc), context)
         val processedValue = processValue(value, type)
-        val filed = BinaryJavaField(Name.identifier(name), access, this, access.isSet(Opcodes.ACC_ENUM), type, processedValue)
+        val field = BinaryJavaField(Name.identifier(name), access, this, access.isSet(Opcodes.ACC_ENUM), type, processedValue)
 
-        fields.add(filed)
+        fields.add(field)
 
-        return AnnotationsCollectorFieldVisitor(filed, context, signatureParser)
+        return AnnotationsCollectorFieldVisitor(field, context, signatureParser)
     }
 
 
@@ -210,9 +210,11 @@ class BinaryJavaClass(
         val type = signatureParser.parseTypeString(StringCharacterIterator(signature ?: descriptor), context)
         // TODO: Read isVararg properly
         val isVararg = false
-        recordComponents.add(BinaryJavaRecordComponent(Name.identifier(name), this, type, isVararg))
+        val recordComponent = BinaryJavaRecordComponent(Name.identifier(name), this, type, isVararg).also {
+            recordComponents.add(it)
+        }
 
-        return null
+        return AnnotationsCollectorRecordComponentVisitor(recordComponent, context, signatureParser)
     }
 
     /**

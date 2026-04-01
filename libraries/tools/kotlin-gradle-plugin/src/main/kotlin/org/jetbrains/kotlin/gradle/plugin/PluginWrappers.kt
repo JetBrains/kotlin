@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporter
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporterG76
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporterG76
 import org.jetbrains.kotlin.gradle.plugin.internal.*
@@ -74,6 +76,8 @@ private fun Project.registerVariantImplementations() {
         JavaExecTaskParametersCompatibilityG76.Factory()
     factories[ProblemsReporter.Factory::class] =
         ProblemsReporterG76.Factory()
+    factories[CompilerDiagnosticsProblemsReporter.Factory::class] =
+        CompilerDiagnosticsProblemsReporterG76.Factory()
     factories[CopySpecAccessor.Factory::class] = CopySpecAccessorG85.Factory()
     factories[BuildIdentifierAccessor.Factory::class] = BuildIdentifierAccessorG81.Factory()
     factories[ProjectDependencyAccessor.Factory::class] = ProjectDependencyAccessorG88.Factory()

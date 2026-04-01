@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -92,9 +92,8 @@ internal class Fir2IrJsResultsConverter(testServices: TestServices) : Fir2IrJsWa
         get() = IrBackendInput::JsIrAfterFrontendBackendInput
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinLibrary> {
-        return loadWebKlibsInTestPipeline(
+        return loadWebKlibs(
             configuration = compilerConfiguration,
-            libraryPaths = getAllJsDependenciesPaths(module, testServices),
             platformChecker = KlibPlatformChecker.JS,
         ).all
     }
@@ -106,6 +105,6 @@ internal class Fir2IrWasmResultsConverter(testServices: TestServices) : Fir2IrJs
         get() = IrBackendInput::WasmAfterFrontendBackendInput
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinLibrary> {
-        return loadWasmLibraries(module, testServices, compilerConfiguration)
+        return loadWasmLibraries(compilerConfiguration)
     }
 }

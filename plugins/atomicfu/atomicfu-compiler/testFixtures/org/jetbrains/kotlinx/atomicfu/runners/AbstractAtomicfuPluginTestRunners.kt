@@ -5,28 +5,19 @@
 
 package org.jetbrains.kotlinx.atomicfu.runners
 
-import org.jetbrains.kotlin.test.backend.handlers.SMAPDumpHandler
 import org.jetbrains.kotlin.konan.test.irText.AbstractLightTreeNativeIrTextTest
+import org.jetbrains.kotlin.test.backend.handlers.SMAPDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
-import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
+import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 import java.io.File
-
-open class AbstractAtomicfuJvmIrTest : AbstractIrBlackBoxCodegenTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureJvmArtifactsHandlersStep { useHandlers(::SMAPDumpHandler) }
-        builder.configureForKotlinxAtomicfu()
-    }
-}
 
 open class AbstractAtomicfuJvmFirLightTreeTest : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -54,7 +45,7 @@ open class AbstractAtomicfuNativeIrTextTest : AbstractLightTreeNativeIrTextTest(
             useConfigurators(
                 ::AtomicfuExtensionRegistrarConfigurator,
                 ::CommonEnvironmentConfigurator,
-                ::NativeEnvironmentConfigurator,
+                ::NativeFirstStageEnvironmentConfigurator,
             )
             defaultDirectives {
                 +WITH_PLATFORM_LIBS

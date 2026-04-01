@@ -1,3 +1,3 @@
-// LANGUAGE: +ContextReceivers, +ContextParameters
+// LANGUAGE: +ContextParameters
 
 context(_: String) fun foo<caret>() {}

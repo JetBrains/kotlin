@@ -5,15 +5,17 @@
 
 package org.jetbrains.kotlin.test.directives
 
+import org.jetbrains.kotlin.cli.pipeline.FrontendFilesForPluginsGenerationPipelinePhase
 import org.jetbrains.kotlin.config.InferenceLogsFormat
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilderBase
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirVFirDumpHandler
 
 object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
     val DUMP_CFG by stringDirective(
@@ -40,6 +42,14 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
             Dumps resulting fir to `testName.fir.txt` file
         """.trimIndent(),
         applicability = Global
+    )
+
+    val EXPLICITLY_GENERATE_PLUGIN_FILES by directive(
+        description = """
+            Forces ${FirDumpHandler::class} and ${FirVFirDumpHandler::class} to generate files with top-level declarations from plugins.
+            In regular tests it's not needed, as these files are created by the ${FrontendFilesForPluginsGenerationPipelinePhase::class}.
+            However, Analysis API tests don't use CLI pipeline phases, so these files should be generated explicitly.
+        """.trimIndent()
     )
 
     val DISABLE_FIR_DUMP_HANDLER by directive(
@@ -80,7 +90,7 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         description = "Defines which parser should be used for FIR compiler"
     )
 
-    val RENDER_DIAGNOSTICS_MESSAGES by directive(
+    val RENDER_DIAGNOSTIC_ARGUMENTS by directive(
         description = "Forces diagnostic arguments to be rendered"
     )
 
@@ -168,7 +178,7 @@ object DumpCfgOption {
     const val FLOW = "FLOW"
 }
 
-fun TestConfigurationBuilder.configureFirParser(parser: FirParser) {
+fun TestConfigurationBuilderBase<*, *>.configureFirParser(parser: FirParser) {
     defaultDirectives {
         FIR_PARSER with parser
     }

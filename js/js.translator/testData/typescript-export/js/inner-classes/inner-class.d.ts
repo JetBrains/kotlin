@@ -7,7 +7,20 @@ declare namespace JS_TESTS {
             get a(): string;
             get Inner(): {
                 new(a: string): TestInner.Inner;
-            } & typeof TestInner.Inner;
+                fromNumber(a: number): foo.TestInner.Inner;
+            };
+            get OpenInnerWithPublicConstructor(): {
+                new(a: string): TestInner.OpenInnerWithPublicConstructor;
+                fromNumber(a: number): foo.TestInner.OpenInnerWithPublicConstructor;
+            };
+            get OpenInnerWithProtectedConstructor(): {
+            };
+            get SubclassOfAbstractInnerClass(): {
+                new(a: string): TestInner.SubclassOfAbstractInnerClass;
+            };
+            get SubclassOfOpenInnerClass(): {
+                new(a: string): TestInner.SubclassOfOpenInnerClass;
+            };
         }
         namespace TestInner {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -15,13 +28,12 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => TestInner;
             }
             class Inner {
-                protected constructor($outer: foo.TestInner, a: string);
+                private constructor();
                 get a(): string;
                 get concat(): string;
-                static fromNumber(a: number): foo.TestInner.Inner;
                 get SecondLayerInner(): {
                     new(a: string): TestInner.Inner.SecondLayerInner;
-                } & typeof TestInner.Inner.SecondLayerInner;
+                };
             }
             namespace Inner {
                 /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -29,7 +41,7 @@ declare namespace JS_TESTS {
                     const constructor: abstract new () => Inner;
                 }
                 class SecondLayerInner {
-                    protected constructor($outer: foo.TestInner.Inner, a: string);
+                    private constructor();
                     get a(): string;
                     get concat(): string;
                 }
@@ -38,6 +50,68 @@ declare namespace JS_TESTS {
                     namespace $metadata$ {
                         const constructor: abstract new () => SecondLayerInner;
                     }
+                }
+            }
+            class OpenInnerWithPublicConstructor {
+                protected constructor($outer: foo.TestInner, a: string);
+                get a(): string;
+                get concat(): string;
+            }
+            namespace OpenInnerWithPublicConstructor {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => OpenInnerWithPublicConstructor;
+                }
+            }
+            class OpenInnerWithProtectedConstructor {
+                protected constructor($outer: foo.TestInner, a: string);
+                get a(): string;
+                get concat(): string;
+            }
+            namespace OpenInnerWithProtectedConstructor {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => OpenInnerWithProtectedConstructor;
+                }
+            }
+            abstract class AbstractInnerWithProtectedConstructor {
+                protected constructor($outer: foo.TestInner, a: string);
+                get a(): string;
+                abstract get concat(): string;
+            }
+            namespace AbstractInnerWithProtectedConstructor {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => AbstractInnerWithProtectedConstructor;
+                }
+            }
+            class SubclassOfAbstractInnerClass extends foo.TestInner.AbstractInnerWithProtectedConstructor.$metadata$.constructor {
+                private constructor();
+                get concat(): string;
+            }
+            namespace SubclassOfAbstractInnerClass {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => SubclassOfAbstractInnerClass;
+                }
+            }
+            class SubclassOfOpenInnerClass extends foo.TestInner.OpenInnerWithProtectedConstructor.$metadata$.constructor {
+                private constructor();
+            }
+            namespace SubclassOfOpenInnerClass {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => SubclassOfOpenInnerClass;
+                }
+            }
+            abstract class AbstractInnerWithSecondaryConstructor {
+                protected constructor($outer: foo.TestInner, a: string);
+                get a(): string;
+            }
+            namespace AbstractInnerWithSecondaryConstructor {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => AbstractInnerWithSecondaryConstructor;
                 }
             }
         }

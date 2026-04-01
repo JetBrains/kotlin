@@ -10,15 +10,12 @@ ENV LANG=en_US.utf8
 
 RUN apt-get install -y git \
     && apt-get install -y curl \
-    && apt-get install -y zip
+    && apt-get install -y zip zstd \
+    && apt-get install -y libatomic1 # native library for nodejs
 
 RUN rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /usr/lib/jvm
-
-RUN curl https://cdn.azul.com/zulu/bin/zulu6.22.0.3-jdk6.0.119-linux_x64.tar.gz | tar -xz -C /usr/lib/jvm
-
-RUN curl https://cdn.azul.com/zulu/bin/zulu7.40.0.15-ca-jdk7.0.272-linux_x64.tar.gz | tar -xz -C /usr/lib/jvm
 
 RUN curl https://corretto.aws/downloads/resources/8.392.08.1/amazon-corretto-8.392.08.1-linux-x64.tar.gz | tar -xz -C /usr/lib/jvm
 
@@ -30,29 +27,33 @@ RUN curl https://corretto.aws/downloads/resources/17.0.9.8.1/amazon-corretto-17.
 
 RUN curl https://corretto.aws/downloads/resources/21.0.1.12.1/amazon-corretto-21.0.1.12.1-linux-x64.tar.gz | tar -xz -C /usr/lib/jvm
 
+RUN curl https://corretto.aws/downloads/resources/25.0.2.10.1/amazon-corretto-25.0.2.10.1-linux-x64.tar.gz | tar -xz -C /usr/lib/jvm
+
 # New naming conventions
-ENV JDK6=/usr/lib/jvm/zulu6.22.0.3-jdk6.0.119-linux_x64 \
-    JDK7=/usr/lib/jvm/zulu7.40.0.15-ca-jdk7.0.272-linux_x64 \
-    JDK8=/usr/lib/jvm/amazon-corretto-8.392.08.1-linux-x64 \
+ENV JDK8=/usr/lib/jvm/amazon-corretto-8.392.08.1-linux-x64 \
     JDK9=/usr/lib/jvm/zulu9.0.7.1-jdk9.0.7-linux_x64 \
     JDK11=/usr/lib/jvm/amazon-corretto-11.0.26.4.1-linux-x64 \
     JDK17=/usr/lib/jvm/amazon-corretto-17.0.9.8.1-linux-x64 \
-    JDK21=/usr/lib/jvm/amazon-corretto-21.0.1.12.1-linux-x64
+    JDK21=/usr/lib/jvm/amazon-corretto-21.0.1.12.1-linux-x64 \
+    JDK25=/usr/lib/jvm/amazon-corretto-25.0.2.10.1-linux-x64
 
 # TeamCity JDK old naming conventions. Kotlin build still have dependencies in Maven build.
-ENV JDK_18=$JDK8
+ENV JDK_18=$JDK8 \
+    JDK_1_8=$JDK8
 
-ENV JDK_16_x64=$JDK6 \
-    JDK_17_x64=$JDK7 \
-    JDK_18_x64=$JDK8 \
+ENV JDK_18_x64=$JDK8 \
+    JDK_1_8_x64=$JDK8 \
     JDK_9_x64=$JDK9
 
 ENV JDK_11_0=$JDK11 \
     JDK_17_0=$JDK17 \
-    JDK_21_0=$JDK21
+    JDK_21_0=$JDK21 \
+    JDK_25_0=$JDK25
 
-ENV JAVA_HOME=$JDK_11_0
+ENV JAVA_HOME=$JDK_17_0
 ENV PATH="$PATH:$JAVA_HOME/bin"
+# this affects Maven builds in scripts/build-kotlin-maven.sh
+ENV MAVEN_JAVA_HOME=$JDK_11_0
 
 RUN curl "https://archive.apache.org/dist/maven/maven-3/3.8.1/binaries/apache-maven-3.8.1-bin.tar.gz" | tar -xz -C /usr/lib
 
@@ -61,3 +62,12 @@ ENV M2_HOME=/usr/lib/apache-maven-3.8.1 \
 
 ENV MAVEN_HOME=$M2_HOME
 ENV PATH="$PATH:$M2_HOME/bin"
+
+# For running under a non-root user, e. g. in TeamCity
+# The UID is assumed to be the same as the user on the host (e. g. the UID of the TeamCity user on agents)
+# so file ownership in mounted volumes are preserved
+ARG USERNAME=user
+ARG UID=1001
+ARG GID=$UID
+RUN groupadd --gid "$GID" "$USERNAME"
+RUN useradd --uid "$UID" --gid "$GID" --create-home "$USERNAME"

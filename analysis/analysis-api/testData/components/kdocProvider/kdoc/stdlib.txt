@@ -1,0 +1,71 @@
+----------/foo(): kotlin.Unit---------------------------------------------------
+null
+
+----------val a: {kotlin.text.StringBuilder=} java.lang.StringBuilder-----------
+null
+
+----------<constructor>(): {kotlin.text.StringBuilder=} java.lang.StringBuilder-
+null
+
+----------java/lang/StringBuilder.append(<dispatch receiver>: java.lang.StringBuilder, str: kotlin.String!): java.lang.StringBuilder!
+null
+----------str: kotlin.String!---------------------------------------------------
+null
+
+----------java/lang/StringBuilder.append(<dispatch receiver>: java.lang.StringBuilder, i: kotlin.Int): java.lang.StringBuilder!
+null
+----------i: kotlin.Int---------------------------------------------------------
+null
+
+----------java/lang/StringBuilder.append(<dispatch receiver>: java.lang.StringBuilder, d: kotlin.Double): java.lang.StringBuilder!
+null
+----------d: kotlin.Double------------------------------------------------------
+null
+
+----------/bar(): kotlin.String-------------------------------------------------
+null
+
+----------kotlin/text/buildString(builderAction: {kotlin.text.StringBuilder=} java.lang.StringBuilder.() -> kotlin.Unit): kotlin.String
+null
+----------builderAction: {kotlin.text.StringBuilder=} java.lang.StringBuilder.() -> kotlin.Unit
+null
+
+----------java/lang/StringBuilder.append(<dispatch receiver>: java.lang.StringBuilder, str: kotlin.String!): java.lang.StringBuilder!
+null
+----------str: kotlin.String!---------------------------------------------------
+null
+
+----------java/lang/StringBuilder.append(<dispatch receiver>: java.lang.StringBuilder, i: kotlin.Int): java.lang.StringBuilder!
+null
+----------i: kotlin.Int---------------------------------------------------------
+null
+
+----------java/lang/StringBuilder.append(<dispatch receiver>: java.lang.StringBuilder, d: kotlin.Double): java.lang.StringBuilder!
+null
+----------d: kotlin.Double------------------------------------------------------
+null
+
+----------/test(): kotlin.String------------------------------------------------
+null
+
+----------kotlin/text/buildString(builderAction: {kotlin.text.StringBuilder=} java.lang.StringBuilder.() -> kotlin.Unit): kotlin.String
+null
+----------builderAction: {kotlin.text.StringBuilder=} java.lang.StringBuilder.() -> kotlin.Unit
+null
+
+----------val a: kotlin.CharArray-----------------------------------------------
+null
+
+----------<constructor>(size: kotlin.Int): kotlin.CharArray---------------------
+null
+----------size: kotlin.Int------------------------------------------------------
+null
+
+----------val index: kotlin.Int-------------------------------------------------
+null
+
+----------java/lang/StringBuilder.append(<dispatch receiver>: java.lang.StringBuilder, str: kotlin.CharArray!): java.lang.StringBuilder!
+null
+----------str: kotlin.CharArray!------------------------------------------------
+null
+

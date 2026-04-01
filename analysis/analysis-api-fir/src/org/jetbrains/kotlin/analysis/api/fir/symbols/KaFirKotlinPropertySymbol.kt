@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -80,7 +82,10 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
             createKaTypeParameters() ?: firSymbol.createKtTypeParameters(builder)
         }
 
-    abstract val compilerVisibilityByPsi: Visibility?
+    open val compilerVisibilityByPsi: Visibility?
+        get() = withValidityAssertion {
+            backingPsi?.psiBasedVisibility(::isOverride)
+        }
 
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { compilerVisibilityByPsi ?: firSymbol.visibility }
@@ -91,7 +96,32 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
         get() = withValidityAssertion { modalityByPsi ?: firSymbol.kaSymbolModality }
 
     override val backingFieldSymbol: KaBackingFieldSymbol?
-        get() = withValidityAssertion { KaFirBackingFieldSymbol.create(this) }
+        get() = withValidityAssertion {
+            val backingPsi = backingPsi
+            if (backingPsi != null) {
+                val backingFieldPsi = (backingPsi as? KtProperty)?.fieldDeclaration
+                return if (backingFieldPsi != null) {
+                    KaFirBackingFieldSymbol(backingFieldPsi, analysisSession, this)
+                } else {
+                    /**
+                     * For consistency with the FIR compiler implementation. Even for computed properties without a real backing field,
+                     * the [org.jetbrains.kotlin.fir.declarations.FirBackingField] is still generated.
+                     */
+                    KaFirDefaultBackingFieldSymbol(analysisSession, this)
+                }
+            }
+
+            val backingFieldSymbol = firSymbol.backingFieldSymbol
+            if (backingFieldSymbol != null) {
+                return if (backingFieldSymbol.fir !is FirDefaultPropertyBackingField) {
+                    KaFirBackingFieldSymbol(backingFieldSymbol, analysisSession, this)
+                } else {
+                    KaFirDefaultBackingFieldSymbol(analysisSession, this)
+                }
+            }
+
+            return null
+        }
 
     override val isLateInit: Boolean
         get() = withValidityAssertion {
@@ -295,10 +325,23 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
         }
 
     override val modalityByPsi: KaSymbolModality?
-        get() = withValidityAssertion { backingPsi?.kaSymbolModality }
+        get() = withValidityAssertion {
+            backingPsi?.run {
+                val modalityByModifiers = kaSymbolModalityByModifiers
+                when {
+                    modalityByModifiers != null -> when {
+                        // KT-80178: interface members with no body have implicit ABSTRACT modality
+                        modalityByModifiers.isOpenFromInterface && !hasBody() -> KaSymbolModality.ABSTRACT
+                        else -> modalityByModifiers
+                    }
 
-    override val compilerVisibilityByPsi: Visibility?
-        get() = withValidityAssertion { backingPsi?.visibility }
+                    // Green code cannot have those modifiers with other modalities
+                    hasModifier(KtTokens.CONST_KEYWORD) -> KaSymbolModality.FINAL
+
+                    else -> psiBasedDefaultKaModality(::isOverride)
+                }
+            }
+        }
 
     override val callableId: CallableId?
         get() = withValidityAssertion {
@@ -326,7 +369,9 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
         }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: firSymbol.isExternal }
+        get() = withValidityAssertion {
+            backingPsi?.isExternalDeclaration ?: firSymbol.isEffectivelyExternal(analysisSession.firSession)
+        }
 
     // NB: `field` in accessors indicates the property should have a backing field. To see that, though, we need BODY_RESOLVE.
     override val hasBackingField: Boolean
@@ -422,10 +467,11 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
         }
 
     override val modalityByPsi: KaSymbolModality?
-        get() = withValidityAssertion { backingPsi?.kaSymbolModalityByModifiers }
-
-    override val compilerVisibilityByPsi: Visibility?
-        get() = withValidityAssertion { backingPsi?.visibilityByModifiers }
+        get() = withValidityAssertion {
+            backingPsi?.run {
+                kaSymbolModalityByModifiers ?: psiBasedDefaultKaModality(::isOverride)
+            }
+        }
 
     override val callableId: CallableId?
         get() = withValidityAssertion {
@@ -459,7 +505,10 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
         get() = withValidityAssertion { true }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: firSymbol.isExternal }
+        get() = withValidityAssertion {
+            // a generated primary constructor property is external if its containing class is external (it can't be external by itself)
+            backingPsi?.containingClassOrObject?.isExternalDeclaration ?: firSymbol.isEffectivelyExternal(analysisSession.firSession)
+        }
 
     override val hasBackingField: Boolean
         get() = withValidityAssertion { true }
@@ -518,10 +567,10 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
                 null
         }
 
-    override val modalityByPsi: KaSymbolModality?
+    override val modalityByPsi: KaSymbolModality
         get() = withValidityAssertion { KaSymbolModality.FINAL }
 
-    override val compilerVisibilityByPsi: Visibility?
+    override val compilerVisibilityByPsi: Visibility
         get() = withValidityAssertion { Visibilities.Public }
 
     override val callableId: CallableId?
@@ -556,7 +605,7 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
         get() = withValidityAssertion { false }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: firSymbol.isExternal }
+        get() = withValidityAssertion { false }
 
     /** KT-70766 */
     override val hasBackingField: Boolean

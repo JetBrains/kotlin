@@ -6,31 +6,52 @@
 package org.jetbrains.kotlin.buildtools.options.generator
 
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.TypeName
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
-import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.types.AbiStabilityMode
+import org.jetbrains.kotlin.arguments.dsl.types.AnnotationDefaultTargetMode
+import org.jetbrains.kotlin.arguments.dsl.types.AssertionsMode
+import org.jetbrains.kotlin.arguments.dsl.types.CompatqualAnnotationsMode
 import org.jetbrains.kotlin.arguments.dsl.types.ExplicitApiMode
+import org.jetbrains.kotlin.arguments.dsl.types.HeaderMode
+import org.jetbrains.kotlin.arguments.dsl.types.JdkRelease
+import org.jetbrains.kotlin.arguments.dsl.types.JspecifyAnnotationsMode
+import org.jetbrains.kotlin.arguments.dsl.types.JvmDefaultMode
 import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
-import org.jetbrains.kotlin.arguments.dsl.types.KotlinVersion
+import org.jetbrains.kotlin.arguments.dsl.types.LambdasMode
+import org.jetbrains.kotlin.arguments.dsl.types.NameBasedDestructuringMode
 import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerMode
+import org.jetbrains.kotlin.arguments.dsl.types.SamConversionsMode
+import org.jetbrains.kotlin.arguments.dsl.types.StringConcatMode
+import org.jetbrains.kotlin.arguments.dsl.types.VerifyIrMode
+import org.jetbrains.kotlin.arguments.dsl.types.WhenExpressionsMode
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import kotlin.math.max
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
 
 private const val MAX_SUPPORTED_VERSIONS_BACK = 3
 
 internal const val IMPL_ARGUMENTS_PACKAGE = "org.jetbrains.kotlin.buildtools.internal.arguments"
 internal const val API_PACKAGE = "org.jetbrains.kotlin.buildtools.api"
 internal const val API_ARGUMENTS_PACKAGE = "$API_PACKAGE.arguments"
+internal const val API_ENUMS_PACKAGE = "$API_ARGUMENTS_PACKAGE.enums"
+
+internal const val JAVA_IO = "java.io"
+internal const val KOTLIN_IO_PATH = "kotlin.io.path"
+internal const val KOTLIN_COLLECTIONS = "kotlin.collections"
+internal const val KOTLIN_TEXT = "kotlin.text"
 
 internal val ANNOTATION_EXPERIMENTAL = ClassName(API_ARGUMENTS_PACKAGE, "ExperimentalCompilerArgument")
 internal val ANNOTATION_USE_FROM_IMPL_RESTRICTED = ClassName("org.jetbrains.kotlin.buildtools.internal", "UseFromImplModuleRestricted")
 
+internal const val KDOC_SINCE = "@since"
 internal const val KDOC_SINCE_2_3_0 = "@since 2.3.0"
+internal const val KDOC_SINCE_2_4_0 = "@since 2.4.0"
+
 internal val KDOC_BASE_OPTIONS_CLASS = """
-    Base class for [%T] options.
+    An option for configuring [%T].
 
     @see get
     @see set    
@@ -59,10 +80,10 @@ internal val experimentalLevelNames = listOf(
     CompilerArgumentsLevelNames.commonKlibBasedArguments,
     CompilerArgumentsLevelNames.jsArguments,
     CompilerArgumentsLevelNames.nativeArguments,
-    CompilerArgumentsLevelNames.wasmArguments,
+    CompilerArgumentsLevelNames.legacyWasmArguments,
 )
 
-internal fun KotlinCompilerArgument.extractName(): String = name.uppercase().replace("-", "_").let {
+internal fun BtaCompilerArgument<*>.extractName(): String = name.uppercase().replace("-", "_").let {
     when {
         it.startsWith("XX") && it != "XX" -> it.replaceFirst("XX", "XX_")
         it.startsWith("X") && it != "X" -> it.replaceFirst("X", "X_")
@@ -70,17 +91,9 @@ internal fun KotlinCompilerArgument.extractName(): String = name.uppercase().rep
     }
 }
 
-// TODO: workaround for now, but we should expose these in the arguments module in a way that doesn't need listing enums and their accessors explicitly here
-internal val enumNameAccessors = mutableMapOf(
-    JvmTarget::class to JvmTarget::targetName,
-    ExplicitApiMode::class to ExplicitApiMode::modeName,
-    KotlinVersion::class to KotlinVersion::versionName,
-    ReturnValueCheckerMode::class to ReturnValueCheckerMode::modeState
-)
+internal fun KClass<*>.toBtaEnumClassName(): ClassName = ClassName(API_ENUMS_PACKAGE, simpleName!!)
 
-@Suppress("UNCHECKED_CAST")
-internal fun KClass<*>.accessor(): KProperty1<Any, String> = enumNameAccessors[this] as? KProperty1<Any, String>
-    ?: error("Unknown enum in compiler arguments. Must be one of: ${enumNameAccessors.keys.joinToString()}.")
+internal val TypeName.isGeneratedEnum: Boolean get() = (this as? ClassName)?.packageName?.startsWith(API_ENUMS_PACKAGE) ?: false
 
 internal fun createGeneratedFileAppendable(): StringBuilder = StringBuilder(GeneratorsFileUtil.GENERATED_MESSAGE_PREFIX)
     .appendLine("the README.md file").appendLine(GeneratorsFileUtil.GENERATED_MESSAGE_SUFFIX).appendLine()
@@ -95,3 +108,25 @@ internal fun getOldestSupportedVersion(kotlinVersion: KotlinReleaseVersion): Kot
 internal fun KotlinCompilerArgumentsLevel.isLeaf(): Boolean = nestedLevels.isEmpty()
 
 internal val kotlinVersionType = ClassName(API_PACKAGE, "KotlinReleaseVersion")
+
+internal val btaEnumVersionMap: Map<ClassName, KotlinReleaseVersion> =
+    mapOf(
+        AbiStabilityMode::class to KotlinReleaseVersion.v2_4_0,
+        AnnotationDefaultTargetMode::class to KotlinReleaseVersion.v2_4_0,
+        AssertionsMode::class to KotlinReleaseVersion.v2_4_0,
+        CompatqualAnnotationsMode::class to KotlinReleaseVersion.v2_4_0,
+        ExplicitApiMode::class to KotlinReleaseVersion.v2_3_0,
+        HeaderMode::class to KotlinReleaseVersion.v2_4_0,
+        JdkRelease::class to KotlinReleaseVersion.v2_4_0,
+        JspecifyAnnotationsMode::class to KotlinReleaseVersion.v2_4_0,
+        JvmDefaultMode::class to KotlinReleaseVersion.v2_4_0,
+        JvmTarget::class to KotlinReleaseVersion.v2_3_0,
+        KotlinVersion::class to KotlinReleaseVersion.v2_3_0,
+        LambdasMode::class to KotlinReleaseVersion.v2_4_0,
+        NameBasedDestructuringMode::class to KotlinReleaseVersion.v2_4_0,
+        ReturnValueCheckerMode::class to KotlinReleaseVersion.v2_3_0,
+        SamConversionsMode::class to KotlinReleaseVersion.v2_4_0,
+        StringConcatMode::class to KotlinReleaseVersion.v2_4_0,
+        VerifyIrMode::class to KotlinReleaseVersion.v2_4_0,
+        WhenExpressionsMode::class to KotlinReleaseVersion.v2_4_0
+    ).mapKeys { (clazz, _) -> clazz.toBtaEnumClassName() }

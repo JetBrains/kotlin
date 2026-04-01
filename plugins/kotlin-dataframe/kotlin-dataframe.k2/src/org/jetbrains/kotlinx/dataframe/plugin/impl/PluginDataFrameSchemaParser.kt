@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaMetadata
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrapUnsafe
 
 sealed class ParseResult {
     object Failure : ParseResult()
@@ -122,7 +122,7 @@ class PluginDataFrameSchemaParser {
                         Result.parsingError("'$name' must have at least one nested column")
                     } else {
                         when {
-                            name.endsWith(": ColumnGroup") ->Result.success(
+                            name.endsWith(": ColumnGroup") -> Result.success(
                                 SimpleColumnGroup(name.removeSuffix(": ColumnGroup"), nestedColumns)
                             )
 
@@ -156,7 +156,7 @@ class PluginDataFrameSchemaParser {
         return Result.success(columns)
     }
 
-    private fun createTypeApproximation(typeString: String): Result<TypeApproximation> {
+    private fun createTypeApproximation(typeString: String): Result<ColumnType> {
         return try {
             val split = typeString.split(".")
 
@@ -167,7 +167,7 @@ class PluginDataFrameSchemaParser {
             val typeApproximation = ClassId(
                 FqName(split.dropLast(1).joinToString(".")),
                 Name.identifier(typeName)
-            ).constructClassLikeType(isMarkedNullable = nullable).wrap()
+            ).constructClassLikeType(isMarkedNullable = nullable).wrapUnsafe()
 
             Result.success(typeApproximation)
         } catch (e: Exception) {

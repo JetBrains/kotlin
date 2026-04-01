@@ -1,0 +1,5 @@
+KtNameReferenceExpression(88,95): 'MyAlias'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyAlias
+    ]

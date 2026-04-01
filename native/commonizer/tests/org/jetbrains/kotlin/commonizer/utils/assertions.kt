@@ -22,8 +22,8 @@ fun assertIsDirectory(file: File) {
 }
 
 fun assertModulesAreEqual(reference: SerializedMetadata, generated: SerializedMetadata, target: CommonizerTarget) {
-    val referenceModule = KlibModuleMetadata.read(SerializedMetadataLibraryProvider(reference))
-    val generatedModule = KlibModuleMetadata.read(SerializedMetadataLibraryProvider(generated))
+    val referenceModule = KlibModuleMetadata.readStrict(SerializedMetadataLibraryProvider(reference))
+    val generatedModule = KlibModuleMetadata.readStrict(SerializedMetadataLibraryProvider(generated))
 
     when (val result = MetadataDeclarationsComparator.compare(referenceModule, generatedModule)) {
         is Result.Success -> Unit

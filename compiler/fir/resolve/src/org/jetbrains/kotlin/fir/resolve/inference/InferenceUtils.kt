@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -73,11 +75,16 @@ fun extractLambdaInfoFromFunctionType(
             isExtensionFunctionType &&
             valueParametersTypesIncludingReceiver.size == argumentValueParameters.size
         ) {
-            // (T, ...) -> V can be converter to T.(...) -> V
-            val firstValueParameter = argumentValueParameters.firstOrNull()
-            val extensionParameter = valueParametersTypesIncludingReceiver.firstOrNull()
-            if (firstValueParameter?.returnTypeRef?.coneTypeSafe<ConeKotlinType>() == extensionParameter) {
+            if (session.languageVersionSettings.supportsFeature(LanguageFeature.LexicographicVariableReadinessCalculation)) {
                 coerceFirstParameterToExtensionReceiver = true
+            } else {
+                // (legacy code for pre-2.4 versions)
+                // (T, ...) -> V can be converter to T.(...) -> V
+                val firstValueParameter = argumentValueParameters.firstOrNull()
+                val extensionParameter = valueParametersTypesIncludingReceiver.firstOrNull()
+                if (firstValueParameter?.returnTypeRef?.coneTypeSafe<ConeKotlinType>() == extensionParameter) {
+                    coerceFirstParameterToExtensionReceiver = true
+                }
             }
         }
 

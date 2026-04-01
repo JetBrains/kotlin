@@ -1,0 +1,10 @@
+STEP 0:
+    modifications:
+        U : A.0.kt -> A.kt
+    added file: A.kt, AllOpenGenerated.kt
+STEP 1:
+    modifications:
+        U : A.1.kt -> A.kt
+        U : B.1.kt -> B.kt
+    modified ir: A.kt, AllOpenGenerated.kt
+    added file: B.kt

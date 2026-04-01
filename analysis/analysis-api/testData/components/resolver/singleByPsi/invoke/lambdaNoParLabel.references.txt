@@ -2,5 +2,6 @@ KtCallExpression(69,76): 'f f@ {}'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Foo) operator fun invoke(a: kotlin.Any)

@@ -61,7 +61,7 @@ class UndispatchedInjection<Context, Target>(
  * - Provider serialization time with CC
  * - Build completion without CC
  */
-class OnBuildCompletionSerializingInjection<Return>(
+class OnBuildCompletionSerializingInjection<Return : Any>(
     val serializedReturnPath: File,
     val returnValueInjection: GradleProjectBuildScriptInjectionContext.() -> Provider<Return>,
 ) : GradleBuildScriptInjection<Project> {
@@ -280,7 +280,7 @@ class GradleProjectBuildScriptInjectionContext(
     val swiftExport get() = kotlinMultiplatform.extensions.getByName("swiftExport") as SwiftExportExtension
     val androidLibrary get() = project.extensions.getByName("android") as LibraryExtension
     val androidApp get() = project.extensions.getByName("android") as AppExtension
-    val androidBase get() = project.extensions.getByName("android") as CommonExtension<*, *, *, *, *>
+    val androidBase get() = project.extensions.getByName("android") as CommonExtension<*, *, *, *, *, *>
     val publishing get() = project.extensions.getByName("publishing") as PublishingExtension
     val signing get() = project.extensions.getByName("signing") as SigningExtension
     val dependencies get() = project.dependencies
@@ -348,7 +348,7 @@ class ReturnFromBuildScriptAfterExecution<T>(
  *
  * @see org.jetbrains.kotlin.gradle.BuildScriptInjectionIT.consumeProjectDependencyViaSettingsInjection
  */
-internal fun <T> TestProject.buildScriptReturn(
+internal fun <T : Any> TestProject.buildScriptReturn(
     returnFromProject: GradleProjectBuildScriptInjectionContext.() -> T,
 ): ReturnFromBuildScriptAfterExecution<T> = providerBuildScriptReturn {
     project.provider {
@@ -365,7 +365,7 @@ internal fun <T> TestProject.buildScriptReturn(
  *
  * @see org.jetbrains.kotlin.gradle.BuildScriptInjectionIT.buildScriptReturnIsCCFriendly
  */
-internal fun <T> TestProject.providerBuildScriptReturn(
+internal fun <T : Any> TestProject.providerBuildScriptReturn(
     returnFromProject: GradleProjectBuildScriptInjectionContext.() -> Provider<T>,
 ): ReturnFromBuildScriptAfterExecution<T> {
     return buildScriptReturnInjection(
@@ -567,9 +567,7 @@ fun TestProject.plugins(build: PluginDependenciesSpec.() -> Unit) {
             .supportGradleBuiltInPlugins()
             .forEach {
                 val pluginPointer = buildscript.dependencies.create(
-                    group = it.id,
-                    name = "${it.id}.gradle.plugin",
-                    version = it.version,
+                    "${it.id}:${it.id}.gradle.plugin:${it.version}"
                 )
                 buildscript.configurations.getByName("classpath").dependencies.add(pluginPointer)
             }

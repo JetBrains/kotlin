@@ -74,11 +74,9 @@ class BinaryJavaRecordComponent(
     override val containingClass: JavaClass,
     override val type: JavaType,
     override val isVararg: Boolean,
-) : JavaRecordComponent, BinaryJavaModifierListOwner {
+) : JavaRecordComponent, BinaryJavaModifierListOwner, MutableJavaAnnotationOwner {
+    override val annotations: MutableCollection<JavaAnnotation> = SmartList()
     override val isFromSource: Boolean get() = false
-
-    override val annotations: Collection<JavaAnnotation>
-        get() = emptyList()
 
     override val access: Int
         get() = 0

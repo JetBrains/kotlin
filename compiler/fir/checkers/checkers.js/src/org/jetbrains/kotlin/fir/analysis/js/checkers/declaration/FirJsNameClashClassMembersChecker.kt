@@ -83,7 +83,7 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
                 targetSymbol == null || overriddenSymbol == null -> return
                 (targetSymbol as? FirConstructorSymbol)?.isPrimary == true -> return
                 !overriddenSymbol.isPresentInGeneratedCode(context.session) && overriddenSymbol.isFinal -> return
-                else -> FirJsStableName.createStableNameOrNull(overriddenSymbol, context.session) ?: return
+                else -> FirJsStableName.createStableNameOrNull(overriddenSymbol) ?: return
             }
 
             if (stableName.isPresentInGeneratedCode) {
@@ -95,7 +95,6 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
                 }
                 val inheritedExternalName = stableName.copy(
                     symbol = targetSymbol,
-                    canBeMangled = false,
                     isPresentInGeneratedCode = isPresentInGeneratedCode
                 )
                 add(inheritedExternalName)
@@ -114,17 +113,15 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
             }
         }
 
-        fun addAllSymbolsFrom(symbols: Collection<FirCallableSymbol<*>>, sessionHolder: SessionAndScopeSessionHolder) {
+        context(sessionHolder: SessionAndScopeSessionHolder)
+        fun addAllSymbolsFrom(symbols: Collection<FirCallableSymbol<*>>) {
             for (symbol in symbols) {
                 when (symbol) {
                     is FirIntersectionCallableSymbol -> {
                         @OptIn(ScopeFunctionRequiresPrewarm::class) // the symbols come from calling process*ByName
-                        val nonSubsumedOverriddenSymbols = symbol.getNonSubsumedOverriddenSymbols(
-                            sessionHolder.session,
-                            sessionHolder.scopeSession
-                        )
+                        val nonSubsumedOverriddenSymbols = symbol.getNonSubsumedOverriddenSymbols()
                         val overriddenSymbols = nonSubsumedOverriddenSymbols.map { it.originalForSubstitutionOverride ?: it }
-                        addAllSymbolsFrom(overriddenSymbols, sessionHolder)
+                        addAllSymbolsFrom(overriddenSymbols)
                         for (intersectedSymbol in overriddenSymbols) {
                             overrideIntersections.getOrPut(intersectedSymbol) { hashSetOf() }.addAll(overriddenSymbols)
                         }
@@ -138,15 +135,15 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
         fun processStableJavaScriptNamesForMembers(declaration: FirClass) {
             declaration.symbol.processAllClassifiers(context.session) { classMemberSymbol ->
                 if (classMemberSymbol is FirClassLikeSymbol) {
-                    jsStableNames.addIfNotNull(FirJsStableName.createStableNameOrNull(classMemberSymbol, context.session))
+                    jsStableNames.addIfNotNull(FirJsStableName.createStableNameOrNull(classMemberSymbol))
                 }
             }
 
             val scope = declaration.symbol.unsubstitutedScope()
 
             scope.processDeclaredConstructors(allSymbols::add)
-            addAllSymbolsFrom(scope.collectAllFunctions(), context.sessionHolder)
-            addAllSymbolsFrom(scope.collectAllProperties(), context.sessionHolder)
+            addAllSymbolsFrom(scope.collectAllFunctions())
+            addAllSymbolsFrom(scope.collectAllProperties())
 
             for (callableMemberSymbol in allSymbols) {
                 val overriddenLeaves = scope.collectOverriddenLeaves(callableMemberSymbol)

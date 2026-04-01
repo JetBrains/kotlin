@@ -1,0 +1,6 @@
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] companionExtensions.kt
+    public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/String|.foo(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final static [ResolvedTo(CONTRACTS)] val [ResolvedTo(CONTRACTS)] R|kotlin/Int|.bar: <implicit> = LAZY_EXPRESSION
+        public static [ResolvedTo(CONTRACTS)] get(): <implicit>
+    public final static [ResolvedTo(CONTRACTS)] val [ResolvedTo(CONTRACTS)] R|kotlin/Int|.baz: <implicit>
+        public static [ResolvedTo(CONTRACTS)] get(): <implicit> { LAZY_BLOCK }

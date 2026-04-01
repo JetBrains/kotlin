@@ -66,12 +66,6 @@ compile_commands.json
 .clangd/
 .cache/clangd
 
-# googletest framework used by runtime tests
-runtime/googletest/
-
-# breakpad library
-runtime/breakpad
-
 # Toolchain builder artifacts
 tools/toolchain_builder/artifacts
 

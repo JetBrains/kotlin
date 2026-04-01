@@ -29,6 +29,7 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol public final? companion object Companion : R|kotlin/Any|
                 FirRegularClassSymbol public final inner class NestedClass : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public final class TopLevelClass : R|pack/SuperClass|
     Element 10
         Implicit receiver:
             FirRegularClassSymbol public final class TopLevelClass : R|pack/SuperClass|

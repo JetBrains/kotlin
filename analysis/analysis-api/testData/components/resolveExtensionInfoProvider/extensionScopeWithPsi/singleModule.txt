@@ -108,6 +108,7 @@ callables: 5
         isCrossinline: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
         isVal: true
@@ -160,6 +161,7 @@ callables: 5
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isVal: true
       location: LOCAL
       modality: FINAL
@@ -193,6 +195,8 @@ callables: 5
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
+      isNotDefault: false
       isVal: true
       location: PROPERTY
       modality: FINAL
@@ -218,6 +222,7 @@ callables: 5
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isInline: false
       isNotDefault: false
       isOverride: false
@@ -272,6 +277,8 @@ callables: 5
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
+      isNotDefault: false
       isVal: false
       location: PROPERTY
       modality: FINAL
@@ -297,6 +304,7 @@ callables: 5
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isInline: false
       isNotDefault: false
       isOverride: false
@@ -343,6 +351,7 @@ callables: 5
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isInline: false
       isNotDefault: false
       isOverride: false
@@ -361,6 +370,7 @@ callables: 5
         isCrossinline: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
         isVal: true
@@ -393,6 +403,7 @@ callables: 5
           isCrossinline: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isImplicitLambdaParameter: false
           isNoinline: false
           isVal: true
@@ -425,6 +436,8 @@ callables: 5
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
+      isNotDefault: false
       isVal: true
       location: PROPERTY
       modality: FINAL
@@ -450,6 +463,7 @@ callables: 5
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isInline: false
       isNotDefault: true
       isOverride: false
@@ -464,6 +478,7 @@ callables: 5
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -509,6 +524,7 @@ callables: 5
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isVal: true
       location: LOCAL
       modality: FINAL

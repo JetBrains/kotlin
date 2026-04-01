@@ -51,6 +51,8 @@ public final class JvmAnnotationNames {
     public static final FqName JETBRAINS_NULLABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Nullable");
     public static final FqName JETBRAINS_MUTABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Mutable");
     public static final FqName JETBRAINS_READONLY_ANNOTATION = new FqName("org.jetbrains.annotations.ReadOnly");
+    public static final FqName JETBRAINS_UNMODIFIABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Unmodifiable");
+    public static final FqName JETBRAINS_UNMODIFIABLE_VIEW_ANNOTATION = new FqName("org.jetbrains.annotations.UnmodifiableView");
 
     public static final FqName READONLY_ANNOTATION = new FqName("kotlin.annotations.jvm.ReadOnly");
     public static final FqName MUTABLE_ANNOTATION = new FqName("kotlin.annotations.jvm.Mutable");
@@ -58,10 +60,6 @@ public final class JvmAnnotationNames {
     public static final FqName PURELY_IMPLEMENTS_ANNOTATION = new FqName("kotlin.jvm.PurelyImplements");
 
     public static final FqName KOTLIN_JVM_INTERNAL = new FqName("kotlin.jvm.internal");
-
-    public static final FqName SERIALIZED_IR_FQ_NAME = new FqName("kotlin.jvm.internal.SerializedIr");
-    public static final String SERIALIZED_IR_DESC = "L" + JvmClassName.byFqNameWithoutInnerClasses(SERIALIZED_IR_FQ_NAME).getInternalName() + ";";
-    public static final String SERIALIZED_IR_BYTES_FIELD_NAME = "b";
 
     public static final String SOURCE_DEBUG_EXTENSION_DESC = "Lkotlin/jvm/internal/SourceDebugExtension;";
 

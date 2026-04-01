@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 project.updateJvmTarget("1.8")
@@ -27,6 +26,19 @@ dependencies {
 
     constraints {
         api(libs.apache.commons.lang)
+    }
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "com.google.guava" && requested.name == "guava") {
+            useVersion("32.0.1-android")
+            because("CVE-2023-2976")
+        }
+        if (requested.group == "commons-codec" && requested.name == "commons-codec") {
+            useVersion("1.19.0")
+            because("WS-2019-0379")
+        }
     }
 }
 

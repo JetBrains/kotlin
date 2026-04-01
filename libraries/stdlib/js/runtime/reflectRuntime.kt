@@ -6,20 +6,8 @@
 package kotlin.js
 
 import kotlin.internal.UsedFromCompilerGeneratedCode
-import kotlin.internal.throwIrLinkageError
 import kotlin.internal.throwUnsupportedOperationException
 import kotlin.reflect.KProperty
-
-@UsedFromCompilerGeneratedCode
-internal fun throwLinkageErrorInCallableName(function: dynamic, linkageError: String) {
-    defineProp(
-        function,
-        name = "callableName",
-        getter = { throwIrLinkageError(linkageError) },
-        setter = VOID,
-        enumerable = true,
-    )
-}
 
 @UsedFromCompilerGeneratedCode
 internal fun getPropertyCallableRef(
@@ -32,15 +20,12 @@ internal fun getPropertyCallableRef(
 ): KProperty<*> {
     getter.get = getter
     getter.set = setter
-    if (linkageError != null) {
-        throwLinkageErrorInCallableName(getter, linkageError)
-    } else {
-        getter.callableName = name
-    }
+    getter.callableName = name
+
     return getPropertyRefClass(
         getter,
         getKPropMetadata(paramCount, setter),
-        getInterfaceMaskFor(getter, superType)
+        superType
     ).unsafeCast<KProperty<*>>()
 }
 
@@ -51,15 +36,17 @@ internal fun getLocalDelegateReference(name: String, superType: dynamic, mutable
     return getPropertyCallableRef(name, 0, superType, lambda, if (mutable) lambda else null, VOID)
 }
 
-private fun getPropertyRefClass(obj: Ctor, metadata: Metadata, imask: BitMask): dynamic {
+private fun getPropertyRefClass(obj: Ctor, metadata: Metadata, superType: Ctor): dynamic {
     obj.`$metadata$` = metadata
     obj.constructor = obj
-    obj.`$imask$` = imask
+
+    val symbol = superType.Symbol
+    if (symbol != null) {
+        obj.asDynamic()[symbol] = true
+    }
+    js("Object.assign(obj, superType.prototype)")
     return obj;
 }
-
-private fun getInterfaceMaskFor(obj: Ctor, superType: dynamic): BitMask =
-    obj.`$imask$` ?: implement(arrayOf(superType))
 
 @Suppress("UNUSED_PARAMETER")
 private fun getKPropMetadata(paramCount: Int, setter: Any?): dynamic {

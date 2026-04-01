@@ -12,11 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
-import org.jetbrains.kotlin.ir.expressions.IrVararg
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.render
 
 context(c: Fir2IrComponents)
@@ -46,11 +42,7 @@ fun IrExpression.prepareExpressionForGivenExpectedType(
         }.insertSpecialCast(expression, valueType, expectedType)
     }
 
-    return with(c.adapterGenerator) {
-        val samFunctionType = getFunctionTypeForPossibleSamType(substitutedExpectedType) ?: substitutedExpectedType
-        expressionWithCast.applySuspendConversionIfNeeded(expression, samFunctionType)
-            .applySamConversionIfNeeded(expression)
-    }
+    return expressionWithCast
 }
 
 

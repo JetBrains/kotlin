@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_DIFFERENCE
 // This case can't be checked using FIR. It is checked later on klib serialization.
 

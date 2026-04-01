@@ -174,6 +174,13 @@ test_support::Object<Payload>& AllocateObjectWithFinalizer(mm::ThreadData& threa
     return test_support::Object<Payload>::FromObjHeader(holder.obj());
 }
 
+template <uint32_t ElementsCount>
+test_support::ObjectArray<ElementsCount>& AllocateArray(mm::ThreadData& threadData) {
+    ObjHolder holder;
+    mm::AllocateArray(&threadData, theArrayTypeInfo, ElementsCount, holder.slot());
+    return test_support::ObjectArray<ElementsCount>::FromArrayHeader(holder.obj()->array());
+}
+
 std::vector<ObjHeader*> Alive(mm::ThreadData& threadData) {
     return alloc::test_support::allocatedObjects(threadData);
 }

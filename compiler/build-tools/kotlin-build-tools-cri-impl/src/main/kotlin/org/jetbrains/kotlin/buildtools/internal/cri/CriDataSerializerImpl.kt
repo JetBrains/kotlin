@@ -9,6 +9,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
 import org.jetbrains.kotlin.incremental.LookupSymbol
+import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import org.jetbrains.kotlin.name.FqName
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
@@ -24,10 +25,15 @@ public class CriDataSerializerImpl {
         val fileIdsToPaths: ByteArray,
     )
 
-    public fun serializeLookups(lookups: Map<LookupSymbol, Collection<String>>): SerializedLookupData {
+    public fun serializeLookups(
+        lookups: Map<LookupSymbol, Collection<String>>,
+        sourceFilesPathConverter: FileToPathConverter,
+    ): SerializedLookupData {
         val filePathToId = mutableMapOf<String, Int>()
 
-        fun addFilePathIfNeeded(filePath: String): Int = filePathToId.getOrPut(filePath) { filePath.hashCode() }
+        fun addFilePathIfNeeded(filePath: String): Int = filePathToId.getOrPut(
+            sourceFilesPathConverter.toPath(sourceFilesPathConverter.toFile(filePath))
+        ) { filePath.hashCode() }
 
         fun Map.Entry<LookupSymbol, Collection<String>>.toLookupEntry(): LookupEntryImpl = LookupEntryImpl(
             key,

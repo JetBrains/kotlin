@@ -1,4 +1,5 @@
-// TARGET_BACKEND: WASM
+// WITH_STDLIB
+// LANGUAGE: +AllowAnyAsAnActualTypeForExpectInterface
 
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")

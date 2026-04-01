@@ -13,8 +13,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.KmpPartiallyResolvedDependenciesCheckerProjectsEvaluated
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.isPartiallyResolvedDependenciesCheckerEnabled
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.locateOrRegisterPartiallyResolvedDependenciesCheckerTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
@@ -60,7 +58,9 @@ private const val DESCRIPTION =
     "Checks that Kotlin Gradle Plugin hasn't reported project configuration errors, failing otherwise. " +
             "This task always runs before compileKotlin* or similar tasks."
 
-internal fun Project.locateOrRegisterCheckKotlinGradlePluginErrorsTask(): TaskProvider<CheckKotlinGradlePluginConfigurationErrors> {
+internal fun Project.locateOrRegisterCheckKotlinGradlePluginErrorsTask(
+    diagnosticsContext: ToolingDiagnosticsContext,
+): TaskProvider<CheckKotlinGradlePluginConfigurationErrors> {
     val partiallyResolvedDependenciesCheckerProjectsEvaluated = if (project.isPartiallyResolvedDependenciesCheckerEnabled) {
         locateOrRegisterPartiallyResolvedDependenciesCheckerTask()
     } else null
@@ -74,26 +74,27 @@ internal fun Project.locateOrRegisterCheckKotlinGradlePluginErrorsTask(): TaskPr
         task.errorDiagnostics.set(
             provider {
                 kotlinToolingDiagnosticsCollector
-                    .getDiagnosticsForProject(this)
+                    .getDiagnosticsForProject(path)
                     .filter { it.severity == ToolingDiagnostic.Severity.ERROR }
             }
         )
         task.strongWarningDiagnostics.set(
             provider {
                 kotlinToolingDiagnosticsCollector
-                    .getDiagnosticsForProject(this)
+                    .getDiagnosticsForProject(path)
                     .filter { it.severity == ToolingDiagnostic.Severity.STRONG_WARNING }
             }
         )
         task.usesService(kotlinToolingDiagnosticsCollectorProvider)
         task.problemsReporter.set(kotlinToolingDiagnosticsCollectorProvider.map { it.problemsReporter })
-        task.renderingOptions.set(ToolingDiagnosticRenderingOptions.forProject(this))
+        task.renderingOptions.set(diagnosticsContext.renderingOptions)
         task.description = DESCRIPTION
         task.group = LifecycleBasePlugin.VERIFICATION_GROUP
 
         task.onlyIf("errorDiagnostics are present") {
             require(it is CheckKotlinGradlePluginConfigurationErrors)
-            !it.errorDiagnostics.orNull.isNullOrEmpty() || !it.strongWarningDiagnostics.orNull.isNullOrEmpty()
+            (it.errorDiagnostics.isPresent && it.errorDiagnostics.get().isNotEmpty()) ||
+                    (it.strongWarningDiagnostics.isPresent && it.strongWarningDiagnostics.get().isNotEmpty())
         }
     }
 

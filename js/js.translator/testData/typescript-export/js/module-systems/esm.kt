@@ -29,8 +29,22 @@ object O {
 @JsExport
 object Parent {
     val value = 10
-    class Nested {
+    class Nested(val value: Int) {
+        @JsName("fromString")
+        constructor(s: String): this(s.toInt())
+    }
+
+    enum class NestedEnum {
+        A, B;
+    }
+
+    object NestedObject {
         val value = 10
+
+        class Nested(val value: Int) {
+            @JsName("fromString")
+            constructor(s: String): this(s.toInt())
+        }
     }
 }
 

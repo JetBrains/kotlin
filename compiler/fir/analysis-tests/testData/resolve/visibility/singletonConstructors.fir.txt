@@ -68,6 +68,6 @@ FILE: singletonConstructors.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<E>|
-            public get(): R|kotlin/enums/EnumEntries<E>|
+            public static get(): R|kotlin/enums/EnumEntries<E>|
 
     }

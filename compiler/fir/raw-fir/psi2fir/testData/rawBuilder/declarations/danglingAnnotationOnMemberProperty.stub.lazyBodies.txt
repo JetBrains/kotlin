@@ -1,0 +1,13 @@
+FILE: danglingAnnotationOnMemberProperty.kt
+    public final? annotation class Ann : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Ann] constructor(): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? class C : R|kotlin/Any| {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }

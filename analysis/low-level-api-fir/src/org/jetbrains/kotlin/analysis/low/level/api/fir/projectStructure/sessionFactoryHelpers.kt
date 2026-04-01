@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationResolver
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.FirThreadSafeCachesFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentScopeProvider
@@ -19,7 +18,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.LLCheckersFac
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirNonEmptyResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
+import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLFirJavaAnnotationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLSubstitutionScopeKeyFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLJumpingPhaseComputationSessionForLocalClassesProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
@@ -32,14 +33,20 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
+import org.jetbrains.kotlin.fir.java.FirJavaAnnotationProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirJumpingPhaseComputationSessionForLocalClassesProvider
 import org.jetbrains.kotlin.fir.scopes.FirLookupDefaultStarImportsInSourcesSettingHolder
+import org.jetbrains.kotlin.fir.scopes.SubstitutionScopeKeyFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 
 @SessionConfiguration
-internal fun LLFirSession.registerIdeComponents(project: Project, languageVersionSettings: LanguageVersionSettings) {
+internal fun LLFirSession.registerIdeComponents(
+    project: Project,
+    languageVersionSettings: LanguageVersionSettings,
+    annotationSearchScope: GlobalSearchScope
+) {
     register(FirCachesFactory::class, FirThreadSafeCachesFactory(project))
     register(SealedClassInheritorsProvider::class, LLSealedInheritorsProvider(project))
     register(FirExceptionHandler::class, LLFirExceptionHandler)
@@ -56,6 +63,8 @@ internal fun LLFirSession.registerIdeComponents(project: Project, languageVersio
 
     @OptIn(FirImplementationDetail::class)
     register(FirJumpingPhaseComputationSessionForLocalClassesProvider::class, LLJumpingPhaseComputationSessionForLocalClassesProvider)
+    register(FirJavaAnnotationProvider::class, LLFirJavaAnnotationProvider(project, annotationSearchScope))
+    register(SubstitutionScopeKeyFactory::class, LLSubstitutionScopeKeyFactory(this))
 }
 
 @SessionConfiguration
@@ -90,7 +99,9 @@ internal fun FirSession.registerCompilerPluginExtensions(project: Project, modul
 
 @SessionConfiguration
 internal fun FirSessionConfigurator.registerCompilerPluginExtensions(project: Project, module: KaModule) {
-    FirExtensionRegistrarAdapter.getInstances(project).forEach(::applyExtensionRegistrar)
+    project.extensionArea.getExtensionPoint<FirExtensionRegistrarAdapter>(FirExtensionRegistrarAdapter.name)
+        .extensionList
+        .forEach(::applyExtensionRegistrar)
 
     val pluginsProvider = KotlinCompilerPluginsProvider.getInstance(project) ?: return
     pluginsProvider
@@ -99,18 +110,16 @@ internal fun FirSessionConfigurator.registerCompilerPluginExtensions(project: Pr
 }
 
 private fun FirSessionConfigurator.applyExtensionRegistrar(registrar: FirExtensionRegistrarAdapter) {
-    registerExtensions((registrar as FirExtensionRegistrar).configure())
+    val extensions = (registrar as FirExtensionRegistrar).configure()
+    registerExtensions(extensions)
 }
 
 @SessionConfiguration
-internal fun LLFirSession.registerCompilerPluginServices(
-    project: Project,
-    module: KaSourceModule
-) {
-    val projectWithDependenciesScope = KaResolutionScopeProvider.getInstance(project).getResolutionScope(module)
-    val annotationsResolver = project.createAnnotationResolver(projectWithDependenciesScope)
+internal fun LLFirSession.registerCompilerPluginServices(project: Project, resolutionScope: GlobalSearchScope) {
+    val annotationsResolver = project.createAnnotationResolver(resolutionScope)
 
     // We need FirRegisteredPluginAnnotations and FirPredicateBasedProvider during extensions' registration process
     register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this, annotationsResolver))
     register(FirPredicateBasedProvider::class, LLFirIdePredicateBasedProvider(this, annotationsResolver))
 }
+

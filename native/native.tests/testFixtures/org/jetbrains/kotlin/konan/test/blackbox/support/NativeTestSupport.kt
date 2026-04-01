@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support
 
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageLogLevel
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageMode
+import org.jetbrains.kotlin.config.PartialLinkageConfig
+import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -581,12 +580,14 @@ object NativeTestSupport {
 
         val mode = findPartialLinkageMode(enclosingTestClass)
             ?: enclosingTestClass.declaredClasses.firstNotNullOfOrNull { findPartialLinkageMode(it) }
-            ?: UsePartialLinkage.Mode.ENABLED_WITH_ERROR // The default mode.
+            ?: UsePartialLinkage.Mode.ERROR // The default mode for testing.
 
         val config = when (mode) {
-            UsePartialLinkage.Mode.DISABLED -> PartialLinkageConfig(PartialLinkageMode.DISABLE, PartialLinkageLogLevel.ERROR)
-            UsePartialLinkage.Mode.DEFAULT -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.DEFAULT)
-            UsePartialLinkage.Mode.ENABLED_WITH_ERROR -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR)
+            UsePartialLinkage.Mode.DEFAULT -> PartialLinkageConfig.DEFAULT
+            UsePartialLinkage.Mode.SILENT -> PartialLinkageConfig(PartialLinkageLogLevel.SILENT)
+            UsePartialLinkage.Mode.INFO -> PartialLinkageConfig(PartialLinkageLogLevel.INFO)
+            UsePartialLinkage.Mode.WARNING -> PartialLinkageConfig(PartialLinkageLogLevel.WARNING)
+            UsePartialLinkage.Mode.ERROR -> PartialLinkageConfig(PartialLinkageLogLevel.ERROR)
         }
 
         return UsedPartialLinkageConfig(config)
@@ -627,7 +628,7 @@ object NativeTestSupport {
         )
     }
 
-    internal fun ExtensionContext.computeBlackBoxTestInstances(): NativeTestInstances<AbstractNativeBlackBoxTest> =
+    fun ExtensionContext.computeBlackBoxTestInstances(): NativeTestInstances<AbstractNativeBlackBoxTest> =
         NativeTestInstances(requiredTestInstances.allInstances)
 
     /*************** Test run settings (simplified) ***************/

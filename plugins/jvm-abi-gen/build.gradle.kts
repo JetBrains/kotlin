@@ -4,7 +4,6 @@ description = "ABI generation for Kotlin/JVM"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
 }
@@ -36,7 +35,6 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:plugin-api"))
-    compileOnly(project(":kotlin-build-common"))
 
     // Include kotlin.metadata for metadata stripping.
     // Note that kotlin-metadata-jvm already includes kotlin-metadata, core:metadata, core:metadata.jvm,

@@ -1,6 +1,7 @@
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 
 buildscript {
     // workaround for KGP build metrics reports: https://github.com/gradle/gradle/issues/20001
@@ -42,15 +43,6 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
 }
 
-gradlePlugin {
-    plugins {
-        register("jps-compatible") {
-            id = "jps-compatible"
-            implementationClass = "org.jetbrains.kotlin.pill.JpsCompatiblePlugin"
-        }
-    }
-}
-
 repositories {
     mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
     google { setUrl("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2") }
@@ -67,6 +59,7 @@ kotlin {
     compilerOptions {
         allWarningsAsErrors.set(true)
         optIn.add("kotlin.ExperimentalStdlibApi")
+        optIn.add("org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl")
     }
 }
 
@@ -76,6 +69,13 @@ afterEvaluate {
             // Required to be able to use bootstrap metadata version in the build scripts and Gradle Kotlin runtime version
             compilerOptions.freeCompilerArgs.add("-Xskip-metadata-version-check")
         }
+    }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    compilerOptions {
+        languageVersion.set(KotlinVersion.KOTLIN_2_1)
+        apiVersion.set(KotlinVersion.KOTLIN_2_1)
     }
 }
 
@@ -89,17 +89,15 @@ java {
 
 dependencies {
     api(project(":gradle-plugins-common"))
-    
+
     implementation(kotlin("stdlib", embeddedKotlinVersion))
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion.get()}")
     implementation(libs.gradle.pluginPublish.gradlePlugin)
     implementation(libs.dokka.gradlePlugin)
     implementation(libs.spdx.gradlePlugin)
     implementation(libs.dexMemberList)
     compileOnly(libs.node.gradlePlugin)
 
-    // Keep in mind https://github.com/johnrengelman/shadow/issues/807 issue as shadow plugin brings transitively "org.ow2.asm" dependency,
-    // which could conflict with a version in Kotlin compiler brought by KGP.
     implementation(libs.shadow.gradlePlugin)
     implementation(libs.proguard.gradlePlugin)
 
@@ -108,14 +106,16 @@ dependencies {
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)
 
+    implementation(libs.org.tukaani.xz)
+
     compileOnly(libs.develocity.gradlePlugin)
     compileOnly(libs.ant) // for accessing the zip-related classes that are present in Gradle's runtime
     compileOnly(gradleApi())
     compileOnly(project(":android-sdk-provisioner"))
 
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$bootstrapKotlinVersion")
     //implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:${libs.versions.kotlin.`for`.gradle.plugins.compilation.get()}")
-    implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:${project.bootstrapKotlinVersion}") {
+    implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:$bootstrapKotlinVersion") {
         isTransitive = false
     }
     implementation(libs.gson)
@@ -124,4 +124,12 @@ dependencies {
 
 tasks.register("checkBuild") {
     dependsOn("test")
+}
+
+project.configurations.named(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main") {
+    resolutionStrategy {
+        eachDependency {
+            if (this.requested.group == "org.jetbrains.kotlin") useVersion(libs.versions.kotlin.`for`.gradle.plugins.compilation.get())
+        }
+    }
 }

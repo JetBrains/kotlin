@@ -86,21 +86,20 @@ KtWhenExpression(186,307): 'when (o) {'
   null
 
 KtNameReferenceExpression(192,193): 'o'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = o
-          receiverType = null
-          returnType = Outer
-          symbol = o: Outer
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = o
+        receiverType = null
+        returnType = Outer
+        symbol = o: Outer
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(205,215): 'FIRST -> 1'
@@ -110,7 +109,7 @@ KtWhenConditionWithExpression(205,210): 'FIRST'
   null
 
 KtNameReferenceExpression(205,210): 'FIRST'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: FIRST>
 
@@ -124,7 +123,7 @@ KtWhenConditionWithExpression(224,230): 'SECOND'
   null
 
 KtNameReferenceExpression(224,230): 'SECOND'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SECOND>
 
@@ -132,21 +131,20 @@ KtWhenExpression(234,301): 'when (i) {'
   null
 
 KtNameReferenceExpression(240,241): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = Inner
-          symbol = i: Inner
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = Inner
+        symbol = i: Inner
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(257,268): 'SECOND -> 2'
@@ -156,7 +154,7 @@ KtWhenConditionWithExpression(257,263): 'SECOND'
   null
 
 KtNameReferenceExpression(257,263): 'SECOND'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SECOND>
 
@@ -170,7 +168,7 @@ KtWhenConditionWithExpression(281,286): 'THIRD'
   null
 
 KtNameReferenceExpression(281,286): 'THIRD'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: THIRD>
 
@@ -226,21 +224,20 @@ KtWhenExpression(357,598): 'when (o) {'
   null
 
 KtNameReferenceExpression(363,364): 'o'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = o
-          receiverType = null
-          returnType = Outer
-          symbol = o: Outer
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = o
+        receiverType = null
+        returnType = Outer
+        symbol = o: Outer
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(376,386): 'FIRST -> 1'
@@ -250,7 +247,7 @@ KtWhenConditionWithExpression(376,381): 'FIRST'
   null
 
 KtNameReferenceExpression(376,381): 'FIRST'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: FIRST>
 
@@ -264,7 +261,7 @@ KtWhenConditionWithExpression(395,401): 'SECOND'
   null
 
 KtNameReferenceExpression(395,401): 'SECOND'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SECOND>
 
@@ -296,21 +293,20 @@ KtWhenExpression(459,550): 'when (i) {'
   null
 
 KtNameReferenceExpression(465,466): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = Inner
-          symbol = i: Inner
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = Inner
+        symbol = i: Inner
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(490,501): 'SECOND -> 2'
@@ -320,7 +316,7 @@ KtWhenConditionWithExpression(490,496): 'SECOND'
   null
 
 KtNameReferenceExpression(490,496): 'SECOND'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SECOND>
 
@@ -334,7 +330,7 @@ KtWhenConditionWithExpression(522,527): 'THIRD'
   null
 
 KtNameReferenceExpression(522,527): 'THIRD'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: THIRD>
 
@@ -342,40 +338,38 @@ KtConstantExpression(531,532): '3'
   null
 
 KtCallExpression(577,582): 'baz()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = baz(): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = baz(): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(577,580): 'baz'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = baz(): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = baz(): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(580,582): '()'
   null

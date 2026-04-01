@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
@@ -94,7 +96,6 @@ internal class DaemonCompilationResults(
      * 4. [CompilationResultCategory.BUILD_METRICS.code]              -> a [BuildMetrics] instance
      **/
     override fun add(compilationResultCategory: Int, value: Serializable) {
-        // TODO propagate the values to the caller via callbacks, requires to make metrics a part of the API
         when (compilationResultCategory) {
             CompilationResultCategory.IC_COMPILE_ITERATION.code -> {
                 kotlinLogger.debug(value as? CompileIterationResult, rootProjectDir)
@@ -109,6 +110,12 @@ internal class DaemonCompilationResults(
             CompilationResultCategory.BUILD_METRICS.code -> @Suppress("UNCHECKED_CAST") (value as? BuildMetrics<GradleBuildTimeMetric, GradleBuildPerformanceMetric>)?.let {
                 buildMetricsReporter.addMetrics(it)
             }
+            CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES.code,
+            CompilationResultCategory.BUILD_REPORT_LINES.code -> @Suppress("UNCHECKED_CAST") (value as? List<String>)?.let {
+                for (line in value) {
+                    kotlinLogger.debug(line)
+                }
+            }
             else -> kotlinLogger.debug("Result category=$compilationResultCategory value=$value")
         }
     }
@@ -118,6 +125,7 @@ internal val clientIsAliveFile by lazy {
     makeAutodeletingFlagFile()
 }
 
+// logging used by tests
 internal fun KotlinLogger.debug(compileIterationResult: CompileIterationResult?, rootProjectDir: File?) {
     if (compileIterationResult != null && isDebugEnabled) {
         if (compileIterationResult.sourceFiles.any()) {
@@ -128,9 +136,8 @@ internal fun KotlinLogger.debug(compileIterationResult: CompileIterationResult?,
                         return@map relativePath ?: it.normalize().absolutePath
                     }
                 }
-            debug("compile iteration: ${sourceFiles.joinToString()}")
+            debug("[KOTLIN] compile iteration: ${sourceFiles.joinToString()}")
         }
-        debug("compiler exit code: ${compileIterationResult.exitCode}")
     }
 }
 

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.container
 
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.utils.genericParameterTypesWithEnclosingThis
 import java.lang.reflect.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -82,11 +83,7 @@ private fun getConstructorInfo(c: Class<*>): ConstructorInfo? {
     if (publicConstructors.size != 1) return null
 
     val constructor = publicConstructors.single()
-    val parameterTypes =
-            if (c.declaringClass != null && !Modifier.isStatic(c.modifiers))
-                listOf(c.declaringClass, *constructor.genericParameterTypes)
-            else constructor.genericParameterTypes.toList()
-    return ConstructorInfo(constructor, parameterTypes)
+    return ConstructorInfo(constructor, constructor.genericParameterTypesWithEnclosingThis.toList())
 }
 
 

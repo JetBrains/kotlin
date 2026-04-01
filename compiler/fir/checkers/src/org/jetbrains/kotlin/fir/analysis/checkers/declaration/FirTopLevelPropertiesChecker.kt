@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
@@ -141,7 +142,7 @@ internal fun checkPropertyInitializer(
                     !backingFieldRequired -> {
                         reporter.reportOn(it, FirErrors.PROPERTY_INITIALIZER_NO_BACKING_FIELD)
                     }
-                    propertySymbol.receiverParameterSymbol != null -> {
+                    propertySymbol.receiverParameterSymbol != null && !propertySymbol.isCompanionExtension -> {
                         reporter.reportOn(it, FirErrors.EXTENSION_PROPERTY_WITH_BACKING_FIELD)
                     }
                 }
@@ -192,7 +193,7 @@ internal fun checkPropertyInitializer(
                     initializationError = true
                 } else if (!isCorrectlyInitialized && reachable) {
                     val isOpenValDeferredInitDeprecationWarning =
-                        !LanguageFeature.ProhibitOpenValDeferredInitialization.isEnabled() &&
+                        LanguageFeature.ProhibitOpenValDeferredInitialization.isDisabled() &&
                                 propertySymbol.getEffectiveModality(containingClass, context.languageVersionSettings) == Modality.OPEN &&
                                 propertySymbol.isVal &&
                                 isDefinitelyAssigned
@@ -266,7 +267,7 @@ private fun reportMustBeInitialized(
         error("Not reachable case. Every \"open val + deferred init\" case that could be made `abstract`, also could be made `final`")
     }
     val isMissedMustBeInitializedDeprecationWarning =
-        !LanguageFeature.ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor.isEnabled() &&
+        LanguageFeature.ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor.isDisabled() &&
                 containingClass != null &&
                 containingClass.primaryConstructorIfAny(context.session) == null &&
                 isDefinitelyAssigned

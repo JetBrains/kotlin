@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,14 @@ import org.jetbrains.kotlin.psi.stubs.*
 import java.lang.reflect.Method
 
 val STUB_TO_STRING_PREFIX = "KotlinStub$"
+
+private val IGNORED_NULL_VALUES: Map<Class<out StubElement<*>>, Set<String>> = buildMap {
+    put(KotlinFunctionStub::class.java, setOf(KotlinCallableStubBase<*>::kdocText.name))
+    put(KotlinPropertyStub::class.java, setOf(KotlinCallableStubBase<*>::kdocText.name))
+    put(KotlinConstructorStub::class.java, setOf(KotlinCallableStubBase<*>::kdocText.name))
+    put(KotlinClassStub::class.java, setOf(KotlinClassOrObjectStub<*>::kdocText.name))
+    put(KotlinObjectStub::class.java, setOf(KotlinClassOrObjectStub<*>::kdocText.name))
+}
 
 @OptIn(KtImplementationDetail::class)
 abstract class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?, elementType: IStubElementType<*, *>) :
@@ -42,11 +50,13 @@ abstract class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<
     }
 
     private fun renderPropertyValues(stubInterface: Class<out Any?>): List<String> {
-        return collectProperties(stubInterface).mapNotNull { property -> renderProperty(property) }.sorted()
+        return collectProperties(stubInterface)
+            .mapNotNull { property -> renderProperty(stubInterface, property) }
+            .sorted()
     }
 
     private fun collectProperties(stubInterface: Class<*>): Collection<Method> = buildList {
-        stubInterface.declaredMethods.filterTo(this) { it.parameterTypes.isEmpty() }
+        stubInterface.declaredMethods.filterTo(this) { it.parameterTypes.isEmpty() && !it.name.endsWith($$"$annotations") }
         for (baseInterface in stubInterface.interfaces) {
             if (baseInterface in BASE_STUB_INTERFACES) {
                 this += collectProperties(baseInterface)
@@ -54,10 +64,18 @@ abstract class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<
         }
     }
 
-    private fun renderProperty(property: Method): String? {
+    private fun renderProperty(stubInterface: Class<*>, property: Method): String? {
         return try {
             val value = property.invoke(this)
             val name = getPropertyName(property)
+
+            if (value == null) {
+                val ignoredNamesForClass = IGNORED_NULL_VALUES[stubInterface].orEmpty()
+                if (name in ignoredNamesForClass) {
+                    return null
+                }
+            }
+
             "$name=$value"
         } catch (e: Exception) {
             LOGGER.error(e)

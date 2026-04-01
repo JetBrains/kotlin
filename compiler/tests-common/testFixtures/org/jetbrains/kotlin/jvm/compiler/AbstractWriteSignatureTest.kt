@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import org.jetbrains.kotlin.codegen.CodegenTestCase
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.*
@@ -15,6 +16,12 @@ import java.util.*
 import java.util.regex.MatchResult
 
 abstract class AbstractWriteSignatureTest : CodegenTestCase() {
+    override val useFir: Boolean
+        get() = true
+
+    override val firParser: FirParser
+        get() = FirParser.LightTree
+
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         val isIgnored = InTextDirectivesUtils.isIgnoredTarget(backend, wholeFile)
         compile(files)

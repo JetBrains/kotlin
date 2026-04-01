@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -16,13 +17,15 @@ dependencies {
 
 sourceSets {
     "main" { none() }
-    "test" { generatedTestDir() }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
 testsJar {}
 
 projectTests {
+    testData(isolated, "testData")
+
     nativeTestTask(
         "test",
         defineJDKEnvVariables = listOf(
@@ -41,7 +44,7 @@ projectTests {
         )
     }
 
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateCliTestsKt") {
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateCliTestsKt", generateTestsInBuildDirectory = true) {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     }
 }

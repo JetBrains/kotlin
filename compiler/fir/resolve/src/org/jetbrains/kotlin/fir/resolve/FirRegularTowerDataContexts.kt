@@ -12,6 +12,7 @@ import java.util.*
 enum class FirTowerDataMode {
     REGULAR,
     NESTED_CLASS,
+    COMPANION_BLOCK,
     COMPANION_OBJECT,
     CONSTRUCTOR_HEADER,
     ENUM_ENTRY,
@@ -27,12 +28,13 @@ class FirRegularTowerDataContexts private constructor(
         regular: FirTowerDataContext,
         forNestedClasses: FirTowerDataContext? = null,
         forCompanionObject: FirTowerDataContext? = null,
+        forCompanionBlock: FirTowerDataContext? = null,
         forConstructorHeaders: FirTowerDataContext? = null,
         forEnumEntries: FirTowerDataContext? = null,
         primaryConstructorPureParametersScope: FirLocalScope? = null,
         primaryConstructorAllParametersScope: FirLocalScope? = null,
     ) : this(
-        enumMap(regular, forNestedClasses, forCompanionObject, forConstructorHeaders, forEnumEntries),
+        enumMap(regular, forNestedClasses, forCompanionObject, forCompanionBlock, forConstructorHeaders, forEnumEntries),
         primaryConstructorPureParametersScope,
         primaryConstructorAllParametersScope,
         FirTowerDataMode.REGULAR
@@ -69,6 +71,7 @@ class FirRegularTowerDataContexts private constructor(
             regular: FirTowerDataContext,
             forNestedClasses: FirTowerDataContext?,
             forCompanionObject: FirTowerDataContext?,
+            forCompanionBlock: FirTowerDataContext?,
             forConstructorHeaders: FirTowerDataContext?,
             forEnumEntries: FirTowerDataContext?,
         ): EnumMap<FirTowerDataMode, FirTowerDataContext> {
@@ -76,6 +79,7 @@ class FirRegularTowerDataContexts private constructor(
             modeMap[FirTowerDataMode.REGULAR] = regular
             modeMap[FirTowerDataMode.NESTED_CLASS] = forNestedClasses
             modeMap[FirTowerDataMode.COMPANION_OBJECT] = forCompanionObject
+            modeMap[FirTowerDataMode.COMPANION_BLOCK] = forCompanionBlock
             modeMap[FirTowerDataMode.CONSTRUCTOR_HEADER] = forConstructorHeaders
             modeMap[FirTowerDataMode.ENUM_ENTRY] = forEnumEntries
             return modeMap

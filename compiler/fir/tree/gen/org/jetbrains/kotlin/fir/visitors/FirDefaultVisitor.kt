@@ -125,6 +125,21 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitCodeFragment(codeFragment: FirCodeFragment, data: D): R =
         visitDeclaration(codeFragment, data)
 
+    override fun visitReplSnippet(replSnippet: FirReplSnippet, data: D): R =
+        visitDeclaration(replSnippet, data)
+
+    override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: D): R =
+        visitStatement(replDeclarationReference, data)
+
+    override fun visitReplExpressionReference(replExpressionReference: FirReplExpressionReference, data: D): R =
+        visitExpression(replExpressionReference, data)
+
+    override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: D): R =
+        visitStatement(replPropertyInitializer, data)
+
+    override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: D): R =
+        visitStatement(replPropertyDelegate, data)
+
     override fun visitResolvedImport(resolvedImport: FirResolvedImport, data: D): R =
         visitImport(resolvedImport, data)
 
@@ -167,8 +182,8 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: D): R =
         visitExpression(varargArgumentsExpression, data)
 
-    override fun visitSamConversionExpression(samConversionExpression: FirSamConversionExpression, data: D): R =
-        visitExpression(samConversionExpression, data)
+    override fun visitFunctionTypeConversionExpression(functionTypeConversionExpression: FirFunctionTypeConversionExpression, data: D): R =
+        visitExpression(functionTypeConversionExpression, data)
 
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: D): R =
         visitExpression(resolvedQualifier, data)

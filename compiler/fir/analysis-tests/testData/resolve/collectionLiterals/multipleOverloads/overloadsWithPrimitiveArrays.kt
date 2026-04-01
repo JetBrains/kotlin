@@ -1,0 +1,21 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-82638
+// LANGUAGE: +CollectionLiterals
+// WITH_STDLIB
+
+fun foo(a: LongArray) {
+}
+
+fun foo(b: IntArray) {
+}
+
+fun test() {
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>([42])
+    <!NONE_APPLICABLE!>foo<!>(["42"])
+    <!NONE_APPLICABLE!>foo<!>([42u])
+    foo([42L])
+    foo([42, 42L])
+}
+
+/* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, integerLiteral, stringLiteral, unsignedLiteral */

@@ -22,24 +22,9 @@ abstract class KotlinD8Ir
 @Inject
 internal constructor(
     target: KotlinJsIrTarget,
-    private val objects: ObjectFactory,
-    private val providers: ProviderFactory,
 ) :
     KotlinJsIrSubTarget(target, "d8"),
     KotlinWasmD8Dsl {
-
-    @Deprecated(
-        "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
-        level = DeprecationLevel.ERROR,
-    )
-    @Suppress("UNUSED_PARAMETER", "UNREACHABLE_CODE")
-    constructor(
-        target: KotlinJsIrTarget,
-    ) : this(
-        target = throw UnsupportedOperationException(),
-        objects = throw UnsupportedOperationException(),
-        providers = throw UnsupportedOperationException(),
-    )
 
     private val d8 = D8Plugin.applyWithEnvSpec(project)
 
@@ -55,7 +40,7 @@ internal constructor(
     }
 
     override fun configureDefaultTestFramework(test: KotlinJsTest) {
-        test.testFramework = KotlinWasmD8(test, objects, providers)
+        test.testFramework = KotlinWasmD8(test)
     }
 
     override fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary) {

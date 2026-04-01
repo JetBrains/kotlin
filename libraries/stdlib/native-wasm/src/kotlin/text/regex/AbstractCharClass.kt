@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -29,6 +29,7 @@ import kotlin.experimental.ExperimentalNativeApi
 import kotlin.collections.associate
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.AtomicReference
+import kotlin.math.min
 import kotlin.native.BitSet
 import kotlin.native.ObsoleteNativeApi
 
@@ -779,36 +780,95 @@ internal abstract class AbstractCharClass : SpecialToken() {
                 CharClasses.ALL -> CachedRange(0x00, 0x10FFFF)
                 CharClasses.SPECIALS -> CachedSpecialsBlock()
                 CharClasses.CN -> CachedCategory(CharCategory.UNASSIGNED.value, true)
-                CharClasses.ISL -> CachedCategoryScope(0x3E, true)
+                CharClasses.ISL -> CachedCategoryScope(
+                    buildMajorCharCategoryMask(
+                        CharCategory.UPPERCASE_LETTER,
+                        CharCategory.LOWERCASE_LETTER,
+                        CharCategory.TITLECASE_LETTER,
+                        CharCategory.MODIFIER_LETTER,
+                        CharCategory.OTHER_LETTER
+                    ),
+                    true
+                )
                 CharClasses.LU -> CachedCategory(CharCategory.UPPERCASE_LETTER.value, true)
                 CharClasses.LL -> CachedCategory(CharCategory.LOWERCASE_LETTER.value, true)
                 CharClasses.LT -> CachedCategory(CharCategory.TITLECASE_LETTER.value, false)
                 CharClasses.LM -> CachedCategory(CharCategory.MODIFIER_LETTER.value, false)
                 CharClasses.LO -> CachedCategory(CharCategory.OTHER_LETTER.value, true)
-                CharClasses.ISM -> CachedCategoryScope(0x1C0, true)
+                CharClasses.ISM -> CachedCategoryScope(
+                    buildMajorCharCategoryMask(
+                        CharCategory.NON_SPACING_MARK,
+                        CharCategory.ENCLOSING_MARK,
+                        CharCategory.COMBINING_SPACING_MARK,
+                    ),
+                    true
+                )
                 CharClasses.MN -> CachedCategory(CharCategory.NON_SPACING_MARK.value, true)
                 CharClasses.ME -> CachedCategory(CharCategory.ENCLOSING_MARK.value, false)
                 CharClasses.MC -> CachedCategory(CharCategory.COMBINING_SPACING_MARK.value, true)
-                CharClasses.ISN -> CachedCategoryScope(0xE00, true)
+                CharClasses.ISN -> CachedCategoryScope(
+                    buildMajorCharCategoryMask(
+                        CharCategory.DECIMAL_DIGIT_NUMBER,
+                        CharCategory.LETTER_NUMBER,
+                        CharCategory.OTHER_NUMBER
+                    ),
+                    true
+                )
                 CharClasses.ND -> CachedCategory(CharCategory.DECIMAL_DIGIT_NUMBER.value, true)
                 CharClasses.NL -> CachedCategory(CharCategory.LETTER_NUMBER.value, true)
                 CharClasses.NO -> CachedCategory(CharCategory.OTHER_NUMBER.value, true)
-                CharClasses.ISZ -> CachedCategoryScope(0x7000, false)
+                CharClasses.ISZ -> CachedCategoryScope(
+                    buildMajorCharCategoryMask(
+                        CharCategory.SPACE_SEPARATOR,
+                        CharCategory.LINE_SEPARATOR,
+                        CharCategory.PARAGRAPH_SEPARATOR
+                    ),
+                    false
+                )
                 CharClasses.ZS -> CachedCategory(CharCategory.SPACE_SEPARATOR.value, false)
                 CharClasses.ZL -> CachedCategory(CharCategory.LINE_SEPARATOR.value, false)
                 CharClasses.ZP -> CachedCategory(CharCategory.PARAGRAPH_SEPARATOR.value, false)
-                CharClasses.ISC -> CachedCategoryScope(0xF0000, true, true)
+                CharClasses.ISC -> CachedCategoryScope(
+                    buildMajorCharCategoryMask(
+                        CharCategory.UNASSIGNED,
+                        CharCategory.CONTROL,
+                        CharCategory.FORMAT,
+                        CharCategory.PRIVATE_USE,
+                        CharCategory.SURROGATE
+                    ),
+                    mayContainSupplCodepoints = true,
+                    containsAllSurrogates = true
+                )
                 CharClasses.CC -> CachedCategory(CharCategory.CONTROL.value, false)
                 CharClasses.CF -> CachedCategory(CharCategory.FORMAT.value, true)
                 CharClasses.CO -> CachedCategory(CharCategory.PRIVATE_USE.value, true)
                 CharClasses.CS -> CachedCategory(CharCategory.SURROGATE.value, false, true)
-                CharClasses.ISP -> CachedCategoryScope((1 shl CharCategory.DASH_PUNCTUATION.value) or (1 shl CharCategory.START_PUNCTUATION.value) or (1 shl CharCategory.END_PUNCTUATION.value) or (1 shl CharCategory.CONNECTOR_PUNCTUATION.value) or (1 shl CharCategory.OTHER_PUNCTUATION.value) or (1 shl CharCategory.INITIAL_QUOTE_PUNCTUATION.value) or (1 shl CharCategory.FINAL_QUOTE_PUNCTUATION.value), true)
+                CharClasses.ISP -> CachedCategoryScope(
+                    buildMajorCharCategoryMask(
+                        CharCategory.DASH_PUNCTUATION,
+                        CharCategory.START_PUNCTUATION,
+                        CharCategory.END_PUNCTUATION,
+                        CharCategory.CONNECTOR_PUNCTUATION,
+                        CharCategory.OTHER_PUNCTUATION,
+                        CharCategory.INITIAL_QUOTE_PUNCTUATION,
+                        CharCategory.FINAL_QUOTE_PUNCTUATION
+                    ),
+                    true
+                )
                 CharClasses.PD -> CachedCategory(CharCategory.DASH_PUNCTUATION.value, false)
                 CharClasses.PS -> CachedCategory(CharCategory.START_PUNCTUATION.value, false)
                 CharClasses.PE -> CachedCategory(CharCategory.END_PUNCTUATION.value, false)
                 CharClasses.PC -> CachedCategory(CharCategory.CONNECTOR_PUNCTUATION.value, false)
                 CharClasses.PO -> CachedCategory(CharCategory.OTHER_PUNCTUATION.value, true)
-                CharClasses.ISS -> CachedCategoryScope(0x7E000000, true)
+                CharClasses.ISS -> CachedCategoryScope(
+                    buildMajorCharCategoryMask(
+                        CharCategory.MATH_SYMBOL,
+                        CharCategory.CURRENCY_SYMBOL,
+                        CharCategory.MODIFIER_SYMBOL,
+                        CharCategory.OTHER_SYMBOL
+                    ),
+                    true
+                )
                 CharClasses.SM -> CachedCategory(CharCategory.MATH_SYMBOL.value, true)
                 CharClasses.SC -> CachedCategory(CharCategory.CURRENCY_SYMBOL.value, false)
                 CharClasses.SK -> CachedCategory(CharCategory.MODIFIER_SYMBOL.value, false)
@@ -842,4 +902,12 @@ internal abstract class AbstractCharClass : SpecialToken() {
             return cachedClass.getValue(negative)
         }
     }
+}
+
+private fun buildMajorCharCategoryMask(vararg minorCategories: CharCategory): Int {
+    var mask = 0
+    minorCategories.forEach { c ->
+        mask = mask.or(1 shl c.value)
+    }
+    return mask
 }
