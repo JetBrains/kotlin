@@ -9,6 +9,9 @@ import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiEnumConstant
 import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.contextModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
@@ -19,6 +22,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.junit.jupiter.api.Test
@@ -81,5 +85,33 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
 
         val nameReference = (argument as KtLightElementBase).kotlinOrigin as KtNameReferenceExpression
         testServices.assertions.assertEquals("MY_CONST", nameReference.getReferencedName())
+    }
+
+    /**
+     * A regression test for KT-84875 to ensure that light classes are not created for dangling file modules.
+     */
+    @Test
+    fun danglingFileLightClasses(file: KtFile, testServices: TestServices) {
+        val contextModule = KotlinProjectStructureProvider.getModule(file.project, file, useSiteModule = null)
+        val ktPsiFactory = KtPsiFactory.contextual(file, markGenerated = true, eventSystemEnabled = false)
+        val danglingFile = ktPsiFactory.createFile("fake.kt", file.text).apply {
+            this.contextModule = contextModule
+        }
+
+        val danglingModule = KotlinProjectStructureProvider.getModule(file.project, danglingFile, useSiteModule = null)
+        testServices.assertions.assertTrue(danglingModule is KaDanglingFileModule) {
+            "Expected a dangling file module, but got ${danglingModule::class.simpleName}"
+        }
+
+        val classOrObject = danglingFile.declarations.filterIsInstance<KtClassOrObject>().first()
+        val lightClass = classOrObject.toLightClass()
+        testServices.assertions.assertEquals(null, lightClass) {
+            "Light class should not be created for a class in a dangling file"
+        }
+
+        val facadeClass = danglingFile.findFacadeClass()
+        testServices.assertions.assertEquals(null, facadeClass) {
+            "Facade light class should not be created for a dangling file"
+        }
     }
 }
