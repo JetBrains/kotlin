@@ -5,12 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.services.configuration
 
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.model.DependencyDescription
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.kotlinFiles
 import org.jetbrains.kotlin.test.services.service
 import java.io.File
 
@@ -19,6 +24,27 @@ class AnalysisApiJvmEnvironmentConfigurator(testServices: TestServices) : JvmEnv
         get() = super.additionalServices + listOf(
             service(::CompiledLibraryProvider),
         )
+
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        super.configureCompilerConfiguration(configuration, module)
+
+        val libraryJars = module.directives[AnalysisApiTestDirectives.ATTACH_LIBRARY_JAR]
+        if (libraryJars.isNotEmpty()) {
+            val sourceFileParents = module.kotlinFiles.map { it.originalFile.parentFile }.distinct()
+
+            nextJar@ for (jarName in libraryJars) {
+                for (sourceFileParent in sourceFileParents) {
+                    val targetFile = sourceFileParent.resolve(jarName)
+                    if (targetFile.exists()) {
+                        configuration.addJvmClasspathRoot(targetFile)
+                        continue@nextJar
+                    }
+                }
+
+                error("Library file $jarName not found")
+            }
+        }
+    }
 
     override fun convertDependencyToFileList(dependency: DependencyDescription): List<File> {
         val friendModule = dependency.dependencyModule

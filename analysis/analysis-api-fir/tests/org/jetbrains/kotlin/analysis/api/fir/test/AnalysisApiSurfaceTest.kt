@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.test
 
 import com.intellij.psi.PsiClass
+import com.intellij.psi.util.descendantsOfType
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.analyzeCopy
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaTypeParameterSy
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPrimaryConstructorSymbolPointer
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
@@ -27,9 +29,12 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.org.objectweb.asm.Type
 import org.junit.jupiter.api.Test
@@ -193,6 +198,87 @@ class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("testData/surfac
             @Suppress("UNCHECKED_CAST")
             val contextParameterBridgeResult = contextParameterBridgeMethod.invoke(null, this@analyze, classSymbol) as Set<KotlinTarget>
             assertEquals(memberResult, contextParameterBridgeResult)
+        }
+    }
+
+    @Test
+    @OptIn(KtExperimentalApi::class)
+    fun companionBlocks(ktFile: KtFile) {
+        analyze(ktFile) {
+            fun checkMembers(classId: ClassId, vararg expectedMemberCallableIds: String) {
+                val classSymbol = findClass(classId)
+                    ?: error("Could not find the class '$classId'")
+
+                val actualText = classSymbol.combinedMemberScope.callables
+                    .toList()
+                    .mapNotNull { it.callableId?.toString() }
+                    .sorted()
+
+                assertEquals(expectedMemberCallableIds.toList(), actualText)
+            }
+
+            checkMembers(
+                ClassId.fromString("org/example/Foo"),
+                "kotlin/Any.equals",
+                "kotlin/Any.hashCode",
+                "kotlin/Any.toString",
+                "org/example/Foo.companionBlockFunction",
+                "org/example/Foo.companionBlockProperty",
+                "org/example/Foo.ordinaryFunction",
+                "org/example/Foo.ordinaryProperty",
+            )
+
+            checkMembers(
+                ClassId.fromString("org/example/Direction"),
+                "kotlin/Enum.clone",
+                "kotlin/Enum.equals",
+                "kotlin/Enum.finalize",
+                "kotlin/Enum.hashCode",
+                "kotlin/Enum.name",
+                "kotlin/Enum.ordinal",
+                "kotlin/Enum.toString",
+                "org/example/Direction.EAST",
+                "org/example/Direction.NORTH",
+                "org/example/Direction.SOUTH",
+                "org/example/Direction.WEST",
+                "org/example/Direction.compareTo",
+                "org/example/Direction.entries",
+                "org/example/Direction.getDeclaringClass",
+                "org/example/Direction.valueOf",
+                "org/example/Direction.values",
+            )
+
+            val actualResolutionResult = ktFile.descendantsOfType<KtProperty>()
+                .filter { it.isLocal && it.name.orEmpty().startsWith("ret") }
+                .mapNotNull { it.initializer }
+                .associate { initializer ->
+                    val initializerText = initializer.text
+
+                    val targetSymbol = (initializer as? KtResolvable)?.resolveSymbol()
+                    initializerText to (targetSymbol as? KaCallableSymbol)?.callableId
+                }
+                .entries
+                .map { (key, value) -> "$key: $value" }
+
+            val expectedResolutionResult = listOf(
+                "foo.ordinaryProperty: org/example/Foo.ordinaryProperty",
+                "foo.ordinaryFunction(): org/example/Foo.ordinaryFunction",
+                "foo.companionBlockProperty: null",
+                "foo.companionBlockFunction(): null",
+                "Foo.companionBlockProperty: null",
+                "Foo.companionBlockFunction(): null",
+                "String.empty: null",
+                "String.fromNumber(9001): null",
+                "Direction.values(): org/example/Direction.values",
+                "Direction.entries: org/example/Direction.entries",
+                "Direction.valueOf(\"SOUTH\"): org/example/Direction.valueOf",
+                "\"\".empty: null",
+                "\"\".fromNumber(42): null",
+                "empty: org/example/empty",
+                "fromNumber(42): org/example/fromNumber",
+            )
+
+            assertEquals(expectedResolutionResult, actualResolutionResult)
         }
     }
 }
