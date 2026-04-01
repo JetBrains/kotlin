@@ -48,8 +48,12 @@ object ServiceLoaderLite {
         val implementations = mutableListOf<Service>()
 
         for (className in findImplementations(service, files)) {
-            val instance = Class.forName(className, false, classLoader).newInstance()
-            implementations += service.cast(instance)
+            try {
+                val instance = Class.forName(className, false, classLoader).newInstance()
+                implementations += service.cast(instance)
+            } catch (_: Throwable) {
+
+            }
         }
 
         return implementations
