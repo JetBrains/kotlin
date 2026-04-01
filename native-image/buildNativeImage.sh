@@ -30,12 +30,13 @@ echo '--- Building kotlin compiler dist ---'
 echo '--- Building kotlin compiler embeddable ---'
 ./gradlew -q :kotlin-compiler-embeddable:embeddable
 
-EMBEDDABLE_JAR=$(find prepare/compiler-embeddable -name 'kotlin-compiler-embeddable-2.4.255-SNAPSHOT.jar')
-STDLIB_JAR=$(find libraries/ -name 'kotlin-stdlib-2.4.255-SNAPSHOT.jar')
-REFLECT_JAR=$(find libraries/ -name 'kotlin-reflect-2.4.255-SNAPSHOT.jar')
+EMBEDDABLE_JAR=$(find prepare/compiler-embeddable -name 'kotlin-compiler-embeddable-*.jar')
+STDLIB_JAR=$(find dist/ -name 'kotlin-stdlib.jar')
+REFLECT_JAR=$(find dist/ -name 'kotlin-reflect.jar')
 COROUTINES_JAR=$(find dist/ -name 'kotlinx-coroutines-core-jvm.jar')
+ANNOTATIONS_JAR=$(find dist/ -name 'annotations-*.jar')
 
-CLASSPATH=$EMBEDDABLE_JAR:$STDLIB_JAR:$REFLECT_JAR:$COROUTINES_JAR
+CLASSPATH=$EMBEDDABLE_JAR:$STDLIB_JAR:$REFLECT_JAR:$COROUTINES_JAR:$ANNOTATIONS_JAR
 echo "Class path: $CLASSPATH"
 
 if [ "$UPDATE_REACHABILITY_METADATA" = true ]; then
