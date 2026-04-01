@@ -32,6 +32,13 @@
 			);
 			target = 20EF86E831B58EE3722E4CE5 /* iosApp */;
 		};
+		F82A25892F7C13980052BC15 /* Exceptions for "FrameworkTarget" folder in "FrameworkTarget" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			publicHeaders = (
+				FrameworkTarget.h,
+			);
+			target = F82A257C2F7C13980052BC15 /* FrameworkTarget */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -50,6 +57,9 @@
 		};
 		F82A257E2F7C13980052BC15 /* FrameworkTarget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F82A25892F7C13980052BC15 /* Exceptions for "FrameworkTarget" folder in "FrameworkTarget" target */,
+			);
 			path = FrameworkTarget;
 			sourceTree = "<group>";
 		};

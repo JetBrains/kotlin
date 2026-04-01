@@ -81,7 +81,7 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
                 projectPath.resolve("iosApp").toFile(),
             ).assertProcessRunResult { assertTrue(isSuccessful) }
 
-            val packageDependency = projectPath.resolve("`PackageDependency`").also { it.createDirectories() }.toFile()
+            val packageDependency = projectPath.resolve("PackageDependency").also { it.createDirectories() }.toFile()
             runProcess(listOf("/usr/bin/swift", "package", "init", "--type", "library"), packageDependency)
             val outgoingXCFramework = packageDependency.resolve("FrameworkTarget.xcframework")
             runProcess(
