@@ -102,7 +102,21 @@ fi
 # A valid review must contain the "## Статус" section
 review_is_valid() { [[ -f "$1" ]] && grep -q '## Статус' "$1"; }
 
+# Status is "ready" only if the '## Статус' section contains the phrase
+review_status_is_ready() {
+    [[ -f "$1" ]] && awk '
+      /^## Статус/ { in_s = 1; next }
+      in_s && /^## / { exit }
+      in_s && /Готов как входной артефакт/ { found = 1 }
+      END { exit !found }
+    ' "$1"
+}
+
 mkdir -p "$REVIEW_DIR"
+
+# Live log files for `tail -f`; copied to per-iteration files after each run
+CODEX_LIVE_LOG="${REVIEW_DIR}/log-codex.txt"
+CLAUDE_LIVE_LOG="${REVIEW_DIR}/log-claude.txt"
 
 echo "=== Review loop: step ${STEP_PADDED}, iterations ${START}..${END} ==="
 echo "=== Branch: $(git branch --show-current) ==="
@@ -196,15 +210,15 @@ ${SUFFICIENCY_CRITERIA}
 - Язык: русский."
 
         PHASE1_START=$(date +%s)
-        echo "" >> "$CODEX_LOG"
-        echo "=== Run started at $(date '+%Y-%m-%d %H:%M:%S') (iteration ${NN}) ===" >> "$CODEX_LOG"
+        echo "=== Run started at $(date '+%Y-%m-%d %H:%M:%S') (iteration ${NN}) ===" > "$CODEX_LIVE_LOG"
         # Note: --full-auto grants Codex unrestricted shell access
-        CODEX_OK=true
         if ! codex exec --full-auto --ephemeral "$CODEX_PROMPT" \
-                >> "$CODEX_LOG" 2>&1; then
-            echo "[${NN}] WARNING: Codex exited with error, checking if review was written..."
-            CODEX_OK=false
+                >> "$CODEX_LIVE_LOG" 2>&1; then
+            cp -- "$CODEX_LIVE_LOG" "$CODEX_LOG"
+            echo "[${NN}] ERROR: Codex crashed (see ${CODEX_LOG}). Aborting." >&2
+            exit 1
         fi
+        cp -- "$CODEX_LIVE_LOG" "$CODEX_LOG"
         PHASE1_ELAPSED=$(( $(date +%s) - PHASE1_START ))
         echo "[${NN}] Phase 1 done ($((PHASE1_ELAPSED / 60))m $((PHASE1_ELAPSED % 60))s)"
 
@@ -214,11 +228,6 @@ ${SUFFICIENCY_CRITERIA}
         else
             echo "[${NN}] WARNING: Review temp file missing or incomplete (no '## Статус' section)."
             rm -f "$REVIEW_TMP"
-            if [[ "$CODEX_OK" == false ]]; then
-                echo "[${NN}] Codex failed and review is invalid. Skipping to next iteration."
-                print_iter_footer "$NN" "$ITER_START_EPOCH"
-                continue
-            fi
         fi
     fi
 
@@ -230,7 +239,7 @@ ${SUFFICIENCY_CRITERIA}
     fi
     echo "[${NN}] Phase 2: Review verified, $(wc -l < "$REVIEW_FILE") lines"
 
-    if grep -qi -- 'Готов как входной артефакт' "$REVIEW_FILE"; then
+    if review_status_is_ready "$REVIEW_FILE"; then
         echo "[${NN}] Phase 2: Review status READY. Stopping loop."
         print_iter_footer "$NN" "$ITER_START_EPOCH"
         break
@@ -274,9 +283,7 @@ ${SUFFICIENCY_CRITERIA}
 Ultrathink."
 
     PHASE3_START=$(date +%s)
-    CLAUDE_OK=true
-    echo "" >> "$CLAUDE_LOG"
-    echo "=== Run started at $(date '+%Y-%m-%d %H:%M:%S') (iteration ${NN}) ===" >> "$CLAUDE_LOG"
+    echo "=== Run started at $(date '+%Y-%m-%d %H:%M:%S') (iteration ${NN}) ===" > "$CLAUDE_LIVE_LOG"
     # Note: --dangerously-skip-permissions grants Claude unrestricted shell access
     if ! claude -p \
             --dangerously-skip-permissions \
@@ -284,10 +291,12 @@ Ultrathink."
             --output-format stream-json \
             --verbose \
             "$CLAUDE_PROMPT" \
-            >> "$CLAUDE_LOG" 2>&1; then
-        echo "[${NN}] WARNING: Claude exited with error (see ${CLAUDE_LOG})"
-        CLAUDE_OK=false
+            >> "$CLAUDE_LIVE_LOG" 2>&1; then
+        cp -- "$CLAUDE_LIVE_LOG" "$CLAUDE_LOG"
+        echo "[${NN}] ERROR: Claude crashed (see ${CLAUDE_LOG}). Aborting." >&2
+        exit 1
     fi
+    cp -- "$CLAUDE_LIVE_LOG" "$CLAUDE_LOG"
     PHASE3_ELAPSED=$(( $(date +%s) - PHASE3_START ))
     echo "[${NN}] Phase 3 done ($((PHASE3_ELAPSED / 60))m $((PHASE3_ELAPSED % 60))s)"
 
@@ -344,16 +353,12 @@ Ultrathink."
         CONSECUTIVE_NO_CHANGES=0
     else
         echo "[${NN}] No changes from this iteration."
-        if [[ "$CLAUDE_OK" == true ]]; then
-            CONSECUTIVE_NO_CHANGES=$((CONSECUTIVE_NO_CHANGES + 1))
-            if [[ $CONSECUTIVE_NO_CHANGES -ge 3 ]]; then
-                echo "=== ${CONSECUTIVE_NO_CHANGES} consecutive no-change iterations. Stopping. ==="
-                rm -f "$COMMIT_MSG_FILE"
-                print_iter_footer "$NN" "$ITER_START_EPOCH"
-                break
-            fi
-        else
-            echo "[${NN}] (not counting toward no-change limit due to AI error)"
+        CONSECUTIVE_NO_CHANGES=$((CONSECUTIVE_NO_CHANGES + 1))
+        if [[ $CONSECUTIVE_NO_CHANGES -ge 3 ]]; then
+            echo "=== ${CONSECUTIVE_NO_CHANGES} consecutive no-change iterations. Stopping. ==="
+            rm -f "$COMMIT_MSG_FILE"
+            print_iter_footer "$NN" "$ITER_START_EPOCH"
+            break
         fi
     fi
 
