@@ -43,6 +43,19 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
     private val source = testSuiteDir.resolve("driver0.kt")
     private val fileRC = testSuiteDir.resolve("File.rc")
 
+    private fun runKonanc(
+        vararg args: String,
+        timeout: Duration = konancTimeout,
+        setJavaHome: Boolean = true,
+    ): RunProcessResult = runProcess(konanc.absolutePath, *args) {
+        this.timeout = timeout
+        if (setJavaHome) {
+            // Other tests run compiler in-process, using the current JDK.
+            // It is reasonable to do the same for the CLI compiler here by default:
+            environment["JAVA_HOME"] = System.getProperty("java.home")
+        }
+    }
+
     // Driver tests are flaky on macOS hosts.
     private fun `check for KT-67454`() {
         Assumptions.assumeFalse(targets.hostTarget.family.isAppleFamily)
@@ -85,9 +98,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             add("-Xpartial-linkage-loglevel=error")
         }
 
-        val compilationResult = runProcess(konanc.absolutePath, source.absolutePath, *args.toTypedArray<String>()) {
-            timeout = konancTimeout
-        }
+        val compilationResult = runKonanc(source.absolutePath, *args.toTypedArray<String>())
         testRunSettings.testProcessExecutor.runProcess(kexe.absolutePath) // run generated executable just to check its sanity
         return compilationResult
     }
@@ -109,9 +120,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             expectedArtifact = TestCompilationArtifact.Executable(kexe),
             tryPassSystemCacheDirectory = true
         )
-        runProcess(konanc.absolutePath, source.absolutePath, *compilation.getCompilerArgs()) {
-            timeout = konancTimeout
-        }
+        runKonanc(source.absolutePath, *compilation.getCompilerArgs())
         val runResult: RunProcessResult = with(testRunSettings) {
             testProcessExecutor.runProcess(kexe.absolutePath) {
                 timeout = Duration.parse("1m")
@@ -140,9 +149,11 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             expectedArtifact = TestCompilationArtifact.Executable(kexe),
             tryPassSystemCacheDirectory = true
         )
-        runProcess(konanc.absolutePath, source.absolutePath, *compilation.getCompilerArgs()) {
-            timeout = konancTimeout
-        }
+        runKonanc(
+            source.absolutePath,
+            *compilation.getCompilerArgs(),
+            setJavaHome = false, // Also test that the script works without JAVA_HOME.
+        )
         assertFalse(kexe.exists())
     }
 
@@ -169,9 +180,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             expectedArtifact = TestCompilationArtifact.Executable(kexe),
             tryPassSystemCacheDirectory = true
         )
-        val compilationResult = runProcess(konanc.absolutePath, source.absolutePath, *compilation.getCompilerArgs()) {
-            timeout = konancTimeout
-        }
+        val compilationResult = runKonanc(source.absolutePath, *compilation.getCompilerArgs())
         val expected = "inline_threshold: 76"
         assertTrue(
             compilationResult.stderr.contains(expected),
@@ -211,9 +220,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             expectedArtifact = TestCompilationArtifact.Executable(kexe),
             tryPassSystemCacheDirectory = true
         )
-        runProcess(konanc.absolutePath, source.absolutePath, *compilation.getCompilerArgs()) {
-            timeout = Duration.parse("5m")
-        }
+        runKonanc(source.absolutePath, *compilation.getCompilerArgs(), timeout = Duration.parse("5m"))
         testRunSettings.testProcessExecutor.runProcess(kexe.absolutePath)
     }
 
@@ -222,15 +229,12 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
         val rootDir = testSuiteDir.resolve("split_compilation_pipeline")
         val libFile = buildDir.resolve("lib.klib")
-        runProcess(
-            konanc.absolutePath,
+        runKonanc(
             rootDir.resolve("override_lib.kt").absolutePath,
             "-produce", "library",
             "-o", libFile.absolutePath,
             "-target", targets.testTarget.visibleName,
-        ) {
-            timeout = konancTimeout
-        }
+        )
 
         val tmpFilesDir = buildDir.resolve("tmpFiles").apply {
             deleteRecursively()
@@ -239,26 +243,23 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         val depsFile = buildDir.resolve("deps.deps")
 
         val mainFile = buildDir.resolve("out.klib")
-        runProcess(
-            konanc.absolutePath,
+        runKonanc(
             rootDir.resolve("override_main.kt").absolutePath,
             "-o", mainFile.absolutePath,
             "-target", targets.testTarget.visibleName,
             "-l", libFile.absolutePath,
             "-Xtemporary-files-dir=${tmpFilesDir.absolutePath}",
             "-Xwrite-dependencies-to=${depsFile.absolutePath}",
-        ) {
-            timeout = konancTimeout
-        }
+        )
 
         val kexe = buildDir.resolve("kexe.kexe").also { it.delete() }
-        runProcess(
-            konanc.absolutePath,
+        runKonanc(
             rootDir.resolve("override_main.kt").absolutePath,
             "-o", kexe.absolutePath,
             "-target", targets.testTarget.visibleName,
             "-Xread-dependencies-from=${depsFile.absolutePath}",
-            "-Xcompile-from-bitcode=${tmpFilesDir.absolutePath}/out.bc"
+            "-Xcompile-from-bitcode=${tmpFilesDir.absolutePath}/out.bc",
+            timeout = Duration.INFINITE,
         )
         val output = testRunSettings.testProcessExecutor.runProcess(kexe.absolutePath).output
         Assumptions.assumeFalse(testRunSettings.testProcessExecutor is NoOpExecutor) // no output in that case.
@@ -273,31 +274,25 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
 
         val rootDir = testSuiteDir.resolve("split_compilation_pipeline")
         val libFile = buildDir.resolve("lib.klib")
-        runProcess(
-            konanc.absolutePath,
+        runKonanc(
             rootDir.resolve("override_lib.kt").absolutePath,
             "-produce", "library",
             "-o", libFile.absolutePath,
             "-target", targets.testTarget.visibleName,
-        ) {
-            timeout = konancTimeout
-        }
+        )
 
         val libFile2 = buildDir.resolve("lib2.klib")
         File(libFile.absolutePath).copyRecursively(libFile2)
 
         val mainFile = buildDir.resolve("out.klib")
-        runProcess(
-            konanc.absolutePath,
+        runKonanc(
             rootDir.resolve("override_main.kt").absolutePath,
             "-o", mainFile.absolutePath,
             "-target", targets.testTarget.visibleName,
             "-l", libFile.absolutePath,
             "-l", libFile2.absolutePath,
             "-Xklib-duplicated-unique-name-strategy=allow-all-with-warning",
-        ) {
-            timeout = konancTimeout
-        }.let {
+        ).let {
             assertTrue(
                 it.stderr.contains("warning: KLIB resolver: The same 'unique_name=lib' found in more than one library"),
                 "`warning: KLIB resolver: The same 'unique_name=lib' found in more than one library` must be in stdout." +
@@ -311,25 +306,19 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         val rootDir = testSuiteDir.resolve("kt68673")
         val libFile = buildDir.resolve("program.klib")
         val kexe = buildDir.resolve("program.kexe")
-        runProcess(
-            konanc.absolutePath,
+        runKonanc(
             rootDir.resolve("main.kt").absolutePath,
             "-produce", "library",
             "-o", libFile.absolutePath,
             "-target", targets.testTarget.visibleName,
-        ) {
-            timeout = konancTimeout
-        }
+        )
 
-        runProcess(
-            konanc.absolutePath,
+        runKonanc(
             "-l", libFile.absolutePath,
             "-o", kexe.absolutePath,
             "-target", targets.testTarget.visibleName,
             "-g"
-        ) {
-            timeout = konancTimeout
-        }
+        )
         val output = testRunSettings.testProcessExecutor.runProcess(kexe.absolutePath).output
         Assumptions.assumeFalse(testRunSettings.testProcessExecutor is NoOpExecutor) // no output in that case.
         TestDataAssertions.assertEqualsToFile(rootDir.resolve("main.out"), output)
