@@ -10,7 +10,7 @@
 | 1 | Ревизия существующих реализаций в экосистеме Kotlin | **Выполнен** | [step-01-kotlin-implementations.md](step-01-kotlin-implementations.md) |
 | 2 | Кросс-языковой обзор API | **Выполнен** | [step-02-cross-language.md](step-02-cross-language.md) |
 | 3a | Сбор данных: использование BitSet в репозитории Kotlin | **Выполнен** | [step-03a-kotlin-repo-data.md](step-03a-kotlin-repo-data.md) |
-| 3b | Сбор данных: использование BitSet в репозитории IntelliJ Community | Не начат | — |
+| 3b | Сбор данных: использование BitSet в репозитории IntelliJ Community | **Выполнен** | [step-03b-intellij-repo-data.md](step-03b-intellij-repo-data.md) |
 | 3c | Анализ: частотная таблица, классификация паттернов и каталог обёрток | Не начат | — |
 | 4 | Широкий анализ open-source использования | Не начат | — |
 | 5 | Болевые точки Java BitSet и wish list сообщества | Не начат | — |
@@ -37,3 +37,7 @@
 ### Шаг 3a (Выполнен)
 
 Каталогизированы все 25 исходных файлов + 1 API dump, содержащих BitSet-связанный код в репозитории kotlin. Распределение по подсистемам: compiler backend (12 файлов — JVM, Common IR, K/N), analysis/symbol light classes (5 файлов), stdlib regex engine (2 файла), K/N runtime impl + tests (3 файла), native commonizer (1 файл), утилиты (1 файл), API dump (1 файл). Доминируют два контекста: dataflow/liveness analysis в компиляторе (BitSet как множество переменных/типов/контейнеров) и character class operations в regex-движке (BitSet как множество code points). Три BitSet-варианта используются параллельно: `java.util.BitSet` (14 файлов), `CustomBitSet` (4 файла), `kotlin.native.BitSet` (4 файла). Сырой каталог без классификации — анализ будет выполнен в шаге 3c.
+
+### Шаг 3b (Выполнен)
+
+Каталогизированы все 211 файлов в репозитории intellij-community, содержащих BitSet-связанный код. Обнаружено 11 кастомных BitSet-реализаций/обёрток: `ConcurrentBitSet` (thread-safe, VarHandle), `ConcurrentThreeStateBitSet` (true/false/null), `BitSetAsRAIntContainer`, `IdBitSet` (смещённые ID), `com.intellij.util.diff.BitSet` и `fleet.util.BitSet` (обе — копии K/N stdlib), `MutableBitSet`/`BitSet` (syntax, immutable/mutable), `UnsignedBitSet` (отрицательные индексы), `BitSetFlags` (адаптер Flags), `BitSet32` (mslinks, 32-бит). Два файла содержат прямые ссылки на KT-55163. Использования организованы по 38 подсистемам: platform/util (28), java-decompiler (27), diff-impl (19), vcs-log (19), python (16, вкл. 13 сгенерированных), groovy (11), vcs-impl (11), lang-impl (10), java-analysis-impl (10), analysis-impl (7), и ~20 подсистем с 1-5 файлами. Сырой каталог без классификации — анализ будет выполнен в шаге 3c.
