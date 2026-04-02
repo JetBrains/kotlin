@@ -421,7 +421,7 @@ class MppMetadataResolutionIT : KGPBaseTest() {
 
             assertEquals(
                 listOf(
-                    //MISSING: listOf("commonMain", "test-producer-1.0-commonMain-.klib"),
+                    listOf("commonMain", "test-producer-1.0-commonMain-.klib"),
                     listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib"),
                 ).prettyPrinted,
                 metadataTransformationOutputClasspath(
@@ -432,7 +432,7 @@ class MppMetadataResolutionIT : KGPBaseTest() {
     }
 
     @GradleTest
-    fun `^KT-69571 - dependency substitution from module to project in shared native causes duplicated metadata klibs`(
+    fun `KT-69571 - dependency substitution from module to project in shared native causes duplicated metadata klibs`(
         gradleVersion: GradleVersion,
         @TempDir localRepo: Path,
     ) {
@@ -483,10 +483,7 @@ class MppMetadataResolutionIT : KGPBaseTest() {
                     listOf("commonMain", "test-producer-1.0-commonMain-.klib"),
                     listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib"),
                 ).prettyPrinted,
-                metadataTransformationOutputClasspath(
-                    "commonMain",
-                    buildOptions = buildOptions.copy(freeArgs = listOf("-P${flagName}=true"))
-                ).relativeTransformationPathComponents().prettyPrinted
+                metadataTransformationOutputClasspath("commonMain").relativeTransformationPathComponents().prettyPrinted
             )
 
             assertEquals(
@@ -494,14 +491,10 @@ class MppMetadataResolutionIT : KGPBaseTest() {
                     listOf("klib", "producer_iosMain"),
                     listOf("klib", "producer_appleMain"),
                     listOf("klib", "producer_nativeMain"),
-                    listOf("metadata", "commonMain"),                           // Duplicate comes from :producer/commonMain
-                    listOf("commonMain", "test-producer-1.0-commonMain-.klib"), // Duplicate comes from test:producer:1.0/commonMain
+                    listOf("commonMain", "test-producer-1.0-commonMain-.klib"),
                     listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib"),
                 ).prettyPrinted,
-                metadataTransformationOutputClasspath(
-                    "nativeMain",
-                    buildOptions = buildOptions.copy(freeArgs = listOf("-P${flagName}=true"))
-                )
+                metadataTransformationOutputClasspath("nativeMain")
                     .relativeTransformationPathComponents().prettyPrinted
             )
         }
