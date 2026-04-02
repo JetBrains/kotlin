@@ -120,6 +120,15 @@
     },
     {
       "parentPhaseType": IrPreLowering,
+      "name": "OuterThisInInlineFunctionsSpecialAccessorLowering",
+      "time": {
+        "nanos": $UINT$,
+        "userNanos": $UINT$,
+        "cpuNanos": $UINT$
+      }
+    },
+    {
+      "parentPhaseType": IrPreLowering,
       "name": "PreSerializationPrivateFunctionInlining",
       "time": {
         "nanos": $UINT$,
@@ -130,15 +139,6 @@
     {
       "parentPhaseType": IrPreLowering,
       "name": "InlineDeclarationCheckerLowering",
-      "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
-      }
-    },
-    {
-      "parentPhaseType": IrPreLowering,
-      "name": "OuterThisInInlineFunctionsSpecialAccessorLowering",
       "time": {
         "nanos": $UINT$,
         "userNanos": $UINT$,
