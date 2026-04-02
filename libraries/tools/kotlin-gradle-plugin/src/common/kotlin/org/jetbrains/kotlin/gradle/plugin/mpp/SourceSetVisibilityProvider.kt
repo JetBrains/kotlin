@@ -13,7 +13,9 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentSelector
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationComponent
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.dependencyArtifactsOrNull
@@ -34,7 +36,9 @@ internal data class SourceSetVisibilityResult(
     val hostSpecificMetadataArtifactBySourceSet: Map<String, File>,
 )
 
-internal class SourceSetVisibilityProvider {
+internal class SourceSetVisibilityProvider(
+    private val buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
+) {
     class PlatformCompilationData(
         val allSourceSets: Set<KotlinSourceSetName>,
         val resolvedDependenciesConfiguration: LazyResolvedConfigurationComponent,
@@ -68,8 +72,7 @@ internal class SourceSetVisibilityProvider {
         if (dependingPlatformCompilations.isEmpty())
             return SourceSetVisibilityResult(emptySet(), emptyMap())
 
-        val resolvedRootMppDependencyId = resolvedRootMppDependency.selected.id
-        val resolvedRootMppDependencyKmpIdentifier = resolvedRootMppDependencyId.kmpMultiVariantModuleIdentifier()
+        val resolvedRootMppDependencyIdentifier = KmpModuleIdentifier.from(resolvedRootMppDependency.selected, buildIdentifierAccessor)
 
         val platformCompilationsByResolvedVariantName = mutableMapOf<String, PlatformCompilationData>()
         val visiblePlatformVariantNames: List<Set<String>> = dependingPlatformCompilations
@@ -78,7 +81,7 @@ internal class SourceSetVisibilityProvider {
                     .resolvedDependenciesConfiguration
                     .allResolvedDependencies
                     .filter {
-                        it.selected.id.kmpMultiVariantModuleIdentifier() == resolvedRootMppDependencyKmpIdentifier ||
+                        KmpModuleIdentifier.from(it.selected, buildIdentifierAccessor) == resolvedRootMppDependencyIdentifier ||
                                 (allowMatchingByRequestedCoordinates && it.requested == resolvedRootMppDependency.requested)
                     }
                     .filter {
@@ -174,7 +177,7 @@ internal class SourceSetVisibilityProvider {
 
                     val dependency = resolvedHostSpecificMetadataConfiguration
                         .allResolvedDependencies
-                        .find { it.selected.id == resolvedRootMppDependencyId }
+                        .find { KmpModuleIdentifier.from(it.selected, buildIdentifierAccessor) == resolvedRootMppDependencyIdentifier }
                         ?: return@mapNotNull null
 
                     val metadataArtifact = resolvedHostSpecificMetadataConfiguration
@@ -314,3 +317,4 @@ internal fun ComponentSelector.kmpMultiVariantModuleIdentifier(): KmpMultiVarian
         else -> KmpMultiVariantModuleIdentifier.Unidentifiable(this)
     }
 }
+

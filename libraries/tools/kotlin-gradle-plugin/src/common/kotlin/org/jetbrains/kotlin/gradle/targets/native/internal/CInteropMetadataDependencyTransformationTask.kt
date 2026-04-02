@@ -166,7 +166,7 @@ internal abstract class CInteropMetadataDependencyTransformationTask @Inject con
         val transformedLibraries = chooseVisibleSourceSets.flatMap { resolution ->
             materializeMetadata(resolution).map { (sourceSetName, cinteropFile) ->
                 TransformedMetadataLibraryRecord(
-                    moduleId = resolution.dependency.id.toString(),
+                    moduleId = KmpModuleIdentifier.from(resolution.dependency, parameters.buildIdentifierAccessor),
                     file = cinteropFile.toString(),
                     sourceSetName = sourceSetName
                 )

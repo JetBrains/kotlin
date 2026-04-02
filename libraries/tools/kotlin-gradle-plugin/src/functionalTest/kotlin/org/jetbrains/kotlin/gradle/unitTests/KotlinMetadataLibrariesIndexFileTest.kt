@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpModuleIdentifier
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpModuleIdentifier.ComponentId.Type.MODULE
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataLibrariesIndexFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.TransformedMetadataLibraryRecord
 import org.junit.jupiter.api.io.TempDir
@@ -50,7 +52,10 @@ class KotlinMetadataLibrariesIndexFileTest {
         val index = KotlinMetadataLibrariesIndexFile(temporaryFolder.resolve("index").also { it.createNewFile() })
         val records = files.map {
             TransformedMetadataLibraryRecord(
-                moduleId = "a",
+                moduleId = KmpModuleIdentifier(
+                    moduleVersion = KmpModuleIdentifier.ModuleVersion("a", "b"),
+                    componentId = KmpModuleIdentifier.ComponentId("c", "d", null, null, MODULE)
+                ),
                 file = it.absolutePath,
                 sourceSetName = it.name
             )

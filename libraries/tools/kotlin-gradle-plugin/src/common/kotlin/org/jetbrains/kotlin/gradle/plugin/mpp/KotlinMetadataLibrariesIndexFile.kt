@@ -15,8 +15,8 @@ import java.io.FileWriter
 
 private val gson = GsonBuilder().setStrictness(Strictness.LENIENT).setPrettyPrinting().serializeNulls().create()
 
-data class TransformedMetadataLibraryRecord(
-    val moduleId: String,
+internal data class TransformedMetadataLibraryRecord(
+    val moduleId: KmpModuleIdentifier,
     val file: String,
     val sourceSetName: String? = null
 )
