@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.components.KaCallableImplementationState
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.getImplementationStatus
+import org.jetbrains.kotlin.fir.analysis.checkers.isSupertypeOf
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOverloadabilityHelper.ContextParameterShadowing.BothWays
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
@@ -472,6 +474,7 @@ internal class KaFirSymbolRelationProvider(
         }
     }
 
+    @Deprecated("Use 'implementationState()' instead", level = DeprecationLevel.HIDDEN)
     override fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus? {
         withValidityAssertion {
             if (this is KaReceiverParameterSymbol) return null
@@ -487,6 +490,38 @@ internal class KaFirSymbolRelationProvider(
             val scopeSession = analysisSession.getScopeSessionFor(analysisSession.firSession)
             return with(SessionHolderImpl(rootModuleSession, scopeSession)) {
                 memberFir.symbol.getImplementationStatus(parentClassFir.symbol)
+            }
+        }
+    }
+
+    override fun KaCallableSymbol.implementationState(implementerClassSymbol: KaClassSymbol): KaCallableImplementationState? {
+        withValidityAssertion {
+            require(this is KaFirSymbol<*>)
+            require(implementerClassSymbol is KaFirSymbol<*>)
+
+            when (this) {
+                is KaNamedFunctionSymbol, is KaPropertySymbol, is KaPropertyAccessorSymbol -> {
+                    val memberFirSymbol = firSymbol as? FirCallableSymbol<*> ?: return null
+
+                    val memberClassFirSymbol = memberFirSymbol.getContainingClassSymbol() as? FirClassSymbol<*> ?: return null
+                    memberClassFirSymbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+
+                    val implementerClassFirSymbol = implementerClassSymbol.firSymbol as? FirClassSymbol<*> ?: return null
+
+                    if (!memberClassFirSymbol.isSupertypeOf(implementerClassFirSymbol, rootModuleSession)) {
+                        return null
+                    }
+
+                    memberFirSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+
+                    val scopeSession = analysisSession.getScopeSessionFor(analysisSession.firSession)
+                    with(SessionHolderImpl(rootModuleSession, scopeSession)) {
+                        return memberFirSymbol.getImplementationStatus(implementerClassFirSymbol).toKaImplementationState()
+                    }
+                }
+                else -> {
+                    return null
+                }
             }
         }
     }
@@ -588,4 +623,13 @@ internal class KaFirSymbolRelationProvider(
                 )
             }
         }
+}
+
+private fun ImplementationStatus.toKaImplementationState(): KaCallableImplementationState = when (this) {
+    ImplementationStatus.NOT_IMPLEMENTED -> KaCallableImplementationState.Missing
+    ImplementationStatus.VAR_IMPLEMENTED_BY_VAL -> KaCallableImplementationState.Explicit(isComplete = false)
+    ImplementationStatus.AMBIGUOUSLY_INHERITED -> KaCallableImplementationState.Inherited(isAmbiguous = true, isOverridable = true)
+    ImplementationStatus.INHERITED_OR_SYNTHESIZED -> KaCallableImplementationState.Inherited(isAmbiguous = false, isOverridable = true)
+    ImplementationStatus.ALREADY_IMPLEMENTED -> KaCallableImplementationState.Explicit(isComplete = true)
+    ImplementationStatus.CANNOT_BE_IMPLEMENTED -> KaCallableImplementationState.Inherited(isAmbiguous = false, isOverridable = false)
 }

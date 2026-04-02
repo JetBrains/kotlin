@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
-import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -618,10 +617,16 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                     // @JsStatic companion members are exported below
                     continue
                 }
-                val implementationStatus by lazy { member.getImplementationStatus(klass) }
 
-                fun hasDefaultImplementationIn(klass: KaClassSymbol) =
-                    klass.classKind == KaClassKind.INTERFACE && implementationStatus == ImplementationStatus.INHERITED_OR_SYNTHESIZED
+                val implementationState by lazy { member.implementationState(klass) }
+
+                fun hasDefaultImplementationIn(klass: KaClassSymbol): Boolean {
+                    if (klass.classKind != KaClassKind.INTERFACE) return false
+                    return when (val implementationState = implementationState) {
+                        is KaCallableImplementationState.Inherited -> !implementationState.isAmbiguous && implementationState.isOverridable
+                        else -> false
+                    }
+                }
 
                 val original = member.fakeOverrideOriginal
                 val actualParent = original.containingDeclaration as? KaClassSymbol ?: continue

@@ -11,6 +11,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.KaCallableImplementationState
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
@@ -250,7 +251,14 @@ internal class KaFe10SymbolRelationProvider(
             throw NotImplementedError("Method is not implemented for FE 1.0")
         }
 
+    @Deprecated("Use 'implementationState()' instead", level = DeprecationLevel.HIDDEN)
     override fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus? {
+        withValidityAssertion {
+            throw NotImplementedError("Method is not implemented for FE 1.0")
+        }
+    }
+
+    override fun KaCallableSymbol.implementationState(implementerClassSymbol: KaClassSymbol): KaCallableImplementationState? {
         withValidityAssertion {
             throw NotImplementedError("Method is not implemented for FE 1.0")
         }

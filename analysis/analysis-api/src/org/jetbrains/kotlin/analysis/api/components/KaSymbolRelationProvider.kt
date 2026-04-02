@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.util.ImplementationStatus
+import java.util.Objects
 
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
@@ -272,7 +273,26 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      */
     @KaExperimentalApi
     @KaK1Unsupported
+    @Deprecated("Use 'implementationState()' instead", level = DeprecationLevel.HIDDEN)
+    @KaNoContextParameterBridgeRequired
     public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus?
+
+    /**
+     * Returns the [KaCallableImplementationState] of the given [KaCallableSymbol] in the context of [implementerClassSymbol].
+     *
+     * Returns `null` if:
+     * - The symbol is a top-level callable;
+     * - The symbol is declared in a class or interface that is not a supertype of [implementerClassSymbol];
+     * - If the symbol is non-implementable (for example, it is a [KaConstructorSymbol], or a [KaValueParameterSymbol]).
+     *
+     * The implementation state describes whether a callable is already implemented, has an inherited
+     * implementation, can be overridden, or must be explicitly overridden in the given class.
+     *
+     * @see KaCallableImplementationState
+     */
+    @KaExperimentalApi
+    @KaK1Unsupported
+    public fun KaCallableSymbol.implementationState(implementerClassSymbol: KaClassSymbol): KaCallableImplementationState?
 
     /**
      * The original declared symbol for this callable symbol, after unwrapping fake override [KaCallableSymbol]s if needed.
@@ -348,6 +368,97 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      */
     @KaIdeApi
     public fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol, targetPlatform: TargetPlatform): Boolean
+}
+
+/**
+ * Describes the implementation state of a [KaCallableSymbol] in the context of a specific [KaClassSymbol].
+ *
+ * An implementation state captures whether a callable is explicitly implemented in the class, has an inherited
+ * implementation, can be overridden, or must be explicitly overridden.
+ *
+ * @see KaSymbolRelationProvider.implementationState
+ */
+public sealed class KaCallableImplementationState {
+    /**
+     * The declaration is directly implemented or explicitly overridden in the target class.
+     *
+     * @property isComplete Whether the implementation is complete. E.g., for a `var` property implemented by `val`,
+     * [isComplete] will be `false`.
+     */
+    public class Explicit @KaImplementationDetail constructor(
+        public val isComplete: Boolean
+    ) : KaCallableImplementationState() {
+        override fun equals(other: Any?): Boolean {
+            return this === other || (other is Explicit && other.isComplete == isComplete)
+        }
+
+        override fun hashCode(): Int {
+            return isComplete.hashCode()
+        }
+
+        override fun toString(): String {
+            return "Explicit(isComplete=$isComplete)"
+        }
+    }
+
+    /**
+     * The declaration has the implementation provided by a supertype or multiple supertypes, and **does not** have explicit implementation
+     * in the target class.
+     *
+     * @property isAmbiguous Whether multiple supertypes provide implementations. As the compiler cannot decide which implementation
+     * to choose, the declaration must be overridden explicitly. E.g.:
+     *
+     * ```kotlin
+     * interface ColoredEntity {
+     *     val color: String
+     * }
+     * *
+     * interface GreenEntity : ColoredEntity {
+     *     override val color get() = "green"
+     * }
+     * *
+     * interface BlueEntity : ColoredEntity {
+     *     override val color get() = "blue"
+     * }
+     * *
+     * // Interface 'SeaColorEntity' must override 'color' because it inherits multiple interface methods for it
+     * interface SeaColorEntity : GreenEntity, BlueEntity
+     * ```
+     *
+     * @property isOverridable Whether the declaration can be overridden in the target class (e.g., it is not marked as `final`
+     * in a supertype).
+     */
+    public class Inherited @KaImplementationDetail constructor(
+        public val isAmbiguous: Boolean,
+        public val isOverridable: Boolean,
+    ) : KaCallableImplementationState() {
+        override fun equals(other: Any?): Boolean {
+            return this === other || (other is Inherited && other.isAmbiguous == isAmbiguous && other.isOverridable == isOverridable)
+        }
+
+        override fun hashCode(): Int {
+            return Objects.hash(isAmbiguous, isOverridable)
+        }
+
+        override fun toString(): String {
+            return "Inherited(isAmbiguous=$isAmbiguous, isOverridable=$isOverridable)"
+        }
+    }
+
+    /**
+     * The declaration is neither implemented in the target class, nor it has inherited implementations.
+     *
+     * Note that it does not necessarily mean it is a compilation error – if the target class is `abstract`, the implementation
+     * can legitimately be absent.
+     */
+    public object Missing : KaCallableImplementationState() {
+        override fun toString(): String = "Missing"
+    }
+
+    @Suppress("unused")
+    private object Unknown : KaCallableImplementationState() {
+        override fun toString(): String = "Unknown"
+    }
 }
 
 /**
@@ -673,18 +784,27 @@ public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol
     get() = with(session) { intersectionOverriddenSymbols }
 
 /**
- * Returns the [ImplementationStatus] of the given [KaCallableSymbol] in the given [parentClassSymbol], or `null` if this symbol is not
- * a member.
+ * Returns the [KaCallableImplementationState] of the given [KaCallableSymbol] in the context of [implementerClassSymbol].
+ *
+ * Returns `null` if:
+ * - The symbol is a top-level callable;
+ * - The symbol is declared in a class or interface that is not a supertype of [implementerClassSymbol];
+ * - If the symbol is non-implementable (for example, it is a [KaConstructorSymbol], or a [KaValueParameterSymbol]).
+ *
+ * The implementation state describes whether a callable is already implemented, has an inherited
+ * implementation, can be overridden, or must be explicitly overridden in the given class.
+ *
+ * @see KaCallableImplementationState
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaK1Unsupported
 @KaContextParameterApi
 context(session: KaSession)
-public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus? {
+public fun KaCallableSymbol.implementationState(implementerClassSymbol: KaClassSymbol): KaCallableImplementationState? {
     return with(session) {
-        getImplementationStatus(
-            parentClassSymbol = parentClassSymbol,
+        implementationState(
+            implementerClassSymbol = implementerClassSymbol,
         )
     }
 }

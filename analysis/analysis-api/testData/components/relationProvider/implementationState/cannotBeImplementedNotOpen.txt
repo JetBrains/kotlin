@@ -1,0 +1,8 @@
+kotlin/Any.equals
+    Inherited(isAmbiguous=false, isOverridable=true)
+kotlin/Any.hashCode
+    Inherited(isAmbiguous=false, isOverridable=true)
+kotlin/Any.toString
+    Inherited(isAmbiguous=false, isOverridable=true)
+/Base.foo
+    Inherited(isAmbiguous=false, isOverridable=false)
