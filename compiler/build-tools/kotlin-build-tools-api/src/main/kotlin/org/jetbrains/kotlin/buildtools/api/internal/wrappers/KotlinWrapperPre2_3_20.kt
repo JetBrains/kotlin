@@ -103,19 +103,9 @@ internal class KotlinWrapperPre2_3_20(
             )
         }
 
-        @Deprecated(
-            "Use newJvmCompilationOperation instead",
-            replaceWith = ReplaceWith("newJvmCompilationOperation(sources, destinationDirectory)")
-        )
-
         override fun classpathSnapshottingOperationBuilder(classpathEntry: Path): JvmClasspathSnapshottingOperationWrapper {
             return JvmClasspathSnapshottingOperationWrapper(base.createClasspathSnapshottingOperation(classpathEntry), this, classpathEntry)
         }
-
-        @Deprecated(
-            "Use classpathSnapshottingOperationBuilder instead",
-            replaceWith = ReplaceWith("classpathSnapshottingOperationBuilder(classpathEntry)")
-        )
 
         private inner class JvmClasspathSnapshottingOperationWrapper(
             private val base: JvmClasspathSnapshottingOperation,
