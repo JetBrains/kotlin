@@ -178,6 +178,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         value = "-Xfriend-paths",
         valueDescription = "<path>",
         description = "Paths to output directories for friend modules (modules whose internals should be visible).",
+        delimiter = Argument.Delimiters.none,
     )
     var friendPaths: Array<String> = emptyArray()
         set(value) {

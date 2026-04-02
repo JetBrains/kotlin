@@ -589,6 +589,7 @@ problems with parentheses in identifiers on certain platforms.""".asReleaseDepen
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         argumentType = PathListType.defaultEmpty
+        delimiter = KotlinCompilerArgument.Delimiter.None
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_2_70,

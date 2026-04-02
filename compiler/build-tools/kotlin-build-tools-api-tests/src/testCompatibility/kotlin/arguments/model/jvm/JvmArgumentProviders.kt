@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Compan
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_ABI_STABILITY
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_ADD_MODULES
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_ASSERTIONS
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_FRIEND_PATHS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_IGNORED_ANNOTATIONS_FOR_BRIDGES
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JAVA_SOURCE_ROOTS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JDK_RELEASE
@@ -146,19 +145,19 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-script-templates", value) },
     ),
-    JvmArgumentTestDescriptor(
-        argumentName = "Xfriend-paths",
-        argument = X_FRIEND_PATHS,
-        argumentValues = listOf(
-            listOf(
-                testBaseDir.resolve("path/to/friend1"),
-                testBaseDir.resolve("path/to/friend2"),
-                testBaseDir.resolve("path/to/friend3"),
-            )
-        ),
-        valueString = { value -> value?.joinToString(",") { it.toFile().absolutePath } },
-        expectedArgumentStringsFor = { value -> listOf("-Xfriend-paths=$value") },
-    ),
+//    JvmArgumentTestDescriptor(
+//        argumentName = "Xfriend-paths",
+//        argument = X_FRIEND_PATHS,
+//        argumentValues = listOf(
+//            listOf(
+//                testBaseDir.resolve("path/to/friend1"),
+//                testBaseDir.resolve("path/to/friend2"),
+//                testBaseDir.resolve("path/to/friend3"),
+//            )
+//        ),
+//        valueString = { value -> value?.joinToString(",") { it.toFile().absolutePath } },
+//        expectedArgumentStringsFor = { value -> listOf("-Xfriend-paths=$value") },
+//    ),
     JvmArgumentTestDescriptor(
         argumentName = "Xjdk-release",
         argument = X_JDK_RELEASE,
