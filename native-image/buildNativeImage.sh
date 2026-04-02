@@ -42,8 +42,9 @@ echo "Class path: $CLASSPATH"
 if [ "$UPDATE_REACHABILITY_METADATA" = true ]; then
   echo '--- Running kotlin compiler embeddable to collect reachability metadata ---'
 
+  TMP_FILE=$(mktemp)
   mkdir -p resources/META-INF/native-image/org/jetbrains/kotlin/kotlin-compiler-embeddable
-  echo 'fun main() { println("Hello world!") }' > /tmp/A.kt
+  echo 'fun main() { println("Hello world!") }' > "$TMP_FILE"
 
   $GRAAL_HOME/bin/java \
     --add-opens java.base/java.lang=ALL-UNNAMED \
@@ -57,7 +58,7 @@ if [ "$UPDATE_REACHABILITY_METADATA" = true ]; then
     -agentlib:native-image-agent=config-merge-dir=resources/META-INF/native-image/org/jetbrains/kotlin/kotlin-compiler-embeddable \
     org.jetbrains.kotlin.cli.jvm.K2JVMCompiler \
     -kotlin-home=dist/kotlinc \
-    /tmp/A.kt
+    "$TMP_FILE"
 
   echo '--- Rebuilding kotlin compiler embeddable with reachability metadata ---'
   ./gradlew -q :kotlin-compiler-embeddable:embeddable
