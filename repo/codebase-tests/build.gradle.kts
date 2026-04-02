@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
+import org.jetbrains.kotlin.testFederation.isSmokeTest
+
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
@@ -46,6 +49,10 @@ projectTests {
         jvmArgumentProviders.add(objects.newInstance<CodeOwnersArgumentProviders>().apply {
             spaceCodeOwnersFile.from(rootDir.resolve(".space/CODEOWNERS"))
         })
+
+
+        @OptIn(TemporaryTestFederationApi::class)
+        isSmokeTest = true
     }
 
     withJvmStdlibAndReflect()
