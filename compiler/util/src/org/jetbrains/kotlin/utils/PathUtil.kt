@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2026 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,14 +116,22 @@ object PathUtil {
         else
             KotlinPathsFromHomeDir(compilerPathForIdeaPlugin)
 
+    /**
+     * Auto-detection/self-discovery for command-line kotlinc:
+     * - Try to get a base path to JAR `kotlin-compiler*.jar`
+     * - If not found, failover to dist (with the assumption it only happens in test)
+     *
+     * If the check failed, likely a non-standard layout is used and `-kotlin-home` should be passed explicitly
+     */
     @JvmStatic
     val kotlinPathsForCompiler: KotlinPaths
-        get() = if (!pathUtilJar.isFile || !pathUtilJar.name.startsWith(KOTLIN_COMPILER_NAME)) {
-            // PathUtil.class is located not in the kotlin-compiler*.jar, so it must be a test and we'll take KotlinPaths from "dist/"
+        get() = if (pathUtilJar.isFile && pathUtilJar.name.startsWith(KOTLIN_COMPILER_NAME)) {
+            KotlinPathsFromHomeDir(compilerPathForCompilerJar)
+        } else {
+            // PathUtil.class is located not in the kotlin-compiler*.jar, so it must be a test, and we'll take KotlinPaths from "dist/"
             // (when running tests, PathUtil.class is in its containing module's artifact, i.e. util-{version}.jar)
             kotlinPathsForDistDirectory
         }
-        else KotlinPathsFromHomeDir(compilerPathForCompilerJar)
 
     @JvmStatic
     val kotlinPathsForDistDirectory: KotlinPaths
@@ -157,8 +165,7 @@ object PathUtil {
             return NO_PATH
         }
 
-    val pathUtilJar: File
-        get() = getResourcePathForClass(PathUtil::class.java)
+    val pathUtilJar: File by lazy { getResourcePathForClass(PathUtil::class.java) }
 
     @JvmStatic
     fun getResourcePathForClass(aClass: Class<*>): File {
