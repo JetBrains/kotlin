@@ -11,17 +11,11 @@ import { STRING_LITERAL_COLOR } from "../theme/colors.mjs";
 function string(kotlinString) {
    const kotlinStringValue =  kotlinString.value
 
-   const chars = kotlinStringValue.$_chars.value;
-
-   let result = '"';
-   for (let i = 0; i < chars.length; i++) {
-       result += String.fromCharCode(chars[i].value);
-   }
-   result += '"';
+   let jsString = kotlinStringValue.$internalStr.value;
 
    return span(
        [color(STRING_LITERAL_COLOR)],
-       [result]
+       [jsString]
    )
 }
 
