@@ -200,6 +200,7 @@ public final class org/jetbrains/kotlin/config/LanguageFeature : java/lang/Enum 
 	public static final field DiscriminateNothingAsNullabilityConstraintInInference Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field DiscriminateSuspendInOverloadResolution Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field DivisionByZeroInConstantExpressions Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field DnnTypeForUnboundedReifiedTypeParameters Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field DoNotGenerateThrowsForDelegatedKotlinMembers Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field DoNotRunSuspendConversionForLambdaReturnStatements Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field DontCreateSyntheticPropertiesWithoutBaseJavaGetter Lorg/jetbrains/kotlin/config/LanguageFeature;
