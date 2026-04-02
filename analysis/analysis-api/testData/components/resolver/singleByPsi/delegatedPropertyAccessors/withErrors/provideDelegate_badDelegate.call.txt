@@ -35,5 +35,5 @@ KtPropertyDelegate(127,135): 'by Bar()'
         valueArgumentMapping = {}
     valueGetterCallAttempt = KaCallResolutionError:
       candidateCalls = []
-      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'.>
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue' on receiver of type 'NoDelegate'.>
     valueSetterCallAttempt = null

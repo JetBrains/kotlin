@@ -2,7 +2,7 @@ KtForExpression(23,37): 'for(i in f) {}'
   KaForLoopCallResolutionAttempt:
     hasNextCallAttempt = KaCallResolutionError:
       candidateCalls = []
-      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext'.>
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext' on receiver of type 'Iterator'.>
     iteratorCallAttempt = KaCallResolutionSuccess:
       call = KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -23,4 +23,4 @@ KtForExpression(23,37): 'for(i in f) {}'
         valueArgumentMapping = {}
     nextCallAttempt = KaCallResolutionError:
       candidateCalls = []
-      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next'.>
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next' on receiver of type 'Iterator'.>

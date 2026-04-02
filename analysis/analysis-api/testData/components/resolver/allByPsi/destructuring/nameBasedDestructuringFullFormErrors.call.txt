@@ -102,7 +102,7 @@ KtDestructuringDeclarationEntry(145,150): 'val a'
 KtDestructuringDeclarationEntry(152,162): 'var second'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second' on receiver of type 'Tuple'.>
 
 KtNameReferenceExpression(167,168): 'x'
   KaCallResolutionSuccess:
@@ -142,7 +142,7 @@ KtDestructuringDeclaration(187,202): '(var first) = x'
 KtDestructuringDeclarationEntry(188,197): 'var first'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtNameReferenceExpression(201,202): 'x'
   KaCallResolutionSuccess:
@@ -182,7 +182,7 @@ KtDestructuringDeclaration(221,244): '(val first: String) = x'
 KtDestructuringDeclarationEntry(222,239): 'val first: String'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtTypeReference(233,239): 'String'
   null
@@ -231,7 +231,7 @@ KtDestructuringDeclaration(263,283): '(val aa = first) = x'
 KtDestructuringDeclarationEntry(264,278): 'val aa = first'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtNameReferenceExpression(273,278): 'first'
   null
@@ -274,7 +274,7 @@ KtDestructuringDeclaration(302,330): '(val aa: String = first) = x'
 KtDestructuringDeclarationEntry(303,325): 'val aa: String = first'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtTypeReference(311,317): 'String'
   null
@@ -744,12 +744,12 @@ KtDestructuringDeclaration(630,654): '(val first, val second,)'
 KtDestructuringDeclarationEntry(631,640): 'val first'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtDestructuringDeclarationEntry(642,652): 'val second'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second' on receiver of type 'Tuple'.>
 
 KtContainerNode(658,659): 'x'
   null
@@ -841,7 +841,7 @@ KtDestructuringDeclaration(673,684): '(val first)'
 KtDestructuringDeclarationEntry(674,683): 'val first'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtContainerNode(688,689): 'x'
   null
@@ -933,7 +933,7 @@ KtDestructuringDeclaration(703,722): '(val first: String)'
 KtDestructuringDeclarationEntry(704,721): 'val first: String'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtTypeReference(715,721): 'String'
   null
@@ -1034,7 +1034,7 @@ KtDestructuringDeclaration(741,757): '(val aa = first)'
 KtDestructuringDeclarationEntry(742,756): 'val aa = first'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtNameReferenceExpression(751,756): 'first'
   null
@@ -1129,7 +1129,7 @@ KtDestructuringDeclaration(776,800): '(val aa: String = first)'
 KtDestructuringDeclarationEntry(777,799): 'val aa: String = first'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtTypeReference(785,791): 'String'
   null
@@ -1796,12 +1796,12 @@ KtDestructuringDeclaration(1043,1067): '(val first, val second,)'
 KtDestructuringDeclarationEntry(1044,1053): 'val first'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtDestructuringDeclarationEntry(1055,1065): 'val second'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second' on receiver of type 'Tuple'.>
 
 KtBlockExpression(1071,1071): ''
   null
@@ -1893,7 +1893,7 @@ KtDestructuringDeclaration(1083,1094): '(val first)'
 KtDestructuringDeclarationEntry(1084,1093): 'val first'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtBlockExpression(1098,1098): ''
   null
@@ -1985,7 +1985,7 @@ KtDestructuringDeclaration(1110,1129): '(val first: String)'
 KtDestructuringDeclarationEntry(1111,1128): 'val first: String'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtTypeReference(1122,1128): 'String'
   null
@@ -2086,7 +2086,7 @@ KtDestructuringDeclaration(1145,1161): '(val aa = first)'
 KtDestructuringDeclarationEntry(1146,1160): 'val aa = first'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtNameReferenceExpression(1155,1160): 'first'
   null
@@ -2181,7 +2181,7 @@ KtDestructuringDeclaration(1177,1201): '(val aa: String = first)'
 KtDestructuringDeclarationEntry(1178,1200): 'val aa: String = first'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtTypeReference(1186,1192): 'String'
   null
