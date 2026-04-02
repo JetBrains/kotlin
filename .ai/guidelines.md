@@ -34,7 +34,7 @@ Note: The IntelliJ Kotlin plugin is in a separate repository (JetBrains/intellij
 | Analysis API             | `Ka*`, `KaFir*`, `LL*` | analysis/                                                 | [AGENTS.md](../analysis/AGENTS.md)                                               |
 | Backend: JVM             |                        | compiler/ir/backend.jvm/                                  | [AGENTS.md](../compiler/AGENTS.md)                                               |
 | Backend: JS              |                        | compiler/ir/backend.js/                                   | [AGENTS.md](../compiler/AGENTS.md)                                               |
-| Backend: Native          |                        | kotlin-native/                                            | [AGENTS.md](../compiler/AGENTS.md)                                               |
+| Backend: Native          |                        | kotlin-native/, native/                                   | [AGENTS.md](../compiler/AGENTS.md)                                               |
 | Backend: WASM            |                        | compiler/ir/backend.wasm/                                 | [AGENTS.md](../compiler/AGENTS.md)                                               |
 | Compiler plugins         |                        | plugins/                                                  | —                                                                                |
 | FIR (K2 frontend)        | `Fir*`                 | compiler/fir/                                             | [AGENTS.md](../compiler/AGENTS.md)                                               |
