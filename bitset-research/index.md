@@ -11,7 +11,7 @@
 | 2 | Кросс-языковой обзор API | **Выполнен** | [step-02-cross-language.md](step-02-cross-language.md) |
 | 3a | Сбор данных: использование BitSet в репозитории Kotlin | **Выполнен** | [step-03a-kotlin-repo-data.md](step-03a-kotlin-repo-data.md) |
 | 3b | Сбор данных: использование BitSet в репозитории IntelliJ Community | **Выполнен** | [step-03b-intellij-repo-data.md](step-03b-intellij-repo-data.md) |
-| 3c | Анализ: частотная таблица, классификация паттернов и каталог обёрток | В работе | [step-03c-part1-frequencies.md](step-03c-part1-frequencies.md), [step-03c-part2-stability-patterns.md](step-03c-part2-stability-patterns.md) |
+| 3c | Анализ: частотная таблица, классификация паттернов и каталог обёрток | **Выполнен** | [step-03c-analysis.md](step-03c-analysis.md) |
 | 4 | Широкий анализ open-source использования | Не начат | — |
 | 5 | Болевые точки Java BitSet и wish list сообщества | Не начат | — |
 | 6 | Таксономия use cases | Не начат | — |
@@ -42,6 +42,6 @@
 
 Каталогизированы все 211 файлов в репозитории intellij-community, содержащих BitSet-связанный код. Обнаружено 11 кастомных BitSet-реализаций/обёрток: `ConcurrentBitSet` (thread-safe, VarHandle), `ConcurrentThreeStateBitSet` (true/false/null), `BitSetAsRAIntContainer`, `IdBitSet` (смещённые ID), `com.intellij.util.diff.BitSet` и `fleet.util.BitSet` (обе — копии K/N stdlib), `MutableBitSet`/`BitSet` (syntax, immutable/mutable), `UnsignedBitSet` (отрицательные индексы), `BitSetFlags` (адаптер Flags), `BitSet32` (mslinks, 32-бит). Два файла содержат прямые ссылки на KT-55163. Использования организованы по 38 подсистемам: platform/util (28), java-decompiler (27), diff-impl (19), vcs-log (19), python (16, вкл. 13 сгенерированных), groovy (11), vcs-impl (11), lang-impl (10), java-analysis-impl (10), analysis-impl (7), и ~20 подсистем с 1-5 файлами. Сырой каталог без классификации — анализ будет выполнен в шаге 3c.
 
-### Шаг 3c (В работе)
+### Шаг 3c (Выполнен)
 
-Готова частотная часть анализа: в [`step-03c-part1-frequencies.md`](step-03c-part1-frequencies.md) сведены частоты методов по Kotlin-only, IntelliJ-only и Combined; доминируют `get(int)`, `set(from,to)`, `BitSet()`, `set(int)` и `BitSet(int)`. В [`step-03c-part2-stability-patterns.md`](step-03c-part2-stability-patterns.md) зафиксировано, что top-10 остаётся неустойчивым даже после быстрого добора `JetBrains/Grammar-Kit` и `JetBrains/markdown`; все `178` use-sites классифицированы по 10 паттернам, крупнейшие кластеры — dataflow/liveness (`35`), diff/text comparison (`27`) и bytecode offset tracking (`26`). Для завершения шага остаётся каталог обёрток и утилит вокруг `BitSet`.
+В [`step-03c-analysis.md`](step-03c-analysis.md) сведены в один артефакт частоты методов, оценка стабильности top-10, классификация `178` use-sites по 10 паттернам и каталог wrapper/utility-слоя вокруг `BitSet`. Combined-профиль доминируется `get(int)`, `set(from,to)`, `BitSet()`, `set(int)` и `BitSet(int)`, а главные API gaps устойчиво повторяются в нескольких подсистемах: typed `copy()`, итерация по set-битам, range/navigation operations и Kotlin-friendly query semantics. Concurrent/tri-state/sparse wrappers зафиксированы как специализированные надстройки, а не как обязательная часть core stdlib API.
