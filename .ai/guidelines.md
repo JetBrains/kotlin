@@ -132,3 +132,13 @@ If there are many options for the JetBrains IDE MCP server, ask the user what MC
 ### MANDATORY - Verify After Writing Code
 
 Use JetBrains MCP `get_file_problems` with errorsOnly=false to check files for warnings. FIX any warnings related to the code changes made. You may ignore unrelated warnings.
+
+## Working with YouTrack
+
+"KT-XXXXX", where XXXXX is the issue number, is an issue in https://youtrack.jetbrains.com/.
+The direct URL for an issue is `https://youtrack.jetbrains.com/issue/KT-XXXXX`.
+When accessing youtrack.jetbrains.com, never fetch web pages from such URLs directly.
+Use YouTrack MCP if configured. Otherwise, use YouTrack REST API, e.g. with a GET request to
+```text
+https://youtrack.jetbrains.com/api/issues/KT-XXXXX?fields=fields=summary,description,customFields(name,value(name,login,text))
+```
