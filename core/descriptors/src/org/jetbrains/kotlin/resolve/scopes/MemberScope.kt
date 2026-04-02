@@ -126,10 +126,10 @@ class DescriptorKindFilter(
     fun intersect(other: DescriptorKindFilter) = DescriptorKindFilter(kindMask and other.kindMask, excludes + other.excludes)
 
     override fun toString(): String {
-        val predefinedFilterName = DEBUG_PREDEFINED_FILTERS_MASK_NAMES.firstOrNull { it.mask == kindMask } ?.name
+        val predefinedFilterName = DEBUG_PREDEFINED_FILTERS_MASK_NAMES.firstOrNull { it.mask == kindMask }?.name
         val kindString = predefinedFilterName ?: DEBUG_MASK_BIT_NAMES
-                .mapNotNull { if (acceptsKinds(it.mask)) it.name else null }
-                .joinToString(separator = " | ")
+            .mapNotNull { if (acceptsKinds(it.mask)) it.name else null }
+            .joinToString(separator = " | ")
 
         return "DescriptorKindFilter($kindString, $excludes)"
     }
@@ -193,19 +193,24 @@ class DescriptorKindFilter(
 
         private class MaskToName(val mask: Int, val name: String)
 
-        private val DEBUG_PREDEFINED_FILTERS_MASK_NAMES = staticFields<DescriptorKindFilter>()
+        // Only used in toString
+        private val DEBUG_PREDEFINED_FILTERS_MASK_NAMES by lazy {
+            staticFields<DescriptorKindFilter>()
                 .mapNotNull { field ->
                     val filter = field.get(null) as? DescriptorKindFilter
                     if (filter != null) MaskToName(filter.kindMask, field.name) else null
                 }
+        }
 
-        private val DEBUG_MASK_BIT_NAMES = staticFields<DescriptorKindFilter>()
+        private val DEBUG_MASK_BIT_NAMES by lazy {
+            staticFields<DescriptorKindFilter>()
                 .filter { it.type == Integer.TYPE }
                 .mapNotNull { field ->
                     val mask = field.get(null) as Int
                     val isOneBitMask = mask == (mask and (-mask))
                     if (isOneBitMask) MaskToName(mask, field.name) else null
                 }
+        }
 
         private inline fun <reified T : Any> staticFields() = T::class.java.fields.filter { Modifier.isStatic(it.modifiers) }
     }
