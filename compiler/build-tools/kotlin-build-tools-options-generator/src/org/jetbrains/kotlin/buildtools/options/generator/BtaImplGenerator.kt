@@ -375,9 +375,6 @@ internal class BtaImplGenerator(
                     )
                 )
             }
-            argument.valueType.origin is StringArrayType -> {
-                add(" ?: emptyArray()")
-            }
             argument.valueType.origin is StringListType -> {
                 add(
                     maybeGetNullabilitySign(argument) + ".%M()",
