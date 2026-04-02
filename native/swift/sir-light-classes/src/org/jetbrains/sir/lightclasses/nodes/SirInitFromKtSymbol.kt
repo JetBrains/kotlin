@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.sir.providers.source.InnerInitSource
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.translateType
+import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.isAbstract
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
@@ -215,6 +216,7 @@ internal class SirRegularInitFromKtSymbol(
             explicitParameters = emptyList(),
             returnType = obj.type,
             kotlinFqName = fqName,
+            kotlinOptIns = ktSymbol.containingDeclaration?.allRequiredOptIns ?: emptyList(),
             selfParameter = null,
             contextParameters = emptyList(),
             extensionReceiverParameter = null,
@@ -238,6 +240,7 @@ internal class SirRegularInitFromKtSymbol(
             explicitParameters = listOf(obj) + parameters,
             returnType = returnType,
             kotlinFqName = fqName,
+            kotlinOptIns = ktSymbol.allRequiredOptIns,
             selfParameter = null,
             contextParameters = emptyList(),
             extensionReceiverParameter = null,

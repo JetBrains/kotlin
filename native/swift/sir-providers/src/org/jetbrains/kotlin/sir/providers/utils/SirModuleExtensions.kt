@@ -15,9 +15,21 @@ public fun SirModule.updateImport(newImport: SirImport) {
 }
 
 public fun SirModule.updateImports(newImports: List<SirImport>) {
-    imports += newImports
-        .filter { it.moduleName != SirSwiftModule.name && it.moduleName != this.name }
-        .filter { it !in imports }
+    val newImports = newImports.filter { it.moduleName != SirSwiftModule.name && it.moduleName != this.name }
+    for (newImport in newImports) {
+        val existingImport = imports.find { it.moduleName == newImport.moduleName }
+        if (existingImport == null) {
+            imports += newImport
+            continue
+        }
+        if (existingImport == newImport) continue
+        imports -= existingImport
+        imports += SirImport(
+            moduleName = existingImport.moduleName,
+            mode = maxOf(existingImport.mode, newImport.mode),
+            spi = (existingImport.spi + newImport.spi).distinct()
+        )
+    }
 }
 
 public fun SirDeclaration.containingModule(): SirModule = when (val parent = parent) {

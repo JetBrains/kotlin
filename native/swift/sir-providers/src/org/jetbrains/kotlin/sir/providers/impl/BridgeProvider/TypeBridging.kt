@@ -5,16 +5,21 @@
 
 package org.jetbrains.kotlin.sir.providers.impl.BridgeProvider
 
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.*
 import org.jetbrains.kotlin.sir.providers.sirModule
+import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.toBridge
 import org.jetbrains.kotlin.sir.providers.utils.KotlinCoroutineSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
+import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
+import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.isValueType
@@ -1183,6 +1188,7 @@ internal sealed interface Bridge {
                     } + swiftType.parameterTypes.map { SirParameter(type = it) },
                     returnType = swiftType.returnType,
                     kotlinFqName = FqName(""),
+                    kotlinOptIns = swiftType.allRequiredOptIns,
                     selfParameter = null,
                     contextParameters = emptyList(),
                     extensionReceiverParameter = null,
@@ -1389,3 +1395,32 @@ internal sealed interface Bridge {
 }
 
 private fun Bridge.renderNil(): String = if (this is AsObjCBridgedOptional) "NSNull()" else "nil"
+
+context(session: SirSession)
+private val SirType.allRequiredOptIns: List<ClassId>
+    get() = when (this) {
+        is SirNominalType -> buildList {
+            generateSequence(this@allRequiredOptIns) { it.parent }.forEach { type ->
+                addAll(type.typeArguments.flatMap { it.allRequiredOptIns })
+                addAll(type.typeDeclaration.allRequiredOptIns)
+            }
+        }
+        is SirExistentialType -> buildList {
+            protocols.forEach { (protocol, typeArguments) ->
+                addAll(typeArguments.flatMap { it.allRequiredOptIns })
+                addAll(protocol.allRequiredOptIns)
+            }
+        }
+        is SirFunctionalType -> buildList {
+            addAll(contextTypes.flatMap { it.allRequiredOptIns })
+            addAll(parameterTypes.flatMap { it.allRequiredOptIns })
+            addAll(errorType.allRequiredOptIns)
+            addAll(returnType.allRequiredOptIns)
+        }
+        is SirTupleType -> types.flatMap { it.second.allRequiredOptIns }
+        is SirErrorType, SirUnsupportedType -> emptyList()
+    }
+
+context(session: SirSession)
+private val SirDeclaration.allRequiredOptIns: List<ClassId>
+    get() = session.withSessions { kaSymbolOrNull<KaDeclarationSymbol>()?.allRequiredOptIns.orEmpty() }

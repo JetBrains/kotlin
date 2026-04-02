@@ -29,6 +29,22 @@ package protocol _InterfaceWithDeprecatedMembers {
 @objc(_SwiftInterfaceC)
 package protocol _SwiftInterfaceC {
 }
+@_spi(Barnnotation) @_spi(Foonnotation)
+public final class Bar: main.Foo {
+    @_spi(Barnnotation) @_spi(Foonnotation)
+    public override init() {
+        if Self.self != main.Bar.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Bar ") }
+        let __kt = __root___Bar_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
 public final class ClassWithDeprecatedMembersFromInterface: KotlinRuntime.KotlinBase, main.InterfaceWithDeprecatedMembers, main._InterfaceWithDeprecatedMembers {
     public init() {
         if Self.self != main.ClassWithDeprecatedMembersFromInterface.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ClassWithDeprecatedMembersFromInterface ") }
@@ -52,6 +68,52 @@ public final class ClassWithDeprecatedMembersFromInterface: KotlinRuntime.Kotlin
     }
     public func regularFunction() -> Swift.Void {
         return { ClassWithDeprecatedMembersFromInterface_regularFunction(self.__externalRCRef()); return () }()
+    }
+}
+@_spi(Foonnotation)
+open class Foo: KotlinRuntime.KotlinBase {
+    @_spi(Foonnotation)
+    public init() {
+        if Self.self != main.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Foo ") }
+        let __kt = __root___Foo_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
+@_spi(Foonnotation)
+public final class FooObject: KotlinRuntime.KotlinBase {
+    @_spi(Foonnotation)
+    public var objectProperty: Swift.String {
+        @_spi(Foonnotation)
+        get {
+            return FooObject_objectProperty_get(self.__externalRCRef())
+        }
+    }
+    @_spi(Foonnotation)
+    public static var shared: main.FooObject {
+        @_spi(Foonnotation)
+        get {
+            return main.FooObject.__createClassWrapper(externalRCRef: __root___FooObject_get())
+        }
+    }
+    private init() {
+        fatalError()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+    @_spi(Barnnotation) @_spi(Foonnotation)
+    public func objectMethod() -> Swift.Void {
+        return { FooObject_objectMethod(self.__externalRCRef()); return () }()
     }
 }
 public final class ObjCObjectB: KotlinRuntime.KotlinBase {
@@ -78,6 +140,33 @@ public final class ObjCObjectB: KotlinRuntime.KotlinBase {
         objCParamB: Swift.String
     ) -> Swift.Void {
         return { KotlinObjectB_kotlinFunB__TypesOfArguments__Swift_String__(self.__externalRCRef(), objCParamB); return () }()
+    }
+}
+public final class OptInConstructor: KotlinRuntime.KotlinBase {
+    public var name: Swift.String {
+        get {
+            return OptInConstructor_name_get(self.__externalRCRef())
+        }
+    }
+    public init() {
+        if Self.self != main.OptInConstructor.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.OptInConstructor ") }
+        let __kt = __root___OptInConstructor_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___OptInConstructor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    public init(
+        name: Swift.String
+    ) {
+        if Self.self != main.OptInConstructor.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.OptInConstructor ") }
+        let __kt = __root___OptInConstructor_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___OptInConstructor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, name); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 public final class SwiftClassA: KotlinRuntime.KotlinBase {
@@ -166,6 +255,43 @@ public final class SwiftClassA: KotlinRuntime.KotlinBase {
         swiftParamA: Swift.String
     ) -> Swift.Void {
         return { KotlinClassA_kotlinFunA__TypesOfArguments__Swift_String__(self.__externalRCRef(), swiftParamA); return () }()
+    }
+}
+public final class WithCompanion: KotlinRuntime.KotlinBase {
+    @_spi(Foonnotation)
+    public final class Companion: KotlinRuntime.KotlinBase {
+        @_spi(Foonnotation)
+        public static var shared: main.WithCompanion.Companion {
+            @_spi(Foonnotation)
+            get {
+                return main.WithCompanion.Companion.__createClassWrapper(externalRCRef: WithCompanion_Companion_get())
+            }
+        }
+        private init() {
+            fatalError()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+        @_spi(Foonnotation)
+        public func companionMethod() -> Swift.Void {
+            return { WithCompanion_Companion_companionMethod(self.__externalRCRef()); return () }()
+        }
+    }
+    public init() {
+        if Self.self != main.WithCompanion.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.WithCompanion ") }
+        let __kt = __root___WithCompanion_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___WithCompanion_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 public final class deprecatedChildT: main.deprecatedT {
@@ -557,6 +683,17 @@ public var MESSAGE: Swift.String {
         return __root___MESSAGE_get()
     }
 }
+@_spi(Barnnotation) @_spi(Foonnotation)
+public var barProperty: main.Bar {
+    @_spi(Barnnotation) @_spi(Foonnotation)
+    get {
+        return main.Bar.__createClassWrapper(externalRCRef: __root___barProperty_get())
+    }
+    @_spi(Barnnotation) @_spi(Foonnotation)
+    set {
+        return { __root___barProperty_set__TypesOfArguments__main_Bar__(newValue.__externalRCRef()); return () }()
+    }
+}
 public var classA: main.SwiftClassA {
     get {
         return main.SwiftClassA.__createClassWrapper(externalRCRef: __root___classA_get())
@@ -572,6 +709,20 @@ public var deprecationInheritedImplicitlyV: Swift.Void {
 public var deprecationInheritedV: Swift.Void {
     get {
         return { __root___deprecationInheritedV_get(); return () }()
+    }
+}
+@_spi(Foonnotation)
+public var fooProperty: main.Foo {
+    @_spi(Foonnotation)
+    get {
+        return main.Foo.__createClassWrapper(externalRCRef: __root___fooProperty_get())
+    }
+}
+@_spi(Foonnotation)
+public var fooVal: Swift.String {
+    @_spi(Foonnotation)
+    get {
+        return __root___fooVal_get()
     }
 }
 public var interfaceC: any main.SwiftInterfaceC {
@@ -596,6 +747,10 @@ public var renamedV: Swift.Void {
         return { __root___renamedV_get(); return () }()
     }
 }
+@_spi(Barnnotation) @_spi(Foonnotation)
+public func bar() -> main.Bar {
+    return main.Bar.__createClassWrapper(externalRCRef: __root___bar())
+}
 @available(*, deprecated, message: "message")
 public func constMessage() -> Swift.Never {
     return { __root___constMessage(); fatalError() }()
@@ -608,9 +763,19 @@ public func deprecatedF() -> Swift.Void {
 public func deprecatedImplicitlyF() -> Swift.Void {
     return { __root___deprecatedImplicitlyF(); return () }()
 }
+public func expressionOptIn() -> Swift.Void {
+    return { __root___expressionOptIn(); return () }()
+}
+@_spi(Foonnotation)
+public func foo() -> main.Foo {
+    return main.Foo.__createClassWrapper(externalRCRef: __root___foo())
+}
 @available(*, deprecated, message: "->message<-")
 public func formattedMessage() -> Swift.Never {
     return { __root___formattedMessage(); fatalError() }()
+}
+public func localDeclarations() -> Swift.Void {
+    return { __root___localDeclarations(); return () }()
 }
 @available(*, deprecated, message: """
 

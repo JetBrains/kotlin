@@ -42,6 +42,24 @@ public sealed interface SirAttribute {
         val isUnusable = unavailable
     }
 
+    class SPI(
+        val name: String
+    ) : SirAttribute {
+        override val identifier: String get() = "_spi"
+        override val arguments: List<SirArgument> get() = listOf(SirArgument(name))
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is SPI) return false
+
+            return name == other.name
+        }
+
+        override fun hashCode(): Int {
+            return name.hashCode()
+        }
+    }
+
     object NonOverride : SirAttribute {
         override val identifier: String get() = "_nonoverride"
 

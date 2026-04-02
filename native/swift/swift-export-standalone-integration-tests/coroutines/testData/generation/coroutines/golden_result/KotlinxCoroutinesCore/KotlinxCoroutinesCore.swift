@@ -76,6 +76,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow where
             }
         }()
     }
+    @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
     public func resetReplayCache() -> Swift.Void {
         return { kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache(self.__externalRCRef()); return () }()
     }
@@ -150,6 +151,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         func emit(
             value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) async throws -> Swift.Void
+        @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
         func resetReplayCache() -> Swift.Void
         func tryEmit(
             value: (any KotlinRuntimeSupport._KotlinBridgeable)?

@@ -260,17 +260,23 @@ extension ExportedKotlinPackages.kotlin {
                     return kotlin_Char_Companion_SIZE_BITS_get(self.__externalRCRef())
                 }
             }
+            @_spi(kotlin$experimental$ExperimentalNativeApi)
             public var MIN_SUPPLEMENTARY_CODE_POINT: Swift.Int32 {
+                @_spi(kotlin$experimental$ExperimentalNativeApi)
                 get {
                     return kotlin_Char_Companion_MIN_SUPPLEMENTARY_CODE_POINT_get(self.__externalRCRef())
                 }
             }
+            @_spi(kotlin$experimental$ExperimentalNativeApi)
             public var MIN_CODE_POINT: Swift.Int32 {
+                @_spi(kotlin$experimental$ExperimentalNativeApi)
                 get {
                     return kotlin_Char_Companion_MIN_CODE_POINT_get(self.__externalRCRef())
                 }
             }
+            @_spi(kotlin$experimental$ExperimentalNativeApi)
             public var MAX_CODE_POINT: Swift.Int32 {
+                @_spi(kotlin$experimental$ExperimentalNativeApi)
                 get {
                     return kotlin_Char_Companion_MAX_CODE_POINT_get(self.__externalRCRef())
                 }
@@ -4582,6 +4588,7 @@ extension ExportedKotlinPackages.kotlin {
                 return { switch kotlin_Throwable_cause_get(self.__externalRCRef()) { case nil: .none; case let res: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
             }
         }
+        @_spi(kotlin$experimental$ExperimentalNativeApi)
         public final func getStackTrace() -> ExportedKotlinPackages.kotlin.Array {
             return ExportedKotlinPackages.kotlin.Array.__createClassWrapper(externalRCRef: kotlin_Throwable_getStackTrace(self.__externalRCRef()))
         }
@@ -6842,6 +6849,7 @@ extension ExportedKotlinPackages.kotlin.time {
                     return ExportedKotlinPackages.kotlin.time.Duration.Companion.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_get())
                 }
             }
+            @_spi(kotlin$time$ExperimentalTime)
             public func convert(
                 value: Swift.Double,
                 sourceUnit: ExportedKotlinPackages.kotlin.time.DurationUnit,

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.KotlinCoroutineSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.sir.util.isNever
 import org.jetbrains.kotlin.sir.util.name
 import org.jetbrains.kotlin.sir.util.swiftIdentifier
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal const val exportAnnotationFqName = "kotlin.native.internal.ExportedBridge"
+private const val optInAnnotationFqName = "kotlin.OptIn"
 private const val cinterop = "kotlinx.cinterop.*"
 private const val convertBlockPtrToKotlinFunction = "kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction"
 private const val stdintHeader = "stdint.h"
@@ -30,6 +32,7 @@ private const val foundationHeader = "Foundation/Foundation.h"
 public class SirBridgeProviderImpl(private val session: SirSession, private val typeNamer: SirTypeNamer) : SirBridgeProvider {
     override fun generateTypeBridge(
         kotlinFqName: FqName?,
+        kotlinOptIns: List<ClassId>,
         swiftFqName: String,
         swiftSymbolName: String,
     ): SirTypeBindingBridge? {
@@ -39,7 +42,8 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
         val kotlinFqName = kotlinFqName?.asString() ?: ""
         return SirTypeBindingBridge(
             name = swiftFqName,
-            kotlinFileAnnotation = "$annotationName($kotlinFqName::class, \"$swiftSymbolName\")"
+            kotlinFileAnnotation = "$annotationName($kotlinFqName::class, \"$swiftSymbolName\")",
+            kotlinOptIns = kotlinOptIns.map { it.asFqNameString() }
         )
     }
 
@@ -48,6 +52,7 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
         explicitParameters: List<SirParameter>,
         returnType: SirType,
         kotlinFqName: FqName,
+        kotlinOptIns: List<ClassId>,
         selfParameter: SirParameter?,
         contextParameters: List<SirParameter>,
         extensionReceiverParameter: SirParameter?,
@@ -71,6 +76,7 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
             parameters = parameters,
             returnType = bridgeReturnType(returnType),
             kotlinFqName = kotlinFqName,
+            kotlinOptIns = kotlinOptIns,
             selfParameter = selfParameter?.let { bridgeParameter(it, 0) },
             contextParameters = parameters.takeLast(contextParameters.size),
             extensionReceiverParameter = extensionReceiverParameter?.let { bridgeParameter(it, 0) },
@@ -151,6 +157,7 @@ private class BridgeFunctionDescriptor(
     override val parameters: List<BridgedParameter>,
     override val returnType: KotlinToSwiftBridge,
     override val kotlinFqName: FqName,
+    val kotlinOptIns: List<ClassId>,
     override val selfParameter: BridgedParameter?,
     override val contextParameters: List<BridgedParameter>,
     override val extensionReceiverParameter: BridgedParameter?,
@@ -323,6 +330,8 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
     buildCallSite: BridgeFunctionDescriptor.() -> String,
 ) = buildList {
     add("@${exportAnnotationFqName.substringAfterLast('.')}(\"${cBridgeName}\")")
+    kotlinOptIns.optInAnnotation?.let(::add)
+
     val kotlinReturnType = returnType.kotlinType.takeIf { !isAsync } ?: KotlinType.Unit
 
     val parameters = allParameters.joinToString {
@@ -462,6 +471,11 @@ private val BridgeFunctionDescriptor.safeImportName: String
 
 private val FqName.safeImportName: String
     get() = pathSegments().joinToString(separator = "_") { it.asString().replace("_", "__") }
+
+private val List<ClassId>.optInAnnotation: String?
+    get() = this.takeIf { it.isNotEmpty() }
+        ?.joinToString { "${it.asFqNameString()}::class" }
+        ?.let { "@${optInAnnotationFqName.substringAfterLast('.')}($it)" }
 
 private fun String.prependIndentToTrailingLines(indent: String): String = this.lines().let { lines ->
     lines.singleOrNull() ?: buildString {
