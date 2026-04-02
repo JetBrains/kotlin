@@ -24,9 +24,7 @@ fun box(): String {
 // EXPECTATIONS NATIVE
 // test.kt:12 box
 // test.kt:7 box
-// test.kt:1 access$foo$tTestKt
 // test.kt:4 foo
-// test.kt:1 access$foo$tTestKt
 // test.kt:7 box
 // test.kt:9 box
 // test.kt:12 box
@@ -34,7 +32,6 @@ fun box(): String {
 
 // EXPECTATIONS JS_IR
 // test.kt:12 box
-// test.kt:1 access$foo$tTestKt
 // test.kt:4 foo
 
 // EXPECTATIONS WASM
