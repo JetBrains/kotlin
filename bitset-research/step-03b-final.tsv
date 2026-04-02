@@ -1,0 +1,206 @@
+file	cls	mode	methods
+platform/util/concurrency/src/com/intellij/util/containers/ConcurrentBitSet.java	impl	?	nextSetBit(), nextClearBit(), cardinality(), clear()
+platform/util/concurrency/src/com/intellij/util/containers/ConcurrentBitSetImpl.java	impl	?	get(int), nextSetBit(), nextClearBit(), cardinality(), toString(), clear()
+platform/util/concurrency/src/com/intellij/util/containers/ConcurrentPackedBitsArray.java	impl	?	clear()
+platform/util/concurrency/src/com/intellij/util/containers/ConcurrentPackedBitsArrayImpl.java	impl	?	clear()
+platform/util/concurrency/src/com/intellij/util/containers/ConcurrentThreeStateBitSet.kt	impl	?	clear()
+platform/util/concurrency/src/com/intellij/util/containers/ConcurrentThreeStateBitSetImpl.kt	impl	?	clear()
+platform/util/diff/src/com/intellij/util/diff/BitSet.kt	impl	?	BitSet(int), set(from,to), set(from,to,bool), nextSetBit(), nextClearBit(), previousSetBit(), previousClearBit(), cardinality(), intersects(), toLongArray(), hashCode(), toString(), clear()
+platform/util/diff/src/com/intellij/util/diff/Diff.kt	use	W	
+platform/util/diff/src/com/intellij/util/diff/MyersLCS.kt	use	W	BitSet(int), set(from,to), set(from,to,bool)
+platform/util/diff/src/com/intellij/util/diff/PatienceIntLCS.kt	use	W	BitSet(int), set(from,to)
+platform/util/diff/src/com/intellij/util/diff/Reindexer.kt	use	W	BitSet(int), get(int), set(int,bool), set(from,to)
+platform/util/src/com/intellij/util/indexing/containers/BitSetAsRAIntContainer.java	use	J	stream()
+platform/util/src/com/intellij/util/indexing/containers/ChangeBufferingList.java	use	W	BitSet(int)
+platform/util/src/com/intellij/util/indexing/containers/IdBitSet.java	impl	?	BitSet(int), get(int), nextSetBit()
+platform/util/src/com/intellij/util/indexing/containers/SortedIdSet.java	use	W	get(int)
+platform/util/text-matching/srcJvm/com/intellij/util/text/matching/BitSet.kt	use	?	
+platform/util/text-matching/src/com/intellij/psi/codeStyle/TypoTolerantMatcher.kt	use	J	BitSet(), get(int), set(int)
+platform/util/ui/src/com/intellij/util/ui/ExtendableHTMLViewFactory.kt	use	J	BitSet()
+platform/util/ui/src/com/intellij/util/ui/html/utils.kt	use	J	
+platform/util/testSrc/com/intellij/util/diff/IntLCSAutoTest.java	test	W	
+platform/util/testSrc/com/intellij/util/diff/IntLCSNewTest.java	test	W	
+platform/util/testSrc/com/intellij/util/diff/IntLCSTest.java	test	W	
+platform/util/testSrc/com/intellij/util/diff/PatienceIntLCSTest.java	test	W	
+platform/util/testSrc/com/intellij/util/diff/ReindexerNewTest.java	test	W	
+platform/util/testSrc/com/intellij/util/indexing/containers/BitSetAsRAIntContainerTest.java	test	J	
+platform/util/testSrc/com/intellij/util/indexing/containers/IdBitSetTest.java	test	W	
+platform/util/testSrc/com/intellij/util/indexing/containers/InputIdContainerTest.java	test	W	
+platform/util/testSrc/com/intellij/util/indexing/containers/UpgradableRandomAccessIntContainerTests.java	test	W	
+platform/analysis-impl/src/com/intellij/codeInspection/dataFlow/interpreter/ReachabilityCountingInterpreter.java	use	J	BitSet(), set(int), set(from,to)
+platform/analysis-impl/src/com/intellij/codeInspection/dataFlow/lang/ir/ControlFlow.java	use	J	nextSetBit()
+platform/analysis-impl/src/com/intellij/codeInspection/dataFlow/lang/ir/LiveVariablesAnalyzer.java	use	J	BitSet(), get(int), set(int), or(), andNot(), nextSetBit(), isEmpty(), stream(), clone(), equals(), hashCode()
+platform/analysis-impl/src/com/intellij/codeInspection/dataFlow/memory/DfaMemoryStateImpl.java	use	J	BitSet(), get(int), set(int), clear(int), nextSetBit(), stream()
+platform/analysis-impl/src/com/intellij/codeInspection/dataFlow/memory/SortedIntSet.java	use	J	set(int)
+platform/analysis-impl/src/com/intellij/codeInspection/dataFlow/rangeSet/LongRangeSet.java	use	J	get(int), toString()
+platform/analysis-impl/src/com/intellij/codeInsight/template/impl/TemplateState.java	use	J	BitSet(), get(int), set(int), isEmpty(), clear()
+platform/core-impl/src/com/intellij/lang/impl/MarkerOptionalData.java	use	J	get(int), set(int), set(int,bool), set(from,to)
+platform/core-impl/src/com/intellij/openapi/editor/impl/PsiBasedStripTrailingSpacesFilter.java	use	J	BitSet(int), get(int), set(from,to)
+platform/core-impl/src/com/intellij/openapi/vfs/CompactVirtualFileSet.java	use	J	BitSet(int), get(int), set(int), clear(int), nextSetBit(), isEmpty(), cardinality()
+platform/core-impl/src/com/intellij/openapi/vfs/DeduplicatingVirtualFileFilter.kt	use	J	BitSet(), get(int), set(int)
+platform/indexing-api/src/com/intellij/util/indexing/IdFilter.java	use	J	BitSet(), get(int), set(int), cardinality()
+platform/indexing-api/src/com/intellij/util/indexing/roots/IndexableFilesDeduplicateFilter.java	use	W	set(int)
+platform/indexing-impl/src/com/intellij/psi/stubs/LazyStubList.java	use	J	BitSet(), set(int), nextSetBit()
+platform/indexing-impl/src/com/intellij/psi/stubs/StubTreeSerializerBase.java	use	J	BitSet(), set(int), set(from,to)
+platform/lang-api/src/com/intellij/util/indexing/LightDirectoryIndex.java	use	W	get(int), set(int), clear()
+platform/lang-impl/src/com/intellij/codeInsight/editorActions/wordSelection/InjectedFileReferenceSelectioner.java	use	J	BitSet(), BitSet(int), get(int), set(int)
+platform/lang-impl/src/com/intellij/find/impl/FindInProjectTask.java	use	W	set(int)
+platform/lang-impl/src/com/intellij/openapi/roots/impl/FilesScanExecutor.kt	use	W	set(int), size()
+platform/lang-impl/src/com/intellij/psi/search/MappedFileTypeIndex.java	use	W	
+platform/lang-impl/src/com/intellij/util/indexing/impl/storage/IntLog.kt	use	J	BitSet(), get(int), set(int)
+platform/lang-impl/src/com/intellij/util/indexing/projectFilter/CachingProjectIndexableFilesFilter.kt	use	W	size(), clear()
+platform/lang-impl/src/com/intellij/util/indexing/projectFilter/ConcurrentFileIds.kt	use	W	get(int), set(int,bool), set(from,to), cardinality(), size(), clear()
+platform/lang-impl/src/com/intellij/util/indexing/projectFilter/ProjectIndexableFilesFilterHealthCheck.kt	use	J	BitSet(), get(int), set(int), or(), size()
+platform/lang-impl/src/com/intellij/util/indexing/contentQueue/dev/IndexWriter.kt	use	J	BitSet(int), set(int), cardinality()
+platform/lang-impl/src/com/intellij/util/indexing/events/DirtyFiles.kt	use	W	get(int), set(int), clear(int), size(), clear()
+platform/syntax/syntax-api/src/com/intellij/platform/syntax/impl/util/MutableBitSet.kt	use	J	
+platform/syntax/syntax-api/test/com/intellij/platform/syntax/impl/builder/BitSetTest.kt	test	W	
+platform/syntax/syntax-api/src/com/intellij/platform/syntax/SyntaxElementTypeSet.kt	use	W	BitSet(int), isEmpty()
+platform/syntax/syntax-api/src/com/intellij/platform/syntax/impl/builder/MarkerOptionalData.kt	use	W	BitSet()
+platform/platform-api/src/com/intellij/ui/OptionGroup.java	use	J	BitSet(), get(int), set(int,bool), set(from,to)
+platform/platform-impl/initial-config-import/src/com/intellij/ide/OldDirectoryCleaner.java	use	J	BitSet(), get(int), set(int,bool), set(from,to), cardinality()
+platform/platform-impl/src/com/intellij/openapi/actionSystem/impl/PreCachedDataContext.kt	use	W	get(int), set(int)
+platform/platform-impl/src/com/intellij/openapi/fileTypes/impl/IgnoredFileCache.java	use	W	get(int), set(int), clear(int), clear()
+platform/platform-impl/src/com/intellij/openapi/vfs/newvfs/impl/VfsData.java	use	W	get(int), set(int)
+platform/platform-impl/src/com/intellij/openapi/vfs/newvfs/persistent/CompactRecordsTable.java	use	J	BitSet(), get(int), set(int)
+platform/projectModel-impl/src/com/intellij/workspaceModel/core/fileIndex/impl/WorkspaceFileIndexDataImpl.kt	use	W	get(int), set(int), clear()
+platform/todo/src/com/intellij/psi/impl/cache/impl/IndexTodoCacheManagerImpl.java	use	W	set(int), clear(int), nextSetBit()
+platform/platform-tests/testSrc/com/intellij/openapi/vfs/newvfs/persistent/VfsDiffBuilder.kt	test	J	
+platform/platform-tests/testSrc/com/intellij/util/containers/ConcurrentBitSetTest.java	test	W	
+platform/diff-impl/src/com/intellij/diff/comparison/ComparisonManagerImpl.java	use	J	BitSet(), get(int), set(from,to), nextClearBit()
+platform/diff-impl/src/com/intellij/diff/merge/MergeThreesideViewerActions.kt	use	J	
+platform/diff-impl/src/com/intellij/diff/tools/combined/CombinedDiffViewer.kt	use	J	BitSet(int), get(int), set(int,bool), set(from,to), set(from,to,bool)
+platform/diff-impl/src/com/intellij/diff/tools/fragmented/UnifiedDiffViewer.java	use	J	
+platform/diff-impl/src/com/intellij/diff/tools/simple/SimpleDiffViewer.java	use	J	
+platform/diff-impl/src/com/intellij/diff/tools/simple/SimpleThreesideDiffViewer.java	use	J	
+platform/diff-impl/src/com/intellij/diff/tools/util/text/SmartTextDiffProvider.java	use	J	set(from,to)
+platform/diff-impl/src/com/intellij/diff/util/DiffUtil.java	use	J	get(int), set(from,to), nextSetBit(), nextClearBit()
+platform/diff-impl/src/com/intellij/openapi/vcs/ex/DocumentTracker.kt	use	J	BitSet(), set(from,to), or(), nextSetBit(), nextClearBit(), isEmpty(), cardinality(), length(), toByteArray()
+platform/diff-impl/src/com/intellij/openapi/vcs/ex/LineStatusTrackerBase.kt	use	J	set(from,to)
+platform/diff-impl/src/com/intellij/openapi/vcs/ex/LineStatusTrackerBlockOperations.kt	use	J	set(from,to)
+platform/diff-impl/src/com/intellij/openapi/vcs/ex/LineStatusTrackerI.kt	use	J	set(from,to)
+platform/vcs-impl/lang/src/com/intellij/codeInsight/actions/VcsFacadeImpl.java	use	J	BitSet(), set(from,to), nextSetBit()
+platform/vcs-impl/shared/src/com/intellij/openapi/vcs/changes/ui/ChangeListRemoteState.kt	use	J	BitSet(), set(int,bool), set(from,to), isEmpty()
+platform/vcs-impl/src/com/intellij/openapi/vcs/changes/actions/diff/lst/LocalTrackerDiffUtil.kt	use	J	BitSet(), set(int), set(from,to), nextSetBit(), nextClearBit(), cardinality()
+platform/vcs-impl/src/com/intellij/openapi/vcs/changes/actions/diff/lst/UnifiedLocalChangeListDiffViewer.kt	use	J	BitSet(), set(int), stream()
+platform/vcs-impl/src/com/intellij/openapi/vcs/changes/patch/AppliedTextPatch.java	use	J	BitSet(), set(from,to), set(from,to,bool), nextSetBit()
+platform/vcs-impl/src/com/intellij/openapi/vcs/changes/patch/tool/ApplyPatchViewer.java	use	J	
+platform/vcs-impl/src/com/intellij/openapi/vcs/ex/MoveChangesLineStatusAction.java	use	J	set(from,to)
+platform/vcs-impl/src/com/intellij/openapi/vcs/ex/RollbackLineStatusAction.java	use	J	
+platform/vcs-impl/src/com/intellij/openapi/vcs/ex/PartialLocalLineStatusTracker.kt	use	J	BitSet(), set(int,bool), set(from,to), set(from,to,bool), or(), nextSetBit(), nextClearBit(), length()
+platform/vcs-impl/src/com/intellij/openapi/vcs/impl/ElementStatusTrackerImpl.java	use	J	BitSet(), set(from,to)
+platform/vcs-log/graph/src/com/intellij/vcs/log/graph/utils/UnsignedBitSet.java	use	J	
+platform/vcs-log/graph/src/com/intellij/vcs/log/graph/utils/impl/BitSetFlags.java	use	J	
+platform/vcs-log/graph/src/com/intellij/vcs/log/graph/utils/BfsUtil.kt	use	W	get(int), set(int,bool), set(from,to)
+platform/vcs-log/graph/src/com/intellij/vcs/log/graph/utils/DfsUtil.kt	use	W	get(int), set(int,bool), set(from,to)
+platform/vcs-log/graph/src/com/intellij/vcs/log/graph/utils/GraphUtil.kt	use	W	BitSet(), get(int), set(int,bool), set(from,to), set(from,to,bool)
+platform/vcs-log/graph/src/com/intellij/vcs/log/graph/collapsing/CollapsedActionManager.java	use	W	get(int)
+platform/vcs-log/graph/src/com/intellij/vcs/log/graph/collapsing/CollapsedController.java	use	W	
+platform/vcs-log/graph/src/com/intellij/vcs/log/graph/collapsing/CollapsedGraph.java	use	W	get(int), set(int,bool), set(from,to), clone()
+platform/vcs-log/graph/src/com/intellij/vcs/log/graph/collapsing/GraphNodesVisibility.java	use	W	get(int)
+platform/vcs-log/graph/src/com/intellij/vcs/log/graph/impl/facade/FirstParentController.kt	use	W	BitSet()
+platform/vcs-log/graph/src/com/intellij/vcs/log/graph/impl/facade/ReachableNodes.kt	use	W	
+platform/vcs-log/graph/src/com/intellij/vcs/log/graph/impl/facade/sort/bek/BekBranchCreator.java	use	W	get(int), set(int,bool), set(from,to)
+platform/vcs-log/graph/src/com/intellij/vcs/log/graph/impl/permanent/PermanentLinearGraphBuilder.java	use	W	get(int), set(int,bool), set(from,to), size()
+platform/vcs-log/impl/src/com/intellij/vcs/log/history/FileHistoryRefiner.kt	use	W	get(int), set(int,bool), set(from,to)
+plugins/git4idea/intellij.vcs.git.coverage/src/com/intellij/vcs/git/coverage/CurrentFeatureBranchBaseDetector.kt	use	W	set(int,bool), set(from,to)
+plugins/git4idea/src/git4idea/history/GitHistoryTraverserImpl.kt	use	W	
+plugins/git4idea/src/git4idea/index/GitStageLineStatusTracker.kt	use	J	BitSet(), set(from,to), nextSetBit()
+plugins/git4idea/src/git4idea/rebase/log/GitCommitEditingActionBase.kt	use	W	
+platform/diff-impl/tests/testSrc/com/intellij/diff/DiffTestCase.kt	test	J	
+platform/diff-impl/tests/testSrc/com/intellij/diff/comparison/BlocksComparisonUtilTest.kt	test	J	
+platform/diff-impl/tests/testSrc/com/intellij/diff/comparison/ComparisonMergeUtilTestBase.kt	test	J	
+platform/diff-impl/tests/testSrc/com/intellij/diff/comparison/ComparisonUtilAutoTest.kt	test	J	
+platform/diff-impl/tests/testSrc/com/intellij/diff/comparison/ComparisonUtilTestBase.kt	test	J	
+platform/diff-impl/tests/testSrc/com/intellij/diff/comparison/IgnoreComparisonUtilTest.kt	test	J	
+platform/diff-impl/tests/testSrc/com/intellij/diff/tools/fragmented/UnifiedFragmentBuilderTest.kt	test	J	
+platform/vcs-impl/testSrc/com/intellij/openapi/vcs/ChangedRangesShifterAutoTest.kt	test	J	
+platform/vcs-tests/testSrc/com/intellij/openapi/vcs/BaseLineStatusTrackerTestCase.kt	test	J	
+platform/vcs-tests/testSrc/com/intellij/openapi/vcs/LineStatusTrackerRevertAutoTest.kt	test	J	
+platform/vcs-tests/testSrc/com/intellij/openapi/vcs/LineStatusTrackerTestUtil.kt	test	J	
+platform/vcs-log/graph/test/com/intellij/vcs/log/graph/impl/DottedFilterEdgesGeneratorTest.kt	test	W	
+platform/vcs-log/graph/test/com/intellij/vcs/log/graph/utils/BitSetFlagsTest.java	test	W	
+platform/vcs-log/graph/test/com/intellij/vcs/log/graph/utils/BfsTests.kt	test	W	
+platform/vcs-log/graph/test/com/intellij/vcs/log/graph/utils/GraphUtilTests.kt	test	W	
+platform/vcs-log/graph/test/com/intellij/vcs/log/graph/utils/UnsignedBitSetTest.java	test	W	
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/exps/Exprent.java	use	J	BitSet(), set(from,to), or()
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/exps/AnnotationExprent.java	use	J	set(from,to)
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/exps/ArrayExprent.java	use	J	set(from,to)
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/exps/AssertExprent.java	use	J	set(from,to)
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/exps/AssignmentExprent.java	use	J	set(from,to)
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/exps/ConstExprent.java	use	J	set(from,to)
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/exps/ExitExprent.java	use	J	set(from,to)
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/exps/FieldExprent.java	use	J	set(from,to)
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/exps/FunctionExprent.java	use	J	set(from,to)
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/exps/IfExprent.java	use	J	set(from,to)
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java	use	J	BitSet(int), get(int), set(int), isEmpty(), length()
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/exps/MonitorExprent.java	use	J	set(from,to)
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/exps/NewExprent.java	use	J	set(from,to)
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/exps/SwitchExprent.java	use	J	set(from,to)
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/exps/VarExprent.java	use	J	set(from,to)
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/stats/Statement.java	use	J	BitSet(), set(from,to), or(), nextSetBit(), length()
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/stats/CatchStatement.java	use	J	
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/stats/DummyExitStatement.java	use	J	BitSet(), or(), isEmpty()
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/ConcatenationHelper.java	use	J	
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/ExprProcessor.java	use	J	BitSet(), set(int), set(from,to)
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/SimplifyExprentsHelper.java	use	J	
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/vars/VarProcessor.java	use	J	BitSet(), get(int), set(int)
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/struct/attr/StructLocalVariableTableAttribute.java	use	J	BitSet(), nextSetBit(), length()
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/struct/consts/ConstantPool.java	use	J	BitSet(int), get(int), set(int), nextSetBit()
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/main/collectors/BytecodeMappingTracer.java	use	J	nextSetBit()
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/main/rels/LambdaProcessor.java	use	J	BitSet(), get(int), set(int), isEmpty()
+plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/util/DebugPrinter.java	use	J	BitSet(), nextSetBit(), length()
+java/java-analysis-impl/src/com/intellij/codeInspection/dataFlow/inference/ContractInferenceIndex.kt	use	J	isEmpty()
+java/java-analysis-impl/src/com/intellij/codeInspection/dataFlow/inference/ContractInferenceInterpreter.java	use	J	BitSet(), get(int), set(int)
+java/java-analysis-impl/src/com/intellij/codeInspection/dataFlow/inference/JavaSourceInference.java	use	J	BitSet(), get(int), isEmpty()
+java/java-analysis-impl/src/com/intellij/codeInspection/dataFlow/inference/MethodDataExternalizer.kt	use	J	BitSet(), toByteArray()
+java/java-analysis-impl/src/com/intellij/codeInspection/dataFlow/inference/ParameterNullityInference.kt	use	J	BitSet(), set(int)
+java/java-analysis-impl/src/com/intellij/codeInspection/dataFlow/inference/inferenceResults.kt	use	J	
+java/java-analysis-impl/src/com/intellij/codeInspection/bytecodeAnalysis/ProjectBytecodeAnalysis.java	use	J	BitSet(), get(int), cardinality()
+java/java-analysis-impl/src/com/siyeh/ig/controlflow/DuplicateConditionInspection.java	use	J	BitSet(), get(int), set(int)
+java/java-analysis-impl/src/com/siyeh/ig/migration/TryFinallyCanBeTryWithResourcesInspection.java	use	J	BitSet(int), get(int), set(int,bool), set(from,to)
+java/java-analysis-impl/src/com/siyeh/ig/psiutils/ControlFlowUtils.java	use	J	BitSet(), get(int), set(int), set(int,bool), set(from,to)
+java/java-psi-impl/src/com/intellij/psi/controlFlow/ControlFlowUtil.java	use	J	BitSet(int), get(int), set(int,bool), set(from,to), or(), clear()
+java/java-psi-impl/src/com/intellij/psi/controlFlow/DefUseUtil.java	use	J	BitSet(int), get(int), set(int)
+java/java-psi-impl/src/com/intellij/psi/impl/source/tree/java/ClassElement.java	FP	J	
+java/java-impl/src/com/intellij/codeInsight/javadoc/SnippetMarkup.java	use	J	BitSet(), set(from,to), nextSetBit()
+java/java-impl/src/com/siyeh/ig/performance/CollectionsMustHaveInitialCapacityInspection.java	FP	J	
+java/java-impl-inspections/src/com/intellij/codeInspection/defUse/DefUseInspection.java	use	J	BitSet(), get(int), set(int), stream()
+java/java-impl-refactorings/src/com/intellij/refactoring/extractMethod/ExtractMethodRecommenderInspection.java	use	J	BitSet(), set(int), nextSetBit(), isEmpty()
+java/idea-ui/src/com/intellij/ide/util/importProject/RootDetectionProcessor.java	use	J	BitSet(int), get(int), set(int,bool), set(from,to), or(), isEmpty()
+java/java-tests/testSrc/com/siyeh/ig/performance/CollectionsMustHaveInitialCapacityInspectionTest.java	FP	J	
+plugins/groovy/groovy-psi/src/org/jetbrains/plugins/groovy/lang/psi/dataFlow/WorkList.kt	use	J	BitSet(), set(int,bool), set(from,to), nextSetBit(), isEmpty(), clear()
+plugins/groovy/groovy-psi/src/org/jetbrains/plugins/groovy/lang/psi/dataFlow/readWrite/ReadBeforeWriteState.kt	use	J	BitSet(), clone(), toString()
+plugins/groovy/groovy-psi/src/org/jetbrains/plugins/groovy/lang/psi/dataFlow/readWrite/ReadBeforeWriteInstance.kt	use	J	get(int), set(int), clone()
+plugins/groovy/groovy-psi/src/org/jetbrains/plugins/groovy/lang/psi/dataFlow/util.kt	use	J	BitSet()
+plugins/groovy/groovy-psi/src/org/jetbrains/plugins/groovy/lang/psi/dataFlow/types/TypeDfaState.java	use	J	BitSet(), get(int), set(int,bool), set(from,to), or(), isEmpty(), clone(), equals()
+plugins/groovy/groovy-psi/src/org/jetbrains/plugins/groovy/lang/psi/dataFlow/types/InferenceCache.java	use	J	get(int)
+plugins/groovy/groovy-psi/src/org/jetbrains/plugins/groovy/codeInspection/utils/ControlFlowUtils.java	use	J	BitSet(int), get(int), set(int), or(), nextSetBit(), cardinality()
+plugins/groovy/groovy-psi/src/org/jetbrains/plugins/groovy/lang/psi/controlFlow/ControlFlowBuilderUtil.java	use	J	nextSetBit()
+plugins/groovy/src/org/jetbrains/plugins/groovy/refactoring/inline/GroovyInlineLocalHandler.java	use	J	get(int), nextSetBit(), cardinality()
+plugins/groovy/src/org/jetbrains/plugins/groovy/refactoring/inline/GroovyInlineLocalProcessor.java	use	J	get(int), nextSetBit(), cardinality()
+plugins/groovy/src/org/jetbrains/plugins/groovy/refactoring/introduce/parameter/GrIntroduceClosureParameterProcessor.java	use	J	get(int), nextSetBit(), cardinality()
+plugins/kotlin/code-insight/fixes-k2/src/org/jetbrains/kotlin/idea/k2/codeinsight/fixes/ChangeMemberFunctionSignatureFixFactory.kt	use	J	BitSet(int), get(int)
+plugins/kotlin/idea/src/org/jetbrains/kotlin/idea/quickfix/ChangeMemberFunctionSignatureFix.kt	use	J	BitSet(int), get(int)
+plugins/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/move/moveDeclarations/ui/MoveKotlinNestedClassesToUpperLevelDialog.java	use	J	BitSet(int), set(int,bool), set(from,to), equals()
+plugins/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/move/moveDeclarations/ui/MoveKotlinTopLevelDeclarationsDialog.java	use	J	BitSet(int), set(int,bool), set(from,to), equals()
+plugins/kotlin/jvm-debugger/sequence/src/org/jetbrains/kotlin/idea/debugger/sequence/psi/java/StreamExCallChecker.kt	FP	J	
+plugins/yaml/gen/_YAMLLexer.java	gen	J	
+plugins/xpath/xpath-lang/gen/org/intellij/lang/xpath/_XPathLexer.java	gen	J	
+python/python-psi-api/src/com/jetbrains/python/psi/stubs/PyFileStub.java	use	J	
+python/python-psi-impl/src/com/jetbrains/python/psi/PyFileElementType.java	use	J	BitSet(), BitSet(int), get(int), set(int,bool), set(from,to)
+python/python-psi-impl/src/com/jetbrains/python/psi/impl/stubs/PyFileStubImpl.java	use	J	BitSet(int), set(int,bool), set(from,to)
+updater/src/mslinks/data/BitSet32.java	use	W	
+updater/src/mslinks/data/CNRLinkFlags.java	use	W	
+updater/src/mslinks/data/LinkFlags.java	use	W	
+updater/src/mslinks/data/LinkInfoFlags.java	use	W	
+fleet/util/core/srcCommonMain/fleet/util/BitSet.kt	use	W	BitSet(int), cardinality()
+grid/impl/src/run/ui/HiddenColumnsSelectionHolder.java	use	J	BitSet(), get(int), set(int), clear(int), toLongArray(), stream(), clear()
+jps/jps-builders/src/org/jetbrains/jps/incremental/IncProjectBuilder.java	gen	J	
+python/python-parser/gen/com/jetbrains/python/lexer/_PythonLexer.java	gen	J	
+API dumps (7 файлов)	use	?	
+JDK API version files (4 файла)	use	?	
+JDK аннотации (1 файл)	use	?	
+Тестовые данные (2 файла)	FP	?	
+
+# Total entries: 203. use: 158 (129 with methods, 29 empty). impl: 8, test: 28, gen: 4, FP: 5
