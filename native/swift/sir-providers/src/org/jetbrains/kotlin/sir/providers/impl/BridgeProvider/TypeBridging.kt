@@ -1219,19 +1219,19 @@ internal sealed interface Bridge {
                     if (swiftType.contextType != null) add("context")
                     addAll(allArgs.drop(1 + swiftType.contextTypes.size))
                 }.takeIf { it.isNotEmpty() }?.let { " ${it.joinToString()} in" } ?: ""
+                val closureHolderRef = "${allArgs.first()}.__externalRCRef()!"
                 val swiftInvocation = buildList {
                     if (swiftType.contextType != null) {
                         add(List(swiftType.contextTypes.size) { idx -> "ctx$idx" }.joinToString(prefix = "let (", postfix = ") = context"))
                     }
                     if (bridgeProxy != null) {
-                        addAll(bridgeProxy.createSwiftInvocation({ "return $it" }))
+                        addAll(bridgeProxy.createSwiftInvocation(mapOf(allArgs.first() to closureHolderRef)) { "return $it" })
                     } else {
                         add("fatalError()")
                     }
                 }
                 val kotlinBaseName = typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))
-                val closureHolderRef = "${allArgs.first()}.__externalRCRef()!"
-                val invokeBody = swiftInvocation.joinToString(";").replace(allArgs.first(), closureHolderRef)
+                val invokeBody = swiftInvocation.joinToString(";")
                 return """{
                 |    let ${allArgs.first()} = $kotlinBaseName(__externalRCRefUnsafe: $valueExpression, options: .asBestFittingWrapper)!
                 |    return {$defineArgs $invokeBody }
@@ -1243,7 +1243,7 @@ internal sealed interface Bridge {
         override fun helperBridges(typeNamer: SirTypeNamer): List<SirBridge> {
             return bridgeProxy?.createSirBridges {
                 val actualArgs = argNames.drop(1).also { if (extensionReceiverParameter != null) it.drop(1) }
-                buildCall("(__pointerToBlock as ${typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)}).invoke(${actualArgs.joinToString()})")
+                buildCall("(${argNames.first()} as ${typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)}).invoke(${actualArgs.joinToString()})")
             } ?: emptyList()
         }
     }
