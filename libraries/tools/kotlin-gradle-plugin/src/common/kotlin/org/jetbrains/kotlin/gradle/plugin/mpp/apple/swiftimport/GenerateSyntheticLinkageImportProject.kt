@@ -13,19 +13,21 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.io.File
 import java.io.Serializable
 import java.security.MessageDigest
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
-internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
+internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), UsesBuildFusService {
 
     @get:Input
     protected abstract val directlyImportedDependencies: SetProperty<SwiftPMDependency>
@@ -95,6 +97,13 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
 
     @TaskAction
     fun generateSwiftPMSyntheticImportProjectAndFetchPackages() {
+        buildFusService.get()?.reportFusMetrics {
+            it.report(
+                BooleanMetrics.KMP_SWIFT_PM_IMPORT_HAS_TRANSITIVE_DEPENDENCIES_FROM_MODULAR_DEPENDENCIES,
+                dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.keys.any { it.isModular }
+            )
+        }
+
         failOnNonIdempotentChangesIfNeeded {
             val packageRoot = syntheticImportProjectRoot.get().asFile.normalizedAbsoluteFile()
             when (syntheticProductType.get()) {

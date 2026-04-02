@@ -37,12 +37,15 @@ private fun swiftPMDependencies(swiftPMDependenciesMetadataClasspath: ArtifactVi
         .artifacts.resolvedArtifacts
         .map { artifacts ->
             val metadataByDependencyIdentifier = artifacts.associate { resolvedArtifact ->
-                val swiftPMPackageIdentifier = when (val componentId = resolvedArtifact.id.componentIdentifier) {
-                    is ProjectComponentIdentifier -> componentId.projectPath
-                    is ModuleComponentIdentifier -> "${componentId.group}_${componentId.module}_${componentId.version}"
+                val (swiftPMPackageIdentifier, isModular) = when (val componentId = resolvedArtifact.id.componentIdentifier) {
+                    is ProjectComponentIdentifier -> componentId.projectPath to false
+                    is ModuleComponentIdentifier -> "${componentId.group}_${componentId.module}_${componentId.version}" to true
                     else -> error("Unexpected componentId: $componentId")
-                }.replace(Regex("[^a-zA-Z0-9]"), "_")
-                SwiftPMDependencyIdentifier(swiftPMPackageIdentifier) to resolvedArtifact.file.inputStream().use {
+                }
+                SwiftPMDependencyIdentifier(
+                    swiftPMPackageIdentifier.replace(Regex("[^a-zA-Z0-9]"), "_"),
+                    isModular = isModular,
+                ) to resolvedArtifact.file.inputStream().use {
                     deserializeSwiftPMImportMetadata(it)
                 }
             }

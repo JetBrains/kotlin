@@ -62,7 +62,7 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
                     dependencyIdentifierToImportedSwiftPMDependencies.set(
                         TransitiveSwiftPMDependencies(
                             mapOf(
-                                SwiftPMDependencyIdentifier("dep") to SwiftPMImportMetadata(
+                                SwiftPMDependencyIdentifier("dep", true) to SwiftPMImportMetadata(
                                     iosDeploymentVersion = "123.0",
                                     macosDeploymentVersion = "234.0",
                                     watchosDeploymentVersion = null,

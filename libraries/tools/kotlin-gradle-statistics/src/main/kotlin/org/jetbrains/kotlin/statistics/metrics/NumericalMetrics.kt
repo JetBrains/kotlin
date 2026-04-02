@@ -65,7 +65,9 @@ enum class NumericalMetrics(val type: NumberOverridePolicy, val anonymization: N
     // User scenarios
 
     // this value is not reported, only time intervals from the previous build are used
-    BUILD_FINISH_TIME(OVERRIDE, SAFE);
+    BUILD_FINISH_TIME(OVERRIDE, SAFE),
+    KMP_SWIFT_PM_IMPORT_NUMBER_OF_DIRECT_DEPENDENCIES(SUM, SAFE),
+    KMP_COCOAPODS_NUMBER_OF_DIRECT_DEPENDENCIES(SUM, SAFE);
 
     companion object {
         const val VERSION = 2
