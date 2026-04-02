@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceImportAliasTestGene
 
   @Test
   public void testAllFilesPresentInImportAliases() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/imports/importAliases"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/imports/importAliases"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

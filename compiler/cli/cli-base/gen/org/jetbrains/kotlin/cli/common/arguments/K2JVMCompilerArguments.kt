@@ -321,7 +321,6 @@ This works like '--enable-preview' in Java. All class files are marked as compil
         value = "-Xjvm-expose-boxed",
         description = "Expose inline classes and functions, accepting and returning them, to Java.",
     )
-    @Enables(LanguageFeature.ImplicitJvmExposeBoxed)
     var jvmExposeBoxed: Boolean = false
         set(value) {
             checkFrozen()

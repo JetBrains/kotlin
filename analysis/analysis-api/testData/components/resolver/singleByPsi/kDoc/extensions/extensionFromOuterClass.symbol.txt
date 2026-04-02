@@ -1,23 +1,41 @@
 <caret_1>:
   KDocName(48,55): 'Int.foo'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /A.foo(<extension receiver>: kotlin.Int<dispatch receiver>: A): kotlin.Unit
+      ]
 
 <caret_2>:
   KDocName(102,109): 'Int.foo'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /A.foo(<extension receiver>: kotlin.Int<dispatch receiver>: A): kotlin.Unit
+      ]
 
 <caret_3>:
   KDocName(168,175): 'Int.foo'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /A.foo(<extension receiver>: kotlin.Int<dispatch receiver>: A): kotlin.Unit
+      ]
 
 <caret_4>:
   KDocName(228,235): 'Int.foo'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /A.foo(<extension receiver>: kotlin.Int<dispatch receiver>: A): kotlin.Unit
+      ]
 
 <caret_5>:
   KDocName(294,301): 'Int.foo'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /A.foo(<extension receiver>: kotlin.Int<dispatch receiver>: A): kotlin.Unit
+      ]
 
 <caret_6>:
   KDocName(357,364): 'Int.foo'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /A.foo(<extension receiver>: kotlin.Int<dispatch receiver>: A): kotlin.Unit
+      ]

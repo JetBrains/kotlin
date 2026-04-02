@@ -322,7 +322,7 @@ KtProperty(422,463): 'val providedDelegate by ResourceID<Int>()'
   null
 
 KtPropertyDelegate(443,463): 'by ResourceID<Int>()'
-  KaCallResolutionSuccess:
+  KaDelegatedPropertyCallResolutionAttempt:
     call = KaDelegatedPropertyCall:
       provideDelegateCall = KaSimpleFunctionCall:
         contextArgumentMapping = {}

@@ -1,16 +1,16 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.kdocProvider
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.components.findKDoc
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbols
-import org.jetbrains.kotlin.analysis.api.resolution.calls
+import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
@@ -36,24 +36,24 @@ abstract class AbstractKDocProviderTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
+    @OptIn(KaExperimentalApi::class, KtExperimentalApi::class)
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = analyze(mainModule.ktModule) {
             copyAwareAnalyzeForTest(mainFile) { contextFile ->
                 buildString {
                     contextFile.accept(object : KtTreeVisitor<Int>() {
                         override fun visitCallExpression(expression: KtCallExpression, data: Int?): Void? {
-                            expression.calleeExpression?.resolveToCall()?.calls?.forEach { call ->
-                                call.symbols().forEach { symbol ->
-                                    if (symbol !is KaDeclarationSymbol) return@forEach
-                                    appendLine(symbol.renderKDoc())
-                                    if (symbol is KaFunctionSymbol) {
-                                        symbol.valueParameters.forEach { param ->
-                                            appendLine(param.renderKDoc())
-                                        }
+                            expression.tryResolveSymbols()?.symbols?.forEach { symbol ->
+                                if (symbol !is KaDeclarationSymbol) return@forEach
+                                appendLine(symbol.renderKDoc())
+                                if (symbol is KaFunctionSymbol) {
+                                    symbol.valueParameters.forEach { param ->
+                                        appendLine(param.renderKDoc())
                                     }
-                                    appendLine()
                                 }
+                                appendLine()
                             }
+
                             return super.visitCallExpression(expression, data)
                         }
 

@@ -77,7 +77,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             copyFunctionSignatureFrom(source)
             // Exposed functions should have no @JvmName annotation, since it does not affect them,
             // but always @JvmExposeBoxed, so users can use reflection to get all exposed functions, if they so desire.
-            if (source.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) &&
+            if (source.shouldBeExposedByAnnotationOrFlag(context) &&
                 source.origin != IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER
             ) {
                 annotations = source.annotations.withJvmExposeBoxedAnnotation(source, context).withoutJvmNameAnnotation() +
@@ -466,7 +466,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             copyFunctionSignatureFrom(irConstructor)
             // Don't create a default argument stub for the primary constructor
             parameters.forEach { it.defaultValue = null }
-            if (irConstructor.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings)) {
+            if (irConstructor.shouldBeExposedByAnnotationOrFlag(context)) {
                 addValueParameter {
                     origin = INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER
                     name = Name.identifier("\$null")
@@ -508,7 +508,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         valueClass.declarations.removeAll(initBlocks)
         valueClass.declarations += function
 
-        if (irConstructor.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings)) {
+        if (irConstructor.shouldBeExposedByAnnotationOrFlag(context)) {
             valueClass.addExposedForJavaConstructor(irConstructor, primaryConstructor, function)
         }
     }

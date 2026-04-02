@@ -23,11 +23,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         applicability = Global
     )
 
-    val IGNORE_BACKEND_K1 by enumDirective<TargetBackend>(
-        description = "Ignore specific backend if test uses K1 frontend",
-        applicability = Global
-    )
-
     val IGNORE_BACKEND_K2 by enumDirective<TargetBackend>(
         description = "Ignore specific backend if test uses K2 frontend",
         applicability = Global
@@ -88,7 +83,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
 
     val IGNORE_ERRORS by directive(
         description = """
-            Ignore frontend errors in ${NoCompilationErrorsHandler::class}
             If this directive is enabled then ${JvmIrBackendFacade::class} won't produce any binaries for test
               if there are errors in it
         """.trimIndent()
@@ -229,12 +223,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val IGNORE_FIR_METADATA_LOADING_K1 by directive(
-        description = """
-            Ignore exceptions in AbstractFirLoadK1CompiledKotlin tests
-        """.trimIndent()
-    )
-
     val IGNORE_FIR_METADATA_LOADING_K2 by directive(
         description = """
             Ignore exceptions in AbstractFirLoadK2CompiledKotlin tests
@@ -275,7 +263,6 @@ fun extractIgnoredDirectiveForTargetBackend(
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
 ): ValueDirective<TargetBackend>? =
     when (testServices.defaultsProvider.frontendKind) {
-        FrontendKinds.ClassicFrontend -> CodegenTestDirectives.IGNORE_BACKEND_K1
         FrontendKinds.FIR -> CodegenTestDirectives.IGNORE_BACKEND_K2
         else -> null
     }?.let { specificIgnoreDirective ->

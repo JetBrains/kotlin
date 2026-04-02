@@ -182,7 +182,8 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
         sourceSetsDependsOnRelation = sourceSetsWithMetadataCompilations.keys.associate { sourceSet ->
             sourceSet.name to sourceSet.dependsOn.filter { it in sourceSetsWithMetadataCompilations }.map { it.name }.toSet()
         },
-        sourceSetModuleDependencies = project.sourceSetModuleDependencies(sourceSetsWithMetadataCompilations),
+        /** Will be populated in task action [GenerateProjectStructureMetadata.generateMetadataXml] because requires configuration resolution */
+        sourceSetModuleDependencies = emptyMap(),
         sourceSetCInteropMetadataDirectory = sourceSetsWithMetadataCompilations.keys
             .filter { it.isNativeSourceSet.getOrThrow() }
             .associate { sourceSet -> sourceSet.name to cinteropMetadataDirectoryPath(sourceSet.name) },
@@ -195,38 +196,6 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
         isPublishedAsRoot = true,
         sourceSetNames = sourceSetsWithMetadataCompilations.keys.map { it.name }.toSet(),
     )
-}
-
-private fun Project.sourceSetModuleDependencies(
-    sourceSetsWithMetadataCompilations: Map<KotlinSourceSet, KotlinCompilation<*>>,
-): Map<String, Set<ModuleDependencyIdentifier>> {
-    /**
-     * When PI is enabled, calling [ModuleIds.fromDependency] is not PI friendly
-     * So Sources Set Dependencies will be populated in the [GenerateProjectStructureMetadata] task.
-     * */
-    if (kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) return emptyMap()
-    return sourceSetsWithMetadataCompilations.keys.associate { sourceSet ->
-        /**
-         * Currently, Kotlin/Native dependencies must include the implementation dependencies, too. These dependencies must also be
-         * published as API dependencies of the metadata module to get into the resolution result, see
-         * [KotlinMetadataTargetConfigurator.exportDependenciesForPublishing].
-         */
-        val isNativeSharedSourceSet = sourceSet.isNativeSourceSet.getOrThrow()
-        val scopes = listOfNotNull(
-            KotlinDependencyScope.API_SCOPE,
-            KotlinDependencyScope.IMPLEMENTATION_SCOPE.takeIf { isNativeSharedSourceSet }
-        )
-        val sourceSetsToIncludeDependencies =
-            if (isNativeSharedSourceSet)
-                dependsOnClosureWithInterCompilationDependencies(sourceSet).plus(sourceSet)
-            else listOf(sourceSet)
-        val sourceSetExportedDependencies = scopes.flatMap { scope ->
-            sourceSetsToIncludeDependencies.flatMap { hierarchySourceSet ->
-                configurations.sourceSetDependencyConfigurationByScope(hierarchySourceSet, scope).allDependencies.toList()
-            }
-        }
-        sourceSet.name to sourceSetExportedDependencies.map { ModuleIds.fromDependency(sourceSet.project, it) }.toSet()
-    }
 }
 
 internal fun <Serializer> KotlinProjectStructureMetadata.serialize(
@@ -395,58 +364,6 @@ internal fun <ParsingContext> parseKotlinSourceSetMetadata(
     )
 }
 
-internal val GlobalProjectStructureMetadataStorageSetupAction = KotlinProjectSetupCoroutine {
-    // Run in AfterEvaluate stage to avoid issues with Precompiled Script Plugins
-    // When Gradle runs `:generatePrecompiledScriptPluginAccessors` it creates dummy project and
-    // applies plugins from *.gradle.kts file to and generates accessors from it.
-    // These dummy projects never gets evaluated and should not expose any Project Structure Metadata.
-    // Putting registerProjectStructureMetadata in AfterEvaluate stage prevents PSM registration in dummy projects.
-    KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript.await()
-    GlobalProjectStructureMetadataStorage.registerProjectStructureMetadata(project) {
-        multiplatformExtension.kotlinProjectStructureMetadata
-    }
-}
-
-internal object GlobalProjectStructureMetadataStorage {
-    private const val propertyPrefix = "kotlin.projectStructureMetadata.build"
-
-    fun propertyName(buildName: String, projectPath: String) = "$propertyPrefix.$buildName.path.$projectPath"
-
-    fun registerProjectStructureMetadata(project: Project, metadataProvider: () -> KotlinProjectStructureMetadata) {
-        project.compositeBuildRootProject {
-            (it as ExtensionAware).extensions.extraProperties.set(
-                propertyName(project.currentBuildId().compatAccessor(project).buildPath, project.path),
-                { metadataProvider().toJson() }
-            )
-        }
-    }
-
-    fun getProjectStructureMetadataProvidersFromAllGradleBuilds(project: Project): Map<ProjectPathWithBuildPath, Lazy<KotlinProjectStructureMetadata?>> {
-        return project.compositeBuildRootProject.extensions.extraProperties.properties
-            .filterKeys { it.startsWith(propertyPrefix) }
-            .entries
-            .associate { (propertyName, propertyValue) ->
-                Pair(
-                    propertyName.toProjectPathWithBuildName(),
-                    lazy { propertyValue?.getProjectStructureMetadataOrNull() }
-                )
-            }
-    }
-
-    private fun Any.getProjectStructureMetadataOrNull(): KotlinProjectStructureMetadata? {
-        val jsonStringProvider = this as? Function0<*> ?: return null
-        val jsonString = jsonStringProvider.invoke() as? String ?: return null
-        return parseKotlinSourceSetMetadataFromJson(jsonString)
-    }
-
-    private fun String.toProjectPathWithBuildName(): ProjectPathWithBuildPath {
-        val (buildPath, projectPath) = removePrefix("$propertyPrefix.").split(".path.")
-        return ProjectPathWithBuildPath(
-            projectPath = projectPath,
-            buildPath = buildPath
-        )
-    }
-}
 
 private const val ROOT_NODE_NAME = "projectStructure"
 private const val PUBLISHED_AS_ROOT_NAME = "isPublishedAsRoot"

@@ -5,27 +5,13 @@
 
 package org.jetbrains.kotlin.kotlinp.jvm.test
 
-import org.jetbrains.kotlin.test.Constructor
-import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliJvmFacade
-import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
-import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
-import org.jetbrains.kotlin.test.model.*
 
-abstract class AbstractKotlinpCompilerTestDataTest : AbstractKotlinpTest<FirOutputArtifact>(FrontendKinds.FIR) {
-    override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirCliJvmFacade
-    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrCliJvmFacade
-    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
-        get() = ::BackendCliJvmFacade
+abstract class AbstractKotlinpCompilerTestDataTest : AbstractKotlinpTest() {
 
-    // It would be excessive to dump kotlinp-read declarations for the compiler loadJava test data in addition to the already existing K1
-    // and K2 dumps. Instead, we're only checking that the dump is the same after the write-read transformation, just to verify that
-    // kotlin-metadata-jvm correctly writes everything that it reads.
+    // It would be excessive to dump kotlinp-read declarations for the compiler loadJava test data in addition to the already existing
+    // dumps. Instead, we're only checking that the dump is the same after the write-read transformation, just to verify that
     override val compareWithTxt: Boolean
         get() = false
 

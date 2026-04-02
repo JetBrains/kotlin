@@ -308,13 +308,14 @@ abstract class KotlinAndroidTarget @Inject constructor(
 
         val apiElementsConfiguration = project.configurations.findConsumable(apiElementsConfigurationName)
             ?: error("Configuration $apiElementsConfigurationName was not found")
-        return project.configurations.createConsumable(sourcesElementsConfigurationName).apply {
+
+        return project.configurations.createConsumable(sourcesElementsConfigurationName) {
             setInvisibleIfSupported()
             description = "Source files of Android ${variantName}."
 
             apiElementsConfiguration.copyAttributesTo(project.providers, dest = this)
             configureSourcesPublicationAttributes(this@KotlinAndroidTarget)
-        }
+        }.get()
     }
 
     /** We filter this variant out as it is never requested on the consumer side, while keeping it leads to ambiguity between Android and

@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModulePsiTypeAsKaTypeTestGenerated
 
   @Test
   public void testAllFilesPresentInAsKaType() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asKaType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asKaType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

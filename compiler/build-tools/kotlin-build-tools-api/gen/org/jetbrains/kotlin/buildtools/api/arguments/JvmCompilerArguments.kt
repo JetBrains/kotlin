@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.buildtools.api.arguments
 import java.nio.`file`.Path
 import kotlin.Boolean
 import kotlin.Deprecated
+import kotlin.DeprecationLevel
 import kotlin.Int
 import kotlin.String
 import kotlin.collections.List
@@ -50,6 +51,10 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
    *
    * @return true if the option has a value set, false otherwise
    */
+  @Deprecated(
+    message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
+    level = DeprecationLevel.WARNING,
+  )
   public operator fun contains(key: JvmCompilerArgument<*>): Boolean
 
   /**
@@ -89,6 +94,10 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      *
      * @return true if the option has a value set, false otherwise
      */
+    @Deprecated(
+      message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
+      level = DeprecationLevel.WARNING,
+    )
     public operator fun contains(key: JvmCompilerArgument<*>): Boolean
 
     /**

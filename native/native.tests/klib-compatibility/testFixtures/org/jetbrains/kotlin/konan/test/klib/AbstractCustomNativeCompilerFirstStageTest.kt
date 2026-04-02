@@ -33,7 +33,7 @@ open class AbstractCustomNativeCompilerFirstStageTest : AbstractNativeCoreTest()
         super.configure(builder)
         useMetaTestConfigurators(::TargetBackendTestSkipper, ::UnsupportedFeaturesTestConfigurator)
         globalDefaults {
-            frontend = if (customNativeCompilerSettings.defaultLanguageVersion.usesK2) FrontendKinds.FIR else FrontendKinds.ClassicFrontend
+            frontend = FrontendKinds.FIR
             targetPlatform = NativePlatforms.unspecifiedNativePlatform
             dependencyKind = DependencyKind.Binary
         }

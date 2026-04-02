@@ -71,8 +71,8 @@ open class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendConte
 
         if (objectToCreate.isPureObject()) {
             initializer = context.irFactory.createExpressionBody(
-                objectToCreate.primaryConstructor?.let { JsIrBuilder.buildConstructorCall(it.symbol) }
-                    ?: objectToCreate.primaryConstructorReplacement?.let { JsIrBuilder.buildCall(it.symbol) }
+                objectToCreate.primaryConstructorReplacement?.let { JsIrBuilder.buildCall(it.symbol) }
+                    ?: objectToCreate.primaryConstructor?.let { JsIrBuilder.buildConstructorCall(it.symbol) }
                     ?: irError("Object should contain a primary constructor") {
                         withIrEntry("objectToCreate", objectToCreate)
                         withIrEntry("this", this@purifyObjectInstanceFieldIfPossible)
@@ -90,7 +90,7 @@ open class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendConte
 
     private fun IrClass.isPureObject(): Boolean {
         return this::hasPureInitialization.getOrSetIfNull {
-            val constructor = primaryConstructor ?: primaryConstructorReplacement
+            val constructor = primaryConstructorReplacement ?: primaryConstructor
             superClass == null && constructor?.body?.statements?.all { it.isPureStatementForObjectInitialization(this@isPureObject) } != false
         }
     }

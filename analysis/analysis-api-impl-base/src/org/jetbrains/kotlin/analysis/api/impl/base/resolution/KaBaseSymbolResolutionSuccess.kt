@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,12 +14,16 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 @KaImplementationDetail
 class KaBaseSymbolResolutionSuccess(
     private val backingSymbols: List<KaSymbol>,
-    override val token: KaLifetimeToken,
 ) : KaSymbolResolutionSuccess {
     constructor(backingSymbol: KaSymbol) : this(
         backingSymbols = listOf(backingSymbol),
-        token = backingSymbol.token,
     )
+
+    init {
+        require(backingSymbols.isNotEmpty()) { "Success cannot be empty" }
+    }
+
+    override val token: KaLifetimeToken get() = backingSymbols.first().token
 
     override val symbols: List<KaSymbol> get() = withValidityAssertion { backingSymbols }
 }

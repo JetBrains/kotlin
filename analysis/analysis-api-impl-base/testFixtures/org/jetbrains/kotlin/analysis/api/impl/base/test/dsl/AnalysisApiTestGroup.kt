@@ -109,7 +109,7 @@ internal fun TestGroup.TestClass.model(
 ) {
     model(
         relativeRootPath = relativeRootPath,
-        extension = data.defaultExtension(),
+        pattern = data.defaultPattern(),
         excludeDirsRecursively = excludeDirsRecursively,
         excludedPattern = excludedPattern,
     )

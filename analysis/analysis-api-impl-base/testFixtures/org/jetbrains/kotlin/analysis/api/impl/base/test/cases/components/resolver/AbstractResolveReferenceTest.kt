@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.KaDecla
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KaModifierListRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaTypeParameterRendererFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.KaPropertyAccessorsRenderer
-import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
-import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionError
-import org.jetbrains.kotlin.analysis.api.resolution.symbols
+import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
@@ -172,8 +170,23 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
 
                 append("attempt: ")
                 appendLine(attempt?.let(::renderFrontendIndependentKClassNameOf) ?: "null")
-                if (attempt is KaSymbolResolutionError) {
-                    appendLine("diagnostic: ${stringRepresentation(attempt.diagnostic)}")
+                when (attempt) {
+                    null, is KaSymbolResolutionSuccess -> {}
+                    is KaSymbolResolutionError -> {
+                        appendLine("diagnostic: ${stringRepresentation(attempt.diagnostic)}")
+                    }
+
+                    is KaCompoundSymbolResolutionError -> withIndent {
+                        for ((index, subAttempt) in attempt.attempts.withIndex()) {
+                            append("attempts[$index]: ")
+                            appendLine(renderFrontendIndependentKClassNameOf(subAttempt))
+                            withIndent {
+                                if (subAttempt is KaSymbolResolutionError) {
+                                    appendLine("diagnostic: ${stringRepresentation(subAttempt.diagnostic)}")
+                                }
+                            }
+                        }
+                    }
                 }
 
                 val renderedSymbols = renderSymbols(symbols)

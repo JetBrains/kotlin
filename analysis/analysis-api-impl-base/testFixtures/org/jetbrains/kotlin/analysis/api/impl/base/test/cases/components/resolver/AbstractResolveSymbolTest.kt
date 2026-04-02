@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,19 +10,32 @@ import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableResult
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.findSpecializedResolveFunctions
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
+import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundSymbolResolutionError
 import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
 import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionError
 import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionSuccess
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolution.KtResolvableCall
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 @OptIn(KtExperimentalApi::class)
 abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "symbol"
+
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+        builder.forTestsMatching("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/*") {
+            defaultDirectives {
+                +AnalysisApiTestDirectives.DISABLE_DEPENDED_MODE
+                +AnalysisApiTestDirectives.IGNORE_FE10
+            }
+        }
+    }
 
     override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String = analyzeForTest(mainElement) {
         val symbolAttempt = tryResolveSymbols(mainElement)
@@ -73,6 +86,10 @@ internal fun assertSpecificResolutionApi(
             is KaSymbolResolutionSuccess -> {
                 // Only non-compound cases can be checked
                 assertions.assertEquals(expected = attempt.symbols.singleOrNull(), actual = specificCall)
+            }
+            is KaCompoundSymbolResolutionError -> {
+                // Multi-symbol resolution: specialized resolveSymbol returns null for compound cases
+                assertions.assertEquals(expected = null, actual = specificCall)
             }
         }
     }

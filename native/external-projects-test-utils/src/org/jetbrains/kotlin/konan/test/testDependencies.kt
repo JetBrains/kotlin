@@ -6,59 +6,87 @@
 package org.jetbrains.kotlin.konan.test
 
 import java.io.File
+import java.nio.file.Path
 import kotlin.io.path.Path
+import kotlin.io.path.nameWithoutExtension
 import kotlin.io.path.pathString
 
-val testDependencyKlibs = System.getProperty("testDependencyKlibs").orEmpty()
+/**
+ * Models the real world libraries that are published like this to Maven:
+ * one main "regular" Kotlin klib and any number of cinterop klibs.
+ *
+ * The IDE sometimes groups them together (e.g. in KaLibraryModule), so it is important to test like this.
+ */
+data class Library(
+    val mainKlib: Path,
+    val cinteropKlibs: List<Path> = emptyList(),
+) {
+    val klibs
+        get() = listOf(mainKlib) + cinteropKlibs
+
+    val name: String
+        get() = mainKlib.nameWithoutExtension
+}
+
+private val testDependencyKlibs = System.getProperty("testDependencyKlibs").orEmpty()
     .split(File.pathSeparator)
     .map(::Path)
 
+private fun getLibrary(name: String): Library {
+    val (cinteropKlibs, regularKlibs) = testDependencyKlibs
+        .filter { it.pathString.contains(name) }
+        .partition { it.pathString.contains("interop") }
+
+    return Library(
+        mainKlib = regularKlibs.singleOrNull() ?: error("Missing '$name' in 'testDependencyKlibs' System Property"),
+        cinteropKlibs = cinteropKlibs
+    )
+}
+
+val testLibraryA: Library
+    get() = getLibrary("testLibraryA")
+
 val testLibraryAKlibFile
-    get() = testDependencyKlibs.firstOrNull { it.contains(Path("testLibraryA")) }
-        ?: error("Missing 'testLibraryA' in 'testDependencyKlibs' System Property")
+    get() = testLibraryA.mainKlib
+
+val testLibraryB: Library
+    get() = getLibrary("testLibraryB")
 
 val testLibraryBKlibFile
-    get() = testDependencyKlibs.firstOrNull { it.contains(Path("testLibraryB")) }
-        ?: error("Missing 'testLibraryB' in 'testDependencyKlibs' System Property")
+    get() = testLibraryB.mainKlib
 
-val testLibraryCKlibFile
-    get() = testDependencyKlibs.firstOrNull { it.contains(Path("testLibraryC")) }
-        ?: error("Missing 'testLibraryC' in 'testDependencyKlibs' System Property")
+val testLibraryC: Library
+    get() = getLibrary("testLibraryC")
 
-val testInternalKlibFile
-    get() = testDependencyKlibs.firstOrNull { it.contains(Path("testInternalLibrary")) }
-        ?: error("Missing 'testInternalLibrary' in 'testDependencyKlibs' System Property")
+val testInternalLibrary: Library
+    get() = getLibrary("testInternalLibrary")
 
-val testExtensionsKlibFile
-    get() = testDependencyKlibs.firstOrNull { it.contains(Path("testExtensionsLibrary")) }
-        ?: error("Missing 'testExtensionsLibrary' in 'testDependencyKlibs' System Property")
+val testExtensionsLibrary: Library
+    get() = getLibrary("testExtensionsLibrary")
 
-val testLibraryKotlinxSerializationJson
-    get() = testDependencyKlibs.firstOrNull {
-        it.pathString.contains("serialization-json")
-    } ?: error("Missing 'kotlinx-serialization-json' in 'testDependencyKlibs' System Property")
+val testLibraryKotlinxSerializationJson: Library
+    get() = getLibrary("serialization-json")
 
-val testLibraryKotlinxSerializationCore
-    get() = testDependencyKlibs.firstOrNull {
-        it.pathString.contains("serialization-core")
-    } ?: error("Missing 'kotlinx-serialization-core' in 'testDependencyKlibs' System Property")
+val testLibraryKotlinxSerializationCore: Library
+    get() = getLibrary("serialization-core")
 
-val testLibraryKotlinxDatetime
-    get() = testDependencyKlibs.firstOrNull {
-        it.pathString.contains("datetime")
-    } ?: error("Missing 'kotlinx-datetime' in 'testDependencyKlibs' System Property")
+val testLibraryKotlinxSerializationCoreKlibFile
+    get() = testLibraryKotlinxSerializationCore.mainKlib
 
-val testLibraryKotlinxCoroutines
-    get() = testDependencyKlibs.firstOrNull {
-        it.pathString.contains("coroutines")
-    } ?: error("Missing 'kotlinx-coroutines' in 'testDependencyKlibs' System Property")
+val testLibraryKotlinxDatetime: Library
+    get() = getLibrary("datetime")
 
-val testLibraryAtomicFu
-    get() = testDependencyKlibs.firstOrNull {
-        it.pathString.contains("atomicfu") && !it.pathString.contains("cinterop-interop")
-    } ?: error("Missing 'org.jetbrains.kotlinx.atomicfu' in 'testDependencyKlibs' System Property")
+val testLibraryKotlinxCoroutines: Library
+    get() = getLibrary("coroutines")
 
-val testLibraryAtomicFuCinteropInterop
-    get() = testDependencyKlibs.firstOrNull {
-        it.pathString.contains("atomicfu-cinterop-interop")
-    } ?: error("Missing 'org.jetbrains.kotlinx.atomicfu' in 'testDependencyKlibs' System Property")
+val testLibraryKotlinxCoroutinesKlibFile
+    get() = testLibraryKotlinxCoroutines.mainKlib
+
+val testLibraryAtomicFu: Library
+    get() = getLibrary("atomicfu")
+
+val testLibraryAtomicFuKlibFile
+    get() = testLibraryAtomicFu.mainKlib
+
+val testLibraryAtomicFuCinteropInteropKlibFile
+    get() = testLibraryAtomicFu.cinteropKlibs.single()

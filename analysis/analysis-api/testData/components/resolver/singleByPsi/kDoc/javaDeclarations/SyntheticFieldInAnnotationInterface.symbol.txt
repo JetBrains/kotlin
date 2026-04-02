@@ -1,7 +1,13 @@
 <caret_1>:
   KDocName(25,38): 'Storage.value'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val value: kotlin.String
+      ]
 
 <caret_2>:
   KDocName(44,59): 'Storage2.value2'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val value2: kotlin.String
+      ]

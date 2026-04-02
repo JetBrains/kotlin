@@ -1,4 +1,7 @@
 KtPropertyDelegate(13,21): 'by Bar()'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'.>
+  KaDelegatedPropertyCallResolutionAttempt:
+    provideDelegateCallAttempt = null
+    valueGetterCallAttempt = KaCallResolutionError:
+      candidateCalls = []
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'.>
+    valueSetterCallAttempt = null

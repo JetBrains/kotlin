@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.resolution
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.resolution.KaCallResolutionSuccess
+import org.jetbrains.kotlin.analysis.api.resolution.KaSingleCallResolutionAttempt
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
@@ -30,4 +33,30 @@ internal fun Map<KtExpression, KaVariableSignature<KaParameterSymbol>>.toValueAr
 
 internal fun Map<KtExpression, KaVariableSignature<KaParameterSymbol>>.toContextArgumentMapping(): Map<KtExpression, KaVariableSignature<KaContextParameterSymbol>> {
     return toSpecializedArgumentMapping()
+}
+
+/**
+ * If all attempts are [KaCallResolutionSuccess], invokes [assemble] with them and returns the result.
+ * Otherwise, returns `null`.
+ */
+internal inline fun <R> assembleMultiCall(
+    attempt1: KaSingleCallResolutionAttempt,
+    attempt2: KaSingleCallResolutionAttempt,
+    attempt3: KaSingleCallResolutionAttempt,
+    assemble: (KaCallResolutionSuccess, KaCallResolutionSuccess, KaCallResolutionSuccess) -> R,
+): R? {
+    val s1 = attempt1 as? KaCallResolutionSuccess ?: return null
+    val s2 = attempt2 as? KaCallResolutionSuccess ?: return null
+    val s3 = attempt3 as? KaCallResolutionSuccess ?: return null
+    return assemble(s1, s2, s3)
+}
+
+internal inline fun <R> assembleMultiCall(
+    attempt1: KaSingleCallResolutionAttempt,
+    attempt2: KaSingleCallResolutionAttempt,
+    assemble: (KaCallResolutionSuccess, KaCallResolutionSuccess) -> R,
+): R? {
+    val s1 = attempt1 as? KaCallResolutionSuccess ?: return null
+    val s2 = attempt2 as? KaCallResolutionSuccess ?: return null
+    return assemble(s1, s2)
 }

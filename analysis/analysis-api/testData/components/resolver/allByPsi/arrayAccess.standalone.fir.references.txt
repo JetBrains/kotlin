@@ -114,8 +114,6 @@ KtArrayAccessExpression(159,166): 'list[1]'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.collections.MutableList) override operator fun get(index: kotlin.Int): E
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(159,163): 'list'
   KtSimpleNameReference:
@@ -143,8 +141,6 @@ KtArrayAccessExpression(178,185): 'list[2]'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.collections.MutableList) override operator fun get(index: kotlin.Int): E
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(178,182): 'list'
   KtSimpleNameReference:
@@ -292,8 +288,6 @@ KtArrayAccessExpression(269,276): 'list[2]'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.collections.MutableList) override operator fun get(index: kotlin.Int): E
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(269,273): 'list'
   KtSimpleNameReference:

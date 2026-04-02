@@ -43,7 +43,7 @@ import static org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager.*;
 /**
  * @noinspection UnusedDeclaration
  */
-@Mojo(name = "kapt", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(name = "kapt", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
     @Parameter
     private String[] annotationProcessors;

@@ -1,5 +1,5 @@
 KtPropertyDelegate(62,84): 'by Delegates.notNull()'
-  KaCallResolutionSuccess:
+  KaDelegatedPropertyCallResolutionAttempt:
     call = KaDelegatedPropertyCall:
       provideDelegateCall = null
       valueGetterCall = KaSimpleFunctionCall:

@@ -251,10 +251,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 @FirBuilderDsl
 class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuilder {
     lateinit var visibility: Visibility
-    var modality: Modality? = null
     var isFromSource: Boolean by Delegates.notNull()
-    var isTopLevel: Boolean by Delegates.notNull()
-    var isStatic: Boolean by Delegates.notNull()
     var javaPackage: JavaPackage? = null
     lateinit var javaTypeParameterStack: MutableJavaTypeParameterStack
     val existingNestedClassifierNames: MutableList<Name> = mutableListOf()

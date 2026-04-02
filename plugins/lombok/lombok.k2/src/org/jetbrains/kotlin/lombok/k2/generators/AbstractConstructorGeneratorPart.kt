@@ -65,7 +65,6 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 returnTypeRef = buildResolvedTypeRef {
                     coneType = classSymbol.defaultType()
                 }
-                isInner = classSymbol.isInner
                 isPrimary = false
                 isFromSource = true
             }

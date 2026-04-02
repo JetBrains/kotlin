@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisLibraryBinaryModuleAbbreviatedTypeTestGe
 
   @Test
   public void testAllFilesPresentInAbbreviatedType() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/abbreviatedType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/abbreviatedType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

@@ -251,8 +251,8 @@ val IrDeclaration.isStaticMultiFieldValueClassReplacement: Boolean
     get() = origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT
             || origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR
 
-fun IrDeclaration.shouldBeExposedByAnnotationOrFlag(languageVersionSettings: LanguageVersionSettings): Boolean {
-    val isPropagatedOrImplicit = propagatedOrImplicitJvmExposeBoxed(languageVersionSettings)
+fun IrDeclaration.shouldBeExposedByAnnotationOrFlag(context: JvmBackendContext): Boolean {
+    val isPropagatedOrImplicit = propagatedOrImplicitJvmExposeBoxed(context)
     val isExplicit = hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
 
     if (!(isExplicit || isPropagatedOrImplicit)) return false
@@ -262,9 +262,9 @@ fun IrDeclaration.shouldBeExposedByAnnotationOrFlag(languageVersionSettings: Lan
     return true
 }
 
-private fun IrDeclaration.propagatedOrImplicitJvmExposeBoxed(languageVersionSettings: LanguageVersionSettings): Boolean =
+private fun IrDeclaration.propagatedOrImplicitJvmExposeBoxed(context: JvmBackendContext): Boolean =
     parentClassOrNull?.getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) != null ||
-            languageVersionSettings.supportsFeature(LanguageFeature.ImplicitJvmExposeBoxed)
+            context.config.implicitJvmExposeBoxed
 
 // Do not duplicate function without inline classes in parameters, since it would lead to CONFLICTING_JVM_DECLARATIONS
 private fun IrDeclaration.isFunctionWhichCanBeExposed(isPropagatedOrImplicit: Boolean): Boolean {

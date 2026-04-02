@@ -1,7 +1,13 @@
 <caret_1>:
   KDocName(25,38): 'Storage.value'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /Storage.getValue(<dispatch receiver>: Storage): kotlin.String!
+      ]
 
 <caret_2>:
   KDocName(44,60): 'Storage.getValue'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /Storage.getValue(<dispatch receiver>: Storage): kotlin.String!
+      ]

@@ -20,7 +20,6 @@ internal actual fun secureRandomBytes(destination: ByteArray): Unit {
     SecureRandomHolder.instance.nextBytes(destination)
 }
 
-@ExperimentalUuidApi
 private class UuidSerialized(
     var mostSignificantBits: Long,
     var leastSignificantBits: Long
@@ -46,23 +45,18 @@ private class UuidSerialized(
     }
 }
 
-@ExperimentalUuidApi
 internal actual fun serializedUuid(uuid: Uuid): Any =
     UuidSerialized(uuid.mostSignificantBits, uuid.leastSignificantBits)
 
-@ExperimentalUuidApi
 internal actual fun ByteArray.getLongAt(index: Int): Long =
     getLongAtCommonImpl(index)
 
-@ExperimentalUuidApi
 internal actual fun Long.formatBytesInto(dst: ByteArray, dstOffset: Int, startIndex: Int, endIndex: Int) =
     formatBytesIntoCommonImpl(dst, dstOffset, startIndex, endIndex)
 
-@ExperimentalUuidApi
 internal actual fun ByteArray.setLongAt(index: Int, value: Long) =
     setLongAtCommonImpl(index, value)
 
-@ExperimentalUuidApi
 internal actual fun uuidParseHexDash(hexDashString: String): Uuid =
     uuidParseHexDashCommonImpl(hexDashString)
 
@@ -70,7 +64,6 @@ internal actual fun uuidParseHexDash(hexDashString: String): Uuid =
 internal actual fun uuidParseHexDashOrNull(hexDashString: String): Uuid? =
     uuidParseHexDashOrNullCommonImpl(hexDashString)
 
-@ExperimentalUuidApi
 internal actual fun uuidParseHex(hexString: String): Uuid =
     uuidParseHexCommonImpl(hexString)
 
@@ -87,8 +80,8 @@ internal actual fun uuidParseHexOrNull(hexString: String): Uuid? =
  *
  * @sample samples.uuid.Uuids.toKotlinUuid
  */
-@SinceKotlin("2.0")
-@ExperimentalUuidApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalUuidApi::class)
 @Suppress("NOTHING_TO_INLINE")
 public inline fun java.util.UUID.toKotlinUuid(): Uuid =
     Uuid.fromLongs(mostSignificantBits, leastSignificantBits)
@@ -101,8 +94,8 @@ public inline fun java.util.UUID.toKotlinUuid(): Uuid =
  *
  * @sample samples.uuid.Uuids.toJavaUuid
  */
-@SinceKotlin("2.0")
-@ExperimentalUuidApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalUuidApi::class)
 @Suppress("NOTHING_TO_INLINE")
 public inline fun Uuid.toJavaUuid(): java.util.UUID = toLongs { mostSignificantBits, leastSignificantBits ->
     java.util.UUID(mostSignificantBits, leastSignificantBits)
@@ -132,8 +125,8 @@ public inline fun Uuid.toJavaUuid(): java.util.UUID = toLongs { mostSignificantB
  * @see Uuid.toByteArray
  * @sample samples.uuid.Uuids.byteBufferGet
  */
-@SinceKotlin("2.0")
-@ExperimentalUuidApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalUuidApi::class)
 public fun ByteBuffer.getUuid(): Uuid {
     if (position() + 15 >= limit()) {
         throw BufferUnderflowException() // otherwise a partial read could occur
@@ -175,8 +168,8 @@ public fun ByteBuffer.getUuid(): Uuid {
  * @see Uuid.fromByteArray
  * @sample samples.uuid.Uuids.byteBufferGetByIndex
  */
-@SinceKotlin("2.0")
-@ExperimentalUuidApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalUuidApi::class)
 public fun ByteBuffer.getUuid(index: Int): Uuid {
     if (index < 0) {
         throw IndexOutOfBoundsException("Negative index: $index")
@@ -216,8 +209,8 @@ public fun ByteBuffer.getUuid(index: Int): Uuid {
  * @see Uuid.toByteArray
  * @sample samples.uuid.Uuids.byteBufferPut
  */
-@SinceKotlin("2.0")
-@ExperimentalUuidApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalUuidApi::class)
 @IgnorableReturnValue
 public fun ByteBuffer.putUuid(uuid: Uuid): ByteBuffer = uuid.toLongs { msb, lsb ->
     if (position() + 15 >= limit()) {
@@ -262,8 +255,8 @@ public fun ByteBuffer.putUuid(uuid: Uuid): ByteBuffer = uuid.toLongs { msb, lsb 
  * @see Uuid.toByteArray
  * @sample samples.uuid.Uuids.byteBufferPutAtIndex
  */
-@SinceKotlin("2.0")
-@ExperimentalUuidApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalUuidApi::class)
 @IgnorableReturnValue
 public fun ByteBuffer.putUuid(index: Int, uuid: Uuid): ByteBuffer = uuid.toLongs { msb, lsb ->
     if (index < 0) {

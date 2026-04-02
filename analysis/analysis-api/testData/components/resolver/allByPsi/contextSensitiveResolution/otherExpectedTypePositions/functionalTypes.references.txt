@@ -111,8 +111,6 @@ KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(t
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(469,476): 'Boolean'
   KtSimpleNameReference:

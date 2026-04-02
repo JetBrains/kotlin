@@ -18,14 +18,4 @@ abstract class AbstractComposeLikeFirAbstractBytecodeTextTestBase(parser: FirPar
     }
 }
 
-open class AbstractComposeLikeIrBytecodeTextTest(): AbstractIrBytecodeTextTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            useConfigurators(::ComposeLikeConfigurator)
-        }
-    }
-}
-
-
 open class AbstractComposeLikeFirLightTreeBytecodeTextTest : AbstractComposeLikeFirAbstractBytecodeTextTestBase(FirParser.LightTree)

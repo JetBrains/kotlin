@@ -43,18 +43,3 @@ inline fun buildStruct(init: SirStructBuilder.() -> Unit): SirStruct {
     }
     return SirStructBuilder().apply(init).build()
 }
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildStructCopy(original: SirStruct, init: SirStructBuilder.() -> Unit): SirStruct {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = SirStructBuilder()
-    copyBuilder.origin = original.origin
-    copyBuilder.visibility = original.visibility
-    copyBuilder.documentation = original.documentation
-    copyBuilder.attributes.addAll(original.attributes)
-    copyBuilder.name = original.name
-    copyBuilder.declarations.addAll(original.declarations)
-    return copyBuilder.apply(init).build()
-}

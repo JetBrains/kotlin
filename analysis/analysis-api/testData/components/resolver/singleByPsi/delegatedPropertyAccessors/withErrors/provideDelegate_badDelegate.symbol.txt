@@ -1,4 +1,11 @@
 KtPropertyDelegate(127,135): 'by Bar()'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'.>
+  KaCompoundSymbolResolutionError:
+    attempts = [
+      KaSymbolResolutionSuccess:
+        symbols = [
+          /provideDelegate(<extension receiver>: Bar, _this: kotlin.Any?, p: kotlin.Any?): NoDelegate
+        ],
+      KaSymbolResolutionError:
+        candidateSymbols = []
+        diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'.>
+    ]

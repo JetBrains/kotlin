@@ -809,8 +809,6 @@ KtCallExpression(1272,1282): 'body(this)'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function2) operator fun invoke(p1: P1, p2: P2): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1272,1276): 'body'
   KtSimpleNameReference:

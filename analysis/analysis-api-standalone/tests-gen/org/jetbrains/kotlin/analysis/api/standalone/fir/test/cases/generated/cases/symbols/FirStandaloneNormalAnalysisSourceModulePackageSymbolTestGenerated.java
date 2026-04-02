@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModulePackageSymbolTestGenerated e
 
   @Test
   public void testAllFilesPresentInPackages() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/packages"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/packages"), Pattern.compile("^(.+)\\.(kt)$"), null, true, "withTestCompilerPluginEnabled");
   }
 
   @Test

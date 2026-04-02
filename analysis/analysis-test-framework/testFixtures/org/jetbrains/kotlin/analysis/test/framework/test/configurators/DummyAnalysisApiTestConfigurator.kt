@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 /**
  * A dummy configurator that does nothing. No files are configured by default.
  */
-object DummyAnalysisApiTestConfigurator : AnalysisApiTestConfigurator() {
+object DummyAnalysisApiTestConfigurator : AnalysisApiTestConfigurator {
     override val analysisApiMode: AnalysisApiMode get() = AnalysisApiMode.Ide
     override val frontendKind: FrontendKind get() = FrontendKind.Fir
     override val analyseInDependentSession: Boolean get() = false

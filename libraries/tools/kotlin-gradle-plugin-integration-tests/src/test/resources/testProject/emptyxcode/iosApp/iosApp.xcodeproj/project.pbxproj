@@ -6,8 +6,22 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXCopyFilesBuildPhase section */
+		F82A25842F7C13980052BC15 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		5E36C2EB8FEB98A69A0CBC14 /* emptyxcode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = emptyxcode.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F82A257D2F7C13980052BC15 /* FrameworkTarget.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FrameworkTarget.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -17,6 +31,13 @@
 				Info.plist,
 			);
 			target = 20EF86E831B58EE3722E4CE5 /* iosApp */;
+		};
+		F82A25892F7C13980052BC15 /* Exceptions for "FrameworkTarget" folder in "FrameworkTarget" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			publicHeaders = (
+				FrameworkTarget.h,
+			);
+			target = F82A257C2F7C13980052BC15 /* FrameworkTarget */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -34,10 +55,25 @@
 			path = Configuration;
 			sourceTree = "<group>";
 		};
+		F82A257E2F7C13980052BC15 /* FrameworkTarget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F82A25892F7C13980052BC15 /* Exceptions for "FrameworkTarget" folder in "FrameworkTarget" target */,
+			);
+			path = FrameworkTarget;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		9060A5CC1C460463CB0DA563 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F82A257A2F7C13980052BC15 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -51,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				5E36C2EB8FEB98A69A0CBC14 /* emptyxcode.app */,
+				F82A257D2F7C13980052BC15 /* FrameworkTarget.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -60,11 +97,22 @@
 			children = (
 				4FF81DBF3A32E3BFF66D191B /* Configuration */,
 				4A517554A312D5DF79FD9F8C /* iosApp */,
+				F82A257E2F7C13980052BC15 /* FrameworkTarget */,
 				97D48EC51C86117DA41B54E7 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		F82A25782F7C13980052BC15 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		20EF86E831B58EE3722E4CE5 /* iosApp */ = {
@@ -75,6 +123,7 @@
 				CAF3C028E67C83687E1B50F9 /* Sources */,
 				9060A5CC1C460463CB0DA563 /* Frameworks */,
 				4881D511BDF7C290AE61C4E4 /* Resources */,
+				F82A25842F7C13980052BC15 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -90,6 +139,29 @@
 			productReference = 5E36C2EB8FEB98A69A0CBC14 /* emptyxcode.app */;
 			productType = "com.apple.product-type.application";
 		};
+		F82A257C2F7C13980052BC15 /* FrameworkTarget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F82A25882F7C13980052BC15 /* Build configuration list for PBXNativeTarget "FrameworkTarget" */;
+			buildPhases = (
+				F82A25782F7C13980052BC15 /* Headers */,
+				F82A25792F7C13980052BC15 /* Sources */,
+				F82A257A2F7C13980052BC15 /* Frameworks */,
+				F82A257B2F7C13980052BC15 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				F82A257E2F7C13980052BC15 /* FrameworkTarget */,
+			);
+			name = FrameworkTarget;
+			packageProductDependencies = (
+			);
+			productName = FrameworkTarget;
+			productReference = F82A257D2F7C13980052BC15 /* FrameworkTarget.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -102,6 +174,9 @@
 				TargetAttributes = {
 					20EF86E831B58EE3722E4CE5 = {
 						CreatedOnToolsVersion = 16.2;
+					};
+					F82A257C2F7C13980052BC15 = {
+						CreatedOnToolsVersion = 26.3;
 					};
 				};
 			};
@@ -120,12 +195,20 @@
 			projectRoot = "";
 			targets = (
 				20EF86E831B58EE3722E4CE5 /* iosApp */,
+				F82A257C2F7C13980052BC15 /* FrameworkTarget */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		4881D511BDF7C290AE61C4E4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F82A257B2F7C13980052BC15 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -158,6 +241,13 @@
 
 /* Begin PBXSourcesBuildPhase section */
 		CAF3C028E67C83687E1B50F9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F82A25792F7C13980052BC15 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -346,6 +436,78 @@
 			};
 			name = Debug;
 		};
+		F82A25862F7C13980052BC15 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "${TEAM_ID}";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = foo.FrameworkTarget;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		F82A25872F7C13980052BC15 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "${TEAM_ID}";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = foo.FrameworkTarget;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -363,6 +525,15 @@
 			buildConfigurations = (
 				8719C072B3594ED865A9FE51 /* Debug */,
 				437E130E03507DEF9FB17A69 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F82A25882F7C13980052BC15 /* Build configuration list for PBXNativeTarget "FrameworkTarget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F82A25862F7C13980052BC15 /* Debug */,
+				F82A25872F7C13980052BC15 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

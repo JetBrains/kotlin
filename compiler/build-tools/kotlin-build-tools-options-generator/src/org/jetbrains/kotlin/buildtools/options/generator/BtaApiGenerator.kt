@@ -239,13 +239,50 @@ internal class BtaApiGenerator(
             addParameter("value", typeParameter)
         }
 
-        function("contains") {
-            addKdoc(KDOC_OPTIONS_CONTAINS)
-            addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
-            returns(BOOLEAN)
-            addParameter("key", parameter.parameterizedBy(STAR))
+        withDeprecationCycle(
+            kotlinVersion,
+            warnFrom = KotlinReleaseVersion.v2_4_0,
+            errorFrom = KotlinReleaseVersion.v2_5_0,
+            removeFrom = KotlinReleaseVersion.v2_6_0,
+            deprecationMessage = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments."
+        ) { annotation ->
+            function("contains") {
+                annotation?.let { addAnnotation(it) }
+                addKdoc(KDOC_OPTIONS_CONTAINS)
+                addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
+                returns(BOOLEAN)
+                addParameter("key", parameter.parameterizedBy(STAR))
+            }
         }
     }
+}
+
+internal fun TypeSpec.Builder.withDeprecationCycle(
+    currentKotlinVersion: KotlinReleaseVersion,
+    warnFrom: KotlinReleaseVersion? = null,
+    errorFrom: KotlinReleaseVersion? = null,
+    hideFrom: KotlinReleaseVersion? = null,
+    removeFrom: KotlinReleaseVersion? = null,
+    deprecationMessage: String,
+    action: TypeSpec.Builder.(AnnotationSpec?) -> Unit,
+) {
+    val deprecationLevel = when {
+        removeFrom != null && currentKotlinVersion >= removeFrom -> return
+        hideFrom != null && currentKotlinVersion >= hideFrom -> DeprecationLevel.HIDDEN
+        errorFrom != null && currentKotlinVersion >= errorFrom -> DeprecationLevel.ERROR
+        warnFrom != null && currentKotlinVersion >= warnFrom -> DeprecationLevel.WARNING
+        else -> null
+    }
+    val annotation = deprecationLevel?.let { deprecationLevel ->
+        AnnotationSpec.builder(Deprecated::class.asTypeName()).apply {
+            addMember(
+                "message = %S",
+                deprecationMessage
+            )
+            addMember("level = %T.%N", DeprecationLevel::class, deprecationLevel.name)
+        }.build()
+    }
+    action(annotation)
 }
 
 internal fun TypeSpec.Builder.generateArgumentType(
@@ -291,7 +328,13 @@ private fun FunSpec.Builder.addParameterIf(name: String, type: ClassName, condit
 private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(deprecated: Boolean = false) {
     function("applyArgumentStrings") {
         maybeAddMutabilityDeprecationAnnotation(deprecated)
-        addKdoc("Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.")
+        addKdoc(
+            """
+            Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
+            
+            @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when the `arguments` contain errors and cannot be parsed
+            """.trimIndent()
+        )
         addParameter(
             ParameterSpec.builder("arguments", listTypeNameOf<String>())
                 .addKdoc("a list of arguments for the Kotlin CLI compiler").build()

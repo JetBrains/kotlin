@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleDefaultTypeTestGenerated ext
 
   @Test
   public void testAllFilesPresentInDefaultType() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeProvider/defaultType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeProvider/defaultType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

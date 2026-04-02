@@ -28,15 +28,15 @@ internal val KotlinNativeHostSpecificMetadataArtifact = KotlinTargetArtifact { t
     if (target !is KotlinNativeTarget) return@KotlinTargetArtifact
     val project = target.project
 
-    target.project.configurations.createConsumable(target.hostSpecificMetadataElementsConfigurationName).also { configuration ->
-        configuration.extendsFrom(*apiElements.extendsFrom.toTypedArray())
+    target.project.configurations.createConsumable(target.hostSpecificMetadataElementsConfigurationName) {
+        extendsFrom(*apiElements.extendsFrom.toTypedArray())
 
         target.project.launchInStage(AfterFinaliseDsl) {
             apiElements.copyAttributesTo(
                 target.project.providers,
-                dest = configuration.attributes
+                dest = attributes
             )
-            configuration.attributes.attribute(
+            attributes.attribute(
                 Usage.USAGE_ATTRIBUTE,
                 target.project.usageByName(KotlinUsages.KOTLIN_METADATA)
             )

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test
 
 import java.io.File
 import java.nio.file.Path
+import kotlin.time.Duration
 
 val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
 
@@ -75,4 +76,14 @@ abstract class Assertions {
     open fun assumeFalse(value: Boolean, message: () -> String) {
         assertFalse(value, message)
     }
+
+    /**
+     * Asserts that the given [action] does not take longer than the given [timeout].
+     *
+     * The action is executed in a new thread so that its elapsed time can be tracked and monitored. If the action takes longer, the thread
+     * is aborted preemptively.
+     *
+     * Not supported in JUnit 4.
+     */
+    abstract fun assertTimeoutPreemptively(timeout: Duration, message: () -> String, action: () -> Unit)
 }

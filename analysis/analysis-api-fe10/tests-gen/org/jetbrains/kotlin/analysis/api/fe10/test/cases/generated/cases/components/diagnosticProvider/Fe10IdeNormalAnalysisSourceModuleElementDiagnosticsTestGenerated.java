@@ -48,7 +48,7 @@ public class Fe10IdeNormalAnalysisSourceModuleElementDiagnosticsTestGenerated ex
 
   @Test
   public void testAllFilesPresentInElementDiagnostics() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/elementDiagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/elementDiagnostics"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

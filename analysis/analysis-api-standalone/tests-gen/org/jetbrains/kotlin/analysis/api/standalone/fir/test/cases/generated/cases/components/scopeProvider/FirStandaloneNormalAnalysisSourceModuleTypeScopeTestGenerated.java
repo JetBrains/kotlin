@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeScopeTestGenerated exten
 
   @Test
   public void testAllFilesPresentInTypeScope() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/typeScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/typeScope"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

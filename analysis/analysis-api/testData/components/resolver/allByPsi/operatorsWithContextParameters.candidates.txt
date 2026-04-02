@@ -5519,6 +5519,23 @@ KtPostfixExpression(1367,1370): 'a++'
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = A
+        symbol = var a: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
 KtNameReferenceExpression(1367,1368): 'a'
   KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
@@ -5565,6 +5582,23 @@ KtOperationReferenceExpression(1368,1370): '++'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
+    isInBestCandidates = true
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = A
+        symbol = var a: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtBinaryExpression(1376,1381): 'b + 1'
@@ -6765,6 +6799,23 @@ KtPostfixExpression(1436,1439): 'b++'
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     isInBestCandidates = true
 
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = SimpleOperators
+        symbol = var b: SimpleOperators
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
 KtNameReferenceExpression(1436,1437): 'b'
   KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
@@ -6811,4 +6862,21 @@ KtOperationReferenceExpression(1437,1439): '++'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
+    isInBestCandidates = true
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = SimpleOperators
+        symbol = var b: SimpleOperators
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -48,7 +48,7 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeParameterTypeTestGenerated ext
 
   @Test
   public void testAllFilesPresentInTypeParameter() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeCreator/typeParameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeCreator/typeParameter"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

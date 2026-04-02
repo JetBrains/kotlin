@@ -132,7 +132,6 @@ class IrMangledNameAndSignatureDumpHandler(
 
     private fun computeDumpExtension(): String {
         return if (
-            testServices.defaultsProvider.frontendKind == FrontendKinds.ClassicFrontend ||
             separateSignatureDirectiveNotPresent(testServices)
         ) {
             DUMP_EXTENSION

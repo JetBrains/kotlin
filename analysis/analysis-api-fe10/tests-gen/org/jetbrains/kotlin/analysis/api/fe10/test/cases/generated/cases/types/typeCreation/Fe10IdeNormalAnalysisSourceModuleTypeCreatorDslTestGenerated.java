@@ -49,7 +49,7 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
 
   @Test
   public void testAllFilesPresentInByDsl() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Nested
@@ -62,7 +62,7 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
 
     @Test
     public void testAllFilesPresentInArrayType() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/arrayType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -172,7 +172,7 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
 
     @Test
     public void testAllFilesPresentInCapturedType() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/capturedType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/capturedType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -228,7 +228,7 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
 
     @Test
     public void testAllFilesPresentInClassType() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/classType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/classType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -344,7 +344,7 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
 
     @Test
     public void testAllFilesPresentInDefinitelyNotNullType() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/definitelyNotNullType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/definitelyNotNullType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -406,7 +406,7 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
 
     @Test
     public void testAllFilesPresentInDynamicType() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/dynamicType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/dynamicType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -432,7 +432,7 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
 
     @Test
     public void testAllFilesPresentInFlexibleType() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -518,7 +518,7 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
 
     @Test
     public void testAllFilesPresentInFunctionType() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/functionType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -622,7 +622,7 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
 
     @Test
     public void testAllFilesPresentInIntersectionType() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -690,7 +690,7 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
 
     @Test
     public void testAllFilesPresentInStarTypeProjection() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/starTypeProjection"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/starTypeProjection"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -710,7 +710,7 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
 
     @Test
     public void testAllFilesPresentInTypeParameterType() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/typeParameterType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/typeParameterType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -748,7 +748,7 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
 
     @Test
     public void testAllFilesPresentInTypeProjection() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/typeProjection"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/typeProjection"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -774,7 +774,7 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
 
     @Test
     public void testAllFilesPresentInVarargArrayType() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test

@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiSignatureSubstitu
 
   @Test
   public void testAllFilesPresentInSignatureSubstitution() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/signatureSubstitution/signatureSubstitution"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/signatureSubstitution/signatureSubstitution"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

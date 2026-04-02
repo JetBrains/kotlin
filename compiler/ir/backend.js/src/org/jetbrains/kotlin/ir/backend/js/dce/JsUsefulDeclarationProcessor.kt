@@ -77,7 +77,7 @@ internal class JsUsefulDeclarationProcessor(
                             compilationException("Expected IrClass as a type argument", expression)
                         }
                         for (declaration in ref.declarations) {
-                            if (declaration is IrConstructor && declaration.isPrimary || declaration.isEs6PrimaryConstructorReplacement) {
+                            if (declaration is IrConstructor && declaration.isPrimary) {
                                 declaration.enqueue(data, "intrinsic: jsClass (constructor)")
                             }
                         }

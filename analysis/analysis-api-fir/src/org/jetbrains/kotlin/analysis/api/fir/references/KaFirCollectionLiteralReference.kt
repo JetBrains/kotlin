@@ -5,32 +5,27 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.references
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.getResolvedKtSymbolOfNameReference
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
+import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
-import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.idea.references.KtCollectionLiteralReference
 import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
+import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
-import org.jetbrains.kotlin.resolve.ArrayFqNames
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @OptIn(KtImplementationDetail::class)
 internal class KaFirCollectionLiteralReference(
     expression: KtCollectionLiteralExpression,
 ) : KtCollectionLiteralReference(expression), KaFirReference {
-    override fun KaFirSession.computeSymbols(): Collection<KaSymbol> = when (val fir = element.getOrBuildFir(resolutionFacade)) {
-        // Collection literals inside annotations
-        is FirCollectionLiteral -> listOfNotNull(arrayOfSymbol(fir) ?: arrayOfSymbol(ArrayFqNames.ARRAY_OF_FUNCTION))
+    @OptIn(KtExperimentalApi::class)
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = tryResolveSymbols()?.symbols.orEmpty()
 
-        // Non-annotations position
-        is FirFunctionCall -> listOfNotNull(fir.calleeReference.getResolvedKtSymbolOfNameReference(firSymbolBuilder))
-
-        else -> emptyList()
+    override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
+        shouldNotBeCalled("Only resolveToSymbols is supposed to be used directly")
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {

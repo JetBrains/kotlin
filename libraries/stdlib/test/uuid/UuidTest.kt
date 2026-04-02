@@ -5,6 +5,7 @@
 
 package test.uuid
 
+import kotlin.comparisons.naturalOrder
 import kotlin.random.Random
 import kotlin.test.*
 import kotlin.time.Clock
@@ -257,12 +258,12 @@ class UuidTest {
         }
     }
 
-    @Suppress("DEPRECATION")
     @Test
     fun lexicalOrder() {
         val maxUuid = Uuid.parse(uuidStringMax)
 
         // TODO: Once LEXICAL_ORDER is dropped, test Uuid.compareTo directly instead
+        @Suppress("DEPRECATION_ERROR")
         for (lexicalOrder in listOf(Uuid.LEXICAL_ORDER, naturalOrder())) {
             for (id in listOf(uuid, Uuid.NIL, maxUuid)) {
                 assertEquals(0, lexicalOrder.compare(id, id), id.toString())

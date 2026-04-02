@@ -18,7 +18,7 @@ fun main() {
     println("Welcome!")
     while (true) {
         print("> ")
-        val t = readLine()
+        val t = readlnOrNull()
         try {
             println(vm.eval(t!!))
         } catch (e: Throwable) {

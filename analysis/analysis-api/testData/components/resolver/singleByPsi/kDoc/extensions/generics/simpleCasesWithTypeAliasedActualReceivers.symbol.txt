@@ -1,22 +1,37 @@
 <caret_1>:
   KDocName(396,417): 'ChildGenericAlias.ext'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /ext(<extension receiver>: Base<T>): kotlin.Unit
+      ]
 
 <caret_2>:
   KDocName(423,453): 'ChildGenericAlias.extRecursive'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /extRecursive(<extension receiver>: Base<T>): kotlin.Unit
+      ]
 
 <caret_3>:
   KDocName(459,487): 'ChildGenericAlias.extNothing'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /extNothing(<extension receiver>: Base<kotlin.Nothing>): kotlin.Unit
+      ]
 
 <caret_4>:
   KDocName(493,518): 'ChildGenericAlias.extStar'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /extStar(<extension receiver>: Base<*>): kotlin.Unit
+      ]
 
 <caret_5>:
   KDocName(527,566): 'ChildGenericAliasWithStarProjection.ext'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /ext(<extension receiver>: Base<T>): kotlin.Unit
+      ]
 
 <caret_6>:
   KDocName(572,620): 'ChildGenericAliasWithStarProjection.extRecursive'
@@ -28,27 +43,45 @@
 
 <caret_8>:
   KDocName(678,721): 'ChildGenericAliasWithStarProjection.extStar'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /extStar(<extension receiver>: Base<*>): kotlin.Unit
+      ]
 
 <caret_9>:
   KDocName(730,762): 'ChildGenericAliasWithNothing.ext'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /ext(<extension receiver>: Base<T>): kotlin.Unit
+      ]
 
 <caret_10>:
   KDocName(768,809): 'ChildGenericAliasWithNothing.extRecursive'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /extRecursive(<extension receiver>: Base<T>): kotlin.Unit
+      ]
 
 <caret_11>:
   KDocName(815,854): 'ChildGenericAliasWithNothing.extNothing'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /extNothing(<extension receiver>: Base<kotlin.Nothing>): kotlin.Unit
+      ]
 
 <caret_12>:
   KDocName(860,896): 'ChildGenericAliasWithNothing.extStar'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /extStar(<extension receiver>: Base<*>): kotlin.Unit
+      ]
 
 <caret_13>:
   KDocName(905,949): 'ChildGenericAliasWithAnotherNothingAlias.ext'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /ext(<extension receiver>: Base<T>): kotlin.Unit
+      ]
 
 <caret_14>:
   KDocName(955,1008): 'ChildGenericAliasWithAnotherNothingAlias.extRecursive'
@@ -60,4 +93,7 @@
 
 <caret_16>:
   KDocName(1071,1119): 'ChildGenericAliasWithAnotherNothingAlias.extStar'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /extStar(<extension receiver>: Base<*>): kotlin.Unit
+      ]

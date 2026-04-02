@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleCreateInheritanceTypeSubstit
 
   @Test
   public void testAllFilesPresentInCreateInheritanceTypeSubstitutor() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

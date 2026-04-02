@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.idea.references.KDocReference
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -107,6 +108,9 @@ internal class KaFe10Resolver(
     }
 
     override fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt? {
+        if (psi is KDocName) {
+            return tryResolveSymbolsForKDocReference(Fe10KDocReference(psi))
+        }
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
         val resolvedCall = when (val resolvedCall = psi.getResolvedCall(bindingContext)) {
             is VariableAsFunctionResolvedCall -> resolvedCall.variableCall
@@ -326,7 +330,7 @@ internal class KaFe10Resolver(
             candidateKtCallInfo.toKaCallCandidates(bestCandidateDescriptors)
         }
 
-        return if (resolvedCall is KaCallResolutionSuccess) {
+        return if (resolvedCall is KaCallResolutionSuccess || (resolvedCall is KaMultiCallResolutionAttempt && resolvedCall.attempts.all { it is KaCallResolutionSuccess })) {
             resolvedCall.toKaCallCandidates() + candidateInfos.filterNot(KaCallCandidate::isInBestCandidates)
         } else {
             candidateInfos
@@ -357,6 +361,11 @@ internal class KaFe10Resolver(
                 backingDiagnostic = diagnostic,
             )
         }
+
+        is KaMultiCallResolutionAttempt -> fold(
+            onSuccess = { listOf(KaBaseApplicableCallCandidate(backingCandidate = it, backingIsInBestCandidates = true)) },
+            onFailure = { attempts -> attempts.flatMap { it.toKaCallCandidates() } },
+        )
     }
 
     private fun KaCallResolutionAttempt?.toKaCallCandidates(bestCandidateDescriptors: Set<CallableDescriptor>): List<KaCallCandidate> {
@@ -389,6 +398,17 @@ internal class KaFe10Resolver(
                 )
             }
 
+            is KaMultiCallResolutionAttempt -> fold(
+                onSuccess = {
+                    listOf(
+                        KaBaseApplicableCallCandidate(
+                            backingCandidate = it,
+                            backingIsInBestCandidates = (it as KaCall).isInBestCandidates(),
+                        ),
+                    )
+                },
+                onFailure = { attempts -> attempts.flatMap { it.toKaCallCandidates(bestCandidateDescriptors) } },
+            )
             null -> emptyList()
         }
     }
@@ -756,15 +776,36 @@ internal class KaFe10Resolver(
         resolvedCalls: List<ResolvedCall<*>>,
         diagnostics: Diagnostics = context.diagnostics,
     ): KaCallResolutionAttempt {
-        kaCall as KaSingleOrMultiCall
-        val failedResolveCall = resolvedCalls.firstOrNull { !it.status.isSuccess } ?: return KaBaseCallResolutionSuccess(kaCall)
+        val failedResolveCall = resolvedCalls.firstOrNull { !it.status.isSuccess }
 
-        val diagnostic = getDiagnosticToReport(context, psi, kaCall as KaCall, diagnostics)?.let { KaFe10Diagnostic(it, token) }
+        // Successful compound calls should be wrapped into KaMultiCallResolutionAttempt
+        if (failedResolveCall == null) when (kaCall) {
+            is KaCompoundVariableAccessCall -> return KaBaseCompoundVariableAccessCallResolutionAttempt(
+                backingCompoundOperation = kaCall.compoundOperation,
+                backingVariableCallAttempt = KaBaseCallResolutionSuccess(kaCall.variableCall),
+                backingOperationCallAttempt = KaBaseCallResolutionSuccess(kaCall.operationCall),
+            )
+            is KaCompoundArrayAccessCall -> return KaBaseCompoundArrayAccessCallResolutionAttempt(
+                backingCompoundOperation = kaCall.compoundOperation,
+                backingIndexArguments = kaCall.indexArguments,
+                backingGetterCallAttempt = KaBaseCallResolutionSuccess(kaCall.getterCall),
+                backingOperationCallAttempt = KaBaseCallResolutionSuccess(kaCall.operationCall),
+                backingSetterCallAttempt = KaBaseCallResolutionSuccess(kaCall.setterCall),
+            )
+
+            else -> {}
+        }
+
+        // For compound calls with errors, extract individual sub-calls as candidates
+        val candidateCalls = (kaCall as KaSingleOrMultiCall).calls
+        if (failedResolveCall == null) return KaBaseCallResolutionSuccess(candidateCalls.single())
+
+        val diagnostic = getDiagnosticToReport(context, psi, kaCall, diagnostics)?.let { KaFe10Diagnostic(it, token) }
             ?: failedResolveCall.nonBoundErrorDiagnostic
 
         return KaBaseCallResolutionError(
             backedDiagnostic = diagnostic,
-            backingCandidateCalls = listOf(kaCall),
+            backingCandidateCalls = candidateCalls,
         )
     }
 
@@ -907,7 +948,11 @@ internal class KaFe10Resolver(
         val provideDelegateCall = provideDelegateResolvedCall
             ?.toPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>(bindingContext)?.asSimpleFunctionCall
 
-        return KaBaseCallResolutionSuccess(KaBaseDelegatedPropertyCall(valueGetterCall, valueSetterCall, provideDelegateCall))
+        return KaBaseDelegatedPropertyCallResolutionAttempt(
+            backingValueGetterCallAttempt = KaBaseCallResolutionSuccess(valueGetterCall),
+            backingValueSetterCallAttempt = valueSetterCall?.let { KaBaseCallResolutionSuccess(it) },
+            backingProvideDelegateCallAttempt = provideDelegateCall?.let { KaBaseCallResolutionSuccess(it) },
+        )
     }
 
     private data class Fe10ForLoopResolvedCalls(
@@ -939,7 +984,11 @@ internal class KaFe10Resolver(
         val nextCall = nextResolvedCall
             .toPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>(bindingContext)?.asSimpleFunctionCall ?: return null
 
-        return KaBaseCallResolutionSuccess(KaBaseForLoopCall(iteratorCall, hasNextCall, nextCall))
+        return KaBaseForLoopCallResolutionAttempt(
+            backingIteratorCallAttempt = KaBaseCallResolutionSuccess(iteratorCall),
+            backingHasNextCallAttempt = KaBaseCallResolutionSuccess(hasNextCall),
+            backingNextCallAttempt = KaBaseCallResolutionSuccess(nextCall),
+        )
     }
 
     private companion object {

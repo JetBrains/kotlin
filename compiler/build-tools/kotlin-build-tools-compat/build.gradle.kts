@@ -51,6 +51,7 @@ generatedSourcesTask(
             "jvmCompilerArguments",
             "org.jetbrains.kotlin.buildtools.internal.compat.arguments",
             "compat",
+            version.toString()
         )
     }
 )

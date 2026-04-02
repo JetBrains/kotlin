@@ -48,7 +48,7 @@ public class Fe10IdeNormalAnalysisSourceModuleIsDenotableTestGenerated extends A
 
   @Test
   public void testAllFilesPresentInIsDenotable() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile(".*\\.descriptors\\.kt$"), true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeInfoProvider/isDenotable"), Pattern.compile("^(.+)\\.(kt)$"), Pattern.compile(".*\\.descriptors\\.kt$"), true);
   }
 
   @Test

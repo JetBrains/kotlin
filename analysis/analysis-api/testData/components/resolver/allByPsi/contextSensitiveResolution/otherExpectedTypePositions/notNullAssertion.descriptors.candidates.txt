@@ -1046,26 +1046,6 @@ KtBinaryExpression(675,699): 'MyClass.myClassProp to 1'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(675,694): 'MyClass.myClassProp'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = MyClass
-        isSafeNavigation = false
-        type = MyClass.Companion
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = myClassProp
-        receiverType = null
-        returnType = MyClass
-        symbol = val myClassProp: MyClass
-        contextParameters = []
-        callableId = /MyClass.Companion.myClassProp
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
-
   KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
@@ -1097,6 +1077,26 @@ KtDotQualifiedExpression(675,694): 'MyClass.myClassProp'
       valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyClass
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = myClassProp
+        receiverType = null
+        returnType = MyClass
+        symbol = val myClassProp: MyClass
+        contextParameters = []
+        callableId = /MyClass.Companion.myClassProp
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
 
 KtNameReferenceExpression(675,682): 'MyClass'
   NO_CANDIDATES
@@ -1209,26 +1209,6 @@ KtBinaryExpression(702,725): 'MyClass.stringProp to 2'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(702,720): 'MyClass.stringProp'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = MyClass
-        isSafeNavigation = false
-        type = MyClass.Companion
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = stringProp
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val stringProp: kotlin.String
-        contextParameters = []
-        callableId = /MyClass.Companion.stringProp
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
-
   KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
@@ -1260,6 +1240,26 @@ KtDotQualifiedExpression(702,720): 'MyClass.stringProp'
       valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyClass
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = stringProp
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val stringProp: kotlin.String
+        contextParameters = []
+        callableId = /MyClass.Companion.stringProp
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
 
 KtNameReferenceExpression(702,709): 'MyClass'
   NO_CANDIDATES
@@ -2521,26 +2521,6 @@ KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(1248,1267): 'MyClass.myClassProp'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = MyClass
-        isSafeNavigation = false
-        type = MyClass.Companion
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = myClassProp
-        receiverType = null
-        returnType = MyClass
-        symbol = val myClassProp: MyClass
-        contextParameters = []
-        callableId = /MyClass.Companion.myClassProp
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
-
   KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
@@ -2572,6 +2552,26 @@ KtDotQualifiedExpression(1248,1267): 'MyClass.myClassProp'
       valueArgumentMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyClass
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = myClassProp
+        receiverType = null
+        returnType = MyClass
+        symbol = val myClassProp: MyClass
+        contextParameters = []
+        callableId = /MyClass.Companion.myClassProp
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
 
 KtNameReferenceExpression(1248,1255): 'MyClass'
   NO_CANDIDATES

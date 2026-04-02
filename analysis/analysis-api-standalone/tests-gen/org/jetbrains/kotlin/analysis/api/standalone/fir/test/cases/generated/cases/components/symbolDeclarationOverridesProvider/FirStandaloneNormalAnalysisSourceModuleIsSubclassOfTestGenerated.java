@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleIsSubclassOfTestGenerated ex
 
   @Test
   public void testAllFilesPresentInIsSubclassOf() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/isSubclassOf"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

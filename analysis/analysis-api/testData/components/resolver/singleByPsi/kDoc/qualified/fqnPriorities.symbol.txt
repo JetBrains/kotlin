@@ -1,15 +1,27 @@
 <caret_1>:
   KDocName(17,23): 'com.AA'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        com/AA
+      ]
 
 <caret_2>:
   KDocName(42,48): 'com.AA'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        com/AA
+      ]
 
 <caret_3>:
   KDocName(80,86): 'com.AA'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        com/AA
+      ]
 
 <caret_4>:
   KDocName(95,98): 'com'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        com
+      ]

@@ -112,7 +112,7 @@ internal val WasmBinaryTransformRegisteringSetupAction = KotlinCompilationSideEf
                 parameters.useDaemonFallbackStrategy.convention(propertiesProvider.kotlinDaemonUseFallbackStrategy)
                     .finalizeValueOnRead()
 
-                BinaryenPlugin.apply(project)
+                project.plugins.apply(BinaryenPlugin::class.java)
                 parameters.binaryenExec.set(project.extensions.findByType(BinaryenEnvSpec::class.java)!!.executable)
                 parameters.mode.set(binary.mode)
             }

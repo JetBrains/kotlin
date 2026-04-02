@@ -72,7 +72,7 @@ data class IncrementalCompilationFeatures(
      * Then, in Monotonous mode the next compilation step would include both a.kt and b.kt.
      * And in the original mode the next compilation step would include only the files that weren't compiled previously.
      */
-    val enableMonotonousIncrementalCompileSetExpansion: Boolean = false,
+    val enableMonotonousIncrementalCompileSetExpansion: Boolean = true,
 ) : Serializable {
 
     companion object {

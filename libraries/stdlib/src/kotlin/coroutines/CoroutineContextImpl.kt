@@ -76,7 +76,7 @@ public fun <E : Element> Element.getPolymorphicElement(key: Key<E>): E? {
 
 /**
  * Returns empty coroutine context if the element is associated with the given [key] in a polymorphic manner
- * or `null` otherwise.
+ * or `this` otherwise.
  * This method returns empty context if either [Element.key] is equal to the given [key] or if the [key] is associated
  * with [Element.key] via [AbstractCoroutineContextKey].
  * See [AbstractCoroutineContextKey] for the example of usage.

@@ -133,4 +133,21 @@ class KaptIT : KotlinMavenTestBase() {
             }
         }
     }
+
+    @MavenTest
+    @DisplayName("KAPT runs after standard resources are copied and can access them")
+    fun testKaptHasAccessToResources(mavenVersion: TestVersions.Maven) {
+        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
+        testProject("test-kapt-hasAccessToResources", mavenVersion, buildOptions) {
+            build(
+                "package", "-X",
+                expectedToFail = false
+            ) {
+                assertFileContains(
+                    "app/target/generated-sources/kaptKotlin/compile/MyClass.kt",
+                    "fun MyClass.customToString() = \"OK\""
+                )
+            }
+        }
+    }
 }

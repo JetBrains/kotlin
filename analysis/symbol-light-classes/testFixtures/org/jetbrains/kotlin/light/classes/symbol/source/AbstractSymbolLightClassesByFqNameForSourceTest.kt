@@ -6,17 +6,11 @@
 package org.jetbrains.kotlin.light.classes.symbol.source
 
 import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesByFqNameTest
-import org.jetbrains.kotlin.light.classes.symbol.base.SymbolLightClassScriptTestConfigurator
 import org.jetbrains.kotlin.light.classes.symbol.base.SymbolLightClassSourceJsTestConfigurator
 import org.jetbrains.kotlin.light.classes.symbol.base.SymbolLightClassSourceJvmTestConfigurator
 
 abstract class AbstractSymbolLightClassesByFqNameForSourceTest : AbstractSymbolLightClassesByFqNameTest(
     configurator = SymbolLightClassSourceJvmTestConfigurator,
-    isTestAgainstCompiledCode = false,
-)
-
-abstract class AbstractScriptSymbolLightClassesByFqNameForSourceTest : AbstractSymbolLightClassesByFqNameTest(
-    configurator = SymbolLightClassScriptTestConfigurator,
     isTestAgainstCompiledCode = false,
 )
 

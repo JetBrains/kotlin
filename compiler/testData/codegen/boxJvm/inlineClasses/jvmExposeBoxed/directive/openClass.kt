@@ -1,7 +1,7 @@
 // JVM_DEFAULT_MODE: enable
 // WITH_STDLIB
 // CHECK_BYTECODE_LISTING
-// LANGUAGE: +ImplicitJvmExposeBoxed
+// JVM_EXPOSE_BOXED
 // TARGET_BACKEND: JVM_IR
 
 // checking that TestClass has correctly generated mangled and exposed overrides

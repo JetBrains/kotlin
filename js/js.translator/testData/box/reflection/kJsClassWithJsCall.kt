@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR_ES6
 import kotlin.reflect.KClass
 
 // FILE: main.kt

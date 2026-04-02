@@ -26,11 +26,11 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
     override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String = analyzeForTest(mainElement) {
         val candidates = collectCallCandidates(mainElement)
         val candidatesAgain = collectCallCandidates(mainElement)
-        val callInfo = mainElement.resolveToCall()
+        val callAttempt = (mainElement as? KtResolvableCall)?.tryResolveCall()
 
         ignoreStabilityIfNeeded {
             assertStableSymbolResult(testServices, candidates.asKaCallCandidates(), candidatesAgain.asKaCallCandidates())
-            checkConsistencyWithResolveCall(callInfo, candidates.asKaCallCandidates(), testServices)
+            checkConsistencyWithResolveCall(callAttempt, candidates.asKaCallCandidates(), testServices)
         }
 
         val sortedCandidates = sortCandidates(candidates)
@@ -43,11 +43,11 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
 
     context(_: KaSession)
     private fun checkConsistencyWithResolveCall(
-        callInfo: KaCallInfo?,
+        callAttempt: KaCallResolutionAttempt?,
         candidates: List<KaCallCandidate>,
         testServices: TestServices,
     ) {
-        val resolvedCall = callInfo?.successfulCallOrNull<KaCallableMemberCall<*, *>>()
+        val resolvedCall = callAttempt?.successfulCall
         if (candidates.isEmpty()) {
             testServices.assertions.assertEquals(null, resolvedCall) {
                 "Inconsistency between candidates and resolved call. " +
@@ -56,17 +56,16 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
             }
         } else {
             if (resolvedCall == null) return
-            val resolvedSymbol = stringRepresentation(resolvedCall.symbol)
-            val candidatesRepresentation = candidates.mapNotNull {
-                if (it.isInBestCandidates) {
-                    stringRepresentation((it.candidate as KaCallableMemberCall<*, *>).symbol)
-                } else {
-                    null
-                }
-            }
+            val resolvedSymbols = resolvedCall.symbols.map { stringRepresentation(it) }.toSet()
+            val candidateSymbols = candidates
+                .filter { it.isInBestCandidates }
+                .flatMap { it.candidate.symbols.map { symbol -> stringRepresentation(symbol) } }
+                .toSet()
 
-            testServices.assertions.assertTrue(resolvedSymbol in candidatesRepresentation) {
-                "'$resolvedSymbol' is not found in:\n" + candidatesRepresentation.joinToString("\n")
+            testServices.assertions.assertTrue(resolvedSymbols.all { it in candidateSymbols }) {
+                "Resolved symbols not found in candidates:\n" +
+                        "resolved: $resolvedSymbols\n" +
+                        "candidates: $candidateSymbols"
             }
         }
     }
@@ -96,14 +95,14 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
     context(_: KaSession)
     private fun sortCandidates(candidates: List<*>): List<*> = candidates.sortedWith { a, b ->
         val call1 = when (a) {
-            is KaCallCandidate -> a.candidate as KaCall
-            is KaCallCandidateInfo -> a.candidate
+            is KaCallCandidate -> a.candidate
+            is KaCallCandidateInfo -> a.candidate as KaSingleOrMultiCall
             else -> return@sortedWith 0
         }
 
         val call2 = when (b) {
-            is KaCallCandidate -> b.candidate as KaCall
-            is KaCallCandidateInfo -> b.candidate
+            is KaCallCandidate -> b.candidate
+            is KaCallCandidateInfo -> b.candidate as KaSingleOrMultiCall
             else -> return@sortedWith 0
         }
 

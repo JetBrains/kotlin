@@ -271,7 +271,7 @@ KtConstantExpression(131,132): '1'
   null
 
 KtBinaryExpression(137,161): 'javaClass.something += 1'
-  KaCallResolutionSuccess:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
@@ -445,7 +445,7 @@ KtConstantExpression(160,161): '1'
   null
 
 KtPostfixExpression(166,187): 'javaClass.something++'
-  KaCallResolutionSuccess:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -584,7 +584,7 @@ KtOperationReferenceExpression(185,187): '++'
         typeArgumentsMapping = {}
 
 KtPrefixExpression(192,213): '--javaClass.something'
-  KaCallResolutionSuccess:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
@@ -724,7 +724,7 @@ KtNameReferenceExpression(204,213): 'something'
       typeArgumentsMapping = {}
 
 KtPostfixExpression(219,230): 'something++'
-  KaCallResolutionSuccess:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -883,7 +883,7 @@ KtOperationReferenceExpression(228,230): '++'
         typeArgumentsMapping = {}
 
 KtPostfixExpression(235,248): '(something)++'
-  KaCallResolutionSuccess:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC

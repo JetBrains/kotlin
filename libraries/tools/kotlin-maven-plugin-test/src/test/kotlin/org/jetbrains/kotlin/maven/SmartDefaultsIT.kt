@@ -174,4 +174,32 @@ class SmartDefaultsIT : KotlinMavenTestBase() {
             }
         }
     }
+
+    @MavenTest
+    @DisplayName("KAPT applied properly for mixed Kotlin+Java project with smart defaults enabled")
+    fun testSmartDefaultsInMixedProjectWithKapt(mavenVersion: TestVersions.Maven) {
+        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
+        testProject("test-smart-defaults-kapt", mavenVersion, buildOptions) {
+            build("verify") {
+                assertSmartDefaultsEnabled()
+
+                assertJarExistsAndNotEmpty("app/target/app-1.0-SNAPSHOT.jar")
+
+                // KAPT ran and generated a Java source file from @Anno on KotlinService
+                assertFileExists(
+                    "app/target/generated-sources/kapt/compile/app/KotlinServiceGenerated.java"
+                ) { "KAPT-generated Java source file was not found" }
+
+                // KAPT ran and generated a Kotlin extension file from @Anno on KotlinService
+                assertFileExists(
+                    "app/target/generated-sources/kaptKotlin/compile/KotlinServiceExtensions.kt"
+                ) { "KAPT-generated Kotlin extension file was not found" }
+
+                // 2 tests in the `KotlinServiceTest`
+                assertTestsPassed(2)
+                // 3 tests in the `JavaConsumerTest`
+                assertTestsPassed(3)
+            }
+        }
+    }
 }

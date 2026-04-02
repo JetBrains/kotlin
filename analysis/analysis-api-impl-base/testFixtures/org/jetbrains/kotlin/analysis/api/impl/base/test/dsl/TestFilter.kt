@@ -18,8 +18,14 @@ infix fun TestFilter.or(other: TestFilter): TestFilter =
 fun frontendIs(vararg frontends: FrontendKind): TestFilter =
     { it.frontend in frontends }
 
-fun testModuleKindIs(vararg moduleKinds: TestModuleKind): TestFilter =
-    { it.moduleKind in moduleKinds }
+fun testModuleKindIs(vararg moduleKinds: TestModuleKind): TestFilter = {
+    when (it.moduleKind) {
+        in moduleKinds -> true
+        TestModuleKind.Source, TestModuleKind.ScriptSource -> TestModuleKind.SourceLike in moduleKinds
+        TestModuleKind.SourceLike -> TestModuleKind.Source in moduleKinds || TestModuleKind.ScriptSource in moduleKinds
+        else -> false
+    }
+}
 
 fun analysisSessionModeIs(vararg modes: AnalysisSessionMode): TestFilter =
     { it.analysisSessionMode in modes }

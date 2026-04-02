@@ -1,6 +1,9 @@
 <caret_1>:
   KDocName(491,505): 'Int.funWarning'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /funWarning(<extension receiver>: kotlin.Int): kotlin.Unit
+      ]
 
 <caret_2>:
   KDocName(511,524): 'Int.funHidden'
@@ -8,11 +11,17 @@
 
 <caret_3>:
   KDocName(530,542): 'Int.funError'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /funError(<extension receiver>: kotlin.Int): kotlin.Unit
+      ]
 
 <caret_4>:
   KDocName(548,563): 'Int.propWarning'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val propWarning: kotlin.Int
+      ]
 
 <caret_5>:
   KDocName(569,583): 'Int.propHidden'
@@ -20,4 +29,7 @@
 
 <caret_6>:
   KDocName(589,602): 'Int.propError'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val propError: kotlin.Int
+      ]

@@ -326,7 +326,7 @@ KtNameReferenceExpression(250,253): 'Int'
   null
 
 KtPostfixExpression(256,265): 'current++'
-  KaCallResolutionSuccess:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -434,7 +434,7 @@ KtBlockExpression(281,330): '{'
   null
 
 KtForExpression(287,328): 'for (i in IntProgression(1, 10)) {'
-  KaCallResolutionSuccess:
+  KaForLoopCallResolutionAttempt:
     call = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
         contextArgumentMapping = {}

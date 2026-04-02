@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiGetSuperTypesTest
 
   @Test
   public void testAllFilesPresentInSuperTypes() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeInfoProvider/superTypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeInfoProvider/superTypes"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

@@ -1,6 +1,9 @@
 <caret_1>:
   KDocName(225,257): 'OutContainer.someNumberExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /someNumberExtension(<extension receiver>: OutContainer<kotlin.Number>): kotlin.Unit
+      ]
 
 <caret_2>:
   KDocName(274,309): 'IntOutContainer.someNumberExtension'
@@ -8,16 +11,28 @@
 
 <caret_3>:
   KDocName(328,366): 'NumberOutContainer.someNumberExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /someNumberExtension(<extension receiver>: OutContainer<kotlin.Number>): kotlin.Unit
+      ]
 
 <caret_4>:
   KDocName(383,412): 'OutContainer.someIntExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /someIntExtension(<extension receiver>: OutContainer<kotlin.Int>): kotlin.Unit
+      ]
 
 <caret_5>:
   KDocName(429,461): 'IntOutContainer.someIntExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /someIntExtension(<extension receiver>: OutContainer<kotlin.Int>): kotlin.Unit
+      ]
 
 <caret_6>:
   KDocName(478,513): 'NumberOutContainer.someIntExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /someIntExtension(<extension receiver>: OutContainer<kotlin.Int>): kotlin.Unit
+      ]

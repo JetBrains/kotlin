@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.light.classes.symbol.base
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
+import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -21,6 +23,9 @@ abstract class AbstractSymbolLightClassesNestedClassesConsistencyTestBase(
     configurator: AnalysisApiTestConfigurator,
     override val isTestAgainstCompiledCode: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
+    override val variantChain: TestVariantChain
+        get() = super.variantChain.withAdditionalVariant("consistency")
+
     override fun doLightClassTest(ktFiles: List<KtFile>, module: KtTestModule, testServices: TestServices) {
         val assertions = testServices.assertions
         for (file in ktFiles) {

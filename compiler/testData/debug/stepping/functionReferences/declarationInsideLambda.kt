@@ -11,8 +11,7 @@ fun box(): String {
     }
 }
 
-// EXPECTATIONS FIR JVM_IR
-
+// EXPECTATIONS JVM_IR
 // test.kt:6 box
 // test.kt:3 foo
 // test.kt:10 box$lambda$0
@@ -20,18 +19,6 @@ fun box(): String {
 // test.kt:10 box$lambda$0
 // test.kt:8 box$lambda$0$localFun$0
 // test.kt:10 box$lambda$0
-// test.kt:3 foo
-// test.kt:6 box
-
-
-// EXPECTATIONS ClassicFrontend JVM_IR
-// test.kt:6 box
-// test.kt:3 foo
-// test.kt:10 invoke
-// test.kt:8 invoke$localFun
-// test.kt:10 invoke
-// test.kt:8 invoke
-// test.kt:10 invoke
 // test.kt:3 foo
 // test.kt:6 box
 

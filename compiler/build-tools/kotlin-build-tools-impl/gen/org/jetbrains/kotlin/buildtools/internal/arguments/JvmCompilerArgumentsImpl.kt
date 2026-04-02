@@ -10,6 +10,8 @@ import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Array
 import kotlin.Boolean
+import kotlin.Deprecated
+import kotlin.DeprecationLevel
 import kotlin.Int
 import kotlin.OptIn
 import kotlin.String
@@ -156,6 +158,10 @@ internal class JvmCompilerArgumentsImpl(
     optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
   }
 
+  @Deprecated(
+    message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
+    level = DeprecationLevel.WARNING,
+  )
   override operator fun contains(key: JvmCompilerArguments.JvmCompilerArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("UNCHECKED_CAST")

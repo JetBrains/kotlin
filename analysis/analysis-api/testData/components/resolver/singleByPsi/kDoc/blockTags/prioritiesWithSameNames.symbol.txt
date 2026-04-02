@@ -1,23 +1,45 @@
 <caret_1>:
   KDocName(8,11): 'Abc'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /Abc,
+        var Abc: kotlin.String
+      ]
 
 <caret_2>:
   KDocName(46,49): 'Abc'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /Abc,
+        var Abc: kotlin.String
+      ]
 
 <caret_3>:
   KDocName(82,85): 'Abc'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        Abc: kotlin.String
+      ]
 
 <caret_4>:
   KDocName(87,90): 'Abc'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /Abc,
+        var Abc: kotlin.String
+      ]
 
 <caret_5>:
   KDocName(124,127): 'Abc'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        var Abc: kotlin.String
+      ]
 
 <caret_6>:
   KDocName(129,132): 'Abc'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /Abc,
+        var Abc: kotlin.String
+      ]

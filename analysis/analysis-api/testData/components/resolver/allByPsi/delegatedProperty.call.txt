@@ -32,7 +32,7 @@ KtProperty(65,87): 'var prop by Delegate()'
   null
 
 KtPropertyDelegate(74,87): 'by Delegate()'
-  KaCallResolutionSuccess:
+  KaDelegatedPropertyCallResolutionAttempt:
     call = KaDelegatedPropertyCall:
       provideDelegateCall = null
       valueGetterCall = KaSimpleFunctionCall:

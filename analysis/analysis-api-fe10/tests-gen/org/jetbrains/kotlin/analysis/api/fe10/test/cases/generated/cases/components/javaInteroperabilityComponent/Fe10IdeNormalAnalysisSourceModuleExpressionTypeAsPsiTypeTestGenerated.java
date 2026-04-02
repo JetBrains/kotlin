@@ -48,7 +48,7 @@ public class Fe10IdeNormalAnalysisSourceModuleExpressionTypeAsPsiTypeTestGenerat
 
   @Test
   public void testAllFilesPresentInForExpression() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forExpression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forExpression"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

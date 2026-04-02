@@ -48,7 +48,7 @@ public class Fe10IdeNormalAnalysisSourceModuleOverriddenDeclarationProviderTestG
 
   @Test
   public void testAllFilesPresentInOverriddenSymbols() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

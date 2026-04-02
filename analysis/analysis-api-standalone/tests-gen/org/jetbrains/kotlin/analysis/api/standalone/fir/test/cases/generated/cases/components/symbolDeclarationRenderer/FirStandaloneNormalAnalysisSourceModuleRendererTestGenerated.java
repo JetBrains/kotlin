@@ -55,7 +55,7 @@ public class FirStandaloneNormalAnalysisSourceModuleRendererTestGenerated extend
 
   @Test
   public void testAllFilesPresentInRenderDeclaration() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test
@@ -242,7 +242,7 @@ public class FirStandaloneNormalAnalysisSourceModuleRendererTestGenerated extend
 
     @Test
     public void testAllFilesPresentInTypes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test

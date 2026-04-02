@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticIm
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
 
 import org.jetbrains.kotlin.gradle.testbase.TestProject
+import org.jetbrains.kotlin.gradle.testbase.XCTestHelpers
 import org.jetbrains.kotlin.gradle.testbase.assertFileExists
+import org.jetbrains.kotlin.gradle.testbase.boot
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -35,6 +37,10 @@ import kotlin.test.assertEquals
 @Suppress("INVISIBLE_REFERENCE")
 const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME =
     GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+
+@Suppress("INVISIBLE_REFERENCE")
+const val SYNTHETIC_IMPORT_DYLIB =
+    GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_DYLIB
 
 fun createLocalSwiftPackage(
     localPackageDir: Path,
@@ -480,7 +486,7 @@ private inline fun <reified T> runAppleToolCommand(
 }
 
 fun describeSwiftPackage(packagePath: Path): SwiftPackageDescription {
-    return runAppleToolCommand(packagePath, listOf("swift", "package", "describe", "--type", "json"))
+    return runAppleToolCommand(packagePath, listOf("/usr/bin/swift", "package", "describe", "--type", "json"))
 }
 
 /**
@@ -720,4 +726,62 @@ data class XcodebuildPIFFrameworksBuildPhase(
 fun dumpXcodebuildPIF(appPath: Path): List<XcodebuildPIFEntry> {
     val outputFile = File.createTempFile("xcodebuild-pif", ".json")
     return runAppleToolCommand(appPath, listOf("xcodebuild", "-dumpPIF", outputFile.absolutePath), outputFile)
+}
+
+
+data class ApplicationRun(
+    val stdout: File,
+    val stderr: File,
+    val exitCode: Int,
+)
+
+fun runApplication(projectPath: Path, appPath: Path): ApplicationRun {
+    val stdout = projectPath.resolve("stdout").toFile()
+    val stderr = projectPath.resolve("stderr").toFile()
+
+    val exitCode = XCTestHelpers().use {
+        val simulator = it.createSimulator().apply {
+            boot()
+        }
+        simulator.install(appPath.toFile())
+        simulator.launch("org.example.project.emptyxcode", stdout, stderr)
+    }
+
+    return ApplicationRun(
+        stdout = stdout,
+        stderr = stderr,
+        exitCode = exitCode,
+    )
+}
+
+fun TestProject.assertApplicationRunsAndObjCRuntimeDoesntEmitInStderr(
+    appPath: Path,
+) {
+    val result = runApplication(projectPath = projectPath, appPath = appPath)
+    try {
+        assertEquals(
+            result.exitCode,
+            0,
+        )
+        assertEquals(
+            "",
+            result.stderr.readLines().filter {
+                /**
+                 * Google Maps and some other libraries litter in stderr with logs we don't care about. We only need the objc message about
+                 * class duplication.
+                 * @see `org.jetbrains.kotlin.gradle.apple.SwiftPMImportDynamicLinkageTests.dynamic linkage with SwiftPM import - duplicates static binary during application linkage`
+                 */
+                "is implemented in both" in it
+            }.joinToString("\n"),
+        )
+    } catch (e: Throwable) {
+        throw AssertionError(
+            listOf(
+                "exitCode: ${result.exitCode}",
+                "stdout: ${result.stdout.readText()}",
+                "stderr: ${result.stderr.readText()}",
+            ).joinToString("\n"),
+            e,
+        )
+    }
 }

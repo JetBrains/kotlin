@@ -186,6 +186,21 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any>(
     }
 
     /**
+     * Returns the value associated with [key] if it exists, or computes a new value with [computeValue] **outside the cache's lock** and
+     * adds it to the cache.
+     *
+     * [computeValue] might be called even if the key is already in the cache, but the cache guarantees that a single, consistent value is
+     * observed as a result.
+     *
+     * **Must be called in a read action.**
+     */
+    fun getOrPut(key: K, computeValue: (K) -> V): V =
+        get(key) ?: run {
+            val newValue = computeValue(key) // Do not inline!
+            computeIfAbsent(key) { newValue }
+        }
+
+    /**
      * Removes the value associated with [key] from the cache, performs cleanup on it, and returns it if it exists. **Must be called in a
      * read action.**
      */

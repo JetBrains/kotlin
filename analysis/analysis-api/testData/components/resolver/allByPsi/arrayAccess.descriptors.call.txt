@@ -895,7 +895,7 @@ KtValueArgument(245,254): '--list[i]'
   null
 
 KtPrefixExpression(245,254): '--list[i]'
-  KaCallResolutionSuccess:
+  KaCompoundArrayAccessCallResolutionAttempt:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC

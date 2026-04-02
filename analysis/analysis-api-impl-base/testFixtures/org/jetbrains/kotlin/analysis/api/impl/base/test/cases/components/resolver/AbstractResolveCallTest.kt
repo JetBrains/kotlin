@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.components.resolveToCall
 import org.jetbrains.kotlin.analysis.api.components.tryResolveCall
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseErrorCallInfo
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSuccessCallInfo
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCallResolutionError
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCallResolutionSuccess
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableResult
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.findSpecializedResolveFunctions
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
@@ -27,37 +27,37 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "call"
 
     override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String = analyzeForTest(mainElement) {
-        val call = tryResolveCall(mainElement)
-        val callInfo = call?.asCallInfo()
-
-        val secondCall = tryResolveCall(mainElement)
+        val result = tryResolveCall(mainElement)
+        val attempt = result?.asCallResolutionAttempt()
+        val secondAttempt = tryResolveCall(mainElement)?.asCallResolutionAttempt()
 
         ignoreStabilityIfNeeded {
-            assertStableResult(testServices, callInfo, secondCall?.asCallInfo())
+            assertStableResult(testServices, attempt, secondAttempt)
             if (mainElement is KtResolvableCall) {
-                val oldCall = mainElement.resolveToCall()
-                assertStableResult(testServices, callInfo, oldCall)
+                val oldAttempt = mainElement.resolveToCall()?.asCallResolutionAttempt()
+                // Old API collapses multi-calls into a single success/error, losing some symbols.
+                // We only check that old API symbols are a subset of new API symbols.
+                val newSymbols = attempt?.calls?.flatMap(KaSingleOrMultiCall::symbols)
+                    ?.map { stringRepresentation(it) }?.toSet().orEmpty()
+                val oldSymbols = oldAttempt?.calls?.flatMap(KaSingleOrMultiCall::symbols)
+                    ?.map { stringRepresentation(it) }?.toSet().orEmpty()
+
+                testServices.assertions.assertTrue(newSymbols.containsAll(oldSymbols)) {
+                    "Old API symbols not found in new API:\nold: $oldSymbols\nnew: $newSymbols"
+                }
             }
         }
 
         // This call mustn't be suppressed as this is the API contracts
         if (configurator.frontendKind == FrontendKind.Fir) {
-            assertSpecificResolutionApi(testServices, callInfo, mainElement)
+            assertSpecificResolutionApi(testServices, attempt, mainElement)
         } else {
             ignoreStabilityIfNeeded {
-                assertSpecificResolutionApi(testServices, callInfo, mainElement)
+                assertSpecificResolutionApi(testServices, attempt, mainElement)
             }
         }
 
-        stringRepresentation(call)
-    }
-
-    private fun Any.asCallInfo(): KaCallInfo? = when (this) {
-        is KaCallInfo -> this
-        is KaCall -> KaBaseSuccessCallInfo(this)
-        is KaCallResolutionError -> KaBaseErrorCallInfo(candidateCalls.map { it as KaCall }, diagnostic)
-        is KaCallResolutionSuccess -> KaBaseSuccessCallInfo(call as KaCall)
-        else -> error("Unknown type: ${this::class.simpleName}")
+        stringRepresentation(result)
     }
 
     context(_: KaSession)
@@ -67,30 +67,49 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
         element.resolveToCall()
     }
 
+    private fun Any.asCallResolutionAttempt(): KaCallResolutionAttempt = when (this) {
+        is KaCallResolutionAttempt -> this
+        is KaSuccessCallInfo -> {
+            val singleCall = (call as KaSingleOrMultiCall).calls.first()
+            KaBaseCallResolutionSuccess(singleCall)
+        }
+
+        is KaErrorCallInfo -> KaBaseCallResolutionError(
+            backedDiagnostic = diagnostic,
+            backingCandidateCalls = candidateCalls.flatMap {
+                (it as KaSingleOrMultiCall).calls
+            },
+        )
+
+        else -> error("Unknown type: ${this::class.simpleName}")
+    }
+
     /**
-     * The function checks that all specific implementations of [KaResolver.resolveCall] are consistent.
+     * The function checks that all specific implementations of [KaResolver.resolveCall] and [KaResolver.tryResolveCall] are consistent.
      */
     context(session: KaSession)
     private fun assertSpecificResolutionApi(
         testServices: TestServices,
-        callInfo: KaCallInfo?,
+        attempt: KaCallResolutionAttempt?,
         element: KtElement,
     ) {
         if (element !is KtResolvableCall) return
         val elementClass = element::class
 
         val assertions = testServices.assertions
+        val expectedCall = attempt?.successfulCall
         for (kFunction in KaResolver::class.findSpecializedResolveFunctions("resolveCall", elementClass)) {
-            val specificCall = kFunction.call(session, element)
-
-            when (callInfo) {
-                null, is KaErrorCallInfo -> assertions.assertEquals(expected = null, actual = specificCall)
-                is KaSuccessCallInfo -> assertStableResult(
-                    testServices = testServices,
-                    firstInfo = callInfo,
-                    secondInfo = specificCall?.asCallInfo(),
-                )
+            val specificCall = kFunction.call(session, element) as? KaSingleOrMultiCall
+            if (expectedCall == null || specificCall == null) {
+                assertions.assertEquals(expected = expectedCall, actual = specificCall)
+            } else {
+                assertStableResult(testServices, expectedCall, specificCall)
             }
+        }
+
+        for (kFunction in KaResolver::class.findSpecializedResolveFunctions("tryResolveCall", elementClass)) {
+            val specificAttempt = kFunction.call(session, element) as? KaCallResolutionAttempt
+            assertStableResult(testServices, attempt, specificAttempt)
         }
     }
 }

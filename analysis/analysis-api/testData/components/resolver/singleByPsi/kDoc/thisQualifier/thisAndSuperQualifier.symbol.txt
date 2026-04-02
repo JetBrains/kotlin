@@ -1,23 +1,81 @@
 <caret_1>:
   KDocName(121,126): 'super'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val super: kotlin.Int
+      ]
 
 <caret_2>:
   KDocName(136,143): '`super`'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val super: kotlin.Int
+      ]
 
 <caret_3>:
   KDocName(153,157): 'this'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val this: kotlin.String
+      ]
 
 <caret_4>:
   KDocName(167,173): '`this`'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val this: kotlin.String
+      ]
 
 <caret_5>:
   KDocName(230,234): 'this'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        KaReceiverParameterSymbol:
+          annotations: []
+          callableId: null
+          compilerVisibility: Public
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isExternal: false
+          isVal: true
+          location: LOCAL
+          modality: FINAL
+          name: <receiver>
+          origin: SOURCE
+          owningCallableSymbol: KaNamedFunctionSymbol(/Impl.withReceiver)
+          receiverParameter: null
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Long
+          visibility: PUBLIC
+      ]
 
 <caret_6>:
   KDocName(244,250): '`this`'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        KaReceiverParameterSymbol:
+          annotations: []
+          callableId: null
+          compilerVisibility: Public
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isExternal: false
+          isVal: true
+          location: LOCAL
+          modality: FINAL
+          name: <receiver>
+          origin: SOURCE
+          owningCallableSymbol: KaNamedFunctionSymbol(/Impl.withReceiver)
+          receiverParameter: null
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Long
+          visibility: PUBLIC
+      ]

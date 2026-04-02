@@ -35,6 +35,7 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
             putAnalysisFlag(JvmAnalysisFlags.sanitizeParentheses, sanitizeParentheses)
             putAnalysisFlag(JvmAnalysisFlags.suppressMissingBuiltinsError, suppressMissingBuiltinsError)
             putAnalysisFlag(JvmAnalysisFlags.enableJvmPreview, enableJvmPreview)
+            putAnalysisFlag(JvmAnalysisFlags.implicitJvmExposeBoxed, jvmExposeBoxed)
             putAnalysisFlag(AnalysisFlags.allowUnstableDependencies, allowUnstableDependencies)
             putAnalysisFlag(JvmAnalysisFlags.outputBuiltinsMetadata, outputBuiltinsMetadata)
         }

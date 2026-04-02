@@ -19,17 +19,9 @@ internal val moduleDescriptors = mutableListOf<WasmModuleDescriptor>()
 
 /**
  * Register new wasm module-dependent descriptor [kotlin.wasm.internal.WasmModuleDescriptor].
- * TODO: Should be removed after bootstrap
  */
 @UsedFromCompilerGeneratedCode
-internal fun registerModuleDescriptor(associatedObjectGetter: kotlin.wasm.internal.reftypes.funcref) {}
-
-/**
- * Register new wasm module-dependent descriptor [kotlin.wasm.internal.WasmModuleDescriptor].
- * TODO: Should be renamed after bootstrap
- */
-@UsedFromCompilerGeneratedCode
-internal fun registerModuleDescriptorWithWrapper(associatedObjectGetter: kotlin.wasm.internal.reftypes.anyref) {
+internal fun registerModuleDescriptor(associatedObjectGetter: kotlin.wasm.internal.reftypes.anyref) {
     moduleDescriptors.add(WasmModuleDescriptor(associatedObjectGetter))
 }
 

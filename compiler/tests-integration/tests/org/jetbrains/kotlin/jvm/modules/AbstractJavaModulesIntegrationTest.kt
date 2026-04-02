@@ -267,7 +267,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         // the "'-d' option is ignored" warning in this test is an artifact of the test infrastructure and is not a part of the test.
         val buildFile = AbstractCliTest.replacePathsInBuildXml(
             "-Xbuild-file=${File(testDataDirectory, "build.xml").path}",
-            testDataDirectory.absolutePath,
+            testDataDirectory,
             tmpdir.absolutePath
         )
         module("usage", additionalKotlinArguments = listOf("-no-stdlib", buildFile))

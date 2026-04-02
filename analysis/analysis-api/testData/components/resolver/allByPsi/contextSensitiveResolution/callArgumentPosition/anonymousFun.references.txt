@@ -243,8 +243,6 @@ KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(933,954): 'anonymousEnumConsumer'
   KtSimpleNameReference:
@@ -269,8 +267,6 @@ KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(972,989): 'anonymousConsumer'
   KtSimpleNameReference:
@@ -295,8 +291,6 @@ KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1011,1028): 'anonymousConsumer'
   KtSimpleNameReference:
@@ -322,8 +316,6 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
     diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
   KtSimpleNameReference:
@@ -349,8 +341,6 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
     diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
   KtSimpleNameReference:
@@ -376,8 +366,6 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
     diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
   KtSimpleNameReference:
@@ -403,8 +391,6 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
     diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
   KtSimpleNameReference:
@@ -430,8 +416,6 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
     diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
   KtSimpleNameReference:
@@ -456,8 +440,6 @@ KtCallExpression(1208,1233): 'anonymousConsumer(func())'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1208,1225): 'anonymousConsumer'
   KtSimpleNameReference:
@@ -491,8 +473,6 @@ KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1238,1255): 'anonymousConsumer'
   KtSimpleNameReference:
@@ -527,8 +507,6 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
     diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1273,1290): 'anonymousConsumer'
   KtSimpleNameReference:

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmExposeBoxedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
@@ -32,7 +33,7 @@ internal enum class JvmExposeBoxedMode {
     EXPLICIT,
 
     /**
-     * The [LanguageFeature.ImplicitJvmExposeBoxed] feature is enabled or
+     * The [JvmAnalysisFlags.implicitJvmExposeBoxed] feature is enabled or
      * the containing class is marked with [JvmExposeBoxed] annotation
      */
     IMPLICIT,
@@ -61,8 +62,8 @@ internal fun KaSession.jvmExposeBoxedMode(callableSymbol: KaCallableSymbol): Jvm
 
     val module = containingClass?.containingModule ?: callableSymbol.containingModule
     val isFeatureEnabled = when (module) {
-        is KaSourceModule -> module.languageVersionSettings.supportsFeature(LanguageFeature.ImplicitJvmExposeBoxed)
-        is KaScriptModule -> module.languageVersionSettings.supportsFeature(LanguageFeature.ImplicitJvmExposeBoxed)
+        is KaSourceModule -> module.languageVersionSettings.getFlag(JvmAnalysisFlags.implicitJvmExposeBoxed)
+        is KaScriptModule -> module.languageVersionSettings.getFlag(JvmAnalysisFlags.implicitJvmExposeBoxed)
         else -> false
     }
 

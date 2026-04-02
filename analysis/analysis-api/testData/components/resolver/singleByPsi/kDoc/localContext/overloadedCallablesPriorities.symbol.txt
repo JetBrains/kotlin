@@ -1,11 +1,21 @@
 <caret_1>:
   KDocName(5,7): 'cc'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /cc(a: kotlin.String): kotlin.Int
+      ]
 
 <caret_2>:
   KDocName(39,41): 'cc'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /cc(): kotlin.Int
+      ]
 
 <caret_3>:
   KDocName(65,67): 'cc'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /cc(a: kotlin.String): kotlin.Int,
+        /cc(): kotlin.Int
+      ]

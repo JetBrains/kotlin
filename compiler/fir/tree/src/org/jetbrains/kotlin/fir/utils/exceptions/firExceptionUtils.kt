@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,30 +9,44 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.renderer.*
-import org.jetbrains.kotlin.fir.types.ConeClassifierLookupTag
+import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugging
+import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithAttributes
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.types.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
 fun ExceptionAttachmentBuilder.withFirEntry(name: String, fir: FirElement?) {
-    withEntry(name, fir) { fir ->
+    if (fir == null) return
+    val firDump = runCatching {
         FirRenderer(
             resolvePhaseRenderer = FirResolvePhaseRenderer(),
             declarationRenderer = FirDeclarationRendererWithAttributes(),
         ).renderElementAsString(fir)
+    }.onFailure { e ->
+        rethrowIntellijPlatformExceptionIfNeeded(e)
+
+        withEntry("${name}Error", e) {
+            e.stackTraceToString()
+        }
+    }.getOrDefault("<error>")
+
+    withEntry(name, fir) { _ ->
+        firDump
     }
 
-    if (fir != null) {
-        withEntry("${name}ElementKind", fir.source?.kind?.let { it::class.simpleName })
-        if (fir is FirElementWithResolveState) {
-            withModuleDataEntry("${name}ModuleData", fir.moduleData)
-        }
-        withSourceEntry("${name}Source", fir.source)
+    withEntry("${name}ElementKind", fir.source?.kind?.let { it::class.simpleName })
+    if (fir is FirElementWithResolveState) {
+        withModuleDataEntry("${name}ModuleData", fir.moduleData)
     }
+
+    withSourceEntry("${name}Source", fir.source)
 }
 
 fun ExceptionAttachmentBuilder.withFirSymbolIdEntry(name: String, symbol: FirBasedSymbol<*>?) {

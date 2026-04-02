@@ -488,7 +488,7 @@ KtNameReferenceExpression(715,721): 'String'
   null
 
 KtPropertyDelegate(722,734): 'by lazy {""}'
-  KaCallResolutionSuccess:
+  KaDelegatedPropertyCallResolutionAttempt:
     call = KaDelegatedPropertyCall:
       provideDelegateCall = null
       valueGetterCall = KaSimpleFunctionCall:

@@ -97,22 +97,43 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
     fun generateSwiftPMSyntheticImportProjectAndFetchPackages() {
         failOnNonIdempotentChangesIfNeeded {
             val packageRoot = syntheticImportProjectRoot.get().asFile.normalizedAbsoluteFile()
-            val linkerHack = when (syntheticProductType.get()) {
-                SyntheticProductType.DYNAMIC -> packageRoot.resolve("linkerHack").also {
-                    it.writeText(linkerScriptHack())
-                    it.setExecutable(true)
+            when (syntheticProductType.get()) {
+                SyntheticProductType.DYNAMIC -> {
+                    generatePackageManifest(
+                        identifier = SYNTHETIC_IMPORT_DYLIB,
+                        packageRoot = packageRoot.resolve("${SUBPACKAGES}/${SYNTHETIC_IMPORT_DYLIB}"),
+                        syntheticProductType = SyntheticProductType.DYNAMIC,
+                        directlyImportedSwiftPMDependencies = directlyImportedDependencies.get(),
+                        transitiveSyntheticPackages = dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.keys,
+                        transitiveSyntheticPackagesPath = "..",
+                    )
+                    generatePackageManifest(
+                        identifier = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+                        packageRoot = packageRoot,
+                        syntheticProductType = SyntheticProductType.INFERRED,
+                        // Leave only version constraints - SwiftPM doesn't pick it up from subproject dependency when product is not consumed explicitly from the package
+                        directlyImportedSwiftPMDependencies = directlyImportedDependencies.get().mapNotNull {
+                            val remoteDependency = when (it) {
+                                is SwiftPMDependency.Local -> return@mapNotNull null
+                                is SwiftPMDependency.Remote -> it
+                            }
+                            remoteDependency.copy(products = emptyList())
+                        }.toSet(),
+                        transitiveSyntheticPackages = setOf(SwiftPMDependencyIdentifier(SYNTHETIC_IMPORT_DYLIB)),
+                        transitiveSyntheticPackagesPath = SUBPACKAGES,
+                    )
                 }
-                SyntheticProductType.INFERRED -> null
-                null -> null
+                SyntheticProductType.INFERRED, null -> {
+                    generatePackageManifest(
+                        identifier = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+                        packageRoot = packageRoot,
+                        syntheticProductType = SyntheticProductType.INFERRED,
+                        directlyImportedSwiftPMDependencies = directlyImportedDependencies.get(),
+                        transitiveSyntheticPackages = dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.keys,
+                        transitiveSyntheticPackagesPath = SUBPACKAGES,
+                    )
+                }
             }
-            generatePackageManifest(
-                identifier = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
-                packageRoot = packageRoot,
-                syntheticProductType = syntheticProductType.get(),
-                directlyImportedSwiftPMDependencies = directlyImportedDependencies.get(),
-                transitiveSyntheticPackages = dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.keys,
-                linkerHackPath = linkerHack,
-            )
             dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.forEach { (dependencyIdentifier, swiftPMDependencies) ->
                 generatePackageManifest(
                     identifier = dependencyIdentifier.identifier,
@@ -125,6 +146,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
                     syntheticProductType = SyntheticProductType.INFERRED,
                     directlyImportedSwiftPMDependencies = swiftPMDependencies.dependencies,
                     transitiveSyntheticPackages = setOf(),
+                    transitiveSyntheticPackagesPath = "..",
                 )
             }
         }
@@ -165,7 +187,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
         syntheticProductType: SyntheticProductType,
         directlyImportedSwiftPMDependencies: Set<SwiftPMDependency>,
         transitiveSyntheticPackages: Set<SwiftPMDependencyIdentifier>,
-        linkerHackPath: File? = null,
+        transitiveSyntheticPackagesPath: String,
     ) {
         val repoDependencies = (directlyImportedSwiftPMDependencies.map { importedPackage ->
             buildString {
@@ -199,7 +221,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
                 append(")")
             }
         } + transitiveSyntheticPackages.map {
-            ".package(path: \"${SUBPACKAGES}/${it.identifier}\")"
+            ".package(path: \"${transitiveSyntheticPackagesPath}/${it.identifier}\")"
         })
         val targetDependencies = (directlyImportedSwiftPMDependencies.flatMap { dependency ->
             dependency.products.map { product -> product to dependency.packageName }
@@ -277,7 +299,6 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
                 platforms = platforms,
                 repoDependencies = repoDependencies,
                 targetDependencies = targetDependencies,
-                linkerHackPath = linkerHackPath?.path,
             )
         )
 
@@ -321,85 +342,10 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
         return "${maximumDeploymentTarget.major}.${maximumDeploymentTarget.minor}"
     }
 
-    private fun linkerScriptHack(): String = """
-    #!/usr/bin/python3
-    import os
-    import sys
-    from os.path import dirname
-    
-    if __name__ == '__main__':
-        is_synthetic_linkage_call = False
-        for arg in sys.argv:
-            if arg.startswith('@rpath') and '${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}' in arg:
-                is_synthetic_linkage_call = True
-    
-        if is_synthetic_linkage_call:
-            print(sys.argv)
-            filelist_index = None
-            platform_version = None
-            arch = None
-            output = None
-            syslibroot = None
-            dependency_info = None
-            install_name = None
-    
-            for (index, arg) in enumerate(sys.argv[1:]):
-                if arg == '-platform_version':
-                    platform_version = sys.argv[index + 2:index + 5]
-                if arg == '-filelist':
-                    filelist_index = index + 2
-    
-                if arg == '-arch':
-                    arch = sys.argv[index + 2]
-                if arg == '-o':
-                    output = sys.argv[index + 2]
-                if arg == '-syslibroot':
-                    syslibroot = sys.argv[index + 2]
-                if arg == '-dependency_info':
-                    dependency_info = sys.argv[index + 2]
-                if arg == '-install_name' or arg == '-dylib_install_name':
-                    install_name = sys.argv[index + 2]
-            if filelist_index is None:
-                raise 'No filelist'
-    
-            filelist_path = sys.argv[filelist_index]
-            empty_object_file = None
-            with open(filelist_path, 'r') as file:
-                for line in file:
-                    if '${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}.o' in line:
-                        empty_object_file = line
-            if empty_object_file is None:
-                raise f'Missing empty object file {filelist_path}'
-    
-            new_filelist = os.path.join(dirname(filelist_path), '_kotlinSwiftPMImport')
-            with open(new_filelist, 'w') as file:
-                file.write(empty_object_file)
-    
-            stub_ld_call = [
-                "-dylib",
-                "-dynamic",
-                "-filelist", new_filelist,
-                "-arch", arch,
-                "-platform_version", *platform_version,
-                "-syslibroot", syslibroot,
-                "-dependency_info", dependency_info,
-                "-install_name", install_name,
-                "-lSystem",
-                "-export_dynamic",
-                "-o", output,
-            ]
-            print('ld ' + ' '.join([f'\'{arg}\'' for arg in stub_ld_call]))
-            print(stub_ld_call)
-            print(sys.argv)
-            os.execlp('ld', 'ld', *stub_ld_call)
-        else:
-            os.execlp('ld', 'ld', *sys.argv[1:])
-
-""".trimIndent()
-
     companion object {
         const val TASK_NAME = "generateSyntheticLinkageSwiftPMImportProject"
         const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME = "KotlinMultiplatformLinkedPackage"
+        const val SYNTHETIC_IMPORT_DYLIB = "KotlinMultiplatformLinkedPackageDylib"
         const val SUBPACKAGES = "subpackages"
         const val MANIFEST_NAME = "Package.swift"
 

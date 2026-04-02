@@ -13,6 +13,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.PlatformInfo
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanJvmInteropTask
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistribution
 import org.jetbrains.kotlin.tools.NativePlugin
 import org.jetbrains.kotlin.tools.NativeToolsExtension
 import org.jetbrains.kotlin.tools.ToolExecutionTask
@@ -38,6 +40,7 @@ open class NativeInteropPlugin : Plugin<Project> {
         target.apply<NativePlugin>()
 
         val nativeInteropPlugin = target.extensions.create<NativeInteropExtension>("nativeInteropPlugin")
+        nativeInteropPlugin.useBootstrapNativeDistribution.convention(false)
 
         val cppImplementation = target.configurations.create(CPP_IMPLEMENTATION_CONFIGURATION) {
             isCanBeConsumed = false
@@ -98,10 +101,6 @@ open class NativeInteropPlugin : Plugin<Project> {
         }
 
         target.dependencies {
-            interopStubGenerator(project(":kotlin-native:Interop:StubGenerator"))
-            interopStubGenerator(project(":kotlin-native:endorsedLibraries:kotlinx.cli", "jvmRuntimeElements"))
-            interopStubGeneratorCppRuntime(project(":kotlin-native:libclangInterop"))
-            interopStubGeneratorCppRuntime(project(":kotlin-native:Interop:Runtime"))
             "api"(project(":kotlin-native:Interop:Runtime"))
             "testImplementation"(project(":kotlin-native:Interop:StubGeneratorConsistencyCheck", "tests-jar"))
         }
@@ -109,8 +108,6 @@ open class NativeInteropPlugin : Plugin<Project> {
         val genTask = target.tasks.register<KonanJvmInteropTask>("genInteropStubs") {
             dependsOn(target.extensions.getByType<NativeDependenciesExtension>().hostPlatformDependency)
             dependsOn(target.extensions.getByType<NativeDependenciesExtension>().llvmDependency)
-            interopStubGeneratorClasspath.from(interopStubGenerator)
-            interopStubGeneratorNativeLibraries.from(interopStubGeneratorCppRuntime)
             outputDirectory.set(target.layout.buildDirectory.dir("nativeInteropStubs"))
             defFile.set(target.layout.projectDirectory.file(nativeInteropPlugin.defFileName))
             compilerOpts.set(nativeInteropPlugin.cCompilerArgs)
@@ -181,11 +178,15 @@ open class NativeInteropPlugin : Plugin<Project> {
         }
 
         target.afterEvaluate {
-            applyFinish(target, bindingsRoot)
+            applyFinish(target, bindingsRoot, genTask)
         }
     }
 
-    private fun applyFinish(target: Project, bindingsRoot: Provider<Directory>): Unit = with(target) {
+    private fun applyFinish(
+            target: Project,
+            bindingsRoot: Provider<Directory>,
+            genTask: TaskProvider<KonanJvmInteropTask>,
+    ): Unit = with(target) {
         val nativeInteropPlugin = extensions.getByType<NativeInteropExtension>()
 
         val defFileName = nativeInteropPlugin.defFileName.run {
@@ -220,9 +221,39 @@ open class NativeInteropPlugin : Plugin<Project> {
             finalizeValue()
             get()
         }
+        val useBootstrapNativeDistribution = nativeInteropPlugin.useBootstrapNativeDistribution.run {
+            finalizeValue()
+            get()
+        }
 
         val cppImplementation = configurations.getByName(CPP_IMPLEMENTATION_CONFIGURATION)
         val cppLink = configurations.getByName(CPP_LINK_CONFIGURATION)
+        val interopStubGenerator = configurations.getByName(INTEROP_STUB_GENERATOR_CONFIGURATION)
+        val interopStubGeneratorCppRuntime = configurations.getByName(INTEROP_STUB_GENERATOR_CPP_RUNTIME_CONFIGURATION)
+
+        if (useBootstrapNativeDistribution) {
+            val bootstrapDistribution = target.registerNativeBootstrapDistribution()
+            genTask.configure {
+                platformManagerProvider.distributionRoot.set(bootstrapDistribution.map { it.root })
+                interopStubGeneratorClasspath.from(bootstrapDistribution.map { it.compilerClasspath })
+                interopStubGeneratorNativeLibraries.from(target.files(bootstrapDistribution.map {
+                    it.nativeLibs.asFileTree.matching {
+                        include("**/*.dylib", "**/*.so", "**/*.dll")
+                    }
+                }))
+            }
+        } else {
+            target.dependencies {
+                interopStubGenerator(project(":kotlin-native:Interop:StubGenerator"))
+                interopStubGenerator(project(":kotlin-native:endorsedLibraries:kotlinx.cli", "jvmRuntimeElements"))
+                interopStubGeneratorCppRuntime(project(":kotlin-native:libclangInterop"))
+                interopStubGeneratorCppRuntime(project(":kotlin-native:Interop:Runtime"))
+            }
+            genTask.configure {
+                interopStubGeneratorClasspath.from(interopStubGenerator)
+                interopStubGeneratorNativeLibraries.from(interopStubGeneratorCppRuntime)
+            }
+        }
 
         val includeDirs = project.files(*systemIncludeDirs.toTypedArray(), *selfHeaders.toTypedArray(), cppImplementation)
 

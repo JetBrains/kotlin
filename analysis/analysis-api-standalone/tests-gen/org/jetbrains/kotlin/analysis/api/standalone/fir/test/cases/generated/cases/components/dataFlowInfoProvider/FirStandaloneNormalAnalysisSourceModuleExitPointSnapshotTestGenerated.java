@@ -49,7 +49,7 @@ public class FirStandaloneNormalAnalysisSourceModuleExitPointSnapshotTestGenerat
 
   @Test
   public void testAllFilesPresentInExitPointSnapshot() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Nested
@@ -62,7 +62,7 @@ public class FirStandaloneNormalAnalysisSourceModuleExitPointSnapshotTestGenerat
 
     @Test
     public void testAllFilesPresentInControlFlow() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class FirStandaloneNormalAnalysisSourceModuleExitPointSnapshotTestGenerat
 
       @Test
       public void testAllFilesPresentInConditionalJumps() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/conditionalJumps"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/conditionalJumps"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -197,7 +197,7 @@ public class FirStandaloneNormalAnalysisSourceModuleExitPointSnapshotTestGenerat
 
       @Test
       public void testAllFilesPresentInDefiniteJumps() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/definiteJumps"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/definiteJumps"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -235,7 +235,7 @@ public class FirStandaloneNormalAnalysisSourceModuleExitPointSnapshotTestGenerat
 
       @Test
       public void testAllFilesPresentInDifferentTargets() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/differentTargets"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/differentTargets"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -261,7 +261,7 @@ public class FirStandaloneNormalAnalysisSourceModuleExitPointSnapshotTestGenerat
 
       @Test
       public void testAllFilesPresentInExitPointEquivalence() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/exitPointEquivalence"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/exitPointEquivalence"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -335,7 +335,7 @@ public class FirStandaloneNormalAnalysisSourceModuleExitPointSnapshotTestGenerat
 
       @Test
       public void testAllFilesPresentInUnconditionalJumps() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/unconditionalJumps"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/unconditionalJumps"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -380,7 +380,7 @@ public class FirStandaloneNormalAnalysisSourceModuleExitPointSnapshotTestGenerat
 
     @Test
     public void testAllFilesPresentInDefaultValues() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -562,7 +562,7 @@ public class FirStandaloneNormalAnalysisSourceModuleExitPointSnapshotTestGenerat
 
     @Test
     public void testAllFilesPresentInLanguageConstructs() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/languageConstructs"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/languageConstructs"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -624,7 +624,7 @@ public class FirStandaloneNormalAnalysisSourceModuleExitPointSnapshotTestGenerat
 
     @Test
     public void testAllFilesPresentInVariables() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/variables"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test

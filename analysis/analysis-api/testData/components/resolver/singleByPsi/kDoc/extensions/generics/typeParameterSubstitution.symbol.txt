@@ -1,14 +1,23 @@
 <caret_1>:
   KDocName(352,383): 'Container.containerIntExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /containerIntExtension(<extension receiver>: Container<kotlin.Int>): kotlin.Unit
+      ]
 
 <caret_2>:
   KDocName(400,432): 'TContainer.containerIntExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /containerIntExtension(<extension receiver>: Container<kotlin.Int>): kotlin.Unit
+      ]
 
 <caret_3>:
   KDocName(449,492): 'TNumberBoundContainer.containerIntExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /containerIntExtension(<extension receiver>: Container<kotlin.Int>): kotlin.Unit
+      ]
 
 <caret_4>:
   KDocName(509,546): 'NumberContainer.containerIntExtension'
@@ -16,7 +25,10 @@
 
 <caret_5>:
   KDocName(565,599): 'IntContainer.containerIntExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /containerIntExtension(<extension receiver>: Container<kotlin.Int>): kotlin.Unit
+      ]
 
 <caret_6>:
   KDocName(616,653): 'StringContainer.containerIntExtension'
@@ -24,19 +36,31 @@
 
 <caret_7>:
   KDocName(822,861): 'Container.containerFixedNumberExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /containerFixedNumberExtension(<extension receiver>: Container<kotlin.Number>): kotlin.Unit
+      ]
 
 <caret_8>:
   KDocName(878,918): 'TContainer.containerFixedNumberExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /containerFixedNumberExtension(<extension receiver>: Container<kotlin.Number>): kotlin.Unit
+      ]
 
 <caret_9>:
   KDocName(935,986): 'TNumberBoundContainer.containerFixedNumberExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /containerFixedNumberExtension(<extension receiver>: Container<kotlin.Number>): kotlin.Unit
+      ]
 
 <caret_10>:
   KDocName(1003,1048): 'NumberContainer.containerFixedNumberExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /containerFixedNumberExtension(<extension receiver>: Container<kotlin.Number>): kotlin.Unit
+      ]
 
 <caret_11>:
   KDocName(1065,1107): 'IntContainer.containerFixedNumberExtension'
@@ -48,23 +72,38 @@
 
 <caret_13>:
   KDocName(1359,1396): 'Container.containerOutNumberExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /containerOutNumberExtension(<extension receiver>: Container<out kotlin.Number>): kotlin.Unit
+      ]
 
 <caret_14>:
   KDocName(1413,1451): 'TContainer.containerOutNumberExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /containerOutNumberExtension(<extension receiver>: Container<out kotlin.Number>): kotlin.Unit
+      ]
 
 <caret_15>:
   KDocName(1468,1517): 'TNumberBoundContainer.containerOutNumberExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /containerOutNumberExtension(<extension receiver>: Container<out kotlin.Number>): kotlin.Unit
+      ]
 
 <caret_16>:
   KDocName(1534,1577): 'NumberContainer.containerOutNumberExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /containerOutNumberExtension(<extension receiver>: Container<out kotlin.Number>): kotlin.Unit
+      ]
 
 <caret_17>:
   KDocName(1594,1634): 'IntContainer.containerOutNumberExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /containerOutNumberExtension(<extension receiver>: Container<out kotlin.Number>): kotlin.Unit
+      ]
 
 <caret_18>:
   KDocName(1651,1694): 'StringContainer.containerOutNumberExtension'

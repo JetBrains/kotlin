@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileSealedInheritors
 
   @Test
   public void testAllFilesPresentInSealedInheritors() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/inheritorsProvider/sealedInheritors"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

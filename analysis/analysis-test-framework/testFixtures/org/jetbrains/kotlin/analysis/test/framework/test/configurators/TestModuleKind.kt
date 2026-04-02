@@ -20,6 +20,10 @@ import org.jetbrains.kotlin.test.model.TestModule
  */
 enum class TestModuleKind(val suffix: String) {
     /**
+     * The specific test module kind for Kotlin sources.
+     *
+     * **Note**: either [SourceLike] or one of [Source] must be supported by a test framework module factory at the same time.
+     *
      * @see org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtSourceTestModuleFactory
      */
     Source("Source"),
@@ -47,9 +51,22 @@ enum class TestModuleKind(val suffix: String) {
     LibrarySource("LibrarySource"),
 
     /**
+     * The specific test module kind for Kotlin scripts.
+     *
+     * **Note**: either [SourceLike] or one of [ScriptSource] must be supported by a test framework module factory at the same time.
+     *
      * @see org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtScriptTestModuleFactory
      */
     ScriptSource("ScriptSource"),
+
+    /**
+     * The united version of [Source] and [ScriptSource] test modules.
+     *
+     * **Note**: either [SourceLike] or one of [Source]/[ScriptSource] must be supported by a test framework module factory at the same time.
+     *
+     * @see org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtSourceLikeTestModuleFactory
+     */
+    SourceLike("SourceLike"),
 
     /**
      * @see org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtCodeFragmentTestModuleFactory

@@ -121,7 +121,9 @@ object PathUtil {
         get() = if (!pathUtilJar.isFile || !pathUtilJar.name.startsWith(KOTLIN_COMPILER_NAME)) {
             // PathUtil.class is located not in the kotlin-compiler*.jar, so it must be a test and we'll take KotlinPaths from "dist/"
             // (when running tests, PathUtil.class is in its containing module's artifact, i.e. util-{version}.jar)
-            kotlinPathsForDistDirectory
+            // Use "kotlin.dist.path" if set by test infrastructure (via withDist()) to avoid relying on the working directory
+            System.getProperty("kotlin.dist.path")?.let { KotlinPathsFromHomeDir(File(it, HOME_FOLDER_NAME)) }
+                ?: kotlinPathsForDistDirectory
         }
         else KotlinPathsFromHomeDir(compilerPathForCompilerJar)
 

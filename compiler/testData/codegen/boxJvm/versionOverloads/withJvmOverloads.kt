@@ -3,8 +3,6 @@
 // WITH_STDLIB
 @file:OptIn(ExperimentalVersionOverloading::class)
 
-import kotlin.jvm.JvmOverloads
-
 class C {
     @Suppress("CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION", "NON_ASCENDING_VERSION_ANNOTATION")
     @JvmOverloads

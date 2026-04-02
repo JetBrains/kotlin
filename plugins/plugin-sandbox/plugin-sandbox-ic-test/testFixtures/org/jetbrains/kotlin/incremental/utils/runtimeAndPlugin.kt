@@ -15,6 +15,7 @@ private const val PLUGIN_JAR_DIR = "plugins/plugin-sandbox/build/libs/"
 private const val PLUGIN_JAR_NAME = "plugin-sandbox"
 
 fun findAnnotationsRuntimeJar() = findJar(ANNOTATIONS_LIB_DIR, ANNOTATIONS_LIB_NAME, ":plugins:plugin-sandbox:plugin-annotations:jar")
-fun findAnnotationsRuntimeKlib() = findKlib(ANNOTATIONS_LIB_DIR, ANNOTATIONS_LIB_NAME, ":plugins:plugin-sandbox:plugin-annotations:jsJar")
+fun findAnnotationsRuntimeJsKlib() = findKlib(ANNOTATIONS_LIB_DIR, ANNOTATIONS_LIB_NAME, ":plugins:plugin-sandbox:plugin-annotations:jsJar", platform = "js")
+fun findAnnotationsRuntimeWasmKlib() = findKlib(ANNOTATIONS_LIB_DIR, ANNOTATIONS_LIB_NAME, ":plugins:plugin-sandbox:plugin-annotations:wasmJsJar", platform = "wasm-js")
 
 fun findPluginJar() = findJar(PLUGIN_JAR_DIR, PLUGIN_JAR_NAME, ":plugins:plugin-sandbox:jar", isCompilerPlugin = true)

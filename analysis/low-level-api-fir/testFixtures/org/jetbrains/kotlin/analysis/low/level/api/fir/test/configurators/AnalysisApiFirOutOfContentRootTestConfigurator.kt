@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.targetPlatform
 import java.nio.file.Path
 
-abstract class AnalysisApiFirOutOfContentRootTestConfiguratorBase : AnalysisApiFirSourceLikeTestConfigurator(false) {
+abstract class AnalysisApiFirOutOfContentRootTestConfiguratorBase : LLSourceLikeBaseTestConfigurator(false) {
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         super.configureTest(builder, disposable)
 

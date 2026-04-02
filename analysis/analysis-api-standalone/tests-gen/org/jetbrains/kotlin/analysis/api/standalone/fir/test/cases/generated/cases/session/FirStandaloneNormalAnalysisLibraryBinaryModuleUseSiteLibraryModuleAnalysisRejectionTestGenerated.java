@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisLibraryBinaryModuleUseSiteLibraryModuleA
 
   @Test
   public void testAllFilesPresentInAllowUseSiteLibraryModuleAnalysis() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/allowUseSiteLibraryModuleAnalysis"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/sessions/allowUseSiteLibraryModuleAnalysis"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

@@ -111,9 +111,10 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     @Override
     public KProperty0 property0(PropertyReference0 p) {
         KDeclarationContainerImpl container = getOwner(p);
+        String name = p.getName();
         String signature = p.getSignature();
         if (!SystemPropertiesKt.getUseK1Implementation()) {
-            return new LazyKProperty0(() -> {
+            return new LazyKProperty0(name, () -> {
                 MatchResult result = KDeclarationContainerImpl.LOCAL_PROPERTY_SIGNATURE.matchEntire(signature);
                 if (result != null) {
                     List<String> values = result.getGroupValues();
@@ -132,21 +133,22 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                     }
                 }
                 if (container instanceof KPackageImpl) {
-                    KmProperty kmProperty = container.findPropertyMetadata(p.getName(), signature);
+                    KmProperty kmProperty = container.findPropertyMetadata(name, signature);
                     return new KotlinKProperty0(container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY);
                 }
-                return new DescriptorKProperty0(container, p.getName(), signature, p.getBoundReceiver());
+                return new DescriptorKProperty0(container, name, signature, p.getBoundReceiver());
             });
         }
-        return new DescriptorKProperty0(container, p.getName(), signature, p.getBoundReceiver());
+        return new DescriptorKProperty0(container, name, signature, p.getBoundReceiver());
     }
 
     @Override
     public KMutableProperty0 mutableProperty0(MutablePropertyReference0 p) {
         KDeclarationContainerImpl container = getOwner(p);
+        String name = p.getName();
         String signature = p.getSignature();
         if (!SystemPropertiesKt.getUseK1Implementation()) {
-            return new LazyKMutableProperty0(() -> {
+            return new LazyKMutableProperty0(name, () -> {
                 MatchResult result = KDeclarationContainerImpl.LOCAL_PROPERTY_SIGNATURE.matchEntire(signature);
                 if (result != null) {
                     List<String> values = result.getGroupValues();
@@ -159,49 +161,51 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                     }
                 }
                 if (container instanceof KPackageImpl) {
-                    KmProperty kmProperty = container.findPropertyMetadata(p.getName(), signature);
+                    KmProperty kmProperty = container.findPropertyMetadata(name, signature);
                     return new KotlinKMutableProperty0(
                             container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY
                     );
                 }
-                return new DescriptorKMutableProperty0(container, p.getName(), signature, p.getBoundReceiver());
+                return new DescriptorKMutableProperty0(container, name, signature, p.getBoundReceiver());
             });
         }
-        return new DescriptorKMutableProperty0(container, p.getName(), signature, p.getBoundReceiver());
+        return new DescriptorKMutableProperty0(container, name, signature, p.getBoundReceiver());
     }
 
     @Override
     public KProperty1 property1(PropertyReference1 p) {
         KDeclarationContainerImpl container = getOwner(p);
+        String name = p.getName();
         String signature = p.getSignature();
         if (!SystemPropertiesKt.getUseK1Implementation()) {
-            return new LazyKProperty1(() -> {
+            return new LazyKProperty1(name, () -> {
                 if (container instanceof KPackageImpl) {
-                    KmProperty kmProperty = container.findPropertyMetadata(p.getName(), signature);
+                    KmProperty kmProperty = container.findPropertyMetadata(name, signature);
                     return new KotlinKProperty1(container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY);
                 }
-                return new DescriptorKProperty1(container, p.getName(), signature, p.getBoundReceiver());
+                return new DescriptorKProperty1(container, name, signature, p.getBoundReceiver());
             });
         }
-        return new DescriptorKProperty1(container, p.getName(), signature, p.getBoundReceiver());
+        return new DescriptorKProperty1(container, name, signature, p.getBoundReceiver());
     }
 
     @Override
     public KMutableProperty1 mutableProperty1(MutablePropertyReference1 p) {
         KDeclarationContainerImpl container = getOwner(p);
+        String name = p.getName();
         String signature = p.getSignature();
         if (!SystemPropertiesKt.getUseK1Implementation()) {
-            return new LazyKMutableProperty1(() -> {
+            return new LazyKMutableProperty1(name, () -> {
                 if (container instanceof KPackageImpl) {
-                    KmProperty kmProperty = container.findPropertyMetadata(p.getName(), signature);
+                    KmProperty kmProperty = container.findPropertyMetadata(name, signature);
                     return new KotlinKMutableProperty1(
                             container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY
                     );
                 }
-                return new DescriptorKMutableProperty1(container, p.getName(), signature, p.getBoundReceiver());
+                return new DescriptorKMutableProperty1(container, name, signature, p.getBoundReceiver());
             });
         }
-        return new DescriptorKMutableProperty1(container, p.getName(), signature, p.getBoundReceiver());
+        return new DescriptorKMutableProperty1(container, name, signature, p.getBoundReceiver());
     }
 
     @Override

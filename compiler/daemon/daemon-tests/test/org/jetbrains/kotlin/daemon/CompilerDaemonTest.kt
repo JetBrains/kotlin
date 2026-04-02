@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.client.KotlinRemoteReplCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
-import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase.*
-import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.test.util.KtTestUtil.getTestDataFileLocatedInCompilerTestData
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -89,8 +88,8 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             assertEquals("build results differ", AbstractCliTest.removePerfOutput(res1.out), AbstractCliTest.removePerfOutput(res2.out))
     }
 
-    private fun getTestBaseDir(): String = KtTestUtil.getTestDataPathBase() + "/integration/smoke/" + getTestName(true)
-    private fun getHelloAppBaseDir(): String = KtTestUtil.getTestDataPathBase() + "/integration/smoke/helloApp"
+    private fun getTestBaseDir(): File = getTestDataFileLocatedInCompilerTestData("integration/smoke/${getTestName(true)}")
+    private fun getHelloAppBaseDir(): File = getTestDataFileLocatedInCompilerTestData("integration/smoke/helloApp")
 
     private fun run(logName: String, vararg args: String): Int = runJava(getTestBaseDir(), logName, *args)
 

@@ -1,10 +1,16 @@
 <caret_1>:
   KDocName(18,32): 'conPropWarning'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val conPropWarning: kotlin.Int
+      ]
 
 <caret_2>:
   KDocName(48,60): 'conPropError'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val conPropError: kotlin.Int
+      ]
 
 <caret_3>:
   KDocName(76,89): 'conPropHidden'
@@ -12,11 +18,17 @@
 
 <caret_4>:
   KDocName(105,116): 'propWarning'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val propWarning: kotlin.Int
+      ]
 
 <caret_5>:
   KDocName(132,141): 'propError'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val propError: kotlin.Int
+      ]
 
 <caret_6>:
   KDocName(157,167): 'propHidden'

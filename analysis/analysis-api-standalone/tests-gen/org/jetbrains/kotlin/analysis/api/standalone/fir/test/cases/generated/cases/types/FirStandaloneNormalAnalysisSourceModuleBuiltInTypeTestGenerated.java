@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleBuiltInTypeTestGenerated ext
 
   @Test
   public void testAllFilesPresentInBuiltins() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/builtins"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/builtins"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

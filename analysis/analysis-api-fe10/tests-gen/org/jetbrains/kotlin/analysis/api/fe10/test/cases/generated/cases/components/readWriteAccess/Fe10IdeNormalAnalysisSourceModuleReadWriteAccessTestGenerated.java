@@ -48,7 +48,7 @@ public class Fe10IdeNormalAnalysisSourceModuleReadWriteAccessTestGenerated exten
 
   @Test
   public void testAllFilesPresentInReadWriteAccess() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionInfoProvider/readWriteAccess"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionInfoProvider/readWriteAccess"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

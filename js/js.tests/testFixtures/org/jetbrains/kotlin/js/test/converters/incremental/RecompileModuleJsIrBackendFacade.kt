@@ -5,25 +5,25 @@
 
 package org.jetbrains.kotlin.js.test.converters.incremental
 
+import org.jetbrains.kotlin.js.test.converters.ClassicJsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.JsUnifiedIrDeserializerAndLoweringFacade
-import org.jetbrains.kotlin.js.test.converters.ClassicJsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
-import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.model.BackendKinds
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 
 @Suppress("warnings")
 class RecompileModuleJsIrBackendFacade(
     testServices: TestServices
-) : CommonRecompileModuleJsBackendFacade<ClassicFrontendOutputArtifact, IrBackendInput>(testServices, TargetBackend.JS_IR) {
+) : CommonRecompileModuleJsBackendFacade(testServices, TargetBackend.JS_IR) {
     override fun TestConfigurationBuilder.configure(module: TestModule) {
         startingArtifactFactory = {
             testServices.artifactsProvider.getArtifact(module, BackendKinds.IrBackend).also {

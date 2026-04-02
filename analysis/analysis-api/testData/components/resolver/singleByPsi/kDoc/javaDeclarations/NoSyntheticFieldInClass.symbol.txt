@@ -4,8 +4,14 @@
 
 <caret_2>:
   KDocName(44,60): 'Storage.setValue'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /Storage.setValue(<dispatch receiver>: Storage, value: kotlin.String!): kotlin.Unit
+      ]
 
 <caret_3>:
   KDocName(66,78): 'Storage.prop'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /Storage.prop(<dispatch receiver>: Storage): kotlin.Unit
+      ]

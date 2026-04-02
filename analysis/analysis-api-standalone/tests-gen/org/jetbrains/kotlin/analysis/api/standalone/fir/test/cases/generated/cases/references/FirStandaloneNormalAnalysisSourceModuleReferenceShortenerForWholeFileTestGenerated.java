@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerForWholeFi
 
   @Test
   public void testAllFilesPresentInShortenWholeFile() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

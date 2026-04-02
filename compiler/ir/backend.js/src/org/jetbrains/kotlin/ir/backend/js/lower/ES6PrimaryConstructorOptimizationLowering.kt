@@ -46,9 +46,7 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
         val irClass = declaration.parentAsClass
         val defaultConstructor = irClass.findDefaultConstructorForReflection()
 
-        if (irClass.isExported(context)) {
-            irClass.removeConstructorForExport()
-        }
+        irClass.removeInteropConstructor()
 
         val constructorReplacement = declaration.convertToRegularConstructor(irClass)
 
@@ -147,8 +145,8 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
         }
     }
 
-    private fun IrClass.removeConstructorForExport() {
-        declarations.removeIf { it is IrConstructor }
+    private fun IrClass.removeInteropConstructor() {
+        declarations.removeIf { it is IrConstructor && it.origin == ES6_SYNTHETIC_INTEROP_CONSTRUCTOR }
     }
 
     private inline fun <T> Iterable<T>.withoutFirst(predicate: (T) -> Boolean): List<T> {

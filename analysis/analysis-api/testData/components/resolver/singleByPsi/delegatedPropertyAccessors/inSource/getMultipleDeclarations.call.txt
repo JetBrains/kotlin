@@ -1,5 +1,5 @@
 KtPropertyDelegate(12,20): 'by Baz()'
-  KaCallResolutionSuccess:
+  KaDelegatedPropertyCallResolutionAttempt:
     call = KaDelegatedPropertyCall:
       provideDelegateCall = null
       valueGetterCall = KaSimpleFunctionCall:

@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleIsReferenceToTestGenerated e
 
   @Test
   public void testAllFilesPresentInIsReferenceTo() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/references/isReferenceTo"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/references/isReferenceTo"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

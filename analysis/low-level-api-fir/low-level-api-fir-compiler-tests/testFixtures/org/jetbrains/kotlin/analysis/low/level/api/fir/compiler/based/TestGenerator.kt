@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirOutOfContentRootLazyBodiesCalculatorTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractLLSourceAnnotationArgumentsCalculatorTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractLLSourceLikeLazyBodiesCalculatorTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractLLSourceLikeStubBasedResolutionTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.*
 import org.jetbrains.kotlin.generators.dsl.TestGroup
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
@@ -20,28 +23,20 @@ fun main(args: Array<String>) {
     val generatedTestRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(generatedTestRoot, "compiler/fir/raw-fir/psi2fir/testData") {
-            testClass<AbstractFirSourceLazyBodiesCalculatorTest> {
-                model("rawBuilder", pattern = TestGeneratorUtil.KT)
+            testClass<AbstractLLSourceLikeLazyBodiesCalculatorTest> {
+                model("rawBuilder", pattern = KT_OR_KTS)
             }
 
             testClass<AbstractFirOutOfContentRootLazyBodiesCalculatorTest> {
                 model("rawBuilder", pattern = TestGeneratorUtil.KT)
             }
 
-            testClass<AbstractFirScriptLazyBodiesCalculatorTest> {
-                model("rawBuilder", pattern = TestGeneratorUtil.KTS)
-            }
-
             testClass<AbstractLLSourceAnnotationArgumentsCalculatorTest> {
                 model("rawBuilder", pattern = TestGeneratorUtil.KT)
             }
 
-            testClass<AbstractLLSourceStubBasedResolutionTest> {
-                model("rawBuilder", pattern = TestGeneratorUtil.KT)
-            }
-
-            testClass<AbstractLLScriptStubBasedResolutionTest> {
-                model("rawBuilder", pattern = TestGeneratorUtil.KTS)
+            testClass<AbstractLLSourceLikeStubBasedResolutionTest> {
+                model("rawBuilder", pattern = KT_OR_KTS)
             }
         }
 

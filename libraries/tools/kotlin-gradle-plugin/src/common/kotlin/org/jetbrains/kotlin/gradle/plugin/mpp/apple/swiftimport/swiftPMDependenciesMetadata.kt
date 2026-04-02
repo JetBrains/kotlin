@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
-import java.io.Serializable
 
 private const val SWIFTPM_DEPENDENCIES_METADATA_USAGE = "swiftPMDependenciesMetadata"
 
@@ -102,5 +101,5 @@ internal fun Project.registerSwiftPMDependenciesMetadataApiElements(swiftPMDepen
         outgoing.artifact(swiftPMDependenciesMetadata) {
             it.classifier = "swiftpm-metadata"
         }
-    }
+    }.get()
 }

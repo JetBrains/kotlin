@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,14 +10,14 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallResolutionError
-import org.jetbrains.kotlin.analysis.api.resolution.KaSingleOrMultiCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaSingleCall
 
 @KaImplementationDetail
 class KaBaseCallResolutionError(
     private val backedDiagnostic: KaDiagnostic,
-    private val backingCandidateCalls: List<KaSingleOrMultiCall>,
+    private val backingCandidateCalls: List<KaSingleCall<*, *>>,
 ) : KaCallResolutionError {
     override val token: KaLifetimeToken get() = backedDiagnostic.token
     override val diagnostic: KaDiagnostic get() = withValidityAssertion { backedDiagnostic }
-    override val candidateCalls: List<KaSingleOrMultiCall> get() = withValidityAssertion { backingCandidateCalls }
+    override val candidateCalls: List<KaSingleCall<*, *>> get() = withValidityAssertion { backingCandidateCalls }
 }

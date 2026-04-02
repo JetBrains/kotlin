@@ -18,6 +18,7 @@ import org.gradle.kotlin.dsl.newInstance
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.nativeDistribution.asNativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.asProperties
 import org.jetbrains.kotlin.nativeDistribution.llvmDistributionSource
 import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
@@ -41,10 +42,21 @@ open class PlatformManagerProvider @Inject constructor(
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
     @Suppress("unused") // used only by Gradle machinery via reflection.
-    protected val konanProperties = project.nativeProtoDistribution.konanProperties
+    protected val konanProperties = distributionRoot.asNativeDistribution().map { it.konanProperties }
 
     @get:Input
-    val konanPropertiesOverride: Map<String, String> = project.llvmDistributionSource.asProperties
+    val konanPropertiesOverride = distributionRoot.map { root ->
+        val isNativeProtoDistribution = runCatching {
+            root.asFile.canonicalPath == project.nativeProtoDistribution.root.asFile.canonicalPath
+        }.getOrDefault(false)
+        if (isNativeProtoDistribution) {
+            // For proto distribution, we must patch the llvm distribution.
+            project.llvmDistributionSource.asProperties
+        } else {
+            // For any other distribution, we shouldn't change anything.
+            emptyMap()
+        }
+    }
 
     /**
      * [PlatformManager] may depend on the current host, so the current host must be an input
@@ -61,14 +73,15 @@ open class PlatformManagerProvider @Inject constructor(
     protected val konanDataDir = providerFactory.gradleProperty("konan.data.dir")
 
     @get:Internal("dependencies are: konanProperties and konanDataDir")
-    val platformManager = distributionRoot.map {
-        PlatformManager(Distribution(
-                konanHome = it.asFile.absolutePath,
-                onlyDefaultProfiles = true,
-                propertyOverrides = konanPropertiesOverride,
-                konanDataDir = konanDataDir.orNull,
-        ))
-    }
+    val platformManager
+        get() = distributionRoot.zip(konanPropertiesOverride) { root, konanPropertiesOverride ->
+            PlatformManager(Distribution(
+                    konanHome = root.asFile.absolutePath,
+                    onlyDefaultProfiles = true,
+                    propertyOverrides = konanPropertiesOverride,
+                    konanDataDir = konanDataDir.orNull,
+            ))
+        }
 }
 
 fun ObjectFactory.platformManagerProvider(project: Project) = newInstance<PlatformManagerProvider>(project)

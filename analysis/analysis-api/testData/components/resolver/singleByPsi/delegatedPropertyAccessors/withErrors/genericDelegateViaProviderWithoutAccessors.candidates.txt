@@ -1,2 +1,36 @@
 KtPropertyDelegate(328,364): 'by ProvideDelegateHolder("provided")'
-  NO_CANDIDATES
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = ProvideDelegateHolder("provided")
+        isSafeNavigation = false
+        type = myPack.ProvideDelegateHolder
+      signature = KaFunctionSignature:
+        receiverType = myPack.ProvideDelegateHolder
+        returnType = myPack.GenericDelegate<T>
+        symbol = myPack/provideDelegate(<extension receiver>: myPack.ProvideDelegateHolder, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): myPack.GenericDelegate<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = thisRef
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = thisRef: kotlin.Any?
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = property
+            receiverType = null
+            returnType = kotlin.reflect.KProperty<*>
+            symbol = property: kotlin.reflect.KProperty<*>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = myPack/provideDelegate
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): myPack/provideDelegate>
+    isInBestCandidates = true

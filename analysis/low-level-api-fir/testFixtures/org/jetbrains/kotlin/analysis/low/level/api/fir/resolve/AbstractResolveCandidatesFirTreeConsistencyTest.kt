@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCandidatesTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.test.services.TestServices
@@ -29,17 +28,9 @@ abstract class AbstractResolveCandidatesFirTreeConsistencyTest : AbstractResolve
     }
 }
 
-abstract class AbstractSourceResolveCandidatesFirTreeConsistencyTest : AbstractResolveCandidatesFirTreeConsistencyTest() {
+abstract class AbstractSourceLikeResolveCandidatesFirTreeConsistencyTest : AbstractResolveCandidatesFirTreeConsistencyTest() {
     override val configurator: AnalysisApiTestConfigurator =
-        object : AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false) {
-            override val testPrefixes: List<String>
-                get() = super.testPrefixes.patchedChainForConsistencyTests()
-        }
-}
-
-abstract class AbstractScriptResolveCandidatesFirTreeConsistencyTest : AbstractResolveCandidatesFirTreeConsistencyTest() {
-    override val configurator: AnalysisApiTestConfigurator =
-        object : AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false) {
+        object : LLSourceLikeTestConfigurator() {
             override val testPrefixes: List<String>
                 get() = super.testPrefixes.patchedChainForConsistencyTests()
         }

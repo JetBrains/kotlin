@@ -1,0 +1,263 @@
+FILE: bitwiseOperations.kt
+    public final fun <T> R|T|.id(): R|T| {
+        ^id this@R|/id|
+    }
+    public final const [EvaluatedValue=Byte(0)] val zeroValByte: R|kotlin/Byte| = Int(0).R|kotlin/Int.toByte|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(1)] val oneValByte: R|kotlin/Byte| = Int(1).R|kotlin/Int.toByte|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(2)] val twoValByte: R|kotlin/Byte| = Int(2).R|kotlin/Int.toByte|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(3)] val threeValByte: R|kotlin/Byte| = Int(3).R|kotlin/Int.toByte|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(0)] val andByte1: R|kotlin/Byte| = R|/oneValByte|.R|kotlin/experimental/and|(R|/twoValByte|)
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(2)] val andByte2: R|kotlin/Byte| = R|/twoValByte|.R|kotlin/experimental/and|(R|/twoValByte|)
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(2)] val andByte3: R|kotlin/Byte| = R|/threeValByte|.R|kotlin/experimental/and|(R|/twoValByte|)
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(8)] val andByte4: R|kotlin/Byte| = Int(12).R|kotlin/Int.toByte|().R|kotlin/experimental/and|(Int(10).R|kotlin/Int.toByte|())
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(3)] val orByte1: R|kotlin/Byte| = R|/oneValByte|.R|kotlin/experimental/or|(R|/twoValByte|)
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(2)] val orByte2: R|kotlin/Byte| = R|/twoValByte|.R|kotlin/experimental/or|(R|/twoValByte|)
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(3)] val orByte3: R|kotlin/Byte| = R|/threeValByte|.R|kotlin/experimental/or|(R|/twoValByte|)
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(14)] val orByte4: R|kotlin/Byte| = Int(12).R|kotlin/Int.toByte|().R|kotlin/experimental/or|(Int(10).R|kotlin/Int.toByte|())
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(3)] val xorByte1: R|kotlin/Byte| = R|/oneValByte|.R|kotlin/experimental/xor|(R|/twoValByte|)
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(0)] val xorByte2: R|kotlin/Byte| = R|/twoValByte|.R|kotlin/experimental/xor|(R|/twoValByte|)
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(1)] val xorByte3: R|kotlin/Byte| = R|/threeValByte|.R|kotlin/experimental/xor|(R|/twoValByte|)
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(6)] val xorByte4: R|kotlin/Byte| = Int(12).R|kotlin/Int.toByte|().R|kotlin/experimental/xor|(Int(10).R|kotlin/Int.toByte|())
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(-1)] val invByte1: R|kotlin/Byte| = R|/zeroValByte|.R|kotlin/experimental/inv|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(-2)] val invByte2: R|kotlin/Byte| = R|/oneValByte|.R|kotlin/experimental/inv|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(1)] val andOrChainedByte: R|kotlin/Byte| = R|/oneValByte|.R|kotlin/experimental/or|(R|/twoValByte|).R|kotlin/experimental/and|(R|/threeValByte|).R|kotlin/experimental/and|(R|/oneValByte|)
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Short(0)] val zeroValShort: R|kotlin/Short| = Int(0).R|kotlin/Int.toShort|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(1)] val oneValShort: R|kotlin/Short| = Int(1).R|kotlin/Int.toShort|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(2)] val twoValShort: R|kotlin/Short| = Int(2).R|kotlin/Int.toShort|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(3)] val threeValShort: R|kotlin/Short| = Int(3).R|kotlin/Int.toShort|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(0)] val andShort1: R|kotlin/Short| = R|/oneValShort|.R|kotlin/experimental/and|(R|/twoValShort|)
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(2)] val andShort2: R|kotlin/Short| = R|/twoValShort|.R|kotlin/experimental/and|(R|/twoValShort|)
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(2)] val andShort3: R|kotlin/Short| = R|/threeValShort|.R|kotlin/experimental/and|(R|/twoValShort|)
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(8)] val andShort4: R|kotlin/Short| = Int(12).R|kotlin/Int.toShort|().R|kotlin/experimental/and|(Int(10).R|kotlin/Int.toShort|())
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(3)] val orShort1: R|kotlin/Short| = R|/oneValShort|.R|kotlin/experimental/or|(R|/twoValShort|)
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(2)] val orShort2: R|kotlin/Short| = R|/twoValShort|.R|kotlin/experimental/or|(R|/twoValShort|)
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(3)] val orShort3: R|kotlin/Short| = R|/threeValShort|.R|kotlin/experimental/or|(R|/twoValShort|)
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(14)] val orShort4: R|kotlin/Short| = Int(12).R|kotlin/Int.toShort|().R|kotlin/experimental/or|(Int(10).R|kotlin/Int.toShort|())
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(3)] val xorShort1: R|kotlin/Short| = R|/oneValShort|.R|kotlin/experimental/xor|(R|/twoValShort|)
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(0)] val xorShort2: R|kotlin/Short| = R|/twoValShort|.R|kotlin/experimental/xor|(R|/twoValShort|)
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(1)] val xorShort3: R|kotlin/Short| = R|/threeValShort|.R|kotlin/experimental/xor|(R|/twoValShort|)
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(6)] val xorShort4: R|kotlin/Short| = Int(12).R|kotlin/Int.toShort|().R|kotlin/experimental/xor|(Int(10).R|kotlin/Int.toShort|())
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(-1)] val invShort1: R|kotlin/Short| = R|/zeroValShort|.R|kotlin/experimental/inv|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(-2)] val invShort2: R|kotlin/Short| = R|/oneValShort|.R|kotlin/experimental/inv|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(1)] val andOrChainedShort: R|kotlin/Short| = R|/oneValShort|.R|kotlin/experimental/or|(R|/twoValShort|).R|kotlin/experimental/and|(R|/threeValShort|).R|kotlin/experimental/and|(R|/oneValShort|)
+        public get(): R|kotlin/Short|
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|/andByte1|.R|/id|<R|kotlin/Byte|>(), R|/zeroValByte|) ->  {
+                ^box String(Fail andByte1)
+            }
+        }
+
+        when () {
+            !=(R|/andByte2|.R|/id|<R|kotlin/Byte|>(), R|/twoValByte|) ->  {
+                ^box String(Fail andByte2)
+            }
+        }
+
+        when () {
+            !=(R|/andByte3|.R|/id|<R|kotlin/Byte|>(), R|/twoValByte|) ->  {
+                ^box String(Fail andByte3)
+            }
+        }
+
+        when () {
+            !=(R|/andByte4|.R|/id|<R|kotlin/Byte|>(), Int(8).R|kotlin/Int.toByte|()) ->  {
+                ^box String(Fail andByte4)
+            }
+        }
+
+        when () {
+            !=(R|/orByte1|.R|/id|<R|kotlin/Byte|>(), R|/threeValByte|) ->  {
+                ^box String(Fail orByte1)
+            }
+        }
+
+        when () {
+            !=(R|/orByte2|.R|/id|<R|kotlin/Byte|>(), R|/twoValByte|) ->  {
+                ^box String(Fail orByte2)
+            }
+        }
+
+        when () {
+            !=(R|/orByte3|.R|/id|<R|kotlin/Byte|>(), R|/threeValByte|) ->  {
+                ^box String(Fail orByte3)
+            }
+        }
+
+        when () {
+            !=(R|/orByte4|.R|/id|<R|kotlin/Byte|>(), Int(14).R|kotlin/Int.toByte|()) ->  {
+                ^box String(Fail orByte4)
+            }
+        }
+
+        when () {
+            !=(R|/xorByte1|.R|/id|<R|kotlin/Byte|>(), R|/threeValByte|) ->  {
+                ^box String(Fail xorByte1)
+            }
+        }
+
+        when () {
+            !=(R|/xorByte2|.R|/id|<R|kotlin/Byte|>(), R|/zeroValByte|) ->  {
+                ^box String(Fail xorByte2)
+            }
+        }
+
+        when () {
+            !=(R|/xorByte3|.R|/id|<R|kotlin/Byte|>(), R|/oneValByte|) ->  {
+                ^box String(Fail xorByte3)
+            }
+        }
+
+        when () {
+            !=(R|/xorByte4|.R|/id|<R|kotlin/Byte|>(), Int(6).R|kotlin/Int.toByte|()) ->  {
+                ^box String(Fail xorByte4)
+            }
+        }
+
+        when () {
+            !=(R|/invByte1|.R|/id|<R|kotlin/Byte|>(), Int(-1).R|kotlin/Int.toByte|()) ->  {
+                ^box String(Fail invByte1)
+            }
+        }
+
+        when () {
+            !=(R|/invByte2|.R|/id|<R|kotlin/Byte|>(), Int(-2).R|kotlin/Int.toByte|()) ->  {
+                ^box String(Fail invByte2)
+            }
+        }
+
+        when () {
+            !=(R|/andOrChainedByte|.R|/id|<R|kotlin/Byte|>(), Int(1).R|kotlin/Int.toByte|()) ->  {
+                ^box String(Fail andOrChainedByte)
+            }
+        }
+
+        when () {
+            !=(R|/andShort1|.R|/id|<R|kotlin/Short|>(), R|/zeroValShort|) ->  {
+                ^box String(Fail andShort1)
+            }
+        }
+
+        when () {
+            !=(R|/andShort2|.R|/id|<R|kotlin/Short|>(), R|/twoValShort|) ->  {
+                ^box String(Fail andShort2)
+            }
+        }
+
+        when () {
+            !=(R|/andShort3|.R|/id|<R|kotlin/Short|>(), R|/twoValShort|) ->  {
+                ^box String(Fail andShort3)
+            }
+        }
+
+        when () {
+            !=(R|/andShort4|.R|/id|<R|kotlin/Short|>(), Int(8).R|kotlin/Int.toShort|()) ->  {
+                ^box String(Fail andShort4)
+            }
+        }
+
+        when () {
+            !=(R|/orShort1|.R|/id|<R|kotlin/Short|>(), R|/threeValShort|) ->  {
+                ^box String(Fail orShort1)
+            }
+        }
+
+        when () {
+            !=(R|/orShort2|.R|/id|<R|kotlin/Short|>(), R|/twoValShort|) ->  {
+                ^box String(Fail orShort2)
+            }
+        }
+
+        when () {
+            !=(R|/orShort3|.R|/id|<R|kotlin/Short|>(), R|/threeValShort|) ->  {
+                ^box String(Fail orShort3)
+            }
+        }
+
+        when () {
+            !=(R|/orShort4|.R|/id|<R|kotlin/Short|>(), Int(14).R|kotlin/Int.toShort|()) ->  {
+                ^box String(Fail orShort4)
+            }
+        }
+
+        when () {
+            !=(R|/xorShort1|.R|/id|<R|kotlin/Short|>(), R|/threeValShort|) ->  {
+                ^box String(Fail xorShort1)
+            }
+        }
+
+        when () {
+            !=(R|/xorShort2|.R|/id|<R|kotlin/Short|>(), R|/zeroValShort|) ->  {
+                ^box String(Fail xorShort2)
+            }
+        }
+
+        when () {
+            !=(R|/xorShort3|.R|/id|<R|kotlin/Short|>(), R|/oneValShort|) ->  {
+                ^box String(Fail xorShort3)
+            }
+        }
+
+        when () {
+            !=(R|/xorShort4|.R|/id|<R|kotlin/Short|>(), Int(6).R|kotlin/Int.toShort|()) ->  {
+                ^box String(Fail xorShort4)
+            }
+        }
+
+        when () {
+            !=(R|/invShort1|.R|/id|<R|kotlin/Short|>(), Int(-1).R|kotlin/Int.toShort|()) ->  {
+                ^box String(Fail invShort1)
+            }
+        }
+
+        when () {
+            !=(R|/invShort2|.R|/id|<R|kotlin/Short|>(), Int(-2).R|kotlin/Int.toShort|()) ->  {
+                ^box String(Fail invShort2)
+            }
+        }
+
+        when () {
+            !=(R|/andOrChainedShort|.R|/id|<R|kotlin/Short|>(), Int(1).R|kotlin/Int.toShort|()) ->  {
+                ^box String(Fail andOrChainedShort)
+            }
+        }
+
+        ^box String(OK)
+    }

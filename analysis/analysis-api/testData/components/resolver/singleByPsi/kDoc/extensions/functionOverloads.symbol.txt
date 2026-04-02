@@ -1,15 +1,29 @@
 <caret_1>:
   KDocName(113,126): 'test.function'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        test/function(<extension receiver>: kotlin.Any): kotlin.Unit,
+        test/function(<extension receiver>: test.Base, i: kotlin.Int): kotlin.Unit
+      ]
 
 <caret_2>:
   KDocName(132,140): 'function'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        test/function(<extension receiver>: kotlin.Any): kotlin.Unit,
+        test/function(<extension receiver>: test.Base, i: kotlin.Int): kotlin.Unit
+      ]
 
 <caret_3>:
   KDocName(150,163): 'Base.function'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        test/Base.function(<dispatch receiver>: test.Base): kotlin.Unit
+      ]
 
 <caret_4>:
   KDocName(169,187): 'test.Base.function'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        test/Base.function(<dispatch receiver>: test.Base): kotlin.Unit
+      ]

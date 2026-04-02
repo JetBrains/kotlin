@@ -49,7 +49,7 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
 
   @Test
   public void testAllFilesPresentInAllByPsi() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test
@@ -326,7 +326,7 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
 
     @Test
     public void testAllFilesPresentInContextSensitiveResolution() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Nested
@@ -339,7 +339,7 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
 
       @Test
       public void testAllFilesPresentInAmbiguity() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/ambiguity"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/ambiguity"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -377,7 +377,7 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
 
       @Test
       public void testAllFilesPresentInCallArgumentPosition() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -571,7 +571,7 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
 
       @Test
       public void testAllFilesPresentInNestedInheritors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/nestedInheritors"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/nestedInheritors"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -615,7 +615,7 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
 
       @Test
       public void testAllFilesPresentInOtherExpectedTypePositions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -767,7 +767,7 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
 
       @Test
       public void testAllFilesPresentInTypePosition() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -907,7 +907,7 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
 
       @Test
       public void testAllFilesPresentInUnqualifiedEnum() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/unqualifiedEnum"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/unqualifiedEnum"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -970,7 +970,7 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
 
     @Test
     public void testAllFilesPresentInDestructuring() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/destructuring"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/destructuring"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -1032,7 +1032,7 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
 
     @Test
     public void testAllFilesPresentInImports() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/imports"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/imports"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -1100,7 +1100,7 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
 
     @Test
     public void testAllFilesPresentInOperators() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/operators"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/operators"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -1168,7 +1168,7 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
 
     @Test
     public void testAllFilesPresentInTypeAlias() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/typeAlias"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/typeAlias"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -1194,7 +1194,7 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
 
     @Test
     public void testAllFilesPresentInWithErrors() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -1213,7 +1213,7 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
 
       @Test
       public void testAllFilesPresentInPartiallyUnresolvedTypeQualifier() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors/partiallyUnresolvedTypeQualifier"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors/partiallyUnresolvedTypeQualifier"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test

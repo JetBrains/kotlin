@@ -125,6 +125,15 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     }
 
     @Test
+    fun `test - multiple klibs in library with atomicfu`() {
+        doTest(
+            dependenciesDir.resolve("multipleKlibsInLibraryWithAtomicfu"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOf(testLibraryAtomicFu)
+            )
+        )
+    }
+
+    @Test
     fun `test - propertyAnnotation`() {
         doTest(
             dependenciesDir.resolve("propertyAnnotation"), configuration = HeaderGenerator.Configuration(
@@ -148,7 +157,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
             dependenciesDir.resolve("notExportedDependency"), configuration = HeaderGenerator.Configuration(
                 frameworkName = "MyApp",
                 withObjCBaseDeclarationStubs = true,
-                dependencies = listOf(testLibraryAKlibFile, testLibraryBKlibFile),
+                dependencies = listOf(testLibraryA, testLibraryB),
             )
         )
     }
@@ -168,8 +177,8 @@ class ObjCExportDependenciesHeaderGeneratorTest(
             dependenciesDir.resolve("exportedAndNotExportedDependency"), configuration = HeaderGenerator.Configuration(
                 frameworkName = "MyApp",
                 withObjCBaseDeclarationStubs = true,
-                dependencies = listOf(testLibraryAKlibFile, testLibraryBKlibFile),
-                exportedDependencies = setOf(testLibraryAKlibFile)
+                dependencies = listOf(testLibraryA, testLibraryB),
+                exportedDependencies = setOf(testLibraryA)
             )
         )
     }
@@ -187,8 +196,8 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     fun `test - testInternalLibrary`() {
         doTest(
             dependenciesDir.resolve("testInternalLibrary"), configuration = HeaderGenerator.Configuration(
-                dependencies = listOfNotNull(testInternalKlibFile),
-                exportedDependencies = setOf(testInternalKlibFile)
+                dependencies = listOfNotNull(testInternalLibrary),
+                exportedDependencies = setOf(testInternalLibrary)
             )
         )
     }
@@ -197,8 +206,8 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     fun `test - extensions library`() {
         doTest(
             dependenciesDir.resolve("extensionsLibrary"), configuration = HeaderGenerator.Configuration(
-                dependencies = listOfNotNull(testExtensionsKlibFile),
-                exportedDependencies = setOf(testExtensionsKlibFile)
+                dependencies = listOfNotNull(testExtensionsLibrary),
+                exportedDependencies = setOf(testExtensionsLibrary)
             )
         )
     }
@@ -235,7 +244,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     fun `test - top level function and extension with the same dependency doesn't generate duplicate`() {
         doTest(
             dependenciesDir.resolve("topLevelFunctionAndExtensionWithDependency"), configuration = HeaderGenerator.Configuration(
-                dependencies = listOfNotNull(testExtensionsKlibFile)
+                dependencies = listOfNotNull(testExtensionsLibrary)
             )
         )
     }
@@ -245,8 +254,8 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         doTest(
             dependenciesDir.resolve("oneTypeExtensionsFromMultipleFilesMergedIntoTheSameCategory"),
             configuration = HeaderGenerator.Configuration(
-                dependencies = listOfNotNull(testExtensionsKlibFile),
-                exportedDependencies = setOf(testExtensionsKlibFile)
+                dependencies = listOfNotNull(testExtensionsLibrary),
+                exportedDependencies = setOf(testExtensionsLibrary)
             )
         )
     }
@@ -270,8 +279,8 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     fun `test - class name mangling`() {
         doTest(
             dependenciesDir.resolve("classNameMangling"), configuration = HeaderGenerator.Configuration(
-                dependencies = listOf(testLibraryCKlibFile),
-                exportedDependencies = setOf(testLibraryCKlibFile),
+                dependencies = listOf(testLibraryC),
+                exportedDependencies = setOf(testLibraryC),
             )
         )
     }

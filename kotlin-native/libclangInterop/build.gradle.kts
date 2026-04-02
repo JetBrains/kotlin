@@ -17,7 +17,8 @@ dependencies {
 
 nativeInteropPlugin {
     defFileName.set("clang.def")
-    usePrebuiltSources.set(true)
+    usePrebuiltSources.set(false)
+    useBootstrapNativeDistribution.set(true)
     commonCompilerArgs.set(emptyList<String>())
     cCompilerArgs.set(listOf("-std=c99"))
     cppCompilerArgs.set(listOf("-std=c++11"))

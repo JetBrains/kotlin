@@ -236,8 +236,8 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
     // related to https://github.com/JetBrains/kotlin/pull/4189
     public void testPathNameDoesNotNameAParent() throws Exception {
         String jar = "hello.jar";
-        String workingDirectory = tmpdir.getAbsolutePath();
-        Files.write(Paths.get(workingDirectory + "/Hello.kt"), "class Hello".getBytes());
+        File workingDirectory = tmpdir;
+        Files.write(Paths.get(workingDirectory.getAbsolutePath() + "/Hello.kt"), "class Hello".getBytes());
 
         Collection<String> javaArgs = new ArrayList<>();
         javaArgs.add("-cp");

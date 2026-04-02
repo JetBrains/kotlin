@@ -453,6 +453,7 @@ configurations {
     }
 
     val jvmMainApi by getting
+    val metadataCompilationApi by configurations.getting
     val nativeApiElements by creating
     for (artifactName in listOf("kotlin-test-common", "kotlin-test-annotations-common")) {
         dependencies {
@@ -461,7 +462,7 @@ configurations {
                 // there is no dependency anymore from kotlin-test to kotlin-test-common and -annotations-common,
                 // but use this constraint to align it if another library brings it transitively
                 jvmMainApi(artifactCoordinates)
-                metadataApiElements(artifactCoordinates)
+                metadataCompilationApi(artifactCoordinates)
                 nativeApiElements(artifactCoordinates)
             }
         }

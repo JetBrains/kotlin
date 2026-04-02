@@ -76,6 +76,7 @@ antlr = "4.13.2"
 org-tukaani-xz = "1.10"
 slf4j = "2.0.17"
 maven-xml-impl = "4.0.0-beta-5"
+yarn = "1.22.22"
 
 [libraries]
 kotlin-compiler-arguments-release = { module = "org.jetbrains.kotlin:kotlin-compiler-arguments-description", version.ref = "kotlin-release" }

@@ -95,7 +95,8 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryC
             ),
             TestCompilationArtifact.Executable(buildDir(testName).resolve("swiftTestExecutable")),
             swiftExtraOpts,
-            outputFile = { executable -> executable.executableFile }
+            outputFile = { executable -> executable.executableFile },
+            minOSVersion = minOSVersion,
         ).result.assertSuccess()
         return TestExecutable(
             success.resultingArtifact,

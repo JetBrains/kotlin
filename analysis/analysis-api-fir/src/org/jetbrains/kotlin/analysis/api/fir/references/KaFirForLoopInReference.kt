@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.references
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.fir.getResolvedSymbolOfNameReference
+import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -15,31 +17,22 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.idea.references.KtForLoopInReference
+import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import kotlin.collections.orEmpty
 
 @OptIn(KtImplementationDetail::class)
 internal class KaFirForLoopInReference(expression: KtForExpression) : KtForLoopInReference(expression), KaFirReference {
-    override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
-        val firLoop = expression.getOrBuildFirSafe<FirWhileLoop>(resolutionFacade) ?: return emptyList()
-        val condition = firLoop.condition as? FirFunctionCall
-        val iterator = this@KaFirForLoopInReference.run {
-            val callee = (condition?.explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference
-            (callee?.getResolvedSymbolOfNameReference()?.fir as? FirProperty)?.getInitializerFunctionCall()
-        }
-        val hasNext = condition?.calleeReference?.getResolvedSymbolOfNameReference()
-        val next = (firLoop.block.statements.firstOrNull() as? FirProperty?)?.getInitializerFunctionCall()
-        return listOfNotNull(
-            iterator?.fir?.buildSymbol(firSymbolBuilder),
-            hasNext?.fir?.buildSymbol(firSymbolBuilder),
-            next?.fir?.buildSymbol(firSymbolBuilder),
-        )
-    }
+    @OptIn(KtExperimentalApi::class)
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = tryResolveSymbols()?.symbols.orEmpty()
 
-    private fun FirProperty.getInitializerFunctionCall() =
-        (initializer as? FirFunctionCall)?.calleeReference?.getResolvedSymbolOfNameReference()
+    override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
+        shouldNotBeCalled("Only resolveToSymbols is supposed to be used directly")
+    }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
         return super<KaFirReference>.isReferenceToImportAlias(alias)

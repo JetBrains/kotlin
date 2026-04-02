@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -108,6 +108,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                 val parent = function.parent
                 val realOverrideTarget = function.realOverrideTargetOrNull
                 val isStatic = function.isStaticMethod
+                val inlineClassesShouldBeUnboxed = function.isExternal
                 val isExportedDefaultImplementation = function.isExportedDefaultImplementation
                 val isInnerClassMember = parent is IrClass && parent.isInner
                 if (isStatic && isInnerClassMember && !isFactoryPropertyForInnerClass) {
@@ -122,7 +123,12 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                             ?.getJsSymbolForOverriddenDeclaration()
                             ?.let(ExportedMemberName::WellKnownSymbol)
                         ?: ExportedMemberName.Identifier(function.getExportedIdentifier()),
-                    returnType = specializedType ?: exportType(function.returnType, functionTypeParameterScope, function),
+                    returnType = specializedType ?: exportType(
+                        function.returnType,
+                        functionTypeParameterScope,
+                        function,
+                        inlineClassesShouldBeUnboxed = inlineClassesShouldBeUnboxed
+                    ),
                     typeParameters = function.typeParameters.map { functionTypeParameterScope[it.symbol]!! },
                     isMember = parent is IrClass && !isExportedDefaultImplementation,
                     isStatic = isStatic && !isFactoryPropertyForInnerClass && !isExportedDefaultImplementation,
@@ -139,6 +145,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                                 it,
                                 it.hasDefaultValue || realOverrideTarget?.parameters?.get(it.indexInParameters)?.hasDefaultValue == true,
                                 functionTypeParameterScope,
+                                inlineClassesShouldBeUnboxed
                             )
                         }
                 )
@@ -153,6 +160,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
     ): ExportedConstructor? {
         if (!constructor.isPrimary) return null
         val constructedClass = constructor.constructedClass
+        val inlineClassesShouldBeUnboxed = constructor.isExternal
         val visibility = when {
             constructedClass.isInner && !isFactoryPropertyForInnerClass -> when (constructedClass.modality) {
                 // Inner classes should be constructed as `new outerClassValue.Inner()`
@@ -173,7 +181,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         } else {
             constructor.nonDispatchParameters
                 .filterNot { it.isBoxParameter }
-                .memoryOptimizedMap { exportParameter(it, it.hasDefaultValue, typeParameterScope) }
+                .memoryOptimizedMap { exportParameter(it, it.hasDefaultValue, typeParameterScope, inlineClassesShouldBeUnboxed) }
         }
         return ExportedConstructor(
             parameters = parameters,
@@ -185,6 +193,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         parameter: IrValueParameter,
         hasDefaultValue: Boolean,
         typeParameterScope: TypeParameterScope,
+        inlineClassesShouldBeUnboxed: Boolean
     ): ExportedParameter {
         // Parameter names do not matter in d.ts files. They can be renamed as we like
         var parameterName = makeValidES5Identifier(parameter.name.asString(), withHash = false)
@@ -193,7 +202,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
 
         return ExportedParameter(
             parameterName,
-            exportType(parameter.type, typeParameterScope, parameter),
+            exportType(parameter.type, typeParameterScope, parameter, inlineClassesShouldBeUnboxed = inlineClassesShouldBeUnboxed),
             hasDefaultValue
         )
     }
@@ -231,6 +240,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                 property.getter?.returnType?.isNullable() == true
 
         val isStatic = property.isStaticProperty
+        val inlineClassesShouldBeUnboxed = property.isExternal
         val isExportedDefaultImplementation = property.isExportedDefaultImplementation
         if (isStatic && property.parentClassOrNull?.isInner == true && !isFactoryPropertyForInnerClass) {
             // Static members of inner classes should only be generated in the corresponding factory property of the outer class
@@ -257,7 +267,12 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                                 ?.copy(isMember = true),
                         ))
                 }
-            } ?: exportType(property.getter!!.returnType, classTypeParameterScope, property)
+            } ?: exportType(
+                property.getter!!.returnType,
+                classTypeParameterScope,
+                property,
+                inlineClassesShouldBeUnboxed = inlineClassesShouldBeUnboxed
+            )
 
         val isAbstract = parentClass?.isInterface == false && property.modality == Modality.ABSTRACT
         val isProtected = property.visibility == DescriptorVisibilities.PROTECTED
@@ -928,6 +943,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         typeParameterScope: TypeParameterScope,
         typeOwner: IrDeclaration? = null,
         shouldCalculateExportedSupertypeForImplicit: Boolean = true,
+        inlineClassesShouldBeUnboxed: Boolean = false,
     ): ExportedType {
         if (type is IrDynamicType || type in currentlyProcessedTypes)
             return ExportedType.Primitive.Any
@@ -992,41 +1008,56 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                 ?: error("Type parameter '${classifier.owner.render()}' is not in scope")
 
             classifier is IrClassSymbol -> {
-                val klass = classifier.owner
-                val isExported = klass.isExportedImplicitlyOrExplicitly(context)
-                val isImplicitlyExported = !isExported && !klass.isExternal
-                val isNonExportedExternal = klass.isExternal && !isExported
-                val name = klass.getFqNameWithJsNameWhenAvailable(
-                    shouldIncludePackage = !isNonExportedExternal && !isEsModules,
-                    isEsModules = isEsModules,
-                ).asString()
+                if (inlineClassesShouldBeUnboxed && !isMarkedNullable && classifier.owner.isSingleFieldValueClass) {
+                    val underlyingType = context.inlineClassesUtils.getInlineClassUnderlyingType(classifier.owner)
+                    val substitutedType = underlyingType.substitute(
+                        classifier.owner.typeParameters,
+                        type.arguments.map { it.typeOrNull ?: context.dynamicType }
+                    )
+                    exportType(
+                        substitutedType,
+                        typeParameterScope,
+                        typeOwner,
+                        shouldCalculateExportedSupertypeForImplicit,
+                        underlyingType.classOrNull?.owner?.isSingleFieldValueClass == true
+                    )
+                } else {
+                    val klass = classifier.owner
+                    val isExported = klass.isExportedImplicitlyOrExplicitly(context)
+                    val isImplicitlyExported = !isExported && !klass.isExternal
+                    val isNonExportedExternal = klass.isExternal && !isExported
+                    val name = klass.getFqNameWithJsNameWhenAvailable(
+                        shouldIncludePackage = !isNonExportedExternal && !isEsModules,
+                        isEsModules = isEsModules,
+                    ).asString()
 
-                val exportedSupertype = runIf(shouldCalculateExportedSupertypeForImplicit && isImplicitlyExported) {
-                    val transitiveExportedType = nonNullType.collectSuperTransitiveHierarchy()
-                    if (transitiveExportedType.isEmpty()) return@runIf null
-                    transitiveExportedType
-                        .memoryOptimizedMap { exportType(it, typeParameterScope, typeOwner) }
-                        .reduce(ExportedType::IntersectionType)
-                } ?: ExportedType.Primitive.Any
+                    val exportedSupertype = runIf(shouldCalculateExportedSupertypeForImplicit && isImplicitlyExported) {
+                        val transitiveExportedType = nonNullType.collectSuperTransitiveHierarchy()
+                        if (transitiveExportedType.isEmpty()) return@runIf null
+                        transitiveExportedType
+                            .memoryOptimizedMap { exportType(it, typeParameterScope, typeOwner) }
+                            .reduce(ExportedType::IntersectionType)
+                    } ?: ExportedType.Primitive.Any
 
-                val classType = ExportedType.ClassType(
-                    name = name,
-                    arguments = type.arguments.memoryOptimizedMap { exportTypeArgument(it, typeOwner, typeParameterScope) },
-                    classId = klass.classId,
-                )
+                    val classType = ExportedType.ClassType(
+                        name = name,
+                        arguments = type.arguments.memoryOptimizedMap { exportTypeArgument(it, typeOwner, typeParameterScope) },
+                        classId = klass.classId,
+                    )
 
-                when (klass.kind) {
-                    ClassKind.ANNOTATION_CLASS,
-                    ClassKind.ENUM_ENTRY,
-                        -> ExportedType.ErrorType("Class $name with kind: ${klass.kind}")
+                    when (klass.kind) {
+                        ClassKind.ANNOTATION_CLASS,
+                        ClassKind.ENUM_ENTRY,
+                            -> ExportedType.ErrorType("Class $name with kind: ${klass.kind}")
 
-                    ClassKind.OBJECT -> ExportedType.TypeOf(classType)
+                        ClassKind.OBJECT -> ExportedType.TypeOf(classType)
 
-                    ClassKind.CLASS,
-                    ClassKind.ENUM_CLASS,
-                    ClassKind.INTERFACE,
-                        -> classType
-                }.withImplicitlyExported(isImplicitlyExported, exportedSupertype)
+                        ClassKind.CLASS,
+                        ClassKind.ENUM_CLASS,
+                        ClassKind.INTERFACE,
+                            -> classType
+                    }.withImplicitlyExported(isImplicitlyExported, exportedSupertype)
+                }
             }
 
             else -> irError("Unexpected classifier") {

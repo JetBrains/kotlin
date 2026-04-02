@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.testLibraryAKlibFile
-import org.jetbrains.kotlin.konan.test.testLibraryKotlinxSerializationCore
+import org.jetbrains.kotlin.konan.test.testLibraryKotlinxSerializationCoreKlibFile
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.runSwiftExport
@@ -49,7 +49,7 @@ class ExternalProjectGenerationTests : AbstractSwiftExportWithBinaryCompilationT
     @Test
     fun `kotlinx-serialization-core`() {
         val klibSettings = KlibExportSettings(
-            testLibraryKotlinxSerializationCore,
+            testLibraryKotlinxSerializationCoreKlibFile,
             targets.testTarget,
             "KotlinSerialization",
             "kotlinx.serialization",

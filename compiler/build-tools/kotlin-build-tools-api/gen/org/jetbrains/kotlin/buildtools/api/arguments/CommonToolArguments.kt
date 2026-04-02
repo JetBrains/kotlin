@@ -5,6 +5,7 @@ package org.jetbrains.kotlin.buildtools.api.arguments
 
 import kotlin.Boolean
 import kotlin.Deprecated
+import kotlin.DeprecationLevel
 import kotlin.String
 import kotlin.collections.List
 import kotlin.jvm.JvmField
@@ -21,6 +22,8 @@ public interface CommonToolArguments {
 
   /**
    * Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
+   *
+   * @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when the `arguments` contain errors and cannot be parsed
    *
    * @param arguments a list of arguments for the Kotlin CLI compiler
    */
@@ -48,6 +51,10 @@ public interface CommonToolArguments {
    *
    * @return true if the option has a value set, false otherwise
    */
+  @Deprecated(
+    message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
+    level = DeprecationLevel.WARNING,
+  )
   public operator fun contains(key: CommonToolArgument<*>): Boolean
 
   /**
@@ -87,10 +94,16 @@ public interface CommonToolArguments {
      *
      * @return true if the option has a value set, false otherwise
      */
+    @Deprecated(
+      message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
+      level = DeprecationLevel.WARNING,
+    )
     public operator fun contains(key: CommonToolArgument<*>): Boolean
 
     /**
      * Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
+     *
+     * @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when the `arguments` contain errors and cannot be parsed
      *
      * @param arguments a list of arguments for the Kotlin CLI compiler
      */

@@ -1,4 +1,12 @@
 KtPropertyDelegate(429,465): 'by ProvideDelegateHolder("provided")'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'setValue'.>
+  KaCompoundSymbolResolutionError:
+    attempts = [
+      KaSymbolResolutionSuccess:
+        symbols = [
+          myPack/GenericDelegate.getValue(<dispatch receiver>: myPack.GenericDelegate<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T,
+          myPack/provideDelegate(<extension receiver>: myPack.ProvideDelegateHolder, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): myPack.GenericDelegate<T>
+        ],
+      KaSymbolResolutionError:
+        candidateSymbols = []
+        diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'setValue'.>
+    ]

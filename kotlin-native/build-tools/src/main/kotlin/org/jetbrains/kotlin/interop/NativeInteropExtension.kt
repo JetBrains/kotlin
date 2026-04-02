@@ -11,6 +11,7 @@ import org.gradle.api.provider.Property
 abstract class NativeInteropExtension {
     abstract val defFileName: Property<String>
     abstract val usePrebuiltSources: Property<Boolean>
+    abstract val useBootstrapNativeDistribution: Property<Boolean>
     abstract val commonCompilerArgs: ListProperty<String>
     abstract val cCompilerArgs: ListProperty<String>
     abstract val cppCompilerArgs: ListProperty<String>

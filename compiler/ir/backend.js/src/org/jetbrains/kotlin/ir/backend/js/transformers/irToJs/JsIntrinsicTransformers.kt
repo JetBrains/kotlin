@@ -22,12 +22,14 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
+import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
+import org.jetbrains.kotlin.ir.util.isThrowable
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
-import org.jetbrains.kotlin.js.config.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 private typealias IrCallTransformer<T> = (T, context: JsGenerationContext) -> JsExpression
@@ -116,15 +118,6 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val classToCreate = call.typeArguments[0]!!.classifierOrFail.owner as IrClass
                 val className = classToCreate.getClassRef(context.staticContext)
                 objectCreate(prototypeOf(className, context.staticContext), context.staticContext)
-            }
-
-            add(symbols.jsClass) { call, context ->
-                val typeArgument = call.typeArguments[0]
-                typeArgument?.getClassRef(context.staticContext)
-                    ?: compilationException(
-                        "Type argument of jsClass must be statically known class",
-                        typeArgument
-                    )
             }
 
             add(symbols.jsNewTarget) { _, _ ->
@@ -362,6 +355,36 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                     JsStringLiteral(signatureString.value as String)
                 } else {
                     JsIntLiteral(backendContext.signaturesPool.getSignatureId(signatureString.value as String))
+                }
+            }
+
+            add(symbols.jsClass) { call, context ->
+                val typeArgument =
+                    call.typeArguments[0]?.type ?: compilationException("Type argument of jsClass must be statically known class", call)
+
+                when {
+                    typeArgument.isAny() -> JsNameRef("Object")
+                    typeArgument.isBoolean() -> JsNameRef("Boolean")
+                    typeArgument.isLong() && backendContext.configuration.compileLongAsBigint -> JsNameRef("BigInt")
+                    typeArgument.isArray() ||
+                            typeArgument.isBooleanArray() -> JsNameRef("Array")
+                    typeArgument.isString() -> JsNameRef("String")
+                    typeArgument.isThrowable() -> JsNameRef("Error")
+                    typeArgument.isCharArray() -> JsNameRef("Uint16Array")
+                    typeArgument.isByteArray() -> JsNameRef("Int8Array")
+                    typeArgument.isShortArray() -> JsNameRef("Int16Array")
+                    typeArgument.isIntArray() -> JsNameRef("Int32Array")
+                    typeArgument.isFloatArray() -> JsNameRef("Float32Array")
+                    typeArgument.isDoubleArray() -> JsNameRef("Float64Array")
+                    typeArgument.isLongArray() -> if (backendContext.configuration.compileLongAsBigint) JsNameRef("BigInt64Array") else JsNameRef("Array")
+                    typeArgument.isNumber() ||
+                            typeArgument.isByte() ||
+                            typeArgument.isShort() ||
+                            typeArgument.isInt() ||
+                            typeArgument.isFloat() ||
+                            typeArgument.isDouble() -> JsNameRef("Number")
+                    typeArgument.isFunctionOrKFunction() -> JsNameRef("Function")
+                    else -> typeArgument.getClassRef(context.staticContext)
                 }
             }
         }

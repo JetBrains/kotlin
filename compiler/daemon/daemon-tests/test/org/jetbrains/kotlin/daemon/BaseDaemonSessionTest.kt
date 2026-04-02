@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.daemon.common.DaemonJVMOptions
 import org.jetbrains.kotlin.daemon.common.DaemonOptions
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
-import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.test.util.KtTestUtil.getTestDataFileLocatedInCompilerTestData
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.io.TempDir
@@ -63,7 +63,7 @@ abstract class BaseDaemonSessionTest {
         Thread.sleep(500) // wait a bit so that all the daemons are shut down
     }
 
-    fun getHelloAppBaseDir(): String = KtTestUtil.getTestDataPathBase() + "/integration/smoke/helloApp"
+    fun getHelloAppBaseDir(): File = getTestDataFileLocatedInCompilerTestData("integration/smoke/helloApp")
 
     private fun DaemonJVMOptions.withLogFile(logFile: File) = copy(
         jvmParams = (jvmParams + "D${CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.property}=\"${logFile.loggerCompatiblePath}\"").toMutableList()

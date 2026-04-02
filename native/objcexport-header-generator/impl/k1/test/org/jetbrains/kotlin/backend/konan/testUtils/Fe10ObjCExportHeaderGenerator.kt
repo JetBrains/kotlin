@@ -72,7 +72,8 @@ class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenera
         val environment: KotlinCoreEnvironment = createKotlinCoreEnvironment(disposable)
 
         val kotlinFiles = root.walkTopDown().filter { it.isFile }.filter { it.extension == "kt" }.toList()
-        val moduleDescriptors = setOf(createModuleDescriptor(environment, kotlinFiles, configuration.dependencies))
+        val dependencyKlibs = configuration.dependencies.flatMap { it.klibs }
+        val moduleDescriptors = setOf(createModuleDescriptor(environment, kotlinFiles, dependencyKlibs))
 
         // Parse objc-entry-points file if present
         val entryPoints = File(root, "objc-entry-points")
@@ -92,12 +93,15 @@ class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenera
             entryPoints = entryPoints,
         )
 
+        // The implementation expects cinterop klibs to be filtered out from the exported modules:
+        val exportedKlibs = configuration.exportedDependencies.map { it.mainKlib }.toSet()
+
         val exportedModuleDescriptors = moduleDescriptors + moduleDescriptors
             .closure<ModuleDescriptor> { it.allDependencyModules }
             .filter { descriptor ->
                 val origin = descriptor.getCapability(KlibModuleOrigin.CAPABILITY) ?: return@filter true
                 origin is DeserializedKlibModuleOrigin &&
-                        origin.library.libraryFile.javaFile().toPath() in configuration.exportedDependencies
+                    origin.library.libraryFile.javaFile().toPath() in exportedKlibs
             }
 
         val namer = ObjCExportNamerImpl(

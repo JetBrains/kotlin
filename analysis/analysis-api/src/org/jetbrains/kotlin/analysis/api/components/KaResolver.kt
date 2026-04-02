@@ -561,6 +561,30 @@ public interface KaResolver : KaSessionComponent {
     public fun KtResolvableCall.tryResolveCall(): KaCallResolutionAttempt?
 
     /**
+     * Attempts to resolve the given [KtForExpression] to a [KaForLoopCallResolutionAttempt] containing the individual
+     * resolution results for each desugared operator call (`iterator`, `hasNext`, `next`).
+     *
+     * This is a specialized counterpart of [KtResolvableCall.tryResolveCall] focused specifically on `for` loops.
+     *
+     * @see KtForExpression.resolveCall
+     * @see KtResolvableCall.tryResolveCall
+     */
+    @KaExperimentalApi
+    public fun KtForExpression.tryResolveCall(): KaForLoopCallResolutionAttempt?
+
+    /**
+     * Attempts to resolve the given [KtPropertyDelegate] to a [KaDelegatedPropertyCallResolutionAttempt] containing the individual
+     * resolution results for each desugared operator call (`getValue`, `setValue`, `provideDelegate`).
+     *
+     * This is a specialized counterpart of [KtResolvableCall.tryResolveCall] focused specifically on delegated properties.
+     *
+     * @see KtPropertyDelegate.resolveCall
+     * @see KtResolvableCall.tryResolveCall
+     */
+    @KaExperimentalApi
+    public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutionAttempt?
+
+    /**
      * Resolves the call for the given [KtResolvableCall].
      *
      * ### Usage Example:
@@ -1771,6 +1795,44 @@ public fun KtInstanceExpressionWithLabel.resolveSymbol(): KaDeclarationSymbol? {
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtResolvableCall.tryResolveCall(): KaCallResolutionAttempt? {
+    return with(session) {
+        tryResolveCall()
+    }
+}
+
+/**
+ * Attempts to resolve the given [KtForExpression] to a [KaForLoopCallResolutionAttempt] containing the individual
+ * resolution results for each desugared operator call (`iterator`, `hasNext`, `next`).
+ *
+ * This is a specialized counterpart of [KtResolvableCall.tryResolveCall] focused specifically on `for` loops.
+ *
+ * @see KtForExpression.resolveCall
+ * @see KtResolvableCall.tryResolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public fun KtForExpression.tryResolveCall(): KaForLoopCallResolutionAttempt? {
+    return with(session) {
+        tryResolveCall()
+    }
+}
+
+/**
+ * Attempts to resolve the given [KtPropertyDelegate] to a [KaDelegatedPropertyCallResolutionAttempt] containing the individual
+ * resolution results for each desugared operator call (`getValue`, `setValue`, `provideDelegate`).
+ *
+ * This is a specialized counterpart of [KtResolvableCall.tryResolveCall] focused specifically on delegated properties.
+ *
+ * @see KtPropertyDelegate.resolveCall
+ * @see KtResolvableCall.tryResolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutionAttempt? {
     return with(session) {
         tryResolveCall()
     }

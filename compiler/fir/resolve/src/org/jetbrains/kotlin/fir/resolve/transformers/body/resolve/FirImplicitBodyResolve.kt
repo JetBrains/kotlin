@@ -284,6 +284,11 @@ open class ReturnTypeCalculatorWithJump(
             if (this !is FirRegularPropertySymbol || isReplSnippetDeclaration != true) return false
             val initializer = fir.initializer as? FirReplExpressionReference
             val delegate = fir.delegate as? FirReplExpressionReference
+            // Some properties like constants are not moved to the eval, so they should be treated as regular ones
+            if (initializer == null && delegate == null) {
+                return false
+            }
+
             return initializer?.hasResolvedType != true && delegate?.hasResolvedType != true
         }
 

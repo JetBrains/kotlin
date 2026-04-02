@@ -48,7 +48,7 @@ public class Fe10IdeNormalAnalysisSourceModuleReturnTargetSymbolTestGenerated ex
 
   @Test
   public void testAllFilesPresentInReturnExpressionTargetSymbol() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionInfoProvider/returnExpressionTargetSymbol"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionInfoProvider/returnExpressionTargetSymbol"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

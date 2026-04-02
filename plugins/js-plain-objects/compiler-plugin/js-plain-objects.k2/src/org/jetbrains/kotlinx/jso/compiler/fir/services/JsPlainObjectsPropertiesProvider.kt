@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.type
@@ -63,6 +64,7 @@ class JsPlainObjectsPropertiesProvider(session: FirSession) : FirExtensionSessio
             emptyList()
         } else {
             buildList {
+                val memberScope = classSymbol.declaredMemberScope(session, null)
                 classSymbol.resolvedSuperTypes.forEach {
                     val expandedType = it.fullyExpandedType(session)
                     val superInterface = expandedType
@@ -77,10 +79,12 @@ class JsPlainObjectsPropertiesProvider(session: FirSession) : FirExtensionSessio
 
                     val superInterfaceSimpleObjectProperties = createJsPlainObjectProperties(superInterface)
                     superInterfaceSimpleObjectProperties.forEach {
+                        val overriddenProperty = memberScope.getProperties(it.name).firstOrNull()
                         add(
                             ClassProperty(
                                 it.name,
-                                it.resolvedTypeRef.withReplacedConeType(substitutor.substituteOrNull(it.resolvedTypeRef.coneType)),
+                                overriddenProperty?.resolvedReturnTypeRef
+                                    ?: it.resolvedTypeRef.withReplacedConeType(substitutor.substituteOrNull(it.resolvedTypeRef.coneType)),
                                 it.source,
                                 it.jsName,
                             )
@@ -88,7 +92,7 @@ class JsPlainObjectsPropertiesProvider(session: FirSession) : FirExtensionSessio
                     }
                 }
 
-                classSymbol.declaredMemberScope(session, null).processAllProperties {
+                memberScope.processAllProperties {
                     if (it.visibility == Visibilities.Public && !it.isOverride && it is FirPropertySymbol) {
                         add(
                             ClassProperty(

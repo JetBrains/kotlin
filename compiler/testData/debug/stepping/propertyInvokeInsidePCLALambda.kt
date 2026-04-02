@@ -34,33 +34,17 @@ fun box(): String {
 // test.kt:6 generate
 // test.kt:3 <init>
 // test.kt:6 generate
-// EXPECTATIONS ClassicFrontend JVM_IR
-// test.kt:17 invoke
-// EXPECTATIONS FIR JVM_IR
 // test.kt:17 bar$lambda$0
-// EXPECTATIONS JVM_IR
 // test.kt:11 foo
 // test.kt:9 <init>
 // test.kt:11 foo
-// EXPECTATIONS ClassicFrontend JVM_IR
-// test.kt:17 invoke
-// test.kt:24 invoke
-// EXPECTATIONS FIR JVM_IR
 // test.kt:17 bar$lambda$0
 // test.kt:24 box$lambda$0
-// EXPECTATIONS JVM_IR
 // test.kt:9 getR
-// EXPECTATIONS ClassicFrontend JVM_IR
-// test.kt:24 invoke
-// test.kt:25 invoke
-// test.kt:17 invoke
-// test.kt:18 invoke
-// EXPECTATIONS FIR JVM_IR
 // test.kt:24 box$lambda$0
 // test.kt:25 box$lambda$0
 // test.kt:17 bar$lambda$0
 // test.kt:18 bar$lambda$0
-// EXPECTATIONS JVM_IR
 // test.kt:6 generate
 // test.kt:7 generate
 // test.kt:19 bar

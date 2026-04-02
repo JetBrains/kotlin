@@ -1,27 +1,29 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.references
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.resolution.KaImplicitInvokeCall
-import org.jetbrains.kotlin.analysis.api.resolution.calls
-import org.jetbrains.kotlin.analysis.api.resolution.symbol
+import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtInvokeFunctionReference
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @OptIn(KtImplementationDetail::class)
 internal class KaFirInvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunctionReference(expression), KaFirReference {
-    override fun KaFirSession.computeSymbols(): Collection<KaSymbol> = expression.resolveToCall()?.calls.orEmpty().mapNotNull { call ->
-        (call as? KaImplicitInvokeCall)
-            ?.symbol
-            ?.takeUnless { it.isBuiltinFunctionInvoke }
+    @OptIn(KtExperimentalApi::class)
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = tryResolveSymbols()?.symbols.orEmpty()
+
+    override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
+        shouldNotBeCalled("Only resolveToSymbols is supposed to be used directly")
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {

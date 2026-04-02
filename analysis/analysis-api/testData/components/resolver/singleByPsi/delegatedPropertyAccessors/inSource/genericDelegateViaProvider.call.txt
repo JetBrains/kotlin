@@ -1,5 +1,5 @@
 KtPropertyDelegate(552,588): 'by ProvideDelegateHolder("provided")'
-  KaCallResolutionSuccess:
+  KaDelegatedPropertyCallResolutionAttempt:
     call = KaDelegatedPropertyCall:
       provideDelegateCall = KaSimpleFunctionCall:
         contextArgumentMapping = {}

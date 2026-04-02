@@ -54,7 +54,7 @@ public class FirStandaloneNormalAnalysisSourceModuleKDocProviderTestGenerated ex
 
   @Test
   public void testAllFilesPresentInKdoc() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/kdocProvider/kdoc"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/kdocProvider/kdoc"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

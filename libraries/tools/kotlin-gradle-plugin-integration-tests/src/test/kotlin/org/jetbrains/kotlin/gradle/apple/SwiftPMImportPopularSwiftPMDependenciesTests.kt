@@ -7,39 +7,27 @@
 
 package org.jetbrains.kotlin.gradle.apple
 
-import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
-import org.jetbrains.kotlin.gradle.testbase.NativeGradlePluginTests
-import org.jetbrains.kotlin.gradle.testbase.OsCondition
-import org.junit.jupiter.api.condition.OS
 import org.gradle.api.file.ProjectLayout
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.*
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.dumpKlibMetadata
 import org.jetbrains.kotlin.gradle.uklibs.include
-import kotlin.io.path.isDirectory
-import kotlin.io.path.listDirectoryEntries
-import kotlin.test.assertEquals
-import org.jetbrains.kotlin.gradle.util.isTeamCityRun
-import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsSource
 import java.nio.file.Path
 import java.util.stream.Stream
-import kotlin.collections.mapOf
-import kotlin.io.path.createDirectories
-import kotlin.io.path.createFile
-import kotlin.io.path.exists
-import kotlin.io.path.readText
-import kotlin.io.path.writeText
+import kotlin.io.path.*
+import kotlin.test.assertEquals
 
 @OsCondition(
     supportedOn = [OS.MAC],
@@ -90,14 +78,13 @@ public open expect class swiftPMImport/emptyxcode/FIRAnalyticsMeta : platform/da
             }
         """.trimIndent(),
         swiftSnippet = """
-            import SwiftUI
             import FirebaseCore
             import FirebaseFirestore
             import Shared
 
             @main
-            struct iOSApp: App {
-                init() {
+            struct iOSApp {
+                static func main() {
                     let opts = FirebaseOptions(googleAppID: "1:1234567890:ios:abcdef123456", gcmSenderID: "1234567890")
                     opts.apiKey = "AIzaSyDrandomKeyGeneratedForDebug001234"
                     opts.projectID = "dummy"
@@ -106,8 +93,6 @@ public open expect class swiftPMImport/emptyxcode/FIRAnalyticsMeta : platform/da
                     TempKt.createFirestore().collection("users").document("local_user")
                         .setData(["name": "John Doe", "isOffline": true])
                 }
-
-                var body: some Scene { WindowGroup { Text("OK") } }
             }
         """.trimIndent(),
         isStatic = isStatic
@@ -136,26 +121,15 @@ public open expect class swiftPMImport/emptyxcode/FIRAnalyticsMeta : platform/da
                 """.trimIndent()
         ),
         swiftSnippet = """
-            import SwiftUI
             import GoogleMaps
             import Shared
 
             @main
-            struct iOSApp: App {
-                init() { GMSServices.provideAPIKey("APIKEY") }
-                
-                var body: some Scene {
-                    WindowGroup { MapView() }
+            struct iOSApp {
+                static func main() { 
+                    GMSServices.provideAPIKey("APIKEY")
+                    GMSMapView.map(withFrame: .zero, camera: TempKt.googleMapsCameraPosition())
                 }
-            }
-
-            struct MapView: UIViewRepresentable {
-                func makeUIView(context: Context) -> GMSMapView {
-                    // .zero frame is used because SwiftUI handles layout resizing automatically
-                    .map(withFrame: .zero, camera: TempKt.googleMapsCameraPosition())
-                }
-                
-                func updateUIView(_ view: GMSMapView, context: Context) {}
             }
         """.trimIndent(),
         ktSnippet = """
@@ -198,16 +172,14 @@ public open expect class swiftPMImport/emptyxcode/FIRAnalyticsMeta : platform/da
             }
         """.trimIndent(),
         swiftSnippet = """
-            import SwiftUI
             import Sentry
             import Shared
 
             @main
-            struct iOSApp: App {
-                var body: some Scene { WindowGroup {
-                    let eventID = TempKt.sentryTest()
-                    Text("Sentry Event ID: \(eventID)")
-                } }
+            struct iOSApp {
+                static func main() {
+                    TempKt.sentryTest()
+                }
             }
         """.trimIndent(),
         isStatic = isStatic
@@ -215,7 +187,7 @@ public open expect class swiftPMImport/emptyxcode/FIRAnalyticsMeta : platform/da
         swiftPackage(
             url = url("https://github.com/getsentry/sentry-cocoa.git"),
             version = exact("9.0.0-rc.1"), // use rc to get the fix: https://github.com/getsentry/sentry-cocoa/pull/6607
-            products = listOf(product("Sentry")),
+            products = listOf(product(if (isStatic) "Sentry" else "Sentry-Dynamic")),
         )
     }
 
@@ -253,18 +225,15 @@ public final expect fun swiftPMImport/emptyxcode/RCPurchases.purchaseProduct(pro
             }
         """.trimIndent(),
         swiftSnippet = """
-            import SwiftUI
             import RevenueCat
             import Shared
 
             @main
-            struct iOSApp: App {
-                var body: some Scene {
-                    WindowGroup {
-                        let ktUserId = TempKt.revcat()
-                        let localUserId = Purchases.shared.appUserID
-                        Text("Is same: \(ktUserId == localUserId)")
-                    }
+            struct iOSApp {
+                static func main() {
+                    let ktUserId = TempKt.revcat()
+                    let localUserId = Purchases.shared.appUserID
+                    print(ktUserId == localUserId)
                 }
             }
         """.trimIndent(),
@@ -376,18 +345,14 @@ public open expect class swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTa
         """.trimIndent(),
         // the `EPMIAWSRegionType` is a synthetic re-exported enum from cinterop, the name depends on project name
         swiftSnippet = """
-            import SwiftUI
             import AWSCore
             import Shared
 
             @main
-            struct iOSApp: App {
-                var body: some Scene {
-                    WindowGroup {
-                        let result = TempKt.aws(regionType: EPMIAWSRegionType.awsregioneunorth1,
-                                                 credentialsProvider: AWSStaticCredentialsProvider(accessKey: "accessKey", secretKey: "secretKey"))
-                        Text("Is Match: \(result)")
-                    }
+            struct iOSApp {
+                static func main() {
+                    let result = TempKt.aws(regionType: EPMIAWSRegionType.awsregioneunorth1,
+                    credentialsProvider: AWSStaticCredentialsProvider(accessKey: "accessKey", secretKey: "secretKey"))
                 }
             }
         """.trimIndent(),
@@ -438,18 +403,15 @@ public open expect class swiftPMImport/emptyxcode/MapViewMeta : platform/UIKit/U
             }
         """.trimIndent(),
         swiftSnippet = """
-            import SwiftUI
             import MapboxMaps
             import Shared
 
             @main
-            struct iOSApp: App {
-                var body: some Scene {
-                    WindowGroup {
-                        let center = CLLocationCoordinate2D(latitude: 39.5, longitude: -98.0)
-                        Map(initialViewport: .camera(center: center, zoom: CGFloat(TempKt.mapboxZoom()), bearing: 0, pitch: 0))
+            struct iOSApp {
+                static func main() {
+                    let center = CLLocationCoordinate2D(latitude: 39.5, longitude: -98.0)
+                    Map(initialViewport: .camera(center: center, zoom: CGFloat(TempKt.mapboxZoom()), bearing: 0, pitch: 0))
                                     .ignoresSafeArea()
-                    }
                 }
             }
         """.trimIndent(),
@@ -492,20 +454,14 @@ public final expect fun hev_socks5_tunnel_stats(tx_packets: kotlinx/cinterop/CVa
             }
         """.trimIndent(),
         swiftSnippet = """
-            import SwiftUI
             import Shared
             import Tun2SocksKit
 
             @main
-            struct iOSApp: App {
-                var body: some Scene {
-                    WindowGroup {
-                        let connectionResult = TempKt.tunnel()
-                        Text("Result: \(connectionResult)")
-                        
-                        let packets = Socks5Tunnel.stats.up.packets
-                        Text("Packets Stats: \(packets)")
-                    }
+            struct iOSApp {
+                static func main() {
+                    TempKt.tunnel()
+                    Socks5Tunnel.stats.up.packets
                 }
             }
         """.trimIndent(),
@@ -572,19 +528,16 @@ public open expect class swiftPMImport/emptyxcode/DDLogsMeta : platform/darwin/N
             }
         """.trimIndent(),
         swiftSnippet = """
-            import SwiftUI
             import Shared
             import DatadogCore
 
             @main
-            struct iOSApp: App {
-                var body: some Scene {
-                    WindowGroup {
-                        let dd = TempKt.ddogInit()
-                        let isInitialized = Datadog.isInitialized()
-                        if(!isInitialized) { fatalError("DD should be initiated in K/N") }
-                        Text("Is Initialized: \(isInitialized)")
-                    }
+            struct iOSApp {
+                static func main() {
+                    TempKt.ddogInit()
+                    let isInitialized = Datadog.isInitialized()
+                    if(!isInitialized) { fatalError("DD should be initiated in K/N") }
+                    print("Is Initialized: \(isInitialized)")
                 }
             }
         """.trimIndent(),
@@ -632,18 +585,14 @@ public open expect class swiftPMImport/emptyxcode/ADJConfigMeta : platform/darwi
             fun adjustConfig() = swiftPMImport.emptyxcode.ADJConfig(appToken = "token", environment = "env")
         """.trimIndent(),
         swiftSnippet = """
-            import SwiftUI
             import Shared
             import AdjustSdk
 
             @main
-            struct iOSApp: App {
-                var body: some Scene {
-                    WindowGroup {
-                        let config = TempKt.adjustConfig()
-                        let sdk = Adjust.initSdk(config)
-                        Text("OK")
-                    }
+            struct iOSApp {
+                static func main() {
+                    let config = TempKt.adjustConfig()
+                    Adjust.initSdk(config)
                 }
             }
         """.trimIndent(),
@@ -688,19 +637,16 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
             }
         """.trimIndent(),
         swiftSnippet = """
-            import SwiftUI
             import Shared
             import AppAuth
 
             @main
-            struct iOSApp: App {
-                var body: some Scene {
-                    WindowGroup {
-                        let request = OIDAuthorizationRequest.init(configuration: TempKt.auth(), clientId: "", scopes: [], redirectURL: NSURL(string: "http://localhost") as! URL, responseType: "code", additionalParameters: ["": ""])
-                        let url = request.authorizationRequestURL().absoluteString
-                        if(!url.contains("example.com")) { fatalError("value from kotlin is not passed") }
-                        Text("OK \(url)")
-                    }
+            struct iOSApp {
+                static func main() {
+                    let request = OIDAuthorizationRequest.init(configuration: TempKt.auth(), clientId: "", scopes: [], redirectURL: NSURL(string: "http://localhost") as! URL, responseType: "code", additionalParameters: ["": ""])
+                    let url = request.authorizationRequestURL().absoluteString
+                    if(!url.contains("example.com")) { fatalError("value from kotlin is not passed") }
+                    print(url)
                 }
             }
         """.trimIndent(),
@@ -731,23 +677,21 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
             }
         """.trimIndent(),
         swiftSnippet = """
-            import SwiftUI
             import LocalSwiftPackage
             import Shared
 
             @main
-            struct iOSApp: App {
-                var body: some Scene {
-                    WindowGroup {
-                        let ktGreeting = TempKt.localGreeting()
-                        let swiftGreeting = LocalHelper.greeting()
-                        if(ktGreeting != swiftGreeting) { fatalError("Greetings don't match") }
-                        Text("Match: \(ktGreeting == swiftGreeting)")
-                    }
+            struct iOSApp {
+                static func main() {
+                    let ktGreeting = TempKt.localGreeting()
+                    let swiftGreeting = LocalHelper.greeting()
+                    print("Match: \(ktGreeting == swiftGreeting)")
                 }
             }
         """.trimIndent(),
         isStatic = isStatic,
+        // No lock file is created
+        synchronizeLockFileWithXcodeProject = false,
         expectedPackageManifest = if (isStatic) {
             """
                 // swift-tools-version: 5.9
@@ -973,19 +917,15 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
             val swiftAppFile = projectPath.resolve("iosApp/iosApp/iOSApp.swift")
             swiftAppFile.writeText(
                 """
-                import SwiftUI
                 import LocalSwiftPackage
                 import Shared
 
                 @main
-                struct iOSApp: App {
-                    var body: some Scene {
-                        WindowGroup {
-                            let ktGreeting = Consumer.shared.localGreeting()
-                            let swiftGreeting = LocalHelper.greeting()
-                            if(ktGreeting != swiftGreeting) { fatalError("Greetings don't match") }
-                            Text("Match: \(ktGreeting == swiftGreeting)")
-                        }
+                struct iOSApp {
+                    static func main() {
+                        let ktGreeting = Consumer.shared.localGreeting()
+                        let swiftGreeting = LocalHelper.greeting()
+                        print(ktGreeting == swiftGreeting)
                     }
                 }
             """.trimIndent()
@@ -1011,7 +951,7 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
             testKotlinLinkage()
 
             // Xcode linkage
-            testXcodeLinkage(isStatic)
+            testXcodeLinkage(projectPath.resolve("dd"))
 
             // Verify Package.swift in root project with exact content
             // Uses synthetic subpackage reference for the producer dependency
@@ -1096,6 +1036,7 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
         swiftSnippet: String = "",
         ktSnippet: String = "",
         isStatic: Boolean,
+        synchronizeLockFileWithXcodeProject: Boolean = true,
         expectedPackageManifest: String? = null,
         beforeBuild: (TestProject.() -> Unit)? = null,
         configure: SwiftPMImportExtension.(ProjectLayout) -> Unit,
@@ -1132,7 +1073,13 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
 
             testVisibleSignatures(expectedCinteropAPIs)
             testKotlinLinkage()
-            testXcodeLinkage(isStatic)
+            if (synchronizeLockFileWithXcodeProject) {
+                copyLockFileIntoIosProject()
+            }
+            val derivedDataPath = projectPath.resolve("dd")
+            testXcodeLinkage(derivedDataPath)
+            val appPath = derivedDataPath.resolve("Build/Products/Debug-iphonesimulator/emptyxcode.app")
+            assertApplicationRunsAndObjCRuntimeDoesntEmitInStderr(appPath)
             if (expectedPackageManifest != null) {
                 testPackageManifest(expectedPackageManifest)
             }
@@ -1156,19 +1103,25 @@ private fun TestProject.testKotlinLinkage() {
     build(":linkDebugFrameworkIosSimulatorArm64")
 }
 
+private fun TestProject.copyLockFileIntoIosProject() {
+    projectPath.resolve("Package.resolved").copyTo(
+        projectPath.resolve("iosApp/iosApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved").also {
+            it.parent.createDirectories()
+        }
+    )
+}
+
 @OptIn(EnvironmentalVariablesOverride::class)
-private fun TestProject.testXcodeLinkage(isStatic: Boolean) {
+private fun TestProject.testXcodeLinkage(derivedDataPath: Path) {
     build(
         "integrateLinkagePackage",
         environmentVariables = EnvironmentalVariables(
             "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj"
         )
     )
-    if (!isStatic) {
-        addEmbedAndSignPhaseForSpmLibrary(projectPath.resolve("iosApp/iosApp.xcodeproj/project.pbxproj"))
-    }
     buildXcodeProject(
         xcodeproj = projectPath.resolve("iosApp/iosApp.xcodeproj"),
+        derivedDataPath = derivedDataPath,
     )
 }
 
@@ -1222,55 +1175,4 @@ private fun TestProject.testPackageManifest(
 
 internal fun KotlinMultiplatformExtension.swiftPMDependencies(configure: SwiftPMImportExtension.() -> Unit) {
     (this.extensions.getByName(SwiftPMImportExtension.EXTENSION_NAME) as SwiftPMImportExtension).configure()
-}
-
-private fun addEmbedAndSignPhaseForSpmLibrary(pbxprojFile: Path) {
-    var pbxprojFileContent = pbxprojFile.readText()
-    val buildFileRegex = Regex(
-        """/\* Begin PBXBuildFile section \*/\s+(\w+) = \{\s+isa = PBXBuildFile;\s+productRef = (\w+);\s+\};\s+/\* End PBXBuildFile section \*/"""
-    )
-
-    val match =
-        buildFileRegex.find(pbxprojFileContent) ?: throw IllegalStateException("PBXBuildFile section not found or has unexpected format")
-
-    val buildFileId = match.groupValues[1]
-    val productRefId = match.groupValues[2]
-    val embedFrameworksBuildFileId = "B638C8582EE09DAA00A788A3"
-    val copyFilesBuildPhaseId = "B638C8592EE09DAA00A788A3"
-
-    println("Found buildFileId: $buildFileId")
-    println("Found productRefId: $productRefId")
-
-    // 1. Replace PBXBuildFile section with PBXBuildFile and PBXCopyFilesBuildPhase
-    val newBuildFileSection = """/* Begin PBXBuildFile section */
-		$buildFileId /* KotlinMultiplatformLinkedPackage in Frameworks */ = {isa = PBXBuildFile; productRef = $productRefId /* KotlinMultiplatformLinkedPackage */; };
-		$embedFrameworksBuildFileId /* KotlinMultiplatformLinkedPackage in Embed Frameworks */ = {isa = PBXBuildFile; productRef = $productRefId /* KotlinMultiplatformLinkedPackage */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-/* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		$copyFilesBuildPhaseId /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				$embedFrameworksBuildFileId /* KotlinMultiplatformLinkedPackage in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */"""
-
-    pbxprojFileContent = buildFileRegex.replace(pbxprojFileContent, newBuildFileSection)
-
-    // 2. Add the new build phase to the target's buildPhases array
-    val buildPhasesRegex = Regex(
-        """(buildPhases = \(\s+(?:\w+,\s+)+)(\);)\s+(buildRules)"""
-    )
-
-    pbxprojFileContent = buildPhasesRegex.replace(pbxprojFileContent) { matchResult ->
-        "${matchResult.groupValues[1]}$copyFilesBuildPhaseId,\n\t\t\t${matchResult.groupValues[2]}\n\t\t\t${matchResult.groupValues[3]}"
-    }
-
-    pbxprojFile.writeText(pbxprojFileContent)
 }

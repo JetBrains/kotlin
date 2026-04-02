@@ -521,8 +521,6 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             this.name = name
             isFromSource = true
             this.visibility = visibility
-            this.modality = builderModality
-            this.isStatic = builderDeclaration.isStaticDeclaration
             classKind = ClassKind.CLASS
 
             val typeParametersMapping = builderDeclaration.initializeTypeParametersMapping(builderSymbol)
@@ -541,7 +539,6 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 visibility.toEffectiveVisibility(this@createEmptyBuilderClass, forClass = true),
                 session.typeContext
             )
-            isTopLevel = false
             status = FirResolvedDeclarationStatusImpl(
                 visibility,
                 builderModality,
@@ -732,7 +729,7 @@ fun FirClassSymbol<*>.createDefaultJavaConstructor(
         moduleData = outerClassSymbol.moduleData
         isFromSource = true
         symbol = FirConstructorSymbol(classId)
-        isInner = outerClassSymbol.rawStatus.isInner
+        val isInner = outerClassSymbol.rawStatus.isInner
         status = FirResolvedDeclarationStatusImpl(
             visibility,
             Modality.FINAL,
@@ -741,7 +738,7 @@ fun FirClassSymbol<*>.createDefaultJavaConstructor(
             isExpect = false
             isActual = false
             isOverride = false
-            isInner = this@buildJavaConstructor.isInner
+            this@apply.isInner = isInner
         }
         isPrimary = false
         returnTypeRef = buildResolvedTypeRef {

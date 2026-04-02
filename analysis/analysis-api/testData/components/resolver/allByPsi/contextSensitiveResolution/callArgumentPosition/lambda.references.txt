@@ -243,8 +243,6 @@ KtCallExpression(830,855): 'lMyClass(InheritorObject)'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(830,838): 'lMyClass'
   KtSimpleNameReference:
@@ -269,8 +267,6 @@ KtCallExpression(860,881): 'lMyClass(propMyClass)'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(860,868): 'lMyClass'
   KtSimpleNameReference:
@@ -295,8 +291,6 @@ KtCallExpression(886,914): 'lMyClass(propInheritorClass)'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(886,894): 'lMyClass'
   KtSimpleNameReference:
@@ -321,8 +315,6 @@ KtCallExpression(919,948): 'lMyClass(propInheritorObject)'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(919,927): 'lMyClass'
   KtSimpleNameReference:
@@ -348,8 +340,6 @@ KtCallExpression(954,976): 'lMyClass(NestedObject)'
     diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(954,962): 'lMyClass'
   KtSimpleNameReference:
@@ -375,8 +365,6 @@ KtCallExpression(981,995): 'lMyClass(prop)'
     diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(981,989): 'lMyClass'
   KtSimpleNameReference:
@@ -402,8 +390,6 @@ KtCallExpression(1000,1019): 'lMyClass(superProp)'
     diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1000,1008): 'lMyClass'
   KtSimpleNameReference:
@@ -429,8 +415,6 @@ KtCallExpression(1024,1043): 'lMyClass(constProp)'
     diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1024,1032): 'lMyClass'
   KtSimpleNameReference:
@@ -456,8 +440,6 @@ KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
     diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1048,1056): 'lMyClass'
   KtSimpleNameReference:
@@ -483,8 +465,6 @@ KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
     diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1071,1079): 'lMyClass'
   KtSimpleNameReference:
@@ -509,8 +489,6 @@ KtCallExpression(1097,1123): 'lMyClass(InheritorClass())'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1097,1105): 'lMyClass'
   KtSimpleNameReference:
@@ -544,8 +522,6 @@ KtCallExpression(1128,1144): 'lMyClass(func())'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1128,1136): 'lMyClass'
   KtSimpleNameReference:
@@ -579,8 +555,6 @@ KtCallExpression(1149,1170): 'lMyClass(superFunc())'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1149,1157): 'lMyClass'
   KtSimpleNameReference:

@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirCodeFragmentImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -54,20 +57,4 @@ inline fun buildCodeFragment(init: FirCodeFragmentBuilder.() -> Unit): FirCodeFr
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirCodeFragmentBuilder().apply(init).build()
-}
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildCodeFragmentCopy(original: FirCodeFragment, init: FirCodeFragmentBuilder.() -> Unit): FirCodeFragment {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirCodeFragmentBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.resolvePhase = original.resolvePhase
-    copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.moduleData = original.moduleData
-    copyBuilder.origin = original.origin
-    copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.block = original.block
-    return copyBuilder.apply(init).build()
 }

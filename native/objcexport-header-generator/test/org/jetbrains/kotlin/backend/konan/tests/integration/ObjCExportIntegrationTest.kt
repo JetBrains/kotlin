@@ -19,8 +19,6 @@ import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.nio.file.Path
-import kotlin.io.path.name
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -141,11 +139,11 @@ class ObjCExportIntegrationTest {
         }
     }
 
-    private fun generateHeadersAndBuildReport(library: Path): IntegrationTestReport {
+    private fun generateHeadersAndBuildReport(library: Library): IntegrationTestReport {
         return generateHeadersAndBuildReport(library.name, listOf(library))
     }
 
-    private fun generateHeadersAndBuildReport(name: String, libraries: List<Path>): IntegrationTestReport {
+    private fun generateHeadersAndBuildReport(name: String, libraries: List<Library>): IntegrationTestReport {
         val configuration = HeaderGenerator.Configuration(
             dependencies = libraries,
             exportedDependencies = libraries.toSet(),

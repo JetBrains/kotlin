@@ -160,9 +160,11 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             is Exportability.Prohibited -> ErrorDeclaration(exportability.reason)
             is Exportability.Allowed -> {
                 val isStatic = function.isStatic || function.isJsStatic()
+                val inlineClassesShouldBeUnboxed = function.isExternal
                 val outerScope = if (!isStatic || isFactoryPropertyForInnerClass) classTypeParameterScope else emptyMap()
                 val functionTypeParameterScope = TypeParameterScope(function, config, outerScope)
-                val returnType = exportType(function.returnType, functionTypeParameterScope)
+                val returnType =
+                    exportType(function.returnType, functionTypeParameterScope, inlineClassesShouldBeUnboxed = inlineClassesShouldBeUnboxed)
                 ExportedFunction(
                     name = function.getJsSymbolForOverriddenDeclaration()?.let(ExportedMemberName::WellKnownSymbol)
                         ?: ExportedMemberName.Identifier(function.getExportedIdentifier()),
@@ -171,7 +173,12 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                     } else {
                         returnType
                     },
-                    parameters = exportFunctionParameters(function, parent, functionTypeParameterScope),
+                    parameters = exportFunctionParameters(
+                        function,
+                        parent,
+                        functionTypeParameterScope,
+                        inlineClassesShouldBeUnboxed
+                    ),
                     typeParameters = function.typeParameters.memoryOptimizedMap { functionTypeParameterScope[it]!! },
                     isMember = parent is KaClassSymbol,
                     isStatic = isStatic,
@@ -209,10 +216,18 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         }
         if (isFactoryPropertyForInnerClass && visibility != ExportedVisibility.DEFAULT) return null
 
+        val inlineClassesShouldBeUnboxed = constructedClass.isExternal
+
         val parameters = if (constructor.isPrimary && visibility == ExportedVisibility.PRIVATE) {
             emptyList()
         } else {
-            exportFunctionParameters(constructor, constructedClass, typeParameterScope, isFactoryPropertyForInnerClass)
+            exportFunctionParameters(
+                constructor,
+                constructedClass,
+                typeParameterScope,
+                inlineClassesShouldBeUnboxed,
+                isFactoryPropertyForInnerClass
+            )
         }
 
         fun returnType() = ExportedType.ClassType(
@@ -252,6 +267,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         function: KaFunctionSymbol,
         parent: KaDeclarationSymbol?,
         functionTypeParameterScope: TypeParameterScope,
+        inlineClassesShouldBeUnboxed: Boolean,
         inFactoryPropertyForInnerClass: Boolean = false,
     ): List<ExportedParameter> {
         return buildList {
@@ -267,21 +283,44 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                         exportType(
                             (parent.containingDeclaration as KaNamedClassSymbol).defaultType,
                             functionTypeParameterScope,
+                            inlineClassesShouldBeUnboxed = inlineClassesShouldBeUnboxed
                         )
                     )
                 )
             }
             for (parameter in function.contextParameters) {
-                add(ExportedParameter(sanitizeName(parameter.name), exportType(parameter.returnType, functionTypeParameterScope)))
+                add(
+                    ExportedParameter(
+                        sanitizeName(parameter.name),
+                        exportType(
+                            parameter.returnType,
+                            functionTypeParameterScope,
+                            inlineClassesShouldBeUnboxed = inlineClassesShouldBeUnboxed
+                        )
+                    )
+                )
             }
             function.receiverParameter?.let {
-                add(ExportedParameter(sanitizeName(SpecialNames.THIS), exportType(it.returnType, functionTypeParameterScope)))
+                add(
+                    ExportedParameter(
+                        sanitizeName(SpecialNames.THIS),
+                        exportType(
+                            it.returnType,
+                            functionTypeParameterScope,
+                            inlineClassesShouldBeUnboxed = inlineClassesShouldBeUnboxed
+                        )
+                    )
+                )
             }
             for (parameter in function.valueParameters) {
                 val type = if (parameter.isVararg) {
                     TypeExporter(config, functionTypeParameterScope).exportSpecializedArrayWithElementType(parameter.returnType)
                 } else {
-                    exportType(parameter.returnType, functionTypeParameterScope)
+                    exportType(
+                        parameter.returnType,
+                        functionTypeParameterScope,
+                        inlineClassesShouldBeUnboxed = inlineClassesShouldBeUnboxed
+                    )
                 }
                 add(ExportedParameter(sanitizeName(parameter.name), type, parameter.hasDefaultValue))
             }
@@ -303,6 +342,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         val parentClass = parent as? KaClassSymbol
         val isAbstract = parentClass?.classKind != KaClassKind.INTERFACE && property.modality == KaSymbolModality.ABSTRACT
         val isStatic = property.isStatic || property.isJsStatic()
+        val inlineClassesShouldBeUnboxed = property.isExternal
 
         val getter = property.getter
         val customGetterName = getter?.getJsName()
@@ -316,7 +356,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                         ExportedFunction(
                             name = ExportedMemberName.Identifier(customSetterName),
                             returnType = ExportedType.Primitive.Unit,
-                            parameters = exportFunctionParameters(setter, parent, classTypeParameterScope),
+                            parameters = exportFunctionParameters(setter, parent, classTypeParameterScope, inlineClassesShouldBeUnboxed),
                             isMember = parentClass != null,
                             isStatic = isStatic,
                             isAbstract = isAbstract,
@@ -328,7 +368,11 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                     add(
                         ExportedFunction(
                             name = ExportedMemberName.Identifier(customGetterName),
-                            returnType = exportType(property.returnType, classTypeParameterScope),
+                            returnType = exportType(
+                                property.returnType,
+                                classTypeParameterScope,
+                                inlineClassesShouldBeUnboxed = inlineClassesShouldBeUnboxed
+                            ),
                             parameters = emptyList(),
                             isMember = parentClass != null,
                             isStatic = isStatic,
@@ -346,12 +390,20 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         val shouldBeExportedAsObjectWithAccessorsInside = config.artifactConfiguration.moduleKind == ModuleKind.ES && !isMember && !isStatic
 
         val propertyType = when {
-            !shouldBeExportedAsObjectWithAccessorsInside -> exportType(property.returnType, classTypeParameterScope)
+            !shouldBeExportedAsObjectWithAccessorsInside -> exportType(
+                property.returnType,
+                classTypeParameterScope,
+                inlineClassesShouldBeUnboxed = inlineClassesShouldBeUnboxed
+            )
             isObjectGetter -> ExportedType.InlineInterfaceType(
                 listOf(
                     ExportedFunction(
                         name = ExportedMemberName.Identifier("getInstance"),
-                        returnType = exportType(property.returnType, classTypeParameterScope),
+                        returnType = exportType(
+                            property.returnType,
+                            classTypeParameterScope,
+                            inlineClassesShouldBeUnboxed = inlineClassesShouldBeUnboxed
+                        ),
                         parameters = emptyList(),
                         isMember = true,
                         isProtected = false
@@ -363,7 +415,11 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                     listOfNotNull(
                         ExportedFunction(
                             name = ExportedMemberName.Identifier("get"),
-                            returnType = exportType(property.getter?.returnType ?: property.returnType, classTypeParameterScope),
+                            returnType = exportType(
+                                property.getter?.returnType ?: property.returnType,
+                                classTypeParameterScope,
+                                inlineClassesShouldBeUnboxed = inlineClassesShouldBeUnboxed
+                            ),
                             parameters = emptyList(),
                             isMember = true,
                             isProtected = false
@@ -374,8 +430,22 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                                 returnType = ExportedType.Primitive.Unit,
                                 parameters = listOf(
                                     property.setter?.parameter?.let {
-                                        ExportedParameter(sanitizeName(it.name), exportType(it.returnType, classTypeParameterScope))
-                                    } ?: ExportedParameter("value", exportType(property.returnType, classTypeParameterScope))
+                                        ExportedParameter(
+                                            sanitizeName(it.name),
+                                            exportType(
+                                                it.returnType,
+                                                classTypeParameterScope,
+                                                inlineClassesShouldBeUnboxed = inlineClassesShouldBeUnboxed
+                                            )
+                                        )
+                                    } ?: ExportedParameter(
+                                        "value",
+                                        exportType(
+                                            property.returnType,
+                                            classTypeParameterScope,
+                                            inlineClassesShouldBeUnboxed = inlineClassesShouldBeUnboxed
+                                        )
+                                    )
                                 ),
                                 isMember = true,
                                 isProtected = false
@@ -671,7 +741,8 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         type: KaType,
         scope: TypeParameterScope,
         shouldCalculateExportedSupertypeForImplicit: Boolean = false,
-    ): ExportedType = TypeExporter(config, scope).exportType(type)
+        inlineClassesShouldBeUnboxed: Boolean = false,
+    ): ExportedType = TypeExporter(config, scope).exportType(type, inlineClassesShouldBeUnboxed)
 
     context(_: KaSession)
     private fun functionExportability(function: KaNamedFunctionSymbol, parent: KaDeclarationSymbol?): Exportability {

@@ -66,7 +66,7 @@ public class FirStandaloneNormalAnalysisSourceModuleTypePointerConsistencyTestGe
 
   @Test
   public void testAllFilesPresentInConsistency() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typePointers/consistency"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typePointers/consistency"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

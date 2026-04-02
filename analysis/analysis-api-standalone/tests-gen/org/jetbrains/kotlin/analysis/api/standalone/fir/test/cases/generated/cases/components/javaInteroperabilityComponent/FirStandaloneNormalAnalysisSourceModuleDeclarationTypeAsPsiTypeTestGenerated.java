@@ -60,7 +60,7 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclarationTypeAsPsiTypeTest
 
   @Test
   public void testAllFilesPresentInForDeclaration() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

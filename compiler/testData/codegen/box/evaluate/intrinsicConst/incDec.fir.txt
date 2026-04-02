@@ -1,0 +1,327 @@
+FILE: incDec.kt
+    public final fun <T> R|T|.id(): R|T| {
+        ^id this@R|/id|
+    }
+    public final const [EvaluatedValue=Byte(2)] val incByte: R|kotlin/Byte| = Int(1).R|kotlin/Int.toByte|().R|kotlin/Byte.inc|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(0)] val decByte: R|kotlin/Byte| = Int(1).R|kotlin/Int.toByte|().R|kotlin/Byte.dec|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(-128)] val incMaxByte: R|kotlin/Byte| = Q|kotlin/Byte|.R|kotlin/Byte.Companion.MAX_VALUE|.R|kotlin/Byte.inc|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(127)] val decMinByte: R|kotlin/Byte| = Q|kotlin/Byte|.R|kotlin/Byte.Companion.MIN_VALUE|.R|kotlin/Byte.dec|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(1)] val incDecChainedByte: R|kotlin/Byte| = Int(1).R|kotlin/Int.toByte|().R|kotlin/Byte.inc|().R|kotlin/Byte.dec|().R|kotlin/Byte.inc|().R|kotlin/Byte.dec|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Short(2)] val incShort: R|kotlin/Short| = Int(1).R|kotlin/Int.toShort|().R|kotlin/Short.inc|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(0)] val decShort: R|kotlin/Short| = Int(1).R|kotlin/Int.toShort|().R|kotlin/Short.dec|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(-32768)] val incMaxShort: R|kotlin/Short| = Q|kotlin/Short|.R|kotlin/Short.Companion.MAX_VALUE|.R|kotlin/Short.inc|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(32767)] val decMinShort: R|kotlin/Short| = Q|kotlin/Short|.R|kotlin/Short.Companion.MIN_VALUE|.R|kotlin/Short.dec|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(1)] val incDecChainedShort: R|kotlin/Short| = Int(1).R|kotlin/Int.toShort|().R|kotlin/Short.inc|().R|kotlin/Short.dec|().R|kotlin/Short.inc|().R|kotlin/Short.dec|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Int(2)] val incInt: R|kotlin/Int| = Int(1).R|kotlin/Int.inc|()
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(0)] val decInt: R|kotlin/Int| = Int(1).R|kotlin/Int.dec|()
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(-2147483648)] val incMaxInt: R|kotlin/Int| = Q|kotlin/Int|.R|kotlin/Int.Companion.MAX_VALUE|.R|kotlin/Int.inc|()
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(2147483647)] val decMinInt: R|kotlin/Int| = Q|kotlin/Int|.R|kotlin/Int.Companion.MIN_VALUE|.R|kotlin/Int.dec|()
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(1)] val incDecChainedInt: R|kotlin/Int| = Int(1).R|kotlin/Int.inc|().R|kotlin/Int.dec|().R|kotlin/Int.inc|().R|kotlin/Int.dec|()
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Long(2)] val incLong: R|kotlin/Long| = Long(1).R|kotlin/Long.inc|()
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(0)] val decLong: R|kotlin/Long| = Long(1).R|kotlin/Long.dec|()
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(-9223372036854775808)] val incMaxLong: R|kotlin/Long| = Q|kotlin/Long|.R|kotlin/Long.Companion.MAX_VALUE|.R|kotlin/Long.inc|()
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(9223372036854775807)] val decMinLong: R|kotlin/Long| = Q|kotlin/Long|.R|kotlin/Long.Companion.MIN_VALUE|.R|kotlin/Long.dec|()
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(1)] val incDecChainedLong: R|kotlin/Long| = Long(1).R|kotlin/Long.inc|().R|kotlin/Long.dec|().R|kotlin/Long.inc|().R|kotlin/Long.dec|()
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=UByte(2)] val incUByte: R|kotlin/UByte| = UInt(1).R|kotlin/UInt.toUByte|().R|kotlin/UByte.inc|()
+        public get(): R|kotlin/UByte|
+    public final const [EvaluatedValue=UByte(0)] val decUByte: R|kotlin/UByte| = UInt(1).R|kotlin/UInt.toUByte|().R|kotlin/UByte.dec|()
+        public get(): R|kotlin/UByte|
+    public final const [EvaluatedValue=UByte(0)] val incMaxUByte: R|kotlin/UByte| = Q|kotlin/UByte|.R|kotlin/UByte.Companion.MAX_VALUE|.R|kotlin/UByte.inc|()
+        public get(): R|kotlin/UByte|
+    public final const [EvaluatedValue=UByte(-1)] val decMinUByte: R|kotlin/UByte| = Q|kotlin/UByte|.R|kotlin/UByte.Companion.MIN_VALUE|.R|kotlin/UByte.dec|()
+        public get(): R|kotlin/UByte|
+    public final const [EvaluatedValue=UByte(1)] val incDecChainedUByte: R|kotlin/UByte| = UInt(1).R|kotlin/UInt.toUByte|().R|kotlin/UByte.inc|().R|kotlin/UByte.dec|().R|kotlin/UByte.inc|().R|kotlin/UByte.dec|()
+        public get(): R|kotlin/UByte|
+    public final const [EvaluatedValue=UShort(2)] val incUShort: R|kotlin/UShort| = UInt(1).R|kotlin/UInt.toUShort|().R|kotlin/UShort.inc|()
+        public get(): R|kotlin/UShort|
+    public final const [EvaluatedValue=UShort(0)] val decUShort: R|kotlin/UShort| = UInt(1).R|kotlin/UInt.toUShort|().R|kotlin/UShort.dec|()
+        public get(): R|kotlin/UShort|
+    public final const [EvaluatedValue=UShort(0)] val incMaxUShort: R|kotlin/UShort| = Q|kotlin/UShort|.R|kotlin/UShort.Companion.MAX_VALUE|.R|kotlin/UShort.inc|()
+        public get(): R|kotlin/UShort|
+    public final const [EvaluatedValue=UShort(-1)] val decMinUShort: R|kotlin/UShort| = Q|kotlin/UShort|.R|kotlin/UShort.Companion.MIN_VALUE|.R|kotlin/UShort.dec|()
+        public get(): R|kotlin/UShort|
+    public final const [EvaluatedValue=UShort(1)] val incDecChainedUShort: R|kotlin/UShort| = UInt(1).R|kotlin/UInt.toUShort|().R|kotlin/UShort.inc|().R|kotlin/UShort.dec|().R|kotlin/UShort.inc|().R|kotlin/UShort.dec|()
+        public get(): R|kotlin/UShort|
+    public final const [EvaluatedValue=UInt(2)] val incUInt: R|kotlin/UInt| = UInt(1).R|kotlin/UInt.inc|()
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(0)] val decUInt: R|kotlin/UInt| = UInt(1).R|kotlin/UInt.dec|()
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(0)] val incMaxUInt: R|kotlin/UInt| = Q|kotlin/UInt|.R|kotlin/UInt.Companion.MAX_VALUE|.R|kotlin/UInt.inc|()
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(-1)] val decMinUInt: R|kotlin/UInt| = Q|kotlin/UInt|.R|kotlin/UInt.Companion.MIN_VALUE|.R|kotlin/UInt.dec|()
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val incDecChainedUInt: R|kotlin/UInt| = UInt(1).R|kotlin/UInt.inc|().R|kotlin/UInt.dec|().R|kotlin/UInt.inc|().R|kotlin/UInt.dec|()
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=ULong(2)] val incULong: R|kotlin/ULong| = ULong(1).R|kotlin/ULong.inc|()
+        public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=ULong(0)] val decULong: R|kotlin/ULong| = ULong(1).R|kotlin/ULong.dec|()
+        public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=ULong(0)] val incMaxULong: R|kotlin/ULong| = Q|kotlin/ULong|.R|kotlin/ULong.Companion.MAX_VALUE|.R|kotlin/ULong.inc|()
+        public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=ULong(-1)] val decMinULong: R|kotlin/ULong| = Q|kotlin/ULong|.R|kotlin/ULong.Companion.MIN_VALUE|.R|kotlin/ULong.dec|()
+        public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=ULong(1)] val incDecChainedULong: R|kotlin/ULong| = ULong(1).R|kotlin/ULong.inc|().R|kotlin/ULong.dec|().R|kotlin/ULong.inc|().R|kotlin/ULong.dec|()
+        public get(): R|kotlin/ULong|
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|/incByte|.R|/id|<R|kotlin/Byte|>(), Int(2).R|kotlin/Int.toByte|()) ->  {
+                ^box String(Fail incByte)
+            }
+        }
+
+        when () {
+            !=(R|/decByte|.R|/id|<R|kotlin/Byte|>(), Int(0).R|kotlin/Int.toByte|()) ->  {
+                ^box String(Fail decByte)
+            }
+        }
+
+        when () {
+            !=(R|/incMaxByte|.R|/id|<R|kotlin/Byte|>(), Q|kotlin/Byte|.R|kotlin/Byte.Companion.MIN_VALUE|) ->  {
+                ^box String(Fail incMaxByte)
+            }
+        }
+
+        when () {
+            !=(R|/decMinByte|.R|/id|<R|kotlin/Byte|>(), Q|kotlin/Byte|.R|kotlin/Byte.Companion.MAX_VALUE|) ->  {
+                ^box String(Fail decMinByte)
+            }
+        }
+
+        when () {
+            !=(R|/incDecChainedByte|.R|/id|<R|kotlin/Byte|>(), Int(1).R|kotlin/Int.toByte|()) ->  {
+                ^box String(Fail incDecChainedByte)
+            }
+        }
+
+        when () {
+            !=(R|/incShort|.R|/id|<R|kotlin/Short|>(), Int(2).R|kotlin/Int.toShort|()) ->  {
+                ^box String(Fail incShort)
+            }
+        }
+
+        when () {
+            !=(R|/decShort|.R|/id|<R|kotlin/Short|>(), Int(0).R|kotlin/Int.toShort|()) ->  {
+                ^box String(Fail decShort)
+            }
+        }
+
+        when () {
+            !=(R|/incMaxShort|.R|/id|<R|kotlin/Short|>(), Q|kotlin/Short|.R|kotlin/Short.Companion.MIN_VALUE|) ->  {
+                ^box String(Fail incMaxShort)
+            }
+        }
+
+        when () {
+            !=(R|/decMinShort|.R|/id|<R|kotlin/Short|>(), Q|kotlin/Short|.R|kotlin/Short.Companion.MAX_VALUE|) ->  {
+                ^box String(Fail decMinShort)
+            }
+        }
+
+        when () {
+            !=(R|/incDecChainedShort|.R|/id|<R|kotlin/Short|>(), Int(1).R|kotlin/Int.toShort|()) ->  {
+                ^box String(Fail incDecChainedShort)
+            }
+        }
+
+        when () {
+            !=(R|/incInt|.R|/id|<R|kotlin/Int|>(), Int(2)) ->  {
+                ^box String(Fail incInt)
+            }
+        }
+
+        when () {
+            !=(R|/decInt|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
+                ^box String(Fail decInt)
+            }
+        }
+
+        when () {
+            !=(R|/incMaxInt|.R|/id|<R|kotlin/Int|>(), Q|kotlin/Int|.R|kotlin/Int.Companion.MIN_VALUE|) ->  {
+                ^box String(Fail incMaxInt)
+            }
+        }
+
+        when () {
+            !=(R|/decMinInt|.R|/id|<R|kotlin/Int|>(), Q|kotlin/Int|.R|kotlin/Int.Companion.MAX_VALUE|) ->  {
+                ^box String(Fail decMinInt)
+            }
+        }
+
+        when () {
+            !=(R|/incDecChainedInt|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
+                ^box String(Fail incDecChainedInt)
+            }
+        }
+
+        when () {
+            !=(R|/incLong|.R|/id|<R|kotlin/Long|>(), Long(2)) ->  {
+                ^box String(Fail incLong)
+            }
+        }
+
+        when () {
+            !=(R|/decLong|.R|/id|<R|kotlin/Long|>(), Long(0)) ->  {
+                ^box String(Fail decLong)
+            }
+        }
+
+        when () {
+            !=(R|/incMaxLong|.R|/id|<R|kotlin/Long|>(), Q|kotlin/Long|.R|kotlin/Long.Companion.MIN_VALUE|) ->  {
+                ^box String(Fail incMaxLong)
+            }
+        }
+
+        when () {
+            !=(R|/decMinLong|.R|/id|<R|kotlin/Long|>(), Q|kotlin/Long|.R|kotlin/Long.Companion.MAX_VALUE|) ->  {
+                ^box String(Fail decMinLong)
+            }
+        }
+
+        when () {
+            !=(R|/incDecChainedLong|.R|/id|<R|kotlin/Long|>(), Long(1)) ->  {
+                ^box String(Fail incDecChainedLong)
+            }
+        }
+
+        when () {
+            !=(R|/incUByte|.R|/id|<R|kotlin/UByte|>(), UInt(2).R|kotlin/UInt.toUByte|()) ->  {
+                ^box String(Fail incUByte)
+            }
+        }
+
+        when () {
+            !=(R|/decUByte|.R|/id|<R|kotlin/UByte|>(), UInt(0).R|kotlin/UInt.toUByte|()) ->  {
+                ^box String(Fail decUByte)
+            }
+        }
+
+        when () {
+            !=(R|/incMaxUByte|.R|/id|<R|kotlin/UByte|>(), Q|kotlin/UByte|.R|kotlin/UByte.Companion.MIN_VALUE|) ->  {
+                ^box String(Fail incMaxUByte)
+            }
+        }
+
+        when () {
+            !=(R|/decMinUByte|.R|/id|<R|kotlin/UByte|>(), Q|kotlin/UByte|.R|kotlin/UByte.Companion.MAX_VALUE|) ->  {
+                ^box String(Fail decMinUByte)
+            }
+        }
+
+        when () {
+            !=(R|/incDecChainedUByte|.R|/id|<R|kotlin/UByte|>(), UInt(1).R|kotlin/UInt.toUByte|()) ->  {
+                ^box String(Fail incDecChainedUByte)
+            }
+        }
+
+        when () {
+            !=(R|/incUShort|.R|/id|<R|kotlin/UShort|>(), UInt(2).R|kotlin/UInt.toUShort|()) ->  {
+                ^box String(Fail incUShort)
+            }
+        }
+
+        when () {
+            !=(R|/decUShort|.R|/id|<R|kotlin/UShort|>(), UInt(0).R|kotlin/UInt.toUShort|()) ->  {
+                ^box String(Fail decUShort)
+            }
+        }
+
+        when () {
+            !=(R|/incMaxUShort|.R|/id|<R|kotlin/UShort|>(), Q|kotlin/UShort|.R|kotlin/UShort.Companion.MIN_VALUE|) ->  {
+                ^box String(Fail incMaxUShort)
+            }
+        }
+
+        when () {
+            !=(R|/decMinUShort|.R|/id|<R|kotlin/UShort|>(), Q|kotlin/UShort|.R|kotlin/UShort.Companion.MAX_VALUE|) ->  {
+                ^box String(Fail decMinUShort)
+            }
+        }
+
+        when () {
+            !=(R|/incDecChainedUShort|.R|/id|<R|kotlin/UShort|>(), UInt(1).R|kotlin/UInt.toUShort|()) ->  {
+                ^box String(Fail incDecChainedUShort)
+            }
+        }
+
+        when () {
+            !=(R|/incUInt|.R|/id|<R|kotlin/UInt|>(), UInt(2)) ->  {
+                ^box String(Fail incUInt)
+            }
+        }
+
+        when () {
+            !=(R|/decUInt|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail decUInt)
+            }
+        }
+
+        when () {
+            !=(R|/incMaxUInt|.R|/id|<R|kotlin/UInt|>(), Q|kotlin/UInt|.R|kotlin/UInt.Companion.MIN_VALUE|) ->  {
+                ^box String(Fail incMaxUInt)
+            }
+        }
+
+        when () {
+            !=(R|/decMinUInt|.R|/id|<R|kotlin/UInt|>(), Q|kotlin/UInt|.R|kotlin/UInt.Companion.MAX_VALUE|) ->  {
+                ^box String(Fail decMinUInt)
+            }
+        }
+
+        when () {
+            !=(R|/incDecChainedUInt|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail incDecChainedUInt)
+            }
+        }
+
+        when () {
+            !=(R|/incULong|.R|/id|<R|kotlin/ULong|>(), ULong(2)) ->  {
+                ^box String(Fail incULong)
+            }
+        }
+
+        when () {
+            !=(R|/decULong|.R|/id|<R|kotlin/ULong|>(), ULong(0)) ->  {
+                ^box String(Fail decULong)
+            }
+        }
+
+        when () {
+            !=(R|/incMaxULong|.R|/id|<R|kotlin/ULong|>(), Q|kotlin/ULong|.R|kotlin/ULong.Companion.MIN_VALUE|) ->  {
+                ^box String(Fail incMaxULong)
+            }
+        }
+
+        when () {
+            !=(R|/decMinULong|.R|/id|<R|kotlin/ULong|>(), Q|kotlin/ULong|.R|kotlin/ULong.Companion.MAX_VALUE|) ->  {
+                ^box String(Fail decMinULong)
+            }
+        }
+
+        when () {
+            !=(R|/incDecChainedULong|.R|/id|<R|kotlin/ULong|>(), ULong(1)) ->  {
+                ^box String(Fail incDecChainedULong)
+            }
+        }
+
+        ^box String(OK)
+    }

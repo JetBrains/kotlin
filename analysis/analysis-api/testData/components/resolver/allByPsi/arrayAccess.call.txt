@@ -353,7 +353,7 @@ KtNameReferenceExpression(115,128): 'implicitIndex'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(134,172): '(@Suppress("SOME_ERROR") list[1]) += 2'
-  KaCallResolutionSuccess:
+  KaCompoundArrayAccessCallResolutionAttempt:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
@@ -740,7 +740,7 @@ KtConstantExpression(171,172): '2'
   null
 
 KtBinaryExpression(177,191): '(list[2]) += 3'
-  KaCallResolutionSuccess:
+  KaCompoundArrayAccessCallResolutionAttempt:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
@@ -1185,7 +1185,7 @@ KtValueArgument(245,254): '--list[i]'
   null
 
 KtPrefixExpression(245,254): '--list[i]'
-  KaCallResolutionSuccess:
+  KaCompoundArrayAccessCallResolutionAttempt:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
@@ -1478,7 +1478,7 @@ KtNameReferenceExpression(256,260): 'list'
       typeArgumentsMapping = {}
 
 KtPrefixExpression(266,277): '++(list[2])'
-  KaCallResolutionSuccess:
+  KaCompoundArrayAccessCallResolutionAttempt:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC

@@ -5,23 +5,18 @@
 
 package kotlin.uuid
 
-@ExperimentalUuidApi
 internal actual fun serializedUuid(uuid: Uuid): Any =
     throw UnsupportedOperationException("Serialization is supported only in Kotlin/JVM")
 
-@ExperimentalUuidApi
 internal actual fun ByteArray.getLongAt(index: Int): Long =
     getLongAtCommonImpl(index)
 
-@ExperimentalUuidApi
 internal actual fun Long.formatBytesInto(dst: ByteArray, dstOffset: Int, startIndex: Int, endIndex: Int) =
     formatBytesIntoCommonImpl(dst, dstOffset, startIndex, endIndex)
 
-@ExperimentalUuidApi
 internal actual fun ByteArray.setLongAt(index: Int, value: Long) =
     setLongAtCommonImpl(index, value)
 
-@ExperimentalUuidApi
 internal actual fun uuidParseHexDash(hexDashString: String): Uuid =
     uuidParseHexDashCommonImpl(hexDashString)
 
@@ -29,7 +24,6 @@ internal actual fun uuidParseHexDash(hexDashString: String): Uuid =
 internal actual fun uuidParseHexDashOrNull(hexDashString: String): Uuid? =
     uuidParseHexDashOrNullCommonImpl(hexDashString)
 
-@ExperimentalUuidApi
 internal actual fun uuidParseHex(hexString: String): Uuid =
     uuidParseHexCommonImpl(hexString)
 

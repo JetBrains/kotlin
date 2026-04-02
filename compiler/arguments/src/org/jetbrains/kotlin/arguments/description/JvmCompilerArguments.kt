@@ -619,7 +619,6 @@ problems with parentheses in identifiers on certain platforms.""".asReleaseDepen
         name = "Xjvm-expose-boxed"
         description = "Expose inline classes and functions, accepting and returning them, to Java.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
-        additionalAnnotations(Enables(LanguageFeature.ImplicitJvmExposeBoxed))
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_0,

@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractSessionInvalidationTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.AbstractResolveToFirSymbolTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractFirOutOfContentRootContextCollectionTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractFirSourceLikeContextCollectionTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractSourceLikeDiagnosticTraversalCounterTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLDiagnosticsTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLPartialDiagnosticsTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLReversedDiagnosticsTest
@@ -23,20 +25,16 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("analysis/low-level-api-fir/tests-gen", "analysis/low-level-api-fir/testData") {
-            testClass<AbstractSourceLazyAnnotationsResolveTest> {
-                model("lazyAnnotations", pattern = TestGeneratorUtil.KT)
-            }
-
-            testClass<AbstractScriptLazyAnnotationsResolveTest> {
-                model("lazyAnnotations", pattern = TestGeneratorUtil.KTS)
+            testClass<AbstractSourceLikeLazyAnnotationsResolveTest> {
+                model("lazyAnnotations", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractSourceDeprecationsResolveTest> {
                 model("lazyResolveDeprecation", pattern = TestGeneratorUtil.KT)
             }
 
-            testClass<AbstractFirSourceLazyDeclarationResolveTest> {
-                model("lazyResolve", pattern = TestGeneratorUtil.KT)
+            testClass<AbstractFirSourceLikeLazyDeclarationResolveTest> {
+                model("lazyResolve", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractFirOutOfContentRootLazyDeclarationResolveTest> {
@@ -47,36 +45,24 @@ fun main(args: Array<String>) {
                 model("lazyResolve", pattern = TestGeneratorUtil.KT)
             }
 
-            testClass<AbstractFirScriptLazyDeclarationResolveTest> {
-                model("lazyResolve", pattern = TestGeneratorUtil.KTS)
-            }
-
             testClass<AbstractFirCustomScriptDefinitionLazyDeclarationResolveTest> {
                 model("lazyResolveCustomScriptDefinition", pattern = TestGeneratorUtil.KTS)
             }
 
-            testClass<AbstractSourceLazyTypeAnnotationsTest> {
-                model("lazyResolveTypeAnnotations", pattern = TestGeneratorUtil.KT)
+            testClass<AbstractSourceLikeLazyTypeAnnotationsTest> {
+                model("lazyResolveTypeAnnotations", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractOutOfContentRootLazyTypeAnnotationsTest> {
                 model("lazyResolveTypeAnnotations", pattern = TestGeneratorUtil.KT)
             }
 
-            testClass<AbstractScriptLazyTypeAnnotationsTest> {
-                model("lazyResolveTypeAnnotations", pattern = TestGeneratorUtil.KTS)
-            }
-
-            testClass<AbstractSourceLazyDeclarationResolveForTypeAnnotationsTest> {
-                model("lazyResolveTypeAnnotations", pattern = TestGeneratorUtil.KT)
+            testClass<AbstractSourceLikeLazyDeclarationResolveForTypeAnnotationsTest> {
+                model("lazyResolveTypeAnnotations", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractOutOfContentRootLazyDeclarationResolveForTypeAnnotationsTest> {
                 model("lazyResolveTypeAnnotations", pattern = TestGeneratorUtil.KT)
-            }
-
-            testClass<AbstractScriptLazyDeclarationResolveForTypeAnnotationsTest> {
-                model("lazyResolveTypeAnnotations", pattern = TestGeneratorUtil.KTS)
             }
 
             testClass<AbstractStdLibSourcesLazyDeclarationResolveTest> {
@@ -91,44 +77,32 @@ fun main(args: Array<String>) {
                 model("lazyResolveByReference")
             }
 
-            testClass<AbstractSourceLazyDeclarationResolveScopeBasedTest> {
-                model("lazyResolveScopes", pattern = TestGeneratorUtil.KT)
+            testClass<AbstractSourceLikeLazyDeclarationResolveScopeBasedTest> {
+                model("lazyResolveScopes", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractOutOfContentRootLazyDeclarationResolveScopeBasedTest> {
                 model("lazyResolveScopes", pattern = TestGeneratorUtil.KT)
             }
 
-            testClass<AbstractScriptLazyDeclarationResolveScopeBasedTest> {
-                model("lazyResolveScopes", pattern = TestGeneratorUtil.KTS)
-            }
-
             testClass<AbstractErrorResistanceTest> {
                 model("errorResistance")
             }
 
-            testClass<AbstractSourceInBlockModificationTest> {
-                model("inBlockModification", recursive = false, pattern = TestGeneratorUtil.KT)
+            testClass<AbstractSourceLikeInBlockModificationTest> {
+                model("inBlockModification", recursive = false, pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractOutOfContentRootInBlockModificationTest> {
                 model("inBlockModification", recursive = false, pattern = TestGeneratorUtil.KT)
             }
 
-            testClass<AbstractScriptInBlockModificationTest> {
-                model("inBlockModification", recursive = false, pattern = TestGeneratorUtil.KTS)
-            }
-
-            testClass<AbstractSourceDanglingFileInBlockModificationTest> {
-                model("inBlockModification", recursive = false, pattern = TestGeneratorUtil.KT)
+            testClass<AbstractSourceLikeDanglingFileInBlockModificationTest> {
+                model("inBlockModification", recursive = false, pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractOutOfContentRootDanglingFileInBlockModificationTest> {
                 model("inBlockModification", recursive = false, pattern = TestGeneratorUtil.KT)
-            }
-
-            testClass<AbstractScriptDanglingFileInBlockModificationTest> {
-                model("inBlockModification", recursive = false, pattern = TestGeneratorUtil.KTS)
             }
 
             testClass<AbstractCodeFragmentInBlockModificationTest> {
@@ -172,48 +146,32 @@ fun main(args: Array<String>) {
 //            )
 //        }
 
-            testClass<AbstractSourceFileStructureTest> {
-                model("fileStructure", pattern = TestGeneratorUtil.KT)
+            testClass<AbstractSourceLikeFileStructureTest> {
+                model("fileStructure", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractOutOfContentRootFileStructureTest> {
                 model("fileStructure", pattern = TestGeneratorUtil.KT)
             }
 
-            testClass<AbstractScriptFileStructureTest> {
-                model("fileStructure", pattern = TestGeneratorUtil.KTS)
-            }
-
-            testClass<AbstractFirSourceContextCollectionTest> {
-                model("fileStructure", pattern = TestGeneratorUtil.KT)
+            testClass<AbstractFirSourceLikeContextCollectionTest> {
+                model("fileStructure", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractFirOutOfContentRootContextCollectionTest> {
                 model("fileStructure", pattern = TestGeneratorUtil.KT)
             }
 
-            testClass<AbstractScriptContextCollectionTest> {
-                model("fileStructure", pattern = TestGeneratorUtil.KTS)
+            testClass<AbstractSourceLikeDiagnosticTraversalCounterTest> {
+                model("fileStructure", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
-            testClass<AbstractSourceDiagnosticTraversalCounterTest> {
-                model("fileStructure", pattern = TestGeneratorUtil.KT)
-            }
-
-            testClass<AbstractScriptDiagnosticTraversalCounterTest> {
-                model("fileStructure", pattern = TestGeneratorUtil.KTS)
-            }
-
-            testClass<AbstractSourceWholeFileResolvePhaseTest> {
-                model("fileStructure", pattern = TestGeneratorUtil.KT)
+            testClass<AbstractSourceLikeWholeFileResolvePhaseTest> {
+                model("fileStructure", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractOutOfContentRootWholeFileResolvePhaseTest> {
                 model("fileStructure", pattern = TestGeneratorUtil.KT)
-            }
-
-            testClass<AbstractScriptWholeFileResolvePhaseTest> {
-                model("fileStructure", pattern = TestGeneratorUtil.KTS)
             }
 
             testClass<AbstractSourcePartialRawFirBuilderTestCase> {
@@ -224,24 +182,16 @@ fun main(args: Array<String>) {
                 model("partialRawBuilder", testMethod = "doRawFirTest")
             }
 
-            testClass<AbstractSourceGetOrBuildFirTest> {
-                model("getOrBuildFir", pattern = TestGeneratorUtil.KT)
+            testClass<AbstractSourceLikeGetOrBuildFirTest> {
+                model("getOrBuildFir", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractOutOfContentRootGetOrBuildFirTest> {
                 model("getOrBuildFir", pattern = TestGeneratorUtil.KT)
             }
 
-            testClass<AbstractScriptGetOrBuildFirTest> {
-                model("getOrBuildFir", pattern = TestGeneratorUtil.KTS)
-            }
-
-            testClass<AbstractInterruptingSourceGetOrBuildFirTest> {
-                model("getOrBuildFirWithInterruption", pattern = TestGeneratorUtil.KT)
-            }
-
-            testClass<AbstractInterruptingScriptGetOrBuildFirTest> {
-                model("getOrBuildFirWithInterruption", pattern = TestGeneratorUtil.KTS)
+            testClass<AbstractInterruptingSourceLikeGetOrBuildFirTest> {
+                model("getOrBuildFirWithInterruption", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractLibraryGetOrBuildFirTest> {
@@ -252,28 +202,16 @@ fun main(args: Array<String>) {
                 model("getOrBuildFirForStdLib")
             }
 
-            testClass<AbstractSourceFileBasedKotlinDeclarationProviderTest> {
-                model("fileBasedDeclarationProvider", pattern = TestGeneratorUtil.KT)
+            testClass<AbstractSourceLikeFileBasedKotlinDeclarationProviderTest> {
+                model("fileBasedDeclarationProvider", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
-            testClass<AbstractScriptFileBasedKotlinDeclarationProviderTest> {
-                model("fileBasedDeclarationProvider", pattern = TestGeneratorUtil.KTS)
+            testClass<AbstractSourceLikeNonLocalDeclarationAnchorTest> {
+                model("nonLocalDeclarationAnchors", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
-            testClass<AbstractSourceNonLocalDeclarationAnchorTest> {
-                model("nonLocalDeclarationAnchors", pattern = TestGeneratorUtil.KT)
-            }
-
-            testClass<AbstractScriptNonLocalDeclarationAnchorTest> {
-                model("nonLocalDeclarationAnchors", pattern = TestGeneratorUtil.KTS)
-            }
-
-            testClass<AbstractSourceClassIdTest> {
-                model("classId", pattern = TestGeneratorUtil.KT)
-            }
-
-            testClass<AbstractScriptClassIdTest> {
-                model("classId", pattern = TestGeneratorUtil.KTS)
+            testClass<AbstractSourceLikeClassIdTest> {
+                model("classId", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractCompilationPeerAnalysisTest> {
@@ -300,12 +238,8 @@ fun main(args: Array<String>) {
                 model("resolveToFirSymbolPsiClass")
             }
 
-            testClass<AbstractSourcePsiBasedContainingClassCalculatorConsistencyTest> {
-                model("psiBasedContainingClass", pattern = TestGeneratorUtil.KT)
-            }
-
-            testClass<AbstractScriptPsiBasedContainingClassCalculatorConsistencyTest> {
-                model("psiBasedContainingClass", pattern = TestGeneratorUtil.KTS)
+            testClass<AbstractSourceLikePsiBasedContainingClassCalculatorConsistencyTest> {
+                model("psiBasedContainingClass", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractCombinedPackageDelegationSymbolProviderTest> {
@@ -332,12 +266,8 @@ fun main(args: Array<String>) {
                 }
             }
 
-            testClass<AbstractSourceDesignationByPsiTest> {
-                model("designationByPsi", pattern = TestGeneratorUtil.KT)
-            }
-
-            testClass<AbstractScriptDesignationByPsiTest> {
-                model("designationByPsi", pattern = TestGeneratorUtil.KTS)
+            testClass<AbstractSourceLikeDesignationByPsiTest> {
+                model("designationByPsi", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
         }
 
@@ -374,20 +304,12 @@ fun main(args: Array<String>) {
                 model("sessions/sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
             }
 
-            testClass<AbstractSourceResolveCandidatesFirTreeConsistencyTest> {
-                model("components/resolver/singleByPsi", pattern = TestGeneratorUtil.KT)
+            testClass<AbstractSourceLikeResolveCandidatesFirTreeConsistencyTest> {
+                model("components/resolver/singleByPsi", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
-            testClass<AbstractScriptResolveCandidatesFirTreeConsistencyTest> {
-                model("components/resolver/singleByPsi", pattern = TestGeneratorUtil.KTS)
-            }
-
-            testClass<AbstractSourceResolveCandidatesByFileFirTreeConsistencyTest> {
-                model("components/resolver/allByPsi", pattern = TestGeneratorUtil.KT)
-            }
-
-            testClass<AbstractScriptResolveCandidatesByFileFirTreeConsistencyTest> {
-                model("components/resolver/allByPsi", pattern = TestGeneratorUtil.KTS)
+            testClass<AbstractSourceLikeResolveCandidatesByFileFirTreeConsistencyTest> {
+                model("components/resolver/allByPsi", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
         }
     }

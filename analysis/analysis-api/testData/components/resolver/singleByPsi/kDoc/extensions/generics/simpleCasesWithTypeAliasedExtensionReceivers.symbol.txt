@@ -1,26 +1,44 @@
 <caret_1>:
   KDocName(573,582): 'Base.ext1'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /ext1(<extension receiver>: {ChildGenericAlias<T>=} Base<T>): kotlin.Unit
+      ]
 
 <caret_2>:
   KDocName(588,597): 'Base.ext2'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /ext2(<extension receiver>: {ChildGenericAliasWithStarProjection=} Base<*>): kotlin.Unit
+      ]
 
 <caret_3>:
   KDocName(603,612): 'Base.ext3'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /ext3(<extension receiver>: {ChildGenericAliasWithNothing=} Base<kotlin.Nothing>): kotlin.Unit
+      ]
 
 <caret_4>:
   KDocName(618,627): 'Base.ext4'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /ext4(<extension receiver>: {ChildGenericAliasWithAnotherNothingAlias=} Base<ChildGenericAliasWithNothing>): kotlin.Unit
+      ]
 
 <caret_5>:
   KDocName(636,661): 'DoubleNestedBaseStar.ext1'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /ext1(<extension receiver>: {ChildGenericAlias<T>=} Base<T>): kotlin.Unit
+      ]
 
 <caret_6>:
   KDocName(667,692): 'DoubleNestedBaseStar.ext2'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /ext2(<extension receiver>: {ChildGenericAliasWithStarProjection=} Base<*>): kotlin.Unit
+      ]
 
 <caret_7>:
   KDocName(698,723): 'DoubleNestedBaseStar.ext3'
@@ -32,11 +50,17 @@
 
 <caret_9>:
   KDocName(763,791): 'DoubleNestedBaseNothing.ext1'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /ext1(<extension receiver>: {ChildGenericAlias<T>=} Base<T>): kotlin.Unit
+      ]
 
 <caret_10>:
   KDocName(797,825): 'DoubleNestedBaseNothing.ext2'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /ext2(<extension receiver>: {ChildGenericAliasWithStarProjection=} Base<*>): kotlin.Unit
+      ]
 
 <caret_11>:
   KDocName(831,859): 'DoubleNestedBaseNothing.ext3'
@@ -44,4 +68,7 @@
 
 <caret_12>:
   KDocName(865,893): 'DoubleNestedBaseNothing.ext4'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /ext4(<extension receiver>: {ChildGenericAliasWithAnotherNothingAlias=} Base<ChildGenericAliasWithNothing>): kotlin.Unit
+      ]

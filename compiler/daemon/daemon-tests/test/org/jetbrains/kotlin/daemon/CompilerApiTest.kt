@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
-import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.test.util.KtTestUtil.getTestDataFileLocatedInCompilerTestData
 import org.junit.Assert
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -88,12 +88,12 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         return code to outputs
     }
 
-    private fun getHelloAppBaseDir(): String = KtTestUtil.getTestDataPathBase() + "/integration/smoke/helloApp"
-    private fun getSimpleScriptBaseDir(): String = KtTestUtil.getTestDataPathBase() + "/integration/smoke/simpleScript"
+    private fun getHelloAppBaseDir(): File = getTestDataFileLocatedInCompilerTestData("integration/smoke/helloApp")
+    private fun getSimpleScriptBaseDir(): File = getTestDataFileLocatedInCompilerTestData("integration/smoke/simpleScript")
 
-    private fun run(baseDir: String, logName: String, vararg args: String): Int = runJava(baseDir, logName, *args)
+    private fun run(baseDir: File, logName: String, vararg args: String): Int = runJava(baseDir, logName, *args)
 
-    private fun runScriptWithArgs(testDataDir: String, logName: String?, scriptClassName: String, classpath: List<File>, vararg arguments: String) {
+    private fun runScriptWithArgs(testDataDir: File, logName: String?, scriptClassName: String, classpath: List<File>, vararg arguments: String) {
 
         val cl = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray())
         val scriptClass = cl.loadClass(scriptClassName)
@@ -102,7 +102,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
         if (logName != null) {
             val expectedFile = File(testDataDir, logName + ".expected")
-            val normalizedContent = normalizeOutput(File(testDataDir), "OUT:\n$scriptOut\nReturn code: 0")
+            val normalizedContent = normalizeOutput(testDataDir, "OUT:\n$scriptOut\nReturn code: 0")
 
             TestDataAssertions.assertEqualsToFile(expectedFile, normalizedContent)
         }

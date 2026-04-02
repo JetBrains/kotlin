@@ -8,3 +8,4 @@ STEP 1:
         U : B.1.kt -> B.kt
     added file: B.kt
     modified ir: AllOpenGenerated.kt
+    updated imports <wasm>: usage.kt

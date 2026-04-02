@@ -49,7 +49,7 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveReferenceWithResolveE
 
   @Test
   public void testAllFilesPresentInReferenceResolve() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Nested
@@ -62,7 +62,7 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveReferenceWithResolveE
 
     @Test
     public void testAllFilesPresentInMultiModule() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Nested
@@ -75,7 +75,7 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveReferenceWithResolveE
 
       @Test
       public void testAllFilesPresentInExtendedModuleDependency() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve/multiModule/extendedModuleDependency"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -126,7 +126,7 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveReferenceWithResolveE
 
     @Test
     public void testAllFilesPresentInSingleModule() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/referenceResolve/singleModule"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test

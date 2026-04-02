@@ -48,7 +48,7 @@ public class Fe10IdeNormalAnalysisSourceModulePackageScopeTestGenerated extends 
 
   @Test
   public void testAllFilesPresentInPackageScope() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/packageScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/packageScope"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

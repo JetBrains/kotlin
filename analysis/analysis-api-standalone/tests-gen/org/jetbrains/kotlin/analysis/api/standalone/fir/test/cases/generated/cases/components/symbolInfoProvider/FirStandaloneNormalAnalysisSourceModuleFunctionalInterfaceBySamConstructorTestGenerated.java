@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleFunctionalInterfaceBySamCons
 
   @Test
   public void testAllFilesPresentInFunctionalInterfaceBySamConstructor() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolInfoProvider/functionalInterfaceBySamConstructor"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolInfoProvider/functionalInterfaceBySamConstructor"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

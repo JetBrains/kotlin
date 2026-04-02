@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,19 +12,29 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.resolution.KtResolvable
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * This interface represents an attempt on resolving some [KtResolvable] through [KaResolver.tryResolveSymbols] API.
  *
- * - A successful result is represented by [KaSymbolResolutionSuccess]
- * - An unsuccessful result is represented by [KaSymbolResolutionError]
+ * [KaSymbolResolutionAttempt] represents either a [single symbol attempt][KaSingleSymbolResolutionAttempt]
+ * or a [compound error][KaCompoundSymbolResolutionError].
  *
  * @see KaResolver.tryResolveSymbols
- * @see KaSymbolResolutionSuccess
- * @see KaSymbolResolutionError
  */
 @KaExperimentalApi
 public sealed interface KaSymbolResolutionAttempt : KaLifetimeOwner
+
+/**
+ * Represents an attempt to resolve a single symbol, which is either a [success][KaSymbolResolutionSuccess]
+ * or an [error][KaSymbolResolutionError].
+ *
+ * @see KaSymbolResolutionAttempt
+ */
+@KaExperimentalApi
+public sealed interface KaSingleSymbolResolutionAttempt : KaSymbolResolutionAttempt
 
 /**
  * Represents a successful resolution result.
@@ -38,7 +48,7 @@ public sealed interface KaSymbolResolutionAttempt : KaLifetimeOwner
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaSymbolResolutionSuccess : KaSymbolResolutionAttempt {
+public interface KaSymbolResolutionSuccess : KaSingleSymbolResolutionAttempt {
     /**
      * The non-empty list of resolved symbols
      */
@@ -65,7 +75,7 @@ public interface KaSymbolResolutionSuccess : KaSymbolResolutionAttempt {
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaSymbolResolutionError : KaSymbolResolutionAttempt {
+public interface KaSymbolResolutionError : KaSingleSymbolResolutionAttempt {
     /**
      * Defines a reason why this attempt is unsuccessful
      */
@@ -91,16 +101,87 @@ public interface KaSymbolResolutionError : KaSymbolResolutionAttempt {
 }
 
 /**
+ * Represents a failed resolution of a compound (multi) call at the symbol level.
+ *
+ * This type is produced only when a compound call has a mix of successful and failed sub-calls,
+ * or when all sub-calls fail. The [attempts] list contains:
+ * - At most one [KaSymbolResolutionSuccess] (merging symbols from all successful sub-calls)
+ * - At least one [KaSymbolResolutionError]
+ * - At least two entries in total
+ *
+ * When all sub-calls succeed, [KaSymbolResolutionSuccess] is returned instead.
+ * When a single call fails, [KaSymbolResolutionError] is returned instead.
+ *
+ * Unlike [KaMultiCallResolutionAttempt], this type does not distinguish between specific compound call kinds
+ * (for-loop, delegated property, etc.) — it simply holds a flat list of sub-call resolution attempts.
+ *
+ * @see KaMultiCallResolutionAttempt
+ */
+@KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaCompoundSymbolResolutionError : KaSymbolResolutionAttempt {
+    /**
+     * The list of individual resolution attempts for each sub-call.
+     *
+     * Contains at most one [KaSymbolResolutionSuccess] and at least one [KaSymbolResolutionError].
+     * At least two entries in total.
+     */
+    @KaExperimentalApi
+    public val attempts: List<KaSingleSymbolResolutionAttempt>
+}
+
+/**
  * Returns a list of [KaSymbol].
  *
  * - If [this] is an instance of [KaSymbolResolutionSuccess], the list will contain [KaSymbolResolutionSuccess.symbols].
  * - If [this] is an instance of [KaSymbolResolutionError], the list will contain [KaSymbolResolutionError.candidateSymbols].
+ * - If [this] is an instance of [KaCompoundSymbolResolutionError], the list will contain the combined symbols from all attempts.
  *
  * @see KaResolver.tryResolveSymbols
  */
 @KaExperimentalApi
 public val KaSymbolResolutionAttempt.symbols: List<KaSymbol>
-    get() = when (this) {
-        is KaSymbolResolutionSuccess -> symbols
-        is KaSymbolResolutionError -> candidateSymbols
+    get() = fold(
+        onSuccess = { it },
+        onFailure = { attempts ->
+            attempts.flatMap {
+                if (it is KaSymbolResolutionError) it.candidateSymbols else it.symbols
+            }
+        },
+    )
+
+/**
+ * The resolved symbols if the resolution succeeded, or an empty list if it failed.
+ *
+ * @see KaCallResolutionAttempt.successfulCall
+ */
+@KaExperimentalApi
+public val KaSymbolResolutionAttempt.successfulSymbols: List<KaSymbol>
+    get() = fold(onSuccess = { it }, onFailure = { emptyList() })
+
+/**
+ * Folds over a [KaSymbolResolutionAttempt] depending on whether the resolution succeeded.
+ *
+ * - [KaSymbolResolutionSuccess]: invokes [onSuccess] with the resolved [symbols][KaSymbolResolutionSuccess.symbols].
+ * - [KaSymbolResolutionError]: invokes [onFailure] with the error wrapped in a single-element list.
+ * - [KaCompoundSymbolResolutionError]: invokes [onFailure] with the individual [attempts][KaCompoundSymbolResolutionError.attempts].
+ */
+@KaExperimentalApi
+@OptIn(ExperimentalContracts::class)
+public inline fun <T> KaSymbolResolutionAttempt.fold(
+    onSuccess: (List<KaSymbol>) -> T,
+    onFailure: (List<KaSingleSymbolResolutionAttempt>) -> T,
+): T {
+    contract {
+        callsInPlace(onSuccess, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(onFailure, InvocationKind.AT_MOST_ONCE)
     }
+
+    val attempts = when (this) {
+        is KaSymbolResolutionSuccess -> return onSuccess(symbols)
+        is KaSymbolResolutionError -> listOf(this)
+        is KaCompoundSymbolResolutionError -> attempts
+    }
+
+    return onFailure(attempts)
+}

@@ -152,9 +152,6 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             val visibility = javaClass.visibility
             this@buildJavaClass.visibility = visibility
             classKind = javaClass.classKind
-            modality = javaClass.modality
-            this.isTopLevel = !classId.isNestedClass
-            isStatic = javaClass.isStatic
             javaPackage = packageCache.getValue(classSymbol.classId.packageFqName)
             this.javaTypeParameterStack = classJavaTypeParameterStack
             existingNestedClassifierNames += javaClass.innerClassNames
@@ -174,6 +171,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
                 }
             }
 
+            val isStatic = javaClass.isStatic
             if (!isStatic && parentClassSymbol != null) {
                 typeParameters += (parentClassSymbol.fir as FirJavaClass).nonEnhancedTypeParameters.map {
                     buildOuterClassTypeParameterRef { symbol = it.symbol }
@@ -182,10 +180,10 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
 
             status = FirResolvedDeclarationStatusImpl(
                 visibility,
-                modality!!,
+                javaClass.modality,
                 effectiveVisibility
             ).apply {
-                this.isInner = !isTopLevel && !this@buildJavaClass.isStatic
+                this.isInner = classId.isNestedClass && !isStatic
                 isFun = classKind == ClassKind.INTERFACE
             }
 
@@ -673,7 +671,6 @@ private fun convertJavaConstructorToFir(
         this.moduleData = moduleData
         isFromSource = javaClass.isFromSource
         symbol = constructorSymbol
-        isInner = classIsInner
         status = methodStatus
         // TODO get rid of dependency on PSI KT-63046
         isPrimary = javaConstructor == null || source?.psi.let { it is PsiMethod && JavaPsiRecordUtil.isCanonicalConstructor(it) }
@@ -730,7 +727,6 @@ private fun buildConstructorForAnnotationClass(
             coneType = classSymbol.defaultType()
         }
         valueParametersForAnnotationConstructor.forEach { _, firValueParameter -> valueParameters += firValueParameter }
-        isInner = false
         isPrimary = true
     }.apply {
         containingClassForStaticMemberAttr = classSymbol.toLookupTag()

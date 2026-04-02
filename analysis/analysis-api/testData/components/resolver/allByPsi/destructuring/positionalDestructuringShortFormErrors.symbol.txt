@@ -388,9 +388,18 @@ KtBlockExpression(485,487): '{}'
   null
 
 KtForExpression(492,521): 'for ([first: String] in y) {}'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'.>
+  KaCompoundSymbolResolutionError:
+    attempts = [
+      KaSymbolResolutionError:
+        candidateSymbols = []
+        diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'.>,
+      KaSymbolResolutionError:
+        candidateSymbols = []
+        diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext'.>,
+      KaSymbolResolutionError:
+        candidateSymbols = []
+        diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next'.>
+    ]
 
 KtParameter(497,512): '[first: String]'
   null

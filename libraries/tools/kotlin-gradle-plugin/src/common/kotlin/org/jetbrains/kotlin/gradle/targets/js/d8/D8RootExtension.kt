@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,12 +18,19 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.utils.property
 
+@Deprecated(
+    "Use 'org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec' instead. Scheduled for removal in Kotlin 2.6.",
+    ReplaceWith(
+        "D8EnvSpec",
+        "org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec"
+    ),
+    level = DeprecationLevel.WARNING
+)
 @OptIn(ExperimentalWasmDsl::class)
 open class D8RootExtension(
     @Transient val project: Project,
     private val d8EnvSpec: D8EnvSpec,
 ) : AbstractSettings<D8Env>() {
-
     private val gradleHome = project.gradle.gradleUserHomeDir.also {
         project.logger.kotlinInfo("Storing cached files in $it")
     }

@@ -17,7 +17,7 @@ fun box() {
     for (_ in 1..10) {}
 }
 
-// EXPECTATIONS FIR JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:9 box:
 // test.kt:5 writeFalse:
 // test.kt:9 box:

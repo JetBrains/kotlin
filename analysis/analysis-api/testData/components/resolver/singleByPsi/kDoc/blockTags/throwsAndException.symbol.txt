@@ -4,7 +4,10 @@
 
 <caret_2>:
   KDocName(29,31): 'AA'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /AA
+      ]
 
 <caret_3>:
   KDocName(47,49): 'AA'
@@ -12,20 +15,35 @@
 
 <caret_4>:
   KDocName(51,53): 'AA'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /AA
+      ]
 
 <caret_5>:
   KDocName(66,75): 'Exception'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        kotlin/Exception
+      ]
 
 <caret_6>:
   KDocName(77,86): 'Exception'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        kotlin/Exception
+      ]
 
 <caret_7>:
   KDocName(102,111): 'Exception'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        kotlin/Exception
+      ]
 
 <caret_8>:
   KDocName(113,122): 'Exception'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        kotlin/Exception
+      ]

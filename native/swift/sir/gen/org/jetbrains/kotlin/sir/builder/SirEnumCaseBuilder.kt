@@ -43,18 +43,3 @@ inline fun buildEnumCase(init: SirEnumCaseBuilder.() -> Unit): SirEnumCase {
     }
     return SirEnumCaseBuilder().apply(init).build()
 }
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildEnumCaseCopy(original: SirEnumCase, init: SirEnumCaseBuilder.() -> Unit): SirEnumCase {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = SirEnumCaseBuilder()
-    copyBuilder.origin = original.origin
-    copyBuilder.visibility = original.visibility
-    copyBuilder.documentation = original.documentation
-    copyBuilder.attributes.addAll(original.attributes)
-    copyBuilder.bridges.addAll(original.bridges)
-    copyBuilder.name = original.name
-    return copyBuilder.apply(init).build()
-}

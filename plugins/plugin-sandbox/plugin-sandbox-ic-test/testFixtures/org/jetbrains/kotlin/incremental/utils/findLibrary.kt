@@ -15,13 +15,13 @@ private fun findLib(
     name: String,
     taskName: String,
     extension: String,
-    isCompilerPlugin: Boolean
+    filter: (File) -> Boolean = { it.name.startsWith(name) }
 ): String {
     val failMessage = { "$extension $name does not exist. Please run $taskName" }
     val libDir = File(dir)
     assertTrue(libDir.exists() && libDir.isDirectory)
     val jar = libDir.listFiles()?.firstOrNull {
-        it.name.startsWith(name) && it.extension == extension && (!isCompilerPlugin || JarFile(it).containsCompilerPluginRegistrar())
+        it.extension == extension && filter(it)
     } ?: fail(failMessage)
     return jar.canonicalPath
 }
@@ -30,7 +30,9 @@ private fun JarFile.containsCompilerPluginRegistrar(): Boolean =
     entries().toList().any { it.name.endsWith("org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar") }
 
 internal fun findJar(dir: String, name: String, taskName: String, isCompilerPlugin: Boolean = false) =
-    findLib(dir, name, taskName, "jar", isCompilerPlugin)
+    findLib(dir, name, taskName, "jar") {
+        it.name.startsWith(name) && (!isCompilerPlugin || JarFile(it).containsCompilerPluginRegistrar())
+    }
 
-internal fun findKlib(dir: String, name: String, taskName: String) =
-    findLib(dir, name, taskName, "klib", isCompilerPlugin = false)
+internal fun findKlib(dir: String, name: String, taskName: String, platform: String) =
+    findLib(dir, name, taskName, "klib") { it.name.startsWith("$name-$platform-") }

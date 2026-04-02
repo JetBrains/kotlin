@@ -9,6 +9,8 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalModuleStateModificationEvent
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
+import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.MultiplatformTestOutputPrefixProvider
@@ -20,43 +22,60 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import java.nio.file.Path
 
-abstract class AnalysisApiTestConfigurator {
+/**
+ * Configures the test environment for Analysis API tests.
+ *
+ * Each configurator defines a specific combination of frontend, analysis mode, and platform,
+ * along with the services and module structure needed to run tests in that configuration.
+ *
+ * To create a modified version of an existing configurator (e.g., to add test prefixes),
+ * use interface delegation:
+ *
+ * ```kotlin
+ * object : AnalysisApiTestConfigurator by existingConfigurator {
+ *     override val testPrefixes = listOf("myPrefix")
+ * }
+ * ```
+ *
+ * @see withAdditionalVariant
+ */
+interface AnalysisApiTestConfigurator {
     /**
      * Chain of test variant identifiers that determines output file naming and execution priority.
      *
      * @see org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest.assertEqualsToTestOutputFile
      * @see org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest.variantChain
      */
-    open val testPrefixes: List<String>
+    val testPrefixes: List<String>
         get() = MultiplatformTestOutputPrefixProvider.getPrefixes(defaultTargetPlatform)
 
-    abstract val analysisApiMode: AnalysisApiMode
+    val analysisApiMode: AnalysisApiMode
 
-    abstract val frontendKind: FrontendKind
+    val frontendKind: FrontendKind
 
-    abstract val analyseInDependentSession: Boolean
+    val analyseInDependentSession: Boolean
 
     /**
      * The platform used by default, in case if no platform is specified in the test data file.
      */
-    open val defaultTargetPlatform: TargetPlatform
+    val defaultTargetPlatform: TargetPlatform
         get() = defaultTargetPlatformValue
 
-    abstract fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable)
+    fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable)
 
-    abstract val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
+    val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
 
-    open fun prepareFilesInModule(ktTestModule: KtTestModule, testServices: TestServices) {}
+    fun prepareFilesInModule(ktTestModule: KtTestModule, testServices: TestServices) {}
 
-    open fun doGlobalModuleStateModification(project: Project) {
+    fun doGlobalModuleStateModification(project: Project) {
         runWriteAction {
             project.publishGlobalModuleStateModificationEvent()
         }
     }
 
-    open fun computeTestDataPath(path: Path): Path = path
+    fun computeTestDataPath(path: Path): Path = path
 
-    abstract fun createModules(
+    fun createModules(
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project,
@@ -65,5 +84,19 @@ abstract class AnalysisApiTestConfigurator {
     companion object {
         val defaultTargetPlatformValue: TargetPlatform
             get() = JvmPlatforms.defaultJvmPlatform
+    }
+}
+
+/**
+ * Returns a configurator that delegates everything to [this] but appends [variant] to [testPrefixes].
+ *
+ * @see TestVariantChain
+ * @see TestVariantChain.withAdditionalVariant
+ */
+fun AnalysisApiTestConfigurator.withAdditionalVariant(variant: String): AnalysisApiTestConfigurator {
+    val base = this
+    return object : AnalysisApiTestConfigurator by base {
+        override val testPrefixes: List<String>
+            get() = base.testPrefixes.withAdditionalVariant(variant)
     }
 }

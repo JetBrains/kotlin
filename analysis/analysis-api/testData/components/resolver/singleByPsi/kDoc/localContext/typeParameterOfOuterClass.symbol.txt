@@ -4,4 +4,7 @@
 
 <caret_2>:
   KDocName(142,144): 'TT'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        TT
+      ]

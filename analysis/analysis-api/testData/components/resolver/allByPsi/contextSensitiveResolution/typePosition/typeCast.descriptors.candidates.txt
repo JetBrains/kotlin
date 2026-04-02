@@ -1408,26 +1408,6 @@ KtBlockExpression(974,1391): '{'
 
 KtDotQualifiedExpression(980,1020): '(i as SealedInheritor1).prop1.hashCode()'
   KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = (i as SealedInheritor1).prop1
-        isSafeNavigation = false
-        type = ERROR_TYPE
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = ERROR_TYPE
-        symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
-        valueParameters = []
-        contextParameters = []
-        callableId = /<Error class: unknown class>.<Error function>
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = false
-
-  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1447,13 +1427,33 @@ KtDotQualifiedExpression(980,1020): '(i as SealedInheritor1).prop1.hashCode()'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-KtDotQualifiedExpression(980,1009): '(i as SealedInheritor1).prop1'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = (i as SealedInheritor1)
+        expression = (i as SealedInheritor1).prop1
+        isSafeNavigation = false
+        type = ERROR_TYPE
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+        valueParameters = []
+        contextParameters = []
+        callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(980,1009): '(i as SealedInheritor1).prop1'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = prop1
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
@@ -1469,11 +1469,11 @@ KtDotQualifiedExpression(980,1009): '(i as SealedInheritor1).prop1'
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
+    candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = prop1
+        expression = (i as SealedInheritor1)
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
@@ -1567,11 +1567,11 @@ KtNameReferenceExpression(1004,1009): 'prop1'
 
 KtCallExpression(1010,1020): 'hashCode()'
   KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = (i as SealedInheritor1).prop1
+        expression = hashCode
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
@@ -1587,11 +1587,11 @@ KtCallExpression(1010,1020): 'hashCode()'
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
+    candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = hashCode
+        expression = (i as SealedInheritor1).prop1
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
@@ -2846,26 +2846,6 @@ KtBlockExpression(1430,1934): '{'
 
 KtSafeQualifiedExpression(1436,1479): '(i as? SealedInheritor1)?.prop1?.hashCode()'
   KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = (i as? SealedInheritor1)?.prop1
-        isSafeNavigation = true
-        type = ERROR_TYPE?
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = ERROR_TYPE
-        symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
-        valueParameters = []
-        contextParameters = []
-        callableId = /<Error class: unknown class>.<Error function>
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = false
-
-  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2885,13 +2865,12 @@ KtSafeQualifiedExpression(1436,1479): '(i as? SealedInheritor1)?.prop1?.hashCode
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-KtSafeQualifiedExpression(1436,1467): '(i as? SealedInheritor1)?.prop1'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = (i as? SealedInheritor1)
+        expression = (i as? SealedInheritor1)?.prop1
         isSafeNavigation = true
         type = ERROR_TYPE?
       extensionReceiver = null
@@ -2906,6 +2885,7 @@ KtSafeQualifiedExpression(1436,1467): '(i as? SealedInheritor1)?.prop1'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
+KtSafeQualifiedExpression(1436,1467): '(i as? SealedInheritor1)?.prop1'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
@@ -2914,6 +2894,26 @@ KtSafeQualifiedExpression(1436,1467): '(i as? SealedInheritor1)?.prop1'
         expression = prop1
         isSafeNavigation = false
         type = ERROR_TYPE
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+        valueParameters = []
+        contextParameters = []
+        callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = (i as? SealedInheritor1)
+        isSafeNavigation = true
+        type = ERROR_TYPE?
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -3005,13 +3005,13 @@ KtNameReferenceExpression(1462,1467): 'prop1'
 
 KtCallExpression(1469,1479): 'hashCode()'
   KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = (i as? SealedInheritor1)?.prop1
-        isSafeNavigation = true
-        type = ERROR_TYPE?
+        expression = hashCode
+        isSafeNavigation = false
+        type = ERROR_TYPE
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -3025,13 +3025,13 @@ KtCallExpression(1469,1479): 'hashCode()'
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
+    candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = hashCode
-        isSafeNavigation = false
-        type = ERROR_TYPE
+        expression = (i as? SealedInheritor1)?.prop1
+        isSafeNavigation = true
+        type = ERROR_TYPE?
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null

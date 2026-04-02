@@ -1,9 +1,9 @@
 
 // SNIPPET
 
-<!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT!>const<!> val x = 1
-val y = <!UNRESOLVED_REFERENCE!>x<!> + 1
+const val x = 1
+val y = x + 1
 
 // SNIPPET
 
-<!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT!>const<!> val z = <!UNRESOLVED_REFERENCE!>x<!> + y + 1
+const val z = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>x + y + 1<!>

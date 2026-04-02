@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleContainingDeclarationProvide
 
   @Test
   public void testAllFilesPresentInContainingDeclarationForSetterParameter() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationForSetterParameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationForSetterParameter"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

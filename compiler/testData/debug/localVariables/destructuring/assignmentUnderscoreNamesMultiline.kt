@@ -21,9 +21,6 @@ fun box(): String {
 
 // EXPECTATIONS JVM_IR
 // test.kt:6 box:
-// EXPECTATIONS ClassicFrontend JVM_IR
-// test.kt:17 box: p:kotlin.Triple=kotlin.Triple
-// EXPECTATIONS JVM_IR
 // test.kt:12 box: p:kotlin.Triple=kotlin.Triple
 // test.kt:14 box: p:kotlin.Triple=kotlin.Triple, o:java.lang.String="O":java.lang.String
 // test.kt:19 box: p:kotlin.Triple=kotlin.Triple, o:java.lang.String="O":java.lang.String, k:java.lang.String="K":java.lang.String

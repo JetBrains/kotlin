@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiSpecificAnnotatio
 
   @Test
   public void testAllFilesPresentInSpecificAnnotations() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/specificAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/specificAnnotations"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

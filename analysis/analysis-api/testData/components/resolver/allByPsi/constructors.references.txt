@@ -25,8 +25,6 @@ KtConstructorDelegationReferenceExpression(61,61): ''
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) constructor()
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(81,87): 'String'
   KtSimpleNameReference:
@@ -45,8 +43,6 @@ KtConstructorDelegationReferenceExpression(88,88): ''
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) constructor()
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(131,140): 'BaseClass'
   KtSimpleNameReference:

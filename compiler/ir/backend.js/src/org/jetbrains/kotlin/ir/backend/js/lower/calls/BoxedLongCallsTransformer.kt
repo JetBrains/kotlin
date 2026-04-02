@@ -38,14 +38,14 @@ internal class BoxedLongCallsTransformer(context: JsIrBackendContext) : CallsTra
         if (call.symbol == symbols.jsLongToString) {
             return irCall(call, symbols.longToStringImpl)
         }
-        if (longAsBigInt && call.symbol == irBuiltIns.longClass.owner.primaryConstructor?.symbol) {
-            return irCall(call, symbols.longFromTwoInts!!)
-        }
         if (longAsBigInt && call.symbol == irBuiltIns.longClass.owner.primaryConstructorReplacement?.symbol) {
             return irCall(call, symbols.longFromTwoInts!!).apply {
                 // The first parameter of the primary constructor replacement function is actually `this`.
                 arguments.assignFrom(call.arguments.drop(1))
             }
+        }
+        if (longAsBigInt && call.symbol == irBuiltIns.longClass.owner.primaryConstructor?.symbol) {
+            return irCall(call, symbols.longFromTwoInts!!)
         }
         if (longAsBigInt && call.symbol == longLowGetter) {
             return irCall(call, symbols.longLowBits!!)

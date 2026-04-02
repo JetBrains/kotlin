@@ -82,7 +82,7 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 fun AnalysisApiTestGroup.generateAnalysisApiTests() {
     component(
         directory = "resolver",
-        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource, TestModuleKind.LibrarySource) and
+        filter = testModuleKindIs(TestModuleKind.SourceLike, TestModuleKind.LibrarySource) and
                 analysisSessionModeIs(AnalysisSessionMode.Normal),
     ) {
         val singleByPsiInit: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
@@ -120,7 +120,7 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
         test<AbstractResolveSymbolTest>(init = singleByPsiInit)
         test<AbstractResolveReferenceTest>(init = singleByPsiInit)
 
-        group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource)) {
+        group(filter = testModuleKindIs(TestModuleKind.SourceLike)) {
             val allByPsiInit: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
                 model(data, "allByPsi")
             }
@@ -166,7 +166,7 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
         }
     }
 
-    group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource)) {
+    group(filter = testModuleKindIs(TestModuleKind.SourceLike)) {
         generateAnalysisApiComponentsTests()
         generateResolveExtensionsTests()
     }
@@ -201,7 +201,7 @@ private fun AnalysisApiTestGroup.generateResolveExtensionsTests() {
 }
 
 private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
-    group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource)) {
+    group(filter = testModuleKindIs(TestModuleKind.SourceLike)) {
         group("symbols", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
             fun TestGroup.TestClass.symbolsModel(data: AnalysisApiTestConfiguratorFactoryData, path: String) {
                 if (data.analysisApiMode == AnalysisApiMode.Standalone
@@ -308,7 +308,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
     }
 
     group("types", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
-        group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource)) {
+        group(filter = testModuleKindIs(TestModuleKind.SourceLike)) {
             test<AbstractTypeByDeclarationReturnTypeTest> {
                 model(it, "byDeclarationReturnType")
             }

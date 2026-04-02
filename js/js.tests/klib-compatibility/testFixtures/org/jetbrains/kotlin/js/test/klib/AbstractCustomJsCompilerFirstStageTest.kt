@@ -35,7 +35,7 @@ open class AbstractCustomJsCompilerFirstStageTest(val testDataRoot: String = "co
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             // Note: Need to specify the concrete FE kind because this affects the choice of IGNORE_BACKEND_* directive.
-            frontend = if (customJsCompilerSettings.defaultLanguageVersion.usesK2) FrontendKinds.FIR else FrontendKinds.ClassicFrontend
+            frontend = FrontendKinds.FIR
             targetPlatform = JsPlatforms.defaultJsPlatform
             dependencyKind = DependencyKind.Binary
         }

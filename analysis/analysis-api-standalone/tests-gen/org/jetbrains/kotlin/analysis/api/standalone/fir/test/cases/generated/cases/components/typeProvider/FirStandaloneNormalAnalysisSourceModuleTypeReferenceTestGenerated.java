@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeReferenceTestGenerated e
 
   @Test
   public void testAllFilesPresentInTypeReference() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeProvider/typeReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeProvider/typeReference"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

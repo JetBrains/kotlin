@@ -239,5 +239,32 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => ValueClassWithCollection;
             }
         }
+        class WrappedStringValueClass {
+            constructor(s: foo.StringValueClass);
+            equals(other: Nullable<any>): boolean;
+            hashCode(): number;
+            toString(): string;
+            get s(): foo.StringValueClass;
+        }
+        namespace WrappedStringValueClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => WrappedStringValueClass;
+            }
+        }
+        interface ExternalInterface {
+            acceptIntValue(value: number): number;
+            acceptStringValue(value: string): string;
+            acceptLambda(cb: (p0: foo.IntValueClass) => void): void;
+            readonly intValue: number;
+            readonly stringValue: string;
+            readonly wrappedStringValue: string;
+            readonly nullableValue: Nullable<string>;
+            readonly nullableNullableValue?: Nullable<foo.NullableValueClass>;
+            readonly genericValue: Array<string>;
+            readonly genericOfGeneric: foo.GenericValueClass<foo.GenericValueClass<string>>;
+            readonly arrayOfIntValue: Array<foo.IntValueClass>;
+            readonly promiseOfStringValue: Promise<foo.StringValueClass>;
+        }
     }
 }

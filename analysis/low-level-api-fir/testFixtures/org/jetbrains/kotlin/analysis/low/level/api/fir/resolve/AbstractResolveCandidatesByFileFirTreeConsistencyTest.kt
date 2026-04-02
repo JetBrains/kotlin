@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCandidatesByFileTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
@@ -38,17 +37,9 @@ abstract class AbstractResolveCandidatesByFileFirTreeConsistencyTest : AbstractR
  */
 internal fun TestVariantChain.patchedChainForConsistencyTests(): TestVariantChain = withAdditionalVariant("consistency")
 
-abstract class AbstractSourceResolveCandidatesByFileFirTreeConsistencyTest : AbstractResolveCandidatesByFileFirTreeConsistencyTest() {
+abstract class AbstractSourceLikeResolveCandidatesByFileFirTreeConsistencyTest : AbstractResolveCandidatesByFileFirTreeConsistencyTest() {
     override val configurator: AnalysisApiTestConfigurator =
-        object : AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false) {
-            override val testPrefixes: List<String>
-                get() = super.testPrefixes.patchedChainForConsistencyTests()
-        }
-}
-
-abstract class AbstractScriptResolveCandidatesByFileFirTreeConsistencyTest : AbstractResolveCandidatesByFileFirTreeConsistencyTest() {
-    override val configurator: AnalysisApiTestConfigurator =
-        object : AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false) {
+        object : LLSourceLikeTestConfigurator() {
             override val testPrefixes: List<String>
                 get() = super.testPrefixes.patchedChainForConsistencyTests()
         }

@@ -51,7 +51,7 @@ class JvmSnapshotBasedIncrementalCompilationConfigurationDefaultsTest {
         )
         @OptIn(ExperimentalCompilerArgument::class)
         assertEquals(
-            false,
+            true,
             icConfiguration[BaseIncrementalCompilationConfiguration.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION]
         )
         assertEquals(false, icConfiguration[BaseIncrementalCompilationConfiguration.TRACK_CONFIGURATION_INPUTS])

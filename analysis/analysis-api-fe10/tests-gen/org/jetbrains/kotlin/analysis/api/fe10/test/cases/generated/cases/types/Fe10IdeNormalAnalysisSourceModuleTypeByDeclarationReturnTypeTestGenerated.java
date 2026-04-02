@@ -48,7 +48,7 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeByDeclarationReturnTypeTestGen
 
   @Test
   public void testAllFilesPresentInByDeclarationReturnType() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/byDeclarationReturnType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/byDeclarationReturnType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

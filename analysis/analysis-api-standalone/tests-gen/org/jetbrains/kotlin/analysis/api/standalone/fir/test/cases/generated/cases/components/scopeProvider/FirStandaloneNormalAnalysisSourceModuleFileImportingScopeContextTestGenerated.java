@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleFileImportingScopeContextTes
 
   @Test
   public void testAllFilesPresentInImportingScopeContext() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/importingScopeContext"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

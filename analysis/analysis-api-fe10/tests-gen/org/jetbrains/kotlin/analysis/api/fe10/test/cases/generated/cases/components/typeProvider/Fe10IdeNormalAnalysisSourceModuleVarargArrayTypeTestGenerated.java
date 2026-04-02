@@ -48,7 +48,7 @@ public class Fe10IdeNormalAnalysisSourceModuleVarargArrayTypeTestGenerated exten
 
   @Test
   public void testAllFilesPresentInVarargArrayType() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeProvider/varargArrayType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeProvider/varargArrayType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

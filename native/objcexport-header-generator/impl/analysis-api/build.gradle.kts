@@ -16,6 +16,7 @@ dependencies {
 
     implementation(project(":core:compiler.common.native"))
     implementation(project(":kotlin-util-klib"))
+    implementation(project(":kotlin-util-klib-metadata"))
     implementation(project(":libraries:tools:analysis-api-based-klib-reader"))
     implementation(project(":native:analysis-api-based-export-common"))
 

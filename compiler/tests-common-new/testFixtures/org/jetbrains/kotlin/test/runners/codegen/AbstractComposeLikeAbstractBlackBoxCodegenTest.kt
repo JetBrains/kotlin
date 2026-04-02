@@ -18,14 +18,4 @@ abstract class AbstractComposeLikeFirAbstractBlackBoxCodegenTestBase(parser: Fir
     }
 }
 
-open class AbstractComposeLikeIrBlackBoxCodegenTest(): AbstractIrBlackBoxCodegenTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            useConfigurators(::ComposeLikeConfigurator)
-        }
-    }
-}
-
-
 open class AbstractComposeLikeFirLightTreeBlackBoxCodegenTest : AbstractComposeLikeFirAbstractBlackBoxCodegenTestBase(FirParser.LightTree)

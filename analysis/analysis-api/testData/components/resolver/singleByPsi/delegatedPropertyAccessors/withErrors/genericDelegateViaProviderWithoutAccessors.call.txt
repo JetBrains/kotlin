@@ -1,4 +1,44 @@
 KtPropertyDelegate(328,364): 'by ProvideDelegateHolder("provided")'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'.>
+  KaDelegatedPropertyCallResolutionAttempt:
+    provideDelegateCallAttempt = KaCallResolutionError:
+      candidateCalls = [
+        KaSimpleFunctionCall:
+          contextArgumentMapping = {}
+          contextArguments = []
+          dispatchReceiver = null
+          extensionReceiver = KaExplicitReceiverValue:
+            expression = ProvideDelegateHolder("provided")
+            isSafeNavigation = false
+            type = myPack.ProvideDelegateHolder
+          signature = KaFunctionSignature:
+            receiverType = myPack.ProvideDelegateHolder
+            returnType = myPack.GenericDelegate<T>
+            symbol = myPack/provideDelegate(<extension receiver>: myPack.ProvideDelegateHolder, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): myPack.GenericDelegate<T>
+            valueParameters = [
+              KaVariableSignature:
+                name = thisRef
+                receiverType = null
+                returnType = kotlin.Any?
+                symbol = thisRef: kotlin.Any?
+                contextParameters = []
+                callableId = null,
+              KaVariableSignature:
+                name = property
+                receiverType = null
+                returnType = kotlin.reflect.KProperty<*>
+                symbol = property: kotlin.reflect.KProperty<*>
+                contextParameters = []
+                callableId = null
+            ]
+            contextParameters = []
+            callableId = myPack/provideDelegate
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {}
+      ]
+      diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): myPack/provideDelegate>
+    valueGetterCallAttempt = KaCallResolutionError:
+      candidateCalls = []
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'.>
+    valueSetterCallAttempt = KaCallResolutionError:
+      candidateCalls = []
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'setValue'.>

@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleGetKlibSourceFileNameTestGen
 
   @Test
   public void testAllFilesPresentInGetKlibSourceFileName() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/klibSourceFileNameProvider/getKlibSourceFileName"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/klibSourceFileNameProvider/getKlibSourceFileName"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

@@ -1,15 +1,27 @@
 <caret_1>:
   KDocName(66,78): 'test.extProp'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val extProp: kotlin.Int
+      ]
 
 <caret_2>:
   KDocName(84,91): 'extProp'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val extProp: kotlin.Int
+      ]
 
 <caret_3>:
   KDocName(100,111): 'Foo.extProp'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val extProp: kotlin.Int
+      ]
 
 <caret_4>:
   KDocName(117,133): 'test.Foo.extProp'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val extProp: kotlin.Int
+      ]

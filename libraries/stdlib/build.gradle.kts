@@ -629,13 +629,13 @@ kotlin {
 
 dependencies {
     val jvmMainApi by configurations.getting
-    val metadataApiElements by configurations.getting
+    val metadataCompilationApi by configurations.getting
     val nativeApiElements = configurations.maybeCreate("nativeApiElements")
     constraints {
         // there is no dependency anymore from kotlin-stdlib to kotlin-stdlib-common,
         // but use this constraint to align it if another library brings it transitively
         jvmMainApi(project(":kotlin-stdlib-common"))
-        metadataApiElements(project(":kotlin-stdlib-common"))
+        metadataCompilationApi(project(":kotlin-stdlib-common"))
         nativeApiElements(project(":kotlin-stdlib-common"))
         // to avoid split package and duplicate classes on classpath after moving them from these artifacts in 1.8.0
         jvmMainApi("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0")

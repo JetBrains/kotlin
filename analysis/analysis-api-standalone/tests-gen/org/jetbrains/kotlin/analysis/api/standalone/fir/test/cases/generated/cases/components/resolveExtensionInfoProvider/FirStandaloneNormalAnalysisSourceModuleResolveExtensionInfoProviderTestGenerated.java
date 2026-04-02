@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveExtensionInfoProvider
 
   @Test
   public void testAllFilesPresentInExtensionScopeWithPsi() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolveExtensionInfoProvider/extensionScopeWithPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolveExtensionInfoProvider/extensionScopeWithPsi"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

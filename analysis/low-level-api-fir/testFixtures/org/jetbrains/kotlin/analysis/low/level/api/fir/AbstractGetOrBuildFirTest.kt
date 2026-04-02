@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.services.ErrorResistanceS
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.FirRenderingOptions
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.firRenderingOptions
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -28,7 +27,10 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.renderer.*
+import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithFilteredAttributes
+import org.jetbrains.kotlin.fir.renderer.FirPackageDirectiveRenderer
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -210,8 +212,8 @@ private fun render(firElement: FirElement?): String = when (firElement) {
 private fun FirElement?.renderContainerSource(): String =
     (this as? FirCallableDeclaration)?.containerSource?.let { "${it::class.simpleName} ${it.presentableString}" } ?: "null"
 
-abstract class AbstractSourceGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
-    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+abstract class AbstractSourceLikeGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
+    override val configurator = LLSourceLikeTestConfigurator()
 }
 
 abstract class AbstractInterruptingGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
@@ -241,8 +243,8 @@ abstract class AbstractInterruptingGetOrBuildFirTest : AbstractGetOrBuildFirTest
     }
 }
 
-abstract class AbstractInterruptingSourceGetOrBuildFirTest : AbstractInterruptingGetOrBuildFirTest() {
-    override val configurator = object : AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false) {
+abstract class AbstractInterruptingSourceLikeGetOrBuildFirTest : AbstractInterruptingGetOrBuildFirTest() {
+    override val configurator = object : LLSourceLikeTestConfigurator() {
         override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
             get() = super.serviceRegistrars + listOf(ErrorResistanceServiceRegistrar)
     }
@@ -252,13 +254,4 @@ abstract class AbstractOutOfContentRootGetOrBuildFirTest : AbstractGetOrBuildFir
     override val configurator get() = AnalysisApiFirOutOfContentRootTestConfigurator
 }
 
-abstract class AbstractScriptGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
-    override val configurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
-}
 
-abstract class AbstractInterruptingScriptGetOrBuildFirTest : AbstractInterruptingGetOrBuildFirTest() {
-    override val configurator = object : AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false) {
-        override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
-            get() = super.serviceRegistrars + listOf(ErrorResistanceServiceRegistrar)
-    }
-}

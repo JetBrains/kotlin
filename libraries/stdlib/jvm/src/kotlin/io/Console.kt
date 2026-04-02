@@ -160,17 +160,19 @@ public actual fun readln(): String = readlnOrNull() ?: throw ReadAfterEOFExcepti
  * The input is decoded using the system default Charset. A [CharacterCodingException] is thrown if input is malformed.
  */
 @SinceKotlin("1.6")
-public actual fun readlnOrNull(): String? = readLine()
+public actual fun readlnOrNull(): String? = LineReader.readLine(System.`in`, Charset.defaultCharset())
 
 /**
  * Reads a line of input from the standard input stream.
  *
- * **This function is obsolete and will be deprecated soon. Consider using [readln] or [readlnOrNull] depending on
- * how the end of the input stream should be handled.**
- *
  * @return the line read or `null` if the input stream is redirected to a file and the end of file has been reached.
+ *
+ * @see readln
+ * @see readlnOrNull
  */
-public fun readLine(): String? = LineReader.readLine(System.`in`, Charset.defaultCharset())
+@Deprecated("Use `readln()` instead of `readLine()!!`, and `readlnOrNull()` instead of `readLine()`.")
+@DeprecatedSinceKotlin(warningSince = "2.4")
+public fun readLine(): String? = readlnOrNull()
 
 // Singleton object lazy initializes on the first use, internal for tests
 internal object LineReader {

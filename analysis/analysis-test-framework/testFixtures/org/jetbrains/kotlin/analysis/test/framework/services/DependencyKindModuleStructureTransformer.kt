@@ -49,6 +49,7 @@ object DependencyKindModuleStructureTransformer : ModuleStructureTransformer() {
         val newKind = when (dependencyModule.explicitTestModuleKind) {
             TestModuleKind.Source,
             TestModuleKind.LibrarySource,
+            TestModuleKind.SourceLike,
             TestModuleKind.ScriptSource,
             TestModuleKind.CodeFragment,
                 -> DependencyKind.Source

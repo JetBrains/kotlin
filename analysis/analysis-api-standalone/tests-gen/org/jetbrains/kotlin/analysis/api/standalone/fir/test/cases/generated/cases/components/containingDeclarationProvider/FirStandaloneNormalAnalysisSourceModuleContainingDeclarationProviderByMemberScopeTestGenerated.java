@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleContainingDeclarationProvide
 
   @Test
   public void testAllFilesPresentInContainingDeclarationFromMemberScope() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationFromMemberScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationFromMemberScope"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

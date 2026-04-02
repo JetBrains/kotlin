@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,18 +10,13 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
 
 object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactory() {
     override fun createConfigurator(data: AnalysisApiTestConfiguratorFactoryData): AnalysisApiTestConfigurator {
-        require(supportMode(data))
+        requireSupported(data)
 
         val targetPlatform = data.targetPlatform.targetPlatform
         return when (data.moduleKind) {
-            TestModuleKind.ScriptSource -> when (data.analysisSessionMode) {
-                AnalysisSessionMode.Normal -> AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false, targetPlatform)
-                AnalysisSessionMode.Dependent -> AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = true, targetPlatform)
-            }
-
-            TestModuleKind.Source -> when (data.analysisSessionMode) {
-                AnalysisSessionMode.Normal -> AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false, targetPlatform)
-                AnalysisSessionMode.Dependent -> AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = true, targetPlatform)
+            TestModuleKind.SourceLike -> when (data.analysisSessionMode) {
+                AnalysisSessionMode.Normal -> LLSourceLikeTestConfigurator(analyseInDependentSession = false, targetPlatform)
+                AnalysisSessionMode.Dependent -> LLSourceLikeTestConfigurator(analyseInDependentSession = true, targetPlatform)
             }
 
             TestModuleKind.LibraryBinary -> {
@@ -55,9 +50,12 @@ object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactor
         data.frontend != FrontendKind.Fir -> false
         data.analysisApiMode != AnalysisApiMode.Ide -> false
         else -> when (data.moduleKind) {
+            TestModuleKind.SourceLike,
+                -> true
+
             TestModuleKind.Source,
             TestModuleKind.ScriptSource,
-                -> true
+                -> false
 
             TestModuleKind.LibraryBinary,
             TestModuleKind.LibraryBinaryDecompiled,

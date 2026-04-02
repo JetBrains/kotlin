@@ -369,7 +369,7 @@ KtBlockExpression(416,543): '{'
   null
 
 KtForExpression(422,468): 'for ([val first, val second: String,] in x) {}'
-  KaCallResolutionSuccess:
+  KaForLoopCallResolutionAttempt:
     call = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -505,7 +505,7 @@ KtBlockExpression(466,468): '{}'
   null
 
 KtForExpression(473,503): 'for ([val first: Int] in x) {}'
-  KaCallResolutionSuccess:
+  KaForLoopCallResolutionAttempt:
     call = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -621,9 +621,16 @@ KtBlockExpression(501,503): '{}'
   null
 
 KtForExpression(508,541): 'for ([val first: String] in y) {}'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'.>
+  KaForLoopCallResolutionAttempt:
+    hasNextCallAttempt = KaCallResolutionError:
+      candidateCalls = []
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext'.>
+    iteratorCallAttempt = KaCallResolutionError:
+      candidateCalls = []
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'.>
+    nextCallAttempt = KaCallResolutionError:
+      candidateCalls = []
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next'.>
 
 KtParameter(513,532): '[val first: String]'
   null

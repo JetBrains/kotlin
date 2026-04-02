@@ -295,7 +295,7 @@ KtBlockExpression(266,363): '{'
   null
 
 KtForExpression(272,301): 'for ([first, second] in x) {}'
-  KaCallResolutionSuccess:
+  KaForLoopCallResolutionAttempt:
     call = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -422,7 +422,7 @@ KtBlockExpression(299,301): '{}'
   null
 
 KtForExpression(306,327): 'for ([first] in x) {}'
-  KaCallResolutionSuccess:
+  KaForLoopCallResolutionAttempt:
     call = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -529,7 +529,7 @@ KtBlockExpression(325,327): '{}'
   null
 
 KtForExpression(332,361): 'for ([first: String] in x) {}'
-  KaCallResolutionSuccess:
+  KaForLoopCallResolutionAttempt:
     call = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
         contextArgumentMapping = {}

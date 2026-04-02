@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
 // CHECK_BYTECODE_LISTING
-// LANGUAGE: +ImplicitJvmExposeBoxed
+// JVM_EXPOSE_BOXED
 
 // FILE: IC.kt
 @JvmInline

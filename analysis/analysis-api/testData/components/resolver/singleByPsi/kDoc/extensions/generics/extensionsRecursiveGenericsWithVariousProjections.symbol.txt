@@ -1,11 +1,20 @@
 <caret_1>:
   KDocName(390,403): 'SomeClass.ext'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /ext(<extension receiver>: GenericFoo<T>): kotlin.Unit
+      ]
 
 <caret_2>:
   KDocName(409,424): 'SomeClassIn.ext'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /ext(<extension receiver>: GenericFooIn<T>): kotlin.Unit
+      ]
 
 <caret_3>:
   KDocName(430,446): 'SomeClassOut.ext'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /ext(<extension receiver>: GenericFooOut<T>): kotlin.Unit
+      ]

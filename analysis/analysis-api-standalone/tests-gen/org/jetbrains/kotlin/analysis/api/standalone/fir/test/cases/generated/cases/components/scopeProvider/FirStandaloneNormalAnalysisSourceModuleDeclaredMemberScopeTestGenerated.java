@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclaredMemberScopeTestGener
 
   @Test
   public void testAllFilesPresentInDeclaredMemberScope() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

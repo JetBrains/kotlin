@@ -53,23 +53,3 @@ inline fun buildSubscript(init: SirSubscriptBuilder.() -> Unit): SirSubscript {
     }
     return SirSubscriptBuilder().apply(init).build()
 }
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildSubscriptCopy(original: SirSubscript, init: SirSubscriptBuilder.() -> Unit): SirSubscript {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = SirSubscriptBuilder()
-    copyBuilder.origin = original.origin
-    copyBuilder.visibility = original.visibility
-    copyBuilder.documentation = original.documentation
-    copyBuilder.attributes.addAll(original.attributes)
-    copyBuilder.isOverride = original.isOverride
-    copyBuilder.isInstance = original.isInstance
-    copyBuilder.modality = original.modality
-    copyBuilder.parameters.addAll(original.parameters)
-    copyBuilder.returnType = original.returnType
-    copyBuilder.getter = original.getter
-    copyBuilder.setter = original.setter
-    return copyBuilder.apply(init).build()
-}

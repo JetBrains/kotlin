@@ -49,7 +49,7 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
 
   @Test
   public void testAllFilesPresentInDiagnostics() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test
@@ -434,7 +434,7 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
 
     @Test
     public void testAllFilesPresentInMustUseReturnValue() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/mustUseReturnValue"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/mustUseReturnValue"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -478,7 +478,7 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
 
     @Test
     public void testAllFilesPresentInNoRuntime() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/noRuntime"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/noRuntime"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -534,7 +534,7 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
 
     @Test
     public void testAllFilesPresentInRedeclaration() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -590,7 +590,7 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
 
     @Test
     public void testAllFilesPresentInSuppression() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -646,7 +646,7 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
 
     @Test
     public void testAllFilesPresentInWasm() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/wasm"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/wasm"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -666,7 +666,7 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
 
     @Test
     public void testAllFilesPresentInWhen() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test

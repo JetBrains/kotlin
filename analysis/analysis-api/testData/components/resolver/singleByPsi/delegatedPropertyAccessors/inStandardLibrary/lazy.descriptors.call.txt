@@ -1,5 +1,5 @@
 KtPropertyDelegate(26,37): 'by lazy {1}'
-  KaCallResolutionSuccess:
+  KaDelegatedPropertyCallResolutionAttempt:
     call = KaDelegatedPropertyCall:
       provideDelegateCall = null
       valueGetterCall = KaSimpleFunctionCall:

@@ -1619,8 +1619,13 @@ open class PsiRawFirBuilder(
                 @OptIn(FirContractViolation::class)
                 when {
                     element.isLocal -> element
-                    // TODO(KT-77816): cause constants to be forbidden within REPL snippets for the time being
-                    element.isConst -> element
+                    element.isConst -> {
+                        // Constant properties are just properties
+                        buildReplDeclarationReference {
+                            source = element.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
+                            symbol = element.symbol
+                        }
+                    }
                     statementDelegate != null -> {
                         element.replaceDelegate(buildReplExpressionReference {
                             source = statementDelegate.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
@@ -1628,7 +1633,7 @@ open class PsiRawFirBuilder(
                         })
 
                         buildReplPropertyDelegate {
-                            source = statementDelegate.source
+                            source = statementDelegate.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
                             propertySymbol = element.symbol
                             delegate = statementDelegate
                         }
@@ -1640,7 +1645,7 @@ open class PsiRawFirBuilder(
                         })
 
                         buildReplPropertyInitializer {
-                            source = statementInitializer.source
+                            source = statementInitializer.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
                             propertySymbol = element.symbol
                             initializer = statementInitializer
                         }

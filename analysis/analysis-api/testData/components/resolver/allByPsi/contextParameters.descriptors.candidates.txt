@@ -171,11 +171,11 @@ KtValueArgumentList(138,140): '()'
 
 KtDotQualifiedExpression(149,158): 'a.foo("")'
   KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = a
+        expression = foo
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
@@ -191,11 +191,11 @@ KtDotQualifiedExpression(149,158): 'a.foo("")'
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
+    candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = foo
+        expression = a
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
@@ -215,11 +215,11 @@ KtNameReferenceExpression(149,150): 'a'
 
 KtCallExpression(151,158): 'foo("")'
   KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = a
+        expression = foo
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
@@ -235,11 +235,11 @@ KtCallExpression(151,158): 'foo("")'
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
+    candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = foo
+        expression = a
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
@@ -420,11 +420,11 @@ KtReturnExpression(266,282): 'return a.foo("")'
 
 KtDotQualifiedExpression(273,282): 'a.foo("")'
   KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = a
+        expression = foo
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
@@ -440,11 +440,11 @@ KtDotQualifiedExpression(273,282): 'a.foo("")'
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
+    candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = foo
+        expression = a
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
@@ -464,11 +464,11 @@ KtNameReferenceExpression(273,274): 'a'
 
 KtCallExpression(275,282): 'foo("")'
   KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = a
+        expression = foo
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
@@ -484,11 +484,11 @@ KtCallExpression(275,282): 'foo("")'
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
+    candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = foo
+        expression = a
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null

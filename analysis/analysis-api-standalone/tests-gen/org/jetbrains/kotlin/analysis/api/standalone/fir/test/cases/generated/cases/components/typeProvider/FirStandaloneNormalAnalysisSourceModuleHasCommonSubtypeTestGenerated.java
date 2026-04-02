@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleHasCommonSubtypeTestGenerate
 
   @Test
   public void testAllFilesPresentInHaveCommonSubtype() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeProvider/haveCommonSubtype"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeProvider/haveCommonSubtype"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

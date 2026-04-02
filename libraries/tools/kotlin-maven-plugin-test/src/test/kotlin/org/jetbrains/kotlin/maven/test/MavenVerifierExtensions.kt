@@ -18,6 +18,7 @@ import java.util.jar.JarFile
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedReader
 import kotlin.io.path.exists
+import kotlin.io.path.readText
 import kotlin.sequences.forEach
 
 fun Verifier.printLog() {
@@ -56,6 +57,18 @@ fun Verifier.assertFileExists(
 ) {
     val path = Path(basedir).resolve(relativePath)
     assertTrue(path.exists(), messageSupplier)
+}
+
+fun Verifier.assertFileContains(
+    relativePath: String,
+    expectedSubstring: String
+) {
+    val path = Path(basedir).resolve(relativePath)
+    assertTrue(path.exists()) { "Expected file '$relativePath' does not exist" }
+    var contents = path.readText()
+    assertTrue(contents.contains(expectedSubstring)) {
+        "Expected substring '$expectedSubstring' is not found in file '$relativePath' with contents:\n$contents\n\n"
+    }
 }
 
 fun Verifier.assertJarExistsAndNotEmpty(relativePath: String) {

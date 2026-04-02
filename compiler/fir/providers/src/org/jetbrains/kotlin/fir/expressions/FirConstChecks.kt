@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -283,8 +285,7 @@ private class FirConstCheckVisitor(
                     return ConstantArgumentKind.ENUM_NOT_CONST
                 }
 
-                val isConstWithoutInitializer = propertySymbol.unwrapFakeOverrides().canBeEvaluated()
-                        || propertySymbol.isCompileTimeBuiltinProperty()
+                val isConstWithoutInitializer = propertySymbol.isCompileTimeBuiltinProperty()
                 when {
                     propertySymbol.isConst || isConstWithoutInitializer -> {
                         val receivers = listOf(propertyAccessExpression.dispatchReceiver, propertyAccessExpression.extensionReceiver)
@@ -365,7 +366,7 @@ private class FirConstCheckVisitor(
     }
 
     private fun visitNamedFunction(functionCall: FirFunctionCall, symbol: FirNamedFunctionSymbol): ConstantArgumentKind {
-        if (!symbol.canBeEvaluated() && !functionCall.isCompileTimeBuiltinCall()) {
+        if (!functionCall.isCompileTimeBuiltinCall()) {
             return ConstantArgumentKind.NOT_CONST
         }
 
@@ -442,10 +443,9 @@ private class FirConstCheckVisitor(
     }
 
     // --- Utils ---
-    private fun FirBasedSymbol<*>.canBeEvaluated(): Boolean {
-        return intrinsicConstEvaluation && this.hasAnnotation(StandardClassIds.Annotations.IntrinsicConstEvaluation, session)
+    private fun FirBasedSymbol<*>.isIntrinsicConst(): Boolean {
+        return this.hasAnnotation(StandardClassIds.Annotations.IntrinsicConstEvaluation, session)
     }
-
 
     private fun ConeKotlinType.toCompileTimeType(): CompileTimeType? {
         if (this.classId == StandardClassIds.Any) return CompileTimeType.ANY
@@ -469,11 +469,14 @@ private class FirConstCheckVisitor(
 
         val name = calleeReference.name
         val symbol = calleeReference.resolvedSymbol as? FirCallableSymbol
-        if (!symbol.fromKotlin()) return false
+        if (!symbol.fromStdlib()) return false
 
         val receiverClassId = this.dispatchReceiver?.getExpandedType()?.classId
 
         if (intrinsicConstEvaluation) {
+            // TODO remove this check after KT-84626
+            if (symbol?.isIntrinsicConst() == true) return true
+
             val receiverType = this.dispatchReceiver?.getExpandedType()?.toCompileTimeType()
                 ?: this.extensionReceiver?.getExpandedType()?.toCompileTimeType()
 
@@ -481,7 +484,7 @@ private class FirConstCheckVisitor(
 
             val callableId = symbol?.callableId ?: return false
 
-            val inBuiltinMap = receiverType != null && canEvalOp(
+            val inBuiltinMap = canEvalOp(
                 callableId = callableId,
                 typeA = receiverType,
                 typeB = firstArgType
@@ -489,6 +492,7 @@ private class FirConstCheckVisitor(
             return inBuiltinMap
         }
 
+        if (!symbol.fromKotlinPackage()) return false
         if (receiverClassId in StandardClassIds.unsignedTypes) return false
 
         if (
@@ -506,6 +510,21 @@ private class FirConstCheckVisitor(
     private fun FirPropertySymbol.isCompileTimeBuiltinProperty(): Boolean {
         val receiverType = dispatchReceiverType ?: resolvedReceiverTypeRef?.coneTypeSafe<ConeKotlinType>() ?: return false
         val receiverClassId = receiverType.fullyExpandedType(session).classId ?: return false
+
+        if (intrinsicConstEvaluation) {
+            // TODO remove this check after KT-84626
+            if (this.isIntrinsicConst()) return true
+
+            val callableId = callableId ?: return false
+            val receiverConstType = receiverType.toCompileTimeType() ?: return false
+            val inBuiltinMap = canEvalOp(
+                callableId = callableId,
+                typeA = receiverConstType,
+                typeB = null
+            )
+            return inBuiltinMap
+        }
+
         return when (name.asString()) {
             "length" -> receiverClassId == StandardClassIds.String
             "code" -> receiverClassId == StandardClassIds.Char
@@ -513,8 +532,12 @@ private class FirConstCheckVisitor(
         }
     }
 
-    private fun FirCallableSymbol<*>?.fromKotlin(): Boolean {
-        return this?.callableId?.packageName?.asString() == "kotlin"
+    private fun FirCallableSymbol<*>?.fromStdlib(): Boolean {
+        return this?.callableId?.packageName?.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME) == true
+    }
+
+    private fun FirCallableSymbol<*>?.fromKotlinPackage(): Boolean {
+        return this?.callableId?.packageName?.asString() == StandardNames.BUILT_INS_PACKAGE_NAME.asString()
     }
 
     private fun FirCallableSymbol<*>?.getReferencedClassSymbol(): FirBasedSymbol<*>? =

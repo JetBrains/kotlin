@@ -49,7 +49,7 @@ public class FirStandaloneNormalAnalysisSourceModuleContainingDeclarationProvide
 
   @Test
   public void testAllFilesPresentInContainingDeclarationByReference() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test
@@ -188,7 +188,7 @@ public class FirStandaloneNormalAnalysisSourceModuleContainingDeclarationProvide
 
     @Test
     public void testAllFilesPresentInDataClassGenerated() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Nested
@@ -201,7 +201,7 @@ public class FirStandaloneNormalAnalysisSourceModuleContainingDeclarationProvide
 
       @Test
       public void testAllFilesPresentInCodeFragment() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/codeFragment"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/codeFragment"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -251,7 +251,7 @@ public class FirStandaloneNormalAnalysisSourceModuleContainingDeclarationProvide
 
       @Test
       public void testAllFilesPresentInLibrary() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/library"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/library"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -301,7 +301,7 @@ public class FirStandaloneNormalAnalysisSourceModuleContainingDeclarationProvide
 
       @Test
       public void testAllFilesPresentInSource() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/source"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/source"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test

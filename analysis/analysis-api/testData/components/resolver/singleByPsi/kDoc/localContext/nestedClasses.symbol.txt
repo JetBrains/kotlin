@@ -1,15 +1,27 @@
 <caret_1>:
   KDocName(8,10): 'AA'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /AA
+      ]
 
 <caret_2>:
   KDocName(16,21): 'AA.AA'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /AA.AA
+      ]
 
 <caret_3>:
   KDocName(47,49): 'AA'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /AA.AA
+      ]
 
 <caret_4>:
   KDocName(76,78): 'AA'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /AA.AA(<dispatch receiver>: AA, p: kotlin.Int): kotlin.Unit
+      ]

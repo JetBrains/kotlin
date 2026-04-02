@@ -64,7 +64,6 @@ projectTests {
     withDist()
 
     testData(project.isolated, "testData")
-    testData(project(":compiler").isolated, "testData/asJava/lightClasses")
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {

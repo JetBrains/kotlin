@@ -1,39 +1,72 @@
 <caret_1>:
   KDocName(86,93): 'Foo.ext'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        test/ext(<extension receiver>: kotlin.Any): kotlin.Unit
+      ]
 
 <caret_2>:
   KDocName(99,102): 'Foo'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        dep2/Foo,
+        dep1/Foo
+      ]
 
 <caret_3>:
   KDocName(115,131): 'Foo.depExtShared'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        dep2/depExtShared(<extension receiver>: dep2.Foo): kotlin.Unit,
+        dep1/depExtShared(<extension receiver>: dep1.Foo): kotlin.Unit
+      ]
 
 <caret_4>:
   KDocName(137,140): 'Foo'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        dep2/Foo,
+        dep1/Foo
+      ]
 
 <caret_5>:
   KDocName(162,173): 'Foo.depExt1'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        dep1/depExt1(<extension receiver>: dep1.Foo): kotlin.Unit
+      ]
 
 <caret_6>:
   KDocName(179,182): 'Foo'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        dep1/Foo
+      ]
 
 <caret_7>:
   KDocName(199,210): 'Foo.depExt2'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        dep2/depExt2(<extension receiver>: dep2.Foo): kotlin.Unit
+      ]
 
 <caret_8>:
   KDocName(216,219): 'Foo'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        dep2/Foo
+      ]
 
 <caret_9>:
   KDocName(236,244): 'dep1.Foo'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        dep1/Foo
+      ]
 
 <caret_10>:
   KDocName(254,262): 'dep2.Foo'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        dep2/Foo
+      ]

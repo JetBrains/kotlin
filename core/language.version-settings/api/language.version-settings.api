@@ -284,7 +284,6 @@ public final class org/jetbrains/kotlin/config/LanguageFeature : java/lang/Enum 
 	public static final field GenericInlineClassParameter Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field HoldsInContracts Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field IgnoreNullabilityForErasedValueParameters Lorg/jetbrains/kotlin/config/LanguageFeature;
-	public static final field ImplicitJvmExposeBoxed Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field ImplicitSignedToUnsignedIntegerConversion Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field ImprovedCapturedTypeApproximationInInference Lorg/jetbrains/kotlin/config/LanguageFeature;

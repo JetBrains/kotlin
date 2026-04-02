@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleVisibilityCheckerTestGenerat
 
   @Test
   public void testAllFilesPresentInVisibility() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/visibilityChecker/visibility"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/visibilityChecker/visibility"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

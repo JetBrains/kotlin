@@ -2,9 +2,12 @@ KtPropertyDelegate(328,364): 'by ProvideDelegateHolder("provided")'
   KtPropertyDelegationMethodsReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'.>
+    attempt: KaCompoundSymbolResolutionError
+      attempts[0]: KaSymbolResolutionError
+        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'.>
+      attempts[1]: KaSymbolResolutionError
+        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'setValue'.>
+      attempts[2]: KaSymbolResolutionError
+        diagnostic: ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): myPack/provideDelegate>
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in myPack) operator fun <T> myPack.ProvideDelegateHolder.provideDelegate(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): myPack.GenericDelegate<T>

@@ -1,14 +1,23 @@
 <caret_1>:
   KDocName(628,649): 'Derived.someExtension'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /someExtension(<extension receiver>: Base<T>): kotlin.Unit
+      ]
 
 <caret_2>:
   KDocName(655,677): 'Derived.someExtension2'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /someExtension2(<extension receiver>: Base<T>, u: U): kotlin.Unit
+      ]
 
 <caret_3>:
   KDocName(683,705): 'Derived.someExtension3'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /someExtension3(<extension receiver>: Base<T>, u: U): kotlin.Unit
+      ]
 
 <caret_4>:
   KDocName(711,733): 'Derived.someExtension4'
@@ -16,4 +25,7 @@
 
 <caret_5>:
   KDocName(739,773): 'DerivedWithIterable.someExtension4'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /someExtension4(<extension receiver>: Base<T>, u: U): kotlin.Unit
+      ]

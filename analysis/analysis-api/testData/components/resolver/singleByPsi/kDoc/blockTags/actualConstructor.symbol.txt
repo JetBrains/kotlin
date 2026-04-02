@@ -4,8 +4,14 @@ common - Common.kt:
 jvm - Jvm.kt:
   <caret_1>:
     KDocName(99,101): 'AA'
-      null
+      KaSymbolResolutionSuccess:
+        symbols = [
+          /AA
+        ]
 
   <caret_2>:
     KDocName(120,122): 'AA'
-      null
+      KaSymbolResolutionSuccess:
+        symbols = [
+          /AA
+        ]

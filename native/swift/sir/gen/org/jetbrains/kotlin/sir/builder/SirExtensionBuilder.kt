@@ -47,20 +47,3 @@ inline fun buildExtension(init: SirExtensionBuilder.() -> Unit): SirExtension {
     }
     return SirExtensionBuilder().apply(init).build()
 }
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildExtensionCopy(original: SirExtension, init: SirExtensionBuilder.() -> Unit): SirExtension {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = SirExtensionBuilder()
-    copyBuilder.origin = original.origin
-    copyBuilder.visibility = original.visibility
-    copyBuilder.documentation = original.documentation
-    copyBuilder.attributes.addAll(original.attributes)
-    copyBuilder.declarations.addAll(original.declarations)
-    copyBuilder.constraints.addAll(original.constraints)
-    copyBuilder.protocols.addAll(original.protocols)
-    copyBuilder.extendedType = original.extendedType
-    return copyBuilder.apply(init).build()
-}

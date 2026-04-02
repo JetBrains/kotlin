@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleOriginalConstructorIfTypeAli
 
   @Test
   public void testAllFilesPresentInOriginalConstructorIfTypeAliased() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/relationProvider/originalConstructorIfTypeAliased"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/relationProvider/originalConstructorIfTypeAliased"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

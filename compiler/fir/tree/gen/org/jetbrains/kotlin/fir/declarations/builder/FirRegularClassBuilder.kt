@@ -83,28 +83,3 @@ inline fun buildRegularClass(init: FirRegularClassBuilder.() -> Unit): FirRegula
     }
     return FirRegularClassBuilder().apply(init).build()
 }
-
-@OptIn(ExperimentalContracts::class, DirectDeclarationsAccess::class)
-inline fun buildRegularClassCopy(original: FirRegularClass, init: FirRegularClassBuilder.() -> Unit): FirRegularClass {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirRegularClassBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.resolvePhase = original.resolvePhase
-    copyBuilder.moduleData = original.moduleData
-    copyBuilder.origin = original.origin
-    copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.typeParameters.addAll(original.typeParameters)
-    copyBuilder.status = original.status
-    copyBuilder.deprecationsProvider = original.deprecationsProvider
-    copyBuilder.scopeProvider = original.scopeProvider
-    copyBuilder.classKind = original.classKind
-    copyBuilder.declarations.addAll(original.declarations)
-    copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.name = original.name
-    copyBuilder.companionObjectSymbol = original.companionObjectSymbol
-    copyBuilder.superTypeRefs.addAll(original.superTypeRefs)
-    copyBuilder.contextParameters.addAll(original.contextParameters)
-    return copyBuilder.apply(init).build()
-}

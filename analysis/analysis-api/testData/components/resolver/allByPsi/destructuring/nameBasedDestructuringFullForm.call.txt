@@ -542,7 +542,7 @@ KtBlockExpression(436,704): '{'
   null
 
 KtForExpression(442,480): 'for ((val first, val second,) in x) {}'
-  KaCallResolutionSuccess:
+  KaForLoopCallResolutionAttempt:
     call = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -669,7 +669,7 @@ KtBlockExpression(478,480): '{}'
   null
 
 KtForExpression(485,510): 'for ((val first) in x) {}'
-  KaCallResolutionSuccess:
+  KaForLoopCallResolutionAttempt:
     call = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -776,7 +776,7 @@ KtBlockExpression(508,510): '{}'
   null
 
 KtForExpression(515,548): 'for ((val first: String) in x) {}'
-  KaCallResolutionSuccess:
+  KaForLoopCallResolutionAttempt:
     call = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -892,7 +892,7 @@ KtBlockExpression(546,548): '{}'
   null
 
 KtForExpression(553,583): 'for ((val aa = first) in x) {}'
-  KaCallResolutionSuccess:
+  KaForLoopCallResolutionAttempt:
     call = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1002,7 +1002,7 @@ KtBlockExpression(581,583): '{}'
   null
 
 KtForExpression(588,626): 'for ((val aa: String = first) in x) {}'
-  KaCallResolutionSuccess:
+  KaForLoopCallResolutionAttempt:
     call = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1121,7 +1121,7 @@ KtBlockExpression(624,626): '{}'
   null
 
 KtForExpression(631,660): 'for ((val _ = first) in x) {}'
-  KaCallResolutionSuccess:
+  KaForLoopCallResolutionAttempt:
     call = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1231,7 +1231,7 @@ KtBlockExpression(658,660): '{}'
   null
 
 KtForExpression(665,702): 'for ((val _: String = first) in x) {}'
-  KaCallResolutionSuccess:
+  KaForLoopCallResolutionAttempt:
     call = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
         contextArgumentMapping = {}

@@ -8,6 +8,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.repl.reader
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplFromTerminal
 
 class IdeReplCommandReader : ReplCommandReader {
-    override fun readLine(next: ReplFromTerminal.WhatNextAfterOneLine) = readLine()
+    override fun readLine(next: ReplFromTerminal.WhatNextAfterOneLine) = readlnOrNull()
     override fun flushHistory() = Unit
 }

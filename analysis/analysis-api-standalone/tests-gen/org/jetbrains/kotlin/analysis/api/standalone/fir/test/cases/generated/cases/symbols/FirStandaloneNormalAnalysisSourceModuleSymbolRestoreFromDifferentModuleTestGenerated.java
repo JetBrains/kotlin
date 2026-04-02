@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolRestoreFromDifferentMo
 
   @Test
   public void testAllFilesPresentInSymbolRestoreFromDifferentModule() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule"), Pattern.compile("^(.+)\\.(kt)$"), null, true, "withTestCompilerPluginEnabled");
   }
 
   @Test

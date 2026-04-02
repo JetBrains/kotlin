@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticsTestWith
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticsTestWithConverter
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticsTestWithJvmIrBackend
 import org.jetbrains.kotlin.test.runners.codegen.*
-import org.jetbrains.kotlin.test.runners.ir.*
+import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeJvmIrSourceRangesTest
+import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeJvmIrTextTest
+import org.jetbrains.kotlin.test.runners.ir.AbstractFirPsiJvmIrSourceRangesTest
+import org.jetbrains.kotlin.test.runners.ir.AbstractFirPsiJvmIrTextTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
 fun main(args: Array<String>) {
@@ -74,16 +77,8 @@ fun main(args: Array<String>) {
                 model("klib/syntheticAccessors")
             }
 
-            testClass<AbstractComposeLikeIrBlackBoxCodegenTest> {
-                model("codegen/composeLike")
-            }
-
             testClass<AbstractComposeLikeFirLightTreeBlackBoxCodegenTest> {
                 model("codegen/composeLike")
-            }
-
-            testClass<AbstractComposeLikeIrBytecodeTextTest> {
-                model("codegen/composeLikeBytecodeText")
             }
 
             testClass<AbstractComposeLikeFirLightTreeBytecodeTextTest> {

@@ -953,26 +953,6 @@ KtNameReferenceExpression(481,487): 'length'
 
 KtSafeQualifiedExpression(499,527): '(s as? Right)?.value?.div(1)'
   KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = (s as? Right)?.value
-        isSafeNavigation = true
-        type = ERROR_TYPE?
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = ERROR_TYPE
-        symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
-        valueParameters = []
-        contextParameters = []
-        callableId = /<Error class: unknown class>.<Error function>
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = false
-
-  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -992,13 +972,12 @@ KtSafeQualifiedExpression(499,527): '(s as? Right)?.value?.div(1)'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-KtSafeQualifiedExpression(499,519): '(s as? Right)?.value'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = (s as? Right)
+        expression = (s as? Right)?.value
         isSafeNavigation = true
         type = ERROR_TYPE?
       extensionReceiver = null
@@ -1013,6 +992,7 @@ KtSafeQualifiedExpression(499,519): '(s as? Right)?.value'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
+KtSafeQualifiedExpression(499,519): '(s as? Right)?.value'
   KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
@@ -1021,6 +1001,26 @@ KtSafeQualifiedExpression(499,519): '(s as? Right)?.value'
         expression = value
         isSafeNavigation = false
         type = ERROR_TYPE
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+        valueParameters = []
+        contextParameters = []
+        callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = (s as? Right)
+        isSafeNavigation = true
+        type = ERROR_TYPE?
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -1112,13 +1112,13 @@ KtNameReferenceExpression(514,519): 'value'
 
 KtCallExpression(521,527): 'div(1)'
   KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = (s as? Right)?.value
-        isSafeNavigation = true
-        type = ERROR_TYPE?
+        expression = div
+        isSafeNavigation = false
+        type = ERROR_TYPE
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -1132,13 +1132,13 @@ KtCallExpression(521,527): 'div(1)'
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
+    candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = div
-        isSafeNavigation = false
-        type = ERROR_TYPE
+        expression = (s as? Right)?.value
+        isSafeNavigation = true
+        type = ERROR_TYPE?
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null

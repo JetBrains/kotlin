@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleSubstitutorBuilderTestGenera
 
   @Test
   public void testAllFilesPresentInSubstitutorBuilder() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/substitutorFactory/substitutorBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/substitutorFactory/substitutorBuilder"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

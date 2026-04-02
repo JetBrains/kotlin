@@ -12,10 +12,7 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "libraries/tools/kotlinp/jvm/testData") {
-            testClass<AbstractK1KotlinpTest> {
-                model("")
-            }
-            testClass<AbstractK2KotlinpTest> {
+            testClass<AbstractKotlinpTest> {
                 model("", pattern = "^(.*)\\.kts?$")
             }
         }

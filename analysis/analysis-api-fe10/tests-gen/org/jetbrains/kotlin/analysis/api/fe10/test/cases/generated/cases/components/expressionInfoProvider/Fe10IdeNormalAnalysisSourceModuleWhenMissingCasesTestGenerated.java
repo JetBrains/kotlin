@@ -48,7 +48,7 @@ public class Fe10IdeNormalAnalysisSourceModuleWhenMissingCasesTestGenerated exte
 
   @Test
   public void testAllFilesPresentInWhenMissingCases() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

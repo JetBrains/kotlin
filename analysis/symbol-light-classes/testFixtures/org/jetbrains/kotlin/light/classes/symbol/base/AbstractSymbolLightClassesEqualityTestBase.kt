@@ -12,6 +12,8 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiEnumConstant
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalModuleStateModificationEvent
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalSourceOutOfBlockModificationEvent
+import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
+import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.psi.KtFile
@@ -25,6 +27,9 @@ abstract class AbstractSymbolLightClassesEqualityTestBase(
     configurator: AnalysisApiTestConfigurator,
     override val isTestAgainstCompiledCode: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
+    override val variantChain: TestVariantChain
+        get() = super.variantChain.withAdditionalVariant("equality")
+
     override fun getRenderResult(
         ktFile: KtFile,
         ktFiles: List<KtFile>,

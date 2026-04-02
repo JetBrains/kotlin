@@ -1,4 +1,41 @@
 KtForExpression(23,37): 'for(i in f) {}'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next'.>
+  KaForLoopCallResolutionAttempt:
+    hasNextCallAttempt = KaCallResolutionSuccess:
+      call = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = f
+          isSafeNavigation = false
+          type = Iterator
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /Iterator.hasNext(<dispatch receiver>: Iterator): kotlin.Boolean
+          valueParameters = []
+          contextParameters = []
+          callableId = /Iterator.hasNext
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+    iteratorCallAttempt = KaCallResolutionSuccess:
+      call = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = f
+          isSafeNavigation = false
+          type = Foo
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Iterator
+          symbol = /Foo.iterator(<dispatch receiver>: Foo): Iterator
+          valueParameters = []
+          contextParameters = []
+          callableId = /Foo.iterator
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+    nextCallAttempt = KaCallResolutionError:
+      candidateCalls = []
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next'.>

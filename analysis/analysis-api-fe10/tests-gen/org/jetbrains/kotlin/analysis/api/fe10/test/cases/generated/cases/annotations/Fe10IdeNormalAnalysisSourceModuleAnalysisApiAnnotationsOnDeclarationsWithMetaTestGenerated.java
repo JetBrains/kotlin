@@ -48,7 +48,7 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDeclaratio
 
   @Test
   public void testAllFilesPresentInMetaAnnotations() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/metaAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/metaAnnotations"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

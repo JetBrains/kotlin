@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleFunctionClassKindTestGenerat
 
   @Test
   public void testAllFilesPresentInFunctionClassKind() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeInfoProvider/functionClassKind"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

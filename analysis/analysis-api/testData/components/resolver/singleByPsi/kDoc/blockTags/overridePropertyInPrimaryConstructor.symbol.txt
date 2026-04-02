@@ -1,11 +1,20 @@
 <caret_1>:
   KDocName(41,43): 'xx'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val xx: kotlin.Int
+      ]
 
 <caret_2>:
   KDocName(56,58): 'xx'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        xx: kotlin.Int
+      ]
 
 <caret_3>:
   KDocName(74,76): 'xx'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val xx: kotlin.Int
+      ]

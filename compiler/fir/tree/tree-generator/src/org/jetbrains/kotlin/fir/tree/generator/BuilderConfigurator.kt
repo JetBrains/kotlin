@@ -46,7 +46,6 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             parents += typeParameterRefsOwnerBuilder
             defaultNull("companionObjectSymbol")
             openBuilder()
-            withCopy()
         }
 
         val qualifiedAccessExpressionBuilder by builder {
@@ -117,7 +116,6 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         builder(typeAlias) {
             parents += declarationBuilder
             parents += typeParameterRefsOwnerBuilder
-            withCopy()
         }
 
         builder(receiverParameter) {
@@ -433,14 +431,6 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         val abstractResolvedQualifierBuilder by builder {
             fields from resolvedQualifier
-        }
-
-        builder(script) {
-            withCopy()
-        }
-
-        builder(codeFragment) {
-            withCopy()
         }
 
         builder(resolvedQualifier) {

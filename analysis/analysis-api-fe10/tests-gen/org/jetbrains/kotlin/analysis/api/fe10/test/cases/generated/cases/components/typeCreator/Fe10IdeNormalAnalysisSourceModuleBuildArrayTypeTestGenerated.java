@@ -48,7 +48,7 @@ public class Fe10IdeNormalAnalysisSourceModuleBuildArrayTypeTestGenerated extend
 
   @Test
   public void testAllFilesPresentInArrayType() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeCreator/arrayType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeCreator/arrayType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

@@ -48,7 +48,7 @@ public class Fe10IdeNormalAnalysisSourceModuleRestrictedAnalysisExceptionWrappin
 
   @Test
   public void testAllFilesPresentInExceptionWrapping() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/restrictedAnalysis/exceptionWrapping"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/restrictedAnalysis/exceptionWrapping"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

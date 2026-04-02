@@ -49,7 +49,7 @@ public class Fe10IdeNormalAnalysisSourceModuleHasConflictingSignatureWithTestGen
 
   @Test
   public void testAllFilesPresentInHasConflictingSignatureWith() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test
@@ -212,7 +212,7 @@ public class Fe10IdeNormalAnalysisSourceModuleHasConflictingSignatureWithTestGen
 
     @Test
     public void testAllFilesPresentInWithErrors() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith/withErrors"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith/withErrors"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test

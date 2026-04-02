@@ -255,8 +255,6 @@ KtConstructorDelegationReferenceExpression(427,427): ''
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) constructor()
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(481,485): 'Anno'
   KtSimpleNameReference:

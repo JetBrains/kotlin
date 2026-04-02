@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.*
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.internal.KgpBuildConstants
 import java.io.File
 
 abstract class BaseYarnRootExtension internal constructor(
@@ -70,7 +71,7 @@ abstract class BaseYarnRootExtension internal constructor(
         .value("https://github.com/yarnpkg/yarn/releases/download")
 
     override val versionProperty: org.gradle.api.provider.Property<String> = project.objects.property<String>()
-        .convention("1.22.17")
+        .convention(KgpBuildConstants.DEFAULT_YARN_VERSION)
 
     override val commandProperty: org.gradle.api.provider.Property<String> = project.objects.property<String>()
         .convention("yarn")

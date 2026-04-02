@@ -42,7 +42,27 @@ internal class XCTestHelpers : Closeable {
     }
 
     @Serializable
-    data class Device(val name: String, val udid: String)
+    data class Device(val name: String, val udid: String) {
+        fun install(application: File) {
+            runProcessAndReturnStdoutWithoutTimeout(
+                listOf("/usr/bin/xcrun", "simctl", "install", udid, application.path)
+            )
+        }
+
+        fun launch(bundleId: String, stdout: File, stderr: File): Int {
+            return ProcessBuilder(
+                listOf(
+                    "/usr/bin/xcrun", "simctl", "launch",
+                    "--console",
+                    udid, bundleId,
+                )
+            ).apply {
+                redirectOutput(stdout)
+                redirectError(stderr)
+            }.start().waitFor()
+        }
+
+    }
 
     @Serializable
     data class Simulators(val devices: Map<String, List<Device>>)
@@ -221,7 +241,7 @@ private fun processOutputWithTimeout(
     timeout: Long,
     unit: TimeUnit,
     redirectErrorStream: Boolean = false,
-    logger: Logger
+    logger: Logger,
 ): String {
     val process = ProcessBuilder(arguments)
         .directory(workDir)
@@ -301,7 +321,7 @@ private fun processOutputWithTimeout(
  */
 private fun <T> retry(
     logger: Logger,
-    block: (attempt: Int) -> T
+    block: (attempt: Int) -> T,
 ): T {
     var lastException: Throwable? = null
     for (attempt in 1..BOOT_RETRIES) {

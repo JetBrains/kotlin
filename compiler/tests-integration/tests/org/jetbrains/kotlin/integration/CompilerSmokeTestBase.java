@@ -29,8 +29,8 @@ import java.util.Collections;
 
 public abstract class CompilerSmokeTestBase extends KotlinIntegrationTestBase {
     @NotNull
-    protected String getTestDataDir() {
-        return KtTestUtil.getTestDataPathBase() + "/integration/smoke/" + getTestName(true);
+    protected File getTestDataDir() {
+        return KtTestUtil.getTestDataFileLocatedInCompilerTestData("integration/smoke/" + getTestName(true));
     }
 
     protected int run(String logName, String... args) throws Exception {

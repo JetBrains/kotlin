@@ -1,2 +1,35 @@
 KtPropertyDelegate(127,135): 'by Bar()'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = Bar()
+        isSafeNavigation = false
+        type = Bar
+      signature = KaFunctionSignature:
+        receiverType = Bar
+        returnType = NoDelegate
+        symbol = /provideDelegate(<extension receiver>: Bar, _this: kotlin.Any?, p: kotlin.Any?): NoDelegate
+        valueParameters = [
+          KaVariableSignature:
+            name = _this
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = _this: kotlin.Any?
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = p
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = p: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /provideDelegate
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true

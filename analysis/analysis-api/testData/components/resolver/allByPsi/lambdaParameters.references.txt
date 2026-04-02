@@ -53,8 +53,6 @@ KtCallExpression(85,94): 'action1()'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(85,92): 'action1'
   KtSimpleNameReference:
@@ -71,8 +69,6 @@ KtCallExpression(99,112): 'action1(prop)'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(99,106): 'action1'
   KtSimpleNameReference:
@@ -122,8 +118,6 @@ KtCallExpression(151,164): 'action2(prop)'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(151,158): 'action2'
   KtSimpleNameReference:

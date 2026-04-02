@@ -189,8 +189,6 @@ KtCallExpression(507,510): 'b()'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function0) operator fun invoke(): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(507,508): 'b'
   KtSimpleNameReference:

@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.prepareKotlinIdeaImportTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractExecutable
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
@@ -235,8 +237,13 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         target.binaries.all { binary ->
             binary.linkTaskProvider.configure { linkTask ->
                 // FIXME: KT-84809 Wire this only when we will call ld
+                val isFrameworkBinary = binary is Framework
                 val ldArgDumpPath = defFilesAndLdDumpGenerationTask.map {
-                    it.ldFilePath(target.konanTarget.appleArchitecture)
+                    if (isFrameworkBinary) {
+                        it.ldFileForFrameworkLinkagePath(target.konanTarget.appleArchitecture)
+                    } else {
+                        it.ldFilePath(target.konanTarget.appleArchitecture)
+                    }
                 }
                 val ldArgDumpFingerprintPath = defFilesAndLdDumpGenerationTask.map {
                     it.ldFileFingerprintPath(target.konanTarget.appleArchitecture)

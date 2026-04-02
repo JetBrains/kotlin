@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleCanBeAnalysedTestGenerated e
 
   @Test
   public void testAllFilesPresentInCanBeAnalysed() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/analysisScopeProvider/canBeAnalysed"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/analysisScopeProvider/canBeAnalysed"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

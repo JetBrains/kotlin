@@ -384,6 +384,18 @@
             "major": 2,
             "minor": 4,
             "patch": 0
+        },
+        {
+            "name": "2.5.0",
+            "major": 2,
+            "minor": 5,
+            "patch": 0
+        },
+        {
+            "name": "2.6.0",
+            "major": 2,
+            "minor": 6,
+            "patch": 0
         }
     ],
     "types": {

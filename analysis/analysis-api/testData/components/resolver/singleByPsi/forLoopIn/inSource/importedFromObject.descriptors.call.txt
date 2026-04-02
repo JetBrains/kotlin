@@ -1,5 +1,5 @@
 KtForExpression(141,160): 'for (x in Foo()) {}'
-  KaCallResolutionSuccess:
+  KaForLoopCallResolutionAttempt:
     call = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
         contextArgumentMapping = {}

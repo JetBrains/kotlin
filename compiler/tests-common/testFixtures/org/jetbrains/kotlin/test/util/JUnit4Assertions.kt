@@ -11,10 +11,11 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
 import org.junit.Assume
 import java.io.File
+import kotlin.time.Duration
 
 object JUnit4Assertions : Assertions() {
     override fun doesEqualToFile(expectedFile: File, actual: String, sanitizer: (String) -> String): Boolean {
-        return TestDataAssertions.compareExpectFileWithActualText(expectedFile, actual, sanitizer).doesEqual;
+        return TestDataAssertions.compareExpectFileWithActualText(expectedFile, actual, sanitizer).doesEqual
     }
 
     override fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String, message: () -> String) {
@@ -59,5 +60,9 @@ object JUnit4Assertions : Assertions() {
 
     override fun assumeFalse(value: Boolean, message: () -> String) {
         Assume.assumeFalse(message.invoke(), value)
+    }
+
+    override fun assertTimeoutPreemptively(timeout: Duration, message: () -> String, action: () -> Unit) {
+        throw UnsupportedOperationException("JUnit 4 does not support timeout assertions.")
     }
 }

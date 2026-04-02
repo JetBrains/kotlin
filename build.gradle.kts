@@ -1,5 +1,9 @@
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 buildscript {
@@ -429,6 +433,11 @@ extra["kotlinJpsPluginEmbeddedDependencies"] = listOf(
     ":kotlin-build-tools-enum-compat",
     ":kotlin-compiler-runner-unshaded",
     ":daemon-common",
+    ":core:names",
+    ":core:language.model",
+    ":core:language.targets",
+    ":core:language.targets.jvm",
+    ":core:language.version-settings",
     ":core:compiler.common",
     ":core:compiler.common.jvm",
     ":core:compiler.common.js",
@@ -1284,4 +1293,16 @@ afterEvaluate {
 // workaround for KT-68482
 tasks.withType<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>().configureEach {
     notCompatibleWithConfigurationCache("KotlinNpmInstallTask is not compatible with Configuration Cache")
+}
+
+plugins.withType<YarnPlugin> {
+    extensions.configure<YarnRootEnvSpec> {
+        version = libs.versions.yarn
+    }
+}
+
+plugins.withType<WasmYarnPlugin> {
+    extensions.configure<WasmYarnRootEnvSpec> {
+        version = libs.versions.yarn
+    }
 }

@@ -378,13 +378,13 @@ KtNameReferenceExpression(433,437): 'Left'
 
 KtDotQualifiedExpression(441,446): 'foo.x'
   KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = foo
+        expression = x
         isSafeNavigation = false
-        type = MySealed!
+        type = ERROR_TYPE
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -398,13 +398,13 @@ KtDotQualifiedExpression(441,446): 'foo.x'
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
+    candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = x
+        expression = foo
         isSafeNavigation = false
-        type = ERROR_TYPE
+        type = MySealed!
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -493,13 +493,13 @@ KtNameReferenceExpression(458,463): 'Right'
 
 KtDotQualifiedExpression(467,472): 'foo.y'
   KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = foo
+        expression = y
         isSafeNavigation = false
-        type = MySealed!
+        type = ERROR_TYPE
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -513,13 +513,13 @@ KtDotQualifiedExpression(467,472): 'foo.y'
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
+    candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
-        expression = y
+        expression = foo
         isSafeNavigation = false
-        type = ERROR_TYPE
+        type = MySealed!
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null

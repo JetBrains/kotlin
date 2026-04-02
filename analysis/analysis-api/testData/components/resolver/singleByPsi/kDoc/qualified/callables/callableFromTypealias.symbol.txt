@@ -4,4 +4,7 @@
 
 <caret_2>:
   KDocName(58,71): 'String.length'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val length: kotlin.Int
+      ]

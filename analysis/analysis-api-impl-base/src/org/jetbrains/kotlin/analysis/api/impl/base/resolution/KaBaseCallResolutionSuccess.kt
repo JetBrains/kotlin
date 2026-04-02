@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallResolutionSuccess
-import org.jetbrains.kotlin.analysis.api.resolution.KaSingleOrMultiCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaSingleCall
 
 @KaImplementationDetail
 class KaBaseCallResolutionSuccess(
-    private val backingCall: KaSingleOrMultiCall,
+    private val backingCall: KaSingleCall<*, *>,
 ) : KaCallResolutionSuccess {
     override val token: KaLifetimeToken get() = backingCall.token
-    override val call: KaSingleOrMultiCall get() = withValidityAssertion { backingCall }
+    override val call: KaSingleCall<*, *> get() = withValidityAssertion { backingCall }
 }

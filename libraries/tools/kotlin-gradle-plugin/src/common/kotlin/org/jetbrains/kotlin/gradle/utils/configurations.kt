@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
@@ -64,10 +63,16 @@ internal fun ConfigurationContainer.detachedResolvable(vararg dependencies: Depe
 
 internal fun ConfigurationContainer.createConsumable(
     name: String,
-    configurationOnCreate: Configuration.() -> Unit = {},
-): Configuration = create(name, configurationOnCreate).apply {
-    isCanBeResolved = false
-}
+    configuration: Configuration.() -> Unit = {}
+): NamedDomainObjectProvider<out Configuration> =
+    if (GradleVersion.current() >= gradleVersionWithNewApi) {
+        consumable(name, configuration)
+    } else {
+        register(name) {
+            it.isCanBeResolved = false
+            configuration(it)
+        }
+    }
 
 internal fun ConfigurationContainer.findConsumable(name: String): Configuration? = findByName(name)?.apply {
     if (isCanBeResolved && isCanBeConsumed) {
@@ -79,9 +84,15 @@ internal fun ConfigurationContainer.findConsumable(name: String): Configuration?
 
 internal fun ConfigurationContainer.maybeCreateConsumable(
     name: String,
-    configurationOnCreate: Configuration.() -> Unit = {},
-): Configuration =
-    findConsumable(name) ?: createConsumable(name, configurationOnCreate)
+    configurationOnCreate: Configuration.() -> Unit = {}
+): Configuration = findConsumable(name) ?: createConsumable(name, configurationOnCreate).get()
+
+@Deprecated("A temporary workaround for configurations changing consumable role post-factum")
+internal fun ConfigurationContainer.maybeCreateConsumableCompat(
+    name: String,
+): Configuration = findConsumable(name) ?: create(name) {
+    it.isCanBeResolved = false
+}
 
 internal fun ConfigurationContainer.createDependencyScope(
     name: String,

@@ -20,7 +20,7 @@ KtBlockExpression(23,56): '{'
   null
 
 KtForExpression(29,54): 'for (i in 1..<5) {'
-  KaCallResolutionSuccess:
+  KaForLoopCallResolutionAttempt:
     call = KaForLoopCall:
       hasNextCall = KaSimpleFunctionCall:
         contextArgumentMapping = {}

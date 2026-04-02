@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.wasm.binaryen
 
+import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionContainer
@@ -14,20 +15,18 @@ import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 @ExperimentalWasmDsl
-abstract class BinaryenPlugin internal constructor() :
-    @Suppress("DEPRECATION_ERROR")
-    org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootPlugin() {
+abstract class BinaryenPlugin internal constructor() : Plugin<Project> {
     override fun apply(project: Project) {
         MultiplePluginDeclarationDetector.detect(project)
 
         project.plugins.apply(BasePlugin::class.java)
 
-        val spec = project.extensions.createBinaryenRootEnvSpec()
+        val spec = project.extensions.createBinaryenEnvSpec()
 
+        @Suppress("DEPRECATION")
         val settings = project.extensions.create(
             BinaryenExtension.EXTENSION_NAME,
             BinaryenExtension::class.java,
@@ -72,13 +71,14 @@ abstract class BinaryenPlugin internal constructor() :
         }
     }
 
-    private fun ExtensionContainer.createBinaryenRootEnvSpec(): BinaryenEnvSpec {
+    private fun ExtensionContainer.createBinaryenEnvSpec(): BinaryenEnvSpec {
         return create(
             BinaryenEnvSpec.EXTENSION_NAME,
             BinaryenEnvSpec::class.java
         )
     }
 
+    @Suppress("DEPRECATION")
     private fun BinaryenEnvSpec.initializeBinaryenRootEnvSpec(
         rootBinaryen: BinaryenExtension,
     ) {
@@ -92,6 +92,7 @@ abstract class BinaryenPlugin internal constructor() :
         platform.convention(rootBinaryen.platform)
     }
 
+    @Suppress("DEPRECATION")
     private fun addPlatform(project: Project, extension: BinaryenExtension) {
         val uname = project.providers.unameExecResult
 
@@ -108,16 +109,11 @@ abstract class BinaryenPlugin internal constructor() :
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         const val TASKS_GROUP_NAME: String = "binaryen"
 
-        internal fun apply(rootProject: Project): BinaryenExtension {
-            rootProject.plugins.apply(BinaryenPlugin::class.java)
-            return rootProject.extensions.getByName(
-                BinaryenExtension.EXTENSION_NAME
-            ) as BinaryenExtension
+        internal fun applyWithEnvSpec(project: Project): BinaryenEnvSpec {
+            project.plugins.apply(BinaryenPlugin::class.java)
+            return project.extensions.getByName(
+                BinaryenEnvSpec.EXTENSION_NAME
+            ) as BinaryenEnvSpec
         }
-
-        internal val Project.kotlinBinaryenExtension: BinaryenExtension
-            get() = extensions.getByName(
-                BinaryenExtension.EXTENSION_NAME
-            ).castIsolatedKotlinPluginClassLoaderAware()
     }
 }

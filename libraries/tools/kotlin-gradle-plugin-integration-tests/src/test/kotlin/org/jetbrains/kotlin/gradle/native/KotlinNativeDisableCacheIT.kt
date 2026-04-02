@@ -110,7 +110,7 @@ internal class KotlinNativeDisableCacheIT : KGPBaseTest() {
                 |            @Suppress("DEPRECATION")
                 |            @OptIn(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCacheApi::class)
                 |            disableNativeCache(
-                |              org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion.`2_3_20`,
+                |              org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion.`2_4_0`,
                 |              "Disabled for integration testing"
                 |            )
                 |        }
@@ -138,7 +138,7 @@ internal class KotlinNativeDisableCacheIT : KGPBaseTest() {
                 |        binaries.all {
                 |            @Suppress("DEPRECATION")
                 |            disableNativeCache(
-                |              org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion.`2_3_20`,
+                |              org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion.`2_4_0`,
                 |              "Disabled for integration testing"
                 |            )
                 |        }
@@ -218,7 +218,7 @@ private fun KGPBaseTest.setupNativeCacheTest(
                 target.binaries.staticLib {
                     @Suppress("DEPRECATION")
                     disableNativeCache(
-                        DisableCacheInKotlinVersion.`2_3_20`,
+                        DisableCacheInKotlinVersion.`2_4_0`,
                         "Disabled for integration testing",
                         URI("https://kotlinlang.org")
                     )

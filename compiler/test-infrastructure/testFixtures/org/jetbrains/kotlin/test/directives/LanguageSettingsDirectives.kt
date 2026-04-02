@@ -135,6 +135,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     )
 
     val ENABLE_JVM_PREVIEW by directive("Enable JVM preview features")
+    val JVM_EXPOSE_BOXED by directive("Implicitly expose inline classes API")
     val EMIT_JVM_TYPE_ANNOTATIONS by directive("Enable emitting jvm type annotations")
     val DISABLE_PARAM_ASSERTIONS by directive("Disable assertions on parameters")
     val DISABLE_CALL_ASSERTIONS by directive("Disable assertions on calls")

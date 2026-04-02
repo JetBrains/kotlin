@@ -56,12 +56,10 @@ class BackendWasmSymbols(
 
     internal val isNotFirstWasmExportCall: IrPropertySymbol = CallableIds.isNotFirstWasmExportCall.propertySymbol()
 
-    val tryGetAssociatedObject = CallableIds.tryGetAssociatedObjectWithWrapper.functionSymbolOrNull()
-        ?: CallableIds.tryGetAssociatedObject.functionSymbol()
+    val tryGetAssociatedObject = CallableIds.tryGetAssociatedObject.functionSymbol()
 
     internal val callAssociatedObjectGetter = CallableIds.callAssociatedObjectGetter.functionSymbol()
-    val registerModuleDescriptor = CallableIds.registerModuleDescriptorWithWrapper.functionSymbolOrNull()
-        ?: CallableIds.registerModuleDescriptor.functionSymbol()
+    val registerModuleDescriptor = CallableIds.registerModuleDescriptor.functionSymbol()
 
     internal val wasmLongImmutableArray = ClassIds.WasmLongImmutableArray.classSymbol()
 
@@ -397,10 +395,8 @@ private object CallableIds {
     val getInterfaceVTable = "getInterfaceVTable".wasmCallableId
     val wasmGetInterfaceVTableBodyImpl = "wasmGetInterfaceVTableBodyImpl".wasmCallableId
     val tryGetAssociatedObject = "tryGetAssociatedObject".wasmCallableId
-    val tryGetAssociatedObjectWithWrapper = "tryGetAssociatedObjectWithWrapper".wasmCallableId
     val callAssociatedObjectGetter = "callAssociatedObjectGetter".wasmCallableId
     val registerModuleDescriptor = "registerModuleDescriptor".wasmCallableId
-    val registerModuleDescriptorWithWrapper = "registerModuleDescriptorWithWrapper".wasmCallableId
     val THROW_NPE = "THROW_NPE".wasmCallableId
     val THROW_ISE = "THROW_ISE".wasmCallableId
     val THROW_CCE = "THROW_CCE".wasmCallableId

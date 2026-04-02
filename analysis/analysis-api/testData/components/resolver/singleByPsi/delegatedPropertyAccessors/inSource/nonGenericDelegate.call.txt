@@ -1,5 +1,5 @@
 KtPropertyDelegate(361,389): 'by NonGenericHolder("world")'
-  KaCallResolutionSuccess:
+  KaDelegatedPropertyCallResolutionAttempt:
     call = KaDelegatedPropertyCall:
       provideDelegateCall = null
       valueGetterCall = KaSimpleFunctionCall:

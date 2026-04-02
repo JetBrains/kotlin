@@ -49,7 +49,7 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
 
   @Test
   public void testAllFilesPresentInShortenRange() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test
@@ -758,7 +758,7 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
 
     @Test
     public void testAllFilesPresentInConflicts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -783,7 +783,7 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
 
       @Test
       public void testAllFilesPresentInClassWithSameName() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/conflicts/classWithSameName"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -852,7 +852,7 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
 
     @Test
     public void testAllFilesPresentInContextSensitiveResolution() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/contextSensitiveResolution"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/contextSensitiveResolution"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -938,7 +938,7 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
 
     @Test
     public void testAllFilesPresentInNestedClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -1071,7 +1071,7 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
 
       @Test
       public void testAllFilesPresentInClassHeaderPositions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/nestedClasses/classHeaderPositions"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -1260,7 +1260,7 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
 
     @Test
     public void testAllFilesPresentInThisReference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -1351,7 +1351,7 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
 
       @Test
       public void testAllFilesPresentInWithLabel() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/thisReference/withLabel"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -1432,7 +1432,7 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
 
     @Test
     public void testAllFilesPresentInTypeParameters() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/typeParameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/typeParameters"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test

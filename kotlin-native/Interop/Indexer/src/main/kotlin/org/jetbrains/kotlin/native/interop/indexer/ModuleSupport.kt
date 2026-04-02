@@ -16,10 +16,7 @@ fun getModulesInfo(compilation: Compilation, modules: List<String>, skipNonImpor
     val areModulesEnabled = compilation.compilerArgs.contains("-fmodules")
     withIndex(excludeDeclarationsFromPCH = false) { index ->
         ModularCompilation(compilation).use {
-            val modulesASTFiles = if (skipNonImportableModules) {
-                getModulesASTFilesSkipNonImportableModules(index, it, modules)
-            } else getModulesASTFiles(index, it, modules)
-
+            val modulesASTFiles = getModulesASTFiles(index, it, modules, skipNonImportableModules)
             return buildModulesInfo(index, modules, modulesASTFiles, areModulesEnabled)
         }
     }
@@ -96,28 +93,21 @@ private fun CXTranslationUnit.importedASTFiles(index: CXIndex): Set<String> {
 
 private const val ERROR_COUNT_LIMIT = 10
 
-private fun getModulesASTFiles(index: CXIndex, compilation: ModularCompilation, modules: List<String>): List<String> {
-    val (translationUnit, errors) = compilation.parseModules(index, modules)
-    try {
-        if (errors.isNotEmpty()) {
-            val errorMessage = errors.take(ERROR_COUNT_LIMIT).joinToString("\n") { it.format }
-            throw Error(errorMessage)
-        }
-
-        translationUnit.ensureNoCompileErrors()
-
-        return translationUnit.importedASTFiles(index).toList()
-    } finally {
-        clang_disposeTranslationUnit(translationUnit)
-    }
-}
-
 /**
- * This method of import is intended for SwiftPM import. We try to import all modules one by one and skip those that didn't import. This means we
- * don't need to require explicit module specification in the build script, and we also don't need to heuristically filter out modules we
- * can't import like C++ modules
+ * Imports modules one by one and collects AST files for successfully imported modules.
+ *
+ * When [skipNonImportableModules] is `true`, import errors are logged to stdout as long as at least one module was imported successfully.
+ * This means we don't need to require explicit module specification in the build script, and we also don't need to heuristically
+ * filter out modules we can't import like C++ modules.
+ * If [skipNonImportableModules] is `false`, or if no modules are successfully imported, the function throws an Error containing
+ * the accumulated import failures.
  */
-private fun getModulesASTFilesSkipNonImportableModules(index: CXIndex, compilation: ModularCompilation, modules: List<String>): List<String> {
+private fun getModulesASTFiles(
+        index: CXIndex,
+        compilation: ModularCompilation,
+        modules: List<String>,
+        skipNonImportableModules: Boolean,
+): List<String> {
     val importedFiles = linkedSetOf<String>()
     var importedSomeModules = false
 
@@ -150,7 +140,7 @@ private fun getModulesASTFilesSkipNonImportableModules(index: CXIndex, compilati
                     errors.map { "${module.moduleName}: ${it}" }
                 }.joinToString("\n")
         )
-        if (importedSomeModules) {
+        if (importedSomeModules && skipNonImportableModules) {
             println(error)
         } else {
             throw error

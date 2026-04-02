@@ -2,10 +2,10 @@ KtForExpression(23,37): 'for(i in f) {}'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext'.>
+    attempt: KaCompoundSymbolResolutionError
+      attempts[0]: KaSymbolResolutionSuccess
+      attempts[1]: KaSymbolResolutionError
+        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext'.>
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       0: (in Foo) operator fun iterator(): Iterator
       1: (in Iterator) operator fun next(): kotlin.Any

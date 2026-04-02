@@ -54,7 +54,7 @@ public class Fe10IdeNormalAnalysisSourceModuleLenientClassIdSubtypingTypeRelatio
 
   @Test
   public void testAllFilesPresentInSubtypingAndEquality() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

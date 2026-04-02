@@ -1,5 +1,5 @@
 KtPropertyDelegate(181,199): 'by Holder("hello")'
-  KaCallResolutionSuccess:
+  KaDelegatedPropertyCallResolutionAttempt:
     call = KaDelegatedPropertyCall:
       provideDelegateCall = null
       valueGetterCall = KaSimpleFunctionCall:

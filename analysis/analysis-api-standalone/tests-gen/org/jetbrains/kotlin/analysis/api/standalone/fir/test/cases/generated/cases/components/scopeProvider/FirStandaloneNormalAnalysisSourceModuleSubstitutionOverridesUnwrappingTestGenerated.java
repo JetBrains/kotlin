@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleSubstitutionOverridesUnwrapp
 
   @Test
   public void testAllFilesPresentInSubstitutionOverridesUnwrapping() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/substitutionOverridesUnwrapping"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

@@ -1,10 +1,16 @@
 <caret_1>:
   KDocName(8,33): '`With Space`.`with space`'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /With Space.with space(<dispatch receiver>: With Space): kotlin.Unit
+      ]
 
 <caret_2>:
   KDocName(43,68): '`With Space`.`with space`'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /With Space.with space(<dispatch receiver>: With Space): kotlin.Unit
+      ]
 
 <caret_3>:
   KtNamedFunction(0,185): '/**'
@@ -16,8 +22,14 @@
 
 <caret_5>:
   KDocName(128,142): 'O.`with space`'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /O.with space(<dispatch receiver>: O): kotlin.Unit
+      ]
 
 <caret_6>:
   KDocName(152,166): 'O.`with space`'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /O.with space(<dispatch receiver>: O): kotlin.Unit
+      ]

@@ -14,15 +14,6 @@ import kotlin.test.assertNull
 
 class GradleDeprecatedPropertyChecker {
 
-    @Test
-    fun `KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT reports deprecation warning`() {
-        val project = buildProjectWithMPP(
-            preApplyCode = { enableKmpProjectIsolationSupport(enabled = true) },
-        ) {
-            kotlin { jvm() }
-        }.evaluate()
-        project.checkDiagnostics("KmpIsolatedProjectsSupportDeprecated")
-    }
 
     @Test
     fun `KT-83254 - diagnostic with filtering - emits only when filter passes the property`() {
@@ -63,5 +54,25 @@ class GradleDeprecatedPropertyChecker {
         assertEquals("foo", propertiesService.get(KOTLIN_DEPRECATED_TEST_PROPERTY, project))
         project.evaluate()
         assertEquals("foo", propertiesService.get(KOTLIN_DEPRECATED_TEST_PROPERTY, project))
+    }
+
+    @Test
+    fun `KT-85433 non-BTA compilation mode reports deprecation warning`() {
+        val project = buildProjectWithMPP(
+            preApplyCode = { enableBtaJvm(enabled = false) },
+        ) {
+            kotlin { jvm() }
+        }.evaluate()
+        project.checkDiagnostics("NonBtaCompilationModeDeprecated")
+    }
+
+    @Test
+    fun `KT-85433 explicit BTA compilation mode reports deprecation warning`() {
+        val project = buildProjectWithMPP(
+            preApplyCode = { enableBtaJvm(enabled = true) },
+        ) {
+            kotlin { jvm() }
+        }.evaluate()
+        project.checkDiagnostics("NonBtaCompilationModeDeprecated")
     }
 }

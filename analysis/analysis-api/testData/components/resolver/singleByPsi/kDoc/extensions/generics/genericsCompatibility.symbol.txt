@@ -1,14 +1,23 @@
 <caret_1>:
   KDocName(149,159): 'Any.anyExt'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        test/anyExt(<extension receiver>: T): kotlin.Unit
+      ]
 
 <caret_2>:
   KDocName(165,176): 'Base.anyExt'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        test/anyExt(<extension receiver>: T): kotlin.Unit
+      ]
 
 <caret_3>:
   KDocName(182,194): 'Child.anyExt'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        test/anyExt(<extension receiver>: T): kotlin.Unit
+      ]
 
 <caret_4>:
   KDocName(203,214): 'Any.baseExt'
@@ -16,11 +25,17 @@
 
 <caret_5>:
   KDocName(220,232): 'Base.baseExt'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        test/baseExt(<extension receiver>: T): kotlin.Unit
+      ]
 
 <caret_6>:
   KDocName(238,251): 'Child.baseExt'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        test/baseExt(<extension receiver>: T): kotlin.Unit
+      ]
 
 <caret_7>:
   KDocName(260,272): 'Any.childExt'
@@ -32,4 +47,7 @@
 
 <caret_9>:
   KDocName(297,311): 'Child.childExt'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        test/childExt(<extension receiver>: T): kotlin.Unit
+      ]

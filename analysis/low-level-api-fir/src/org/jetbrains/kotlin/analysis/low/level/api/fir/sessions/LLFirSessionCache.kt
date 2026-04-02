@@ -85,19 +85,36 @@ class LLFirSessionCache(
 
         checkCanceled()
 
+        storage.unstableDanglingFileSessionCache[module]
+            ?.takeIf { it.isValidDanglingFileSession }
+            ?.let { return it }
+
+        // The creation of an unstable dangling file session might require accessing `unstableDanglingFileSessionCache` again to get the
+        // context session, so we have to create the session outside `compute` to avoid recursive updates.
+        //
+        // `newSession` might be thrown away if another thread added its own new session, but the result will be consistent due to
+        // `compute`.
+        val newSession = createSession(module)
         val session = storage.unstableDanglingFileSessionCache.compute(module) { _, existingSession ->
-            if (existingSession is LLFirDanglingFileSession && !existingSession.hasFileModifications) {
+            if (existingSession?.isValidDanglingFileSession == true) {
                 existingSession
             } else {
-                createSession(module)
+                newSession
             }
         }
 
         requireNotNull(session)
         checkSessionValidity(session)
-
         return session
     }
+
+    private val LLFirSession.isValidDanglingFileSession: Boolean
+        get() {
+            // For unstable dangling files, the `isValid` check on the session will likely always pass because unstable dangling file
+            // sessions are not actively invalidated (`isValid` is written during session invalidation). However, it is important for
+            // consistency to check the session's own validity. In the future, session validity might be updated for additional purposes.
+            return this is LLFirDanglingFileSession && !hasFileModifications && isValid
+        }
 
     private fun <T : KaModule> getCachedSession(module: T, storage: SessionStorage, factory: (T) -> LLFirSession): LLFirSession {
         checkCanceled()
@@ -107,10 +124,7 @@ class LLFirSessionCache(
         } else {
             // Non-isolated session creation may need to access other sessions, so we should create the session outside `computeIfAbsent` to
             // avoid recursive update exceptions.
-            storage[module] ?: run {
-                val newSession = factory(module)
-                storage.computeIfAbsent(module) { newSession }
-            }
+            storage.getOrPut(module) { factory(module) }
         }
 
         checkSessionValidity(session)

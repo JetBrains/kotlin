@@ -1,0 +1,10 @@
+<caret_1>:
+  KDocName(25,40): 'Storage.getProp'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        /Storage.getProp(<dispatch receiver>: Storage, p0: kotlin.String!): kotlin.String!
+      ]
+
+<caret_2>:
+  KDocName(46,58): 'Storage.prop'
+    null

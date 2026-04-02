@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleHLSmartCastInfoTestGenerated
 
   @Test
   public void testAllFilesPresentInSmartCastInfo() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/smartCastInfo"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/dataFlowInfoProvider/smartCastInfo"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

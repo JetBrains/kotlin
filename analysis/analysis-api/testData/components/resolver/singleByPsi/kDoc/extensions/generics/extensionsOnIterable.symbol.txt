@@ -1,31 +1,61 @@
 <caret_1>:
   KDocName(52,64): 'Iterable.map'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        kotlin/collections/map(<extension receiver>: kotlin.collections.Iterable<T>, transform: (T) -> R): kotlin.collections.List<R>
+      ]
 
 <caret_2>:
   KDocName(72,88): 'Iterable.flatMap'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        kotlin/collections/flatMap(<extension receiver>: kotlin.collections.Iterable<T>, transform: (T) -> kotlin.collections.Iterable<R>): kotlin.collections.List<R>,
+        kotlin/collections/flatMap(<extension receiver>: kotlin.collections.Iterable<T>, transform: (T) -> kotlin.sequences.Sequence<R>): kotlin.collections.List<R>
+      ]
 
 <caret_3>:
   KDocName(96,112): 'Iterable.flatten'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        kotlin/collections/flatten(<extension receiver>: kotlin.collections.Iterable<kotlin.collections.Iterable<T>>): kotlin.collections.List<T>
+      ]
 
 <caret_4>:
   KDocName(120,132): 'Iterable.min'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        kotlin/collections/min(<extension receiver>: kotlin.collections.Iterable<kotlin.Double>): kotlin.Double,
+        kotlin/collections/min(<extension receiver>: kotlin.collections.Iterable<kotlin.Float>): kotlin.Float,
+        kotlin/collections/min(<extension receiver>: kotlin.collections.Iterable<T>): T
+      ]
 
 <caret_5>:
   KDocName(140,148): 'List.map'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        kotlin/collections/map(<extension receiver>: kotlin.collections.Iterable<T>, transform: (T) -> R): kotlin.collections.List<R>
+      ]
 
 <caret_6>:
   KDocName(156,168): 'List.flatMap'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        kotlin/collections/flatMap(<extension receiver>: kotlin.collections.Iterable<T>, transform: (T) -> kotlin.collections.Iterable<R>): kotlin.collections.List<R>,
+        kotlin/collections/flatMap(<extension receiver>: kotlin.collections.Iterable<T>, transform: (T) -> kotlin.sequences.Sequence<R>): kotlin.collections.List<R>
+      ]
 
 <caret_7>:
   KDocName(176,188): 'List.flatten'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        kotlin/collections/flatten(<extension receiver>: kotlin.collections.Iterable<kotlin.collections.Iterable<T>>): kotlin.collections.List<T>
+      ]
 
 <caret_8>:
   KDocName(196,204): 'List.min'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        kotlin/collections/min(<extension receiver>: kotlin.collections.Iterable<kotlin.Double>): kotlin.Double,
+        kotlin/collections/min(<extension receiver>: kotlin.collections.Iterable<kotlin.Float>): kotlin.Float,
+        kotlin/collections/min(<extension receiver>: kotlin.collections.Iterable<T>): T
+      ]

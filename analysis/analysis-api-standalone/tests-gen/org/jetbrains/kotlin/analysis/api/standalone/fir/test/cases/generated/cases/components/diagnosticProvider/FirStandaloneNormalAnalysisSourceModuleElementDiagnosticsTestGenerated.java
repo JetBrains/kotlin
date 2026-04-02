@@ -48,7 +48,7 @@ public class FirStandaloneNormalAnalysisSourceModuleElementDiagnosticsTestGenera
 
   @Test
   public void testAllFilesPresentInElementDiagnostics() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/elementDiagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/elementDiagnostics"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

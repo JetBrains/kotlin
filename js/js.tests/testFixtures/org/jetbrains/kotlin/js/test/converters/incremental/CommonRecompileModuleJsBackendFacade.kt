@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl
 
-@Suppress("warnings")
-abstract class CommonRecompileModuleJsBackendFacade<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>>(
+abstract class CommonRecompileModuleJsBackendFacade(
     val testServices: TestServices,
     val backendKind: TargetBackend
 ) : AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>() {
@@ -90,6 +89,6 @@ abstract class CommonRecompileModuleJsBackendFacade<R : ResultingArtifact.Fronte
 
     override fun shouldTransform(module: TestModule): Boolean {
         return testServices.defaultsProvider.targetBackend == backendKind &&
-                JsEnvironmentConfigurator.run { incrementalEnabled(testServices) && module.hasFilesToRecompile()}
+                JsEnvironmentConfigurator.run { incrementalEnabled(testServices) && module.hasFilesToRecompile() }
     }
 }

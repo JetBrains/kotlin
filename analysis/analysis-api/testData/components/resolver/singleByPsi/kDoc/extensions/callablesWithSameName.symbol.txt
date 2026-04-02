@@ -1,15 +1,29 @@
 <caret_1>:
   KDocName(80,88): 'test.ext'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        test/ext(<extension receiver>: test.Foo): kotlin.Unit
+      ]
 
 <caret_2>:
   KDocName(94,97): 'ext'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        test/ext(<extension receiver>: test.Foo): kotlin.Unit
+      ]
 
 <caret_3>:
   KDocName(106,113): 'Foo.ext'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        test/ext(<extension receiver>: test.Foo): kotlin.Unit,
+        val ext: kotlin.Int
+      ]
 
 <caret_4>:
   KDocName(119,131): 'test.Foo.ext'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        test/ext(<extension receiver>: test.Foo): kotlin.Unit,
+        val ext: kotlin.Int
+      ]

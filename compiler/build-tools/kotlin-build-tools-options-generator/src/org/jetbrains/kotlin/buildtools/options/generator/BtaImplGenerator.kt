@@ -18,13 +18,28 @@ import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
 
+internal data class CompatLayerConfig(
+    /**
+     * The Kotlin version of the currently running build.
+     */
+    val currentKotlinVersion: KotlinReleaseVersion
+)
+
 @OptIn(ExperimentalArgumentApi::class)
 internal class BtaImplGenerator(
     private val targetPackage: String,
     private val skipXX: Boolean,
+    /**
+     * The Kotlin version that is used for generating arguments from SSoT.
+     *
+     * It's usually the Kotlin version of the currently running build,
+     * but it will be set to an older version when generating the compat layer.
+     */
     private val kotlinVersion: KotlinReleaseVersion,
-    private val generateCompatLayer: Boolean,
+    private val compatLayerConfig: CompatLayerConfig? = null,
 ) : BtaGenerator {
+
+    private val generateCompatLayer = compatLayerConfig != null
 
     private val outputs = mutableListOf<Pair<Path, String>>()
 
@@ -569,11 +584,20 @@ internal class BtaImplGenerator(
             addStatement("%N[key.id] = adapter?.mapTo(%N, key) ?: %N", mapProperty, "value", "value")
         }
 
-        function("contains") {
-            addModifiers(KModifier.OVERRIDE, KModifier.OPERATOR)
-            returns(BOOLEAN)
-            addParameter("key", parameter.parameterizedBy(STAR))
-            addStatement("return key.id in optionsMap")
+        withDeprecationCycle(
+            compatLayerConfig?.currentKotlinVersion ?: kotlinVersion,
+            warnFrom = KotlinReleaseVersion.v2_4_0,
+            errorFrom = KotlinReleaseVersion.v2_5_0,
+            removeFrom = KotlinReleaseVersion.v2_6_0,
+            deprecationMessage = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments."
+        ) { annotation ->
+            function("contains") {
+                annotation?.let { addAnnotation(it) }
+                addModifiers(KModifier.OVERRIDE, KModifier.OPERATOR)
+                returns(BOOLEAN)
+                addParameter("key", parameter.parameterizedBy(STAR))
+                addStatement("return key.id in optionsMap")
+            }
         }
 
         function("get") {

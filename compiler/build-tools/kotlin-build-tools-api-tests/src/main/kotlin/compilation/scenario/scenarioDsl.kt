@@ -20,12 +20,20 @@ import kotlin.io.path.deleteExisting
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
-internal abstract class BaseScenarioModule(
+internal abstract class BaseScenarioModule private constructor(
     internal val module: Module,
     internal val outputs: MutableSet<String>,
     private val strategyConfig: ExecutionPolicy,
     private val icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
 ) : ScenarioModule {
+    // make a copy of the outputs to avoid them being shared between different tests
+    constructor(
+        module: Module,
+        outputs: Collection<String>,
+        strategyConfig: ExecutionPolicy,
+        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
+    ) : this(module, outputs.toMutableSet(), strategyConfig, icOptionsConfigAction)
+
     override fun changeFile(
         fileName: String,
         transform: (String) -> String,

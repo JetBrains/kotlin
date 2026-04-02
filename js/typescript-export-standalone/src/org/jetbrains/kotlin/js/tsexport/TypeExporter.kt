@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -36,7 +36,7 @@ internal class TypeExporter(private val config: TypeScriptExportConfig, private 
     private val currentlyProcessedTypes = hashSetOf<KaType>()
 
     context(_: KaSession)
-    internal fun exportType(type: KaType): ExportedType {
+    internal fun exportType(type: KaType, inlineClassesShouldBeUnboxed: Boolean = false): ExportedType {
         if (type is KaDynamicType || type in currentlyProcessedTypes)
             return Primitive.Any
 
@@ -49,7 +49,7 @@ internal class TypeExporter(private val config: TypeScriptExportConfig, private 
         val isMarkedNullable = type.isMarkedNullable
         val nonNullType = type.withNullability(isMarkedNullable = false)
 
-        val exportedType = exportSimpleNonNullableType(nonNullType)
+        val exportedType = exportSimpleNonNullableType(nonNullType, inlineClassesShouldBeUnboxed && !isMarkedNullable)
 
         return exportedType.withNullability(isMarkedNullable)
             .also { currentlyProcessedTypes.remove(type) }
@@ -72,7 +72,7 @@ internal class TypeExporter(private val config: TypeScriptExportConfig, private 
     }
 
     context(_: KaSession)
-    private fun exportSimpleNonNullableType(type: KaType): ExportedType {
+    private fun exportSimpleNonNullableType(type: KaType, inlineClassesShouldBeUnboxed: Boolean): ExportedType {
         if (type.isBooleanType)
             return Primitive.Boolean
         if (type.isLongType || type.isULongType)
@@ -132,17 +132,33 @@ internal class TypeExporter(private val config: TypeScriptExportConfig, private 
                 ?: error("Type parameter ${type.symbol.render()} is not in scope")
         }
         if (type is KaClassType) {
-            return exportClassType(type)
+            return exportClassType(type, inlineClassesShouldBeUnboxed)
         }
         error("type must be either KaClassType or KaTypeParameterType. Actual type: ${type.javaClass.name}")
     }
 
     context(_: KaSession)
-    private fun exportClassType(type: KaClassType): ExportedType {
+    private fun exportClassType(type: KaClassType, inlineClassesShouldBeUnboxed: Boolean): ExportedType {
         val symbol = type.symbol
         val isExported = shouldDeclarationBeExportedImplicitlyOrExplicitly(symbol)
         return when (symbol) {
             is KaNamedClassSymbol -> {
+                if (inlineClassesShouldBeUnboxed && symbol.isInline) {
+                    val underlyingType = symbol.singleFieldValueClassUnderlyingType
+
+                    if (underlyingType != null) {
+                        val substitutedType = buildSubstitutor {
+                            for ((i, tp) in symbol.typeParameters.withIndex()) {
+                                type.typeArguments[i].type?.let {
+                                    substitution(tp, it)
+                                }
+                            }
+                        }.substitute(underlyingType)
+
+                        return exportType(substitutedType, (underlyingType.symbol as? KaNamedClassSymbol)?.isInline == true)
+                    }
+                }
+
                 val isImplicitlyExported = !isExported && !symbol.isExternal
                 val isNonExportedExternal = symbol.isExternal && !isExported
                 val name = symbol

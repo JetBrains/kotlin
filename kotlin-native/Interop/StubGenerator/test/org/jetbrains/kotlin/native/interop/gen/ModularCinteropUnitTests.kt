@@ -135,10 +135,9 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
                     argsWithFmodulesAndSearchPath(partiallyImportableSetup.tempFiles.directory)
             )
         }.toString()
-        // FIXME: KT-84023 - We actually want to see the "'iostream' file not found", but it doesn't display right now
         assertContains(
                 importFailure,
-                "fatal error: could not build module 'failure'"
+                "fatal error: 'iostream' file not found"
         )
     }
 

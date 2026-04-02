@@ -73,6 +73,22 @@ declare namespace JS_TESTS {
         }
     }
     namespace foo {
+        interface ExternalInterface {
+            readonly intValue: number;
+            readonly stringValue: string;
+            readonly wrappedStringValue: string;
+            readonly nullableValue: Nullable<string>;
+            readonly nullableNullableValue?: Nullable<foo.NullableValueClass>;
+            readonly genericValue: Array<string>;
+            readonly genericOfGeneric: foo.GenericValueClass<foo.GenericValueClass<string>>;
+            acceptIntValue(value: number): number;
+            acceptStringValue(value: string): string;
+            readonly arrayOfIntValue: Array<foo.IntValueClass>;
+            readonly promiseOfStringValue: Promise<foo.StringValueClass>;
+            acceptLambda(cb: (p0: foo.IntValueClass) => void): void;
+        }
+    }
+    namespace foo {
         class IntValueClass {
             constructor(value: number);
             get value(): number;
@@ -308,5 +324,18 @@ declare namespace JS_TESTS {
         function createPairWithValueClass(): kotlin.Pair<foo.IntValueClass, foo.StringValueClass>;
         function createTripleWithValueClass(): kotlin.Triple<foo.IntValueClass, foo.StringValueClass, foo.BooleanValueClass>;
         function acceptPairWithValueClass(pair: kotlin.Pair<foo.IntValueClass, foo.IntValueClass>): number;
+        class WrappedStringValueClass {
+            constructor(s: foo.StringValueClass);
+            get s(): foo.StringValueClass;
+            toString(): string;
+            hashCode(): number;
+            equals(other: Nullable<any>): boolean;
+        }
+        namespace WrappedStringValueClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => WrappedStringValueClass;
+            }
+        }
     }
 }

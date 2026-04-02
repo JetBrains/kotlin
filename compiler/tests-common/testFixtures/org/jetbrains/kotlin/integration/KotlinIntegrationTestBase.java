@@ -35,10 +35,12 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.test.TestDataAssertions;
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.KotlinPaths;
-import org.jetbrains.kotlin.utils.PathUtil;
+import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -55,7 +57,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         KotlinTestUtils.runTestWithThrowable(this, () -> super.runTest());
     }
 
-    protected int runJava(@NotNull String testDataDir, @Nullable String logName, @NotNull String... arguments) {
+    protected int runJava(@NotNull File testDataDir, @Nullable String logName, @NotNull String... arguments) {
         GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(testDataDir);
         commandLine.setExePath(getJavaRuntime().getAbsolutePath());
         commandLine.addParameters(arguments);
@@ -94,7 +96,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         content = normalizePath(content, testDataDir, "[TestData]");
         content = normalizePath(content, tmpdir, "[Temp]");
         content = normalizePath(content, getCompilerLib(), "[CompilerLib]");
-        content = normalizePath(content, new File(KtTestUtil.getHomeDirectory()), "[KotlinProjectHome]");
+        content = normalizePath(content, getKotlinProjectHome(), "[KotlinProjectHome]");
         content = normalizePath(content, new File(System.getProperty("java.home")), "[JavaHome]");
         content = content.replaceAll(Pattern.quote(KotlinCompilerVersion.VERSION), "[KotlinVersion]");
         content = content.replaceAll("\\(JRE .+\\)", "(JRE [JREVersion])");
@@ -104,9 +106,9 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         return content;
     }
 
-    private void check(String testDataDir, String baseName, String content) {
+    private void check(File testDataDir, String baseName, String content) {
         File expectedFile = new File(testDataDir, baseName + ".expected");
-        String normalizedContent = normalizeOutput(new File(testDataDir), content);
+        String normalizedContent = normalizeOutput(testDataDir, content);
 
         TestDataAssertions.assertEqualsToFile(expectedFile, normalizedContent);
     }
@@ -154,9 +156,15 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
     }
 
     public static KotlinPaths getKotlinPaths() {
-        KotlinPaths paths = PathUtil.getKotlinPathsForDistDirectory();
+        KotlinPaths paths = new KotlinPathsFromHomeDir(ForTestCompileRuntime.distKotlincForTests());
         assertTrue("Compiler dist not found. Build 'dist' target.", paths.getLibPath().isDirectory());
         return paths;
+    }
+
+    // Returns the repo root: uses KOTLIN_DIST_PATH when available, falls back to user.dir
+    private static File getKotlinProjectHome() {
+        String distPath = System.getProperty(TestCompilePaths.KOTLIN_DIST_PATH);
+        return distPath != null ? new File(distPath).getParentFile() : new File(KtTestUtil.getHomeDirectory());
     }
 
     private static class OutputListener extends ProcessAdapter {

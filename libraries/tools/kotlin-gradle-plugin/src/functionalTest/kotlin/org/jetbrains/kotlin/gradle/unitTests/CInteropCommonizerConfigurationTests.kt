@@ -33,8 +33,8 @@ class CInteropCommonizerConfigurationTests {
     fun `test - compatibility rule - superset is compatible`() {
         val project = buildProjectWithMPP()
 
-        val consumable = project.configurations.createConsumable("testElements").also { configuration ->
-            configuration.attributes.attribute(
+        val consumable = project.configurations.createConsumable("testElements") {
+            attributes.attribute(
                 CommonizerTargetAttribute.attribute,
                 CommonizerTarget(
                     KonanTarget.LINUX_X64,
@@ -70,8 +70,8 @@ class CInteropCommonizerConfigurationTests {
     fun `test - disambiguation rule - chooses most specific variant`() {
         val project = buildProjectWithMPP()
 
-        project.configurations.createConsumable("testConsumableAll").also { configuration ->
-            configuration.attributes.attribute(
+        project.configurations.createConsumable("testConsumableAll") {
+            attributes.attribute(
                 CommonizerTargetAttribute.attribute,
                 CommonizerTarget(
                     KonanTarget.LINUX_X64,
@@ -85,8 +85,8 @@ class CInteropCommonizerConfigurationTests {
         }
 
         /* More specific as it does not offer macos parts */
-        val consumableSpecific = project.configurations.createConsumable("testConsumableSpecific").also { configuration ->
-            configuration.attributes.attribute(
+        val consumableSpecific = project.configurations.createConsumable("testConsumableSpecific") {
+            attributes.attribute(
                 CommonizerTargetAttribute.attribute,
                 CommonizerTarget(
                     KonanTarget.IOS_ARM64,

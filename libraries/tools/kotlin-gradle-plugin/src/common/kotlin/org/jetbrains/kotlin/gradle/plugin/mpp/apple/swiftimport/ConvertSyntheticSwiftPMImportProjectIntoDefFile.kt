@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
 import kotlin.collections.joinToString
@@ -136,6 +137,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                     """.trimIndent()
                 )
                 ldFilePath(architecture).getFile().writeText("\n")
+                ldFileForFrameworkLinkagePath(architecture).getFile().writeText("\n")
                 ldFileFingerprintPath(architecture).getFile().writeText("0")
                 frameworkSearchpathFilePath(architecture).getFile().writeText("\n")
                 librarySearchpathFilePath(architecture).getFile().writeText("\n")
@@ -177,7 +179,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
         val dd = syntheticImportDd.get().asFile.resolve("dd_${xcodebuildSdk.get()}")
 
         // FIXME: KT-84809 - This is not great, but we can't remove entire DD on incremental runs
-        val forceClangToReexecute = dd.resolve("Build/Intermediates.noindex/${GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}.build")
+        val forceClangToReexecute = dd.resolve("Build/Intermediates.noindex/${GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB}.build")
         if (forceClangToReexecute.exists()) {
             forceClangToReexecute.deleteRecursively()
         }
@@ -239,7 +241,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                 it.isFile
             }.forEach {
                 val clangArgs = it.readLines().single()
-                val isArchitectureSpecificProductClangCall = "-fmodule-name=${GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}" in clangArgs
+                val isArchitectureSpecificProductClangCall = "-fmodule-name=${GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB}" in clangArgs
                         && "-target${DUMP_FILE_ARGS_SEPARATOR}${clangArchitecture}-apple" in clangArgs
                 if (isArchitectureSpecificProductClangCall) {
                     architectureSpecificProductClangCalls.add(it)
@@ -259,7 +261,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
             }.filter {
                 // This will actually be a clang call
                 val ldArgs = it.readLines().single()
-                ("@rpath/lib${GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}.dylib" in ldArgs || "@rpath/${GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}.framework" in ldArgs)
+                ("@rpath/lib${GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB}.dylib" in ldArgs || "@rpath/${GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB}.framework" in ldArgs)
                         && "-target${DUMP_FILE_ARGS_SEPARATOR}${clangArchitecture}-apple" in ldArgs
             }
 
@@ -267,6 +269,8 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
 
             ldFilePath(architecture).getFile()
                 .writeText(parsedLdCall.ldArgs.joinToString(DUMP_FILE_ARGS_SEPARATOR))
+            ldFileForFrameworkLinkagePath(architecture).getFile()
+                .writeText(parsedLdCall.frameworkLdArgs.joinToString(DUMP_FILE_ARGS_SEPARATOR))
             ldFileFingerprintPath(architecture).getFile()
                 .writeText(System.currentTimeMillis().toString())
             frameworkSearchpathFilePath(architecture).getFile()
@@ -307,6 +311,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
 
     data class ParsedLdCall(
         val ldArgs: List<String>,
+        val frameworkLdArgs: List<String>,
         val linkTimeFrameworkSearchPaths: Set<String>,
         val librarySearchPaths: Set<String>,
     )
@@ -314,14 +319,16 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     fun parseLdCall(architectureSpecificProductLdCall: File): ParsedLdCall {
         val resplitLdCall = architectureSpecificProductLdCall.readLines().single().split(DUMP_FILE_ARGS_SEPARATOR)
         val ldArgs = mutableListOf<String>()
+        val filelist = mutableListOf<String>()
+        val kotlinDylibProduct = mutableListOf<String>()
         val linkTimeFrameworkSearchPaths = mutableSetOf<String>()
         val librarySearchPaths = mutableSetOf<String>()
 
         resplitLdCall.forEachIndexed { index, arg ->
-            if (
-                // Most linkage dependencies are passed in the filelist
-                arg == "-filelist"
-                || arg == "-framework"
+            if (arg == "-filelist") {
+                filelist.addAll(listOf(arg, resplitLdCall[index + 1]))
+            }
+            if (arg == "-framework"
                 || (arg.startsWith("-") && arg.endsWith("_framework"))
             ) {
                 ldArgs.addAll(listOf(arg, resplitLdCall[index + 1]))
@@ -338,7 +345,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                 librarySearchPaths.add(arg.substring(2))
             }
 
-            // Unpacked XCFramework slices are passed as a CLI path
+            // Unpacked XCFramework slices and dynamic libraries are passed as a CLI path
             if (arg.startsWith("/")) {
                 if (arg.endsWith(".a")) {
                     ldArgs.add(arg)
@@ -348,7 +355,11 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                     librarySearchPaths.add((File(arg).parentFile.path))
                 }
                 if (".framework/" in arg) {
-                    ldArgs.add(arg)
+                    if (arg.endsWith("/" + GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB)) {
+                        kotlinDylibProduct.add(arg)
+                    } else {
+                        ldArgs.add(arg)
+                    }
                     linkTimeFrameworkSearchPaths.add(
                         File(arg).parentFile.parentFile.path
                     )
@@ -357,7 +368,8 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
         }
 
         return ParsedLdCall(
-            ldArgs = ldArgs,
+            ldArgs = ldArgs + filelist,
+            frameworkLdArgs = kotlinDylibProduct + ldArgs,
             linkTimeFrameworkSearchPaths = linkTimeFrameworkSearchPaths,
             librarySearchPaths = librarySearchPaths,
         )
@@ -458,8 +470,16 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     }
 
     fun defFilePath(architecture: AppleArchitecture) = defFiles.map { it.file("${architecture.xcodebuildArch}.def") }
+
+    /**
+     * The difference between these is that for dynamic framework linkage we never want -filelist as we expect it to contain .o files
+     * which are instead doing to be exported through our SwiftPM dylib product
+     */
     fun ldFilePath(architecture: AppleArchitecture) = ldDump.map { it.file("${architecture.xcodebuildArch}.ld") }
+    fun ldFileForFrameworkLinkagePath(architecture: AppleArchitecture) = ldDump.map { it.file("${architecture.xcodebuildArch}.framework.ld") }
+
     fun ldFileFingerprintPath(architecture: AppleArchitecture) = ldDump.map { it.file("${architecture.xcodebuildArch}.timestamp.ld") }
+
     fun frameworkSearchpathFilePath(architecture: AppleArchitecture) = ldDump.map { it.file("${architecture.xcodebuildArch}_framework_search_paths") }
     fun librarySearchpathFilePath(architecture: AppleArchitecture) = ldDump.map { it.file("${architecture.xcodebuildArch}_library_search_paths") }
 

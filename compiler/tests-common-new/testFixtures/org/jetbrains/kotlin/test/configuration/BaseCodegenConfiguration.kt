@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ENABLE_DEBUG_MODE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
@@ -60,7 +59,6 @@ fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput
     commonServicesConfigurationForCodegenAndDebugTest(targetFrontend)
     additionalSourceProvider?.let { useAdditionalSourceProviders(it) }
     facadeStep(frontendFacade)
-    classicFrontendHandlersStep()
     firHandlersStep()
     facadeStep(frontendToBackendConverter)
     irHandlersStep(init = {})
@@ -148,8 +146,8 @@ fun TestConfigurationBuilder.configureDumpHandlersForCodegenTest(includeAllDumpH
 /**
  * Add all handlers usually used in codegen tests and the [JvmBoxRunner] handler
  */
-fun TestConfigurationBuilder.configureCommonHandlersForBoxTest(includeK1Handlers: Boolean = true) {
-    commonHandlersForCodegenTest(includeK1Handlers)
+fun TestConfigurationBuilder.configureCommonHandlersForBoxTest() {
+    commonHandlersForCodegenTest()
     configureJvmArtifactsHandlersStep {
         useHandlers(::JvmBoxRunner)
     }
@@ -158,28 +156,13 @@ fun TestConfigurationBuilder.configureCommonHandlersForBoxTest(includeK1Handlers
 /**
  * Add all handlers usually used in codegen tests
  */
-fun TestConfigurationBuilder.commonHandlersForCodegenTest(includeK1Handlers: Boolean = true) {
-    if (includeK1Handlers) {
-        configureClassicFrontendHandlersStep {
-            commonClassicFrontendHandlersForCodegenTest()
-        }
-    }
-
+fun TestConfigurationBuilder.commonHandlersForCodegenTest() {
     configureFirHandlersStep {
         commonFirHandlersForCodegenTest()
     }
     configureJvmArtifactsHandlersStep {
         commonBackendHandlersForCodegenTest()
     }
-}
-
-/**
- * Adds a handler which checks that there are no compilation errors reported at the K1 frontend step
- */
-fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<ClassicFrontendOutputArtifact, FrontendKinds.ClassicFrontend>.commonClassicFrontendHandlersForCodegenTest() {
-    useHandlers(
-        ::NoCompilationErrorsHandler,
-    )
 }
 
 /**

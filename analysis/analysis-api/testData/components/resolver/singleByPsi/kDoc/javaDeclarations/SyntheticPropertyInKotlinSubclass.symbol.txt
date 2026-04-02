@@ -1,7 +1,13 @@
 <caret_2>:
   KDocName(53,57): 'prop'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        dependency/JavaBase.getProp(<dispatch receiver>: dependency.JavaBase): kotlin.String!
+      ]
 
 <caret_1>:
   KDocName(63,79): 'KotlinChild.prop'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        dependency/JavaBase.getProp(<dispatch receiver>: dependency.JavaBase): kotlin.String!
+      ]

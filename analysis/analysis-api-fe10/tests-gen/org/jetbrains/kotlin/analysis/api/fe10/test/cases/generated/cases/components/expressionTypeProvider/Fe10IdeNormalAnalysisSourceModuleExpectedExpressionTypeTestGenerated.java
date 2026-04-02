@@ -54,7 +54,7 @@ public class Fe10IdeNormalAnalysisSourceModuleExpectedExpressionTypeTestGenerate
 
   @Test
   public void testAllFilesPresentInExpectedExpressionType() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test

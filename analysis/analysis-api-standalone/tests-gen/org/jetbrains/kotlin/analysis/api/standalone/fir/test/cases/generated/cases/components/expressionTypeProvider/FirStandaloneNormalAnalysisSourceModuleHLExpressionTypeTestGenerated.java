@@ -49,7 +49,7 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
 
   @Test
   public void testAllFilesPresentInExpressionType() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test
@@ -500,7 +500,7 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
 
     @Test
     public void testAllFilesPresentInApproximatedLocalClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -580,7 +580,7 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
 
     @Test
     public void testAllFilesPresentInAssignment() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -630,7 +630,7 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
 
     @Test
     public void testAllFilesPresentInNameReference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test

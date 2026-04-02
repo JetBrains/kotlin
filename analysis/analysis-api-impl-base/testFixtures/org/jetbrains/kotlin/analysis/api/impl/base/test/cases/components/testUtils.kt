@@ -128,6 +128,17 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
             append(className)
 
             val klass = this@with::class
+            val multiCallResolutionAttemptCallValue: Any? = if (klass.isSubclassOf(KaMultiCallResolutionAttempt::class)) {
+                klass.memberProperties
+                    .firstOrNull { it.name == "call" }
+                    ?.let {
+                        @Suppress("UNCHECKED_CAST")
+                        (it as KProperty1<Any, *>).get(this@with)
+                    }
+            } else {
+                null
+            }
+
             klass.memberProperties
                 .filter { property ->
                     property.visibility == KVisibility.PUBLIC &&
@@ -138,7 +149,14 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
                             /** The call is already covered as a part of [KaCompoundOperation.operationCall] */
                             !(klass.isSubclassOf(KaCompoundAccessCall::class) && property.name == KaCompoundAccessCall::operationCall.name) &&
                             /** This is already covered by [KaFunctionCall.valueArgumentMapping] and [KaFunctionCall.contextArguments] */
-                            !(klass.isSubclassOf(KaFunctionCall::class) && property.name == KaFunctionCall<*>::combinedArgumentMapping.name)
+                            !(klass.isSubclassOf(KaFunctionCall::class) && property.name == KaFunctionCall<*>::combinedArgumentMapping.name) &&
+                            // The multi-call resolution attempt already renders all attempts via individual named properties
+                            !(klass.isSubclassOf(KaMultiCallResolutionAttempt::class) && property.name == KaMultiCallResolutionAttempt::attempts.name) &&
+                            // If call is present, skip individual attempt properties (they're redundant with the call)
+                            !(klass.isSubclassOf(KaMultiCallResolutionAttempt::class) && multiCallResolutionAttemptCallValue != null &&
+                                    property.name.endsWith("Attempt")) &&
+                            // If call is null, skip the call property itself
+                            !(klass.isSubclassOf(KaMultiCallResolutionAttempt::class) && multiCallResolutionAttemptCallValue == null && property.name == "call")
                 }.ifNotEmpty {
                     joinTo(this@buildString, separator = "\n  ", prefix = ":\n  ") { property ->
                         val name = property.name
@@ -147,7 +165,7 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
                         val value = (property as KProperty1<Any, *>).get(this@with)?.let { value ->
                             when {
                                 (KaErrorCallInfo::class.isSuperclassOf(klass) || KaCallResolutionError::class.isSuperclassOf(klass)) && name == "candidateCalls" -> {
-                                    sortedCalls(value as Collection<KaCall>)
+                                    sortedCalls(value as Collection<KaSingleOrMultiCall>)
                                 }
 
                                 KaSymbolResolutionError::class.isSuperclassOf(klass) && name == KaSymbolResolutionError::candidateSymbols.name -> {
@@ -245,14 +263,16 @@ internal fun prettyPrintSignature(signature: KaCallableSignature<*>): String = p
 }
 
 context(_: KaSession)
-internal fun sortedCalls(collection: Collection<KaCall>): Collection<KaCall> = collection.sortedWith { call1, call2 ->
+internal fun sortedCalls(
+    collection: Collection<KaSingleOrMultiCall>,
+): Collection<KaSingleOrMultiCall> = collection.sortedWith { call1, call2 ->
     compareCalls(call1, call2)
 }
 
-internal fun KaCall.symbols(): List<KaSymbol> = (this as KaSingleOrMultiCall).symbols
-
 context(_: KaSession)
-internal fun sortedSymbols(collection: Collection<KaSymbol>): Collection<KaSymbol> = collection.sortedWith { symbol1, symbol2 ->
+internal fun sortedSymbols(
+    collection: Collection<KaSymbol>,
+): Collection<KaSymbol> = collection.sortedWith { symbol1, symbol2 ->
     compareSymbols(symbol1, symbol2)
 }
 
@@ -262,10 +282,8 @@ internal fun compareSymbols(symbol1: KaSymbol, symbol2: KaSymbol): Int {
 }
 
 context(_: KaSession)
-internal fun compareCalls(call1: KaCall, call2: KaCall): Int {
-    // The order of candidate calls is non-deterministic. Sort by symbol string value.
-    if (call1 !is KaCallableMemberCall<*, *> || call2 !is KaCallableMemberCall<*, *>) return 0
-    return stringRepresentation(call1.partiallyAppliedSymbol).compareTo(stringRepresentation(call2.partiallyAppliedSymbol))
+internal fun compareCalls(call1: KaSingleOrMultiCall, call2: KaSingleOrMultiCall): Int {
+    return stringRepresentation(call1).compareTo(stringRepresentation(call2))
 }
 
 context(_: KaSession)
@@ -279,7 +297,7 @@ internal fun assertStableSymbolResult(
 
     for ((firstCandidate, secondCandidate) in firstCandidates.zip(secondCandidates)) {
         assertions.assertEquals(firstCandidate::class, secondCandidate::class)
-        assertStableResult(testServices, firstCandidate.candidate as KaCall, secondCandidate.candidate as KaCall)
+        assertStableResult(testServices, firstCandidate.candidate, secondCandidate.candidate)
         assertions.assertEquals(firstCandidate.isInBestCandidates, secondCandidate.isInBestCandidates)
 
         when (firstCandidate) {
@@ -314,6 +332,16 @@ internal fun assertStableResult(
             firstDiagnostic = firstAttempt.diagnostic,
             secondDiagnostic = (secondAttempt as KaSymbolResolutionError).diagnostic,
         )
+    }
+
+    if (firstAttempt is KaSymbolResolutionSuccess) {
+        assertions.assertTrue(firstAttempt.symbols.isNotEmpty()) {
+            "Success result has no symbols"
+        }
+    }
+
+    if (firstAttempt is KaCompoundSymbolResolutionError) {
+        assertMultiSymbolConsistency(testServices, firstAttempt)
     }
 
     val firstSymbols = sortedSymbols(firstAttempt.symbols)
@@ -351,6 +379,22 @@ internal fun assertStableResult(
             )
         }
 
+        is KaMultiCallResolutionAttempt -> if (symbolResolutionAttempt is KaCompoundSymbolResolutionError) {
+            val callErrors = callResolutionAttempt.attempts.filterIsInstance<KaCallResolutionError>()
+            val symbolErrors = symbolResolutionAttempt.attempts.filterIsInstance<KaSymbolResolutionError>()
+            assertions.assertEquals(callErrors.size, symbolErrors.size) {
+                "Number of error attempts differs between call and symbol resolution"
+            }
+
+            for ((callError, symbolError) in callErrors.zip(symbolErrors)) {
+                assertStableResult(
+                    testServices = testServices,
+                    firstDiagnostic = callError.diagnostic,
+                    secondDiagnostic = symbolError.diagnostic,
+                )
+            }
+        }
+
         else -> {}
     }
 
@@ -375,55 +419,136 @@ internal fun KClass<KaResolver>.findSpecializedResolveFunctions(
 
 
 context(_: KaSession)
-internal fun assertStableResult(testServices: TestServices, firstInfo: KaCallInfo?, secondInfo: KaCallInfo?) {
+internal fun assertStableResult(
+    testServices: TestServices,
+    firstAttempt: KaCallResolutionAttempt?,
+    secondAttempt: KaCallResolutionAttempt?,
+) {
     val assertions = testServices.assertions
-    if (firstInfo == null || secondInfo == null) {
-        assertions.assertEquals(firstInfo, secondInfo)
+    if (firstAttempt == null || secondAttempt == null) {
+        assertions.assertEquals(firstAttempt, secondAttempt)
         return
     }
 
-    assertions.assertEquals(firstInfo::class, secondInfo::class)
-    when (firstInfo) {
-        is KaErrorCallInfo -> {
+    assertions.assertEquals(firstAttempt::class, secondAttempt::class)
+
+    when (firstAttempt) {
+        is KaCallResolutionError -> {
             assertStableResult(
                 testServices = testServices,
-                firstDiagnostic = firstInfo.diagnostic,
-                secondDiagnostic = (secondInfo as KaErrorCallInfo).diagnostic,
+                firstDiagnostic = firstAttempt.diagnostic,
+                secondDiagnostic = (secondAttempt as KaCallResolutionError).diagnostic,
             )
         }
 
-        is KaSuccessCallInfo -> {
-            assertConsistency(testServices, firstInfo.call)
+        is KaCallResolutionSuccess -> {
+            assertConsistency(testServices, firstAttempt.call)
+        }
+
+        is KaMultiCallResolutionAttempt -> {
+            assertMultiCallConsistency(testServices, firstAttempt)
+
+            val secondMulti = secondAttempt as KaMultiCallResolutionAttempt
+            assertions.assertEquals(firstAttempt.attempts.size, secondMulti.attempts.size)
+            for ((first, second) in firstAttempt.attempts.zip(secondMulti.attempts)) {
+                assertions.assertEquals(first::class, second::class)
+                if (first is KaCallResolutionError) {
+                    assertStableResult(
+                        testServices = testServices,
+                        firstDiagnostic = first.diagnostic,
+                        secondDiagnostic = (second as KaCallResolutionError).diagnostic,
+                    )
+                }
+            }
         }
     }
 
-    val firstCalls = sortedCalls(firstInfo.calls)
-    val secondCalls = sortedCalls(secondInfo.calls)
-    assertions.assertEquals(firstCalls.size, secondCalls.size)
+    if (firstAttempt !is KaMultiCallResolutionAttempt) {
+        val firstCalls = sortedCalls(firstAttempt.calls)
+        val secondCalls = sortedCalls(secondAttempt.calls)
+        assertions.assertEquals(firstCalls.size, secondCalls.size)
 
-    for ((firstCall, secondCall) in firstCalls.zip(secondCalls)) {
-        assertStableResult(testServices, firstCall, secondCall)
+        for ((firstCall, secondCall) in firstCalls.zip(secondCalls)) {
+            assertStableResult(testServices, firstCall, secondCall)
+        }
     }
 }
 
 context(_: KaSession)
-internal fun assertStableResult(testServices: TestServices, firstCall: KaCall, secondCall: KaCall) {
+private fun assertMultiCallConsistency(testServices: TestServices, attempt: KaMultiCallResolutionAttempt) {
     val assertions = testServices.assertions
-    assertions.assertEquals(firstCall::class, secondCall::class)
+    val call = attempt.call
+    if (call != null) {
+        // All attempts must be successful
+        for (subAttempt in attempt.attempts) {
+            assertions.assertTrue(subAttempt is KaCallResolutionSuccess) {
+                "Multi-call has non-null call, but attempt ${subAttempt::class.simpleName} is not success"
+            }
+        }
+    } else {
+        // At least one attempt must be an error
+        assertions.assertTrue(attempt.attempts.any { it is KaCallResolutionError }) {
+            "Multi-call has null call, but no error attempts found"
+        }
+    }
+}
 
-    val symbolsFromFirstCall = firstCall.symbols()
-    val symbolsFromSecondCall = secondCall.symbols()
-    assertions.assertEquals(symbolsFromFirstCall, symbolsFromSecondCall)
+/**
+ * The function forces [KaCompoundSymbolResolutionError] guarantees.
+ */
+context(_: KaSession)
+private fun assertMultiSymbolConsistency(testServices: TestServices, attempt: KaCompoundSymbolResolutionError) {
+    val assertions = testServices.assertions
+    val attempts = attempt.attempts
+    // At least one attempt must be an error
+    assertions.assertTrue(attempts.any { it is KaSymbolResolutionError }) {
+        "Multi-call has no error attempts found"
+    }
+
+    // At most one attempt must be successful
+    assertions.assertTrue(attempts.count { it is KaSymbolResolutionSuccess } <= 1) {
+        "Multi-call has more than one successful attempts found"
+    }
+
+    // At least two elements must be present
+    assertions.assertTrue(attempts.size >= 2) {
+        "Multi-call has less than two attempts found"
+    }
 }
 
 context(_: KaSession)
-internal fun assertConsistency(testServices: TestServices, call: KaCall) {
-    if (call !is KaCallableMemberCall<*, *>) return
+internal fun assertStableResult(testServices: TestServices, firstCall: KaSingleOrMultiCall, secondCall: KaSingleOrMultiCall) {
+    val assertions = testServices.assertions
+    assertions.assertEquals(firstCall::class, secondCall::class)
+
+    val symbolsFromFirstCall = sortedSymbols(firstCall.symbols)
+    val symbolsFromSecondCall = sortedSymbols(secondCall.symbols)
+    assertions.assertEquals(symbolsFromFirstCall.size, symbolsFromSecondCall.size)
+    for ((first, second) in symbolsFromFirstCall.zip(symbolsFromSecondCall)) {
+        assertions.assertEquals(first, second)
+    }
+}
+
+context(_: KaSession)
+internal fun assertConsistency(testServices: TestServices, call: KaSingleOrMultiCall, checkTypeArgumentsMapping: Boolean = true) {
+    when (call) {
+        is KaMultiCall -> {
+            // Multi-call sub-calls may have empty type argument mappings
+            val skipTypeArguments = true
+            for (subCall in call.calls) {
+                assertConsistency(testServices, subCall, checkTypeArgumentsMapping = !skipTypeArguments)
+            }
+
+            return
+        }
+
+        is KaSingleCall<*, *> -> {
+            // The rest of the function body validates it
+        }
+    }
 
     val assertions = testServices.assertions
-    val symbol = call.symbol
-
-    if (call is KaSingleCall<*, *>) {
+    if (call is KaCallableMemberCall<*, *>) {
         val partiallyAppliedSymbol = call.partiallyAppliedSymbol
         assertions.assertEquals(call.signature, partiallyAppliedSymbol.signature)
         assertions.assertEquals(call.dispatchReceiver, partiallyAppliedSymbol.dispatchReceiver)
@@ -452,17 +577,19 @@ internal fun assertConsistency(testServices: TestServices, call: KaCall) {
         }
     }
 
-    val typeArgumentsMapping = call.typeArgumentsMapping
-    val typeParameters = symbol.typeParameters
-    for (parameterSymbol in typeParameters) {
-        val mappedType = typeArgumentsMapping[parameterSymbol]
-        assertions.assertNotNull(mappedType) {
-            "Type argument for type parameter $parameterSymbol is not found in $typeArgumentsMapping"
+    if (checkTypeArgumentsMapping) {
+        val typeArgumentsMapping = call.typeArgumentsMapping
+        val typeParameters = call.signature.symbol.typeParameters
+        for (parameterSymbol in typeParameters) {
+            val mappedType = typeArgumentsMapping[parameterSymbol]
+            assertions.assertNotNull(mappedType) {
+                "Type argument for type parameter $parameterSymbol is not found in $typeArgumentsMapping"
+            }
         }
-    }
 
-    assertions.assertEquals(typeParameters.size, typeArgumentsMapping.size) {
-        "Extra elements found in ${call::typeArgumentsMapping.name}:\n${typeArgumentsMapping.keys - typeParameters}"
+        assertions.assertEquals(typeParameters.size, typeArgumentsMapping.size) {
+            "Extra elements found in ${call::typeArgumentsMapping.name}:\n${typeArgumentsMapping.keys - typeParameters}"
+        }
     }
 }
 

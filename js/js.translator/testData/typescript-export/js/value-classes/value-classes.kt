@@ -198,3 +198,26 @@ fun createTripleWithValueClass(): Triple<IntValueClass, StringValueClass, Boolea
 @JsExport
 fun acceptPairWithValueClass(pair: Pair<IntValueClass, IntValueClass>): Int = 
     pair.first.value + pair.second.value
+
+@JsExport
+value class WrappedStringValueClass(val s: StringValueClass)
+
+@JsExport
+external interface ExternalInterface {
+    val intValue: IntValueClass
+    val stringValue: StringValueClass
+    val wrappedStringValue: WrappedStringValueClass
+    val nullableValue: NullableValueClass
+    val nullableNullableValue: NullableValueClass?
+
+    val genericValue: GenericValueClass<Array<String>>
+    val genericOfGeneric: GenericValueClass<GenericValueClass<GenericValueClass<String>>>
+
+    fun acceptIntValue(value: IntValueClass): IntValueClass
+    fun acceptStringValue(value: StringValueClass): StringValueClass
+
+    val arrayOfIntValue: Array<IntValueClass>
+    val promiseOfStringValue: kotlin.js.Promise<StringValueClass>
+
+    fun acceptLambda(cb: (IntValueClass) -> Unit)
+}

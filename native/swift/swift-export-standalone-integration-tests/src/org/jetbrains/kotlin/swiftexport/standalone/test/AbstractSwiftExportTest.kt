@@ -48,6 +48,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
     * execution and generation context, simulating a case when a user has a dependency in their Gradle project.
     * */
     var givenModules: Set<TestModule.Given> = emptySet()
+    var minOSVersion: String? = null
 
     private val binariesDir get() = testRunSettings.get<Binaries>().testBinariesDir
     protected fun buildDir(testName: String) = binariesDir.resolve(testName)
@@ -238,6 +239,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
                 "-package-name", "SwiftExportTests",
             ),
             outputFile = { it.binaryLibrary },
+            minOSVersion = minOSVersion,
         ).result.assertSuccess().resultingArtifact
     }
 

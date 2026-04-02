@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -176,7 +177,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
             isIncremental,
             compilationCanceledStatus
         ).apply {
-            val moduleName = requireNotNull(args.moduleName) { "'moduleName' is null!" }
+            val moduleName = args.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
             val targetId = TargetId(moduleName, "java-production")
             val targetToCache = mapOf(targetId to caches.platformCache)
             val incrementalComponents = IncrementalCompilationComponentsImpl(targetToCache)

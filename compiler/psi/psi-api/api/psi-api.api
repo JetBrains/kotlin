@@ -303,7 +303,7 @@ public final class org/jetbrains/kotlin/kdoc/psi/impl/KDocLink : org/jetbrains/k
 	public final fun getTagIfSubject ()Lorg/jetbrains/kotlin/kdoc/psi/impl/KDocTag;
 }
 
-public final class org/jetbrains/kotlin/kdoc/psi/impl/KDocName : org/jetbrains/kotlin/psi/KtElementImpl {
+public final class org/jetbrains/kotlin/kdoc/psi/impl/KDocName : org/jetbrains/kotlin/psi/KtElementImpl, org/jetbrains/kotlin/resolution/KtResolvable {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public final fun getContainingDoc ()Lorg/jetbrains/kotlin/kdoc/psi/api/KDoc;
 	public final fun getContainingSection ()Lorg/jetbrains/kotlin/kdoc/psi/impl/KDocSection;

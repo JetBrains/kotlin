@@ -185,6 +185,10 @@ public class KtTestUtil {
         return getHomeDirectory() + "/compiler/testData";
     }
 
+    public static File getTestDataFileLocatedInCompilerTestData(String subPath) {
+        return transformTestDataPath("compiler/testData/" + subPath);
+    }
+
     @NotNull
     public static String getHomeDirectory() {
         return homeDir;

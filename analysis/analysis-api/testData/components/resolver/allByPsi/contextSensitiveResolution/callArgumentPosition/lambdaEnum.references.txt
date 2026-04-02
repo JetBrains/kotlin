@@ -43,8 +43,6 @@ KtCallExpression(276,293): 'lEnum(EnumValue1)'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(276,281): 'lEnum'
   KtSimpleNameReference:
@@ -69,8 +67,6 @@ KtCallExpression(298,315): 'lEnum(EnumValue2)'
     attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
-      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(298,303): 'lEnum'
   KtSimpleNameReference:
