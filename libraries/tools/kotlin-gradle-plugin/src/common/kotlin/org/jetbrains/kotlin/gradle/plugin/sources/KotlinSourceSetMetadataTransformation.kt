@@ -18,10 +18,10 @@ internal val InternalKotlinSourceSet.metadataTransformation: GranularMetadataTra
     // Create only for source sets in multiplatform plugin
     project.multiplatformExtensionOrNull ?: return@property null
 
-    val parentSourceSetVisibilityProvider = ParentSourceSetVisibilityProvider { componentIdentifier ->
+    val parentSourceSetVisibilityProvider = ParentSourceSetVisibilityProvider { kmpModuleIdentifier ->
         dependsOnClosureWithInterCompilationDependencies(this).filterIsInstance<DefaultKotlinSourceSet>()
             .mapNotNull { it.metadataTransformation }
-            .flatMap { it.visibleSourceSetsByComponentId[componentIdentifier].orEmpty() }
+            .flatMap { it.visibleSourceSetsByKmpModuleIdentifier[kmpModuleIdentifier].orEmpty() }
             .toSet()
     }
 

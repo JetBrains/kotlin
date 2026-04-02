@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.provider.Provider
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logging
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
@@ -160,6 +162,9 @@ internal class GranularMetadataTransformation(
 
         @get:Input
         val allowMatchingByRequestedCoordinates: Boolean,
+
+        @get:Internal
+        val buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
     ) {
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet, transformProjectDependenciesWithSourceSetMetadataOutputs: Boolean = true) : this(
             build = project.currentBuild,
@@ -178,7 +183,8 @@ internal class GranularMetadataTransformation(
             uklibFragmentAttributes = kotlinSourceSet.metadataFragmentAttributes.map { it.convertToStringForConsumption() }.toSet(),
             computeTransformedLibraryChecksum = project.kotlinPropertiesProvider.computeTransformedLibraryChecksum,
             kmpResolutionStrategy = project.kotlinPropertiesProvider.kmpResolutionStrategy,
-            allowMatchingByRequestedCoordinates = project.kotlinPropertiesProvider.allowMatchingByRequestedCoordinatesInGMDT.get()
+            allowMatchingByRequestedCoordinates = project.kotlinPropertiesProvider.allowMatchingByRequestedCoordinatesInGMDT.get(),
+            buildIdentifierAccessor = project.variantImplementationFactoryProvider<BuildIdentifierAccessor.Factory>(),
         )
     }
 
@@ -192,10 +198,10 @@ internal class GranularMetadataTransformation(
 
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
 
-    val visibleSourceSetsByComponentId: Map<ComponentIdentifier, Set<String>> by lazy {
+    internal val visibleSourceSetsByKmpModuleIdentifier: Map<KmpModuleIdentifier, Set<String>> by lazy {
         metadataDependencyResolutions
             .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
-            .groupBy { it.dependency.id }
+            .groupBy { KmpModuleIdentifier.from(it.dependency, params.buildIdentifierAccessor) }
             .mapValues { (_, visibleSourceSets) -> visibleSourceSets.flatMap { it.allVisibleSourceSetNames }.toSet() }
     }
 
@@ -218,6 +224,7 @@ internal class GranularMetadataTransformation(
             val resolvedDependency: ResolvedDependencyResult = resolvedDependencyQueue.poll()
             val selectedComponent = resolvedDependency.selected
             val componentId = selectedComponent.id
+            val kmpModuleIdentifier = KmpModuleIdentifier.from(selectedComponent, params.buildIdentifierAccessor)
 
             if (!visitedDependencies.add(componentId)) {
                 /* Already processed this dependency */
@@ -226,7 +233,7 @@ internal class GranularMetadataTransformation(
 
             logger.debug("Transform dependency: $resolvedDependency")
             val dependencyResult = processDependency(
-                resolvedDependency, parentSourceSetVisibilityProvider.getSourceSetsVisibleInParents(componentId)
+                resolvedDependency, parentSourceSetVisibilityProvider.getSourceSetsVisibleInParents(kmpModuleIdentifier)
             )
             logger.debug("Transformation result of dependency $resolvedDependency: $dependencyResult")
 
@@ -392,13 +399,13 @@ internal class GranularMetadataTransformation(
 
         val isResolvedToProject = moduleId in params.build
 
-        val sourceSetVisibility = SourceSetVisibilityProvider().getVisibleSourceSets(
+        val sourceSetVisibility = SourceSetVisibilityProvider(params.buildIdentifierAccessor).getVisibleSourceSets(
             dependency,
             params.dependingPlatformCompilations,
             projectStructureMetadata,
             isResolvedToProject,
             resolveWithLenientPSMResolutionScheme = params.kmpResolutionStrategy == KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs,
-            allowMatchingByRequestedCoordinates = params.allowMatchingByRequestedCoordinates
+            allowMatchingByRequestedCoordinates = params.allowMatchingByRequestedCoordinates,
         )
 
         val allVisibleSourceSets = sourceSetVisibility.visibleSourceSetNames

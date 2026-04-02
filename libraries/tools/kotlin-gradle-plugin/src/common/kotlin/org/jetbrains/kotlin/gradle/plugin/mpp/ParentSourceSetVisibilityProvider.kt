@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.artifacts.component.ComponentIdentifier
-
 internal fun interface ParentSourceSetVisibilityProvider {
-    fun getSourceSetsVisibleInParents(identifier: ComponentIdentifier): Set<String>
+    fun getSourceSetsVisibleInParents(identifier: KmpModuleIdentifier): Set<String>
 
     object Empty : ParentSourceSetVisibilityProvider {
-        override fun getSourceSetsVisibleInParents(identifier: ComponentIdentifier): Set<String> = emptySet()
+        override fun getSourceSetsVisibleInParents(identifier: KmpModuleIdentifier): Set<String> = emptySet()
     }
 }
