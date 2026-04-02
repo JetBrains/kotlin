@@ -133,8 +133,6 @@ private class RuntimeTestCompiler(
             if (generatedFile.relativePath.endsWith(".class")) {
                 val className = generatedFile.relativePath.removeSuffix(".class").replace('/', '.')
                 classLoader.defineClass(className, generatedFile.asByteArray())
-            } else {
-                null
             }
         }
 
