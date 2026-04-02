@@ -110,6 +110,7 @@ internal fun isSupported(type: SirType): Boolean = when (type) {
     }
     is SirFunctionalType -> isSupported(type.returnType) && type.parameterTypes.all { isSupported(it) }
     is SirTypedFlowType -> isSupported(type.elementType)
+    is SirTypedReceiveChannelType -> isSupported(type.elementType)
     is SirExistentialType -> type.protocols.all { (protocol, typeArguments) ->
         val protocolSupported = protocol == KotlinRuntimeSupportModule.kotlinBridgeable ||
                 protocol.kaSymbolOrNull<KaClassSymbol>()?.sirAvailability() is SirAvailability.Available

@@ -274,3 +274,88 @@ public func asyncSequence<T>(
 ) -> KotlinFlowSequence<T> {
     return flow.asAsyncSequence()
 }
+
+// MARK: - ReceiveChannel Support
+
+public protocol KotlinReceiveChannel: KotlinRuntime.KotlinBase { }
+
+public protocol KotlinTypedReceiveChannel<Element>: AsyncSequence where AsyncIterator == KotlinReceiveChannelIterator<Element>, Failure == any Error {
+    associatedtype Element
+
+    var _channel: any KotlinReceiveChannel { get }
+}
+
+extension KotlinTypedReceiveChannel {
+    public var wrapped: any KotlinReceiveChannel { _channel }
+
+    public func makeAsyncIterator() -> KotlinReceiveChannelIterator<Element> {
+        KotlinReceiveChannelIterator(_channel)
+    }
+}
+
+public struct _KotlinTypedReceiveChannelImpl<Element>: KotlinTypedReceiveChannel {
+    public let _channel: any KotlinReceiveChannel
+
+    public init(_ channel: any KotlinReceiveChannel) {
+        self._channel = channel
+    }
+}
+
+/// An async iterator for kotlinx.coroutines.channels.ReceiveChannel.
+///
+/// ## Discussion
+/// Uses the existing ChannelIterator from kotlinx.coroutines via bridge functions.
+/// ChannelIterator.hasNext() (suspend) + ChannelIterator.next() map naturally
+/// to AsyncIteratorProtocol.next() -> Element?.
+public final class KotlinReceiveChannelIterator<Element>: AsyncIteratorProtocol {
+    public typealias Failure = any Error
+
+    private let channelRef: Swift.UnsafeMutableRawPointer
+    private let iteratorRef: Swift.UnsafeMutableRawPointer
+
+    fileprivate init(_ channel: some KotlinReceiveChannel) {
+        channelRef = channel.__externalRCRef()
+        iteratorRef = _kotlin_swift_ReceiveChannel_iterator(channelRef)
+    }
+
+    deinit {
+        _kotlin_swift_ReceiveChannel_cancel(channelRef)
+    }
+
+    public func next() async throws -> Element? {
+        try await {
+            try Task.checkCancellation()
+            var cancellation: KotlinCoroutineSupport.KotlinTask! = nil
+            return try await withTaskCancellationHandler {
+                try await withUnsafeThrowingContinuation { (nativeContinuation: UnsafeContinuation<Element?, any Error>) in
+                    withUnsafeCurrentTask { currentTask in
+                        let continuation: (Swift.Optional<Element>) -> Swift.Void = { nativeContinuation.resume(returning: $0) }
+                        let exception: (Swift.Optional<KotlinRuntime.KotlinBase>) -> Swift.Void = { error in
+                            nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
+                        }
+                        cancellation = KotlinCoroutineSupport.KotlinTask(currentTask!)
+
+                        let _: () = _kotlin_swift_ChannelIterator_next(self.iteratorRef, { arg0, arg1 in
+                                return {
+                                    if arg0 {
+                                        let element = arg1.flatMap(KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef:)) as! Element
+                                        continuation(.some(element))
+                                    } else {
+                                        continuation(.none)
+                                    }
+                                    return 0
+                                }()
+                        }, { arg0 in
+                                return {
+                                    exception(arg0.flatMap(KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef:)));
+                                    return 0
+                                }()
+                        }, cancellation.__externalRCRef())
+                    }
+                }
+            } onCancel: {
+                cancellation?.cancelExternally()
+            }
+        }()
+    }
+}

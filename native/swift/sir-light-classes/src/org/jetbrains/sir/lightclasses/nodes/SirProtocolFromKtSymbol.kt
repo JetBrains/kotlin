@@ -148,6 +148,30 @@ internal class SirMarkerProtocolFromKtSymbol(
  *
  * @property targetProtocol Protocol declaration this extension belongs to.
  */
+/**
+ * A bridged protocol implementation with no exported declarations.
+ * Used for types like ReceiveChannel where members reference internal APIs.
+ */
+internal class SirEmptyBridgedProtocolImplementation(
+    private val protocol: SirProtocolFromKtSymbol,
+) : SirExtension(), SirFromKtSymbol<KaNamedClassSymbol> {
+    override val ktSymbol: KaNamedClassSymbol = protocol.ktSymbol
+    override val sirSession: SirSession = protocol.sirSession
+    override val origin: SirOrigin = KotlinSource(protocol.ktSymbol)
+    override val visibility: SirVisibility = SirVisibility.PUBLIC
+    override val documentation: String? = null
+    override var parent: SirDeclarationParent
+        get() = withSessions { ktSymbol.containingModule.sirModule() }
+        set(_) = Unit
+    override val extendedType: SirType get() = SirNominalType(protocol)
+    override val protocols: List<SirProtocol> get() = emptyList()
+    override val constraints: List<SirTypeConstraint> = listOf(
+        SirTypeConstraint.Conformance(SirNominalType(KotlinRuntimeSupportModule.kotlinBridgeable))
+    )
+    override val attributes: List<SirAttribute> get() = emptyList()
+    override val declarations: MutableList<SirDeclaration> = mutableListOf()
+}
+
 internal class SirBridgedProtocolImplementationFromKtSymbol(
     override val ktSymbol: KaNamedClassSymbol,
     override val sirSession: SirSession,
@@ -431,6 +455,41 @@ internal class SirFlowFromKtSymbol(
 
     override val protocols: List<SirProtocol> by lazy {
         super.protocols + supportProtocol
+    }
+
+    override val existentialExtension: SirExtension by lazy {
+        SirExistentialProtocolImplementation()
+    }
+}
+
+/**
+ * An ad-hoc translation for kotlinx.coroutines.channels.ReceiveChannel
+ *
+ * Suppresses exporting ReceiveChannel's own members and supertypes (which reference internal
+ * coroutines APIs like SelectClause1, SelectInstance). The channel functionality is provided
+ * through the KotlinReceiveChannel support protocol and AsyncSequence conformance instead.
+ */
+internal class SirReceiveChannelFromKtSymbol(
+    ktSymbol: KaNamedClassSymbol,
+    sirSession: SirSession,
+) : SirProtocolFromKtSymbol(ktSymbol, sirSession), SirFromKtSymbol<KaNamedClassSymbol> {
+
+    internal companion object {
+        val RECEIVE_CHANNEL_CLASS_ID = ClassId.fromString("kotlinx/coroutines/channels/ReceiveChannel")
+        val CLASS_IDS = listOf(RECEIVE_CHANNEL_CLASS_ID)
+    }
+
+    private val supportProtocol = KotlinCoroutineSupportModule.kotlinReceiveChannel
+
+    override val declarations: MutableList<SirDeclaration> = mutableListOf()
+
+    internal inner class SirExistentialProtocolImplementation : SirExistentialProtocolImplementationFromKtSymbol(this@SirReceiveChannelFromKtSymbol) {
+        override val protocols: List<SirProtocol>
+            get() = super.protocols + supportProtocol
+    }
+
+    override val protocols: List<SirProtocol> by lazy {
+        listOf(supportProtocol)
     }
 
     override val existentialExtension: SirExtension by lazy {

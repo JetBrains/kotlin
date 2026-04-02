@@ -113,6 +113,25 @@ public class SirTypeProviderImpl(
                                 }
                             }
 
+                            // Intercept ReceiveChannel<T> for typed generic wrapping
+                            if (kaType.classId == RECEIVE_CHANNEL_CLASS_ID) {
+                                val elementArg = kaType.typeArguments.singleOrNull()
+                                if (elementArg is KaTypeArgumentWithVariance) {
+                                    val elementType = elementArg.type
+                                    val translatedElement = when {
+                                        elementType.isUnitType -> ctx.anyRepresentativeType().optionalIfNeeded(elementType)
+                                        else -> elementType.translateType(ctx)
+                                    }
+                                    if (translatedElement !is SirErrorType && translatedElement !is SirUnsupportedType) {
+                                        return@withSessions SirTypedReceiveChannelType(
+                                            typedProtocol = KotlinCoroutineSupportModule.kotlinTypedReceiveChannel,
+                                            elementType = translatedElement,
+                                            channelType = resolveReceiveChannelProtocolType(kaType)
+                                        ).optionalIfNeeded(kaType)
+                                    }
+                                }
+                            }
+
                             val classSymbol = kaType.symbol
                             when (classSymbol.sirAvailability()) {
                                 is SirAvailability.Available, is SirAvailability.Hidden ->
@@ -223,6 +242,9 @@ public class SirTypeProviderImpl(
                 if (this is SirTypedFlowType) {
                     flowType.handleImports(processTypeImports)
                 }
+                if (this is SirTypedReceiveChannelType) {
+                    channelType.handleImports(processTypeImports)
+                }
             }
             is SirFunctionalType -> {
                 parameterTypes.forEach { it.handleImports(processTypeImports) }
@@ -284,6 +306,7 @@ public class SirTypeProviderImpl(
         )
 
         val COLLECTION_CLASS_IDS = setOf(StandardClassIds.Set, StandardClassIds.Map, StandardClassIds.List)
+        val RECEIVE_CHANNEL_CLASS_ID = ClassId.fromString("kotlinx/coroutines/channels/ReceiveChannel")
     }
 }
 
@@ -292,4 +315,11 @@ private fun resolveFlowProtocolType(kaType: KaType): SirExistentialType {
     return (kaType.symbol?.toSir()?.primaryDeclaration as? SirProtocol)
         ?.let { SirExistentialType(it) }
         ?: SirExistentialType(KotlinCoroutineSupportModule.kotlinFlow)
+}
+
+context(sir: SirSession)
+private fun resolveReceiveChannelProtocolType(kaType: KaType): SirExistentialType {
+    return (kaType.symbol?.toSir()?.primaryDeclaration as? SirProtocol)
+        ?.let { SirExistentialType(it) }
+        ?: SirExistentialType(KotlinCoroutineSupportModule.kotlinReceiveChannel)
 }

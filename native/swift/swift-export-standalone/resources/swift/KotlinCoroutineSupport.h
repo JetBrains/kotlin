@@ -19,4 +19,10 @@ void _kotlin_swift_SwiftFlowIterator_init_initialize(void * __kt, void * flow);
 
 void __root___SwiftJob_setCallback(void *, bool (^)(bool));
 
+void *_kotlin_swift_ReceiveChannel_iterator(void * self);
+
+void _kotlin_swift_ReceiveChannel_cancel(void * self);
+
+void _kotlin_swift_ChannelIterator_next(void * self, int32_t (^continuation)(bool, void * _Nullable ), int32_t (^exception)(void * _Nullable ), void * cancellation);
+
 NS_ASSUME_NONNULL_END

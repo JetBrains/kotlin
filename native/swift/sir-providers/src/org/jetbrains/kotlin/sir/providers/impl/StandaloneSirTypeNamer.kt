@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.sir.SirScopeDefiningDeclaration
 import org.jetbrains.kotlin.sir.SirTupleType
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.SirTypedFlowType
+import org.jetbrains.kotlin.sir.SirTypedReceiveChannelType
 import org.jetbrains.kotlin.sir.SirUnsupportedType
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
@@ -71,6 +72,7 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
             KotlinCoroutineSupportModule.kotlinTypedMutableStateFlow -> "kotlinx.coroutines.flow.MutableStateFlow<${kotlinParametrizedName(type.elementType)}>"
             else -> error("TypedFlowType $type can not be named")
         }
+        is SirTypedReceiveChannelType -> "kotlinx.coroutines.channels.ReceiveChannel<${kotlinParametrizedName(type.elementType)}>"
         is SirExistentialType -> kotlinFqName(type)
         is SirFunctionalType -> "${"kotlin.coroutines.Suspend".takeIf { type.isAsync } ?: ""}Function${type.contextTypes.count() + type.parameterTypes.count()}<${(type.contextTypes + type.parameterTypes + type.returnType).joinToString { kotlinFqName(it) }}>"
         is SirErrorType, is SirUnsupportedType, is SirTupleType ->

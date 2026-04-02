@@ -210,6 +210,24 @@ public object KotlinCoroutineSupportModule : SirModule() {
         visibility = SirVisibility.PUBLIC
     }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
 
+    public val kotlinReceiveChannel: SirProtocol = buildProtocol {
+        origin = KotlinRuntimeElement()
+        name = "KotlinReceiveChannel"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
+    public val kotlinTypedReceiveChannel: SirProtocol = buildProtocol {
+        origin = KotlinRuntimeElement()
+        name = "KotlinTypedReceiveChannel"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
+    public val kotlinTypedReceiveChannelImpl: SirStruct = buildStruct {
+        origin = KotlinRuntimeElement()
+        name = "_KotlinTypedReceiveChannelImpl"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
 }
 
 private fun <T> T.initializeParentForSelfAndChildren(parentModule: SirModule): T where T : SirDeclaration, T : SirDeclarationContainer {

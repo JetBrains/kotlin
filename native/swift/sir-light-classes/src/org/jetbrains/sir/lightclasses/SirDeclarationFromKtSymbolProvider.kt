@@ -32,6 +32,10 @@ public class SirDeclarationFromKtSymbolProvider(
                                 ktSymbol = ktSymbol,
                                 sirSession = sirSession,
                             )
+                            ktSymbol.classId in SirReceiveChannelFromKtSymbol.CLASS_IDS -> SirReceiveChannelFromKtSymbol(
+                                ktSymbol = ktSymbol,
+                                sirSession = sirSession,
+                            )
                             else -> SirProtocolFromKtSymbol(
                                 ktSymbol = ktSymbol,
                                 sirSession = sirSession,
@@ -39,7 +43,11 @@ public class SirDeclarationFromKtSymbolProvider(
                         }
                         SirTranslationResult.RegularInterface(
                             declaration = protocol,
-                            bridgedImplementation = SirBridgedProtocolImplementationFromKtSymbol(protocol),
+                            bridgedImplementation = if (protocol is SirReceiveChannelFromKtSymbol) {
+                                SirEmptyBridgedProtocolImplementation(protocol)
+                            } else {
+                                SirBridgedProtocolImplementationFromKtSymbol(protocol)
+                            },
                             markerDeclaration = protocol.existentialMarker,
                             existentialExtension = protocol.existentialExtension,
                             auxExtension = protocol.auxExtension,

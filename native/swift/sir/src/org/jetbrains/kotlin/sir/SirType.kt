@@ -178,6 +178,12 @@ class SirTypedFlowType(
     val flowType: SirExistentialType,
 ) : SirExistentialType(typedProtocol to listOf(elementType)), SirWrappedType
 
+class SirTypedReceiveChannelType(
+    val typedProtocol: SirProtocol,
+    val elementType: SirType,
+    val channelType: SirExistentialType,
+) : SirExistentialType(typedProtocol to listOf(elementType)), SirWrappedType
+
 val SirNominalType.escaping: SirNominalType get() = copyAppendingAttributes(SirAttribute.Escaping)
 
 val SirFunctionalType.escaping: SirFunctionalType get() = copyAppendingAttributes(SirAttribute.Escaping)

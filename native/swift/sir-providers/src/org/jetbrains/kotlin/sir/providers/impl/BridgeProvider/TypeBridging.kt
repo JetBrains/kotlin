@@ -54,6 +54,7 @@ internal fun bridgeType(type: SirType, position: SirTypeVariance): Bridge =
 
 private fun bridgeExistential(type: SirExistentialType, position: SirTypeVariance): Bridge {
     if (type is SirTypedFlowType) return AsTypedFlow(type)
+    if (type is SirTypedReceiveChannelType) return AsTypedReceiveChannel(type)
     if (type.protocols.singleOrNull()?.first == KotlinRuntimeSupportModule.kotlinBridgeable) {
         return AsAnyBridgeable
     }
@@ -77,6 +78,7 @@ internal fun bridgeAsNSCollectionElement(type: SirType): BidirectionalBridge = w
     is AsExistential,
     is AsAnyBridgeable,
     is AsTypedFlow,
+    is AsTypedReceiveChannel,
     is AsOpaqueObject,
     is SirCustomTypeTranslatorImpl.RangeBridge,
     AsNothing,
@@ -104,6 +106,7 @@ private fun bridgeNominalType(type: SirNominalType, position: SirTypeVariance): 
             is AsExistential,
             is AsAnyBridgeable,
             is AsTypedFlow,
+            is AsTypedReceiveChannel,
             is AsContravariantBlock,
             is AsCovariantBlock,
             is AsInvariantBlock,
@@ -503,6 +506,50 @@ internal sealed interface Bridge {
         }
     }
 
+    /**
+     * A bridge for the typed `KotlinTypedReceiveChannel<Element>` wrapper protocols/structs.
+     *
+     * On the Kotlin/C side it's the same opaque pointer as for [AsExistential].
+     * On the Swift side, the return path wraps the pointer in a `KotlinTypedReceiveChannel<Element>` protocol,
+     * and the parameter path unwraps via `.wrapped.__externalRCRef()`.
+     */
+    class AsTypedReceiveChannel(override val swiftType: SirTypedReceiveChannelType) : BidirectionalBridge {
+        override val kotlinType = KotlinType.KotlinObject
+        override val cType = CType.Object
+
+        private val structType = SirNominalType(
+            typeDeclaration = KotlinCoroutineSupportModule.kotlinTypedReceiveChannelImpl,
+            typeArguments = listOf(swiftType.elementType)
+        )
+
+        override val inKotlinSources = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as ${
+                    typeNamer.kotlinFqName(
+                        swiftType,
+                        SirTypeNamer.KotlinNameType.PARAMETRIZED)}"
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
+        }
+
+        override val inSwiftSources = object : ValueConversion {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                "${valueExpression}.wrapped.__externalRCRef()"
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val kotlinBaseName = typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))
+                val channelProtocolFqName = typeNamer.swiftFqName(swiftType.channelType)
+                val structFqName = typeNamer.swiftFqName(structType)
+                return "$structFqName($kotlinBaseName.__createProtocolWrapper(externalRCRef: $valueExpression) as! $channelProtocolFqName)"
+            }
+        }
+    }
+
     class AsOpaqueObject(override val swiftType: SirType, override val kotlinType: KotlinType, override val cType: CType) : BidirectionalBridge {
         override val inKotlinSources = object : ValueConversion {
             // nulls are handled by AsOptionalWrapper, so safe to cast from nullable to non-nullable
@@ -831,7 +878,7 @@ internal sealed interface Bridge {
                 require(
                     wrappedObject is AsObjCBridged || wrappedObject is AsObject ||
                             wrappedObject is AsExistential || wrappedObject is AsAnyBridgeable || wrappedObject is AsTypedFlow ||
-                            wrappedObject is AsContravariantBlock || wrappedObject is AsInvariantBlock ||
+                            wrappedObject is AsTypedReceiveChannel || wrappedObject is AsContravariantBlock || wrappedObject is AsInvariantBlock ||
                             wrappedObject is SirCustomTypeTranslatorImpl.RangeBridge
                 )
                 return valueExpression.mapSwift { wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, it) } +
@@ -843,7 +890,7 @@ internal sealed interface Bridge {
                 return when (wrappedObject) {
                     is AsObjCBridged, is AsCovariantBlock, is AsInvariantBlock ->
                         valueExpression.mapSwift { wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it) }
-                    is AsObject, is AsExistential, is AsAnyBridgeable, is AsTypedFlow, is SirCustomTypeTranslatorImpl.RangeBridge ->
+                    is AsObject, is AsExistential, is AsAnyBridgeable, is AsTypedFlow, is AsTypedReceiveChannel, is SirCustomTypeTranslatorImpl.RangeBridge ->
                         "{ switch $valueExpression { case ${wrappedObject.renderNil()}: .none; case let res: ${
                             wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
                         }; } }()"
