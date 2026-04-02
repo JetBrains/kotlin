@@ -26,15 +26,15 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
     @DisplayName("BTA argument is converted to a raw argument")
     fun <T> CommonArgumentConfiguration<T>.testBtaArgumentToArgumentString() {
         assumeArgumentSupported()
-        for (values in argumentValues) {
+        for (value in argumentValues) {
             val jvmOperation = kotlinToolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
-                compilerArguments[argumentKey] = values
+                compilerArguments[argumentKey] = value
             }.build()
 
             val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
 
             assertEquals(
-                expectedArgumentStringsFor(getValueString(values)),
+                expectedArgumentStringsFor(getValueString(value)),
                 actualArgumentStrings,
             )
         }
