@@ -1,0 +1,90 @@
+#include <Foundation/Foundation.h>
+#include <stdint.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+void * _Nullable kotlin_Array_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
+
+void * kotlin_Array_iterator(void * self);
+
+_Bool kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, int32_t index, void * _Nullable value);
+
+int32_t kotlin_Array_size_get(void * self);
+
+void * kotlin_Exception_init_allocate();
+
+_Bool kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+_Bool kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(void * __kt, NSString * _Nullable message);
+
+_Bool kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, NSString * _Nullable message, void * _Nullable cause);
+
+_Bool kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, void * _Nullable cause);
+
+void * kotlin_IllegalStateException_init_allocate();
+
+_Bool kotlin_IllegalStateException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+_Bool kotlin_IllegalStateException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(void * __kt, NSString * _Nullable message);
+
+_Bool kotlin_IllegalStateException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, NSString * _Nullable message, void * _Nullable cause);
+
+_Bool kotlin_IllegalStateException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, void * _Nullable cause);
+
+void * kotlin_RuntimeException_init_allocate();
+
+_Bool kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+_Bool kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(void * __kt, NSString * _Nullable message);
+
+_Bool kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, NSString * _Nullable message, void * _Nullable cause);
+
+_Bool kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, void * _Nullable cause);
+
+void * _Nullable kotlin_Throwable_cause_get(void * self);
+
+void * kotlin_Throwable_getStackTrace(void * self);
+
+void * kotlin_Throwable_init_allocate();
+
+_Bool kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, NSString * _Nullable message, void * _Nullable cause);
+
+_Bool kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(void * __kt, NSString * _Nullable message);
+
+_Bool kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, void * _Nullable cause);
+
+_Bool kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+NSString * _Nullable kotlin_Throwable_message_get(void * self);
+
+_Bool kotlin_Throwable_printStackTrace(void * self);
+
+NSString * kotlin_Throwable_toString(void * self);
+
+_Bool kotlin_collections_Iterator_hasNext(void * self);
+
+void * _Nullable kotlin_collections_Iterator_next(void * self);
+
+void * _Nullable kotlin_coroutines_CoroutineContext_Element_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable initial, void * _Nullable (^operation)(void * _Nullable , void *));
+
+void * kotlin_coroutines_CoroutineContext_Element_key_get(void * self);
+
+void * kotlin_coroutines_CoroutineContext_Element_minusKey__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__(void * self, void * key);
+
+void * _Nullable kotlin_coroutines_CoroutineContext_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable initial, void * _Nullable (^operation)(void * _Nullable , void *));
+
+void * kotlin_coroutines_CoroutineContext_minusKey__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__(void * self, void * key);
+
+void * kotlin_coroutines_CoroutineContext_plus__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext__(void * self, void * context);
+
+void * kotlin_coroutines_cancellation_CancellationException_init_allocate();
+
+_Bool kotlin_coroutines_cancellation_CancellationException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+_Bool kotlin_coroutines_cancellation_CancellationException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(void * __kt, NSString * _Nullable message);
+
+_Bool kotlin_coroutines_cancellation_CancellationException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, NSString * _Nullable message, void * _Nullable cause);
+
+_Bool kotlin_coroutines_cancellation_CancellationException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * __kt, void * _Nullable cause);
+
+NS_ASSUME_NONNULL_END

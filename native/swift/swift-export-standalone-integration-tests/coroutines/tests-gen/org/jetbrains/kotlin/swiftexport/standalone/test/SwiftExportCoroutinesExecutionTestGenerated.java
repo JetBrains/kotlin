@@ -33,6 +33,12 @@ public class SwiftExportCoroutinesExecutionTestGenerated extends AbstractSwiftEx
   }
 
   @Test
+  @TestMetadata("channels")
+  public void testChannels() {
+    runTest("native/swift/swift-export-standalone-integration-tests/coroutines/testData/execution/channels/");
+  }
+
+  @Test
   @TestMetadata("closures")
   public void testClosures() {
     runTest("native/swift/swift-export-standalone-integration-tests/coroutines/testData/execution/closures/");
