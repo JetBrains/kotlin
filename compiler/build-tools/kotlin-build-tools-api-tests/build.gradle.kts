@@ -72,12 +72,11 @@ kotlin {
 
 val compatibilityTestsVersions = listOf(
     BuildToolsVersion(KotlinToolingVersion(project.version.toString()), isCurrent = true),
-    BuildToolsVersion(KotlinToolingVersion(2, 2, 21, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 1, 20, null)),
-    BuildToolsVersion(KotlinToolingVersion(2, 0, 21, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 2, 21, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 3, 0, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 3, 10, null)),
-    BuildToolsVersion(KotlinToolingVersion(2, 3, 20, "RC")),
+    BuildToolsVersion(KotlinToolingVersion(2, 3, 20, null)),
 )
 
 class BuildToolsVersion(val version: KotlinToolingVersion, val isCurrent: Boolean = false) {
