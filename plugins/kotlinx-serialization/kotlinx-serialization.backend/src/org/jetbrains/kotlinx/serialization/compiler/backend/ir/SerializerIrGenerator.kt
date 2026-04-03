@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
@@ -637,11 +638,9 @@ open class SerializerIrGenerator(
         ) {
             val serializableDesc = getSerializableClassDescriptorBySerializer(irClass) ?: return
             val generator = when {
-                serializableDesc.isEnumWithLegacyGeneratedSerializer() -> SerializerForEnumsGenerator(
-                    irClass,
-                    context
-                )
-                serializableDesc.isSingleFieldValueClass -> SerializerForInlineClassGenerator(irClass, context)
+                serializableDesc.isEnumWithLegacyGeneratedSerializer() -> SerializerForEnumsGenerator(irClass, context)
+                serializableDesc.isSingleFieldValueClass(distinguishBasicAndExtended = context.platform.isJvm()) ->
+                    SerializerForInlineClassGenerator(irClass, context)
                 else -> SerializerIrGenerator(irClass, context, metadataPlugin)
             }
             generator.generate()

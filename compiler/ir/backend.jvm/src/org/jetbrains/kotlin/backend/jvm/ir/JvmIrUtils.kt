@@ -612,3 +612,7 @@ fun IrMutableAnnotationContainer.copyAnnotationsAndAddJavaLangDeprecated(source:
 
 fun IrConstructor.isNonExposedConstructorOfOrdinaryClass(): Boolean =
     parameters.lastOrNull()?.origin == JvmLoweredDeclarationOrigin.NON_EXPOSED_CONSTRUCTOR_SYNTHETIC_PARAMETER
+
+
+val IrClass.isSingleFieldValueClass: Boolean get() = isSingleFieldValueClass(distinguishBasicAndExtended = true)
+val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(distinguishBasicAndExtended = true)

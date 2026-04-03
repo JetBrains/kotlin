@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.phaser.BackendContextHolder
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.ir.types.IrType
@@ -49,7 +48,6 @@ interface CommonBackendContext : LoweringContext, BackendContextHolder {
      * See [InlineClassesUtils].
      */
     val inlineClassesUtils: InlineClassesUtils
-        get() = DefaultInlineClassesUtils
 
     val partialLinkageSupport: PartialLinkageSupportForLowerings
         get() = PartialLinkageSupportForLowerings.DISABLED
@@ -71,7 +69,7 @@ interface InlineClassesUtils {
     /**
      * Should this class be treated as inline class?
      */
-    fun isClassInlineLike(klass: IrClass): Boolean = klass.isSingleFieldValueClass
+    fun isClassInlineLike(klass: IrClass): Boolean
 
     /**
      * Unlike [org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType], doesn't use [IrClass.inlineClassRepresentation] because
@@ -81,5 +79,3 @@ interface InlineClassesUtils {
         irClass.declarations.firstIsInstanceOrNull<IrConstructor>()?.takeIf { it.isPrimary }?.parameters[0]?.type
             ?: error("Class has no primary constructor: ${irClass.fqNameWhenAvailable}")
 }
-
-object DefaultInlineClassesUtils : InlineClassesUtils

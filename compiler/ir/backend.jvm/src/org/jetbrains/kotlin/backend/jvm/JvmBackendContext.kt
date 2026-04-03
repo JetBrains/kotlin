@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.InlineClassesUtils
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator.ClosureBuilder
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
@@ -100,6 +101,10 @@ class JvmBackendContext(
     val inlineMethodGenerationLock = Any()
 
     val optionalAnnotations = mutableListOf<MetadataSource.Class>()
+
+    @Deprecated("It is non-JVM API", level = DeprecationLevel.ERROR)
+    override val inlineClassesUtils: InlineClassesUtils
+        get() = error("Not supported in JVM")
 
     init {
         state.mapInlineClass = { descriptor ->

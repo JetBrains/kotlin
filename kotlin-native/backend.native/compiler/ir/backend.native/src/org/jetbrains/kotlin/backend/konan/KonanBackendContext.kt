@@ -6,14 +6,22 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.InlineClassesUtils
 import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 
 internal abstract class KonanBackendContext(config: NativeSecondStageCompilationConfig) : BasicNativeBackendPhaseContext(config), CommonBackendContext {
+    override val inlineClassesUtils: InlineClassesUtils = object : InlineClassesUtils {
+        override fun isClassInlineLike(klass: IrClass): Boolean =
+                klass.isSingleFieldValueClass(distinguishBasicAndExtended = false)
+    }
+
     abstract val builtIns: KonanBuiltIns
 
     abstract override val symbols: BackendNativeSymbols

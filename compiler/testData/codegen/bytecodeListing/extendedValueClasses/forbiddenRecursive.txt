@@ -1,0 +1,235 @@
+@kotlin.Metadata
+public final class A {
+    // source: 'forbiddenRecursive.kt'
+    private final field y: int
+    private final @org.jetbrains.annotations.NotNull field z: A
+    public method <init>(p0: int, @org.jetbrains.annotations.NotNull p1: A): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getY(): int
+    public final @org.jetbrains.annotations.NotNull method getZ(): A
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class B {
+    // source: 'forbiddenRecursive.kt'
+    private final field y: int
+    private final @org.jetbrains.annotations.Nullable field z: B
+    public method <init>(p0: int, @org.jetbrains.annotations.Nullable p1: B): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getY(): int
+    public final @org.jetbrains.annotations.Nullable method getZ(): B
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class C {
+    // source: 'forbiddenRecursive.kt'
+    private final @org.jetbrains.annotations.Nullable field a: C
+    private final @org.jetbrains.annotations.NotNull field b: C
+    private final @org.jetbrains.annotations.NotNull field c: C
+    private final @org.jetbrains.annotations.Nullable field d: C
+    private final @org.jetbrains.annotations.NotNull field e: D
+    public method <init>(@org.jetbrains.annotations.Nullable p0: C, @org.jetbrains.annotations.NotNull p1: C, @org.jetbrains.annotations.NotNull p2: C, @org.jetbrains.annotations.Nullable p3: C, @org.jetbrains.annotations.NotNull p4: D): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.Nullable method getA(): C
+    public final @org.jetbrains.annotations.NotNull method getB(): C
+    public final @org.jetbrains.annotations.NotNull method getC(): C
+    public final @org.jetbrains.annotations.Nullable method getD(): C
+    public final @org.jetbrains.annotations.NotNull method getE(): D
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class D {
+    // source: 'forbiddenRecursive.kt'
+    private final @org.jetbrains.annotations.NotNull field a: C
+    public method <init>(@org.jetbrains.annotations.NotNull p0: C): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.NotNull method getA(): C
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class E {
+    // source: 'forbiddenRecursive.kt'
+    private final field a: java.lang.Object
+    public method <init>(p0: java.lang.Object): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getA(): java.lang.Object
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class F {
+    // source: 'forbiddenRecursive.kt'
+    private final @org.jetbrains.annotations.Nullable field a: java.lang.Object
+    public method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.Nullable method getA(): java.lang.Object
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class ForbiddenRecursiveKt {
+    // source: 'forbiddenRecursive.kt'
+    public final static @org.jetbrains.annotations.NotNull method wrap(@org.jetbrains.annotations.NotNull p0: C): C
+    public final static @org.jetbrains.annotations.NotNull method wrap(@org.jetbrains.annotations.NotNull p0: E): E
+    public final static @org.jetbrains.annotations.NotNull method wrap(@org.jetbrains.annotations.NotNull p0: F): F
+}
+
+@kotlin.Metadata
+public final class New1 {
+    // source: 'forbiddenRecursive.kt'
+    private final @org.jetbrains.annotations.NotNull field x: New1
+    private method <init>(p0: New1): void
+    public synthetic method <init>(p0: New1, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.NotNull method getX-RWE5yrM(): New1
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class New2 {
+    // source: 'forbiddenRecursive.kt'
+    private final @org.jetbrains.annotations.NotNull field x: New2
+    public method <init>(@org.jetbrains.annotations.NotNull p0: New2): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.NotNull method getX(): New2
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class New5 {
+    // source: 'forbiddenRecursive.kt'
+    private final @org.jetbrains.annotations.NotNull field x: New5
+    private final @org.jetbrains.annotations.NotNull field y: New5
+    private method <init>(p0: New5, p1: New5): void
+    public synthetic method <init>(p0: New5, p1: New5, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.NotNull method getX-3HNlJ4c(): New5
+    public final @org.jetbrains.annotations.NotNull method getY-3HNlJ4c(): New5
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class New6 {
+    // source: 'forbiddenRecursive.kt'
+    private final @org.jetbrains.annotations.NotNull field x: New6
+    private final @org.jetbrains.annotations.NotNull field y: New6
+    public method <init>(@org.jetbrains.annotations.NotNull p0: New6, @org.jetbrains.annotations.NotNull p1: New6): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.NotNull method getX(): New6
+    public final @org.jetbrains.annotations.NotNull method getY(): New6
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class New7 {
+    // source: 'forbiddenRecursive.kt'
+    private final @org.jetbrains.annotations.NotNull field x: New7_
+    public method <init>(@org.jetbrains.annotations.NotNull p0: New7_): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.NotNull method getX(): New7_
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class New7_ {
+    // source: 'forbiddenRecursive.kt'
+    private final @org.jetbrains.annotations.NotNull field x: New7
+    private final @org.jetbrains.annotations.NotNull field y: New7
+    public method <init>(@org.jetbrains.annotations.NotNull p0: New7, @org.jetbrains.annotations.NotNull p1: New7): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.NotNull method getX(): New7
+    public final @org.jetbrains.annotations.NotNull method getY(): New7
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class Old1 {
+    // source: 'forbiddenRecursive.kt'
+    private final @org.jetbrains.annotations.NotNull field x: New1
+    private synthetic method <init>(p0: New1): void
+    public synthetic final static method box-impl(p0: New1): Old1
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: New1): New1
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: New1, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: New1, p1: New1): boolean
+    public final @org.jetbrains.annotations.NotNull method getX(): New1
+    public method hashCode(): int
+    public static method hashCode-impl(p0: New1): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: New1): java.lang.String
+    public synthetic final method unbox-impl(): New1
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class Old2 {
+    // source: 'forbiddenRecursive.kt'
+    private final @org.jetbrains.annotations.NotNull field x: New2
+    private synthetic method <init>(p0: New2): void
+    public synthetic final static method box-impl(p0: New2): Old2
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: New2): New2
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: New2, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: New2, p1: New2): boolean
+    public final @org.jetbrains.annotations.NotNull method getX(): New2
+    public method hashCode(): int
+    public static method hashCode-impl(p0: New2): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: New2): java.lang.String
+    public synthetic final method unbox-impl(): New2
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class Old5 {
+    // source: 'forbiddenRecursive.kt'
+    private final @org.jetbrains.annotations.NotNull field x: New5
+    private synthetic method <init>(p0: New5): void
+    public synthetic final static method box-impl(p0: New5): Old5
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: New5): New5
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: New5, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: New5, p1: New5): boolean
+    public final @org.jetbrains.annotations.NotNull method getX(): New5
+    public method hashCode(): int
+    public static method hashCode-impl(p0: New5): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: New5): java.lang.String
+    public synthetic final method unbox-impl(): New5
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class Old6 {
+    // source: 'forbiddenRecursive.kt'
+    private final @org.jetbrains.annotations.NotNull field x: New6
+    private synthetic method <init>(p0: New6): void
+    public synthetic final static method box-impl(p0: New6): Old6
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: New6): New6
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: New6, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: New6, p1: New6): boolean
+    public final @org.jetbrains.annotations.NotNull method getX(): New6
+    public method hashCode(): int
+    public static method hashCode-impl(p0: New6): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: New6): java.lang.String
+    public synthetic final method unbox-impl(): New6
+}

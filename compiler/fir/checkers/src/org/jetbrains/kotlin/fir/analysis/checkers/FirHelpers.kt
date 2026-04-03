@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
+import org.jetbrains.kotlin.types.model.isNullableType
 import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.getChildren
@@ -130,31 +131,30 @@ fun ConeKotlinType.isValueClass(session: FirSession): Boolean {
     return toRegularClassSymbol(session)?.isInlineOrValue == true
 }
 
-fun ConeKotlinType.isSingleFieldValueClass(session: FirSession): Boolean = with(session.typeContext) {
-    isRecursiveSingleFieldValueClassType(session) != null || typeConstructor().isInlineClass()
+fun ConeKotlinType.isBasicSingleFieldValueClass(session: FirSession): Boolean = with(session.typeContext) {
+    getValueClassTypeRecursionType(session, checkExtendedValueClasses = false, checkMultiField = false) != null ||
+            typeConstructor().isInlineClass()
 }
 
-private fun ConeKotlinType.isRecursiveSingleFieldValueClassType(session: FirSession) =
-    getValueClassTypeRecursionType(hashSetOf(), session, onlyInline = true)
-
-fun ConeKotlinType.getValueClassTypeRecursionType(session: FirSession): RecursionType? =
-    getValueClassTypeRecursionType(hashSetOf(), session, onlyInline = false)
+fun ConeKotlinType.getValueClassTypeRecursionType(
+    session: FirSession, checkExtendedValueClasses: Boolean, checkMultiField: Boolean
+): RecursionType? = getValueClassTypeRecursionType(hashSetOf(), session, checkExtendedValueClasses, checkMultiField)
 
 enum class RecursionType { Plain, ViaTypeParameters }
 
 private fun ConeKotlinType.getValueClassTypeRecursionType(
-    visited: HashSet<ConeKotlinType>, session: FirSession, onlyInline: Boolean
-): RecursionType? {
+    visited: HashSet<ConeKotlinType>, session: FirSession, checkExtendedValueClasses: Boolean, checkMultiField: Boolean
+): RecursionType? = context(session.typeContext) {
     val plainRegularClass = toRegularClassSymbol(session)
     val expectedRecursionType = if (plainRegularClass != null) Plain else ViaTypeParameters
 
     val asRegularClass = plainRegularClass ?: leastUpperBound(session).toRegularClassSymbol(session) ?: return null
-    val primaryConstructor = asRegularClass.takeIf { it.isInlineOrValueClass() }?.primaryConstructorIfAny(session) ?: return null
+    val primaryConstructor = asRegularClass.takeIf { it.isInlineOrValueClass() && (!it.isExtendedValueClass(session) || checkExtendedValueClasses && !isNullableType()) }?.primaryConstructorIfAny(session) ?: return null
 
-    if (primaryConstructor.valueParameterSymbols.size > 1 && onlyInline) return null
+    if (primaryConstructor.valueParameterSymbols.size > 1 && !checkMultiField) return null
     if (!visited.add(this)) return expectedRecursionType
     val hasRecursionInParameters = primaryConstructor.valueParameterSymbols.any {
-        it.resolvedReturnType.getValueClassTypeRecursionType(visited, session, onlyInline) != null
+        it.resolvedReturnType.getValueClassTypeRecursionType(visited, session, checkExtendedValueClasses, checkMultiField) != null
     }
     return (if (hasRecursionInParameters) expectedRecursionType else null).also { visited.remove(this) }
 }
