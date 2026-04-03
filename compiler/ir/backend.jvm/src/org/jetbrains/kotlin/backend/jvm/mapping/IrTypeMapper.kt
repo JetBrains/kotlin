@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.mapping
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.classNameOverride
+import org.jetbrains.kotlin.backend.jvm.ir.isSingleFieldValueClass
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity

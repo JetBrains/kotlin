@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER
+import org.jetbrains.kotlin.backend.jvm.ir.inlineClassRepresentation
 import org.jetbrains.kotlin.backend.jvm.ir.isNonExposedConstructorOfOrdinaryClass
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.backend.jvm.ir.isSingleFieldValueClass
 import org.jetbrains.kotlin.backend.jvm.ir.shouldBeExposedByAnnotationOrFlag
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
@@ -679,7 +681,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
 
         function.body = context.createIrBuilder(valueClass.symbol).run {
             val context = this@JvmInlineClassLowering.context
-            val underlyingType = getInlineClassUnderlyingType(valueClass)
+            val underlyingType = getInlineClassUnderlyingType(valueClass, distinguishBasicAndExtended = true)
             irExprBody(
                 if (untypedEquals.origin == IrDeclarationOrigin.DEFINED) {
                     val boxFunction = context.inlineClassReplacements.getBoxFunction(valueClass)

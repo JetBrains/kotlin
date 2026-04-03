@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.FirTypeRefSource
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.isSingleFieldValueClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -654,8 +653,6 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         return result
     }
-
-    private fun ConeKotlinType.isUnsupportedInlineType(session: FirSession): Boolean = isSingleFieldValueClass(session) && !isPrimitiveOrNullablePrimitive
 
     private fun CheckerContext.checkType(typeRef: FirTypeRef, typeSource: KtSourceElement?, reporter: DiagnosticReporter) {
         val type = typeRef.coneType.fullyExpandedType()

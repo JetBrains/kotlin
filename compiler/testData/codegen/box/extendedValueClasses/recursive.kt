@@ -1,16 +1,12 @@
 // LANGUAGE: +ValueClasses
 // CHECK_BYTECODE_LISTING
 
-value class A(val y: Int, val z: A)
+// Take a look at testData/codegen/box/extendedValueClasses/forbiddenRecursive.kt for forbidden recursive samples which though work on JVM.
+
 value class B(val y: Int, val z: B?)
-
-value class C(val a: C?, val b: C, val c: C, val d: C?, val e: D)
-
-value class D(val a: C)
 value class E<T>(val a: T)
 value class F<T>(val a: T?)
 
-fun C.wrap() = C(null, this, this, this, D(this))
 inline fun <T> E<T>.wrap() = E(this)
 inline fun <T> F<T>.wrap() = F(this)
 

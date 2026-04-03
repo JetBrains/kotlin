@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.parcelize
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -391,6 +392,8 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
     private val ushortSerializer = IrUnsafeCoerceWrappedSerializer(shortSerializer, symbols.kotlinUShort.defaultType, irBuiltIns.shortType)
     private val uintSerializer = IrUnsafeCoerceWrappedSerializer(intSerializer, symbols.kotlinUInt.defaultType, irBuiltIns.intType)
     private val ulongSerializer = IrUnsafeCoerceWrappedSerializer(longSerializer, symbols.kotlinULong.defaultType, irBuiltIns.longType)
+
+    private val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(distinguishBasicAndExtended = true)
 
     // Unsigned array types
     private val ubyteArraySerializer = IrUnsafeCoerceWrappedSerializer(

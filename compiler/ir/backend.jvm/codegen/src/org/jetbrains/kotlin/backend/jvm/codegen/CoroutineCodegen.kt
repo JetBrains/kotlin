@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.hasContinuation
 import org.jetbrains.kotlin.backend.jvm.ir.isReadOfCrossinline
+import org.jetbrains.kotlin.backend.jvm.ir.isSingleFieldValueClass
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor

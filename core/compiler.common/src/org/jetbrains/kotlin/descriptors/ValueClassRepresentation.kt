@@ -13,21 +13,24 @@ import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
 sealed class ValueClassRepresentation<Type : RigidTypeMarker> {
+    abstract val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>?
+    abstract fun containsPropertyWithName(name: Name): Boolean
+    abstract fun getPropertyTypeByName(name: Name): Type?
+
     fun <Other : SimpleTypeMarker> mapUnderlyingType(transform: (Type) -> Other): ValueClassRepresentation<Other> = when (this) {
         is InlineClassRepresentation -> InlineClassRepresentation(underlyingPropertyName, transform(underlyingType))
         is MultiFieldValueClassRepresentation ->
             MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes.map { [name, type] -> name to transform(type) })
-        is ExtendedValueClassRepresentation<*> -> ExtendedValueClassRepresentation()
+        is ExtendedValueClassRepresentation ->
+            ExtendedValueClassRepresentation(underlyingPropertyNamesToTypes?.map { [name, type] -> name to transform(type) })
     }
 }
 
 sealed class BasicValueClassRepresentation<Type : RigidTypeMarker>: ValueClassRepresentation<Type>() {
-    abstract val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>
-    abstract fun containsPropertyWithName(name: Name): Boolean
-    abstract fun getPropertyTypeByName(name: Name): Type?
+    abstract override val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>
 }
 
-fun <T : RigidTypeMarker> ValueClassRepresentation<T>.asBasic() = this as? BasicValueClassRepresentation
+fun <T : RigidTypeMarker> ValueClassRepresentation<T>.asOld() = this as? BasicValueClassRepresentation
 
 enum class ValueClassKind { Inline, MultiField }
 
@@ -53,3 +56,14 @@ fun <Type : RigidTypeMarker> createValueClassRepresentation(context: TypeSystemC
         Inline -> InlineClassRepresentation(fields[0].first, fields[0].second)
         MultiField -> MultiFieldValueClassRepresentation(fields)
     }
+
+
+fun <T : RigidTypeMarker> ValueClassRepresentation<T>.toInlineRepresentation(
+    distinguishBasicAndExtended: Boolean
+): InlineClassRepresentation<T>? = when (this) {
+    is InlineClassRepresentation -> this
+    is MultiFieldValueClassRepresentation -> null
+    is ExtendedValueClassRepresentation if distinguishBasicAndExtended -> null
+    is ExtendedValueClassRepresentation -> underlyingPropertyNamesToTypes?.singleOrNull()
+        ?.let { (name, type) -> InlineClassRepresentation(name, type) }
+}

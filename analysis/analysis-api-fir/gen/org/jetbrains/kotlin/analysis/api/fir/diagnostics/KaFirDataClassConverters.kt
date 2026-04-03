@@ -1249,7 +1249,6 @@ private fun KaDiagnosticConverterBuilder.addConversions22() {
 private fun KaDiagnosticConverterBuilder.addConversions23() {
     add(FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS.warningFactory) { firDiagnostic ->
         ValueClassCannotBeRecursiveViaTypeParametersWarningImpl(
-            firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -2099,7 +2098,6 @@ private fun KaDiagnosticConverterBuilder.addConversions43() {
     }
     add(FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE) { firDiagnostic ->
         ValueClassCannotBeRecursiveImpl(
-            firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -4837,7 +4835,6 @@ private fun KaDiagnosticConverterBuilder.addConversions107() {
     }
     add(FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS.errorFactory) { firDiagnostic ->
         ValueClassCannotBeRecursiveViaTypeParametersErrorImpl(
-            firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

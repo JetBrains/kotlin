@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
 import org.jetbrains.kotlin.backend.jvm.codegen.materialize
+import org.jetbrains.kotlin.backend.jvm.ir.isSingleFieldValueClass
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetClass

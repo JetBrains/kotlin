@@ -242,7 +242,7 @@ class Fir2IrConverter(
         // Otherwise, redundant members, e.g., synthetic toString _and_ fake override toString, will be added.
         if (klass is FirRegularClass && irConstructor != null && (irClass.isValue || irClass.isData)) {
             declarationStorage.enterScope(irConstructor.symbol)
-            if (irClass.isSingleFieldValueClass) {
+            if (irClass.isSingleFieldValueClass(distinguishBasicAndExtended = true)) {
                 allDeclarations += dataClassMembersGenerator.generateSingleFieldValueClassMembers(klass, irClass)
             }
             if (irClass.isMultiFieldValueClass) {

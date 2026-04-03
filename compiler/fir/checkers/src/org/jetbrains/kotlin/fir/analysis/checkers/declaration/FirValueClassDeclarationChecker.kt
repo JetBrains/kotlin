@@ -243,7 +243,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
         for ([name, primaryConstructorParameter] in primaryConstructorParametersByName) {
             val parameterTypeRef = primaryConstructorParameter.resolvedReturnTypeRef
-            val recursionType = parameterTypeRef.coneType.getValueClassTypeRecursionType(context.session)
+            val recursionType = parameterTypeRef.coneType.getValueClassTypeRecursionType(context.session, checkExtendedValueClasses = true)
             when {
                 declaration.isFinal && primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
                     reporter.reportOn(
@@ -270,10 +270,14 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     )
                 }
 
-                !isExtendedValueClass && recursionType != null -> when (recursionType) {
-                    Plain -> reporter.reportOn(parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE, valueModifierPrefix)
+                // Currently, it is decided to forbid recursive value classes even for EXTENDED ones because they require implementation on non-JVM platforms.
+                // As they can be expressed in Java, the prohibition creates a subtle difference between Java's and Kotlin's recursive unconstructible value classes.
+                // Also, there appears a minor inconsistency between unconstructible value and non-value classes in Kotlin.
+                // Neither of the issues affects any meaningful code.
+                recursionType != null -> when (recursionType) {
+                    Plain -> reporter.reportOn(parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE)
                     ViaTypeParameters -> reporter.reportOn(
-                        parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS, valueModifierPrefix,
+                        parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS,
                     )
                 }
 
