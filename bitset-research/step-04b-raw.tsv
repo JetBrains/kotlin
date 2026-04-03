@@ -1,0 +1,635 @@
+repo	file	cls	methods	context
+RoaringBitmap	fuzz-tests/src/test/java/org/roaringbitmap/BufferFuzzer.java	test		public class BufferFuzzer
+RoaringBitmap	fuzz-tests/src/test/java/org/roaringbitmap/Fuzzer.java	test		public class Fuzzer
+RoaringBitmap	jmh/src/jmh/java/org/roaringbitmap/BitSetUtilBenchmark.java	test		public class BitSetUtilBenchmark
+RoaringBitmap	jmh/src/jmh/java/org/roaringbitmap/iteration/BitmapNextBenchmark.java	test		public class BitmapNextBenchmark
+RoaringBitmap	jmh/src/jmh/java/org/roaringbitmap/iteration/Concatenation.java	test		Using lots and lots of parameter sets is clever, but it takes a long
+RoaringBitmap	jmh/src/jmh/java/org/roaringbitmap/map/MapBenchmark.java	test		public class MapBenchmark
+RoaringBitmap	roaringbitmap/src/main/java/org/roaringbitmap/BitSetUtil.java	impl	BitSet(int); get(int); cardinality(); toLongArray(); valueOf(long[])	Convert a {@link RoaringBitmap} to a {@link BitSet}
+RoaringBitmap	roaringbitmap/src/main/java/org/roaringbitmap/RoaringBitSet.java	impl	and(); or(); xor(); andNot(); intersects(); toByteArray(); toLongArray(); clone(); equals()	A {@link BitSet} implementation based on {@link RoaringBitmap}
+RoaringBitmap	roaringbitmap/src/main/java/org/roaringbitmap/buffer/BufferBitSetUtil.java	impl	get(int); cardinality(); toLongArray()	Generate a MutableRoaringBitmap out of a BitSet
+RoaringBitmap	roaringbitmap/src/test/java/org/roaringbitmap/TestBitSetUtil.java	test		public class TestBitSetUtil
+RoaringBitmap	roaringbitmap/src/test/java/org/roaringbitmap/TestRange.java	test		public class TestRange
+RoaringBitmap	roaringbitmap/src/test/java/org/roaringbitmap/TestRoaringBitmap.java	test		Generic testing of the roaring bitmaps
+RoaringBitmap	roaringbitmap/src/test/java/org/roaringbitmap/TestRunContainer.java	test		generates randomly N distinct integers from 0 to Max
+RoaringBitmap	roaringbitmap/src/test/java/org/roaringbitmap/buffer/TestBitSetUtil.java	test		public class TestBitSetUtil
+RoaringBitmap	roaringbitmap/src/test/java/org/roaringbitmap/buffer/TestImmutableRoaringBitmap.java	test		Generic testing of the roaring bitmaps
+RoaringBitmap	roaringbitmap/src/test/java/org/roaringbitmap/buffer/TestRange.java	test		public class TestRange
+RoaringBitmap	roaringbitmap/src/test/java/org/roaringbitmap/buffer/TestRoaringBitmap.java	test		Generic testing of the roaring bitmaps
+RoaringBitmap	roaringbitmap/src/test/java/org/roaringbitmap/buffer/TestRunContainer.java	test		generates randomly N distinct integers from 0 to Max
+androidx	core/core-backported-fixes/src/main/java/androidx/core/backported/fixes/SystemPropertyResolver.kt	use	valueOf(long[])	Resolves the status of a [KnownIssue] using `ro.build.backported_fixes.alias_bitset.long_list`
+androidx	pdf/pdf-ink/src/main/kotlin/androidx/pdf/ink/EditableDocumentViewModel.kt	use	BitSet()	Fetches annotations from the [PdfAnnotationsManager] for the defined page range
+androidx	profileinstaller/profileinstaller/src/main/java/androidx/profileinstaller/ProfileTranscoder.java	use	valueOf(long[])	Transcode (or convert) a binary profile from one format version to another
+androidx	recyclerview/recyclerview/src/androidTest/java/androidx/recyclerview/widget/AsyncListUtilLayoutTest.java	test		public class AsyncListUtilLayoutTest
+androidx	recyclerview/recyclerview/src/androidTest/java/androidx/recyclerview/widget/GridLayoutManagerBaseConfigSetTest.java	test		public class GridLayoutManagerBaseConfigSetTest
+androidx	recyclerview/recyclerview/src/androidTest/java/androidx/recyclerview/widget/StaggeredGridLayoutManagerBaseConfigSetTest.java	test		public class StaggeredGridLayoutManagerBaseConfigSetTest
+androidx	recyclerview/recyclerview/src/main/java/androidx/recyclerview/widget/StaggeredGridLayoutManager.java	use	BitSet(int); get(int); set(int,bool); set(from,to,bool); clear(); clear(int); isEmpty()	A LayoutManager that lays out children in a staggered grid formation
+antlr4	runtime/Java/src/org/antlr/v4/runtime/ANTLRErrorListener.java	use		Upon syntax error, notify any interested parties. This is not how to
+antlr4	runtime/Java/src/org/antlr/v4/runtime/BaseErrorListener.java	use		Provides an empty default implementation of {@link ANTLRErrorListener}. The
+antlr4	runtime/Java/src/org/antlr/v4/runtime/DiagnosticErrorListener.java	use	BitSet(); set(int)	This implementation of {@link ANTLRErrorListener} can be used to identify
+antlr4	runtime/Java/src/org/antlr/v4/runtime/ProxyErrorListener.java	use		This implementation of {@link ANTLRErrorListener} dispatches all calls to a
+antlr4	runtime/Java/src/org/antlr/v4/runtime/atn/ATNConfigSet.java	use	BitSet(); set(int)	Specialized {@link Set}{@code <}{@link ATNConfig}{@code >} that can track
+antlr4	runtime/Java/src/org/antlr/v4/runtime/atn/AmbiguityInfo.java	use		This class represents profiling event information for an ambiguity
+antlr4	runtime/Java/src/org/antlr/v4/runtime/atn/LL1Analyzer.java	use	BitSet(); get(int); set(int); clear(int)	Calculates the SLL(1) expected lookahead set for each outgoing transition
+antlr4	runtime/Java/src/org/antlr/v4/runtime/atn/PredictionMode.java	use	BitSet(); get(int); set(int); or(); nextSetBit(); cardinality(); equals()	This enumeration defines the prediction modes available in ANTLR 4 along with
+antlr4	runtime/Java/src/org/antlr/v4/runtime/atn/ProfilingATNSimulator.java	use	nextSetBit()	@since 4.3
+antlr4	runtime/Java/src/org/antlr/v4/runtime/misc/Utils.java	use	nextSetBit()	public class Utils
+antlr4	tool-testsuite/test/org/antlr/v4/test/tool/TestPerformance.java	test		Parse all java files under this package within the JDK_SOURCE_ROOT
+antlr4	tool/src/org/antlr/v4/tool/GrammarParserInterpreter.java	use	BitSet(int); get(int); set(int); nextSetBit(); size()	public class GrammarParserInterpreter
+beam	runners/core-java/src/main/java/org/apache/beam/runners/core/triggers/FinishedTriggersBitSet.java	impl	BitSet(int); get(int); clone()	public class FinishedTriggersBitSet
+beam	runners/core-java/src/main/java/org/apache/beam/runners/core/triggers/TriggerStateMachineRunner.java	use	isEmpty()	Executes a trigger while managing persistence of information about which subtriggers are
+beam	sdks/java/core/src/main/java/org/apache/beam/sdk/coders/BitSetCoder.java	impl	toByteArray(); valueOf(long[])	public class BitSetCoder
+beam	sdks/java/core/src/main/java/org/apache/beam/sdk/coders/CoderRegistry.java	use		A {@link CoderRegistry} allows creating a {@link Coder} for a given Java {@link Class class} or
+beam	sdks/java/core/src/main/java/org/apache/beam/sdk/coders/RowCoderGenerator.java	use	BitSet(int); get(int); set(int)	A utility for automatically generating a {@link Coder} for {@link Row} objects corresponding to a
+beam	sdks/java/core/src/main/java/org/apache/beam/sdk/schemas/transforms/RenameFields.java	use	BitSet(int); get(int); isEmpty()	A transform for renaming fields inside an existing schema. Top level or nested fields can be
+beam	sdks/java/core/src/main/java/org/apache/beam/sdk/util/BitSetCoder.java	impl	toByteArray(); valueOf(long[])	Coder for the BitSet used to track child-trigger finished states
+beam	sdks/java/core/src/test/java/org/apache/beam/sdk/coders/BitSetCoderTest.java	test		Generated data to check that the wire format has not changed. To regenerate, see {@link
+beam	sdks/java/core/src/test/java/org/apache/beam/sdk/schemas/transforms/RenameFieldsTest.java	test		public class RenameFieldsTest
+calcite	core/src/main/java/org/apache/calcite/plan/RelOptUtil.java	use	BitSet(int); size()	<code>RelOptUtil</code> defines static utility methods for use in optimizing
+calcite	core/src/main/java/org/apache/calcite/profile/ProfilerImpl.java	use	BitSet(); clear(int); or(); size()	Implementation of {@link Profiler} that only investigates "interesting"
+calcite	core/src/main/java/org/apache/calcite/profile/SimpleProfiler.java	use	BitSet(); get(int); clear(int); or(); size()	Basic implementation of {@link Profiler}
+calcite	core/src/main/java/org/apache/calcite/rel/metadata/RelMdPredicates.java	use	BitSet(); get(int); set(int); nextSetBit(); cardinality()	Utility to infer Predicates that are applicable above a RelNode
+calcite	core/src/main/java/org/apache/calcite/rel/rules/AggregateJoinTransposeRule.java	use	BitSet(); get(int); set(int)	Planner rule that pushes an
+calcite	core/src/main/java/org/apache/calcite/rel/rules/HyperGraph.java	use	BitSet(); get(int); set(int); set(int,bool); and(); or(); andNot(); stream(); equals()	HyperGraph represents a join graph
+calcite	core/src/main/java/org/apache/calcite/rel/rules/LoptMultiJoin.java	use	get(int)	Utility class that keeps track of the join factors that
+calcite	core/src/main/java/org/apache/calcite/rel/rules/LoptOptimizeJoinRule.java	use	BitSet(int); get(int); set(int); clear(int); and(); or(); cardinality()	Planner rule that implements the heuristic planner for determining optimal
+calcite	core/src/main/java/org/apache/calcite/rel/rules/ProjectCorrelateTransposeRule.java	use	BitSet(); set(int)	Planner rule that pushes a {@link Project} under {@link Correlate} to apply
+calcite	core/src/main/java/org/apache/calcite/rel/rules/PushProjector.java	use	BitSet(int); set(int); set(from,to); or(); nextSetBit(); isEmpty(); cardinality()	PushProjector is a utility class used to perform operations used in push
+calcite	core/src/main/java/org/apache/calcite/rex/RexSimplify.java	use	BitSet(); get(int); set(int)	Context required to simplify a row-expression
+calcite	core/src/main/java/org/apache/calcite/sql/validate/SqlValidatorImpl.java	use	BitSet(); get(int); set(int); isEmpty()	Default implementation of {@link SqlValidator}
+calcite	core/src/main/java/org/apache/calcite/sql2rel/SqlToRelConverter.java	use	BitSet(); set(int); cardinality()	Converts a SQL parse tree (consisting of
+calcite	core/src/main/java/org/apache/calcite/tools/RelBuilder.java	use	BitSet(); get(int); set(int)	Builder for relational expressions
+calcite	core/src/main/java/org/apache/calcite/util/ArrowSet.java	use	BitSet(); get(int); set(int); stream()	Represents a set of functional dependencies. Each functional dependency is an {@link Arrow}
+calcite	core/src/main/java/org/apache/calcite/util/BitSets.java	impl	BitSet(); get(int); set(int); set(from,to); or(); nextSetBit(); cardinality(); length(); clone()	Utility functions for {@link BitSet}
+calcite	core/src/main/java/org/apache/calcite/util/ImmutableBitSet.java	impl	get(int); clone()	An immutable list of bits
+calcite	core/src/main/java/org/apache/calcite/util/mapping/Mappings.java	use	BitSet(); set(int); equals()	Utility functions related to mappings
+calcite	core/src/test/java/org/apache/calcite/util/BitSetsTest.java	test		Unit test for {@link org.apache.calcite.util.BitSets}
+calcite	core/src/test/java/org/apache/calcite/util/UtilTest.java	test		Unit test for {@link Util} and other classes in this package
+calcite	testkit/src/main/java/org/apache/calcite/test/schemata/catchall/CatchallSchema.java	test		Object whose fields are relations. Called "catch-all" because it's OK
+cassandra	src/java/org/apache/cassandra/hints/HintsDispatcher.java	use	BitSet(int); get(int); set(int); size()	Dispatches a single hints file to a specified node in a batched manner
+cassandra	src/java/org/apache/cassandra/metrics/ThreadLocalMeter.java	use	BitSet(); set(int); clear(int); nextSetBit()	An alternative to Dropwizard Meter which implements the same kind of API
+cassandra	src/java/org/apache/cassandra/metrics/ThreadLocalMetrics.java	use	BitSet(); set(int); clear(int); nextSetBit(); cardinality()	A thread-local counter implementation designed to use in metrics as an alternative to LongAdder u...
+cassandra	src/java/org/apache/cassandra/service/reads/repair/RowIteratorMergeListener.java	use	BitSet(int); get(int); set(int)	The partition level deletion with with which source {@code i} is currently repaired, or
+cassandra	src/java/org/apache/cassandra/utils/MurmurHash.java	use	flip(int); toByteArray(); valueOf(long[])	This is a very fast, non-cryptographic hash suitable for general hash-based
+cassandra	test/burn/org/apache/cassandra/concurrent/LongSharedExecutorPoolTest.java	test		public class LongSharedExecutorPoolTest
+cassandra	test/burn/org/apache/cassandra/net/Reporters.java	test		final class OneTimeUnit
+cassandra	test/distributed/org/apache/cassandra/distributed/test/accord/AccordLoadTest.java	test		public class AccordLoadTest
+cassandra	test/harry/main/org/apache/cassandra/harry/model/ASTSingleTableModel.java	test		The common case there can only be 1 value, but in the case of {@link Conditional.In} this can be ...
+cassandra	test/long/org/apache/cassandra/dht/tokenallocator/AbstractReplicationAwareTokenAllocatorTest.java	test		Base class for {@link Murmur3ReplicationAwareTokenAllocatorTest} and {@link RandomReplicationAwar...
+cassandra	test/microbench/org/apache/cassandra/test/microbench/btree/BTreeTransformBench.java	test		public class BTreeTransformBench
+cassandra	test/simulator/main/org/apache/cassandra/simulator/systems/SimulatedFutureActionScheduler.java	test		public class SimulatedFutureActionScheduler
+cassandra	test/unit/org/apache/cassandra/concurrent/ManyToOneConcurrentLinkedQueueTest.java	test		public class ManyToOneConcurrentLinkedQueueTest
+cassandra	test/unit/org/apache/cassandra/db/compaction/unified/BackgroundCompactionTrackingTest.java	test		public class BackgroundCompactionTrackingTest
+checkstyle	src/it/resources/com/google/checkstyle/test/chapter3filestructure/rule331nowildcard/InputNoWildcardImports.java	test		InputNoWildcardImports.java
+checkstyle	src/it/resources/com/google/checkstyle/test/chapter3filestructure/rule333orderingandspacing/InputFormattedOrderingAndSpacingValid.java	test		public class InputFormattedOrderingAndSpacingValid
+checkstyle	src/it/resources/com/google/checkstyle/test/chapter3filestructure/rule333orderingandspacing/InputFormattedOrderingAndSpacingValid2.java	test		public class InputFormattedOrderingAndSpacingValid2
+checkstyle	src/it/resources/com/google/checkstyle/test/chapter3filestructure/rule333orderingandspacing/InputOrderingAndSpacingValid.java	test		public class InputOrderingAndSpacingValid
+checkstyle	src/it/resources/com/google/checkstyle/test/chapter3filestructure/rule333orderingandspacing/InputOrderingAndSpacingValid2.java	test		public class InputOrderingAndSpacingValid2
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/DetailAstImpl.java	use	BitSet(); set(int); or()	The implementation of {@link DetailAST}. This should only be directly used to
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/FinalParametersCheck.java	use	get(int)	<div>
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/annotation/MissingDeprecatedCheck.java	use	get(int)	<div>
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/coding/AvoidDoubleBraceInitializationCheck.java	use	get(int)	<div>
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/coding/FinalLocalVariableCheck.java	use	get(int)	<div>
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/coding/IllegalTypeCheck.java	use	BitSet(); get(int); isEmpty()	<div>
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/coding/InnerAssignmentCheck.java	use	get(int)	<div>
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/coding/MagicNumberCheck.java	use	get(int)	<div>
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/coding/ModifiedControlVariableCheck.java	use	get(int)	<div>
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/coding/MultipleStringLiteralsCheck.java	use	BitSet(); get(int); set(int); clear()	<div>
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/coding/RequireThisCheck.java	use	get(int)	<div>
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/design/InnerTypeLastCheck.java	use	get(int)	<div>
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/header/HeaderCheck.java	use	BitSet(); get(int)	<div>
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/header/RegexpHeaderCheck.java	use	BitSet(); get(int); cardinality()	<div>
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/indentation/IndentLevel.java	use	BitSet(); get(int); set(int); or(); nextSetBit(); cardinality(); length()	Encapsulates representation of notion of expected indentation levels
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/indentation/SlistHandler.java	use	get(int)	Handler for a list of statements
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/javadoc/AtclauseOrderCheck.java	use	get(int)	<div>
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/javadoc/JavadocTagInfo.java	use	get(int)	This enum defines the various Javadoc tags and their properties
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/sizes/MethodLengthCheck.java	use	BitSet(); set(int); set(from,to); cardinality()	<div>
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/checks/whitespace/ParenPadCheck.java	use	get(int)	<div>
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/site/SiteUtil.java	use	stream()	Utility class for site generation
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/utils/CommonUtil.java	use	BitSet()	Contains utility methods
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/utils/TokenUtil.java	use		Contains utility methods for tokens
+checkstyle	src/main/java/com/puppycrawl/tools/checkstyle/utils/XpathUtil.java	use	get(int)	Contains utility methods for xpath
+checkstyle	src/test/java/com/puppycrawl/tools/checkstyle/DetailAstImplTest.java	test		TestCase to check DetailAST
+checkstyle	src/test/java/com/puppycrawl/tools/checkstyle/bdd/InlineConfigParser.java	test		Pattern for lines under
+checkstyle	src/test/java/com/puppycrawl/tools/checkstyle/internal/AllChecksTest.java	test		Checks that an array is a subset of other array
+checkstyle	src/test/java/com/puppycrawl/tools/checkstyle/internal/XdocsPagesTest.java	test		Generates xdocs pages from templates and performs validations
+checkstyle	src/test/resources/com/puppycrawl/tools/checkstyle/checks/coding/requirethis/InputRequireThisValidateOnlyOverlappingTrue.java	test		public class InputRequireThisValidateOnlyOverlappingTrue
+commons-lang	src/main/java/org/apache/commons/lang3/ArrayUtils.java	use	BitSet(); set(int); nextSetBit(); nextClearBit(); cardinality()	Operations on arrays, primitive arrays (like {@code int[]}) and
+commons-lang	src/main/java/org/apache/commons/lang3/util/FluentBitSet.java	impl	BitSet(); BitSet(int); get(int); get(from,to); set(int); set(int,bool); set(from,to); set(from,to,bool); clear(); clear(int); clear(from,to); flip(int); flip(from,to); and(); or(); xor(); andNot(); nextSetBit(); nextClearBit(); previousSetBit(); previousClearBit(); isEmpty(); cardinality(); size(); length(); intersects(); toByteArray(); toLongArray(); stream(); clone(); hashCode(); toString()	A fluent {@link BitSet} with additional operations
+commons-lang	src/test/java/org/apache/commons/lang3/ArrayUtilsTest.java	test		Tests {@link ArrayUtils}
+commons-lang	src/test/java/org/apache/commons/lang3/HashSetvBitSetBenchmark.java	test		Test to show whether using BitSet for removeAll() methods is faster than using HashSet
+commons-lang	src/test/java/org/apache/commons/lang3/util/FluentBitSetTest.java	test		Tests {@link FluentBitSet}
+druid	benchmarks/src/test/java/org/apache/druid/benchmark/ExpressionSelectorBenchmark.java	test		public class ExpressionSelectorBenchmark
+druid	benchmarks/src/test/java/org/apache/druid/benchmark/NullHandlingBitmapGetVsIteratorBenchmark.java	test		public class NullHandlingBitmapGetVsIteratorBenchmark
+druid	benchmarks/src/test/java/org/apache/druid/benchmark/compression/CompressedColumnarIntsBenchmark.java	test		public class CompressedColumnarIntsBenchmark
+druid	benchmarks/src/test/java/org/apache/druid/benchmark/compression/CompressedVSizeColumnarMultiIntsBenchmark.java	test		public class CompressedVSizeColumnarMultiIntsBenchmark
+druid	extensions-contrib/spectator-histogram/src/main/java/org/apache/druid/spectator/histogram/NullableOffsetsHeader.java	use	BitSet(); set(int); cardinality(); length(); toByteArray()	A header for storing offsets for columns with nullable values
+druid	processing/src/main/java/org/apache/druid/collections/bitmap/BitSetBitmapFactory.java	impl	valueOf(long[])	BitSetBitmapFactory implements BitmapFactory as a wrapper for java.util.BitSet
+druid	processing/src/main/java/org/apache/druid/collections/bitmap/WrappedBitSetBitmap.java	impl	and(); or(); andNot(); clone()	WrappedBitSetBitmap implements MutableBitmap for java.util.BitSet
+druid	processing/src/main/java/org/apache/druid/collections/bitmap/WrappedImmutableBitSetBitmap.java	impl	BitSet(); get(int); nextSetBit(); isEmpty(); cardinality(); toByteArray(); valueOf(long[]); clone()	WrappedImmutableBitSetBitmap implements ImmutableBitmap for java.util.BitSet
+druid	processing/src/main/java/org/apache/druid/query/dimension/ForwardingFilteredDimensionSelector.java	use		@param selector must return true from {@link DimensionSelector#nameLookupPossibleInAdvance()}
+druid	processing/src/main/java/org/apache/druid/query/filter/vector/MultiValueStringVectorValueMatcher.java	use	BitSet(int); get(int); set(int)	public class MultiValueStringVectorValueMatcher
+druid	processing/src/main/java/org/apache/druid/query/filter/vector/SingleValueStringVectorValueMatcher.java	use	BitSet(int); get(int); set(int)	public class SingleValueStringVectorValueMatcher
+druid	processing/src/main/java/org/apache/druid/query/groupby/GroupByQueryQueryToolChest.java	use	BitSet(); get(int); set(int); nextSetBit(); isEmpty()	Toolchest for GroupBy queries
+druid	processing/src/main/java/org/apache/druid/query/groupby/epinephelinae/RowBasedGrouperHelper.java	use	BitSet(int); get(int); set(int); size()	This class contains shared code between {@link GroupByMergingQueryRunner} and {@link GroupByRowPr...
+druid	processing/src/main/java/org/apache/druid/query/rowsandcols/LazilyDecoratedRowsAndColumns.java	use	BitSet(int); get(int); set(int); set(int,bool)	public class LazilyDecoratedRowsAndColumns
+druid	processing/src/main/java/org/apache/druid/segment/DimensionSelectorUtils.java	use	BitSet(int); get(int); set(int)	Generic implementation of {@link DimensionSelector#makeValueMatcher(String)}, uses {@link
+druid	processing/src/main/java/org/apache/druid/segment/RowCombiningTimeAndDimsIterator.java	use	BitSet(); set(int); clear(); nextSetBit()	RowCombiningTimeAndDimsIterator takes some {@link RowIterator}s, assuming that they are "sorted" ...
+druid	processing/src/main/java/org/apache/druid/segment/StringDimensionIndexer.java	use	BitSet(int); get(int); set(int)	Truncates the value to the first {@link #maxStringLength} characters if configured, otherwise ret...
+druid	processing/src/main/java/org/apache/druid/segment/column/StringUtf8DictionaryEncodedColumn.java	use	BitSet(int); get(int); set(int)	{@link DictionaryEncodedColumn<String>} for a column which has a {@link ByteBuffer} based UTF-8 d...
+druid	processing/src/main/java/org/apache/druid/segment/nested/NestedFieldDictionaryEncodedColumn.java	use	BitSet(int); get(int); set(int)	Lookup value from appropriate scalar value dictionary, coercing the value to {@link #logicalType}...
+druid	processing/src/main/java/org/apache/druid/segment/nested/VariantColumn.java	use	BitSet(int); get(int); set(int)	{@link NestedCommonFormatColumn} for single type array columns, and mixed type columns. If {@link...
+druid	processing/src/test/java/org/apache/druid/collections/IntSetTestUtility.java	test		*/
+druid	processing/src/test/java/org/apache/druid/collections/bitmap/BatchIteratorAdapterTest.java	test		public class BatchIteratorAdapterTest
+druid	processing/src/test/java/org/apache/druid/collections/bitmap/BitmapOperationAgainstConsecutiveRunsTest.java	test		public class BitmapOperationAgainstConsecutiveRunsTest
+druid	processing/src/test/java/org/apache/druid/collections/bitmap/BitmapOperationAgainstUniformDistributionTest.java	test		public class BitmapOperationAgainstUniformDistributionTest
+druid	processing/src/test/java/org/apache/druid/collections/bitmap/WrappedBitSetBitmapBitSetTest.java	test		*/
+druid	processing/src/test/java/org/apache/druid/java/util/emitter/core/HttpPostEmitterStressTest.java	test		public class HttpPostEmitterStressTest
+druid	processing/src/test/java/org/apache/druid/segment/IndexIOTest.java	test		This is mostly a test of the validator
+druid	processing/src/test/java/org/apache/druid/segment/data/TestColumnCompression.java	test		public class TestColumnCompression
+eclipse-collections	eclipse-collections/src/main/java/org/eclipse/collections/impl/list/immutable/primitive/ImmutableBooleanArrayList.java	use	BitSet(int); get(int); set(int); set(from,to); size(); clone()	ImmutableBooleanArrayList is the non-modifiable equivalent of {@link BooleanArrayList}
+eclipse-collections	eclipse-collections/src/main/java/org/eclipse/collections/impl/list/mutable/primitive/BooleanArrayList.java	use	BitSet(); BitSet(int); get(int); set(int); set(from,to); set(from,to,bool); clear(); clear(int); clear(from,to); size()	BooleanArrayList is similar to {@link FastList}, and is memory-optimized for boolean primitives
+eclipse-collections	eclipse-collections/src/main/java/org/eclipse/collections/impl/map/mutable/primitive/ObjectBooleanHashMap.java	use	BitSet(int); get(int); set(int,bool); set(from,to); clear(); size(); hashCode()	@since 3.0
+eclipse-collections	eclipse-collections/src/main/java/org/eclipse/collections/impl/map/mutable/primitive/ObjectBooleanHashMapWithHashingStrategy.java	use	BitSet(int); get(int); set(int,bool); set(from,to); clear(); size()	@since 7.0
+eclipse-collections	unit-tests/src/test/java/org/eclipse/collections/impl/list/mutable/primitive/BooleanArrayListTest.java	test		JUnit test for {@link BooleanArrayList}
+eclipse-collections	unit-tests/src/test/java/org/eclipse/collections/impl/map/mutable/primitive/ObjectBooleanHashMapTestCase.java	test		abstract class ObjectBooleanHashMapTestCase
+elasticsearch	benchmarks/src/main/java/org/elasticsearch/benchmark/compute/operator/BlockBenchmark.java	test		All data type/block kind combinations to be loaded before the benchmark
+elasticsearch	modules/lang-painless/src/main/java/org/elasticsearch/painless/ClassWriter.java	use		Manages the top level writers for class and possibly
+elasticsearch	modules/lang-painless/src/main/java/org/elasticsearch/painless/Def.java	use	BitSet(int); get(int); set(int); length()	Support for dynamic type (def)
+elasticsearch	modules/lang-painless/src/main/java/org/elasticsearch/painless/MethodWriter.java	use	set(int)	Extension of {@link GeneratorAdapter} with some utility methods
+elasticsearch	modules/lang-painless/src/main/java/org/elasticsearch/painless/PainlessScript.java	use		Abstract superclass on top of which all Painless scripts are built
+elasticsearch	modules/lang-painless/src/main/java/org/elasticsearch/painless/phase/DefaultIRTreeToASMBytesPhase.java	use	BitSet(int); length()	public class DefaultIRTreeToASMBytesPhase
+elasticsearch	modules/lang-painless/src/main/java/org/elasticsearch/painless/phase/PainlessUserTreeToIRTreePhase.java	use		public class PainlessUserTreeToIRTreePhase
+elasticsearch	server/src/main/java/org/elasticsearch/action/search/SearchQueryThenFetchAsyncAction.java	use	BitSet(int); get(int); set(int); size()	Response to a query phase request, holding per-shard results that have been partially reduced as ...
+elasticsearch	server/src/main/java/org/elasticsearch/common/logging/HeaderWarning.java	use	BitSet(int); get(int); set(int); length()	This is a simplistic logger that adds warning messages to HTTP headers
+elasticsearch	server/src/main/java/org/elasticsearch/lucene/util/automaton/MinimizationOperations.java	use	BitSet(int); get(int); set(int); clear(int)	Operations for minimizing automata
+elasticsearch	server/src/test/java/org/elasticsearch/common/util/ArrayUtilsTests.java	test		public class ArrayUtilsTests
+elasticsearch	x-pack/plugin/autoscaling/src/test/java/org/elasticsearch/xpack/autoscaling/AutoscalingTestCase.java	test		abstract class AutoscalingTestCase
+elasticsearch	x-pack/plugin/eql/src/main/java/org/elasticsearch/xpack/eql/analysis/Verifier.java	use	BitSet(int); get(int); set(int); nextSetBit()	The verifier has the role of checking the analyzed tree for failures and build a list of failures...
+elasticsearch	x-pack/plugin/eql/src/main/java/org/elasticsearch/xpack/eql/parser/EqlParser.java	use		Parses an EQL statement into execution plan
+elasticsearch	x-pack/plugin/eql/src/test/java/org/elasticsearch/xpack/eql/expression/function/scalar/string/BetweenFunctionPipeTests.java	test		public class BetweenFunctionPipeTests
+elasticsearch	x-pack/plugin/eql/src/test/java/org/elasticsearch/xpack/eql/expression/function/scalar/string/IndexOfFunctionPipeTests.java	test		public class IndexOfFunctionPipeTests
+elasticsearch	x-pack/plugin/eql/src/test/java/org/elasticsearch/xpack/eql/expression/function/scalar/string/SubstringFunctionPipeTests.java	test		public class SubstringFunctionPipeTests
+elasticsearch	x-pack/plugin/esql-datasource-ndjson/src/main/java/org/elasticsearch/xpack/esql/datasource/ndjson/NdJsonPageDecoder.java	use	BitSet(int); get(int); set(int); clear(); size()	public class NdJsonPageDecoder
+elasticsearch	x-pack/plugin/esql-datasource-ndjson/src/main/java/org/elasticsearch/xpack/esql/datasource/ndjson/NdJsonSchemaInferrer.java	use	BitSet(); get(int); set(int); clear()	Infers schema from NDJSON files by reading the first N lines
+elasticsearch	x-pack/plugin/esql-datasource-orc/src/main/java/org/elasticsearch/xpack/esql/datasource/orc/OrcFormatReader.java	use	BitSet(int); set(int)	{@link RangeAwareFormatReader} implementation for Apache ORC files
+elasticsearch	x-pack/plugin/esql/arrow/src/main/java/org/elasticsearch/xpack/esql/arrow/BlockConverter.java	use	BitSet(); BitSet(int); set(int); toByteArray()	Convert a block into Arrow buffers
+elasticsearch	x-pack/plugin/esql/compute/src/main/generated-src/org/elasticsearch/compute/data/BooleanArrayBlock.java	gen		Block implementation that stores values in a {@link BooleanArrayVector}
+elasticsearch	x-pack/plugin/esql/compute/src/main/generated-src/org/elasticsearch/compute/data/BooleanBigArrayBlock.java	gen		Block implementation that stores values in a {@link BooleanBigArrayVector}. Does not take ownersh...
+elasticsearch	x-pack/plugin/esql/compute/src/main/generated-src/org/elasticsearch/compute/data/BytesRefArrayBlock.java	gen		Block implementation that stores values in a {@link BytesRefArrayVector}
+elasticsearch	x-pack/plugin/esql/compute/src/main/generated-src/org/elasticsearch/compute/data/DoubleArrayBlock.java	gen		Block implementation that stores values in a {@link DoubleArrayVector}
+elasticsearch	x-pack/plugin/esql/compute/src/main/generated-src/org/elasticsearch/compute/data/DoubleBigArrayBlock.java	gen		Block implementation that stores values in a {@link DoubleBigArrayVector}. Does not take ownershi...
+elasticsearch	x-pack/plugin/esql/compute/src/main/generated-src/org/elasticsearch/compute/data/FloatArrayBlock.java	gen		Block implementation that stores values in a {@link FloatArrayVector}
+elasticsearch	x-pack/plugin/esql/compute/src/main/generated-src/org/elasticsearch/compute/data/FloatBigArrayBlock.java	gen		Block implementation that stores values in a {@link FloatBigArrayVector}. Does not take ownership...
+elasticsearch	x-pack/plugin/esql/compute/src/main/generated-src/org/elasticsearch/compute/data/IntArrayBlock.java	gen		Block implementation that stores values in a {@link IntArrayVector}
+elasticsearch	x-pack/plugin/esql/compute/src/main/generated-src/org/elasticsearch/compute/data/IntBigArrayBlock.java	gen		Block implementation that stores values in a {@link IntBigArrayVector}. Does not take ownership o...
+elasticsearch	x-pack/plugin/esql/compute/src/main/generated-src/org/elasticsearch/compute/data/LongArrayBlock.java	gen		Block implementation that stores values in a {@link LongArrayVector}
+elasticsearch	x-pack/plugin/esql/compute/src/main/generated-src/org/elasticsearch/compute/data/LongBigArrayBlock.java	gen		Block implementation that stores values in a {@link LongBigArrayVector}. Does not take ownership ...
+elasticsearch	x-pack/plugin/esql/compute/src/main/java/org/elasticsearch/compute/data/AbstractArrayBlock.java	use	BitSet(int); get(int); set(int); nextSetBit(); isEmpty(); cardinality(); size(); toLongArray(); valueOf(long[])	@param positionCount the number of values in this block
+elasticsearch	x-pack/plugin/esql/compute/src/main/java/org/elasticsearch/compute/data/AbstractBlockBuilder.java	use	BitSet(); set(int)	Called during implementations of {@link Block.Builder#build} as a first step
+elasticsearch	x-pack/plugin/esql/compute/src/main/java/org/elasticsearch/compute/data/BlockFactory.java	use		{@return a builder for constructing a {@link BlockFactory}}
+elasticsearch	x-pack/plugin/esql/compute/src/main/java/org/elasticsearch/compute/data/BlockRamUsageEstimator.java	use	size()	final class BlockRamUsageEstimator
+elasticsearch	x-pack/plugin/esql/compute/src/test/java/org/elasticsearch/compute/data/BasicBlockTests.java	test		Take an object with exactly 1 reference and assert that ref counting works fine
+elasticsearch	x-pack/plugin/esql/compute/src/test/java/org/elasticsearch/compute/data/BlockAccountingTests.java	test		Ideally we would test a real Block builder, but that would require a large heap which is not poss...
+elasticsearch	x-pack/plugin/esql/compute/src/test/java/org/elasticsearch/compute/data/BlockFactoryTests.java	test		public class BlockFactoryTests
+elasticsearch	x-pack/plugin/esql/compute/src/test/java/org/elasticsearch/compute/data/BlockTypeRandomizer.java	test		Returns a block with the same contents, but with a randomized type (Constant, vector, big-array...)
+elasticsearch	x-pack/plugin/esql/compute/src/test/java/org/elasticsearch/compute/data/BooleanBlockEqualityTests.java	test		public class BooleanBlockEqualityTests
+elasticsearch	x-pack/plugin/esql/compute/src/test/java/org/elasticsearch/compute/data/BytesRefBlockEqualityTests.java	test		public class BytesRefBlockEqualityTests
+elasticsearch	x-pack/plugin/esql/compute/src/test/java/org/elasticsearch/compute/data/DoubleBlockEqualityTests.java	test		public class DoubleBlockEqualityTests
+elasticsearch	x-pack/plugin/esql/compute/src/test/java/org/elasticsearch/compute/data/FilteredBlockTests.java	test		public class FilteredBlockTests
+elasticsearch	x-pack/plugin/esql/compute/src/test/java/org/elasticsearch/compute/data/FloatBlockEqualityTests.java	test		public class FloatBlockEqualityTests
+elasticsearch	x-pack/plugin/esql/compute/src/test/java/org/elasticsearch/compute/data/IntBlockEqualityTests.java	test		public class IntBlockEqualityTests
+elasticsearch	x-pack/plugin/esql/compute/src/test/java/org/elasticsearch/compute/data/LongBlockEqualityTests.java	test		public class LongBlockEqualityTests
+elasticsearch	x-pack/plugin/esql/compute/src/test/java/org/elasticsearch/compute/operator/MMROperatorTests.java	test		public class MMROperatorTests
+elasticsearch	x-pack/plugin/esql/compute/test/src/main/java/org/elasticsearch/compute/test/MockBlockFactory.java	test		A block factory that tracks the creation of blocks, vectors, builders that it creates. The
+elasticsearch	x-pack/plugin/esql/src/main/generated-src/org/elasticsearch/xpack/esql/expression/predicate/operator/comparison/InBooleanEvaluator.java	gen		{@link ExpressionEvaluator} implementation for {@link In}
+elasticsearch	x-pack/plugin/esql/src/main/generated-src/org/elasticsearch/xpack/esql/expression/predicate/operator/comparison/InBytesRefEvaluator.java	gen		{@link ExpressionEvaluator} implementation for {@link In}
+elasticsearch	x-pack/plugin/esql/src/main/generated-src/org/elasticsearch/xpack/esql/expression/predicate/operator/comparison/InDoubleEvaluator.java	gen		{@link ExpressionEvaluator} implementation for {@link In}
+elasticsearch	x-pack/plugin/esql/src/main/generated-src/org/elasticsearch/xpack/esql/expression/predicate/operator/comparison/InIntEvaluator.java	gen		{@link ExpressionEvaluator} implementation for {@link In}
+elasticsearch	x-pack/plugin/esql/src/main/generated-src/org/elasticsearch/xpack/esql/expression/predicate/operator/comparison/InLongEvaluator.java	gen		{@link ExpressionEvaluator} implementation for {@link In}
+elasticsearch	x-pack/plugin/esql/src/main/generated-src/org/elasticsearch/xpack/esql/expression/predicate/operator/comparison/InMillisNanosEvaluator.java	gen		{@link ExpressionEvaluator} implementation for {@link In}
+elasticsearch	x-pack/plugin/esql/src/main/generated-src/org/elasticsearch/xpack/esql/expression/predicate/operator/comparison/InNanosMillisEvaluator.java	gen		{@link ExpressionEvaluator} implementation for {@link In}
+elasticsearch	x-pack/plugin/esql/src/main/java/org/elasticsearch/xpack/esql/analysis/Analyzer.java	use	BitSet(int); set(int)	This class is part of the planner. Resolves references (such as variable and index names) and per...
+elasticsearch	x-pack/plugin/esql/src/main/java/org/elasticsearch/xpack/esql/analysis/Verifier.java	use	nextSetBit()	This class is part of the planner. Responsible for failing impossible queries with a human-readab...
+elasticsearch	x-pack/plugin/esql/src/main/java/org/elasticsearch/xpack/esql/core/tree/NodeToString.java	use	BitSet(); get(int); set(from,to); size()	Renders {@link Node} trees as strings
+elasticsearch	x-pack/plugin/esql/src/main/java/org/elasticsearch/xpack/esql/datasources/spi/ColumnBlockConversions.java	use	BitSet(int); set(int)	Converts columnar primitive arrays to ESQL {@link Block}s, avoiding the per-element overhead
+elasticsearch	x-pack/plugin/esql/src/main/java/org/elasticsearch/xpack/esql/expression/predicate/operator/comparison/In.java	use	get(int)	The {@code IN} operator
+elasticsearch	x-pack/plugin/esql/src/main/java/org/elasticsearch/xpack/esql/parser/EsqlParser.java	use	BitSet(int); get(int); set(int); cardinality()	Maximum number of characters in an ESQL query. Antlr may parse the entire
+elasticsearch	x-pack/plugin/esql/src/main/java/org/elasticsearch/xpack/esql/parser/PromqlParser.java	use		Parses an PromQL expression into execution plan
+elasticsearch	x-pack/plugin/esql/src/main/java/org/elasticsearch/xpack/esql/telemetry/FeatureMetric.java	use	set(int)	ESQL "features" returned by the usage API. This <strong>mostly</strong> tracks
+elasticsearch	x-pack/plugin/ml/src/main/java/org/elasticsearch/xpack/ml/aggs/frequentitemsets/CountingItemSetTraverser.java	use	BitSet(); BitSet(int); get(int); set(int); clear(int)	Item set traverser to find the next interesting item set
+elasticsearch	x-pack/plugin/old-lucene-versions/src/main/java/org/elasticsearch/xpack/lucene/bwc/codecs/lucene70/fst/Util.java	use	BitSet(); get(int); set(int)	Static helper methods
+elasticsearch	x-pack/plugin/ql/src/main/java/org/elasticsearch/xpack/ql/tree/Node.java	use	BitSet(); get(int); set(from,to); size(); toString()	Immutable tree structure
+elasticsearch	x-pack/plugin/ql/src/test/java/org/elasticsearch/xpack/ql/expression/function/scalar/FunctionTestUtils.java	test		final class FunctionTestUtils
+elasticsearch	x-pack/plugin/ql/src/test/java/org/elasticsearch/xpack/ql/expression/function/scalar/string/StartsWithFunctionPipeTests.java	test		public class StartsWithFunctionPipeTests
+elasticsearch	x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/analysis/analyzer/Verifier.java	use	BitSet(int); set(int); nextSetBit()	The verifier has the role of checking the analyzed tree for failures and build a list of failures...
+elasticsearch	x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/CompositeAggCursor.java	use	toByteArray(); valueOf(long[])	Cursor for composite aggregation (GROUP BY)
+elasticsearch	x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/CompositeAggRowSet.java	use		{@link RowSet} specific to (GROUP BY) aggregation
+elasticsearch	x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/PivotCursor.java	use		public class PivotCursor
+elasticsearch	x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/PivotRowSet.java	use		PivotRowSet.java
+elasticsearch	x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/Querier.java	use	nextSetBit(); cardinality()	Refreshes the PIT ID on the search source with the new value returned in the response
+elasticsearch	x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/ResultRowSet.java	use	nextSetBit(); cardinality(); size(); length()	abstract class ResultRowSet
+elasticsearch	x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/SchemaCompositeAggRowSet.java	use		Extension of the {@link RowSet} over a composite agg, extending it to provide its schema
+elasticsearch	x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/SchemaSearchHitRowSet.java	use		Initial results from a search hit search. Distinct from the following pages
+elasticsearch	x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/SearchHitCursor.java	use	toByteArray(); valueOf(long[])	public class SearchHitCursor
+elasticsearch	x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/execution/search/SearchHitRowSet.java	use		Extracts rows from an array of {@link SearchHit}
+elasticsearch	x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/parser/SqlParser.java	use		Used only in tests
+elasticsearch	x-pack/plugin/sql/src/main/java/org/elasticsearch/xpack/sql/querydsl/container/QueryContainer.java	use	BitSet(int); get(int); set(int); size(); equals()	Container for various references of the built ES query
+elasticsearch	x-pack/plugin/sql/src/test/java/org/elasticsearch/xpack/sql/execution/search/CompositeAggregationCursorTests.java	test		public class CompositeAggregationCursorTests
+elasticsearch	x-pack/plugin/sql/src/test/java/org/elasticsearch/xpack/sql/execution/search/QuerierTests.java	test		public class QuerierTests
+elasticsearch	x-pack/plugin/sql/src/test/java/org/elasticsearch/xpack/sql/execution/search/SearchHitCursorTests.java	test		public class SearchHitCursorTests
+elasticsearch	x-pack/plugin/sql/src/test/java/org/elasticsearch/xpack/sql/expression/function/scalar/string/InsertFunctionPipeTests.java	test		public class InsertFunctionPipeTests
+elasticsearch	x-pack/plugin/sql/src/test/java/org/elasticsearch/xpack/sql/expression/function/scalar/string/LocateFunctionPipeTests.java	test		public class LocateFunctionPipeTests
+elasticsearch	x-pack/plugin/sql/src/test/java/org/elasticsearch/xpack/sql/expression/function/scalar/string/ReplaceFunctionPipeTests.java	test		public class ReplaceFunctionPipeTests
+elasticsearch	x-pack/plugin/sql/src/test/java/org/elasticsearch/xpack/sql/expression/function/scalar/string/SubstringFunctionPipeTests.java	test		public class SubstringFunctionPipeTests
+elasticsearch	x-pack/plugin/sql/src/test/java/org/elasticsearch/xpack/sql/querydsl/container/QueryContainerTests.java	test		public class QueryContainerTests
+elasticsearch	x-pack/plugin/text-structure/src/main/java/org/elasticsearch/xpack/textstructure/structurefinder/DelimitedTextStructureFinder.java	use	BitSet(); set(int); set(from,to); nextSetBit()	Make a mask whose bits are set when the corresponding field in every supplied
+elasticsearch	x-pack/plugin/text-structure/src/main/java/org/elasticsearch/xpack/textstructure/structurefinder/TimestampFormatFinder.java	use	BitSet(); get(int); set(int); isEmpty(); cardinality(); length(); stream()	Used to find the best timestamp format for one of the following situations:
+elasticsearch	x-pack/plugin/text-structure/src/test/java/org/elasticsearch/xpack/textstructure/structurefinder/DelimitedTextStructureFinderTests.java	test		public class DelimitedTextStructureFinderTests
+elasticsearch	x-pack/plugin/text-structure/src/test/java/org/elasticsearch/xpack/textstructure/structurefinder/TimestampFormatFinderTests.java	test		Logic copied from {@code org.elasticsearch.ingest.common.DateFormat.Tai64n.parseMillis}
+elasticsearch	x-pack/plugin/watcher/src/test/java/org/elasticsearch/xpack/watcher/WatcherIndexingListenerTests.java	test		create a mock cluster state, the returns the specified index as watch index
+elasticsearch	x-pack/plugin/watcher/src/test/java/org/elasticsearch/xpack/watcher/trigger/schedule/engine/TickerScheduleEngineTests.java	test		When a cluster state changes and watches are restarted, the engine should clean up any previous w...
+flink	flink-connectors/flink-connector-base/src/test/java/org/apache/flink/connector/base/source/reader/synchronization/FutureCompletingBlockingQueueTest.java	test		This test is to guard that our reflection is not broken and we do not lose the performance
+flink	flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint/DefaultCheckpointPlanCalculator.java	use	BitSet(int); get(int); set(int); cardinality(); size()	Default implementation for {@link CheckpointPlanCalculator}. If all tasks are running, it
+flink	flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint/RescaleMappings.java	use	BitSet(int); get(int); set(int)	Contains the fine-grain channel mappings that occur when a connected operator has been rescaled
+flink	flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint/RoundRobinOperatorStateRepartitioner.java	use	BitSet(int); set(int); cardinality()	Current default implementation of {@link OperatorStateRepartitioner} that redistributes state in
+flink	flink-runtime/src/main/java/org/apache/flink/runtime/io/network/partition/consumer/SingleInputGate.java	use	BitSet(int); get(int); set(int); clear(int); nextClearBit(); cardinality()	An input gate consumes one or more partitions of a single produced intermediate result
+flink	flink-runtime/src/main/java/org/apache/flink/runtime/scheduler/VertexEndOfDataListener.java	use	BitSet(); get(int); set(int); cardinality()	Records the end of data event of each task, and allows for checking whether all tasks of a {@link
+flink	flink-runtime/src/main/java/org/apache/flink/streaming/runtime/watermark/AlignedWatermarkCombiner.java	use	BitSet(int); set(int); clear(); cardinality()	A {@link WatermarkCombiner} is design to align {@link Watermark}s. It will combine watermarks
+flink	flink-runtime/src/main/java/org/apache/flink/streaming/runtime/watermark/BoolWatermarkCombiner.java	use	BitSet(int); set(int); set(from,to); clear(from,to); cardinality()	A {@link WatermarkCombiner} for unaligned {@link BoolWatermark}s
+flink	flink-runtime/src/main/java/org/apache/flink/streaming/runtime/watermark/LongWatermarkCombiner.java	use	BitSet(int); set(int); cardinality()	A {@link WatermarkCombiner} for unaligned {@link LongWatermark}s
+flink	flink-runtime/src/main/java/org/apache/flink/streaming/runtime/watermark/extension/eventtime/EventTimeWatermarkHandler.java	use	BitSet(int); set(int); cardinality()	This class is used to handle {@link EventTimeExtension} related watermarks in operator, such as
+flink	flink-runtime/src/test/java/org/apache/flink/runtime/jobmanager/SlotCountExceedingParallelismTest.java	test		Tests that Flink can execute jobs with a higher parallelism than available number of slots. This
+flink	flink-runtime/src/test/java/org/apache/flink/runtime/operators/hash/CompactingHashTableTest.java	test		This has to be duplicated in InPlaceMutableHashTableTest and CompactingHashTableTest because
+flink	flink-runtime/src/test/java/org/apache/flink/runtime/operators/hash/InPlaceMutableHashTableTest.java	test		This has to be duplicated in InPlaceMutableHashTableTest and CompactingHashTableTest because
+flink	flink-streaming-java/src/main/java/org/apache/flink/streaming/util/serialize/FlinkChillPackageRegistrar.java	use		Registers all chill serializers used for Java types
+flink	flink-streaming-java/src/test/java/org/apache/flink/streaming/runtime/operators/windowing/KeyMapPutTest.java	test		KeyMapPutTest.java
+flink	flink-table/flink-table-common/src/main/java/org/apache/flink/table/utils/PartitionPathUtils.java	use	BitSet(int); get(int); set(int); size()	Make partition path from partition spec
+flink	flink-table/flink-table-planner/src/main/java/org/apache/calcite/rel/metadata/RelMdPredicates.java	use	get(int); set(int); nextSetBit(); cardinality()	Utility to infer Predicates that are applicable above a RelNode
+flink	flink-table/flink-table-planner/src/main/java/org/apache/calcite/sql2rel/SqlToRelConverter.java	use	BitSet(); set(int)	Converts a SQL parse tree (consisting of {@link org.apache.calcite.sql.SqlNode} objects) into a
+flink	flink-table/flink-table-planner/src/main/java/org/apache/flink/table/planner/plan/rules/logical/FlinkAggregateJoinTransposeRule.java	use	BitSet(); get(int); set(int)	This rule is copied from Calcite's {@link
+flink	flink-table/flink-table-runtime/src/main/java/org/apache/flink/table/data/UpdatableRowData.java	use	BitSet(int); get(int); set(int)	An implementation of {@link RowData} which is backed by a {@link RowData} and an updated Java
+flink	flink-table/flink-table-runtime/src/main/java/org/apache/flink/table/runtime/operators/join/SortMergeJoinFunction.java	use	BitSet(); get(int); set(int); clear()	public class SortMergeJoinFunction
+flink	flink-table/flink-table-runtime/src/main/java/org/apache/flink/table/runtime/operators/sink/constraint/BinaryLengthConstraint.java	use	get(int)	final class BinaryLengthConstraint
+flink	flink-table/flink-table-runtime/src/main/java/org/apache/flink/table/runtime/operators/sink/constraint/CharLengthConstraint.java	use	get(int)	final class CharLengthConstraint
+flink	flink-table/flink-table-runtime/src/main/java/org/apache/flink/table/runtime/operators/sink/constraint/ConstraintEnforcerExecutor.java	use	BitSet(int); set(int); size()	Logic extracted from {@link ConstraintEnforcer} in order to use it outside of {@link
+flink	flink-tests/src/test/java/org/apache/flink/runtime/operators/lifecycle/validation/DrainingValidator.java	test		For each input, checks that the {@link Watermark#MAX_WATERMARK} was received and then the input
+flink	flink-tests/src/test/java/org/apache/flink/test/checkpointing/UnalignedCheckpointRescaleITCase.java	test		Creates a FailingMapper that only fails during snapshot operations
+flink	flink-tests/src/test/java/org/apache/flink/test/state/operator/restore/StreamOperatorSnapshotRestoreTest.java	test		Test restoring an operator from a snapshot (local recovery activated, JM snapshot deleted)
+flink	flink-tests/src/test/java/org/apache/flink/test/windowing/sessionwindows/SessionWindowITCase.java	test		public class SessionWindowITCase
+graal	compiler/src/jdk.graal.compiler.test/src/jdk/graal/compiler/hotspot/amd64/test/StubAVXTest.java	test		public class StubAVXTest
+graal	compiler/src/jdk.graal.compiler.test/src/jdk/graal/compiler/hotspot/replaycomp/test/RecordedOperationPersistenceTest.java	test		Tests the JSON serialization and deserialization performed by
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/core/common/alloc/BasicBlockOrderUtils.java	use	BitSet(int); get(int); set(int)	The initial capacities of the worklists used for iteratively finding the block order
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/core/common/alloc/DefaultCodeEmissionOrder.java	use	BitSet(int)	Computes an ordering of the blocks that can be used by the machine code generator. The machine
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/core/common/alloc/LinearScanOrder.java	use	BitSet(int); clear(int)	Computes an ordering of the blocks that can be used by the linear scan register allocator
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/core/common/cfg/BasicBlockSet.java	use	BitSet(int); get(int); set(int)	public class BasicBlockSet
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/core/common/cfg/DominatorOptimizationProblem.java	use	BitSet(int); get(int); set(int)	This class represents a dominator tree problem, i.e. a problem which can be solved by traversing
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/core/common/util/BitMap2D.java	use	BitSet(int); get(from,to); set(from,to); clear()	This class implements a two-dimensional bitmap
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/hotspot/HotSpotForeignCallLinkage.java	use	BitSet(); set(int); nextSetBit(); cardinality(); toLongArray(); valueOf(long[])	The details required to link a HotSpot runtime or stub call
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/hotspot/HotSpotReplacementsImpl.java	use		Filters certain method substitutions based on whether there is underlying hardware support for
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/hotspot/SymbolicSnippetEncoder.java	use		This class performs graph encoding using {@link GraphEncoder} but also converts JVMCI type and
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/hotspot/aarch64/AArch64HotSpotRegisterAllocationConfig.java	use	BitSet(int); get(int); set(int); clear(int); size()	Excluding r27 is a temporary solution until we exclude r27 unconditionally at
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/hotspot/amd64/AMD64HotSpotRegisterAllocationConfig.java	use	BitSet(int); get(int); set(int); clear(int); size()	Specify priority of register selection within phases of register allocation. Highest priority
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/hotspot/phases/OnStackReplacementPhase.java	use	get(int)	Generates a speculative type check on {@code osrLocal} for {@code narrowedStamp}
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/hotspot/replaycomp/RecordedOperationPersistence.java	impl	toLongArray(); valueOf(long[])	Provides functionality for persisting and loading recorded compilation units
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/hotspot/replaycomp/proxy/HotSpotResolvedJavaMethodProxy.java	use		final class HotSpotResolvedJavaMethodProxy
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/hotspot/stubs/SnippetStub.java	use		Base class for a stub defined by a snippet
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/java/BciBlockMapping.java	use	BitSet(); get(int); set(int); clear(); clear(int); or(); andNot(); nextSetBit(); previousSetBit(); isEmpty(); length(); clone()	Builds a mapping between bytecodes and basic blocks and builds a conservative control flow graph
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/java/BytecodeParser.java	use	BitSet(); get(int); set(int); andNot(); nextSetBit(); isEmpty(); cardinality(); clone()	The {@code GraphBuilder} class parses the bytecode of a method and builds the IR graph
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/java/LargeLocalLiveness.java	use	BitSet(int); clear(); or(); andNot(); nextSetBit()	final class LargeLocalLiveness
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/java/LocalLiveness.java	use	BitSet(); or(); nextSetBit()	Encapsulates the liveness calculation, so that subclasses for locals &le; 64 and locals &gt; 64
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/java/SmallLocalLiveness.java	use	nextSetBit()	final class SmallLocalLiveness
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/lir/alloc/lsra/LinearScanResolveDataFlowPhase.java	use	BitSet(int); get(int); set(int); clear(); or()	Phase 6: resolve data flow
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/lir/amd64/AMD64VZeroUpper.java	use	BitSet(); get(int); set(int); equals()	vzeroupper is essential to avoid performance penalty during SSE-AVX transition. Specifically,
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/lir/constopt/ConstantLoadOptimization.java	use	BitSet(); get(int); set(int)	This optimization tries to improve the handling of constants by replacing a single definition of
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/lir/constopt/ConstantTreeAnalyzer.java	use	BitSet(int); get(int); set(int); size()	Analyzes a {@link ConstantTree} and marks potential materialization positions
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/lir/dfa/UniqueWorkList.java	use	BitSet(int); get(int)	Ensures that an element is only in the worklist once
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/lir/stackslotalloc/FixPointIntervalBuilder.java	use	BitSet(int); get(int); set(int); clear(int); or(); nextSetBit(); clone(); equals()	Calculates the stack intervals using a worklist-based backwards data-flow analysis
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/nodes/GraphDecoder.java	use	BitSet(int); get(int); set(int); set(from,to); clear(int); nextSetBit(); isEmpty()	Decoder for {@link EncodedGraph encoded graphs} produced by {@link GraphEncoder}. Support for
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/nodes/spi/DelegatingReplacements.java	use		A convenience class for overriding just a portion of the Replacements API
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/nodes/spi/Replacements.java	use		Interface for managing replacements
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/nodes/spi/SnippetParameterInfo.java	use	BitSet(int); set(int)	Encodes info about a snippet's parameters derived from annotations such as
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/phases/common/InsertProxyPhase.java	use	BitSet(); get(int); set(int)	Phase that inserts proxies after partial evaluation. Performing the proxy insertion in a separate
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/phases/common/inlining/walker/CallsiteHolderExplorable.java	use	get(int); isEmpty()	<p>
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/phases/common/inlining/walker/InliningData.java	use	BitSet(); set(int); toString()	<p>
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/phases/common/inlining/walker/MethodInvocation.java	use		<p>
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/replacements/DefaultJavaLoweringProvider.java	use	BitSet(); get(int); set(int)	VM-independent lowerings for standard Java nodes. VM-specific methods are abstract and must be
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/replacements/NonNullParameterPlugin.java	use	get(int)	A {@link ParameterPlugin} that sets non-null stamps for parameters annotated with
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/replacements/ReplacementsImpl.java	use	isEmpty()	The preprocessed replacement graphs. This is keyed by a pair of a method and options because
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/replacements/SnippetTemplate.java	use	BitSet(int); set(int)	A snippet template is a graph created by parsing a snippet method and then specialized by binding
+graal	compiler/src/jdk.graal.compiler/src/jdk/graal/compiler/virtual/phases/ea/PartialEscapeClosure.java	use	BitSet(int); get(int); set(int)	Nodes with inputs that were modified during analysis are marked in this bitset - this way
+graal	espresso-compiler-stub/src/com.oracle.truffle.espresso.graal/src/com/oracle/truffle/espresso/graal/DummyReplacements.java	use		final class DummyReplacements
+graal	espresso/src/com.oracle.truffle.espresso.libjavavm/src/com/oracle/truffle/espresso/libjavavm/Arguments.java	use	get(int)	final class Arguments
+graal	espresso/src/com.oracle.truffle.espresso.libjavavm/src/com/oracle/truffle/espresso/libjavavm/LibEspresso.java	use	BitSet(); set(int)	final class LibEspresso
+graal	espresso/src/com.oracle.truffle.espresso/src/com/oracle/truffle/espresso/analysis/BlockIterator.java	use	BitSet(int); get(int); set(int); clear(int)	Breadth-first iteration over a graph's blocks
+graal	espresso/src/com.oracle.truffle.espresso/src/com/oracle/truffle/espresso/analysis/GraphBuilder.java	use	BitSet(); BitSet(int); get(int); set(int)	Analyses control flow of the byte code to identify every start of a basic block
+graal	espresso/src/com.oracle.truffle.espresso/src/com/oracle/truffle/espresso/analysis/Util.java	impl	BitSet(int); or(); nextSetBit(); nextClearBit()	final class Util
+graal	espresso/src/com.oracle.truffle.espresso/src/com/oracle/truffle/espresso/analysis/frame/FrameAnalysis.java	use	BitSet(int); get(int); set(int); set(from,to); set(from,to,bool); clear(int)	Statically analyses bytecodes to produce a {@link EspressoFrameDescriptor frame description} for
+graal	espresso/src/com.oracle.truffle.espresso/src/com/oracle/truffle/espresso/analysis/graph/EspressoExecutionGraph.java	use	BitSet(int); get(int); set(int)	final class EspressoExecutionGraph
+graal	espresso/src/com.oracle.truffle.espresso/src/com/oracle/truffle/espresso/analysis/liveness/BlockBoundaryFinder.java	use	BitSet(int); get(int); set(int)	Does a single pass over all blocks in order to find the set of local variables that is alive at
+graal	espresso/src/com.oracle.truffle.espresso/src/com/oracle/truffle/espresso/analysis/liveness/BlockBoundaryResult.java	use		public interface BlockBoundaryResult
+graal	espresso/src/com.oracle.truffle.espresso/src/com/oracle/truffle/espresso/analysis/liveness/LivenessAnalysis.java	use	BitSet(int); get(int); set(int); clear(int); or(); andNot(); clone()	final class LivenessAnalysis
+graal	espresso/src/com.oracle.truffle.espresso/src/com/oracle/truffle/espresso/analysis/liveness/LoopPropagatorClosure.java	use	BitSet(int); get(int); set(int); clear(); clear(int); or(); andNot(); isEmpty(); clone()	Glues together loop entries and loop ends by forcing loop ends to have an end state that is a
+graal	sdk/src/org.graalvm.launcher/src/org/graalvm/launcher/Launcher.java	use	BitSet(); get(int); set(int); set(from,to)	Default option description indentation
+graal	sdk/src/org.graalvm.polyglot.tck/src/org/graalvm/polyglot/tck/TypeDescriptor.java	use	BitSet(); get(int); set(int); isEmpty()	Represents a type of a polyglot value. Types include primitive types, null type, object type,
+graal	substratevm/src/com.oracle.graal.pointsto/src/com/oracle/graal/pointsto/AnalysisPolicy.java	use		Specifies if this policy models constants objects context sensitively, i.e., by creating a
+graal	substratevm/src/com.oracle.graal.pointsto/src/com/oracle/graal/pointsto/flow/context/bytecode/BytecodeSensitiveAnalysisPolicy.java	use	and(); or(); andNot(); cardinality()	Wraps the analysis object corresponding to a clone site for a given context into a non-null
+graal	substratevm/src/com.oracle.graal.pointsto/src/com/oracle/graal/pointsto/flow/context/bytecode/ContextSensitiveMultiTypeState.java	use	get(int); equals()	Returns an array of all type ids from the {@link #objects} array. This mitigates the CPU
+graal	substratevm/src/com.oracle.graal.pointsto/src/com/oracle/graal/pointsto/typestate/DefaultAnalysisPolicy.java	use	set(from,to); clear(int); and(); or(); andNot(); nextSetBit(); cardinality()	This class implements the default, context-insensitive, static analysis policy
+graal	substratevm/src/com.oracle.graal.pointsto/src/com/oracle/graal/pointsto/typestate/MultiTypeStateWithBitSet.java	impl	get(int); nextSetBit(); equals(); hashCode()	Keep a bit set for types to easily answer queries like contains type or types count, and
+graal	substratevm/src/com.oracle.graal.pointsto/src/com/oracle/graal/pointsto/typestate/TypeStateUtils.java	use	BitSet(int); set(int); clear(int); and(); or(); andNot(); nextSetBit(); cardinality(); size(); length(); clone()	This method gives access to the java.lang.BitSet's array of bytes. We need that array for
+graal	substratevm/src/com.oracle.svm.core.foreign/src/com/oracle/svm/core/foreign/TrampolineSet.java	use	BitSet(int); get(int); set(int); clear(); isEmpty()	A set of trampolines that can be assigned to specific upcall stubs with specific method handles
+graal	substratevm/src/com.oracle.svm.core/src/com/oracle/svm/core/code/CodeInfoEncoder.java	use	BitSet(); get(int); set(int)	Encapsulates {@link FrequencyEncoder}s for values that are referenced by an index, just like
+graal	substratevm/src/com.oracle.svm.core/src/com/oracle/svm/core/code/FrameInfoEncoder.java	use	BitSet(); get(int); set(int); length()	Hook for when a frame is registered for encoding
+graal	substratevm/src/com.oracle.svm.core/src/com/oracle/svm/core/graal/meta/SubstrateReplacements.java	use		The replacements implementation for the compiler at runtime. All snippets and method
+graal	substratevm/src/com.oracle.svm.core/src/com/oracle/svm/core/heap/Pod.java	use	BitSet(); get(int); set(int); set(from,to); nextSetBit(); nextClearBit(); isEmpty(); equals()	A structure of fields, including object references, that is {@linkplain Builder modeled} at image
+graal	substratevm/src/com.oracle.svm.core/src/com/oracle/svm/core/heap/SubstrateReferenceMap.java	use	BitSet(); get(int); set(int); nextSetBit(); previousSetBit(); isEmpty(); toLongArray(); valueOf(long[]); stream()	Stores the reference map data. 3 bits are currently required per entry: the first bit at
+graal	substratevm/src/com.oracle.svm.hosted/src/com/oracle/svm/hosted/code/SubstrateGraphMaker.java	use		public class SubstrateGraphMaker
+graal	substratevm/src/com.oracle.svm.hosted/src/com/oracle/svm/hosted/dashboard/PointsToBreakdown.java	use	BitSet(); get(int); set(int); stream()	Creates a JSON representation of the pointsto graph, in the format expected by the dashboard. The
+graal	substratevm/src/com.oracle.svm.hosted/src/com/oracle/svm/hosted/dynamicaccessinference/dataflow/ForwardDataFlowAnalyzer.java	use	BitSet(); nextSetBit()	Abstract bytecode forward data-flow analyzer. Abstract program states, represented by {@code S},
+graal	substratevm/src/com.oracle.svm.hosted/src/com/oracle/svm/hosted/imagelayer/ImageLayerSectionFeature.java	use	isEmpty(); toByteArray()	Creates a {@linkplain ImageLayerSection section} with information specific to the current layer
+graal	substratevm/src/com.oracle.svm.hosted/src/com/oracle/svm/hosted/imagelayer/LayeredDispatchTableFeature.java	use	BitSet(); set(int)	Tracks the state of type dispatch tables across layers. Across layers, this information is used
+graal	substratevm/src/com.oracle.svm.hosted/src/com/oracle/svm/hosted/meta/TypeCheckBuilder.java	use	BitSet(); get(int); set(int); and(); or(); andNot(); nextSetBit(); isEmpty(); cardinality(); intersects(); clone(); equals()	This class assigns each type an id, determines stamp metadata, and generates the information
+graal	substratevm/src/com.oracle.svm.hosted/src/com/oracle/svm/hosted/meta/UniverseBuilder.java	use	BitSet(); set(from,to); nextSetBit(); nextClearBit(); previousSetBit(); length(); clone()	This step is single threaded, i.e., all the maps are modified only by a single thread, so no
+graal	substratevm/src/com.oracle.svm.hosted/src/com/oracle/svm/hosted/meta/VTableBuilder.java	use	BitSet(); get(int); or(); nextClearBit()	We are allowed to filter vtables as long as we know the type layout does not need to
+graal	substratevm/src/com.oracle.svm.interpreter/src/com/oracle/svm/interpreter/ristretto/meta/RistrettoReplacements.java	use		The replacements implementation for the Ristretto JIT compiler at runtime. All snippets and
+graal	sulong/projects/com.oracle.truffle.llvm.parser/src/com/oracle/truffle/llvm/parser/LLVMLivenessAnalysis.java	use	BitSet(int); get(int); set(int); set(from,to); clear(); clear(int); or(); andNot(); nextSetBit(); size()	Holds the information when a certain value can be invalidated. The nullableWithinBlock
+graal	sulong/projects/com.oracle.truffle.llvm.parser/src/com/oracle/truffle/llvm/parser/LazyToTruffleConverterImpl.java	use	nextSetBit()	Check whether the function parameter has an LLVM byval attribute attached to it. This usually
+graal	sulong/projects/com.oracle.truffle.llvm.parser/src/com/oracle/truffle/llvm/parser/ValueList.java	use	BitSet(); get(int); set(int); set(int,bool)	Produce a new unique value used as placeholder for a forward referenced symbol
+graal	sulong/projects/com.oracle.truffle.llvm.runtime/src/com/oracle/truffle/llvm/runtime/LLVMIVarBitLarge.java	use	BitSet(int); set(int); isEmpty(); toByteArray()	Implementation of variable-width integers with > 64 bits in size
+graal	sulong/projects/com.oracle.truffle.llvm/src/com/oracle/truffle/llvm/initialization/LoadModulesNode.java	use	BitSet(int); get(int); set(int); clear()	The {@link LoadModulesNode} initialise the library. This involves building the scopes (local
+graal	tools/src/com.oracle.truffle.tools.agentscript/src/com/oracle/truffle/tools/agentscript/impl/InsightInstrument.java	use	BitSet(); set(int); clear(int); nextClearBit(); length()	public class InsightInstrument
+graal	truffle/src/com.oracle.truffle.api.dsl.test/src/com/oracle/truffle/api/dsl/test/MergeSpecializationsTest.java	test		public class MergeSpecializationsTest
+graal	truffle/src/com.oracle.truffle.api.dsl.test/src/com/oracle/truffle/api/dsl/test/StateBitTest.java	test		public class StateBitTest
+graal	truffle/src/com.oracle.truffle.api.dsl/src/com/oracle/truffle/api/dsl/SpecializationStatistics.java	use	BitSet(); get(int); set(int); nextSetBit()	Represents a specialization statistics utiltiy that can be {@link #enter() entered} to collect
+graal	truffle/src/com.oracle.truffle.api.strings/src/com/oracle/truffle/api/strings/TruffleString.java	use	BitSet(int); get(int); set(int)	Represents a primitive String type, which can be reused across languages. Language implementers
+graal	truffle/src/com.oracle.truffle.api.test/src/com/oracle/truffle/api/test/utilities/FinalBitSetTest.java	test		public class FinalBitSetTest
+graal	truffle/src/com.oracle.truffle.api.utilities/src/com/oracle/truffle/api/utilities/FinalBitSet.java	impl	toLongArray()	Read-only bitset designed for partial evaluation. The implementation is partially re-used from
+graal	truffle/src/com.oracle.truffle.api/src/com/oracle/truffle/api/frame/FrameDescriptor.java	use	BitSet(); get(int); set(int); clear(int); or()	Descriptor of the slots of frame objects. Multiple frame instances are associated with one such
+graal	truffle/src/com.oracle.truffle.dsl.processor/src/com/oracle/truffle/dsl/processor/library/LibraryGenerator.java	use	BitSet(int)	public class LibraryGenerator
+graal	truffle/src/com.oracle.truffle.polyglot/src/com/oracle/truffle/polyglot/PolyglotContextImpl.java	use	BitSet(int); get(int); set(int); cardinality()	Claims a sharing layer for a context. This typically happens at when the first non-host
+graal	truffle/src/com.oracle.truffle.polyglot/src/com/oracle/truffle/polyglot/PolyglotThreadInfo.java	use	BitSet(int); get(int); set(int); clear(int); cardinality()	Only true if the thread was created "inside" exitContext, i.e. created from the thread
+graal	visualizer/C1Visualizer/TextEditor/src/main/java/at/ssw/visualizer/texteditor/model/Scanner.java	use	BitSet(); get(int); set(int)	The implementing class must specify the used <code> TokenID</code>s and
+graal	visualizer/IdealGraphVisualizer/Data/src/main/java/org/graalvm/visualizer/data/serialization/lazy/GraphMetadata.java	use	BitSet(); set(int)	Metadata distilled during scanning the input data, for use before the graph
+graal	visualizer/IdealGraphVisualizer/Data/src/main/java/org/graalvm/visualizer/data/serialization/lazy/StreamPool.java	use	BitSet(); get(int); set(int); clear()	Stream constant pool. Performs a snapshot before data is overwritten in the pool. Later the pool
+graal	visualizer/IdealGraphVisualizer/GraphSearch/src/main/java/org/graalvm/visualizer/search/ui/actions/GraphContextAction.java	use	BitSet(); get(int); set(int)	@author sdedic
+graal	wasm/src/org.graalvm.wasm/src/org/graalvm/wasm/GlobalRegistry.java	use	BitSet(int); get(int); set(int,bool)	The global registry holds the global values in the WebAssembly module instance
+graal	wasm/src/org.graalvm.wasm/src/org/graalvm/wasm/parser/validation/BlockFrame.java	use	BitSet(int); set(int); clone()	Representation of a wasm block during module validation
+graal	wasm/src/org.graalvm.wasm/src/org/graalvm/wasm/parser/validation/ControlFrame.java	use	get(int); set(int); clone()	Represents the scope of a block structure during module validation
+graal	wasm/src/org.graalvm.wasm/src/org/graalvm/wasm/parser/validation/IfFrame.java	use	clone()	Representation of a wasm if and else block during module validation
+graal	wasm/src/org.graalvm.wasm/src/org/graalvm/wasm/parser/validation/LoopFrame.java	use	clone()	Representation of a wasm loop during module validation
+graal	web-image/src/com.oracle.svm.hosted.webimage/src/com/oracle/svm/hosted/webimage/wasm/ast/ActiveData.java	use	BitSet(int); get(int); set(int); size()	Manages active data segments of a {@link WasmModule}
+guava	android/guava-testlib/test/com/google/common/testing/ArbitraryInstancesTest.java	test		Unit test for {@link ArbitraryInstances}
+guava	android/guava-tests/benchmark/com/google/common/base/CharMatcherBenchmark.java	test		Benchmark for the {@link CharMatcher} class
+guava	android/guava-tests/benchmark/com/google/common/base/WhitespaceMatcherBenchmark.java	test		public class WhitespaceMatcherBenchmark
+guava	android/guava-tests/test/com/google/common/base/CharMatcherTest.java	test		Unit test for {@link CharMatcher}
+guava	android/guava/src/com/google/common/base/CharMatcher.java	impl	BitSet(); get(int); set(int); set(from,to); flip(from,to); and(); or(); nextSetBit(); cardinality(); size(); length(); clone()	Determines a true or false value for any Java {@code char} value, just as {@link Predicate} does
+guava	android/guava/src/com/google/common/base/SmallCharMatcher.java	use	get(int); set(int); nextSetBit(); cardinality()	An immutable version of CharMatcher for smallish sets of characters that uses a hash table with
+guava	android/guava/src/com/google/common/collect/ImmutableMap.java	use	BitSet(); get(int); set(int); isEmpty(); cardinality()	A {@link Map} whose contents will never change, with many other important properties detailed at
+guava	android/guava/src/com/google/common/collect/Sets.java	use	BitSet(int); get(int); set(int); set(from,to); clear(from,to); nextSetBit(); nextClearBit(); isEmpty(); size(); clone()	Static utility methods pertaining to {@link Set} instances. Also see this class's counterparts
+guava	guava-testlib/test/com/google/common/testing/ArbitraryInstancesTest.java	test		Unit test for {@link ArbitraryInstances}
+guava	guava-tests/benchmark/com/google/common/base/CharMatcherBenchmark.java	test		Benchmark for the {@link CharMatcher} class
+guava	guava-tests/benchmark/com/google/common/base/WhitespaceMatcherBenchmark.java	test		public class WhitespaceMatcherBenchmark
+guava	guava-tests/test/com/google/common/base/CharMatcherTest.java	test		Unit test for {@link CharMatcher}
+guava	guava/src/com/google/common/base/CharMatcher.java	impl	BitSet(); get(int); set(int); set(from,to); flip(from,to); and(); or(); nextSetBit(); cardinality(); size(); length(); clone()	Determines a true or false value for any Java {@code char} value, just as {@link Predicate} does
+guava	guava/src/com/google/common/base/SmallCharMatcher.java	use	get(int); set(int); nextSetBit(); cardinality()	An immutable version of CharMatcher for smallish sets of characters that uses a hash table with
+guava	guava/src/com/google/common/collect/ImmutableMap.java	use	BitSet(); get(int); set(int); isEmpty(); cardinality()	A {@link Map} whose contents will never change, with many other important properties detailed at
+guava	guava/src/com/google/common/collect/Sets.java	use	BitSet(int); get(int); set(int); set(from,to); clear(from,to); nextSetBit(); nextClearBit(); isEmpty(); size(); clone()	Static utility methods pertaining to {@link Set} instances. Also see this class's counterparts
+h2database	h2/src/main/org/h2/command/Parser.java	use		The parser is used to convert a SQL statement string to an command object
+h2database	h2/src/main/org/h2/command/ParserBase.java	use	BitSet(); get(int); set(int); or(); nextSetBit(); isEmpty(); cardinality(); length()	The base class for the parser
+h2database	h2/src/main/org/h2/command/Tokenizer.java	use	get(int); set(int)	Tokenizer
+h2database	h2/src/main/org/h2/command/query/Optimizer.java	use	BitSet(); get(int); set(int)	The optimizer is responsible to find the best execution plan
+h2database	h2/src/main/org/h2/command/query/Select.java	use	BitSet(); nextSetBit(); cardinality()	This class represents a simple SELECT statement
+h2database	h2/src/main/org/h2/engine/Database.java	use	BitSet(); get(int); set(int); andNot(); nextClearBit()	There is one database object per open database
+h2database	h2/src/main/org/h2/engine/SessionLocal.java	use	BitSet(); set(int)	A session represents an embedded database connection. When using the server
+h2database	h2/src/main/org/h2/jdbc/JdbcCallableStatement.java	use	BitSet(); get(int); set(int)	Represents a callable statement
+h2database	h2/src/main/org/h2/mvstore/Chunk.java	use	BitSet(); get(int); set(int); isEmpty(); cardinality(); toByteArray(); valueOf(long[])	A chunk of data, containing one or multiple pages
+h2database	h2/src/main/org/h2/mvstore/FileStore.java	use	BitSet()	Class FileStore is a base class to allow for different store implementations
+h2database	h2/src/main/org/h2/mvstore/FreeSpaceBitSet.java	impl	BitSet(); get(int); set(from,to); clear(); clear(from,to); nextSetBit(); nextClearBit(); previousSetBit(); previousClearBit(); cardinality(); size(); length()	A free space bit set
+h2database	h2/src/main/org/h2/mvstore/db/MVSortedTempResult.java	use	BitSet(); get(int); set(int); nextClearBit()	Sorted temporary result
+h2database	h2/src/main/org/h2/mvstore/db/Store.java	use	get(int)	A store with open tables
+h2database	h2/src/main/org/h2/mvstore/tx/CommitDecisionMaker.java	use	BitSet(int); get(int); set(int)	Class CommitDecisionMaker makes a decision during post-commit processing
+h2database	h2/src/main/org/h2/mvstore/tx/Transaction.java	use	BitSet(); get(int); set(int)	A transaction
+h2database	h2/src/main/org/h2/table/InformationSchemaTable.java	use		This class is responsible to build the INFORMATION_SCHEMA tables
+h2database	h2/src/main/org/h2/table/InformationSchemaTableLegacy.java	use		This class is responsible to build the legacy variant of INFORMATION_SCHEMA
+h2database	h2/src/test/org/h2/test/db/TestBigResult.java	test		Test for big result sets
+h2database	h2/src/test/org/h2/test/store/CalculateHashConstant.java	test		Calculate the constant for the secondary / supplemental hash function, so
+h2database	h2/src/test/org/h2/test/store/CalculateHashConstantLong.java	test		Calculate the constant for the secondary hash function, so that the hash
+h2database	h2/src/test/org/h2/test/unit/TestIntPerfectHash.java	test		Tests the perfect hash tool
+h2database	h2/src/test/org/h2/test/unit/TestMVTempResult.java	test		Tests that MVTempResult implementations do not produce OOME
+h2database	h2/src/test/org/h2/test/unit/TestPerfectHash.java	test		Tests the perfect hash tool
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/engine/spi/ActionQueue.java	use	BitSet(int); get(int); set(int); nextClearBit()	Responsible for maintaining the queue of actions related to events
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/internal/util/ImmutableBitSet.java	impl	toLongArray(); valueOf(long[])	An immutable variant of the {@link BitSet} class with some additional operations
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/internal/util/StringHelper.java	use	BitSet(); get(int); set(int)	Used to find the ordinal parameters (e.g. '?1') in a string
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/metamodel/mapping/internal/EmbeddableMappingTypeImpl.java	use	BitSet(); get(int); set(int)	Describes a "normal" embeddable
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/metamodel/mapping/internal/ToOneAttributeMapping.java	use		@author Steve Ebersole
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/persister/entity/mutation/EntityTableMapping.java	use	BitSet(); get(int); set(int)	Descriptor for the mapping of a table relative to an entity
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/persister/entity/mutation/TableSet.java	use	BitSet(); get(int); set(int)	Represents a Set of TableMapping(s); table mappings are
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/query/results/internal/complete/EntityResultImpl.java	use		@author Steve Ebersole
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/query/sqm/sql/AggregateColumnAssignmentHandler.java	use	BitSet(int); get(int); set(int); nextSetBit(); previousSetBit(); previousClearBit(); cardinality()	Handler for assignments to sub-columns of an aggregate column, which require a special write expr...
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/query/sqm/sql/internal/SqmMapEntryResult.java	use		@author Steve Ebersole
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/ast/spi/AbstractSqlAstTranslator.java	use	BitSet(int); get(int); set(int); size()	@author Steve Ebersole
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/AbstractFetchParent.java	use		@author Steve Ebersole
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/BiDirectionalFetch.java	use		public interface BiDirectionalFetch
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/DomainResultGraphNode.java	use		Marker for all object types that can be part of a result mapping
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/FetchParent.java	use		Contract for things that can be the parent of a fetch
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/basic/BasicFetch.java	use	set(int)	Fetch for a basic-value
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/basic/BasicResult.java	use	set(int)	DomainResult for a basic-value
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/collection/internal/DelayedCollectionFetch.java	use		@author Steve Ebersole
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/collection/internal/EagerCollectionFetch.java	use		@author Steve Ebersole
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/collection/internal/SelectEagerCollectionFetch.java	use		@author Andrea Boriero
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/entity/AbstractDiscriminatedEntityResultGraphNode.java	use		abstract class AbstractDiscriminatedEntityResultGraphNode
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/entity/AbstractEntityResultGraphNode.java	use		AbstractFetchParent sub-class for entity-valued graph nodes
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/entity/EntityFetch.java	use		Specialization of Fetch for entity-valued fetches
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/entity/internal/AbstractNonJoinedEntityFetch.java	use		@author Steve Ebersole
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/entity/internal/EntityFetchJoinedImpl.java	use		@author Andrea Boriero
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/entity/internal/EntityInitializerImpl.java	use	BitSet(int)	@author Andrea Boriero
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/instantiation/internal/ArgumentDomainResult.java	use		@author Steve Ebersole
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/instantiation/internal/DynamicInstantiationResultImpl.java	use		@author Steve Ebersole
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/graph/tuple/TupleResult.java	use	set(int)	@author Christian Beikov
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/internal/domain/CircularBiDirectionalFetchImpl.java	use		@author Andrea Boriero
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/jdbc/internal/JdbcValuesResultSetImpl.java	use	BitSet(int); get(int); set(int); clear()	{@link AbstractJdbcValues} implementation for a JDBC {@link ResultSet} as the source
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/sql/results/jdbc/internal/StandardJdbcValuesMapping.java	use	BitSet(int)	@author Steve Ebersole
+hibernate-orm	hibernate-core/src/main/java/org/hibernate/tuple/entity/EntityMetamodel.java	use	BitSet(); set(int); isEmpty()	Centralizes metamodel information about an entity
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetConverterImmutableTests.java	test		Test using a converter to map the BitSet
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetConverterMutabilityTests.java	test		Basically the same test as {@link BitSetConverterTests} except here we
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetConverterTests.java	test		Test using a converter to map the BitSet
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetHelper.java	test		@author Steve Ebersole
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetImplicitTests.java	test		Tests for using BitSet without any mapping details
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetJavaType.java	test		@author Vlad Mihalcea
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetJavaTypeContributionTests.java	test		@author Steve Ebersole
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetJavaTypeRegistrationTests.java	test		@author Steve Ebersole
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetJavaTypeTests.java	test		Tests for using an explicit {@link JavaType}
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetJdbcTypeCodeTests.java	test		Tests for {@link JdbcTypeCode}
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetJdbcTypeRegistrationTests.java	test		@author Steve Ebersole
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetJdbcTypeTests.java	test		@author Steve Ebersole
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetMetaUserTypeTest.java	test		public class BitSetMetaUserTypeTest
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetMutabilityPlan.java	test		A BitSet's internal state is mutable, so handle that
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetRegisteredUserTypeTest.java	test		public class BitSetRegisteredUserTypeTest
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetType.java	test		@author Vlad Mihalcea
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetTypeTest.java	test		@author Vlad Mihalcea
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetUserType.java	test		@author Vlad Mihalcea
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/basic/bitset/BitSetUserTypeTest.java	test		@author Vlad Mihalcea
+hibernate-orm	hibernate-core/src/test/java/org/hibernate/orm/test/mapping/converted/converter/ConverterOverrideTypeRegisttrationTest.java	test		<pre>
+hibernate-orm	hibernate-spatial/src/main/java/org/hibernate/spatial/dialect/hana/HANASpatialFunction.java	use	BitSet(); get(int); set(from,to); size()	public class HANASpatialFunction
+hibernate-orm	hibernate-vector/src/main/java/org/hibernate/vector/internal/VectorHelper.java	use	BitSet(); set(int); nextSetBit()	Helper for vector related functionality
+hibernate-orm	tooling/metamodel-generator/src/main/java/org/hibernate/processor/annotation/ErrorHandler.java	use		Responsible for forwarding errors from the HQL typechecker to the Java compiler,
+hive	common/src/java/org/apache/hadoop/hive/common/FileUtils.java	use	BitSet(int); get(int); set(int); size()	Collection of file manipulation utilities common across Hive
+hive	iceberg/iceberg-handler/src/main/java/org/apache/iceberg/mr/hive/writer/ParquetVariantRecordWriter.java	use	BitSet(int); set(int); nextClearBit(); size()	Writer-side helper that buffers a small sample of records to initialize Parquet VARIANT shredding...
+hive	ql/src/java/org/apache/hadoop/hive/ql/ddl/table/partition/add/AlterTableAddPartitionOperation.java	use	BitSet()	Operation process of adding a partition to a table
+hive	ql/src/java/org/apache/hadoop/hive/ql/exec/ColumnStatsUpdateTask.java	use	BitSet()	ColumnStatsUpdateTask implementation. For example, ALTER TABLE src_stat
+hive	ql/src/java/org/apache/hadoop/hive/ql/exec/FileSinkOperator.java	use	BitSet(); get(int); set(int)	File Sink operator implementation
+hive	ql/src/java/org/apache/hadoop/hive/ql/exec/tez/HiveSplitGenerator.java	use	get(int); toString()	This class is used to generate splits inside the AM on the cluster. It
+hive	ql/src/java/org/apache/hadoop/hive/ql/io/orc/VectorizedOrcAcidRowBatchReader.java	use	BitSet(int); set(int); set(from,to,bool); clear(int); clear(from,to); nextSetBit(); previousSetBit(); cardinality(); size(); clone()	A fast vectorized batch reader class for ACID. Insert events are read directly
+hive	ql/src/java/org/apache/hadoop/hive/ql/metadata/Hive.java	use	BitSet()	This class has functions that implement meta data/DDL operations using calls
+hive	ql/src/java/org/apache/hadoop/hive/ql/optimizer/ConstantPropagateProcFactory.java	use	BitSet(); get(int); set(int); nextSetBit()	Factory for generating the different node processors used by ConstantPropagate
+hive	ql/src/java/org/apache/hadoop/hive/ql/optimizer/FixedBucketPruningOptimizer.java	use	BitSet(int); set(int); clear(); cardinality()	Fixed bucket pruning optimizer goes through all the table scans and annotates them
+hive	ql/src/java/org/apache/hadoop/hive/ql/optimizer/GroupingSetOptimizer.java	use	nextSetBit(); valueOf(long[])	public class GroupingSetOptimizer
+hive	ql/src/java/org/apache/hadoop/hive/ql/optimizer/SharedWorkOptimizer.java	use	BitSet(); get(int); set(int); cardinality()	Shared computation optimizer
+hive	ql/src/java/org/apache/hadoop/hive/ql/optimizer/calcite/rules/HiveAggregateJoinTransposeRule.java	use	BitSet(); get(int); get(from,to); set(int)	Planner rule that pushes an
+hive	ql/src/java/org/apache/hadoop/hive/ql/optimizer/calcite/rules/HiveCardinalityPreservingJoinOptimization.java	use	BitSet(); BitSet(int); get(int); set(int); stream()	Optimization to reduce the amount of broadcasted/shuffled data throughout the DAG processing
+hive	ql/src/java/org/apache/hadoop/hive/ql/optimizer/calcite/rules/HiveLoptMultiJoin.java	use	get(int)	Join filters associated with the MultiJoin, decomposed into a list
+hive	ql/src/java/org/apache/hadoop/hive/ql/optimizer/calcite/rules/HiveLoptOptimizeJoinRule.java	use	BitSet(int); get(int); set(int); clear(int); and(); or(); cardinality()	Locates all null generating factors whose outer join can be removed. The
+hive	ql/src/java/org/apache/hadoop/hive/ql/optimizer/calcite/stats/EstimateUniqueKeys.java	use	BitSet(); get(int); set(int)	EstimateUniqueKeys provides an ability to estimate unique keys based on statistics
+hive	ql/src/java/org/apache/hadoop/hive/ql/optimizer/calcite/stats/HiveRelMdPredicates.java	use	get(int); set(int); nextSetBit(); cardinality(); toString()	Infers predicates for a project
+hive	ql/src/java/org/apache/hadoop/hive/ql/parse/CalcitePlanner.java	use	BitSet(); set(int); flip(from,to); size()	{@link org.antlr.runtime.TokenRewriteStream} offers the opportunity of multiple rewrites of the same
+hive	ql/src/java/org/apache/hadoop/hive/ql/plan/TableScanDesc.java	use	get(int); size()	Table Scan Descriptor Currently, data is only read from a base source as part
+hive	ql/src/test/org/apache/hadoop/hive/metastore/txn/TestTxnHandler.java	test		Tests for TxnHandler
+hive	ql/src/test/org/apache/hadoop/hive/ql/TestTxnCommands3.java	test		run with and w/o event fitlering enabled - should get the same results
+hive	ql/src/test/org/apache/hadoop/hive/ql/exec/vector/VectorRandomBatchSource.java	test		Generate random batch source from a random Object[] row source (VectorRandomRowSource)
+hive	ql/src/test/org/apache/hadoop/hive/ql/io/TestAcidUtils.java	test		Hive 1.3.0 delta dir naming scheme which supports multi-statement txns
+hive	ql/src/test/org/apache/hadoop/hive/ql/io/orc/TestInputOutputFormat.java	test		Set the blocks and their location for the file
+hive	ql/src/test/org/apache/hadoop/hive/ql/io/orc/TestOrcRawRecordMerger.java	test		{@link org.apache.hive.hcatalog.streaming.TestStreaming#testInterleavedTransactionBatchCommits} h...
+hive	ql/src/test/org/apache/hadoop/hive/ql/io/orc/TestOrcSplit.java	test		Tests for OrcSplit class
+hive	ql/src/test/org/apache/hadoop/hive/ql/io/orc/TestVectorizedOrcAcidRowBatchReader.java	test		This class tests the VectorizedOrcAcidRowBatchReader by creating an actual split and a set
+hive	ql/src/test/org/apache/hadoop/hive/ql/optimizer/calcite/rules/views/TestHiveAugmentMaterializationRule.java	test		public class TestHiveAugmentMaterializationRule
+hive	ql/src/test/org/apache/hadoop/hive/ql/parse/TestDMLSemanticAnalyzer.java	test		public class TestDMLSemanticAnalyzer
+hive	serde/src/java/org/apache/hadoop/hive/serde2/thrift/ColumnBuffer.java	use	BitSet(); get(int); get(from,to); set(from,to); size(); length()	ColumnBuffer
+hive	serde/src/test/org/apache/hadoop/hive/serde2/thrift/TestColumnBuffer.java	test		Test if the nulls BitSet is maintained properly when we extract subset from ColumnBuffer
+hive	service/src/java/org/apache/hive/service/auth/AuthType.java	use	BitSet(); get(int); set(int); cardinality()	AuthType is used to parse and verify
+hive	standalone-metastore/metastore-common/src/main/java/org/apache/hadoop/hive/metastore/txn/TxnCommonUtils.java	use	BitSet(); get(int); set(int); valueOf(long[])	Transform a {@link org.apache.hadoop.hive.metastore.api.GetOpenTxnsResponse} to a
+hive	standalone-metastore/metastore-common/src/main/java/org/apache/hadoop/hive/metastore/utils/FileUtils.java	use	BitSet(int); get(int); set(int); size()	Filter that filters out hidden files
+hive	standalone-metastore/metastore-server/src/main/java/org/apache/hadoop/hive/metastore/columnstats/aggr/ColumnStatsAggregator.java	use	BitSet(int); get(int); set(int); nextClearBit(); cardinality(); size()	The tuner controls the derivation of the NDV value when aggregating statistics from multiple part...
+hive	standalone-metastore/metastore-server/src/main/java/org/apache/hadoop/hive/metastore/handler/AddPartitionsHandler.java	use	BitSet()	Validate a partition before creating it. The validation checks
+hive	standalone-metastore/metastore-server/src/main/java/org/apache/hadoop/hive/metastore/handler/CreateTableHandler.java	use	BitSet()	public class CreateTableHandler
+hive	standalone-metastore/metastore-server/src/main/java/org/apache/hadoop/hive/metastore/txn/TxnUtils.java	use	BitSet(int); get(int); set(from,to); valueOf(long[])	Returns a valid txn list for cleaner
+hive	standalone-metastore/metastore-server/src/main/java/org/apache/hadoop/hive/metastore/txn/entities/OpenTxnList.java	use	BitSet(); set(int); size(); toByteArray()	Class for the getOpenTxnList calculation
+hive	standalone-metastore/metastore-server/src/main/java/org/apache/hadoop/hive/metastore/txn/jdbc/functions/GetValidWriteIdsForTableFunction.java	use	BitSet(); set(int); clear(); size(); toByteArray()	public class GetValidWriteIdsForTableFunction
+hive	standalone-metastore/metastore-tools/tools-common/src/main/java/org/apache/hadoop/hive/metastore/tools/HMSClient.java	use	get(int); valueOf(long[])	Wrapper for Thrift HMS interface
+hive	storage-api/src/java/org/apache/hadoop/hive/common/ValidCleanerWriteIdList.java	use	BitSet()	An implementation of {@link ValidWriteIdList} for use by the Cleaner
+hive	storage-api/src/java/org/apache/hadoop/hive/common/ValidCompactorWriteIdList.java	use		An implementation of {@link ValidWriteIdList} for use by the compactor
+hive	storage-api/src/java/org/apache/hadoop/hive/common/ValidReadTxnList.java	use	BitSet(); BitSet(int); get(int); set(int); nextSetBit()	An implementation of {@link org.apache.hadoop.hive.common.ValidTxnList} for use by readers
+hive	storage-api/src/java/org/apache/hadoop/hive/common/ValidReaderWriteIdList.java	use	BitSet(); BitSet(int); get(int); set(int); nextSetBit()	An implementation of {@link ValidWriteIdList} for use by readers
+hive	storage-api/src/test/org/apache/hadoop/hive/common/TestValidCompactorWriteIdList.java	test		Tests for {@link ValidCompactorWriteIdList}
+hive	storage-api/src/test/org/apache/hadoop/hive/common/TestValidReadTxnList.java	test		Tests for {@link ValidReadTxnList}
+hive	storage-api/src/test/org/apache/hadoop/hive/common/TestValidReaderWriteIdList.java	test		Tests for {@link ValidReaderWriteIdList}
+hive	storage-api/src/test/org/apache/hive/common/util/TestTxnIdUtils.java	test		public class TestTxnIdUtils
+lucene	lucene/analysis/common/src/java/org/apache/lucene/analysis/hunspell/NGramFragmentChecker.java	use	BitSet(int); set(from,to,bool); cardinality(); size()	A {@link FragmentChecker} based on all character n-grams possible in a certain language, keeping
+lucene	lucene/analysis/common/src/java/org/apache/lucene/analysis/in/IndicNormalizer.java	use	BitSet(int); get(int); set(int)	Normalizes the Unicode representation of text in Indian languages
+lucene	lucene/codecs/src/java/org/apache/lucene/codecs/memory/FSTTermsReader.java	use	BitSet(); get(int); set(int)	FST-based terms dictionary reader
+lucene	lucene/codecs/src/java/org/apache/lucene/codecs/simpletext/SimpleTextLiveDocsFormat.java	use	BitSet(int); get(int); set(int); length()	reads/writes plaintext live docs
+lucene	lucene/core/src/java/org/apache/lucene/util/automaton/Automaton.java	use	BitSet(int); get(int); set(from,to); nextSetBit(); size()	Represents an automaton and all its states and transitions. States are integers and must be
+lucene	lucene/core/src/java/org/apache/lucene/util/automaton/FiniteStringsIterator.java	use	BitSet(int); get(int); set(int); clear(int)	Iterates all accepted strings
+lucene	lucene/core/src/java/org/apache/lucene/util/automaton/Operations.java	use	BitSet(int); get(int); set(int); clear(int); and(); andNot(); nextSetBit(); isEmpty(); cardinality()	Automata operations
+lucene	lucene/core/src/java/org/apache/lucene/util/fst/Util.java	use	BitSet(); get(int); set(int)	Static helper methods
+lucene	lucene/core/src/java/org/apache/lucene/util/graph/GraphTokenStreamFiniteStrings.java	use	BitSet(int); get(int); set(int)	Consumes a TokenStream and creates an {@link Automaton} where the transition labels are terms
+lucene	lucene/core/src/test/org/apache/lucene/index/TestTransactionRollback.java	test		Test class to illustrate using IndexDeletionPolicy to provide multi-level rollback capability
+lucene	lucene/core/src/test/org/apache/lucene/search/TestPointQueries.java	test		public class TestPointQueries
+lucene	lucene/core/src/test/org/apache/lucene/util/TestBytesRefHash.java	test		Test method for {@link
+lucene	lucene/core/src/test/org/apache/lucene/util/TestFixedBitDocIdSet.java	test		public class TestFixedBitDocIdSet
+lucene	lucene/core/src/test/org/apache/lucene/util/TestIntArrayDocIdSet.java	test		public class TestIntArrayDocIdSet
+lucene	lucene/core/src/test/org/apache/lucene/util/TestNotDocIdSet.java	test		public class TestNotDocIdSet
+lucene	lucene/core/src/test/org/apache/lucene/util/TestRoaringDocIdSet.java	test		public class TestRoaringDocIdSet
+lucene	lucene/core/src/test/org/apache/lucene/util/TestSparseFixedBitDocIdSet.java	test		public class TestSparseFixedBitDocIdSet
+lucene	lucene/core/src/test/org/apache/lucene/util/automaton/MinimizationOperations.java	test		Operations for minimizing automata
+lucene	lucene/core/src/test/org/apache/lucene/util/bkd/TestBKD.java	test		public class TestBKD
+lucene	lucene/highlighter/src/test/org/apache/lucene/search/uhighlight/TestUnifiedHighlighterTermVec.java	test		Tests highlighting for matters *expressly* relating to term vectors
+lucene	lucene/spatial3d/src/java/org/apache/lucene/spatial3d/geom/GeoConcavePolygon.java	use	BitSet(); get(int); set(int); size(); equals()	GeoConcavePolygon objects are generic building blocks of more complex structures. The only
+lucene	lucene/spatial3d/src/java/org/apache/lucene/spatial3d/geom/GeoConvexPolygon.java	use	BitSet(); get(int); set(int); size(); equals()	GeoConvexPolygon objects are generic building blocks of more complex structures. The only
+lucene	lucene/spatial3d/src/java/org/apache/lucene/spatial3d/geom/GeoPolygonFactory.java	use	BitSet(); BitSet(int); get(int); set(int,bool); set(from,to); size()	Class which constructs a GeoMembershipShape representing an arbitrary polygon
+lucene	lucene/spatial3d/src/java/org/apache/lucene/spatial3d/geom/SerializableObject.java	use	toByteArray(); valueOf(long[])	Indicates that a geo3d object can be serialized and deserialized
+lucene	lucene/spatial3d/src/test/org/apache/lucene/spatial3d/geom/TestGeoPolygon.java	test		public class TestGeoPolygon
+lucene	lucene/test-framework/src/java/org/apache/lucene/tests/geo/BaseGeoPointTestCase.java	test		Abstract class to do basic tests for a geospatial impl (high level fields and queries) NOTE: This
+lucene	lucene/test-framework/src/java/org/apache/lucene/tests/geo/BaseXYPointTestCase.java	test		abstract class BaseXYPointTestCase
+lucene	lucene/test-framework/src/java/org/apache/lucene/tests/index/BasePointsFormatTestCase.java	test		Abstract class to do basic tests for a points format. NOTE: This test focuses on the points impl,
+lucene	lucene/test-framework/src/java/org/apache/lucene/tests/search/SearchEquivalenceTestBase.java	test		Simple base class for checking search equivalence. Extend it, and write tests that create {@link
+lucene	lucene/test-framework/src/java/org/apache/lucene/tests/util/BaseDocIdSetTestCase.java	test		Assert that the content of the {@link DocIdSet} is the same as the content of the {@link
+lucene	lucene/test-framework/src/java/org/apache/lucene/tests/util/RamUsageTester.java	test		An accumulator of object references. This class allows for customizing RAM usage estimation
+lucene	lucene/test-framework/src/java/org/apache/lucene/tests/util/automaton/AutomatonTestUtil.java	test		Utilities for testing automata
+netty	codec-base/src/main/java/io/netty/handler/codec/DateFormatter.java	use	BitSet(); get(int); set(int)	A formatter for HTTP header dates, such as "Expires" and "Date" headers, or "expires" field in "S...
+netty	codec-http/src/main/java/io/netty/handler/codec/http/CookieUtil.java	use	BitSet(int); get(int); set(int); set(int,bool); set(from,to,bool); or()	@deprecated Duplicate of package private ${@link io.netty.handler.codec.http.cookie.CookieUtil}
+netty	codec-http/src/main/java/io/netty/handler/codec/http/HttpChunkLineValidatingByteProcessor.java	impl		Validates the chunk start line. That is, the chunk size and chunk extensions, until the CR LF pair
+netty	codec-http/src/main/java/io/netty/handler/codec/http/cookie/CookieUtil.java	use	BitSet(); get(int); set(int); set(int,bool)	@param buf a buffer where some cookies were maybe encoded
+netty	common/src/main/java/io/netty/util/internal/InternalThreadLocalMap.java	use	BitSet(); get(int); set(int)	The internal data structure that stores the thread-local variables for Netty and all {@link FastT...
+pmd	pmd-core/src/main/java/net/sourceforge/pmd/cpd/MatchCollector.java	use	BitSet(); get(int); set(int)	MatchCollector.java
+pmd	pmd-java/src/main/java/net/sourceforge/pmd/lang/java/ast/OverrideResolutionPass.java	use	BitSet(int); get(int); set(int)	Populates method declarations with the method they override
+pmd	pmd-java/src/main/java/net/sourceforge/pmd/lang/java/symbols/table/internal/JavaResolvers.java	use	BitSet(int); get(int); set(int); nextSetBit(); isEmpty(); size()	Returns true if the given element can be imported in the current file
+spark	sql/hive/src/test/java/org/apache/spark/sql/hive/test/Complex.java	test		This is a fork of Hive 0.13's org/apache/hadoop/hive/serde2/thrift/test/Complex.java, which
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/LocalVariableAnnotation.java	use	get(int); equals()	Bug annotation class for local variable names
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/OpcodeStack.java	use	BitSet(); get(int); set(int); clear(); nextSetBit(); clone()	tracks the types and numbers of objects that are currently on the operand
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/StackMapAnalyzer.java	use	BitSet(); set(int)	@author pugh
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/Tokenizer.java	use	BitSet(); get(int); set(int); set(from,to)	A simple tokenizer for Java source text. This is not intended to be a
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/AbstractDominatorsAnalysis.java	use	BitSet(); get(int); set(int); clear(); and(); or(); equals()	<p>A dataflow analysis to compute dominator relationships between basic blocks
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/AnalysisContext.java	use	BitSet(); get(int); set(int,bool)	A context for analysis of a complete project. This serves as the repository
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/AssertionMethods.java	use	BitSet(); get(int); set(int)	Mark methodref constant pool entries of methods that are likely to implement
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/BasicBlock.java	use	BitSet(); get(int); set(int)	Simple basic block abstraction for BCEL
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/BetterCFGBuilder2.java	use	BitSet(); get(int); set(int)	A CFGBuilder that really tries to construct accurate control flow graphs. The
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/BlockType.java	impl		Dataflow value representing the current nesting of catch and finally blocks
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/CFG.java	use	get(int)	Simple control flow graph abstraction for BCEL
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/ClassContext.java	use	BitSet(); get(int); set(int); set(from,to); and(); nextSetBit(); isEmpty()	A ClassContext caches all of the auxiliary objects used to analyze the
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/Frame.java	use	BitSet(); set(int)	<p>Generic class for representing a Java stack frame as a dataflow value. A
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/LiveLocalStoreAnalysis.java	use	BitSet(); get(int); set(int); clear(); clear(int); or(); nextSetBit(); equals()	Dataflow analysis to find live stores of locals. This is just a backward
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/LiveLocalStoreDataflow.java	use		Dataflow class for LiveLocalStoreAnalysis
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/LockChecker.java	use	get(int)	Front-end for LockDataflow that can avoid doing unnecessary work (e.g.,
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/MethodBytecodeSet.java	impl		Class representing the set of opcodes used in a method
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/PruneUnconditionalExceptionThrowerEdges.java	use	BitSet(); set(int)	@param xMethod
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/bcp/PatternMatcher.java	use	BitSet(); get(int); set(int,bool)	<p>Match a ByteCodePattern against the code of a method, represented by a CFG
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/deref/UnconditionalValueDerefSet.java	use	BitSet(); get(int); set(int); clear(); clear(int); and(); or(); isEmpty(); equals()	A set of values unconditionally dereferenced in the future
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/interproc/ParameterProperty.java	use	BitSet(); get(int); set(from,to)	Method property recording which parameters are have some property
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/npe/DerefFinder.java	use	and(); nextSetBit(); isEmpty()	@author pugh
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/npe/IsNullValueAnalysis.java	use	BitSet(); get(int); set(int)	A dataflow analysis to detect potential null pointer dereferences
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/npe/NullDerefAndRedundantComparisonFinder.java	use	BitSet(); get(int); set(int); clear(int); or()	A user-friendly front end for finding null pointer dereferences and redundant
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/npe/UsagesRequiringNonNullValues.java	use	get(int)	@author pugh
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/type/ExceptionSet.java	use	BitSet(); get(int); set(int); clear(); clear(int); or(); equals(); hashCode()	Class for keeping track of exceptions that can be thrown by an instruction
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/type/TypeFrame.java	use	BitSet(); get(int); set(from,to); clear(); clear(int); or()	A specialization of {@link Frame} for determining the types of values in the
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/type/TypeFrameModelingVisitor.java	use	BitSet(); get(int); set(int)	Visitor to model the effects of bytecode instructions on the types of the
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/vna/LoadedFieldSet.java	use	BitSet(); get(int); set(int)	Object which stores which fields are loaded and stored by the instructions in
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/ba/vna/MergeTree.java	use	BitSet(); get(int); set(int); or(); nextSetBit()	Data structure to keep track of which input ValueNumbers were combined to
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/classfile/engine/ClassParserUsingASM.java	use	BitSet(); set(int)	@author William Pugh
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/classfile/engine/bcel/FinallyDuplicatesInfoFactory.java	use	BitSet(); get(int); set(int); clear(int); nextSetBit(); isEmpty(); size(); toString()	@author Tagir Valeev
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/classfile/engine/bcel/LoadedFieldSetFactory.java	use	BitSet(); get(int); set(int)	Factory to determine which fields are loaded and stored by the instructions
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/classfile/engine/bcel/NonImplicitExceptionDominatorsAnalysisFactory.java	use		Analysis engine to produce NonImplicitExceptionDominatorsAnalysis objects
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/classfile/engine/bcel/NonImplicitExceptionPostDominatorsAnalysisFactory.java	use		Analysis engine to produce NonImplicitExceptionPostDominatorsAnalysis objects
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/BuildUnconditionalParamDerefDatabase.java	use	BitSet(); set(int); isEmpty()	Build database of unconditionally dereferenced parameters
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/DontIgnoreResultOfPutIfAbsent.java	use	get(int); equals()	public class DontIgnoreResultOfPutIfAbsent
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindBadCast2.java	use	get(int)	public class FindBadCast2
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindBugsSummaryStats.java	use	BitSet(int); set(int); clear(); cardinality()	public class FindBugsSummaryStats
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindDeadLocalStores.java	use	BitSet(); get(int); set(int)	Find dead stores to local variables
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindJSR166LockMonitorenter.java	use	get(int)	Find places where ordinary (balanced) synchronization is performed on JSR166
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindLocalSelfAssignment2.java	use	BitSet(); get(int); set(int); clear()	public class FindLocalSelfAssignment2
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindMismatchedWaitOrNotify.java	use	get(int)	final class FindMismatchedWaitOrNotify
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindNonSerializableStoreIntoSession.java	use	get(int)	public class FindNonSerializableStoreIntoSession
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindNonSerializableValuePassedToWriteObject.java	use	get(int)	public class FindNonSerializableValuePassedToWriteObject
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindNullDeref.java	use	BitSet(); get(int); set(int); clear(int); and(); or(); nextSetBit(); isEmpty(); clone()	A Detector to find instructions where a NullPointerException might be raised
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindOpenStream.java	use	get(int)	A Detector to look for streams that are opened in a method, do not escape the
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindRefComparison.java	use	BitSet(); set(int); or(); intersects()	Find suspicious reference comparisons. This includes:
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindSelfComparison.java	use	get(int)	public class FindSelfComparison
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindSelfComparison2.java	use	get(int)	@param classContext
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindSleepWithLockHeld.java	use	get(int)	Find calls to Thread.sleep() made with a lock held
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindUnrelatedTypesInGenericContainer.java	use	get(int)	@author Nat Ayewah
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindUnreleasedLock.java	use	get(int)	public class FindUnreleasedLock
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindUseOfNonSerializableValue.java	use	get(int)	public class FindUseOfNonSerializableValue
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/FindUselessObjects.java	use	BitSet(); get(int); set(int); nextSetBit()	@author Tagir Valeev
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/InfiniteLoop.java	use	BitSet(); set(int); clear(); nextSetBit()	*/
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/LazyInit.java	use	BitSet(); get(int); set(int); clear(); and()	The pattern to look for
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/LoadOfKnownNullValue.java	use	BitSet(); get(int); set(int); cardinality()	@param classContext
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/MethodReturnCheck.java	use	BitSet(); get(int); set(int)	Look for calls to methods where the return value is erroneously ignored. This
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/MethodReturnValueStreamFactory.java	use	BitSet(); get(int); set(int)	StreamFactory for streams that are created as the result of calling a method
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/NoiseNullDeref.java	use	BitSet(); get(int); set(int)	A Detector to find instructions where a NullPointerException might be raised
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/RuntimeExceptionCapture.java	use	get(int)	RuntimeExceptionCapture
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/SuspiciousThreadInterrupted.java	use	BitSet(); get(int); set(int)	looks for calls to Thread.interrupted from a non static context, especially
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/detect/SwitchFallthrough.java	use	BitSet(); get(int); set(int); clear(); clear(int); and(); or(); nextSetBit(); cardinality(); clone()	A GOTO might correspond to a <code>break</code> or to a do/while/for loop
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/props/WarningPropertyUtil.java	use	BitSet(); get(int); set(int)	Utility methods for creating general warning properties
+spotbugs	spotbugs/src/main/java/edu/umd/cs/findbugs/xml/MetaCharacterMap.java	use	BitSet(); get(int); set(int)	Map of metacharacters that need to be escaped, and what to replace them with
+spring-framework	spring-core/src/main/java/org/springframework/cglib/core/EmitUtils.java	use	BitSet(); get(int); set(int)	Process an array on the stack. Assumes the top item on the stack
+spring-framework	spring-core/src/main/java/org/springframework/util/MimeType.java	use	BitSet(int); get(int); set(int); set(from,to); andNot()	Represents a MIME Type, as originally defined in RFC 2046 and subsequently

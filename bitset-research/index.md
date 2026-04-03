@@ -13,7 +13,7 @@
 | 3b | Сбор данных: использование BitSet в репозитории IntelliJ Community | **Выполнен** | [step-03b-intellij-repo-data.md](step-03b-intellij-repo-data.md) |
 | 3c | Анализ: частотная таблица, классификация паттернов и каталог обёрток | **Выполнен** | [step-03c-analysis.md](step-03c-analysis.md) |
 | 4a | Отбор репозиториев и методология | **Выполнен** | [step-04a-repo-selection.md](step-04a-repo-selection.md) |
-| 4b | Извлечение данных по репозиториям | Не начат | — |
+| 4b | Извлечение данных по репозиториям | **Выполнен** | [step-04b-repo-data.md](step-04b-repo-data.md) |
 | 4c | Сводный анализ open-source использования | Не начат | — |
 | 5 | Болевые точки Java BitSet и wish list сообщества | Не начат | — |
 | 6 | Таксономия use cases | Не начат | — |
@@ -51,3 +51,7 @@
 ### Шаг 4a (Выполнен)
 
 Отобраны 23 внешних open-source репозитория с подтверждённым наличием ≥3 файлов с упоминанием `java.util.BitSet` в code search. Из 11 seed-кандидатов (план исследования) прошли верификацию 7; ещё 16 отобраны через curated domain-driven поиск (broad search через GitHub Code Search использовался как эвристический discovery без per-repo верификации). Покрыто 11 доменов: compilers/JVM, search/indexing, Android, JVM libraries, data processing, static analysis, database engines, networking, collections, web frameworks, ORM. Медиана звёзд — 8 535, суммарно ~423k. Единственный Kotlin-first репозиторий — `androidx/androidx`. 8 из 23 репозиториев достигли лимита `--limit=30` по умолчанию — реальное число файлов выше. Методология поиска, rate limit management и ограничения выборки задокументированы.
+
+### Шаг 4b (Выполнен)
+
+Извлечены данные об использовании `java.util.BitSet` из 23 open-source репозиториев. Каталогизировано 641 файл: 422 use, 23 impl, 178 test, 18 gen; ещё 51 файл исключён (import без использования в коде). Top-5 методов в use-site файлах: `get(int)` (253), `set(int)` (243), `BitSet()` (168), `BitSet(int)` (119), `nextSetBit()` (67). Обнаружено 23 impl-файла с повторяющимися gaps: immutability (5 реализаций: calcite, hibernate, druid, graal FinalBitSet, graal MultiTypeState), iteration/Iterable (4: calcite ImmutableBitSet, graal Util, druid WrappedImmutableBitSetBitmap, calcite BitSets), serialization (3: beam BitSetCoder ×2, graal RecordedOperationPersistence), compressed storage (3: RoaringBitmap), fluent/convenience API (3: commons-lang FluentBitSet, netty Match, spotbugs MethodBytecodeSet). Арифметическая согласованность проверена: сумма per-repo use-sites = total use-sites для каждого метода.
