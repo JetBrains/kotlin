@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.backend.common.phaser.BackendContextHolder
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLowerings
+import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
@@ -71,7 +71,7 @@ interface InlineClassesUtils {
     /**
      * Should this class be treated as inline class?
      */
-    fun isClassInlineLike(klass: IrClass): Boolean = klass.isSingleFieldValueClass
+    fun isClassInlineLike(klass: IrClass): Boolean = klass.isSingleFieldValueClass(distinguishBasicAndExtended = false)
 
     /**
      * Unlike [org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType], doesn't use [IrClass.inlineClassRepresentation] because

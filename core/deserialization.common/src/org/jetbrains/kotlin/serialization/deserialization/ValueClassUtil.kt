@@ -27,7 +27,17 @@ fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
         annotationId.relativeClassName.asString() == "JvmInline" && annotationId.packageFqName.asString() == "kotlin.jvm"
     }
     if (!hasJvmInline && tryLoadExtendedValueClass && Flags.IS_VALUE_CLASS.get(flags) && !hasInlineClassUnderlyingPropertyName()) {
-        return ExtendedValueClassRepresentation()
+        val modality = Flags.MODALITY.get(flags)
+        val isAbstractOrSealed = modality == ProtoBuf.Modality.ABSTRACT || modality == ProtoBuf.Modality.SEALED
+        val fields = if (isAbstractOrSealed) {
+            null
+        } else {
+            val primaryConstructor = constructorList.singleOrNull { !Flags.IS_SECONDARY.get(it.flags) } ?: return null
+            primaryConstructor.valueParameterList.map {
+                nameResolver.getName(it.name) to typeDeserializer(it.type(typeTable))
+            }
+        }
+        return ExtendedValueClassRepresentation(fields)
     }
 
     if (hasInlineClassUnderlyingPropertyName()) {

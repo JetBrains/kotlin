@@ -5,6 +5,17 @@
 
 package org.jetbrains.kotlin.descriptors
 
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 
-class ExtendedValueClassRepresentation<Type : RigidTypeMarker> : ValueClassRepresentation<Type>()
+class ExtendedValueClassRepresentation<Type : RigidTypeMarker>(
+    override val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>?
+) : ValueClassRepresentation<Type>() {
+    private val map = underlyingPropertyNamesToTypes?.toMap()
+
+    override fun containsPropertyWithName(name: Name): Boolean = map != null && name in map
+    override fun getPropertyTypeByName(name: Name): Type? = map?.get(name)
+
+    override fun toString(): String =
+        "ExtendedValueClassRepresentation(underlyingPropertyNamesToTypes=$underlyingPropertyNamesToTypes)"
+}

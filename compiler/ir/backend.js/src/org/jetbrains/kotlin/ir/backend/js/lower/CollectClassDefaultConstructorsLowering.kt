@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
+import org.jetbrains.kotlin.ir.backend.js.utils.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isClass
@@ -28,7 +29,7 @@ class CollectClassDefaultConstructorsLowering(private val context: JsIrBackendCo
     }
 
     private fun IrClass.couldContainDefaultConstructor(): Boolean {
-        return isClass && (!isValue || isExtendedValueClass) && !isExpect && modality != Modality.ABSTRACT && modality != Modality.SEALED
+        return isClass && !isSingleFieldValueClass && !isExpect && modality != Modality.ABSTRACT && modality != Modality.SEALED
     }
 
     private val IrClass.defaultConstructor: IrConstructor?

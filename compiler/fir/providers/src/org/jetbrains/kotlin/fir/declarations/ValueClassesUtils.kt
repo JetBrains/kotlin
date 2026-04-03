@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.SuspiciousValueClassCheck
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isValue
+import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -25,14 +26,21 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: FirSession): ConeKotlinType? {
     val symbol = this.fullyExpandedType(session).toRegularClassSymbol(session) ?: return null
     symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
-    return symbol.fir.inlineClassRepresentation?.underlyingType
+    return symbol.fir.inlineClassRepresentation(distinguishBasicAndExtended = true)?.underlyingType
 }
 
 @OptIn(SuspiciousValueClassCheck::class)
 fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession): ValueClassRepresentation<ConeRigidType>? {
     val areExtendedValueClassesSupported = session.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)
     if (areExtendedValueClassesSupported && !klass.hasAnnotation(JVM_INLINE_ANNOTATION_CLASS_ID, session) && klass.isValue) {
-        return ExtendedValueClassRepresentation()
+        val fields = if (klass.modality == Modality.ABSTRACT || klass.modality == Modality.SEALED) {
+            null
+        } else {
+            klass.getValueClassUnderlyingParameters(session)
+                ?.map { it.name to it.symbol.resolvedReturnType as ConeRigidType }
+                ?: emptyList()
+        }
+        return ExtendedValueClassRepresentation(fields)
     }
     val parameters = klass.getValueClassUnderlyingParameters(session)?.takeIf { it.isNotEmpty() } ?: return null
     val fields = parameters.map { it.name to it.symbol.resolvedReturnType as ConeRigidType }
@@ -55,14 +63,16 @@ private fun isRecursiveSingleFieldValueClass(
     session: FirSession,
     visited: MutableSet<ConeRigidType>
 ): Boolean {
-    val nextType = type.valueClassRepresentationTypeMarkersList(session)?.singleOrNull()?.second ?: return false
+    val nextType = type.basicValueClassRepresentationTypeMarkersList(session)?.singleOrNull()?.second ?: return false
     return !visited.add(nextType) || isRecursiveSingleFieldValueClass(nextType, session, visited)
 }
 
-private fun ConeRigidType.valueClassRepresentationTypeMarkersList(session: FirSession): List<Pair<Name, ConeRigidType>>? {
+private fun ConeRigidType.basicValueClassRepresentationTypeMarkersList(session: FirSession): List<Pair<Name, ConeRigidType>>? {
     val symbol = this.toRegularClassSymbol(session) ?: return null
     if (!symbol.fir.isInlineOrValue) return null
-    symbol.fir.valueClassRepresentation?.let { return it.asBasic()?.underlyingPropertyNamesToTypes }
+    val valueClassRepresentation = symbol.fir.valueClassRepresentation
+    if (valueClassRepresentation is ExtendedValueClassRepresentation) return null
+    valueClassRepresentation?.let { return it.underlyingPropertyNamesToTypes }
 
     val constructorSymbol = symbol.fir.primaryConstructorIfAny(session) ?: return null
     return constructorSymbol.valueParameterSymbols.map { it.name to it.resolvedReturnType as ConeRigidType }

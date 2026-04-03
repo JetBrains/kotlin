@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.asBasic
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
@@ -459,14 +458,16 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker? =
         this as? IrTypeParameterSymbol
 
+    open val distinguishBasicAndExtendedSingleFieldValueClasses: Boolean get() = false
+
     override fun TypeConstructorMarker.isInlineClass(): Boolean =
-        (this as? IrClassSymbol)?.owner?.isSingleFieldValueClass == true
+        (this as? IrClassSymbol)?.owner?.isSingleFieldValueClass(distinguishBasicAndExtended = distinguishBasicAndExtendedSingleFieldValueClasses) == true
 
     override fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean =
         (this as? IrClassSymbol)?.owner?.isMultiFieldValueClass == true
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, SimpleTypeMarker>>? =
-        (this as? IrClassSymbol)?.owner?.valueClassRepresentation?.asBasic()?.underlyingPropertyNamesToTypes
+        (this as? IrClassSymbol)?.owner?.valueClassRepresentation?.underlyingPropertyNamesToTypes
 
     override fun TypeConstructorMarker.isInnerClass(): Boolean =
         (this as? IrClassSymbol)?.owner?.isInner == true
@@ -478,7 +479,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         } ?: owner.superTypes.first()
 
     override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? =
-        (this as IrType).classOrNull?.owner?.inlineClassRepresentation?.underlyingType
+        (this as IrType).classOrNull?.owner?.inlineClassRepresentation(distinguishBasicAndExtended = distinguishBasicAndExtendedSingleFieldValueClasses)?.underlyingType
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =
         getNameForClassUnderKotlinPackage()?.let(PrimitiveType::getByShortName)

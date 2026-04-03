@@ -164,7 +164,7 @@ val FirCallableSymbol<*>.isInlineClassProperty: Boolean
     get() {
         if (this !is FirPropertySymbol || dispatchReceiverType == null || receiverParameterSymbol != null || hasContextParameters) return false
         val containingClass = getContainingClassSymbol() as? FirRegularClassSymbol ?: return false
-        val inlineClassRepresentation = containingClass.fir.inlineClassRepresentation ?: return false
+        val inlineClassRepresentation = containingClass.fir.inlineClassRepresentation(distinguishBasicAndExtended = false) ?: return false
         return inlineClassRepresentation.underlyingPropertyName == this.name
     }
 
