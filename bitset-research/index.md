@@ -12,7 +12,7 @@
 | 3a | Сбор данных: использование BitSet в репозитории Kotlin | **Выполнен** | [step-03a-kotlin-repo-data.md](step-03a-kotlin-repo-data.md) |
 | 3b | Сбор данных: использование BitSet в репозитории IntelliJ Community | **Выполнен** | [step-03b-intellij-repo-data.md](step-03b-intellij-repo-data.md) |
 | 3c | Анализ: частотная таблица, классификация паттернов и каталог обёрток | **Выполнен** | [step-03c-analysis.md](step-03c-analysis.md) |
-| 4a | Отбор репозиториев и методология | Не начат | — |
+| 4a | Отбор репозиториев и методология | **Выполнен** | [step-04a-repo-selection.md](step-04a-repo-selection.md) |
 | 4b | Извлечение данных по репозиториям | Не начат | — |
 | 4c | Сводный анализ open-source использования | Не начат | — |
 | 5 | Болевые точки Java BitSet и wish list сообщества | Не начат | — |
@@ -47,3 +47,7 @@
 ### Шаг 3c (Выполнен)
 
 В [`step-03c-analysis.md`](step-03c-analysis.md) сведены в один артефакт частоты методов, оценка стабильности top-10, классификация `171` TSV-level use-site entries (raw `180` file-level loci) по 10 паттернам и каталог wrapper/utility-слоя вокруг `BitSet`. Combined-профиль доминируется `get(int)`, `set(from,to)`, `BitSet()`, `set(int)` и `BitSet(int)`, а главные API gaps устойчиво повторяются в нескольких подсистемах: typed `copy()`, итерация по set-битам, range/navigation operations и Kotlin-friendly query semantics. Concurrent/tri-state/sparse wrappers зафиксированы как специализированные надстройки, а не как обязательная часть core stdlib API.
+
+### Шаг 4a (Выполнен)
+
+Отобраны 23 внешних open-source репозитория с подтверждённым наличием ≥3 файлов с упоминанием `java.util.BitSet` в code search. Из 11 seed-кандидатов (план исследования) прошли верификацию 7; ещё 16 отобраны через curated domain-driven поиск (broad search через GitHub Code Search использовался как эвристический discovery без per-repo верификации). Покрыто 11 доменов: compilers/JVM, search/indexing, Android, JVM libraries, data processing, static analysis, database engines, networking, collections, web frameworks, ORM. Медиана звёзд — 8 535, суммарно ~423k. Единственный Kotlin-first репозиторий — `androidx/androidx`. 8 из 23 репозиториев достигли лимита `--limit=30` по умолчанию — реальное число файлов выше. Методология поиска, rate limit management и ограничения выборки задокументированы.
