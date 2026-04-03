@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
+import org.jetbrains.kotlin.descriptors.ExtendedValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.ir.IrAttribute
-import org.jetbrains.kotlin.descriptors.ExtendedValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.toInlineRepresentation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -36,8 +37,20 @@ fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
     attributeOwnerId = other.attributeOwnerId
 }
 
-val IrClass.isSingleFieldValueClass: Boolean
-    get() = valueClassRepresentation is InlineClassRepresentation
+/**
+ * Determines whether the current `IrClass` is compatible with being a single-field value class.
+ *
+ * The compatibility is assessed based on the type of value class representation associated with the `IrClass`.
+ *
+ * @param distinguishBasicAndExtended A boolean indicating whether to differentiate between basic and extended value class representations.
+ *                                    If `true`, `ExtendedValueClassRepresentation` will not be considered as single-field compatible,
+ *                                    regardless of the number of properties in the representation. If `false`, the compatibility
+ *                                    for extended value classes depends on whether they have exactly one underlying property.
+ *                                    `true` must be used for JVM, `false` for other backends.
+ * @return `true` if the `IrClass` is compatible with being a single-field value class; `false` otherwise.
+ */
+fun IrClass.isSingleFieldValueClass(distinguishBasicAndExtended: Boolean): Boolean =
+    valueClassRepresentation?.toInlineRepresentation(distinguishBasicAndExtended) != null
 
 val IrClass.isMultiFieldValueClass: Boolean
     get() = valueClassRepresentation is MultiFieldValueClassRepresentation
@@ -68,8 +81,23 @@ val IrFunction.isPropertyAccessor: Boolean
 val IrClass.multiFieldValueClassRepresentation: MultiFieldValueClassRepresentation<IrSimpleType>?
     get() = valueClassRepresentation as? MultiFieldValueClassRepresentation<IrSimpleType>
 
-val IrClass.inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
-    get() = valueClassRepresentation as? InlineClassRepresentation<IrSimpleType>
+/**
+ * Retrieves the inline class representation of this class if available.
+ *
+ * This method evaluates the type of the class's value class representation and
+ * determines whether to return its equivalent inline class representation.
+ *
+ * @param distinguishBasicAndExtended A boolean indicating whether to differentiate between basic and extended value class representations.
+ *                                    If `true`, `ExtendedValueClassRepresentation` will not be considered as single-field compatible,
+ *                                    regardless of the number of properties in the representation. If `false`, the compatibility
+ *                                    for extended value classes depends on whether they have exactly one underlying property.
+ *                                    `true` must be used for JVM, `false` for other backends.
+ * @return An [InlineClassRepresentation] if the class has a compatible value class
+ *         representation and meets the conditions specified by the `distinguishBasicAndExtended`
+ *         parameter; otherwise, `null`.
+ */
+fun IrClass.inlineClassRepresentation(distinguishBasicAndExtended: Boolean): InlineClassRepresentation<IrSimpleType>? =
+    valueClassRepresentation?.toInlineRepresentation(distinguishBasicAndExtended)
 
 
 @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)

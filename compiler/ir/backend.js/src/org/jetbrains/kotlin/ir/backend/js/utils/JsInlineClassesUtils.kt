@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.JsCommonInlineClassesUtils
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
+import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IdSignatureValues
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -62,3 +64,6 @@ class JsInlineClassesUtils(val context: JsIrBackendContext) : JsCommonInlineClas
 
     fun getRuntimeClassFor(type: IrType): IrClass? = type.erasedUpperBound.takeIf { !it.isInterface }
 }
+
+val IrClass.isSingleFieldValueClass get() = isSingleFieldValueClass(distinguishBasicAndExtended = false)
+val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(distinguishBasicAndExtended = false)

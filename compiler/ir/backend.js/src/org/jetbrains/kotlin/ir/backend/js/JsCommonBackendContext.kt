@@ -42,6 +42,8 @@ interface JsCommonBackendContext : CommonBackendContext {
 }
 
 interface JsCommonInlineClassesUtils : InlineClassesUtils {
+    override fun isClassInlineLike(klass: IrClass): Boolean =
+        klass.isSingleFieldValueClass(distinguishBasicAndExtended = false)
 
     /**
      * Returns the inlined class for the given type, or `null` if the type is not inlined.

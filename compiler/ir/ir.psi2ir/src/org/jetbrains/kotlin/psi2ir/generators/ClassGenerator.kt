@@ -93,7 +93,7 @@ internal class ClassGenerator(
                 type.toIrType() as? IrSimpleType ?: error("Value class underlying type is not a simple type: $classDescriptor")
             }
 
-            if (irClass.isSingleFieldValueClass && ktClassOrObject is KtClassOrObject) {
+            if (irClass.isSingleFieldValueClass(distinguishBasicAndExtended = true) && ktClassOrObject is KtClassOrObject) {
                 generateAdditionalMembersForSingleFieldValueClasses(irClass, ktClassOrObject)
             }
 
