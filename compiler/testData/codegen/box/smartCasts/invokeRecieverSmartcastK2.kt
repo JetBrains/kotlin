@@ -1,4 +1,5 @@
 // IGNORE_BACKEND_K1: ANY
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: ANY:1.9
 // ISSUE: KT-63709
 
 operator fun String.invoke(unused: String): String = "String.invoke(String)"
