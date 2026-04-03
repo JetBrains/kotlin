@@ -36,9 +36,6 @@ abstract class TestDataFileReplacer(testServices: TestServices) : MetaTestConfig
     protected abstract val File.newFile: File
 }
 
-// TODO(KT-85292): delete together with its only usage in wasm tests
-class FirOldFrontendMetaConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices)
-
 class LatestLanguageVersionMetaConfigurator(testServices: TestServices) : TestDataFileReplacer(testServices) {
     override fun shouldReplaceFile(originalFile: File): Boolean {
         return originalFile.useLines { lines ->
