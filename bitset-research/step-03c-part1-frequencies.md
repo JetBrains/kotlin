@@ -2,21 +2,23 @@
 
 ## Резюме
 
-Построена объединённая частотная таблица по 178 use-site entries: 20 из репозитория Kotlin и 158 из IntelliJ TSV. В суммарной выборке доминируют `get(int)` (75), `set(from,to)` (63), `BitSet()` (60), `set(int)` (52) и `BitSet(int)` (33).
+Построена объединённая частотная таблица по 171 use-site entries: 20 из репозитория Kotlin и 151 из IntelliJ TSV. В суммарной выборке доминируют `get(int)` (75), `set(from,to)` (63), `BitSet()` (60), `set(int)` (52) и `BitSet(int)` (32).
 
 Интеллиевские частоты полностью раскладываются на `J` и `W`: непустых `mode=?` строк нет. Kotlin-часть добавляет операции, которых почти нет или совсем нет в IntelliJ-выборке: `copy()`, `forEachBit()`, `mapEachBit()`, `valueOf(LongArray)`, `set(IntRange)`, `orWithFilterHasChanged()`.
 
 ## Входные данные
 
 - `bitset-research/step-03a-kotlin-repo-data.md`
-- `bitset-research/step-03b-final.tsv`
+- `bitset-research/step-03b-extracted.tsv`
 
 ## Scope
 
-- IntelliJ TSV: `158` use-site entries (`cls=use`). Из них `129` имеют непустой `methods`, `29` — pass-through entries с пустым `methods`.
+- IntelliJ TSV: `151` use-site entries (`cls=use`) после переклассификации `7` записей в `cls=impl` (см. ниже). Из них `127` имеют непустой `methods`, `24` — pass-through entries с пустым `methods`.
+- Переклассификация: при сверке с сырым каталогом `step-03b-intellij-repo-data.md`, `7` записей TSV, исходно размеченных как `cls=use`, переведены в `cls=impl`, т.к. сырой каталог 3b явно описывает их как самостоятельные реализации/обёртки BitSet (входят в `11` идентифицированных custom BitSet типов): `BitSetAsRAIntContainer.java` (обёртка j.u.BitSet → RandomAccessIntContainer), `text-matching/BitSet.kt` (typealias, ссылка на KT-55163), `MutableBitSet.kt` (кастомная реализация на LongArray), `UnsignedBitSet.java` (обёртка с поддержкой отрицательных индексов), `BitSetFlags.java` (адаптер j.u.BitSet → Flags), `BitSet32.java` (32-битная реализация для mslinks), `fleet.util.BitSet.kt` (копия K/N stdlib для мультиплатформенности). Переклассифицированные записи перенесены в каталог обёрток `step-03c-analysis.md`.
+- Коррекция методов: в TSV-строке `FilesScanExecutor.kt` метод `size()` является ложным — `deque.size` в исходном коде относится к `ConcurrentLinkedDeque`, а не к BitSet; сырой каталог 3b фиксирует только `ConcurrentBitSet.create(int)` и `.set(int)`. Метод `size()` исключён из подсчётов для этого файла.
 - Колонки IntelliJ в таблицах: `IntelliJ-J` = `mode=J` (`JVM-direct`, прямое использование `java.util.BitSet`), `IntelliJ-W` = `mode=W` (`wrapper-mediated`, использование через обёртку или кастомный BitSet-тип). Колонка `IntelliJ` — их сумма.
 - Kotlin `step-03a`: `20` use-site файлов после исключения `4` реализаций BitSet, `1` test suite и `1` API dump. Из них `18` имеют методы, `2` — pass-through.
-- Комбинированная выборка: `178` use-site entries, из них `147` реально вносят вклад в частоты методов.
+- Комбинированная выборка: `171` use-site entries, из них `145` реально вносят вклад в частоты методов.
 - Нормализация `step-03a` к TSV-словарю: `new BitSet(int)` / `BitSet(size)` / `CustomBitSet(nodesCount)` -> `BitSet(int)`; `CustomBitSet()` -> `BitSet()`; `[int]` -> `get(int)`; `[int] = ...` и `.set(int, Boolean)` -> `set(int,bool)`; свойства `.isEmpty` / `.size` -> `isEmpty()` / `size()`; `CustomBitSet.valueOf(LongArray)` -> `valueOf(LongArray)`.
 
 ## Kotlin Per-File Method Lists
@@ -51,12 +53,12 @@
 | Method | Kotlin | IntelliJ | IntelliJ-J | IntelliJ-W | Total |
 |---|---:|---:|---:|---:|---:|
 | `BitSet()` | 7 | 53 | 50 | 3 | 60 |
-| `BitSet(int)` | 9 | 24 | 18 | 6 | 33 |
+| `BitSet(int)` | 9 | 23 | 18 | 5 | 32 |
 | `valueOf(LongArray)` | 1 | 0 | 0 | 0 | 1 |
 
 Traceability:
 - `BitSet()` (60) — representative files: K: `compiler/ir/backend.common/src/org/jetbrains/kotlin/backend/common/lower/optimizations/LivenessAnalysis.kt`; IJ-J: `grid/impl/src/run/ui/HiddenColumnsSelectionHolder.java`; IJ-W: `platform/syntax/syntax-api/src/com/intellij/platform/syntax/impl/builder/MarkerOptionalData.kt`
-- `BitSet(int)` (33) — representative files: K: `analysis/symbol-light-classes/src/org/jetbrains/kotlin/light/classes/symbol/classes/symbolLightClassUtils.kt`; IJ-J: `java/idea-ui/src/com/intellij/ide/util/importProject/RootDetectionProcessor.java`; IJ-W: `fleet/util/core/srcCommonMain/fleet/util/BitSet.kt`
+- `BitSet(int)` (32) — representative files: K: `analysis/symbol-light-classes/src/org/jetbrains/kotlin/light/classes/symbol/classes/symbolLightClassUtils.kt`; IJ-J: `java/idea-ui/src/com/intellij/ide/util/importProject/RootDetectionProcessor.java`; IJ-W: `platform/util/diff/src/com/intellij/util/diff/MyersLCS.kt`
 - `valueOf(LongArray)` (1) — K: `kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/CastsOptimization.kt`
 
 ### Single-bit
@@ -122,15 +124,16 @@ Traceability:
 | Method | Kotlin | IntelliJ | IntelliJ-J | IntelliJ-W | Total |
 |---|---:|---:|---:|---:|---:|
 | `isEmpty()` | 3 | 15 | 14 | 1 | 18 |
-| `cardinality()` | 3 | 13 | 11 | 2 | 16 |
-| `size()` | 3 | 6 | 1 | 5 | 9 |
+| `cardinality()` | 3 | 12 | 11 | 1 | 15 |
+| `size()` | 3 | 5 | 1 | 4 | 8 |
 | `length()` | 1 | 6 | 6 | 0 | 7 |
 | `intersects()` | 3 | 0 | 0 | 0 | 3 |
 
 Traceability:
 - `isEmpty()` (18) — representative files: K: `analysis/symbol-light-classes/src/org/jetbrains/kotlin/light/classes/symbol/classes/symbolLightClassUtils.kt`; IJ-J: `java/idea-ui/src/com/intellij/ide/util/importProject/RootDetectionProcessor.java`; IJ-W: `platform/syntax/syntax-api/src/com/intellij/platform/syntax/SyntaxElementTypeSet.kt`
-- `cardinality()` (16) — representative files: K: `kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/CastsOptimization.kt`; IJ-J: `java/java-analysis-impl/src/com/intellij/codeInspection/bytecodeAnalysis/ProjectBytecodeAnalysis.java`; IJ-W: `fleet/util/core/srcCommonMain/fleet/util/BitSet.kt`
-- `size()` (9) — K: `compiler/psi/parser/src/org/jetbrains/kotlin/kdoc/lexer/_KDocLexer.java`, `compiler/util/src/org/jetbrains/kotlin/utils/BitSetUtil.kt`, `kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/CastsOptimization.kt`; IJ-J: `platform/lang-impl/src/com/intellij/util/indexing/projectFilter/ProjectIndexableFilesFilterHealthCheck.kt`; IJ-W: `platform/lang-impl/src/com/intellij/openapi/roots/impl/FilesScanExecutor.kt`, `platform/lang-impl/src/com/intellij/util/indexing/events/DirtyFiles.kt`, `platform/lang-impl/src/com/intellij/util/indexing/projectFilter/CachingProjectIndexableFilesFilter.kt`, `platform/lang-impl/src/com/intellij/util/indexing/projectFilter/ConcurrentFileIds.kt`, `platform/vcs-log/graph/src/com/intellij/vcs/log/graph/impl/permanent/PermanentLinearGraphBuilder.java`
+- `cardinality()` (15) — representative files: K: `kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/CastsOptimization.kt`; IJ-J: `java/java-analysis-impl/src/com/intellij/codeInspection/bytecodeAnalysis/ProjectBytecodeAnalysis.java`; IJ-W: `platform/lang-impl/src/com/intellij/util/indexing/projectFilter/ConcurrentFileIds.kt`
+- `size()` (8) — K: `compiler/psi/parser/src/org/jetbrains/kotlin/kdoc/lexer/_KDocLexer.java`, `compiler/util/src/org/jetbrains/kotlin/utils/BitSetUtil.kt`, `kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/CastsOptimization.kt`; IJ-J: `platform/lang-impl/src/com/intellij/util/indexing/projectFilter/ProjectIndexableFilesFilterHealthCheck.kt`; IJ-W: `platform/lang-impl/src/com/intellij/util/indexing/events/DirtyFiles.kt`, `platform/lang-impl/src/com/intellij/util/indexing/projectFilter/CachingProjectIndexableFilesFilter.kt`, `platform/lang-impl/src/com/intellij/util/indexing/projectFilter/ConcurrentFileIds.kt`, `platform/vcs-log/graph/src/com/intellij/vcs/log/graph/impl/permanent/PermanentLinearGraphBuilder.java`
+- **Примечание:** строка `size()` семантически неоднородна. Kotlin-вызовы включают `java.util.BitSet.size()` (ёмкость storage в битах) и `CustomBitSet.size` (число Long-слов). IntelliJ-W вызовы проходят через обёртки с различной семантикой (`BitSetFlags.size()` — фиксированный `mySize`, `ConcurrentFileIds` — делегирует на `ConcurrentBitSet`). Строку не следует использовать как единый количественный сигнал для API-приоритизации.
 - `length()` (7) — K: `analysis/symbol-light-classes/src/org/jetbrains/kotlin/light/classes/symbol/classes/symbolLightClassUtils.kt`; IJ-J: `platform/diff-impl/src/com/intellij/openapi/vcs/ex/DocumentTracker.kt`, `platform/vcs-impl/src/com/intellij/openapi/vcs/ex/PartialLocalLineStatusTracker.kt`, `plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java`, `plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/stats/Statement.java`, `plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/struct/attr/StructLocalVariableTableAttribute.java`, `plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/util/DebugPrinter.java`
 - `intersects()` (3) — K: `analysis/symbol-light-classes/src/org/jetbrains/kotlin/light/classes/symbol/classes/symbolLightClassUtils.kt`, `kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/CastsOptimization.kt`, `libraries/stdlib/native-wasm/src/kotlin/text/regex/AbstractCharClass.kt`
 
@@ -140,7 +143,7 @@ Traceability:
 |---|---:|---:|---:|---:|---:|
 | `clone()` | 2 | 5 | 4 | 1 | 7 |
 | `copy()` | 7 | 0 | 0 | 0 | 7 |
-| `stream()` | 0 | 6 | 6 | 0 | 6 |
+| `stream()` | 0 | 5 | 5 | 0 | 5 |
 | `toString()` | 1 | 2 | 2 | 0 | 3 |
 | `toByteArray()` | 0 | 2 | 2 | 0 | 2 |
 | `toLongArray()` | 0 | 1 | 1 | 0 | 1 |
@@ -148,7 +151,7 @@ Traceability:
 Traceability:
 - `clone()` (7) — K: `analysis/symbol-light-classes/src/org/jetbrains/kotlin/light/classes/symbol/classes/symbolLightClassUtils.kt`, `analysis/symbol-light-classes/src/org/jetbrains/kotlin/light/classes/symbol/symbolLightUtils.kt`; IJ-J: `platform/analysis-impl/src/com/intellij/codeInspection/dataFlow/lang/ir/LiveVariablesAnalyzer.java`, `plugins/groovy/groovy-psi/src/org/jetbrains/plugins/groovy/lang/psi/dataFlow/readWrite/ReadBeforeWriteInstance.kt`, `plugins/groovy/groovy-psi/src/org/jetbrains/plugins/groovy/lang/psi/dataFlow/readWrite/ReadBeforeWriteState.kt`, `plugins/groovy/groovy-psi/src/org/jetbrains/plugins/groovy/lang/psi/dataFlow/types/TypeDfaState.java`; IJ-W: `platform/vcs-log/graph/src/com/intellij/vcs/log/graph/collapsing/CollapsedGraph.java`
 - `copy()` (7) — K: `analysis/symbol-light-classes/src/org/jetbrains/kotlin/light/classes/symbol/classes/symbolLightClassUtils.kt`, `compiler/backend/src/org/jetbrains/kotlin/codegen/coroutines/resumePointDependentAnalysis.kt`, `compiler/ir/backend.common/src/org/jetbrains/kotlin/backend/common/lower/optimizations/LivenessAnalysis.kt`, `kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/CastsOptimization.kt`, `kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/ComputeTypesPass.kt`, `kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/DevirtualizationAnalysis.kt`, `kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/StaticInitializersOptimization.kt`
-- `stream()` (6) — IJ-J: `grid/impl/src/run/ui/HiddenColumnsSelectionHolder.java`, `java/java-impl-inspections/src/com/intellij/codeInspection/defUse/DefUseInspection.java`, `platform/analysis-impl/src/com/intellij/codeInspection/dataFlow/lang/ir/LiveVariablesAnalyzer.java`, `platform/analysis-impl/src/com/intellij/codeInspection/dataFlow/memory/DfaMemoryStateImpl.java`, `platform/util/src/com/intellij/util/indexing/containers/BitSetAsRAIntContainer.java`, `platform/vcs-impl/src/com/intellij/openapi/vcs/changes/actions/diff/lst/UnifiedLocalChangeListDiffViewer.kt`
+- `stream()` (5) — IJ-J: `grid/impl/src/run/ui/HiddenColumnsSelectionHolder.java`, `java/java-impl-inspections/src/com/intellij/codeInspection/defUse/DefUseInspection.java`, `platform/analysis-impl/src/com/intellij/codeInspection/dataFlow/lang/ir/LiveVariablesAnalyzer.java`, `platform/analysis-impl/src/com/intellij/codeInspection/dataFlow/memory/DfaMemoryStateImpl.java`, `platform/vcs-impl/src/com/intellij/openapi/vcs/changes/actions/diff/lst/UnifiedLocalChangeListDiffViewer.kt`
 - `toString()` (3) — K: `compiler/backend/src/org/jetbrains/kotlin/codegen/coroutines/resumePointDependentAnalysis.kt`; IJ-J: `platform/analysis-impl/src/com/intellij/codeInspection/dataFlow/rangeSet/LongRangeSet.java`, `plugins/groovy/groovy-psi/src/org/jetbrains/plugins/groovy/lang/psi/dataFlow/readWrite/ReadBeforeWriteState.kt`
 - `toByteArray()` (2) — IJ-J: `java/java-analysis-impl/src/com/intellij/codeInspection/dataFlow/inference/MethodDataExternalizer.kt`, `platform/diff-impl/src/com/intellij/openapi/vcs/ex/DocumentTracker.kt`
 - `toLongArray()` (1) — IJ-J: `grid/impl/src/run/ui/HiddenColumnsSelectionHolder.java`
@@ -180,14 +183,14 @@ Traceability:
 ## Pass-Through Notes
 
 - Kotlin pass-through use-site файлы (`2`): `analysis/symbol-light-classes/src/org/jetbrains/kotlin/light/classes/symbol/methods/SymbolLightSimpleMethod.kt`, `analysis/symbol-light-classes/src/org/jetbrains/kotlin/light/classes/symbol/methods/SymbolLightConstructor.kt`.
-- IntelliJ TSV pass-through entries (`29`) входят в общее число use-sites, но не вносят вклад в частоты методов.
-- `mode=J` (`15`): `java/java-analysis-impl/src/com/intellij/codeInspection/dataFlow/inference/inferenceResults.kt`, `platform/diff-impl/src/com/intellij/diff/merge/MergeThreesideViewerActions.kt`, `platform/diff-impl/src/com/intellij/diff/tools/fragmented/UnifiedDiffViewer.java`, `platform/diff-impl/src/com/intellij/diff/tools/simple/SimpleDiffViewer.java`, `platform/diff-impl/src/com/intellij/diff/tools/simple/SimpleThreesideDiffViewer.java`, `platform/syntax/syntax-api/src/com/intellij/platform/syntax/impl/util/MutableBitSet.kt`, `platform/util/ui/src/com/intellij/util/ui/html/utils.kt`, `platform/vcs-impl/src/com/intellij/openapi/vcs/changes/patch/tool/ApplyPatchViewer.java`, `platform/vcs-impl/src/com/intellij/openapi/vcs/ex/RollbackLineStatusAction.java`, `platform/vcs-log/graph/src/com/intellij/vcs/log/graph/utils/UnsignedBitSet.java`, `platform/vcs-log/graph/src/com/intellij/vcs/log/graph/utils/impl/BitSetFlags.java`, `plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/ConcatenationHelper.java`, `plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/SimplifyExprentsHelper.java`, `plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/stats/CatchStatement.java`, `python/python-psi-api/src/com/jetbrains/python/psi/stubs/PyFileStub.java`.
-- `mode=W` (`10`): `platform/lang-impl/src/com/intellij/psi/search/MappedFileTypeIndex.java`, `platform/util/diff/src/com/intellij/util/diff/Diff.kt`, `platform/vcs-log/graph/src/com/intellij/vcs/log/graph/collapsing/CollapsedController.java`, `platform/vcs-log/graph/src/com/intellij/vcs/log/graph/impl/facade/ReachableNodes.kt`, `plugins/git4idea/src/git4idea/history/GitHistoryTraverserImpl.kt`, `plugins/git4idea/src/git4idea/rebase/log/GitCommitEditingActionBase.kt`, `updater/src/mslinks/data/BitSet32.java`, `updater/src/mslinks/data/CNRLinkFlags.java`, `updater/src/mslinks/data/LinkFlags.java`, `updater/src/mslinks/data/LinkInfoFlags.java`.
-- `mode=?` (`4`): `platform/util/text-matching/srcJvm/com/intellij/util/text/matching/BitSet.kt`, `API dumps (7 файлов)`, `JDK API version files (4 файла)`, `JDK аннотации (1 файл)`.
+- IntelliJ TSV pass-through entries (`24`) входят в общее число use-sites, но не вносят вклад в частоты методов. `5` бывших pass-through entries переклассифицированы в `cls=impl` (см. Scope).
+- `mode=J` (`12`): `java/java-analysis-impl/src/com/intellij/codeInspection/dataFlow/inference/inferenceResults.kt`, `platform/diff-impl/src/com/intellij/diff/merge/MergeThreesideViewerActions.kt`, `platform/diff-impl/src/com/intellij/diff/tools/fragmented/UnifiedDiffViewer.java`, `platform/diff-impl/src/com/intellij/diff/tools/simple/SimpleDiffViewer.java`, `platform/diff-impl/src/com/intellij/diff/tools/simple/SimpleThreesideDiffViewer.java`, `platform/util/ui/src/com/intellij/util/ui/html/utils.kt`, `platform/vcs-impl/src/com/intellij/openapi/vcs/changes/patch/tool/ApplyPatchViewer.java`, `platform/vcs-impl/src/com/intellij/openapi/vcs/ex/RollbackLineStatusAction.java`, `plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/ConcatenationHelper.java`, `plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/SimplifyExprentsHelper.java`, `plugins/java-decompiler/engine/src/org/jetbrains/java/decompiler/modules/decompiler/stats/CatchStatement.java`, `python/python-psi-api/src/com/jetbrains/python/psi/stubs/PyFileStub.java`.
+- `mode=W` (`9`): `platform/lang-impl/src/com/intellij/psi/search/MappedFileTypeIndex.java`, `platform/util/diff/src/com/intellij/util/diff/Diff.kt`, `platform/vcs-log/graph/src/com/intellij/vcs/log/graph/collapsing/CollapsedController.java`, `platform/vcs-log/graph/src/com/intellij/vcs/log/graph/impl/facade/ReachableNodes.kt`, `plugins/git4idea/src/git4idea/history/GitHistoryTraverserImpl.kt`, `plugins/git4idea/src/git4idea/rebase/log/GitCommitEditingActionBase.kt`, `updater/src/mslinks/data/CNRLinkFlags.java`, `updater/src/mslinks/data/LinkFlags.java`, `updater/src/mslinks/data/LinkInfoFlags.java`.
+- `mode=?` (`3`): `API dumps (7 файлов)`, `JDK API version files (4 файла)`, `JDK аннотации (1 файл)`.
 
 ## Verification
 
 - Проверка `Kotlin + IntelliJ = Total` выполнена для всех `34` методов: расхождений нет.
 - Проверка `IntelliJ-J + IntelliJ-W = IntelliJ` выполнена для всех `34` методов: расхождений нет.
-- Непустых `cls=use` строк с `mode=?` в TSV нет, поэтому колонка `IntelliJ` полностью раскладывается на `J` и `W`.
-- Контрольный масштаб: `20` Kotlin use-sites + `158` IntelliJ use-site entries = `178`; метод-bearing subset: `18 + 129 = 147`.
+- Непустых `cls=use` строк с `mode=?` в TSV нет (после переклассификации осталось `3` строки `mode=?`, все pass-through), поэтому колонка `IntelliJ` полностью раскладывается на `J` и `W`.
+- Контрольный масштаб: `20` Kotlin use-sites + `151` IntelliJ use-site entries = `171`; метод-bearing subset: `18 + 127 = 145`.
