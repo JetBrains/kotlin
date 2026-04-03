@@ -63,6 +63,9 @@ shopt -s nullglob
 ARTIFACTS=(bitset-research/step-${STEP_PADDED}-*.md)
 shopt -u nullglob
 
+# Files Claude is allowed to modify: artifacts + index
+ALLOWED_FILES=("${ARTIFACTS[@]}" "bitset-research/index.md")
+
 if [[ ${#ARTIFACTS[@]} -eq 0 ]]; then
     echo "ERROR: No artifacts found for step ${STEP_PADDED} (glob: bitset-research/step-${STEP_PADDED}-*.md)" >&2
     exit 1
@@ -318,7 +321,7 @@ Ultrathink."
     STRAY_FILES=()
     while IFS= read -r f; do
         [[ -n "$f" ]] && STRAY_FILES+=("$f")
-    done < <(git diff HEAD --name-only | grep -v -x -F -f <(printf '%s\n' "${ARTIFACTS[@]}") || true)
+    done < <(git diff HEAD --name-only | grep -v -x -F -f <(printf '%s\n' "${ALLOWED_FILES[@]}") || true)
     if [[ ${#STRAY_FILES[@]} -gt 0 ]]; then
         echo "[${NN}] WARNING: Claude modified files outside artifacts, reverting:"
         printf '  %s\n' "${STRAY_FILES[@]}"
@@ -331,14 +334,14 @@ Ultrathink."
     UNTRACKED_STRAY=()
     while IFS= read -r f; do
         [[ -n "$f" ]] && UNTRACKED_STRAY+=("$f")
-    done < <(git ls-files --others --exclude-standard | grep -v -x -F -f <(printf '%s\n' "${ARTIFACTS[@]}") || true)
+    done < <(git ls-files --others --exclude-standard | grep -v -x -F -f <(printf '%s\n' "${ALLOWED_FILES[@]}") || true)
     if [[ ${#UNTRACKED_STRAY[@]} -gt 0 ]]; then
         echo "[${NN}] WARNING: Claude created untracked files outside artifacts, removing:"
         printf '  %s\n' "${UNTRACKED_STRAY[@]}"
         rm -f -- "${UNTRACKED_STRAY[@]}"
     fi
 
-    if ! git diff HEAD --quiet -- "${ARTIFACTS[@]}"; then
+    if ! git diff HEAD --quiet -- "${ALLOWED_FILES[@]}"; then
         if [[ -f "$COMMIT_MSG_FILE" ]] && [[ -s "$COMMIT_MSG_FILE" ]]; then
             COMMIT_DESC=$(head -n 1 -- "$COMMIT_MSG_FILE" | cut -c1-200)
             COMMIT_MSG="Update \`bitset-research\`: ${COMMIT_DESC}"
@@ -346,7 +349,7 @@ Ultrathink."
             COMMIT_MSG="Update \`bitset-research\`: apply review ${NN} fixes to step-${STEP_PADDED} artifacts"
         fi
 
-        git add -- "${ARTIFACTS[@]}"
+        git add -- "${ALLOWED_FILES[@]}"
         echo "$COMMIT_MSG" | git commit -F -
         echo "[${NN}] Committed: $(git log --oneline -1)"
         COMMITS_MADE=$((COMMITS_MADE + 1))
