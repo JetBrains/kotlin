@@ -14,7 +14,7 @@
 | 3c | Анализ: частотная таблица, классификация паттернов и каталог обёрток | **Выполнен** | [step-03c-analysis.md](step-03c-analysis.md) |
 | 4a | Отбор репозиториев и методология | **Выполнен** | [step-04a-repo-selection.md](step-04a-repo-selection.md) |
 | 4b | Извлечение данных по репозиториям | **Выполнен** | [step-04b-repo-data.md](step-04b-repo-data.md) |
-| 4c | Сводный анализ open-source использования | Не начат | — |
+| 4c | Сводный анализ open-source использования | **Выполнен** | [step-04c-analysis.md](step-04c-analysis.md) |
 | 5 | Болевые точки Java BitSet и wish list сообщества | Не начат | — |
 | 6 | Таксономия use cases | Не начат | — |
 | 7 | Анализ KEEP процесса | Не начат | — |
@@ -55,3 +55,7 @@
 ### Шаг 4b (Выполнен)
 
 Извлечены данные об использовании `java.util.BitSet` из 23 open-source репозиториев. Каталогизировано 641 файл: 422 use, 23 impl, 178 test, 18 gen; ещё 51 файл исключён (import без использования в коде). Top-5 методов в use-site файлах: `get(int)` (253), `set(int)` (243), `BitSet()` (168), `BitSet(int)` (119), `nextSetBit()` (67). Обнаружено 23 impl-файла с повторяющимися gaps: immutability (5 реализаций: calcite, hibernate, druid, graal FinalBitSet, graal MultiTypeState), iteration/Iterable (4: calcite ImmutableBitSet, graal Util, druid WrappedImmutableBitSetBitmap, calcite BitSets), serialization (3: beam BitSetCoder ×2, graal RecordedOperationPersistence), compressed storage (3: RoaringBitmap), fluent/convenience API (3: commons-lang FluentBitSet, netty Match, spotbugs MethodBytecodeSet). Арифметическая согласованность проверена: сумма per-repo use-sites = total use-sites для каждого метода.
+
+### Шаг 4c (Выполнен)
+
+В [`step-04c-analysis.md`](step-04c-analysis.md) сведены частотная таблица `33` методов, оценка стабильности (leave-one-out + incremental), классификация `422` use-sites по `12` паттернам и каталог «неудобных» паттернов. Top-5 (`get(int)` 253, `set(int)` 243, `BitSet()` 168, `BitSet(int)` 119, `nextSetBit()` 67) стабилен с шага 2 из 21 (incremental). Top-10 membership нестабильна в LOO для 4 repos (ранги 8–11 тесно сгруппированы: разброс 6 файлов). Крупнейшие паттерны: Dataflow/liveness (86, 20.4%), Column/parameter mask (72, 17.1%), Static analysis detectors (67, 15.9%), Query optimization (49, 11.6%). Главные «неудобные» паттерны: ручной nextSetBit-цикл (105 файлов), 5 independent immutability wrappers, 19 файлов с unsafe `clone()` cast. Сравнение с JetBrains (step-03c): top-3 core совпадает; `set(from,to)` #2 в JetBrains → #12 в OSS (IntelliJ diff/bytecode specific); `cardinality()` #10 → #6 (OSS больше считают). OSS подтверждает must-have core API: get/set, constructors, nextSetBit + iteration, or/and/andNot, isEmpty/cardinality, typed copy(), equals/hashCode.

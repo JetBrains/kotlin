@@ -60,14 +60,14 @@ PLAN="bitset-research/bitset-research-plan.md"
 
 # ---- Artifact discovery ----
 shopt -s nullglob
-ARTIFACTS=(bitset-research/step-${STEP_PADDED}-*.md)
+ARTIFACTS=(bitset-research/step-${STEP_PADDED}-*.{md,tsv,py})
 shopt -u nullglob
 
 # Files Claude is allowed to modify: artifacts + index
 ALLOWED_FILES=("${ARTIFACTS[@]}" "bitset-research/index.md")
 
 if [[ ${#ARTIFACTS[@]} -eq 0 ]]; then
-    echo "ERROR: No artifacts found for step ${STEP_PADDED} (glob: bitset-research/step-${STEP_PADDED}-*.md)" >&2
+    echo "ERROR: No artifacts found for step ${STEP_PADDED} (glob: bitset-research/step-${STEP_PADDED}-*.{md,tsv,py})" >&2
     exit 1
 fi
 
@@ -281,7 +281,7 @@ ${SUFFICIENCY_CRITERIA}
   НЕ добавляй префикс «Update \`bitset-research\`:» — его добавит скрипт.
   НЕ выполняй git add, git commit и любые другие git-команды.
 - Если ни одно замечание не потребовало исправлений, НЕ создавай файл с commit message.
-- Не трогай файлы за пределами bitset-research/step-${STEP_PADDED}-*.md и bitset-research/index.md.
+- Не трогай файлы за пределами bitset-research/step-${STEP_PADDED}-*.{md,tsv,py} и bitset-research/index.md.
 
 Ultrathink."
 
