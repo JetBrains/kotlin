@@ -42,7 +42,6 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
             ::TargetBackendTestSkipper,
         )
         defaultDirectives {
-            FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
             +DISABLE_FIR_DUMP_HANDLER
             if (customNativeCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE) {
                 // We need to set the custom LV to let `UnsupportedFeaturesTestConfigurator` skip tests with
