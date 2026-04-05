@@ -18,8 +18,10 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal fun Project.locateOrRegisterSwiftPMDependenciesMetadataTaskAndConsumableConfiguration(
     swiftPMImportExtension: SwiftPMImportExtension,
@@ -31,6 +33,13 @@ internal fun Project.locateOrRegisterSwiftPMDependenciesMetadataTaskAndConsumabl
         SerializeSwiftPMDependenciesMetadata.TASK_NAME,
     ) {
         it.configureWithExtension(swiftPMImportExtension)
+        it.konanTargets.set(
+            provider {
+                multiplatformExtension.targets.filterIsInstance<KotlinNativeTarget>().map { it.konanTarget }.filter {
+                    it.family.isAppleFamily
+                }
+            }
+        )
     }
     val swiftPMDependenciesMetadataApiElements = registerSwiftPMDependenciesMetadataApiElements(swiftPMDependenciesMetadata)
     project.multiplatformExtension.publishing.adhocSoftwareComponent.addVariantsFromConfiguration(
@@ -64,6 +73,9 @@ internal abstract class SerializeSwiftPMDependenciesMetadata : DefaultTask() {
     @get:Input
     protected abstract val discoverModulesImplicitly: Property<Boolean>
 
+    @get:Input
+    abstract val konanTargets: SetProperty<KonanTarget>
+
     @get:OutputFile
     protected val metadataFile: Provider<RegularFile> = project.layout.buildDirectory.file("kotlin/swiftPMDependenciesMetadata")
 
@@ -84,6 +96,7 @@ internal abstract class SerializeSwiftPMDependenciesMetadata : DefaultTask() {
     }
 
     internal fun swiftPMImportMetadata() = SwiftPMImportMetadata(
+        konanTargets = konanTargets.get().map { it.name }.toSet(),
         iosDeploymentVersion = iosDeploymentVersion.orNull,
         macosDeploymentVersion = macosDeploymentVersion.orNull,
         watchosDeploymentVersion = watchosDeploymentVersion.orNull,

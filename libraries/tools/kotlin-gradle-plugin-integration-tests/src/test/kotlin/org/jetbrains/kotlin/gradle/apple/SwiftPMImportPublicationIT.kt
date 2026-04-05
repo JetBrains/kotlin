@@ -63,6 +63,7 @@ class SwiftPMImportPublicationIT : KGPBaseTest() {
 
         assertEquals(
             SwiftPMImportMetadata(
+                konanTargets = setOf("ios_arm64", "ios_simulator_arm64"),
                 iosDeploymentVersion = "18.0",
                 macosDeploymentVersion = null,
                 watchosDeploymentVersion = null,
@@ -123,6 +124,7 @@ class SwiftPMImportPublicationIT : KGPBaseTest() {
 
         assertEquals(
             SwiftPMImportMetadata(
+                konanTargets = setOf("ios_arm64", "ios_simulator_arm64"),
                 iosDeploymentVersion = null,
                 macosDeploymentVersion = null,
                 watchosDeploymentVersion = null,

@@ -360,6 +360,7 @@ sealed class SwiftPMDependency : Serializable {
 // This is the structure that we serialize into
 @kotlinx.serialization.Serializable
 internal data class SwiftPMImportMetadata(
+    val konanTargets: Set<String>,
     val iosDeploymentVersion: String?,
     val macosDeploymentVersion: String?,
     val watchosDeploymentVersion: String?,
