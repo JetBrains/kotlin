@@ -97,7 +97,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
 
     @TaskAction
     fun generateSwiftPMSyntheticImportProjectAndFetchPackages() {
-        buildFusService.get()?.reportFusMetrics {
+        buildFusService.orNull?.reportFusMetrics {
             it.report(
                 BooleanMetrics.KMP_SWIFT_PM_IMPORT_HAS_TRANSITIVE_DEPENDENCIES_FROM_MODULAR_DEPENDENCIES,
                 dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.keys.any { it.isModular }
