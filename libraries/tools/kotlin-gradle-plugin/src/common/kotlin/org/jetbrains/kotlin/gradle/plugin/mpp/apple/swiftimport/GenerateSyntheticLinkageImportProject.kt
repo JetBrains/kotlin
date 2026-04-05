@@ -128,7 +128,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                             }
                             remoteDependency.copy(products = emptyList())
                         }.toSet(),
-                        transitiveSyntheticPackages = setOf(SwiftPMDependencyIdentifier(SYNTHETIC_IMPORT_DYLIB)),
+                        transitiveSyntheticPackages = setOf(SwiftPMDependencyIdentifier(SYNTHETIC_IMPORT_DYLIB, false)),
                         transitiveSyntheticPackagesPath = SUBPACKAGES,
                     )
                 }
