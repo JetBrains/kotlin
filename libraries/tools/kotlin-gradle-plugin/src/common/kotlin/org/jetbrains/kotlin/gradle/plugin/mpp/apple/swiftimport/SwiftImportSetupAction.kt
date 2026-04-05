@@ -236,7 +236,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
 
         target.binaries.all { binary ->
             binary.linkTaskProvider.configure { linkTask ->
-                // FIXME: KT-84809 Wire this only when we will call ld
+                if (binary is Framework && binary.isStatic) return@configure
                 val isFrameworkBinary = binary is Framework
                 val ldArgDumpPath = defFilesAndLdDumpGenerationTask.map {
                     if (isFrameworkBinary) {

@@ -438,6 +438,55 @@ class SwiftPMImportUnitTests {
             fetchTask
         )
     }
+
+    @Test
+    fun `test - only dynamic frameworks depend on SwiftPM import pipeline`() {
+        val linkTaskName = "linkDebugFrameworkIosSimulatorArm64"
+        val staticFramework = swiftPMImportProject(
+            multiplatform = {
+                iosSimulatorArm64().binaries.framework {
+                    isStatic = true
+                }
+            },
+            swiftPMDependencies = { layout ->
+                localSwiftPackage(
+                    directory = layout.projectDirectory.dir("my-custom-pkg"),
+                    products = listOf("ManifestPackage"),
+                )
+            }
+        ).evaluate()
+
+        val staticFrameworkTaskDependencies = staticFramework.tasks.getByName(linkTaskName)
+            .taskDependencies.getDependencies(null)
+            .map { it.name }.toSet()
+
+        val dynamicFramework = swiftPMImportProject(
+            multiplatform = {
+                iosSimulatorArm64().binaries.framework {
+                    isStatic = false
+                }
+            },
+            swiftPMDependencies = { layout ->
+                localSwiftPackage(
+                    directory = layout.projectDirectory.dir("my-custom-pkg"),
+                    products = listOf("ManifestPackage"),
+                )
+            }
+        ).evaluate()
+
+        val dynamicFrameworkTaskDependencies = dynamicFramework.tasks.getByName(linkTaskName)
+            .taskDependencies.getDependencies(null)
+            .map { it.name }.toSet()
+
+        assertEquals(
+            setOf("convertSyntheticImportProjectIntoDefFileIphonesimulator"),
+            dynamicFrameworkTaskDependencies - staticFrameworkTaskDependencies,
+        )
+        assertEquals(
+            setOf(),
+            staticFrameworkTaskDependencies - dynamicFrameworkTaskDependencies,
+        )
+    }
 }
 
 private fun ProjectInternal.swiftPmLocalDependencies(): List<SwiftPMDependency.Local> {
