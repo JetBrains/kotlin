@@ -106,7 +106,8 @@ public class StandaloneAnalysisAPISessionBuilder(
 
     @Deprecated(
         "Compiler configuration is not a good fit for specifying multi-module project.",
-        ReplaceWith("buildKtModuleProvider { }")
+        ReplaceWith("buildKtModuleProvider { }"),
+        level = DeprecationLevel.HIDDEN,
     )
     public fun buildKtModuleProviderByCompilerConfiguration(
         compilerConfiguration: CompilerConfiguration,
