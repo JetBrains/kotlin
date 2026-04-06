@@ -45,8 +45,9 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.permissions.KotlinStand
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.services.LLStandaloneFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser
-import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder
-import org.jetbrains.kotlin.analysis.project.structure.builder.buildProjectStructureProvider
+import org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainerBuilder
+import org.jetbrains.kotlin.analysis.project.structure.builder.buildModuleContainer
+import org.jetbrains.kotlin.analysis.project.structure.impl.KotlinStandaloneProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.impl.buildKtModuleProviderByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.project.structure.impl.getPsiFilesFromPaths
 import org.jetbrains.kotlin.analysis.project.structure.impl.getSourceFilePaths
@@ -95,11 +96,12 @@ public class StandaloneAnalysisAPISessionBuilder(
     private lateinit var projectStructureProvider: KotlinStaticProjectStructureProvider
 
     @OptIn(ExperimentalContracts::class)
-    public fun buildKtModuleProvider(init: KtModuleProviderBuilder.() -> Unit) {
+    public fun buildKtModuleProvider(init: KaModuleContainerBuilder.() -> Unit) {
         contract {
             callsInPlace(init, InvocationKind.EXACTLY_ONCE)
         }
-        projectStructureProvider = buildProjectStructureProvider(kotlinCoreProjectEnvironment.environment, project, init)
+        val [moduleContainer, platform] = buildModuleContainer(kotlinCoreProjectEnvironment.environment, project, init)
+        projectStructureProvider = KotlinStandaloneProjectStructureProvider(platform, project, moduleContainer)
     }
 
     @Deprecated(
