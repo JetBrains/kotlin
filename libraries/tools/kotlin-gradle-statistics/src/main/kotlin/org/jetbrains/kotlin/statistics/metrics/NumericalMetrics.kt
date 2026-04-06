@@ -70,6 +70,6 @@ enum class NumericalMetrics(val type: NumberOverridePolicy, val anonymization: N
     KMP_COCOAPODS_NUMBER_OF_DIRECT_DEPENDENCIES(SUM, SAFE);
 
     companion object {
-        const val VERSION = 2
+        const val VERSION = 3
     }
 }
