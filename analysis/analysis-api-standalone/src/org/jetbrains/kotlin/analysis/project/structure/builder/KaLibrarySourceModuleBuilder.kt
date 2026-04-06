@@ -35,7 +35,7 @@ public class KtLibrarySourceModuleBuilder(private val project: Project) : KtModu
 }
 
 @OptIn(ExperimentalContracts::class)
-public inline fun KtModuleProviderBuilder.buildKtLibrarySourceModule(init: KtLibrarySourceModuleBuilder.() -> Unit): KaLibrarySourceModule {
+public inline fun KtModuleContainerBuilder.buildKtLibrarySourceModule(init: KtLibrarySourceModuleBuilder.() -> Unit): KaLibrarySourceModule {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }

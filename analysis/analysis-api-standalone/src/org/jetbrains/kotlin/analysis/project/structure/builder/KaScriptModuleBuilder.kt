@@ -41,7 +41,7 @@ public class KtScriptModuleBuilder(private val project: Project) : KtModuleBuild
 
 @KaExperimentalApi
 @OptIn(ExperimentalContracts::class)
-public inline fun KtModuleProviderBuilder.buildKtScriptModule(init: KtScriptModuleBuilder.() -> Unit): KaScriptModule {
+public inline fun KtModuleContainerBuilder.buildKtScriptModule(init: KtScriptModuleBuilder.() -> Unit): KaScriptModule {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }

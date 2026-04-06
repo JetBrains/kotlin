@@ -28,23 +28,27 @@ public final class org/jetbrains/kotlin/analysis/api/standalone/StandaloneAnalys
 }
 
 public final class org/jetbrains/kotlin/analysis/project/structure/builder/KaLibraryModuleBuilderKt {
-	public static final fun buildKtLibraryModule (Lorg/jetbrains/kotlin/analysis/project/structure/builder/KtModuleProviderBuilder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibraryModule;
+	public static final fun buildKtLibraryModule (Lorg/jetbrains/kotlin/analysis/project/structure/builder/KtModuleContainerBuilder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibraryModule;
 }
 
 public final class org/jetbrains/kotlin/analysis/project/structure/builder/KaLibrarySourceModuleBuilderKt {
-	public static final fun buildKtLibrarySourceModule (Lorg/jetbrains/kotlin/analysis/project/structure/builder/KtModuleProviderBuilder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibrarySourceModule;
+	public static final fun buildKtLibrarySourceModule (Lorg/jetbrains/kotlin/analysis/project/structure/builder/KtModuleContainerBuilder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibrarySourceModule;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/project/structure/builder/KaModuleContainer {
+	public abstract fun getAllModules ()Ljava/util/List;
 }
 
 public final class org/jetbrains/kotlin/analysis/project/structure/builder/KaScriptModuleBuilderKt {
-	public static final fun buildKtScriptModule (Lorg/jetbrains/kotlin/analysis/project/structure/builder/KtModuleProviderBuilder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaScriptModule;
+	public static final fun buildKtScriptModule (Lorg/jetbrains/kotlin/analysis/project/structure/builder/KtModuleContainerBuilder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaScriptModule;
 }
 
 public final class org/jetbrains/kotlin/analysis/project/structure/builder/KaSdkModuleBuilderKt {
-	public static final fun buildKtSdkModule (Lorg/jetbrains/kotlin/analysis/project/structure/builder/KtModuleProviderBuilder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibraryModule;
+	public static final fun buildKtSdkModule (Lorg/jetbrains/kotlin/analysis/project/structure/builder/KtModuleContainerBuilder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibraryModule;
 }
 
 public final class org/jetbrains/kotlin/analysis/project/structure/builder/KaSourceModuleBuilderKt {
-	public static final fun buildKtSourceModule (Lorg/jetbrains/kotlin/analysis/project/structure/builder/KtModuleProviderBuilder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaSourceModule;
+	public static final fun buildKtSourceModule (Lorg/jetbrains/kotlin/analysis/project/structure/builder/KtModuleContainerBuilder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaSourceModule;
 }
 
 public abstract class org/jetbrains/kotlin/analysis/project/structure/builder/KtBinaryModuleBuilder : org/jetbrains/kotlin/analysis/project/structure/builder/KtModuleBuilder {
@@ -99,11 +103,11 @@ public abstract class org/jetbrains/kotlin/analysis/project/structure/builder/Kt
 	public final fun setPlatform (Lorg/jetbrains/kotlin/platform/TargetPlatform;)V
 }
 
-public final class org/jetbrains/kotlin/analysis/project/structure/builder/KtModuleProviderBuilder {
+public final class org/jetbrains/kotlin/analysis/project/structure/builder/KtModuleContainerBuilder {
 	public field platform Lorg/jetbrains/kotlin/platform/TargetPlatform;
 	public fun <init> (Lcom/intellij/core/CoreApplicationEnvironment;Lcom/intellij/openapi/project/Project;)V
 	public final fun addModule (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
-	public final fun build ()Lorg/jetbrains/kotlin/analysis/api/standalone/base/projectStructure/KotlinStaticProjectStructureProvider;
+	public final fun build ()Lorg/jetbrains/kotlin/analysis/project/structure/builder/KaModuleContainer;
 	public final fun getCoreApplicationEnvironment ()Lcom/intellij/core/CoreApplicationEnvironment;
 	public final fun getPlatform ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
 	public final fun getProject ()Lcom/intellij/openapi/project/Project;

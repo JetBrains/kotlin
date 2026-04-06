@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder
+import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleContainerBuilder
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.library.metadata.KlibInputModule
@@ -62,7 +62,7 @@ public fun <Config> createKaModulesForStandaloneAnalysis(
     return KaModules(fakeSourceModule, binaryModules, platformLibraryModules)
 }
 
-private fun <Config> KtModuleProviderBuilder.inputModuleIntoKaLibraryModule(
+private fun <Config> KtModuleContainerBuilder.inputModuleIntoKaLibraryModule(
     input: KlibInputModule<Config>,
     targetPlatform: TargetPlatform,
 ): KaLibraryModule = addModule(
