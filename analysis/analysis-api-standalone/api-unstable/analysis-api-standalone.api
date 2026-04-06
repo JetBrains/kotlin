@@ -9,7 +9,7 @@ public final class org/jetbrains/kotlin/analysis/api/standalone/StandaloneAnalys
 	public fun <init> (Lcom/intellij/openapi/Disposable;Z)V
 	public final fun build ()Lorg/jetbrains/kotlin/analysis/api/standalone/StandaloneAnalysisAPISession;
 	public final fun buildKtModuleProvider (Lkotlin/jvm/functions/Function1;)V
-	public final fun buildKtModuleProviderByCompilerConfiguration (Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
+	public final synthetic fun buildKtModuleProviderByCompilerConfiguration (Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
 	public final fun enableCacheCleaner ()V
 	public final fun getApplication ()Lcom/intellij/openapi/application/Application;
 	public final fun getProject ()Lcom/intellij/openapi/project/Project;
