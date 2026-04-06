@@ -7,40 +7,41 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KotlinStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.project.structure.impl.KotlinStandaloneProjectStructureProvider
+import org.jetbrains.kotlin.analysis.project.structure.impl.KaModuleContainerImpl
 import org.jetbrains.kotlin.platform.TargetPlatform
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-public class KtModuleProviderBuilder(
+public class KtModuleContainerBuilder(
     public val coreApplicationEnvironment: CoreApplicationEnvironment,
     public val project: Project,
 ) {
-    private val mainModules: MutableList<KaModule> = mutableListOf()
+    private val allModules: MutableList<KaModule> = mutableListOf()
 
     public fun <M : KaModule> addModule(module: M): M {
-        mainModules.add(module)
+        allModules.add(module)
         return module
     }
 
     public lateinit var platform: TargetPlatform
 
-    public fun build(): KotlinStaticProjectStructureProvider {
-        return KotlinStandaloneProjectStructureProvider(platform, project, mainModules)
+    public fun build(): KaModuleContainer {
+        return KaModuleContainerImpl(allModules)
     }
 }
 
 @OptIn(ExperimentalContracts::class)
-internal inline fun buildProjectStructureProvider(
+internal inline fun buildModuleContainer(
     coreApplicationEnvironment: CoreApplicationEnvironment,
     project: Project,
-    init: KtModuleProviderBuilder.() -> Unit,
-): KotlinStaticProjectStructureProvider {
+    init: KtModuleContainerBuilder.() -> Unit
+): Pair<KaModuleContainer, TargetPlatform> {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return KtModuleProviderBuilder(coreApplicationEnvironment, project).apply(init).build()
+
+    val moduleContainerBuilder = KtModuleContainerBuilder(coreApplicationEnvironment, project).apply(init)
+    return moduleContainerBuilder.build() to moduleContainerBuilder.platform
 }

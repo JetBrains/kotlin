@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathNioRoots
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -136,52 +135,56 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
     project: Project,
     compilerConfig: CompilerConfiguration,
     ktFiles: List<KtFile>,
-): KotlinStaticProjectStructureProvider = buildProjectStructureProvider(coreApplicationEnvironment, project) {
-    val [scriptFiles, _] = ktFiles.partition { it.isScript() }
-    val platform = JvmPlatforms.defaultJvmPlatform
+): KotlinStaticProjectStructureProvider {
+    val [moduleContainer, platform] = buildModuleContainer(coreApplicationEnvironment, project) {
+        val [scriptFiles, _] = ktFiles.partition { it.isScript() }
+        val platform = JvmPlatforms.defaultJvmPlatform
 
-    fun KtModuleBuilder.addModuleDependencies(moduleName: String) {
-        val libraryRoots = compilerConfig.jvmModularRoots.asSequence().map { it.toPath() } + compilerConfig.jvmClasspathNioRoots()
-        addRegularDependency(
-            buildKtLibraryModule {
-                this.platform = platform
-                addBinaryRoots(libraryRoots.toList())
-                libraryName = "Library for $moduleName"
-            }
-        )
-        compilerConfig.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
+        fun KtModuleBuilder.addModuleDependencies(moduleName: String) {
+            val libraryRoots = compilerConfig.jvmModularRoots.asSequence().map { it.toPath() } + compilerConfig.jvmClasspathNioRoots()
             addRegularDependency(
-                buildKtSdkModule {
+                buildKtLibraryModule {
                     this.platform = platform
-                    addBinaryRootsFromJdkHome(jdkHome.toPath(), isJre = false)
-                    libraryName = "JDK for $moduleName"
+                    addBinaryRoots(libraryRoots.toList())
+                    libraryName = "Library for $moduleName"
                 }
             )
+            compilerConfig.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
+                addRegularDependency(
+                    buildKtSdkModule {
+                        this.platform = platform
+                        addBinaryRootsFromJdkHome(jdkHome.toPath(), isJre = false)
+                        libraryName = "JDK for $moduleName"
+                    }
+                )
+            }
         }
-    }
 
-    val configLanguageVersionSettings = compilerConfig[CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS]
+        val configLanguageVersionSettings = compilerConfig[CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS]
 
-    for (scriptFile in scriptFiles) {
-        buildKtScriptModule {
+        for (scriptFile in scriptFiles) {
+            buildKtScriptModule {
+                configLanguageVersionSettings?.let { this.languageVersionSettings = it }
+                this.platform = platform
+                this.file = scriptFile
+
+                addModuleDependencies("Script " + scriptFile.name)
+            }.apply(::addModule)
+        }
+
+        buildKtSourceModule {
             configLanguageVersionSettings?.let { this.languageVersionSettings = it }
             this.platform = platform
-            this.file = scriptFile
+            this.moduleName = compilerConfig.get(CommonConfigurationKeys.MODULE_NAME) ?: "<no module name provided>"
 
-            addModuleDependencies("Script " + scriptFile.name)
+            addModuleDependencies(moduleName)
+
+            addSourceRoots(compilerConfig.javaSourceRoots.map { Paths.get(it) })
         }.apply(::addModule)
+
+
+        this.platform = platform
     }
 
-    buildKtSourceModule {
-        configLanguageVersionSettings?.let { this.languageVersionSettings = it }
-        this.platform = platform
-        this.moduleName = compilerConfig.get(CommonConfigurationKeys.MODULE_NAME) ?: "<no module name provided>"
-
-        addModuleDependencies(moduleName)
-
-        addSourceRoots(compilerConfig.javaSourceRoots.map { Paths.get(it) })
-    }.apply(::addModule)
-
-
-    this.platform = platform
+    return KotlinStandaloneProjectStructureProvider(platform, project, moduleContainer)
 }

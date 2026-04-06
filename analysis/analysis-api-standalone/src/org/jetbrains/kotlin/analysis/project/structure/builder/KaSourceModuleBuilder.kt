@@ -93,7 +93,7 @@ public class KtSourceModuleBuilder(
 }
 
 @OptIn(ExperimentalContracts::class)
-public inline fun KtModuleProviderBuilder.buildKtSourceModule(init: KtSourceModuleBuilder.() -> Unit): KaSourceModule {
+public inline fun KtModuleContainerBuilder.buildKtSourceModule(init: KtSourceModuleBuilder.() -> Unit): KaSourceModule {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
