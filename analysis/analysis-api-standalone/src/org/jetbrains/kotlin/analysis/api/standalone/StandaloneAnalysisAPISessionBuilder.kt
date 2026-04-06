@@ -216,6 +216,7 @@ public class StandaloneAnalysisAPISessionBuilder(
      *
      * @param compilerConfiguration The [CompilerConfiguration] containing information about the registered compiler plugins.
      */
+    @Deprecated("Obsolete Standalone API", level = DeprecationLevel.HIDDEN)
     public fun registerCompilerPluginServices(compilerConfiguration: CompilerConfiguration) {
         registerProjectService(
             KotlinCompilerPluginsProvider::class.java,
