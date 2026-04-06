@@ -192,7 +192,7 @@ The default value is 'warn'.""",
         }
 
     @Argument(
-        value = "Xmultifile-parts-inherit",
+        value = "-Xmultifile-parts-inherit",
         description = "Compile multifile classes as a hierarchy of parts and a facade."
     )
     var inheritMultifileParts: Boolean = false

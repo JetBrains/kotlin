@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvide
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JKlibIrLinker(
@@ -98,15 +97,23 @@ class JKlibIrLinker(
         return (JavaToKotlinClassMap.mapJavaToKotlin(this) ?: JavaToKotlinClassMap.mapKotlinToJava(toUnsafe())) != null
     }
 
+    private val mappedClassFqnByFunctionName: Map<String, FqName> =
+        JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES.associate { signature ->
+            val dotIndex = signature.indexOf('.')
+            val parenthesisIndex = signature.indexOf('(')
+            val classInternalName = signature.substring(0, dotIndex)
+            val funName = signature.substring(dotIndex + 1, parenthesisIndex)
+            val javaFqName = FqName(classInternalName.replace('/', '.'))
+            funName to javaFqName
+        }
+
     /**
-     * A hack to resolve methods of Java-to-Kotlin mapped types (e.g., kotlin.Throwable vs java.lang.Throwable).
-     * This addresses issues where the Kotlin 1.x (K1) frontend fails to resolve a Java method when the type
-     * is represented as its Kotlin mapped equivalent.
-     *
-     * In particular, it was introduced to resolve methods like `getSuppressed` that are present in Java's
-     * `java.lang.Throwable` but don't map directly/trivially to Kotlin's `kotlin.Throwable` during early linkage.
+     * A hack to resolve methods from Java-to-Kotlin mapped types that are only defined on the Java
+     * type but visible from the Kotlin type (e.g., java.lang.Throwable.getSuppressed). Those methods
+     * are not available from the kotlin type during early linkage.
      */
-    // TODO(KT-84877): remove this hack when we have a proper way to map Java APIs not present in klib to Kotlin.
+    // TODO(KT-84877): remove this hack when we have a proper way to map Java APIs not present in klib
+    // to Kotlin.
     private fun withKotlinBuiltinsHack(idSig: IdSignature, f: () -> IrSymbol?): IrSymbol? {
         val symbol = f()
         if (idSig is IdSignature.CommonSignature) {
@@ -114,17 +121,21 @@ class JKlibIrLinker(
             if (symbol != null) {
                 if (symbol is IrClassSymbol && fqName.isMappedType() && fqName !in mappedClassSymbols) {
                     mappedClassSymbols[fqName] = symbol
-                    JavaToKotlinClassMap.mapJavaToKotlin(fqName)?.asSingleFqName()?.let { mappedClassSymbols[it] = symbol }
-                    JavaToKotlinClassMap.mapKotlinToJava(fqName.toUnsafe())?.asSingleFqName()?.let { mappedClassSymbols[it] = symbol }
                 }
                 return symbol
             }
 
-            val maybeClassFqName = fqName.parent()
-            if (!maybeClassFqName.isRoot) {
-                val classSymbol = mappedClassSymbols[maybeClassFqName] ?: return null
-                val funName = idSig.nameSegments.last()
-                return classSymbol.owner.declarations.firstOrNull { it.getNameWithAssert().asString() == funName }?.symbol
+            // This is needed to avoid unbound symbols for some kotlin.Int functions.
+            mappedClassSymbols[FqName("kotlin.Int")]?.owner?.declarations
+
+            val funName = idSig.nameSegments.last()
+            val mappedClassFqn = mappedClassFqnByFunctionName[funName] ?: return null
+            val mappedClassSymbol = mappedClassSymbols[mappedClassFqn] ?: return null
+
+            for (declaration in mappedClassSymbol.owner.declarations) {
+                if (declaration.getNameWithAssert().asString() == funName) {
+                    return declaration.symbol
+                }
             }
             return null
         }
