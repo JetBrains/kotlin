@@ -56,16 +56,16 @@ import vector.*
 
 @Composable fun VecInUi() {
     UiContent {
-        VectorContent {
-            <!COMPOSE_APPLIER_CALL_MISMATCH!>Ui<!>()
+        <!COMPOSE_APPLIER_CALL_MISMATCH!>VectorContent<!> {
+            Ui()
         }
     }
 }
 
 @Composable fun UiInVec() {
     VectorContent {
-        UiContent {
-            Ui()
+        <!COMPOSE_APPLIER_CALL_MISMATCH!>UiContent<!> {
+            <!COMPOSE_APPLIER_CALL_MISMATCH!>Ui<!>()
         }
     }
 }

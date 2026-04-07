@@ -18,6 +18,7 @@ package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
 import androidx.compose.compiler.plugins.kotlin.Classpath
+import org.junit.Assume.assumeTrue
 import org.junit.Test
 
 class ComposableTargetCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(useFir) {
@@ -497,8 +498,10 @@ class ComposableTargetCheckerTests(useFir: Boolean) : AbstractComposeDiagnostics
     )
 
     @Test
-    fun testDifferentWrapperTypes() = check(
-        """
+    fun testDifferentWrapperTypes() {
+        assumeTrue(useFir)
+        check(
+            """
             import androidx.compose.runtime.*
              
             @Retention(AnnotationRetention.BINARY)
@@ -536,13 +539,14 @@ class ComposableTargetCheckerTests(useFir: Boolean) : AbstractComposeDiagnostics
              
             @Composable fun T() {
                 MWrapper {
-                    NWrapper {
-                        N()
+                    ${firMisStart()}NWrapper${firEnd()} {
+                        ${firMisStart()}N${firEnd()}()
                     }
                 }
             }
         """
-    )
+        )
+    }
 
     @Test
     fun differentApplierInContainingFunction() = check(
