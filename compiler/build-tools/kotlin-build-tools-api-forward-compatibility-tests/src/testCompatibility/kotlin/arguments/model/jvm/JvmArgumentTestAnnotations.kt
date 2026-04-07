@@ -26,17 +26,34 @@ annotation class AllJvmCompilerArgumentsWithBtaVersionsTest
 
 /**
  * Parameterized test annotation for validating forward compatibility of JVM compiler arguments
- * that reject invalid string values.
+ * that reject invalid argument values.
  *
  * This annotation generates test cases specifically for JVM compiler arguments where setting
- * an invalid string value should throw [org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException].
+ * an invalid argument value should throw [org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException].
  *
- * @see InvalidValueJvmCompilerArgumentsArgumentProvider
+ * @see InvalidArgumentValueJvmCompilerArgumentsArgumentProvider
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)
 @ParameterizedTest(name = "{0}: {displayName}")
 @ArgumentsSource(
-    InvalidValueJvmCompilerArgumentsArgumentProvider::class
+    InvalidArgumentValueJvmCompilerArgumentsArgumentProvider::class
 )
-annotation class InvalidValueJvmCompilerArgumentsWithBtaVersionsTest
+annotation class InvalidArgumentValueJvmCompilerArgumentsWithBtaVersionsTest
+
+/**
+ * Parameterized test annotation for validating forward compatibility of JVM compiler arguments
+ * that reject invalid string values.
+ *
+ * This annotation generates test cases specifically for JVM compiler arguments where setting
+ * an invalid string value should throw [org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException].
+ *
+ * @see InvalidRawValueJvmCompilerArgumentsArgumentProvider
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(AnnotationRetention.RUNTIME)
+@ParameterizedTest(name = "{0}: {displayName}")
+@ArgumentsSource(
+    InvalidRawValueJvmCompilerArgumentsArgumentProvider::class
+)
+annotation class InvalidRawValueJvmCompilerArgumentsWithBtaVersionsTest

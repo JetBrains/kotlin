@@ -13,5 +13,7 @@ internal class JvmArgumentConfiguration<T>(
 ) : ArgumentConfiguration<T>(jvmArgumentTestDescriptor) {
     val argumentKey: JvmCompilerArgument<T> = jvmArgumentTestDescriptor.argument
     val argumentValues: List<T> = jvmArgumentTestDescriptor.argumentValues
-    val invalidValue: T? = jvmArgumentTestDescriptor.invalidArgumentValue
+
+    val invalidArgumentValues: List<T> = jvmArgumentTestDescriptor.invalidArgumentValues
+    val invalidRawValues: List<String> = jvmArgumentTestDescriptor.invalidRawValues
 }

@@ -12,7 +12,8 @@ internal class JvmArgumentTestDescriptor<T>(
     override val argumentName: String,
     override val argument: JvmCompilerArguments.JvmCompilerArgument<T>,
     override val argumentValues: List<T>,
-    override val invalidArgumentValue: T? = null,
+    override val invalidArgumentValues: List<T> = emptyList(),
+    override val invalidRawValues: List<String> = emptyList(),
     val valueString: (T?) -> String?,
     val expectedArgumentStringsFor: (String) -> List<String>,
 ) : ArgumentTestDescriptor<T> {

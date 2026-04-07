@@ -11,9 +11,13 @@ internal interface ArgumentTestDescriptor<T> {
 
     val argumentValues: List<T>
 
-    val invalidArgumentValue: T?
+    val invalidArgumentValues: List<T>
     val runsInvalidArgumentValueTest: Boolean
-        get() = invalidArgumentValue != null
+        get() = invalidArgumentValues.isNotEmpty()
+
+    val invalidRawValues: List<String>
+    val runsInvalidRawValueTest: Boolean
+        get() = invalidRawValues.isNotEmpty()
 
     fun getValueString(argument: T?): String?
     fun expectedArgumentStringsFor(value: String): List<String>

@@ -38,9 +38,15 @@ internal class AllCommonCompilerArgumentsArgumentProvider : ArgumentsProvider {
     }
 }
 
-internal class InvalidValueCommonCompilerArgumentsArgumentProvider : ArgumentsProvider {
+internal class InvalidArgumentValueCommonCompilerArgumentsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
         return namedArgumentConfiguration { it.runsInvalidArgumentValueTest }.map { Arguments.of(it) }.stream()
+    }
+}
+
+internal class InvalidRawValueCommonCompilerArgumentsArgumentProvider : ArgumentsProvider {
+    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+        return namedArgumentConfiguration { it.runsInvalidRawValueTest }.map { Arguments.of(it) }.stream()
     }
 }
 
@@ -172,7 +178,8 @@ internal val commonCompilerArgumentTestDescriptors: List<CommonArgumentTestDescr
         argumentName = "Xwarning-level",
         argument = X_WARNING_LEVEL,
         argumentValues = listOf(arrayOf("DEPRECATION:error", "UNUSED_VARIABLE:disabled")),
-        invalidArgumentValue = arrayOf("DEPRECATION:non-existent-level"),
+        invalidArgumentValues = listOf(arrayOf("DEPRECATION:non-existent-level")),
+        invalidRawValues = listOf("DEPRECATION:non-existent-level"),
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-Xwarning-level=$value") },
     ),

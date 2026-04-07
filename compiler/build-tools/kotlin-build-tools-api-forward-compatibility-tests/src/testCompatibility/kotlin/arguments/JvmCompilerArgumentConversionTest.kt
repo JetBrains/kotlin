@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgumen
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.tests.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.AllJvmCompilerArgumentsWithBtaVersionsTest
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.InvalidValueJvmCompilerArgumentsWithBtaVersionsTest
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.InvalidArgumentValueJvmCompilerArgumentsWithBtaVersionsTest
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.InvalidRawValueJvmCompilerArgumentsWithBtaVersionsTest
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.JvmArgumentConfiguration
 import org.jetbrains.kotlin.buildtools.tests.toolchain
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -110,31 +111,31 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
         )
     }
 
-    @InvalidValueJvmCompilerArgumentsWithBtaVersionsTest
+    @InvalidRawValueJvmCompilerArgumentsWithBtaVersionsTest
     @DisplayName("Raw argument with non-existent BTA argument value fails conversion")
-    fun JvmArgumentConfiguration<String?>.testInvalidRawArgumentConversionFails() {
+    fun <T> JvmArgumentConfiguration<T>.testInvalidRawArgumentConversionFails() {
         assumeArgumentSupported()
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        for (invalidValue in invalidRawValues) {
+            val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
 
-        assertThrows<CompilerArgumentsParseException> {
-            operation.compilerArguments.applyArgumentStrings(
-                expectedArgumentStringsFor(getValueString(invalidValue))
-            )
-            operation.compilerArguments[argumentKey]
+            assertThrows<CompilerArgumentsParseException> {
+                operation.compilerArguments.applyArgumentStrings(
+                    expectedArgumentStringsFor(invalidValue)
+                )
+            }
         }
     }
 
+    @InvalidArgumentValueJvmCompilerArgumentsWithBtaVersionsTest
     @DisplayName("Setting non-existent BTA argument value directly fails")
-    @InvalidValueJvmCompilerArgumentsWithBtaVersionsTest
-    fun JvmArgumentConfiguration<String?>.testInvalidDirectAssignmentFails() {
+    fun <T> JvmArgumentConfiguration<T>.testInvalidDirectAssignmentFails() {
         assumeArgumentSupported()
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        for (invalidValue in invalidArgumentValues) {
+            val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
 
-        assertThrows<CompilerArgumentsParseException> {
-            operation.compilerArguments.applyArgumentStrings(
-                expectedArgumentStringsFor(getValueString(invalidValue))
-            )
-            operation.compilerArguments[argumentKey]
+            assertThrows<CompilerArgumentsParseException> {
+                operation.compilerArguments[argumentKey] = invalidValue
+            }
         }
     }
 
