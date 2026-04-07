@@ -554,6 +554,8 @@ include ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:kotlin-compiler-fir-for-ide"
 
 include ":compiler:build-tools:kotlin-build-tools-api",
+        ":compiler:build-tools:kotlin-build-tools-future-api",
+        ":compiler:build-tools:kotlin-build-tools-future-impl",
         ":compiler:build-tools:kotlin-build-tools-impl",
         ":compiler:build-tools:kotlin-build-tools-compat",
         ":compiler:build-tools:kotlin-build-tools-api-tests",
