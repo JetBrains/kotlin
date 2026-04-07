@@ -82,11 +82,13 @@ open class WasiBoxRunner(
 
             val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(modulesToArtifact.keys.first())
             val useNewExceptionProposal = configuration.getNotNull(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL)
+            val wasmCoroutinesStackSwitching = configuration.getNotNull(WasmConfigurationKeys.WASM_COROUTINES_STACK_SWITCHING)
 
             val exceptions = vmsToCheck.mapNotNull { vm ->
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
                     useNewExceptionHandling = useNewExceptionProposal,
+                    wasmCoroutinesStackSwitching = wasmCoroutinesStackSwitching,
                     failsIn = failsIn,
                     entryFile = if (!vm.entryPointIsJsFile) "$WASM_BASE_FILE_NAME.wasm" else collectedJsArtifacts.entryPath ?: "test.mjs",
                     jsFilePaths = jsFilePaths,

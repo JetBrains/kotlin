@@ -25,6 +25,7 @@ internal sealed class WasmVM(
         jsFiles: List<String>,
         workingDirectory: File?,
         useNewExceptionHandling: Boolean = false,
+        wasmCoroutinesStackSwitching: Boolean = false,
         toolArgs: List<String> = emptyList(),
     ): String
 
@@ -34,6 +35,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            wasmCoroutinesStackSwitching: Boolean,
             toolArgs: List<String>,
         ) =
             tool.run(
@@ -41,7 +43,7 @@ internal sealed class WasmVM(
                 *jsFiles.toTypedArray(),
                 "--module",
                 *if (useNewExceptionHandling) arrayOf("--no-experimental-wasm-legacy-eh", "--experimental-wasm-exnref") else emptyArray(),
-                "--experimental-wasm-wasmfx",
+                *if (wasmCoroutinesStackSwitching) arrayOf("--experimental-wasm-wasmfx") else emptyArray(),
                 entryFile,
                 workingDirectory = workingDirectory,
             )
@@ -53,6 +55,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            wasmCoroutinesStackSwitching: Boolean,
             toolArgs: List<String>,
         ) =
             tool.run(
@@ -70,6 +73,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            wasmCoroutinesStackSwitching: Boolean,
             toolArgs: List<String>
         ) =
             tool.run(
@@ -86,6 +90,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            wasmCoroutinesStackSwitching: Boolean,
             toolArgs: List<String>,
         ) =
             tool.run(
@@ -102,6 +107,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            wasmCoroutinesStackSwitching: Boolean,
             toolArgs: List<String>,
         ): String {
             require(jsFiles.isEmpty())
@@ -122,6 +128,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            wasmCoroutinesStackSwitching: Boolean,
             toolArgs: List<String>,
         ) =
             tool.run(
@@ -141,11 +148,13 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            wasmCoroutinesStackSwitching: Boolean,
             toolArgs: List<String>
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
                 *if (useNewExceptionHandling) arrayOf("--no-experimental-wasm-legacy-eh", "--experimental-wasm-exnref") else emptyArray(),
+                *if (wasmCoroutinesStackSwitching) arrayOf("--experimental-wasm-wasmfx") else emptyArray(),
                 *jsFiles.toTypedArray(),
                 entryFile,
                 workingDirectory = workingDirectory

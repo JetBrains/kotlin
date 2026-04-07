@@ -152,6 +152,10 @@ constructor(
                     }
                 }
 
+                if (isWasm) {
+                    it.nodeArgs.add("--experimental-wasm-wasmfx")
+                }
+
                 it.npmToolingEnvDir.value(npmToolingDir).disallowChanges()
 
                 with(nodeJsEnvSpec) {

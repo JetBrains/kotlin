@@ -7,12 +7,16 @@ package org.jetbrains.kotlin.gradle.targets.wasm.d8
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.utils.property
 
 @OptIn(ExperimentalWasmDsl::class)
 open class D8RootExtension(
     project: Project,
     d8EnvSpec: D8EnvSpec,
 ) : org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension(project, d8EnvSpec) {
+
+    override val versionProperty: org.gradle.api.provider.Property<String> = project.objects.property<String>()
+        .convention("14.8.12")
 
     companion object {
         val EXTENSION_NAME: String
