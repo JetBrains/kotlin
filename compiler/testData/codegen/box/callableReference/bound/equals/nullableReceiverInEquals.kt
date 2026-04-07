@@ -1,3 +1,5 @@
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS:2.3.0
+// KT-85411: Supported in 2.4.0-Beta2
 // See https://youtrack.jetbrains.com/issue/KT-14938
 // WITH_REFLECT
 
