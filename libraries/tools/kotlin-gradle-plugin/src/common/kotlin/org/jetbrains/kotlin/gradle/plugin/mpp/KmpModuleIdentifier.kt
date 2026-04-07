@@ -13,56 +13,53 @@ import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import java.io.Serializable
 
+
 internal data class KmpModuleIdentifier(
-    val moduleVersion: ModuleVersion?,
+    val moduleId: ModuleId?,
     val componentId: ComponentId,
 ) : Serializable {
 
-    data class ModuleVersion(
+    data class ModuleId(
         val group: String,
         val name: String,
     ) : Serializable
 
-    data class ComponentId(
-        val group: String?,
-        val module: String?,
-        val projectPath: String?,
-        val buildPath: String?,
-        val type: Type,
-    ) : Serializable {
-        enum class Type { PROJECT, MODULE }
-    }
+    sealed interface ComponentId : Serializable
+
+    data class ModuleComponentId(
+        val group: String,
+        val name: String,
+    ) : ComponentId
+
+    data class ProjectComponentId(
+        val projectPath: String,
+        val buildPath: String,
+    ) : ComponentId
 
     companion object {
         fun from(
             component: ResolvedComponentResult,
             buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
         ): KmpModuleIdentifier {
-            val moduleVersion = try {
-                component.moduleVersion?.let { ModuleVersion(it.group, it.name) }
+            val moduleId = try {
+                component.moduleVersion?.let { ModuleId(it.group, it.name) }
             } catch (_: Exception) {
                 null
             }
 
             val componentId = when (val id = component.id) {
-                is ProjectComponentIdentifier -> ComponentId(
-                    group = null,
-                    module = null,
+                is ProjectComponentIdentifier -> ProjectComponentId(
                     projectPath = id.projectPath,
-                    buildPath = id.build.compatAccessor(buildIdentifierAccessor).buildPath,
-                    type = ComponentId.Type.PROJECT
+                    buildPath = id.build.compatAccessor(buildIdentifierAccessor).buildPath
                 )
-                is ModuleComponentIdentifier -> ComponentId(
+                is ModuleComponentIdentifier -> ModuleComponentId(
                     group = id.group,
-                    module = id.module,
-                    projectPath = null,
-                    buildPath = null,
-                    type = ComponentId.Type.MODULE
+                    name = id.module
                 )
                 else -> error("Unexpected Component Identifier: '$id' of type ${id.javaClass}")
             }
 
-            return KmpModuleIdentifier(moduleVersion, componentId)
+            return KmpModuleIdentifier(moduleId, componentId)
         }
     }
 
@@ -70,8 +67,8 @@ internal data class KmpModuleIdentifier(
         if (this === other) return true
         if (other !is KmpModuleIdentifier) return false
 
-        if (moduleVersion != null && other.moduleVersion != null) {
-            return moduleVersion == other.moduleVersion
+        if (moduleId != null && other.moduleId != null) {
+            return moduleId == other.moduleId
         }
 
         // fall back to component matching when a module version is not available on any of the compared identifiers
@@ -79,17 +76,17 @@ internal data class KmpModuleIdentifier(
     }
 
     override fun hashCode(): Int {
-        if (moduleVersion != null) {
-            return 31 * moduleVersion.group.hashCode() + moduleVersion.name.hashCode()
+        if (moduleId != null) {
+            return 31 * moduleId.group.hashCode() + moduleId.name.hashCode()
         }
         return componentId.hashCode()
     }
 
     override fun toString(): String {
-        val modulePart = moduleVersion?.let { "moduleVersion=${it.group}:${it.name}" } ?: "moduleVersion=null"
-        val componentPart = when (componentId.type) {
-            ComponentId.Type.PROJECT -> "project ${componentId.buildPath}${componentId.projectPath}"
-            ComponentId.Type.MODULE -> "module ${componentId.group}:${componentId.module}"
+        val modulePart = moduleId?.let { "moduleVersion=${it.group}:${it.name}" } ?: "moduleVersion=null"
+        val componentPart = when (componentId) {
+            is ProjectComponentId -> "project ${componentId.buildPath}${componentId.projectPath}"
+            is ModuleComponentId -> "module ${componentId.group}:${componentId.name}"
         }
         return "KmpModuleIdentifier($modulePart, $componentPart)"
     }

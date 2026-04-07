@@ -5,15 +5,62 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import com.google.gson.GsonBuilder
-import com.google.gson.Strictness
+import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropMetadataDependencyTransformationTask
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
+import java.lang.reflect.Type
 
-private val gson = GsonBuilder().setStrictness(Strictness.LENIENT).setPrettyPrinting().serializeNulls().create()
+private val gson = GsonBuilder()
+    .setStrictness(Strictness.LENIENT)
+    .setPrettyPrinting()
+    .serializeNulls()
+    .registerTypeHierarchyAdapter(KmpModuleIdentifier.ComponentId::class.java, KmpModuleIdentifierComponentIdAdapter)
+    .create()
+
+internal object KmpModuleIdentifierComponentIdAdapter : JsonSerializer<KmpModuleIdentifier.ComponentId>, JsonDeserializer<KmpModuleIdentifier.ComponentId> {
+    override fun serialize(src: KmpModuleIdentifier.ComponentId, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
+        return JsonObject().also {
+            when (src) {
+                is KmpModuleIdentifier.ModuleComponentId -> {
+                    it.addProperty("type", "module")
+                    it.addProperty("group", src.group)
+                    it.addProperty("name", src.name)
+                }
+                is KmpModuleIdentifier.ProjectComponentId -> {
+                    it.addProperty("type", "project")
+                    it.addProperty("projectPath", src.projectPath)
+                    it.addProperty("buildPath", src.buildPath)
+                }
+            }
+        }
+    }
+
+    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): KmpModuleIdentifier.ComponentId {
+        require(json.isJsonObject) { "Expected JsonObject, got ${json.javaClass}" }
+        require(json.asJsonObject.has("type")) { "JsonObject must contain 'type' property" }
+        json as JsonObject
+        val type = json.get("type").asString
+
+        return when (type) {
+            "module" -> {
+                KmpModuleIdentifier.ModuleComponentId(
+                    group = json.get("group").asString,
+                    name = json.get("name").asString
+                )
+            }
+            "project" -> {
+                KmpModuleIdentifier.ProjectComponentId(
+                    projectPath = json.get("projectPath").asString,
+                    buildPath = json.get("buildPath").asString
+                )
+            }
+            else -> error("Unknown ComponentId type: $type")
+        }
+    }
+}
 
 internal data class TransformedMetadataLibraryRecord(
     val moduleId: KmpModuleIdentifier,
