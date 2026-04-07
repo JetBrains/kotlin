@@ -231,12 +231,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
      *      resolved end-coordinates are different, but requested will be matching
      *  When the flag is set, the algorithm will proceed with matching "requested" (i.e. api(project(":B")) coordinates
      *
-     *  *Why not enable it by default?*
-     *  Because of the danger of dependency inconsistency. Algorithm expects that ALL artifacts are coming from the same publication
-     *  i.e. build. So API and Expect/Actuals are consistent between "metadata" and "implementation" variants.
      */
     val allowMatchingByRequestedCoordinatesInGMDT: Provider<Boolean>
-        get() = booleanProvider(KOTLIN_KMP_ALLOW_MATCHING_BY_REQUESTED_COORDINATES_IN_GMDT).orElse(false)
+        get() = booleanProvider(KOTLIN_KMP_ALLOW_MATCHING_BY_REQUESTED_COORDINATES_IN_GMDT).orElse(true)
 
     // Throw in IDE resolvers instead of just printing them
     val strictResolveIdeDependencies: Boolean
