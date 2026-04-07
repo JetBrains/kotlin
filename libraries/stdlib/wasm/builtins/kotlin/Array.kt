@@ -46,6 +46,14 @@ internal constructor(size: Int) {
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
     internal constructor(storage: WasmAnyArray)
 
+    internal fun getWithoutBoundCheck(index: Int): T {
+        @Suppress("UNCHECKED_CAST") return storage.get(index) as T
+    }
+
+    internal fun setWithoutBoundCheck(index: Int, value: T) {
+        storage.set(index, value)
+    }
+
     /**
      * Returns the array element at the given [index].
      *

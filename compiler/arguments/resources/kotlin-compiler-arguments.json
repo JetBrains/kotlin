@@ -11216,7 +11216,7 @@
                                                         "valueInVersions": []
                                                     },
                                                     "defaultValue": {
-                                                        "current": false,
+                                                        "current": true,
                                                         "valueInVersions": []
                                                     }
                                                 },
@@ -11237,7 +11237,50 @@
                                                         "valueInVersions": []
                                                     },
                                                     "defaultValue": {
+                                                        "current": true,
+                                                        "valueInVersions": []
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-enable-array-range-checks-safe-elimination",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Enable bounds check elimination for provably-safe array accesses in for-loops. Only effective when -Xwasm-enable-array-range-checks is also enabled.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "affectsCompilationOutcome": true,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
                                                         "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": true,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.4.0",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                },
+                                                "argumentType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": true,
                                                         "valueInVersions": []
                                                     }
                                                 }
@@ -13021,7 +13064,7 @@
                                                         "valueInVersions": []
                                                     },
                                                     "defaultValue": {
-                                                        "current": false,
+                                                        "current": true,
                                                         "valueInVersions": []
                                                     }
                                                 },
@@ -13042,7 +13085,50 @@
                                                         "valueInVersions": []
                                                     },
                                                     "defaultValue": {
+                                                        "current": true,
+                                                        "valueInVersions": []
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-enable-array-range-checks-safe-elimination",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Enable bounds check elimination for provably-safe array accesses in for-loops. Only effective when -Xwasm-enable-array-range-checks is also enabled.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "affectsCompilationOutcome": true,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
                                                         "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": true,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.4.0",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                },
+                                                "argumentType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": true,
                                                         "valueInVersions": []
                                                     }
                                                 }

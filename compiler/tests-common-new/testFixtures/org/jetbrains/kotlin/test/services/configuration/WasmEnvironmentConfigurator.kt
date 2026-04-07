@@ -141,7 +141,14 @@ open class WasmSecondStageEnvironmentConfigurator(
         configuration.includes = mainPath
 
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ASSERTS, true)
-        configuration.put(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, true)
+        configuration.put(
+            WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS,
+            WasmEnvironmentConfigurationDirectives.WASM_DISABLE_ARRAY_RANGE_CHECKS !in registeredDirectives
+        )
+        configuration.put(
+            WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION,
+            WasmEnvironmentConfigurationDirectives.WASM_ENABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION in registeredDirectives
+        )
 
         val sourceDirs = module.files.map { it.originalFile.parent }.distinct()
         configuration.sourceMapSourceRoots = sourceDirs

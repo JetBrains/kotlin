@@ -43,6 +43,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<KotlinWasmCompilerArgumen
     private fun fillConfiguration(configuration: CompilerConfiguration, arguments: KotlinWasmCompilerArguments) {
         initializeFinalArtifactConfiguration(configuration, arguments)
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, arguments.wasmEnableArrayRangeChecks)
+        configuration.put(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION, arguments.wasmEnableArrayRangeChecksSafeElimination)
         configuration.put(WasmConfigurationKeys.WASM_DEBUG, arguments.wasmDebug)
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ASSERTS, arguments.wasmEnableAsserts)
         configuration.put(WasmConfigurationKeys.WASM_GENERATE_WAT, arguments.wasmGenerateWat)

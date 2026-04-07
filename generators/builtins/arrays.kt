@@ -312,6 +312,15 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
             }
         }
 
+        private val uncheckedGetBody = when (kind) {
+            null -> "@Suppress(\"UNCHECKED_CAST\") return storage.get(index) as T"
+            PrimitiveType.BOOLEAN -> "return storage.get(index).reinterpretAsInt().reinterpretAsBoolean()"
+            else -> "return storage.get(index)"
+        }
+
+        private val uncheckedSetBody =
+            "storage.set(index, value${if (kind == PrimitiveType.BOOLEAN) ".reinterpretAsByte()" else ""})"
+
         override fun ClassBuilder.generatePropertiesAndInit() {
             property {
                 visibility = MethodVisibility.INTERNAL
@@ -325,10 +334,18 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
                     if (size < 0) throw IllegalArgumentException("Negative array size")
                     storage = $storageArrayType(size)
                 }
-                
+
                 @WasmPrimitiveConstructor
                 @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
                 internal constructor(storage: $storageArrayType)
+
+                internal fun getWithoutBoundCheck(index: Int): $elementTypeName {
+                    $uncheckedGetBody
+                }
+
+                internal fun setWithoutBoundCheck(index: Int, value: $elementTypeName) {
+                    $uncheckedSetBody
+                }
             """.trimIndent()
             )
         }
