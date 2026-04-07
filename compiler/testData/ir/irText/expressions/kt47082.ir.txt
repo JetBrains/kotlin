@@ -80,6 +80,8 @@ FILE fqName:<root> fileName:/kt47082.kt
     TYPE_PARAMETER name:C index:1 variance: superTypes:[<root>.Base<E of <root>.toChannel>] reified:false
     VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.Receiver<E of <root>.toChannel>
     VALUE_PARAMETER kind:Regular name:destination index:1 type:C of <root>.toChannel
+    annotations:
+      Suppress(names = ["CAST_NEVER_SUCCEEDS_ERROR"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun toChannel <E, C> (<this>: <root>.Receiver<E of <root>.toChannel>, destination: C of <root>.toChannel): C of <root>.toChannel declared in <root>'
         TYPE_OP type=C of <root>.toChannel origin=CAST typeOperand=C of <root>.toChannel

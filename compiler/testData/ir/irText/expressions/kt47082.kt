@@ -12,6 +12,7 @@ interface Base<in E>
 
 interface Receiver<out E>
 
+@Suppress("CAST_NEVER_SUCCEEDS_ERROR")
 fun <E, C : Base<E>> Receiver<E>.toChannel(destination: C): C = null as C
 
 fun <R> foo(r: Receiver<R>): R = produce { r.toChannel(this) }

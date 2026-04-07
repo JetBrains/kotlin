@@ -22,6 +22,7 @@ fun <E : Any?> produce(block: @ExtensionFunctionType Function1<Derived<E>, Unit>
   return null as E
 }
 
+@Suppress(names = ["CAST_NEVER_SUCCEEDS_ERROR"])
 fun <E : Any?, C : Base<E>> Receiver<E>.toChannel(destination: C): C {
   return null as C
 }
