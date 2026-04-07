@@ -43,9 +43,15 @@ internal class AllCommonCompilerArgumentsWithBtaVersionsArgumentProvider : Argum
     }
 }
 
-internal class EnumCommonCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
+internal class InvalidArgumentValueCommonCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration { it.runsEnumTest }.map { Arguments.of(it) }.stream()
+        return namedArgumentConfiguration { it.runsInvalidArgumentValueTest }.map { Arguments.of(it) }.stream()
+    }
+}
+
+internal class InvalidRawValueCommonCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
+    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+        return namedArgumentConfiguration { it.runsInvalidRawValueTest }.map { Arguments.of(it) }.stream()
     }
 }
 
@@ -114,7 +120,7 @@ internal val commonCompilerArguments: List<CommonArgumentTestDescriptor<*>> = li
         argumentName = "Xannotation-default-target",
         argument = X_ANNOTATION_DEFAULT_TARGET,
         argumentValues = AnnotationDefaultTargetMode.entries.toList(),
-        runsEnumTest = true,
+        invalidRawValues = listOf("non-existent-value"),
         runsNullableTest = true,
         valueString = { value -> value?.stringValue },
         expectedArgumentStringsFor = { value -> listOf("-Xannotation-default-target=$value") },
@@ -123,7 +129,7 @@ internal val commonCompilerArguments: List<CommonArgumentTestDescriptor<*>> = li
         argumentName = "Xverify-ir",
         argument = X_VERIFY_IR,
         argumentValues = VerifyIrMode.entries.toList(),
-        runsEnumTest = true,
+        invalidRawValues = listOf("non-existent-value"),
         runsNullableTest = true,
         valueString = { value -> value?.stringValue },
         expectedArgumentStringsFor = { value -> listOf("-Xverify-ir=$value") },
@@ -132,7 +138,7 @@ internal val commonCompilerArguments: List<CommonArgumentTestDescriptor<*>> = li
         argumentName = "Xname-based-destructuring",
         argument = X_NAME_BASED_DESTRUCTURING,
         argumentValues = NameBasedDestructuringMode.entries.toList(),
-        runsEnumTest = true,
+        invalidRawValues = listOf("non-existent-value"),
         runsNullableTest = true,
         skipBtaV1 = true,
         valueString = { value -> value?.stringValue },

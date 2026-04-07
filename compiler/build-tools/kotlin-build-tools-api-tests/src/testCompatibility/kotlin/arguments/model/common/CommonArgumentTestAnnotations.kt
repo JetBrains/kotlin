@@ -26,21 +26,38 @@ import org.junit.jupiter.params.provider.ArgumentsSource
 annotation class AllCommonCompilerArgumentsWithBtaVersionsTest
 
 /**
- * Parameterized test annotation for validating backward compatibility of enum-typed common compiler arguments
- * across Build Tools API versions (BTAv1 and BTAv2).
+ * Parameterized test annotation for validating backward compatibility of common compiler arguments
+ * that reject invalid argument values across Build Tools API versions (BTAv1 and BTAv2).
  *
- * This annotation generates test cases specifically for common compiler arguments with enum types,
- * testing each enum argument with both BTA versions to verify backward compatibility.
+ * This annotation generates test cases specifically for common compiler arguments where setting
+ * an invalid string value should throw [org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException].
  *
- * @see EnumCommonCompilerArgumentsWithBtaVersionsArgumentProvider
+ * @see InvalidArgumentValueCommonCompilerArgumentsWithBtaVersionsArgumentProvider
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)
 @ParameterizedTest(name = "{0}: {displayName}")
 @ArgumentsSource(
-    EnumCommonCompilerArgumentsWithBtaVersionsArgumentProvider::class
+    InvalidArgumentValueCommonCompilerArgumentsWithBtaVersionsArgumentProvider::class
 )
-annotation class EnumCommonCompilerArgumentsWithBtaVersionsTest
+annotation class InvalidArgumentValueCommonCompilerArgumentsWithBtaVersionsTest
+
+/**
+ * Parameterized test annotation for validating backward compatibility of common compiler arguments
+ * that reject invalid raw string values across Build Tools API versions (BTAv1 and BTAv2).
+ *
+ * This annotation generates test cases specifically for common compiler arguments where setting
+ * an invalid string value should throw [org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException].
+ *
+ * @see InvalidArgumentValueCommonCompilerArgumentsWithBtaVersionsArgumentProvider
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(AnnotationRetention.RUNTIME)
+@ParameterizedTest(name = "{0}: {displayName}")
+@ArgumentsSource(
+    InvalidRawValueCommonCompilerArgumentsWithBtaVersionsArgumentProvider::class
+)
+annotation class InvalidRawValueCommonCompilerArgumentsWithBtaVersionsTest
 
 /**
  * Parameterized test annotation for validating backward compatibility of nullable common compiler arguments

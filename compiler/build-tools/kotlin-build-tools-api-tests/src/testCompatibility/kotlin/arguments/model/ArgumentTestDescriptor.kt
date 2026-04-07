@@ -14,7 +14,14 @@ internal interface ArgumentTestDescriptor<T> {
 
     val argumentValues: List<T>
 
-    val runsEnumTest: Boolean
+    val invalidArgumentValues: List<T>
+    val runsInvalidArgumentValueTest: Boolean
+        get() = invalidArgumentValues.isNotEmpty()
+
+    val invalidRawValues: List<String>
+    val runsInvalidRawValueTest: Boolean
+        get() = invalidRawValues.isNotEmpty()
+
     val runsNullableTest: Boolean
     val skipBtaV1: Boolean
 

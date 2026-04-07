@@ -15,4 +15,7 @@ internal class CommonArgumentConfiguration<T>(
 ) : ArgumentConfiguration<T>(kotlinToolchain, commonArgumentTestDescriptor) {
     val argumentKey: CommonCompilerArgument<T> = commonArgumentTestDescriptor.argument
     val argumentValues: List<T> = commonArgumentTestDescriptor.argumentValues
+
+    val invalidArgumentValues: List<T> = commonArgumentTestDescriptor.invalidArgumentValues
+    val invalidRawValues: List<String> = commonArgumentTestDescriptor.invalidRawValues
 }

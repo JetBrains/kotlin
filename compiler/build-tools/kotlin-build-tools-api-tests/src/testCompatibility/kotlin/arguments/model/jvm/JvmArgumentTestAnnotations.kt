@@ -26,22 +26,38 @@ import org.junit.jupiter.params.provider.ArgumentsSource
 annotation class AllJvmCompilerArgumentsWithBtaVersionsTest
 
 /**
- * Parameterized test annotation for validating backward compatibility of enum-typed JVM compiler arguments
- * across Build Tools API versions (BTAv1 and BTAv2).
+ * Parameterized test annotation for validating backward compatibility of JVM compiler arguments
+ * that reject invalid argument values across Build Tools API versions (BTAv1 and BTAv2).
  *
- * This annotation generates test cases specifically for JVM compiler arguments with enum types,
- * testing each enum argument with both BTA versions to verify backward compatibility.
+ * This annotation generates test cases specifically for JVM compiler arguments where setting
+ * an invalid string value should throw [org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException].
  *
- * @see EnumJvmCompilerArgumentsWithBtaVersionsArgumentProvider
+ * @see InvalidArgumentValueJvmCompilerArgumentsWithBtaVersionsArgumentProvider
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)
 @ParameterizedTest(name = "{0}: {displayName}")
 @ArgumentsSource(
-    EnumJvmCompilerArgumentsWithBtaVersionsArgumentProvider::class
+    InvalidArgumentValueJvmCompilerArgumentsWithBtaVersionsArgumentProvider::class
 )
-annotation class EnumJvmCompilerArgumentsWithBtaVersionsTest
+annotation class InvalidArgumentValueJvmCompilerArgumentsWithBtaVersionsTest
 
+/**
+ * Parameterized test annotation for validating backward compatibility of JVM compiler arguments
+ * that reject invalid raw string values across Build Tools API versions (BTAv1 and BTAv2).
+ *
+ * This annotation generates test cases specifically for JVM compiler arguments where setting
+ * an invalid string value should throw [org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException].
+ *
+ * @see InvalidArgumentValueJvmCompilerArgumentsWithBtaVersionsArgumentProvider
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(AnnotationRetention.RUNTIME)
+@ParameterizedTest(name = "{0}: {displayName}")
+@ArgumentsSource(
+    InvalidRawValueJvmCompilerArgumentsWithBtaVersionsArgumentProvider::class
+)
+annotation class InvalidRawValueJvmCompilerArgumentsWithBtaVersionsTest
 
 /**
  * Parameterized test annotation for validating backward compatibility of nullable JVM compiler arguments

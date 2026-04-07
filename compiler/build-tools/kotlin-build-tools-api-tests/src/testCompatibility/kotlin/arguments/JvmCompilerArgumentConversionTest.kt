@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.buildtools.tests.arguments
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.AllJvmCompilerArgumentsWithBtaVersionsTest
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.EnumJvmCompilerArgumentsWithBtaVersionsTest
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.InvalidRawValueJvmCompilerArgumentsWithBtaVersionsTest
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.JvmArgumentConfiguration
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.NullableJvmCompilerArgumentsWithBtaVersionsTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
@@ -110,18 +110,20 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
         )
     }
 
-    @EnumJvmCompilerArgumentsWithBtaVersionsTest
+    @InvalidRawValueJvmCompilerArgumentsWithBtaVersionsTest
     @DisplayName("Raw argument with non-existent BTA argument value fails conversion")
     fun <T> JvmArgumentConfiguration<T>.testInvalidRawArgumentConversionFails() {
         assumeArgumentSupported()
-        kotlinToolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
+        for (invalidValue in invalidRawValues) {
             assertThrows<CompilerArgumentsParseException> {
-                compilerArguments.applyArgumentStrings(
-                    expectedArgumentStringsFor("non-existent-value")
-                )
-                compilerArguments[argumentKey]
+                kotlinToolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
+                    compilerArguments.applyArgumentStrings(
+                        expectedArgumentStringsFor(invalidValue)
+                    )
+                    compilerArguments[argumentKey]
+                }.build()
             }
-        }.build()
+        }
     }
 
     @NullableJvmCompilerArgumentsWithBtaVersionsTest
