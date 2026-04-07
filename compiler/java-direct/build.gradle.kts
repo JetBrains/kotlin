@@ -1,3 +1,6 @@
+
+description = "Kotlin Java Direct Compiler Plugin"
+
 plugins {
     kotlin("jvm")
     id("test-inputs-check")
@@ -45,9 +48,16 @@ kotlin {
     jvmToolchain(17)
 }
 
+publish()
+
+runtimeJar()
+sourcesJar()
+javadocJar()
+
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
         useJUnitPlatform()
+        workingDir = rootDir
     }
     testGenerator("org.jetbrains.kotlin.java.direct.TestGeneratorKt", generateTestsInBuildDirectory = true)
     testData(project(":compiler:fir:analysis-tests").isolated, "testData")

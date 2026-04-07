@@ -100,10 +100,10 @@ The chat log shows repeated failures to construct correct test class names:
 **Recommendation**: Add a **test name cheat sheet** to AGENT_INSTRUCTIONS.md:
 ```
 # Box tests:
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated.*testName*"
+./gradlew :kotlin-java-direct:test --tests "JavaUsingAstBoxTestGenerated.*testName*"
 
 # Phased tests:
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated.*testName*"
+./gradlew :kotlin-java-direct:test --tests "JavaUsingAstPhasedTestGenerated.*testName*"
 
 # Use wildcard glob to avoid needing exact nested class path
 ```

@@ -611,7 +611,7 @@ tasks {
         dependsOn(":core:language.targets:check")
         dependsOn(":core:language.targets.jvm:check")
         dependsOn(":core:language.version-settings:check")
-        dependsOn(":compiler:java-direct:test")
+        dependsOn(":kotlin-java-direct:test")
     }
 
     testLifecycleTask("miscTest") {

@@ -356,13 +356,13 @@ These need individual investigation. Many may resolve automatically when categor
 
 ```bash
 # Run specific failing test
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated\$Annotations\$Instances.testJavaAnnotation" -q
+./gradlew :kotlin-java-direct:test --tests "JavaUsingAstBoxTestGenerated\$Annotations\$Instances.testJavaAnnotation" -q
 
 # Run all annotation tests
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated\$Annotations.*" -q
+./gradlew :kotlin-java-direct:test --tests "JavaUsingAstBoxTestGenerated\$Annotations.*" -q
 
 # Update test baselines if needed
-./gradlew :compiler:java-direct:test --tests "TestName" -Pkotlin.test.update.test.data=true
+./gradlew :kotlin-java-direct:test --tests "TestName" -Pkotlin.test.update.test.data=true
 ```
 
 ---

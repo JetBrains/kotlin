@@ -67,6 +67,9 @@ object PathUtil {
     const val KOTLIN_JAVA_REFLECT_JAR = "$KOTLIN_JAVA_REFLECT_NAME.jar"
     const val KOTLIN_REFLECT_SRC_JAR = "$KOTLIN_JAVA_REFLECT_NAME-sources.jar"
 
+    const val KOTLIN_JAVA_DIRECT_COMPILER_PLUGIN_NAME = "kotlin-java-direct"
+    const val KOTLIN_JAVA_DIRECT_COMPILER_PLUGIN_JAR = "$KOTLIN_JAVA_DIRECT_COMPILER_PLUGIN_NAME.jar"
+
     const val KOTLIN_JAVA_SCRIPT_RUNTIME_NAME = "kotlin-script-runtime"
     const val KOTLIN_JAVA_SCRIPT_RUNTIME_JAR = "$KOTLIN_JAVA_SCRIPT_RUNTIME_NAME.jar"
     const val KOTLIN_SCRIPTING_COMMON_NAME = "kotlin-scripting-common"

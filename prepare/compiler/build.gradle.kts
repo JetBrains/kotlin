@@ -98,6 +98,7 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-scripting-compiler",
     ":kotlin-scripting-compiler-impl",
     ":kotlin-scripting-jvm",
+    ":kotlin-java-direct",
     ":libraries:tools:mutability-annotations-compat",
     ":plugins:jvm-abi-gen",
     ":kotlin-jklib-compiler"

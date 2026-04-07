@@ -29,7 +29,7 @@ Agents were struggling because they:
 Run full suite ONCE to get error frequencies:
 
 ```bash
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q 2>&1 | tee full_output.txt
+./gradlew :kotlin-java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q 2>&1 | tee full_output.txt
 grep "ERROR_TYPE" full_output.txt | sort | uniq -c | sort -rn
 ```
 
@@ -50,7 +50,7 @@ Work ONLY on that test until you understand it completely:
 
 ```bash
 # Run ONLY this test repeatedly
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testAbstractMethodsOfAny" -q
+./gradlew :kotlin-java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testAbstractMethodsOfAny" -q
 ```
 
 - Read test data file
@@ -86,10 +86,10 @@ Implement the fix:
 
 ```bash
 # Run similar tests
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.test*Inheritance*" -q
+./gradlew :kotlin-java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.test*Inheritance*" -q
 
 # Run full suite
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q
+./gradlew :kotlin-java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q
 ```
 
 Document:

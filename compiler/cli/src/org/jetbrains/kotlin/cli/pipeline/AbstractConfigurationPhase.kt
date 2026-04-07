@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.ir.validation.IrValidationDiagnostics
@@ -131,6 +133,17 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
 
         pluginClasspaths.addAll(scriptingPluginClasspath)
         pluginOptions.addAll(scriptingPluginOptions)
+
+        configuration.setupLanguageVersionSettings(arguments)
+
+        if (configuration.languageVersionSettings.supportsFeature(LanguageFeature.JavaDirect)) {
+            val kotlinPaths = paths ?: PathUtil.kotlinPathsForCompiler
+            val libPath = kotlinPaths.libPath.takeIf { it.exists() && it.isDirectory } ?: File(".")
+            val jarPath = File(libPath, PathUtil.KOTLIN_JAVA_DIRECT_COMPILER_PLUGIN_JAR).takeIf { it.exists() }
+            if (jarPath != null) {
+                pluginConfigurations.add(jarPath.canonicalPath)
+            }
+        }
 
         PluginCliParser.loadPluginsSafe(
             pluginClasspaths,

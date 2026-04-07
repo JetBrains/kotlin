@@ -35,7 +35,7 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
         // Collect source roots (directories only)
         val roots = configuration.javaSourceRoots
             .mapNotNull(findLocalFile)
-            .filter { it.isDirectory }
+//            .filter { it.isDirectory }
             .map { it.canonicalFile.toPath() }
         
         // For library session (no Java sources), just use the default finder
