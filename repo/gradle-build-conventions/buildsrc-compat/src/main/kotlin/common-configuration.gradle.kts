@@ -313,7 +313,6 @@ fun Project.configureTests() {
             ":analysis:analysis-api-standalone:analysis-api-standalone-native",
             ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests",
             ":compiler",
-            ":compiler:android-tests",
             ":compiler:arguments",
             ":compiler:build-tools:kotlin-build-tools-api",
             ":compiler:build-tools:kotlin-build-tools-compat",

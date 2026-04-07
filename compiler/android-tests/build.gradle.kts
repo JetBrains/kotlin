@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("android-sdk-provisioner")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -69,6 +70,30 @@ projectTests {
         androidSdkProvisioner {
             provideToThisTaskAsSystemProperty(ProvisioningType.SDK_WITH_EMULATOR)
         }
+        extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
+            // Android emulator setup writes AVD metadata under the provisioned SDK directory.
+            val androidSdkRoot = rootDir.resolve("dependencies/android-sdk/build/androidSdk")
+            extraPermissions.add("""permission java.io.FilePermission "${androidSdkRoot.absolutePath}", "read";""")
+            extraPermissions.add("""permission java.io.FilePermission "${androidSdkRoot.absolutePath}/-", "read,write,delete";""")
+            // Android tests execute temporary gradle wrappers/scripts in java.io.tmpdir.
+            val tmpDir = File(System.getProperty("java.io.tmpdir"))
+            extraPermissions.add("""permission java.io.FilePermission "${tmpDir.absolutePath}/-", "execute";""")
+            // Emulator process management runs shell utilities directly.
+            val executablePaths = listOf(
+                "/bin/sh", "/usr/bin/sh",
+                "/bin/ps", "/usr/bin/ps",
+                "/bin/grep", "/usr/bin/grep",
+                "/bin/kill", "/usr/bin/kill",
+                "/bin/pidof", "/usr/bin/pidof",
+                "/bin/pgrep", "/usr/bin/pgrep",
+                "${androidSdkRoot.absolutePath}/platform-tools/adb",
+                "${androidSdkRoot.absolutePath}/emulator/emulator",
+                "${androidSdkRoot.absolutePath}/cmdline-tools/bin/avdmanager",
+            )
+            for (path in executablePaths) {
+                extraPermissions.add("""permission java.io.FilePermission "$path", "read,execute";""")
+            }
+        }
     }
 
     withJvmStdlibAndReflect()
@@ -79,6 +104,5 @@ val generateAndroidTests by generator(
     testSourceSet,
     inputKind = GeneratorInputKind.RuntimeClasspath,
 ) {
-    workingDir = rootDir
     dependsOn(rootProject.tasks.named("dist"))
 }

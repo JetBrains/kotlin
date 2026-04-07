@@ -58,7 +58,7 @@ data class ConfigurationKey(val kind: ConfigurationKind, val jdkKind: TestJdkKin
 class CodegenTestsOnAndroidGenerator private constructor(private val pathManager: PathManager) {
     private var currentModuleIndex = 1
 
-    private val pathFilter: String? = System.getProperties().getProperty("kotlin.test.android.path.filter")
+    private val pathFilter: String? = System.getProperty("kotlin.test.android.path.filter")
 
     private val pendingUnitTestGenerators = hashMapOf<String, UnitTestFileWriter>()
 

@@ -287,16 +287,16 @@ public class Emulator {
     //Only for Unix
     private static void stopDdmsProcess() {
         if (SystemInfo.isUnix) {
-            GeneralCommandLine listOfEmulatorProcess = new GeneralCommandLine();
-            listOfEmulatorProcess.setExePath("sh");
-            listOfEmulatorProcess.addParameter("-c");
-            listOfEmulatorProcess.addParameter("ps aux | grep emulator");
-            RunResult runResult = RunUtils.execute(listOfEmulatorProcess);
-            OutputUtils.checkResult(runResult);
-            String pidFromPsCommand = OutputUtils.getPidFromPsCommand(runResult.getOutput());
-            if (pidFromPsCommand != null) {
+            GeneralCommandLine pgrep = new GeneralCommandLine();
+            pgrep.setExePath(resolveUnixExecutable("/usr/bin/pgrep", "/bin/pgrep"));
+            pgrep.addParameter("-f");
+            pgrep.addParameter("java .* emulator");
+            RunResult runResult = RunUtils.execute(pgrep);
+            if (!runResult.getStatus()) return;
+            List<String> processIds = StringUtil.getWordsIn(runResult.getOutput());
+            for (String pidFromPsCommand : processIds) {
                 GeneralCommandLine killCommand = new GeneralCommandLine();
-                killCommand.setExePath("kill");
+                killCommand.setExePath(resolveUnixExecutable("/usr/bin/kill", "/bin/kill"));
                 killCommand.addParameter(pidFromPsCommand);
                 RunUtils.execute(killCommand);
             }
@@ -315,24 +315,33 @@ public class Emulator {
         if (SystemInfo.isUnix) {
             GeneralCommandLine pidOfProcess = new GeneralCommandLine();
             if (SystemInfo.isMac) {
-                pidOfProcess.setExePath("pgrep");
+                pidOfProcess.setExePath(resolveUnixExecutable("/usr/bin/pgrep", "/bin/pgrep"));
                 pidOfProcess.addParameter("-f");
             } else {
-                pidOfProcess.setExePath("pidof");
+                pidOfProcess.setExePath(resolveUnixExecutable("/usr/bin/pidof", "/bin/pidof"));
             }
             pidOfProcess.addParameter(processName);
             RunResult runResult = RunUtils.execute(pidOfProcess);
-            String processIdsStr = runResult.getOutput().substring(("pidof " + processName).length());
-            List<String> processIds = StringUtil.getWordsIn(processIdsStr);
+            List<String> processIds = StringUtil.getWordsIn(runResult.getOutput());
             for (String pid : processIds) {
                 GeneralCommandLine killCommand = new GeneralCommandLine();
-                killCommand.setExePath("kill");
+                killCommand.setExePath(resolveUnixExecutable("/usr/bin/kill", "/bin/kill"));
                 killCommand.addParameter("-s");
                 killCommand.addParameter("9");
                 killCommand.addParameter(pid);
                 RunUtils.execute(killCommand);
             }
         }
+    }
+
+    private static String resolveUnixExecutable(String... candidates) {
+        for (String candidate : candidates) {
+            File file = new File(candidate);
+            if (file.isFile() && file.canExecute()) {
+                return file.getAbsolutePath();
+            }
+        }
+        return candidates[0];
     }
 
     public String runTestsViaInstrumentation(String suiteClassName) {
