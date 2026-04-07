@@ -363,24 +363,13 @@ class MppMetadataResolutionIT : KGPBaseTest() {
 
             assertEquals(
                 listOf(
-                    listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib")
-                ).prettyPrinted,
-                metadataTransformationOutputClasspath("commonMain")
-                    .relativeTransformationPathComponents().prettyPrinted
-            )
-
-            val flagName = "kotlin.internal.kmp.allowMatchingByRequestedCoordinatesInMetadataTransformations"
-            assertEquals(
-                listOf(
                     listOf("metadata", "commonMain"),
                     listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib"),
                     listOf("commonMain", "androidx.collection-collection-1.5.0-commonMain-.klib"),
                     listOf("commonMain", "androidx.annotation-annotation-1.9.1-commonMain-.klib"),
                 ).prettyPrinted,
-                metadataTransformationOutputClasspath(
-                    "commonMain",
-                    buildOptions = buildOptions.copy(freeArgs = listOf("-P${flagName}=true"))
-                ).relativeTransformationPathComponents().prettyPrinted
+                metadataTransformationOutputClasspath("commonMain")
+                    .relativeTransformationPathComponents().prettyPrinted
             )
         }
     }
