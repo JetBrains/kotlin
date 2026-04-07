@@ -27,6 +27,7 @@ import bar.*
 
     val o = object {
         val a = "aaa"
+        /*p:kotlin(Suppress)*/@/*p:bar p:kotlin p:local.declarations*/Suppress("CAST_NEVER_SUCCEEDS_ERROR")
         fun foo(): /*p:bar p:local.declarations*/LocalI = null as /*p:bar p:local.declarations*/LocalI
     }
 

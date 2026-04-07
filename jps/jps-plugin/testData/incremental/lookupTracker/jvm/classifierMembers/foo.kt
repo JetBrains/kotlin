@@ -1,3 +1,5 @@
+/*p:kotlin(Suppress)*/@file:/*p:bar p:foo p:kotlin*/Suppress("CAST_NEVER_SUCCEEDS_ERROR")
+
 package foo
 
 import bar.*
