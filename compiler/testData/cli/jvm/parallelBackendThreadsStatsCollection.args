@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/parallelBackendThreadsStatsCollection1.kt
+$TESTDATA_DIR$/parallelBackendThreadsStatsCollection2.kt
+$TESTDATA_DIR$/parallelBackendThreadsStatsCollection3.kt
+$TESTDATA_DIR$/parallelBackendThreadsStatsCollection4.kt
+-d
+$TEMP_DIR$
+-Xbackend-threads=0
