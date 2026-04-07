@@ -18,10 +18,9 @@ shift
 if "%_TOOL_CLASS%"=="" set _TOOL_CLASS=org.jetbrains.kotlin.cli.utilities.MainKt
 
 if not "%JAVA_HOME%"=="" (
-  if exist "%JAVA_HOME%\bin\java.exe" set "_JAVACMD=%JAVA_HOME%\bin\java.exe"
+  rem Prepend JAVA_HOME to local PATH to be able to simply execute "java" later in the script.
+  set "PATH=%JAVA_HOME%\bin;%PATH%"
 )
-
-if "%_JAVACMD%"=="" set _JAVACMD=java
 
 set JAVA_ARGS=
 set KONAN_ARGS=
@@ -50,6 +49,14 @@ if not "!ARG!" == "" (
     goto again
 )
 
+call :set_java_version
+
+rem Allow JNI access.
+if %_java_major_version% geq 24 set JAVA_OPTS=%JAVA_OPTS% "--enable-native-access=ALL-UNNAMED"
+
+rem Suppress unsafe deprecation warnings on JDK 24, see KT-85538.
+if %_java_major_version% equ 24 set JAVA_OPTS=%JAVA_OPTS% "--sun-misc-unsafe-memory-access=allow"
+
 set "KONAN_LIB=%_KONAN_HOME%\konan\lib"
 
 set "KONAN_JAR=%KONAN_LIB%\kotlin-native-compiler-embeddable.jar"
@@ -64,7 +71,7 @@ set JAVA_OPTS=-ea ^
 
 set LIBCLANG_DISABLE_CRASH_RECOVERY=1
 
-"%_JAVACMD%" %JAVA_OPTS% %JAVA_ARGS% -cp "%KONAN_CLASSPATH%" %_TOOL_CLASS% %TOOL_NAME% %KONAN_ARGS%
+java %JAVA_OPTS% %JAVA_ARGS% -cp "%KONAN_CLASSPATH%" %_TOOL_CLASS% %TOOL_NAME% %KONAN_ARGS%
 
 exit /b %ERRORLEVEL%
 goto end
@@ -76,6 +83,30 @@ rem # subroutines
   set _BIN_DIR=
   for %%i in (%~sf0) do set _BIN_DIR=%_BIN_DIR%%%~dpsi
   set _KONAN_HOME=%_BIN_DIR%..
+goto :eof
+
+rem Parses "java -version" output and stores the major version to _java_major_version.
+rem Note that this only loads the first component of the version, so "1.8.0_265" -> "1".
+rem But it's fine because major version is 9 for JDK 9, and so on.
+rem Needs to be executed in the EnableDelayedExpansion mode.
+:set_java_version
+  set _version=
+  rem Parse output and take the third token from the string containing " version ".
+  rem It should be something like "1.8.0_275" or "15.0.1".
+  for /f "tokens=3" %%i in ('java -version 2^>^&1 ^| findstr /i " version "') do (
+    rem Split the string by "-" or "." and take the first token.
+    for /f "delims=-. tokens=1" %%j in ("%%i") do (
+      rem At this point, _version should be something like "1 or "15. Note the leading quote.
+      set _version=%%j
+    )
+  )
+  if "!_version!"=="" (
+    rem If failed to parse the output, set the version to 1.
+    set _java_major_version=1
+  ) else (
+    rem Strip the leading quote.
+    set _java_major_version=!_version:~1!
+  )
 goto :eof
 
 :end

@@ -323,4 +323,16 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         Assumptions.assumeFalse(testRunSettings.testProcessExecutor is NoOpExecutor) // no output in that case.
         TestDataAssertions.assertEqualsToFile(rootDir.resolve("main.out"), output)
     }
+
+    @Test
+    fun testKonancProducesNoOutputOnSuccessfulCompilation() {
+        // Download dependencies to make sure the next compiler invocation won't need to do that
+        // and therefore won't show the downloading process in the output.
+        runKonanc("-Xcheck-dependencies")
+
+        val compilationResult = compileSimpleFile(emptyList())
+
+        assertEquals("", compilationResult.stdout)
+        assertEquals("", compilationResult.stderr)
+    }
 }
