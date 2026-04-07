@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.konan.util.Named
 import java.io.Serializable
 
 private const val DEPRECATION_LINK = "https://kotl.in/native-targets-tiers"
-const val DEPRECATED_TARGET_MESSAGE = "Target is no longer available. See: $DEPRECATION_LINK"
+const val DEPRECATED_TARGET_MESSAGE = "Target will be removed in a future release. See: $DEPRECATION_LINK"
 
 @Suppress("ClassName")
 sealed class KonanTarget(override val name: String, val family: Family, val architecture: Architecture) : Named, Serializable {
