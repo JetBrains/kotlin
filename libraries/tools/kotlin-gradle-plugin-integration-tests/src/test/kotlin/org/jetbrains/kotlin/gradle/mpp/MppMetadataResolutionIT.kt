@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.utils.addToStdlib.countOccurrencesOf
+import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.params.ParameterizedTest
+import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
@@ -379,6 +381,139 @@ class MppMetadataResolutionIT : KGPBaseTest() {
                     "commonMain",
                     buildOptions = buildOptions.copy(freeArgs = listOf("-P${flagName}=true"))
                 ).relativeTransformationPathComponents().prettyPrinted
+            )
+        }
+    }
+
+    @GradleTest
+    fun `KT-84533 - dependency substitution from module to project fails metadata compilation`(
+        gradleVersion: GradleVersion,
+        @TempDir localRepo: Path,
+    ) {
+        project("empty", gradleVersion, localRepoDir = localRepo) {
+            plugins {
+                kotlin("multiplatform").apply(false)
+            }
+            val localRepoString = localRepo.toString()
+            includeOtherProjectAsSubmodule("empty", newSubmoduleName = "producer") {
+                buildScriptInjection {
+                    project.plugins.apply("maven-publish")
+                    publishing.repositories.maven {
+                        it.setUrl(localRepoString)
+                    }
+                    project.group = "test"
+                    project.version = "1.0"
+
+                    project.applyMultiplatform {
+                        iosArm64()
+                        iosSimulatorArm64()
+                        jvm()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    }
+                }
+            }
+            build(":producer:publish")
+
+            buildScriptInjection {
+                project.computeTransformedLibraryChecksum(false)
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosSimulatorArm64()
+                    jvm()
+                    sourceSets.commonMain.dependencies {
+                        api("test:producer:1.0")
+                    }
+
+                    sourceSets.jvmMain.dependencies {
+                        api(project(":producer"))
+                    }
+                }
+            }
+
+            assertEquals(
+                listOf(
+                    //MISSING: listOf("commonMain", "test-producer-1.0-commonMain-.klib"),
+                    listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib"),
+                ).prettyPrinted,
+                metadataTransformationOutputClasspath(
+                    "commonMain",
+                ).relativeTransformationPathComponents().prettyPrinted
+            )
+        }
+    }
+
+    @GradleTest
+    fun `^KT-69571 - dependency substitution from module to project in shared native causes duplicated metadata klibs`(
+        gradleVersion: GradleVersion,
+        @TempDir localRepo: Path,
+    ) {
+        project("empty", gradleVersion, localRepoDir = localRepo) {
+            plugins {
+                kotlin("multiplatform").apply(false)
+            }
+            val localRepoString = localRepo.toString()
+            includeOtherProjectAsSubmodule("empty", newSubmoduleName = "producer") {
+                buildScriptInjection {
+                    project.plugins.apply("maven-publish")
+                    publishing.repositories.maven {
+                        it.setUrl(localRepoString)
+                    }
+                    project.group = "test"
+                    project.version = "1.0"
+
+                    project.applyMultiplatform {
+                        iosArm64()
+                        iosSimulatorArm64()
+                        jvm()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    }
+                }
+            }
+            build(":producer:publish")
+
+            buildScriptInjection {
+                project.computeTransformedLibraryChecksum(false)
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosSimulatorArm64()
+                    jvm()
+                    sourceSets.commonMain.dependencies {
+                        api("test:producer:1.0")
+                    }
+
+                    sourceSets.nativeMain.dependencies {
+                        api(project(":producer"))
+                    }
+                }
+            }
+
+            val flagName = "kotlin.internal.kmp.allowMatchingByRequestedCoordinatesInMetadataTransformations"
+
+            assertEquals(
+                listOf(
+                    listOf("commonMain", "test-producer-1.0-commonMain-.klib"),
+                    listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib"),
+                ).prettyPrinted,
+                metadataTransformationOutputClasspath(
+                    "commonMain",
+                    buildOptions = buildOptions.copy(freeArgs = listOf("-P${flagName}=true"))
+                ).relativeTransformationPathComponents().prettyPrinted
+            )
+
+            assertEquals(
+                listOf(
+                    listOf("klib", "producer_iosMain"),
+                    listOf("klib", "producer_appleMain"),
+                    listOf("klib", "producer_nativeMain"),
+                    listOf("metadata", "commonMain"),                           // Duplicate comes from :producer/commonMain
+                    listOf("commonMain", "test-producer-1.0-commonMain-.klib"), // Duplicate comes from test:producer:1.0/commonMain
+                    listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib"),
+                ).prettyPrinted,
+                metadataTransformationOutputClasspath(
+                    "nativeMain",
+                    buildOptions = buildOptions.copy(freeArgs = listOf("-P${flagName}=true"))
+                )
+                    .relativeTransformationPathComponents().prettyPrinted
             )
         }
     }
