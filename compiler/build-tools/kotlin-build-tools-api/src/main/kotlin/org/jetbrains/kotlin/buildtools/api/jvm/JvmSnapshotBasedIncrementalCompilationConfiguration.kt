@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.api.jvm
 
-import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
@@ -38,31 +37,70 @@ public interface JvmIncrementalCompilationConfiguration
  *
  * @see JvmCompilationOperation.Builder.snapshotBasedIcConfigurationBuilder
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @ExperimentalBuildToolsApi
 public open class JvmSnapshotBasedIncrementalCompilationConfiguration
-@Deprecated("Instantiating this class directly will not be possible and it will become abstract in a future release. Use `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.") constructor(
+@Deprecated(
+    "Instantiating this class directly will not be possible and it will become abstract in a future release. Use `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.",
+    level = DeprecationLevel.ERROR
+)
+constructor(
     public val workingDirectory: Path,
     public val sourcesChanges: SourcesChanges,
     public val dependenciesSnapshotFiles: List<Path>,
     @Deprecated("This property is no longer required and will be removed in a future release.")
     public val shrunkClasspathSnapshot: Path,
-    @Deprecated("Use `get` directly instead or a `Builder` instance to set options. This property will be removed in a future release.") // Hide in 2.4, remove in 2.7
+    @Deprecated("Use `get` directly instead or a `Builder` instance to set options. This property will be removed in a future release.", level = DeprecationLevel.ERROR)
     public open val options: JvmSnapshotBasedIncrementalCompilationOptions,
 ) : JvmIncrementalCompilationConfiguration, BaseIncrementalCompilationConfiguration {
 
+    /**
+     * This is not used in current versions of BTA, but is used to fill in the non-nullable `options` field that exists for earlier versions.
+     */
+    private object DUMMY_OPTIONS : JvmSnapshotBasedIncrementalCompilationOptions {
+        override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>): V {
+            TODO("Not yet implemented")
+        }
+
+        override fun <V> set(
+            key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>,
+            value: V,
+        ) {
+            TODO("Not yet implemented")
+        }
+
+        override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
+            TODO("Not yet implemented")
+        }
+    }
+
     @Deprecated("Instantiating this class directly will not be possible and it will become abstract in a future release. Use `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.")
+    @Suppress("DEPRECATION_ERROR")
     public constructor(
         workingDirectory: Path,
         sourcesChanges: SourcesChanges,
         dependenciesSnapshotFiles: List<Path>,
-        options: JvmSnapshotBasedIncrementalCompilationOptions,
     ) : this(
         workingDirectory,
         sourcesChanges,
         dependenciesSnapshotFiles,
         workingDirectory.resolve("classpath-snapshot"),
-        options,
+        DUMMY_OPTIONS
+    )
+
+    @Deprecated("Instantiating this class directly will not be possible and it will become abstract in a future release. Use `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.")
+    @Suppress("DEPRECATION_ERROR")
+    public constructor(
+        workingDirectory: Path,
+        sourcesChanges: SourcesChanges,
+        dependenciesSnapshotFiles: List<Path>,
+        shrunkClasspathSnapshot: Path,
+    ) : this(
+        workingDirectory,
+        sourcesChanges,
+        dependenciesSnapshotFiles,
+        shrunkClasspathSnapshot,
+        DUMMY_OPTIONS
     )
 
     /**
@@ -140,7 +178,7 @@ public open class JvmSnapshotBasedIncrementalCompilationConfiguration
      * @see get
      * @see set
      */
-    public class Option<V> internal constructor(id: String) : JvmSnapshotBasedIncrementalCompilationOptions.Option<V>(id)
+    public class Option<V> internal constructor(id: String) : BaseOption<V>(id)
 
     /**
      * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
@@ -323,8 +361,11 @@ public open class JvmSnapshotBasedIncrementalCompilationConfiguration
  *
  * @since 2.3.0
  */
-@Suppress("DEPRECATION")
-@Deprecated("Use `JvmSnapshotBasedIncrementalCompilationConfiguration` and `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`. This interface will be removed in a future release.")
+@Suppress("DEPRECATION_ERROR")
+@Deprecated(
+    "Use `JvmSnapshotBasedIncrementalCompilationConfiguration` and `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`. This interface will be removed in a future release.",
+    level = DeprecationLevel.ERROR
+)
 @ExperimentalBuildToolsApi
 public interface JvmSnapshotBasedIncrementalCompilationOptions : BaseIncrementalCompilationConfiguration {
     /**
@@ -333,7 +374,10 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions : BaseIncremental
      * @see get
      * @see set
      */
-    @Deprecated("Use `JvmSnapshotBasedIncrementalCompilationConfiguration.Option` This interface will be removed in a future release.")
+    @Deprecated(
+        "Use `JvmSnapshotBasedIncrementalCompilationConfiguration.Option` This interface will be removed in a future release.",
+        level = DeprecationLevel.ERROR
+    )
     public open class Option<V> internal constructor(id: String) : BaseOption<V>(id)
 
     /**
@@ -349,6 +393,10 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions : BaseIncremental
      */
     public operator fun <V> set(key: Option<V>, value: V)
 
+    @Deprecated(
+        "Use `JvmSnapshotBasedIncrementalCompilationConfiguration` and `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`. This interface will be removed in a future release.",
+        level = DeprecationLevel.ERROR
+    )
     public companion object {
 
         /**

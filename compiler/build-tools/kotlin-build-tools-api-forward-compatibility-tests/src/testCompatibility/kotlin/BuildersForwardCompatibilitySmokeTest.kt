@@ -27,7 +27,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.toPath
 import kotlin.io.path.writeText
 
-class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
+class BuildersForwardCompatibilitySmokeTest : BaseCompilationTest() {
 
     @DisplayName("Test all APIs using legacy non-builders")
     @Test

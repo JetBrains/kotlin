@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 @file:OptIn(ExperimentalBuildToolsApi::class)
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION", "DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.buildtools.api.internal.wrappers
 
@@ -182,7 +182,7 @@ internal class KotlinWrapperPre2_3_20(
                 sourcesChanges: SourcesChanges,
                 dependenciesSnapshotFiles: List<Path>,
             ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
-                val options = createSnapshotBasedIcOptions()
+                val options = base.createSnapshotBasedIcOptions()
                 return JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(
                     workingDirectory,
                     sourcesChanges,
@@ -202,7 +202,7 @@ internal class KotlinWrapperPre2_3_20(
                 dependenciesSnapshotFiles: List<Path>,
                 shrunkClasspathSnapshot: Path,
             ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
-                val options = createSnapshotBasedIcOptions()
+                val options = base.createSnapshotBasedIcOptions()
                 return JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(
                     workingDirectory,
                     sourcesChanges,
@@ -212,6 +212,7 @@ internal class KotlinWrapperPre2_3_20(
                 )
             }
 
+            @Suppress("DEPRECATION_ERROR")
             inner class JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(
                 workingDirectory: Path,
                 sourcesChanges: SourcesChanges,
@@ -242,11 +243,13 @@ internal class KotlinWrapperPre2_3_20(
                 override fun toBuilder(): Builder = deepCopy()
 
                 override fun <V> get(key: Option<V>): V {
-                    return options[key]
+                    val legacyOption = JvmSnapshotBasedIncrementalCompilationOptions.Option<V>(key.id)
+                    return options[legacyOption]
                 }
 
                 override fun <V> set(key: Option<V>, value: V) {
-                    options[key] = value
+                    val legacyOption = JvmSnapshotBasedIncrementalCompilationOptions.Option<V>(key.id)
+                    options[legacyOption] = value
                 }
 
                 override fun build(): JvmSnapshotBasedIncrementalCompilationConfiguration = deepCopy()
@@ -254,16 +257,16 @@ internal class KotlinWrapperPre2_3_20(
                 private fun deepCopy(): JvmSnapshotBasedIncrementalCompilationConfigurationWrapper {
                     return JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(
                         workingDirectory, sourcesChanges, dependenciesSnapshotFiles, shrunkClasspathSnapshot,
-                        createSnapshotBasedIcOptions().also { newOptions ->
-                            JvmSnapshotBasedIncrementalCompilationConfiguration::class.java.declaredFields.filter {
+                        base.createSnapshotBasedIcOptions().also { newOptions ->
+                            JvmSnapshotBasedIncrementalCompilationOptions::class.java.declaredFields.filter {
                                 it.type.isAssignableFrom(
-                                    Option::class.java
+                                    JvmSnapshotBasedIncrementalCompilationOptions.Option::class.java
                                 )
                             }.forEach { field ->
                                 try {
                                     @Suppress("UNCHECKED_CAST")
-                                    newOptions[field.get(Companion) as Option<Any?>] =
-                                        this[field.get(Companion) as Option<*>]
+                                    newOptions[field.get(JvmSnapshotBasedIncrementalCompilationOptions.Companion) as JvmSnapshotBasedIncrementalCompilationOptions.Option<Any?>] =
+                                        options[field.get(JvmSnapshotBasedIncrementalCompilationOptions.Companion) as JvmSnapshotBasedIncrementalCompilationOptions.Option<*>]
                                 } catch (_: IllegalStateException) {
                                     // this field was not set and has no default
                                 }
@@ -273,11 +276,10 @@ internal class KotlinWrapperPre2_3_20(
                 }
 
                 override fun <V> set(key: BaseIncrementalCompilationConfiguration.Option<V>, value: V) {
-                    val oldOption = Option<V>(key.id)
+                    val oldOption = JvmSnapshotBasedIncrementalCompilationOptions.Option<V>(key.id)
                     options[oldOption] = value
                 }
             }
-
 
             private fun copy(): JvmCompilationOperationWrapper {
                 return toolchain.jvmCompilationOperationBuilder(sources, destinationDirectory)
@@ -443,6 +445,11 @@ private fun <V> CommonToolArguments.set(
     }
 }
 
+private fun JvmCompilationOperation.createSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions =
+    unwrapInvocationTargetException {
+        this::class.java.getMethod("createSnapshotBasedIcOptions").invoke(this) as JvmSnapshotBasedIncrementalCompilationOptions
+    }
+
 internal inline fun <T> unwrapInvocationTargetException(action: () -> T): T {
     return try {
         action()
@@ -450,3 +457,4 @@ internal inline fun <T> unwrapInvocationTargetException(action: () -> T): T {
         throw e.cause ?: e
     }
 }
+

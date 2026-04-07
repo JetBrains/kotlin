@@ -26,14 +26,6 @@ class JvmSnapshotBasedIncrementalCompilationConfigurationDefaultsTest {
         testDefaults(icConfiguration.toUnifiedAccessor())
     }
 
-    @Test
-    fun testDefaultOptionsOnLegacyObject() {
-        val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        @Suppress("DEPRECATION") val icConfiguration = kotlinToolchains.jvm.jvmCompilationOperation(emptyList(), Path("."))
-            .createSnapshotBasedIcOptions()
-        testDefaults(icConfiguration.toUnifiedAccessor())
-    }
-
     private fun testDefaults(icConfiguration: HasSnapshotBasedIcOptionsAccessor) {
         assertEquals(null, icConfiguration[BaseIncrementalCompilationConfiguration.ROOT_PROJECT_DIR])
         assertEquals(null, icConfiguration[BaseIncrementalCompilationConfiguration.MODULE_BUILD_DIR])
@@ -65,14 +57,6 @@ internal interface HasSnapshotBasedIcOptionsAccessor {
 }
 
 internal fun JvmSnapshotBasedIncrementalCompilationConfiguration.toUnifiedAccessor(): HasSnapshotBasedIcOptionsAccessor {
-    return object : HasSnapshotBasedIcOptionsAccessor {
-        override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>): V = this@toUnifiedAccessor[key]
-        override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V = this@toUnifiedAccessor[key]
-    }
-}
-
-@Suppress("DEPRECATION")
-internal fun org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.toUnifiedAccessor(): HasSnapshotBasedIcOptionsAccessor {
     return object : HasSnapshotBasedIcOptionsAccessor {
         override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>): V = this@toUnifiedAccessor[key]
         override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V = this@toUnifiedAccessor[key]

@@ -176,28 +176,6 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
      */
     public val compilerArguments: JvmCompilerArguments
 
-    /**
-     * Creates an options set for snapshot-based incremental compilation (IC) in JVM projects.
-     * May be used to configure incremental compilation as follows:
-     * ```
-     * val icOptions = compilation.snapshotBasedIcConfigurationBuilder()
-     *
-     * icOptions[JvmIncrementalCompilationOptions.BACKUP_CLASSES] = true
-     *
-     * compilation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = JvmIncrementalCompilationConfiguration(
-     *     workingDirectory = Paths.get("build/kotlin"),
-     *     sourcesChanges = SourcesChanges.ToBeCalculated,
-     *     dependenciesSnapshotFiles = snapshots,
-     *     shrunkClasspathSnapshot = shrunkSnapshot,
-     *     options = icOptions,
-     * )
-     * ```
-     * @see org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-     */
-    @Suppress("DEPRECATION")
-    @Deprecated("JvmSnapshotBasedIncrementalCompilationOptions is deprecated. Use `snapshotBasedIcConfigurationBuilder` instead.")
-    public fun createSnapshotBasedIcOptions(): org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
-
     public companion object {
 
         /**

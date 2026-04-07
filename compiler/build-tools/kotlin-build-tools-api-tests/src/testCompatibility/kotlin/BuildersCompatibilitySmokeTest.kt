@@ -2,28 +2,20 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
-@file:Suppress("DEPRECATION")
-
 package org.jetbrains.kotlin.buildtools.tests
 
-import org.jetbrains.kotlin.buildtools.api.BuildOperation
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.FORCE_RECOMPILATION
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.CLASSPATH
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.NO_REFLECT
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.NO_STDLIB
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
@@ -74,6 +66,7 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
         assertEquals(10000L, policy2[ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS])
     }
 
+    @Suppress("DEPRECATION")
     @DisplayName("Modifying IC configuration builder after build does not affect the built configuration")
     @DefaultStrategyAgnosticCompilationTest
     fun testICConfigBuilderImmutability(strategyConfig: CompilerExecutionStrategyConfiguration) {
@@ -86,18 +79,18 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
             sourcesChanges = SourcesChanges.Unknown,
             dependenciesSnapshotFiles = emptyList(),
         ).apply {
-            this[JvmSnapshotBasedIncrementalCompilationConfiguration.FORCE_RECOMPILATION] = false
+            this[FORCE_RECOMPILATION] = false
             this[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES] = true
         }
         val icConfig1 = icBuilder.build()
 
-        icBuilder[JvmSnapshotBasedIncrementalCompilationConfiguration.FORCE_RECOMPILATION] = true
+        icBuilder[FORCE_RECOMPILATION] = true
         icBuilder[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES] = false
         val icConfig2 = icBuilder.build()
 
-        assertEquals(false, icConfig1[JvmSnapshotBasedIncrementalCompilationConfiguration.FORCE_RECOMPILATION])
+        assertEquals(false, icConfig1[FORCE_RECOMPILATION])
         assertEquals(true, icConfig1[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES])
-        assertEquals(true, icConfig2[JvmSnapshotBasedIncrementalCompilationConfiguration.FORCE_RECOMPILATION])
+        assertEquals(true, icConfig2[FORCE_RECOMPILATION])
         assertEquals(false, icConfig2[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES])
     }
 

@@ -93,12 +93,32 @@ internal class KotlinWrapperPre2_4_0(
             sourcesChanges: SourcesChanges,
             dependenciesSnapshotFiles: List<Path>,
         ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
-            return JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(
+            return snapshotBasedIcConfigurationBuilder(
+                workingDirectory,
+                sourcesChanges,
+                dependenciesSnapshotFiles,
+                workingDirectory.resolve("shrunk-classpath-snapshot.bin"),
+            )
+
+        }
+
+        @Deprecated(
+            "The shrunkClasspathSnapshot parameter is no longer required",
+            replaceWith = ReplaceWith("snapshotBasedIcConfigurationBuilder(workingDirectory, sourcesChanges, dependenciesSnapshotFiles)"),
+            level = DeprecationLevel.WARNING
+        )
+        override fun snapshotBasedIcConfigurationBuilder(
+            workingDirectory: Path,
+            sourcesChanges: SourcesChanges,
+            dependenciesSnapshotFiles: List<Path>,
+            shrunkClasspathSnapshot: Path,
+        ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
+            return JvmSnapshotBasedIncrementalCompilationConfigurationBuilderWrapper(
                 base.snapshotBasedIcConfigurationBuilder(
                     workingDirectory,
                     sourcesChanges,
                     dependenciesSnapshotFiles,
-                    workingDirectory.resolve("shrunk-classpath-snapshot.bin"),
+                    shrunkClasspathSnapshot,
                 )
             )
         }
@@ -117,7 +137,30 @@ internal class KotlinWrapperPre2_4_0(
             return JvmCompilationOperationWrapper(base.build())
         }
 
+        @Suppress("DEPRECATION_ERROR")
         private class JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(
+            val base: JvmSnapshotBasedIncrementalCompilationConfiguration,
+        ) : JvmSnapshotBasedIncrementalCompilationConfiguration(
+            base.workingDirectory,
+            base.sourcesChanges,
+            base.dependenciesSnapshotFiles,
+            base.shrunkClasspathSnapshot,
+            base.options
+        ) {
+
+            override fun toBuilder(): Builder = JvmSnapshotBasedIncrementalCompilationConfigurationBuilderWrapper(base.toBuilder())
+
+            override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
+                val oldOption = Option<V>(key.id)
+                return base[oldOption]
+            }
+
+            override fun <V> get(key: Option<V>): V {
+                return base[key]
+            }
+        }
+
+        private class JvmSnapshotBasedIncrementalCompilationConfigurationBuilderWrapper(
             val base: JvmSnapshotBasedIncrementalCompilationConfiguration.Builder,
         ) : JvmSnapshotBasedIncrementalCompilationConfiguration.Builder by base {
             override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
@@ -131,7 +174,7 @@ internal class KotlinWrapperPre2_4_0(
             }
 
             override fun build(): JvmSnapshotBasedIncrementalCompilationConfiguration {
-                return base.build()
+                return JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(base.build())
             }
         }
     }
