@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.extensionsStorage
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime.pluginSandboxAnnotationsJsForTests
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.incremental.utils.findAnnotationsRuntimeJsKlib
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.plugin.sandbox.fir.FirPluginPrototypeExtensionRegistrar
@@ -23,7 +23,7 @@ abstract class AbstractIncrementalCodegenJsWithPluginCompilerRunnerTest(
     granularity: JsGenerationGranularity,
     workingDirPath: String
 ) : JsAbstractInvalidationTest(targetBackend, granularity, workingDirPath) {
-    private val annotationsKlib = findAnnotationsRuntimeJsKlib()
+    private val annotationsKlib = pluginSandboxAnnotationsJsForTests().path
 
     override val librariesToExcludeFromStats
         get() = super.librariesToExcludeFromStats + annotationsKlib

@@ -4,6 +4,7 @@ plugins {
     id("nodejs-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -37,10 +38,6 @@ sourceSets {
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 3072) {
-        dependsOn(":dist")
-        workingDir = rootDir
-        dependsOn(":plugins:plugin-sandbox:jar")
-        dependsOn(":plugins:plugin-sandbox:plugin-annotations:distAnnotations")
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         with(wasmNodeJsKotlinBuild) {
             setupNodeJs(nodejsVersion)
@@ -49,6 +46,15 @@ projectTests {
             property.set("kotlin.wasm.test.root.out.dir")
             buildDirectory.set(layout.buildDirectory)
         }
+        extensions.configure<TestInputsCheckExtension> {
+            with(extraPermissions) {
+                add("permission java.util.PropertyPermission \"kotlin.incremental.compilation\", \"write\";")
+                add("permission java.util.PropertyPermission \"kotlin.incremental.compilation.js\", \"write\";")
+                // The plugin-sandbox compiler plugin generates synthetic source files (like AllOpenGenerated.kt),
+                // and later on the compiler asserts that the synthetic file does not exist via !File.exists()
+                add("""permission java.io.FilePermission "${projectDir.absolutePath}/-", "read";""")
+            }
+        }
     }
 
     testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForPluginSandboxICTestsKt")
@@ -56,8 +62,14 @@ projectTests {
     withJvmStdlibAndReflect()
     withJsRuntime()
     withWasmRuntime()
-    withStdlibWeb()
-    withStdlibCommon()
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
+    withMockJdkAnnotationsJar()
+    withPluginSandboxJar()
+    withPluginSandboxAnnotations()
+
+    testData(project.isolated, "testData")
+    testData(project(":js:js.translator").isolated, "testData")
 }
 
 testsJar()

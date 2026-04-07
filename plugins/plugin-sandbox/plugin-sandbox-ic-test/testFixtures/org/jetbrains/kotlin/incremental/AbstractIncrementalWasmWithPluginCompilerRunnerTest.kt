@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.extensionsStorage
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime.pluginSandboxAnnotationsWasmForTests
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.incremental.utils.findAnnotationsRuntimeWasmKlib
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.plugin.sandbox.fir.FirPluginPrototypeExtensionRegistrar
 import org.jetbrains.kotlin.plugin.sandbox.ir.GeneratedDeclarationsIrBodyFiller
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.wasm.config.wasmIncludedModuleOnly
 abstract class AbstractIncrementalWasmWithPluginCompilerRunnerTest(
     workingDirPath: String,
 ) : WasmAbstractInvalidationTest(TargetBackend.WASM, workingDirPath) {
-    private val annotationsKlib = findAnnotationsRuntimeWasmKlib()
+    private val annotationsKlib = pluginSandboxAnnotationsWasmForTests().path
 
     override val librariesToExcludeFromStats
         get() = super.librariesToExcludeFromStats + annotationsKlib

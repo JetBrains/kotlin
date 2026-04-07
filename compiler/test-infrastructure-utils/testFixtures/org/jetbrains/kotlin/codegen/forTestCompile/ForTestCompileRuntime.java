@@ -95,6 +95,22 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static File pluginSandboxAnnotationsWasmForTests() {
+        return propertyOrDist(
+                PLUGIN_SANDBOX_ANNOTATIONS_WASM_KLIB_PATH,
+                "plugins/plugin-sandbox/plugin-annotations/build/libs/plugin-annotations-wasm-js" + "-" + KotlinCompilerVersion.VERSION + ".klib"
+        );
+    }
+
+    @NotNull
+    public static File pluginSandboxJarForTests() {
+        return propertyOrDist(
+                PLUGIN_SANDBOX_JAR_PATH,
+                "plugins/plugin-sandbox/build/libs/plugin-sandbox" + "-" + KotlinCompilerVersion.VERSION + ".jar"
+        );
+    }
+
+    @NotNull
     public static List<File> testScriptDefinitionClasspathForTests() {
         String classpathString = getProperty(KOTLIN_TEST_SCRIPT_DEFINITION_CLASSPATH, null);
         if (classpathString == null) {

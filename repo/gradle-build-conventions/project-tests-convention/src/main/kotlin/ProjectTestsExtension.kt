@@ -124,6 +124,18 @@ abstract class ProjectTestsExtension(val project: Project) {
         }
     }
 
+    val pluginSandboxAnnotationsWasmKlib: Configuration = project.configurations.create("pluginSandboxAnnotationsWasmKlib") {
+        isTransitive = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_RUNTIME))
+            attribute(KotlinPlatformType.attribute, KotlinPlatformType.wasm)
+        }
+    }
+
+    val pluginSandboxJar: Configuration = project.configurations.create("pluginSandboxJar") {
+        isTransitive = false
+    }
+
     private fun add(configuration: Configuration, dependency: DependencyHandler.() -> ProjectDependency) {
         project.dependencies { configuration(dependency(this)) }
     }
@@ -239,6 +251,11 @@ abstract class ProjectTestsExtension(val project: Project) {
     fun withPluginSandboxAnnotations() {
         add(pluginSandboxAnnotationsJar) { project(":plugins:plugin-sandbox:plugin-annotations") }
         add(pluginSandboxAnnotationsJsKlib) { project(":plugins:plugin-sandbox:plugin-annotations", "jsRuntimeElements") }
+        add(pluginSandboxAnnotationsWasmKlib) { project(":plugins:plugin-sandbox:plugin-annotations", "wasmJsRuntimeElements") }
+    }
+
+    fun withPluginSandboxJar() {
+        add(pluginSandboxJar) { project(":plugins:plugin-sandbox") }
     }
 
     // -------------------- testData configuration --------------------

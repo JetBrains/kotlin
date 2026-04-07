@@ -397,7 +397,6 @@ fun Project.configureTests() {
             ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
             ":plugins:jvm-abi-gen",
             ":plugins:plugins-interactions-testing",
-            ":plugins:plugin-sandbox:plugin-sandbox-ic-test",
             ":plugins:scripting:scripting-tests",
             ":repo:artifacts-tests",
             ":repo:codebase-tests",

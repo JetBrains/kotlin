@@ -32,4 +32,6 @@ object TestCompilePaths {
     const val KOTLIN_TESTDATA_ROOTS = "kotlin.testData.roots"
     const val PLUGIN_SANDBOX_ANNOTATIONS_JAR_PATH: String = "firPluginAnnotations.jvm.path"
     const val PLUGIN_SANDBOX_ANNOTATIONS_JS_KLIB_PATH: String = "firPluginAnnotations.js.path"
+    const val PLUGIN_SANDBOX_ANNOTATIONS_WASM_KLIB_PATH: String = "firPluginAnnotations.wasm.path"
+    const val PLUGIN_SANDBOX_JAR_PATH: String = "firPlugin.jar.path"
 }

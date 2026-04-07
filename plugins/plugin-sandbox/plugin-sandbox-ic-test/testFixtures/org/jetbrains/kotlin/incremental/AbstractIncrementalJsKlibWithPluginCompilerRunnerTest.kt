@@ -6,16 +6,16 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime.pluginSandboxAnnotationsJsForTests
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime.pluginSandboxJarForTests
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
-import org.jetbrains.kotlin.incremental.utils.findAnnotationsRuntimeJsKlib
-import org.jetbrains.kotlin.incremental.utils.findPluginJar
 import java.io.File
 
 abstract class AbstractIncrementalJsKlibWithPluginCompilerRunnerTest : AbstractIncrementalK2JsKlibCompilerWithScopeExpansionRunnerTest() {
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments =
         super.createCompilerArguments(destinationDir, testDir).apply {
-            val annotationsKlib = findAnnotationsRuntimeJsKlib()
-            val pluginJar = findPluginJar()
+            val annotationsKlib = pluginSandboxAnnotationsJsForTests().path
+            val pluginJar = pluginSandboxJarForTests().path
 
             libraries += "${File.pathSeparator}$annotationsKlib"
             pluginClasspaths = arrayOf(pluginJar)

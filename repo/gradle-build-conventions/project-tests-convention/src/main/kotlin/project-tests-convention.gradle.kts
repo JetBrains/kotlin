@@ -23,6 +23,8 @@ val provider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply 
 
     pluginSandboxAnnotationsJar.from(extension.pluginSandboxAnnotationsJar)
     pluginSandboxAnnotationsJsKlib.from(extension.pluginSandboxAnnotationsJsKlib)
+    pluginSandboxAnnotationsWasmKlib.from(extension.pluginSandboxAnnotationsWasmKlib)
+    pluginSandboxJar.from(extension.pluginSandboxJar)
 
     mockJdkRuntimeJar.value(extension.mockJdkRuntime)
     mockJdkRuntime.value(extension.mockJdkRuntime)
