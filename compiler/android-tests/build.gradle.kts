@@ -71,6 +71,10 @@ projectTests {
             provideToThisTaskAsSystemProperty(ProvisioningType.SDK_WITH_EMULATOR)
         }
         extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
+            // Test generator copies template Android project from this directory.
+            val androidModuleRoot = rootDir.resolve("compiler/android-tests/android-module")
+            extraPermissions.add("""permission java.io.FilePermission "${androidModuleRoot.absolutePath}", "read";""")
+            extraPermissions.add("""permission java.io.FilePermission "${androidModuleRoot.absolutePath}/-", "read";""")
             // Android emulator setup writes AVD metadata under the provisioned SDK directory.
             val androidSdkRoot = rootDir.resolve("dependencies/android-sdk/build/androidSdk")
             extraPermissions.add("""permission java.io.FilePermission "${androidSdkRoot.absolutePath}", "read";""")
