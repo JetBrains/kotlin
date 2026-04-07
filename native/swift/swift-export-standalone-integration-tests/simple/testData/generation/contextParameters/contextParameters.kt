@@ -55,3 +55,12 @@ fun contextBlockB(): context(ContextB, ContextA) String.(Int) -> Unit = TODO()
 fun contextBlockC(block: context(Context) (String) -> Unit): Unit = TODO()
 
 fun contextBlockD(): context(Context) (Int) -> Unit = TODO()
+
+class Bar
+
+context(bar: Bar)
+fun combine(bar2: Bar): Bar = TODO()
+
+fun Bar.combine(bar: Bar): Bar = TODO()
+
+fun combine(bar: Bar, bar2: Bar): Bar = TODO()

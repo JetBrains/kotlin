@@ -1,4 +1,5 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Bar::class, "4main3BarC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Context::class, "4main7ContextC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ContextA::class, "4main8ContextAC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ContextB::class, "4main8ContextBC")
@@ -8,8 +9,8 @@ import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
-@ExportedBridge("Foo_bar__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable_main_Context__")
-public fun Foo_bar__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable_main_Context__(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("Foo_bar__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable_main_Context__")
+public fun Foo_bar__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable_main_Context__(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
     val __ctx = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx) as Context
@@ -17,16 +18,16 @@ public fun Foo_bar__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeab
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("Foo_baz_get__TypesOfArguments__main_Context__")
-public fun Foo_baz_get__TypesOfArguments__main_Context__(self: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("Foo_baz_get__TypesOfArgumentsC1__main_Context__")
+public fun Foo_baz_get__TypesOfArgumentsC1__main_Context__(self: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val __ctx = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx) as Context
     val _result = run { context(__ctx) { __self.baz } }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("Foo_complexContextFunction__TypesOfArguments__Swift_String_Swift_Int32_main_ContextA_main_Context_main_ContextB__")
-public fun Foo_complexContextFunction__TypesOfArguments__Swift_String_Swift_Int32_main_ContextA_main_Context_main_ContextB__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, count: Int, contextA: kotlin.native.internal.NativePtr, context: kotlin.native.internal.NativePtr, contextB: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("Foo_complexContextFunction__TypesOfArgumentsEC3__Swift_String_Swift_Int32_main_ContextA_main_Context_main_ContextB__")
+public fun Foo_complexContextFunction__TypesOfArgumentsEC3__Swift_String_Swift_Int32_main_ContextA_main_Context_main_ContextB__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, count: Int, contextA: kotlin.native.internal.NativePtr, context: kotlin.native.internal.NativePtr, contextB: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
     val __count = count
@@ -37,8 +38,8 @@ public fun Foo_complexContextFunction__TypesOfArguments__Swift_String_Swift_Int3
     return _result
 }
 
-@ExportedBridge("Foo_complexContextProperty_get__TypesOfArguments__Swift_String_main_ContextB_main_ContextA__")
-public fun Foo_complexContextProperty_get__TypesOfArguments__Swift_String_main_ContextB_main_ContextA__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, contextB: kotlin.native.internal.NativePtr, contextA: kotlin.native.internal.NativePtr): Int {
+@ExportedBridge("Foo_complexContextProperty_get__TypesOfArgumentsEC2__Swift_String_main_ContextB_main_ContextA__")
+public fun Foo_complexContextProperty_get__TypesOfArgumentsEC2__Swift_String_main_ContextB_main_ContextA__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, contextB: kotlin.native.internal.NativePtr, contextA: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
     val __contextB = kotlin.native.internal.ref.dereferenceExternalRCRef(contextB) as ContextB
@@ -47,8 +48,8 @@ public fun Foo_complexContextProperty_get__TypesOfArguments__Swift_String_main_C
     return _result
 }
 
-@ExportedBridge("Foo_complexContextProperty_set__TypesOfArguments__Swift_String_Swift_Int32_main_ContextB_main_ContextA__")
-public fun Foo_complexContextProperty_set__TypesOfArguments__Swift_String_Swift_Int32_main_ContextB_main_ContextA__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, value: Int, contextB: kotlin.native.internal.NativePtr, contextA: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("Foo_complexContextProperty_set__TypesOfArgumentsEC2__Swift_String_Swift_Int32_main_ContextB_main_ContextA__")
+public fun Foo_complexContextProperty_set__TypesOfArgumentsEC2__Swift_String_Swift_Int32_main_ContextB_main_ContextA__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, value: Int, contextB: kotlin.native.internal.NativePtr, contextA: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
     val __value = value
@@ -58,16 +59,16 @@ public fun Foo_complexContextProperty_set__TypesOfArguments__Swift_String_Swift_
     return run { _result; true }
 }
 
-@ExportedBridge("Foo_foo__TypesOfArguments__main_Context__")
-public fun Foo_foo__TypesOfArguments__main_Context__(self: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("Foo_foo__TypesOfArgumentsC1__main_Context__")
+public fun Foo_foo__TypesOfArgumentsC1__main_Context__(self: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val __ctx = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx) as Context
     val _result = run { context(__ctx) { __self.foo() } }
     return run { _result; true }
 }
 
-@ExportedBridge("Foo_unnamedContextParametersFunction__TypesOfArguments__main_Context_main_ContextB__")
-public fun Foo_unnamedContextParametersFunction__TypesOfArguments__main_Context_main_ContextB__(self: kotlin.native.internal.NativePtr, _0: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("Foo_unnamedContextParametersFunction__TypesOfArgumentsC2__main_Context_main_ContextB__")
+public fun Foo_unnamedContextParametersFunction__TypesOfArgumentsC2__main_Context_main_ContextB__(self: kotlin.native.internal.NativePtr, _0: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val ___0 = kotlin.native.internal.ref.dereferenceExternalRCRef(_0) as Context
     val __ctx = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx) as ContextB
@@ -75,8 +76,8 @@ public fun Foo_unnamedContextParametersFunction__TypesOfArguments__main_Context_
     return run { _result; true }
 }
 
-@ExportedBridge("Foo_unnamedContextParametersProperty_get__TypesOfArguments__main_ContextA_main_Context__")
-public fun Foo_unnamedContextParametersProperty_get__TypesOfArguments__main_ContextA_main_Context__(self: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("Foo_unnamedContextParametersProperty_get__TypesOfArgumentsC2__main_ContextA_main_Context__")
+public fun Foo_unnamedContextParametersProperty_get__TypesOfArgumentsC2__main_ContextA_main_Context__(self: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val __ctx = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx) as ContextA
     val ___1 = kotlin.native.internal.ref.dereferenceExternalRCRef(_1) as Context
@@ -84,13 +85,26 @@ public fun Foo_unnamedContextParametersProperty_get__TypesOfArguments__main_Cont
     return _result.objcPtr()
 }
 
-@ExportedBridge("Foo_unnamedContextParametersProperty_set__TypesOfArguments__Swift_String_main_ContextA_main_Context__")
-public fun Foo_unnamedContextParametersProperty_set__TypesOfArguments__Swift_String_main_ContextA_main_Context__(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr, _2: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("Foo_unnamedContextParametersProperty_set__TypesOfArgumentsC2__Swift_String_main_ContextA_main_Context__")
+public fun Foo_unnamedContextParametersProperty_set__TypesOfArgumentsC2__Swift_String_main_ContextA_main_Context__(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr, _2: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val __value = interpretObjCPointer<kotlin.String>(value)
     val __ctx = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx) as ContextA
     val ___2 = kotlin.native.internal.ref.dereferenceExternalRCRef(_2) as Context
     val _result = run { context(__ctx, ___2) { __self.unnamedContextParametersProperty = __value } }
+    return run { _result; true }
+}
+
+@ExportedBridge("__root___Bar_init_allocate")
+public fun __root___Bar_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = run { kotlin.native.internal.createUninitializedInstance<Bar>() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, Bar()) }
     return run { _result; true }
 }
 
@@ -139,23 +153,47 @@ public fun __root___Foo_get(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___bar__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable_main_Context__")
-public fun __root___bar__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable_main_Context__(arg: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___bar__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable_main_Context__")
+public fun __root___bar__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable_main_Context__(arg: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
     val __ctx = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx) as Context
     val _result = run { context(__ctx) { bar(__arg) } }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___baz_get__TypesOfArguments__main_Context__")
-public fun __root___baz_get__TypesOfArguments__main_Context__(ctx: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___baz_get__TypesOfArgumentsC1__main_Context__")
+public fun __root___baz_get__TypesOfArgumentsC1__main_Context__(ctx: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __ctx = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx) as Context
     val _result = run { context(__ctx) { baz } }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___complexContextFunction__TypesOfArguments__Swift_String_Swift_Bool_main_Context_main_ContextA_main_ContextB__")
-public fun __root___complexContextFunction__TypesOfArguments__Swift_String_Swift_Bool_main_Context_main_ContextA_main_ContextB__(`receiver`: kotlin.native.internal.NativePtr, yes: Boolean, context: kotlin.native.internal.NativePtr, contextA: kotlin.native.internal.NativePtr, contextB: kotlin.native.internal.NativePtr): Int {
+@ExportedBridge("__root___combine__TypesOfArgumentsC1__main_Bar_main_Bar__")
+public fun __root___combine__TypesOfArgumentsC1__main_Bar_main_Bar__(bar2: kotlin.native.internal.NativePtr, bar: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __bar2 = kotlin.native.internal.ref.dereferenceExternalRCRef(bar2) as Bar
+    val __bar = kotlin.native.internal.ref.dereferenceExternalRCRef(bar) as Bar
+    val _result = run { context(__bar) { combine(__bar2) } }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___combine__TypesOfArgumentsE__main_Bar_main_Bar__")
+public fun __root___combine__TypesOfArgumentsE__main_Bar_main_Bar__(`receiver`: kotlin.native.internal.NativePtr, bar: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Bar
+    val __bar = kotlin.native.internal.ref.dereferenceExternalRCRef(bar) as Bar
+    val _result = run { __receiver.combine(__bar) }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___combine__TypesOfArguments__main_Bar_main_Bar__")
+public fun __root___combine__TypesOfArguments__main_Bar_main_Bar__(bar: kotlin.native.internal.NativePtr, bar2: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __bar = kotlin.native.internal.ref.dereferenceExternalRCRef(bar) as Bar
+    val __bar2 = kotlin.native.internal.ref.dereferenceExternalRCRef(bar2) as Bar
+    val _result = run { combine(__bar, __bar2) }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___complexContextFunction__TypesOfArgumentsEC3__Swift_String_Swift_Bool_main_Context_main_ContextA_main_ContextB__")
+public fun __root___complexContextFunction__TypesOfArgumentsEC3__Swift_String_Swift_Bool_main_Context_main_ContextA_main_ContextB__(`receiver`: kotlin.native.internal.NativePtr, yes: Boolean, context: kotlin.native.internal.NativePtr, contextA: kotlin.native.internal.NativePtr, contextB: kotlin.native.internal.NativePtr): Int {
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
     val __yes = yes
     val __context = kotlin.native.internal.ref.dereferenceExternalRCRef(context) as Context
@@ -165,8 +203,8 @@ public fun __root___complexContextFunction__TypesOfArguments__Swift_String_Swift
     return _result
 }
 
-@ExportedBridge("__root___complexContextProperty_get__TypesOfArguments__Swift_String_main_ContextA_main_ContextB__")
-public fun __root___complexContextProperty_get__TypesOfArguments__Swift_String_main_ContextA_main_ContextB__(`receiver`: kotlin.native.internal.NativePtr, contextA: kotlin.native.internal.NativePtr, contextB: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("__root___complexContextProperty_get__TypesOfArgumentsEC2__Swift_String_main_ContextA_main_ContextB__")
+public fun __root___complexContextProperty_get__TypesOfArgumentsEC2__Swift_String_main_ContextA_main_ContextB__(`receiver`: kotlin.native.internal.NativePtr, contextA: kotlin.native.internal.NativePtr, contextB: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
     val __contextA = kotlin.native.internal.ref.dereferenceExternalRCRef(contextA) as ContextA
     val __contextB = kotlin.native.internal.ref.dereferenceExternalRCRef(contextB) as ContextB
@@ -174,8 +212,8 @@ public fun __root___complexContextProperty_get__TypesOfArguments__Swift_String_m
     return _result
 }
 
-@ExportedBridge("__root___complexContextProperty_set__TypesOfArguments__Swift_String_Swift_Bool_main_ContextA_main_ContextB__")
-public fun __root___complexContextProperty_set__TypesOfArguments__Swift_String_Swift_Bool_main_ContextA_main_ContextB__(`receiver`: kotlin.native.internal.NativePtr, value: Boolean, contextA: kotlin.native.internal.NativePtr, contextB: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("__root___complexContextProperty_set__TypesOfArgumentsEC2__Swift_String_Swift_Bool_main_ContextA_main_ContextB__")
+public fun __root___complexContextProperty_set__TypesOfArgumentsEC2__Swift_String_Swift_Bool_main_ContextA_main_ContextB__(`receiver`: kotlin.native.internal.NativePtr, value: Boolean, contextA: kotlin.native.internal.NativePtr, contextB: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
     val __value = value
     val __contextA = kotlin.native.internal.ref.dereferenceExternalRCRef(contextA) as ContextA
@@ -222,31 +260,31 @@ public fun __root___contextBlockD(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___foo__TypesOfArguments__main_Context__")
-public fun __root___foo__TypesOfArguments__main_Context__(ctx: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("__root___foo__TypesOfArgumentsC1__main_Context__")
+public fun __root___foo__TypesOfArgumentsC1__main_Context__(ctx: kotlin.native.internal.NativePtr): Boolean {
     val __ctx = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx) as Context
     val _result = run { context(__ctx) { foo() } }
     return run { _result; true }
 }
 
-@ExportedBridge("__root___unnamedContextParametersFunction__TypesOfArguments__main_Context_main_ContextB__")
-public fun __root___unnamedContextParametersFunction__TypesOfArguments__main_Context_main_ContextB__(ctx: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("__root___unnamedContextParametersFunction__TypesOfArgumentsC2__main_Context_main_ContextB__")
+public fun __root___unnamedContextParametersFunction__TypesOfArgumentsC2__main_Context_main_ContextB__(ctx: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean {
     val __ctx = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx) as Context
     val ___1 = kotlin.native.internal.ref.dereferenceExternalRCRef(_1) as ContextB
     val _result = run { context(__ctx, ___1) { unnamedContextParametersFunction() } }
     return run { _result; true }
 }
 
-@ExportedBridge("__root___unnamedContextParametersProperty_get__TypesOfArguments__main_ContextA_main_Context__")
-public fun __root___unnamedContextParametersProperty_get__TypesOfArguments__main_ContextA_main_Context__(_0: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr): Int {
+@ExportedBridge("__root___unnamedContextParametersProperty_get__TypesOfArgumentsC2__main_ContextA_main_Context__")
+public fun __root___unnamedContextParametersProperty_get__TypesOfArgumentsC2__main_ContextA_main_Context__(_0: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr): Int {
     val ___0 = kotlin.native.internal.ref.dereferenceExternalRCRef(_0) as ContextA
     val __ctx = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx) as Context
     val _result = run { context(___0, __ctx) { unnamedContextParametersProperty } }
     return _result
 }
 
-@ExportedBridge("__root___unnamedContextParametersProperty_set__TypesOfArguments__Swift_Int32_main_ContextA_main_Context__")
-public fun __root___unnamedContextParametersProperty_set__TypesOfArguments__Swift_Int32_main_ContextA_main_Context__(value: Int, _1: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("__root___unnamedContextParametersProperty_set__TypesOfArgumentsC2__Swift_Int32_main_ContextA_main_Context__")
+public fun __root___unnamedContextParametersProperty_set__TypesOfArgumentsC2__Swift_Int32_main_ContextA_main_Context__(value: Int, _1: kotlin.native.internal.NativePtr, ctx: kotlin.native.internal.NativePtr): Boolean {
     val __value = value
     val ___1 = kotlin.native.internal.ref.dereferenceExternalRCRef(_1) as ContextA
     val __ctx = kotlin.native.internal.ref.dereferenceExternalRCRef(ctx) as Context

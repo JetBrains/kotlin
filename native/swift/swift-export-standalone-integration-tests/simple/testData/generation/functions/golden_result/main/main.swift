@@ -20,44 +20,56 @@ public final class Foo: KotlinRuntime.KotlinBase {
     public func ext(
         _ receiver: Swift.String
     ) -> Swift.Void {
-        return { Foo_ext__TypesOfArguments__Swift_String__(self.__externalRCRef(), receiver); return () }()
+        return { Foo_ext__TypesOfArgumentsE__Swift_String__(self.__externalRCRef(), receiver); return () }()
     }
     public func getExtVal(
         _ receiver: Swift.String
     ) -> Swift.String {
-        return Foo_extVal_get__TypesOfArguments__Swift_String__(self.__externalRCRef(), receiver)
+        return Foo_extVal_get__TypesOfArgumentsE__Swift_String__(self.__externalRCRef(), receiver)
     }
     public func getExtVar(
         _ receiver: Swift.String
     ) -> Swift.String {
-        return Foo_extVar_get__TypesOfArguments__Swift_String__(self.__externalRCRef(), receiver)
+        return Foo_extVar_get__TypesOfArgumentsE__Swift_String__(self.__externalRCRef(), receiver)
     }
     public func setExtVar(
         _ receiver: Swift.String,
         v: Swift.String
     ) -> Swift.Void {
-        return { Foo_extVar_set__TypesOfArguments__Swift_String_Swift_String__(self.__externalRCRef(), receiver, v); return () }()
+        return { Foo_extVar_set__TypesOfArgumentsE__Swift_String_Swift_String__(self.__externalRCRef(), receiver, v); return () }()
     }
+}
+public func combine(
+    _ receiver: main.Foo,
+    foo: main.Foo
+) -> main.Foo {
+    return main.Foo.__createClassWrapper(externalRCRef: __root___combine__TypesOfArgumentsE__main_Foo_main_Foo__(receiver.__externalRCRef(), foo.__externalRCRef()))
+}
+public func combine(
+    foo: main.Foo,
+    foo2: main.Foo
+) -> main.Foo {
+    return main.Foo.__createClassWrapper(externalRCRef: __root___combine__TypesOfArguments__main_Foo_main_Foo__(foo.__externalRCRef(), foo2.__externalRCRef()))
 }
 public func foo(
     _ receiver: Swift.Int32
 ) -> Swift.Void {
-    return { __root___foo__TypesOfArguments__Swift_Int32__(receiver); return () }()
+    return { __root___foo__TypesOfArgumentsE__Swift_Int32__(receiver); return () }()
 }
 public func foo(
     _ receiver: Swift.Int32?
 ) -> Swift.Void {
-    return { __root___foo__TypesOfArguments__Swift_Optional_Swift_Int32___(receiver.map { it in NSNumber(value: it) } ?? nil); return () }()
+    return { __root___foo__TypesOfArgumentsE__Swift_Optional_Swift_Int32___(receiver.map { it in NSNumber(value: it) } ?? nil); return () }()
 }
 public func foo(
     _ receiver: main.Foo
 ) -> Swift.Void {
-    return { __root___foo__TypesOfArguments__main_Foo__(receiver.__externalRCRef()); return () }()
+    return { __root___foo__TypesOfArgumentsE__main_Foo__(receiver.__externalRCRef()); return () }()
 }
 public func foo(
     _ receiver: main.Foo?
 ) -> Swift.Void {
-    return { __root___foo__TypesOfArguments__Swift_Optional_main_Foo___(receiver.map { it in it.__externalRCRef() } ?? nil); return () }()
+    return { __root___foo__TypesOfArgumentsE__Swift_Optional_main_Foo___(receiver.map { it in it.__externalRCRef() } ?? nil); return () }()
 }
 public func foo() -> Swift.Int32 {
     return __root___foo()
@@ -65,42 +77,42 @@ public func foo() -> Swift.Int32 {
 public func getBar(
     _ receiver: Swift.Int32
 ) -> Swift.String {
-    return __root___bar_get__TypesOfArguments__Swift_Int32__(receiver)
+    return __root___bar_get__TypesOfArgumentsE__Swift_Int32__(receiver)
 }
 public func getBar(
     _ receiver: Swift.Int32?
 ) -> Swift.String {
-    return __root___bar_get__TypesOfArguments__Swift_Optional_Swift_Int32___(receiver.map { it in NSNumber(value: it) } ?? nil)
+    return __root___bar_get__TypesOfArgumentsE__Swift_Optional_Swift_Int32___(receiver.map { it in NSNumber(value: it) } ?? nil)
 }
 public func getBar(
     _ receiver: main.Foo
 ) -> Swift.String {
-    return __root___bar_get__TypesOfArguments__main_Foo__(receiver.__externalRCRef())
+    return __root___bar_get__TypesOfArgumentsE__main_Foo__(receiver.__externalRCRef())
 }
 public func getBar(
     _ receiver: main.Foo?
 ) -> Swift.String {
-    return __root___bar_get__TypesOfArguments__Swift_Optional_main_Foo___(receiver.map { it in it.__externalRCRef() } ?? nil)
+    return __root___bar_get__TypesOfArgumentsE__Swift_Optional_main_Foo___(receiver.map { it in it.__externalRCRef() } ?? nil)
 }
 public func getFoo(
     _ receiver: Swift.Int32
 ) -> Swift.String {
-    return __root___foo_get__TypesOfArguments__Swift_Int32__(receiver)
+    return __root___foo_get__TypesOfArgumentsE__Swift_Int32__(receiver)
 }
 public func getFoo(
     _ receiver: Swift.Int32?
 ) -> Swift.String {
-    return __root___foo_get__TypesOfArguments__Swift_Optional_Swift_Int32___(receiver.map { it in NSNumber(value: it) } ?? nil)
+    return __root___foo_get__TypesOfArgumentsE__Swift_Optional_Swift_Int32___(receiver.map { it in NSNumber(value: it) } ?? nil)
 }
 public func getFoo(
     _ receiver: main.Foo
 ) -> Swift.String {
-    return __root___foo_get__TypesOfArguments__main_Foo__(receiver.__externalRCRef())
+    return __root___foo_get__TypesOfArgumentsE__main_Foo__(receiver.__externalRCRef())
 }
 public func getFoo(
     _ receiver: main.Foo?
 ) -> Swift.String {
-    return __root___foo_get__TypesOfArguments__Swift_Optional_main_Foo___(receiver.map { it in it.__externalRCRef() } ?? nil)
+    return __root___foo_get__TypesOfArgumentsE__Swift_Optional_main_Foo___(receiver.map { it in it.__externalRCRef() } ?? nil)
 }
 public func return_any_should_append_runtime_import() -> any KotlinRuntimeSupport._KotlinBridgeable {
     return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: __root___return_any_should_append_runtime_import())
@@ -109,25 +121,25 @@ public func setFoo(
     _ receiver: Swift.Int32,
     v: Swift.String
 ) -> Swift.Void {
-    return { __root___foo_set__TypesOfArguments__Swift_Int32_Swift_String__(receiver, v); return () }()
+    return { __root___foo_set__TypesOfArgumentsE__Swift_Int32_Swift_String__(receiver, v); return () }()
 }
 public func setFoo(
     _ receiver: Swift.Int32?,
     v: Swift.String
 ) -> Swift.Void {
-    return { __root___foo_set__TypesOfArguments__Swift_Optional_Swift_Int32__Swift_String__(receiver.map { it in NSNumber(value: it) } ?? nil, v); return () }()
+    return { __root___foo_set__TypesOfArgumentsE__Swift_Optional_Swift_Int32__Swift_String__(receiver.map { it in NSNumber(value: it) } ?? nil, v); return () }()
 }
 public func setFoo(
     _ receiver: main.Foo,
     v: Swift.String
 ) -> Swift.Void {
-    return { __root___foo_set__TypesOfArguments__main_Foo_Swift_String__(receiver.__externalRCRef(), v); return () }()
+    return { __root___foo_set__TypesOfArgumentsE__main_Foo_Swift_String__(receiver.__externalRCRef(), v); return () }()
 }
 public func setFoo(
     _ receiver: main.Foo?,
     v: Swift.String
 ) -> Swift.Void {
-    return { __root___foo_set__TypesOfArguments__Swift_Optional_main_Foo__Swift_String__(receiver.map { it in it.__externalRCRef() } ?? nil, v); return () }()
+    return { __root___foo_set__TypesOfArgumentsE__Swift_Optional_main_Foo__Swift_String__(receiver.map { it in it.__externalRCRef() } ?? nil, v); return () }()
 }
 extension ExportedKotlinPackages.inline {
     public final class Bar: KotlinRuntime.KotlinBase {
@@ -499,7 +511,7 @@ extension ExportedKotlinPackages.operators {
         _ receiver: ExportedKotlinPackages.operators.Foo,
         other: ExportedKotlinPackages.operators.Foo
     ) -> ExportedKotlinPackages.operators.Foo {
-        return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_invoke__TypesOfArguments__ExportedKotlinPackages_operators_Foo_ExportedKotlinPackages_operators_Foo__(receiver.__externalRCRef(), other.__externalRCRef()))
+        return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_invoke__TypesOfArgumentsE__ExportedKotlinPackages_operators_Foo_ExportedKotlinPackages_operators_Foo__(receiver.__externalRCRef(), other.__externalRCRef()))
     }
 }
 extension ExportedKotlinPackages.overload {

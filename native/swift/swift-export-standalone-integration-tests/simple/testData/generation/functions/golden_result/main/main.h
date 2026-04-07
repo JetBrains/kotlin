@@ -3,51 +3,55 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-_Bool Foo_ext__TypesOfArguments__Swift_String__(void * self, NSString * receiver);
+_Bool Foo_ext__TypesOfArgumentsE__Swift_String__(void * self, NSString * receiver);
 
-NSString * Foo_extVal_get__TypesOfArguments__Swift_String__(void * self, NSString * receiver);
+NSString * Foo_extVal_get__TypesOfArgumentsE__Swift_String__(void * self, NSString * receiver);
 
-NSString * Foo_extVar_get__TypesOfArguments__Swift_String__(void * self, NSString * receiver);
+NSString * Foo_extVar_get__TypesOfArgumentsE__Swift_String__(void * self, NSString * receiver);
 
-_Bool Foo_extVar_set__TypesOfArguments__Swift_String_Swift_String__(void * self, NSString * receiver, NSString * v);
+_Bool Foo_extVar_set__TypesOfArgumentsE__Swift_String_Swift_String__(void * self, NSString * receiver, NSString * v);
 
 void * __root___Foo_init_allocate();
 
 _Bool __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
-NSString * __root___bar_get__TypesOfArguments__Swift_Int32__(int32_t receiver);
+NSString * __root___bar_get__TypesOfArgumentsE__Swift_Int32__(int32_t receiver);
 
-NSString * __root___bar_get__TypesOfArguments__Swift_Optional_Swift_Int32___(NSNumber * _Nullable receiver);
+NSString * __root___bar_get__TypesOfArgumentsE__Swift_Optional_Swift_Int32___(NSNumber * _Nullable receiver);
 
-NSString * __root___bar_get__TypesOfArguments__main_Foo__(void * receiver);
+NSString * __root___bar_get__TypesOfArgumentsE__main_Foo__(void * receiver);
 
-NSString * __root___bar_get__TypesOfArguments__Swift_Optional_main_Foo___(void * _Nullable receiver);
+NSString * __root___bar_get__TypesOfArgumentsE__Swift_Optional_main_Foo___(void * _Nullable receiver);
 
-_Bool __root___foo__TypesOfArguments__Swift_Int32__(int32_t receiver);
+void * __root___combine__TypesOfArgumentsE__main_Foo_main_Foo__(void * receiver, void * foo);
 
-_Bool __root___foo__TypesOfArguments__Swift_Optional_Swift_Int32___(NSNumber * _Nullable receiver);
+void * __root___combine__TypesOfArguments__main_Foo_main_Foo__(void * foo, void * foo2);
 
-_Bool __root___foo__TypesOfArguments__main_Foo__(void * receiver);
+_Bool __root___foo__TypesOfArgumentsE__Swift_Int32__(int32_t receiver);
 
-_Bool __root___foo__TypesOfArguments__Swift_Optional_main_Foo___(void * _Nullable receiver);
+_Bool __root___foo__TypesOfArgumentsE__Swift_Optional_Swift_Int32___(NSNumber * _Nullable receiver);
+
+_Bool __root___foo__TypesOfArgumentsE__main_Foo__(void * receiver);
+
+_Bool __root___foo__TypesOfArgumentsE__Swift_Optional_main_Foo___(void * _Nullable receiver);
 
 int32_t __root___foo();
 
-NSString * __root___foo_get__TypesOfArguments__Swift_Int32__(int32_t receiver);
+NSString * __root___foo_get__TypesOfArgumentsE__Swift_Int32__(int32_t receiver);
 
-NSString * __root___foo_get__TypesOfArguments__Swift_Optional_Swift_Int32___(NSNumber * _Nullable receiver);
+NSString * __root___foo_get__TypesOfArgumentsE__Swift_Optional_Swift_Int32___(NSNumber * _Nullable receiver);
 
-NSString * __root___foo_get__TypesOfArguments__main_Foo__(void * receiver);
+NSString * __root___foo_get__TypesOfArgumentsE__main_Foo__(void * receiver);
 
-NSString * __root___foo_get__TypesOfArguments__Swift_Optional_main_Foo___(void * _Nullable receiver);
+NSString * __root___foo_get__TypesOfArgumentsE__Swift_Optional_main_Foo___(void * _Nullable receiver);
 
-_Bool __root___foo_set__TypesOfArguments__Swift_Int32_Swift_String__(int32_t receiver, NSString * v);
+_Bool __root___foo_set__TypesOfArgumentsE__Swift_Int32_Swift_String__(int32_t receiver, NSString * v);
 
-_Bool __root___foo_set__TypesOfArguments__Swift_Optional_Swift_Int32__Swift_String__(NSNumber * _Nullable receiver, NSString * v);
+_Bool __root___foo_set__TypesOfArgumentsE__Swift_Optional_Swift_Int32__Swift_String__(NSNumber * _Nullable receiver, NSString * v);
 
-_Bool __root___foo_set__TypesOfArguments__main_Foo_Swift_String__(void * receiver, NSString * v);
+_Bool __root___foo_set__TypesOfArgumentsE__main_Foo_Swift_String__(void * receiver, NSString * v);
 
-_Bool __root___foo_set__TypesOfArguments__Swift_Optional_main_Foo__Swift_String__(void * _Nullable receiver, NSString * v);
+_Bool __root___foo_set__TypesOfArgumentsE__Swift_Optional_main_Foo__Swift_String__(void * _Nullable receiver, NSString * v);
 
 void * __root___return_any_should_append_runtime_import();
 
@@ -143,7 +147,7 @@ int32_t operators_Foo_value_get(void * self);
 
 _Bool operators_Foo_value_set__TypesOfArguments__Swift_Int32__(void * self, int32_t newValue);
 
-void * operators_invoke__TypesOfArguments__ExportedKotlinPackages_operators_Foo_ExportedKotlinPackages_operators_Foo__(void * receiver, void * other);
+void * operators_invoke__TypesOfArgumentsE__ExportedKotlinPackages_operators_Foo_ExportedKotlinPackages_operators_Foo__(void * receiver, void * other);
 
 void * overload_Foo_init_allocate();
 

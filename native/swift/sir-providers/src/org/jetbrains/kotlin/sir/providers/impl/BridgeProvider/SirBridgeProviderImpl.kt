@@ -159,7 +159,7 @@ private class BridgeFunctionDescriptor(
     override val isAsync: Boolean,
     override val typeNamer: SirTypeNamer,
 ) : BridgeFunctionBuilder, BridgeFunctionProxy {
-    val kotlinBridgeName = bridgeDeclarationName(baseBridgeName, parameters, typeNamer)
+    val kotlinBridgeName = bridgeDeclarationName(baseBridgeName, parameters, contextParameters, extensionReceiverParameter, typeNamer)
     val cBridgeName = kotlinBridgeName
 
     context(session: SirSession)
@@ -294,16 +294,26 @@ private class BridgeFunctionDescriptor(
 // problems with this approach are:
 // 1. there can be limit for declaration names in Clang compiler
 // 1. this name will be UGLY in the debug session
-private fun bridgeDeclarationName(bridgeName: String, parameterBridges: List<BridgedParameter>, typeNamer: SirTypeNamer): String {
-    val nameSuffixForOverloadSimulation = parameterBridges.joinToString(separator = "_") {
-        typeNamer.swiftFqName(it.bridge.swiftType)
-            .replace(".", "_")
-            .replace(",", "_")
-            .replace("<", "_")
-            .replace(">", "_") +
-                if (it.bridge is Bridge.AsNSArrayForVariadic) "_Vararg_" else ""
-    }
-    val suffixString = if (parameterBridges.isNotEmpty()) "__TypesOfArguments__${nameSuffixForOverloadSimulation}__" else ""
+private fun bridgeDeclarationName(
+    bridgeName: String,
+    parameterBridges: List<BridgedParameter>,
+    contextParameters: List<BridgedParameter>,
+    extensionReceiverParameter: BridgedParameter?,
+    typeNamer: SirTypeNamer
+): String {
+    val suffixString = if (parameterBridges.isNotEmpty()) {
+        val nameSuffixForOverloadSimulation = parameterBridges.joinToString(separator = "_") {
+            typeNamer.swiftFqName(it.bridge.swiftType)
+                .replace(".", "_")
+                .replace(",", "_")
+                .replace("<", "_")
+                .replace(">", "_") +
+                    if (it.bridge is Bridge.AsNSArrayForVariadic) "_Vararg_" else ""
+        }
+        val extensionSuffix = if (extensionReceiverParameter != null) "E" else ""
+        val contextSuffix = contextParameters.size.takeIf { it > 0 }?.let { "C$it" } ?: ""
+        "__TypesOfArguments${extensionSuffix}${contextSuffix}__${nameSuffixForOverloadSimulation}__"
+    } else ""
     val result = "${bridgeName}${suffixString}".cIdentifier
     return result
 }

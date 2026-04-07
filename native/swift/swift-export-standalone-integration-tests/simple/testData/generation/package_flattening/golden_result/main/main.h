@@ -15,8 +15,8 @@ int32_t org_kotlin_foo_variable_get();
 
 _Bool org_kotlin_foo_variable_set__TypesOfArguments__Swift_Int32__(int32_t newValue);
 
-NSString * org_kotlin_foo_x_get__TypesOfArguments__Swift_Int32__(int32_t receiver);
+NSString * org_kotlin_foo_x_get__TypesOfArgumentsE__Swift_Int32__(int32_t receiver);
 
-int32_t org_kotlin_foo_y__TypesOfArguments__Swift_String__(NSString * receiver);
+int32_t org_kotlin_foo_y__TypesOfArgumentsE__Swift_String__(NSString * receiver);
 
 NS_ASSUME_NONNULL_END

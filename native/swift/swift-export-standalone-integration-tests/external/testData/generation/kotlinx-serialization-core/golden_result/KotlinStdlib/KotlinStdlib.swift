@@ -6872,107 +6872,107 @@ extension ExportedKotlinPackages.kotlin.time {
             public func getNanoseconds(
                 _ receiver: Swift.Int32
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArgumentsE__Swift_Int32__(self.__externalRCRef(), receiver))
             }
             public func getNanoseconds(
                 _ receiver: Swift.Int64
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArgumentsE__Swift_Int64__(self.__externalRCRef(), receiver))
             }
             public func getNanoseconds(
                 _ receiver: Swift.Double
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArgumentsE__Swift_Double__(self.__externalRCRef(), receiver))
             }
             public func getMicroseconds(
                 _ receiver: Swift.Int32
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_microseconds_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_microseconds_get__TypesOfArgumentsE__Swift_Int32__(self.__externalRCRef(), receiver))
             }
             public func getMicroseconds(
                 _ receiver: Swift.Int64
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_microseconds_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_microseconds_get__TypesOfArgumentsE__Swift_Int64__(self.__externalRCRef(), receiver))
             }
             public func getMicroseconds(
                 _ receiver: Swift.Double
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_microseconds_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_microseconds_get__TypesOfArgumentsE__Swift_Double__(self.__externalRCRef(), receiver))
             }
             public func getMilliseconds(
                 _ receiver: Swift.Int32
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_milliseconds_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_milliseconds_get__TypesOfArgumentsE__Swift_Int32__(self.__externalRCRef(), receiver))
             }
             public func getMilliseconds(
                 _ receiver: Swift.Int64
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_milliseconds_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_milliseconds_get__TypesOfArgumentsE__Swift_Int64__(self.__externalRCRef(), receiver))
             }
             public func getMilliseconds(
                 _ receiver: Swift.Double
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_milliseconds_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_milliseconds_get__TypesOfArgumentsE__Swift_Double__(self.__externalRCRef(), receiver))
             }
             public func getSeconds(
                 _ receiver: Swift.Int32
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_seconds_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_seconds_get__TypesOfArgumentsE__Swift_Int32__(self.__externalRCRef(), receiver))
             }
             public func getSeconds(
                 _ receiver: Swift.Int64
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_seconds_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_seconds_get__TypesOfArgumentsE__Swift_Int64__(self.__externalRCRef(), receiver))
             }
             public func getSeconds(
                 _ receiver: Swift.Double
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_seconds_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_seconds_get__TypesOfArgumentsE__Swift_Double__(self.__externalRCRef(), receiver))
             }
             public func getMinutes(
                 _ receiver: Swift.Int32
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_minutes_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_minutes_get__TypesOfArgumentsE__Swift_Int32__(self.__externalRCRef(), receiver))
             }
             public func getMinutes(
                 _ receiver: Swift.Int64
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_minutes_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_minutes_get__TypesOfArgumentsE__Swift_Int64__(self.__externalRCRef(), receiver))
             }
             public func getMinutes(
                 _ receiver: Swift.Double
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_minutes_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_minutes_get__TypesOfArgumentsE__Swift_Double__(self.__externalRCRef(), receiver))
             }
             public func getHours(
                 _ receiver: Swift.Int32
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_hours_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_hours_get__TypesOfArgumentsE__Swift_Int32__(self.__externalRCRef(), receiver))
             }
             public func getHours(
                 _ receiver: Swift.Int64
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_hours_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_hours_get__TypesOfArgumentsE__Swift_Int64__(self.__externalRCRef(), receiver))
             }
             public func getHours(
                 _ receiver: Swift.Double
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_hours_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_hours_get__TypesOfArgumentsE__Swift_Double__(self.__externalRCRef(), receiver))
             }
             public func getDays(
                 _ receiver: Swift.Int32
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_days_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_days_get__TypesOfArgumentsE__Swift_Int32__(self.__externalRCRef(), receiver))
             }
             public func getDays(
                 _ receiver: Swift.Int64
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_days_get__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_days_get__TypesOfArgumentsE__Swift_Int64__(self.__externalRCRef(), receiver))
             }
             public func getDays(
                 _ receiver: Swift.Double
             ) -> ExportedKotlinPackages.kotlin.time.Duration {
-                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_days_get__TypesOfArguments__Swift_Double__(self.__externalRCRef(), receiver))
+                return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_days_get__TypesOfArgumentsE__Swift_Double__(self.__externalRCRef(), receiver))
             }
             package override init(
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,

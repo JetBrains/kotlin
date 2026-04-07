@@ -116,6 +116,9 @@ val Int?.bar: String get() = TODO()
 val Foo.bar: String get() = TODO()
 val Foo?.bar: String get() = TODO()
 
+fun Foo.combine(foo: Foo): Foo = TODO()
+fun combine(foo: Foo, foo2: Foo): Foo = TODO()
+
 // FILE: operator_fun.kt
 package operators
 

@@ -46,15 +46,15 @@ public fun org_kotlin_foo_variable_set__TypesOfArguments__Swift_Int32__(newValue
     return run { _result; true }
 }
 
-@ExportedBridge("org_kotlin_foo_x_get__TypesOfArguments__Swift_Int32__")
-public fun org_kotlin_foo_x_get__TypesOfArguments__Swift_Int32__(`receiver`: Int): kotlin.native.internal.NativePtr {
+@ExportedBridge("org_kotlin_foo_x_get__TypesOfArgumentsE__Swift_Int32__")
+public fun org_kotlin_foo_x_get__TypesOfArgumentsE__Swift_Int32__(`receiver`: Int): kotlin.native.internal.NativePtr {
     val __receiver = `receiver`
     val _result = run { __receiver.org_kotlin_foo_x }
     return _result.objcPtr()
 }
 
-@ExportedBridge("org_kotlin_foo_y__TypesOfArguments__Swift_String__")
-public fun org_kotlin_foo_y__TypesOfArguments__Swift_String__(`receiver`: kotlin.native.internal.NativePtr): Int {
+@ExportedBridge("org_kotlin_foo_y__TypesOfArgumentsE__Swift_String__")
+public fun org_kotlin_foo_y__TypesOfArgumentsE__Swift_String__(`receiver`: kotlin.native.internal.NativePtr): Int {
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
     val _result = run { __receiver.org_kotlin_foo_y() }
     return _result

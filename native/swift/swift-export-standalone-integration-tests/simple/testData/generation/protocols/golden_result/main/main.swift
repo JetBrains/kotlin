@@ -316,22 +316,22 @@ public var nullable: (any main.Foeble)? {
 public func foo(
     _ receiver: any main.ContainerProtocol
 ) -> Swift.Void {
-    return { __root___foo__TypesOfArguments__anyU20main_ContainerProtocol__(receiver.__externalRCRef()); return () }()
+    return { __root___foo__TypesOfArgumentsE__anyU20main_ContainerProtocol__(receiver.__externalRCRef()); return () }()
 }
 public func foo(
     _ receiver: main.__ContainerProtocol_NestedProtocol_NestedClass
 ) -> Swift.Void {
-    return { __root___foo__TypesOfArguments__main___ContainerProtocol_NestedProtocol_NestedClass__(receiver.__externalRCRef()); return () }()
+    return { __root___foo__TypesOfArgumentsE__main___ContainerProtocol_NestedProtocol_NestedClass__(receiver.__externalRCRef()); return () }()
 }
 public func foo(
     _ receiver: main._SiblingProtocol_NestedClass
 ) -> Swift.Void {
-    return { __root___foo__TypesOfArguments__main__SiblingProtocol_NestedClass__(receiver.__externalRCRef()); return () }()
+    return { __root___foo__TypesOfArgumentsE__main__SiblingProtocol_NestedClass__(receiver.__externalRCRef()); return () }()
 }
 public func foo(
     _ receiver: any main._ContainerProtocol_NestedProtocol
 ) -> Swift.Void {
-    return { __root___foo__TypesOfArguments__anyU20main__ContainerProtocol_NestedProtocol__(receiver.__externalRCRef()); return () }()
+    return { __root___foo__TypesOfArgumentsE__anyU20main__ContainerProtocol_NestedProtocol__(receiver.__externalRCRef()); return () }()
 }
 public func list(
     value: [any main.Foeble]
@@ -564,22 +564,22 @@ extension ExportedKotlinPackages.packagewithprotocols {
     public static func foo(
         _ receiver: any ExportedKotlinPackages.packagewithprotocols.ContainerProtocol
     ) -> Swift.Void {
-        return { packagewithprotocols_foo__TypesOfArguments__anyU20ExportedKotlinPackages_packagewithprotocols_ContainerProtocol__(receiver.__externalRCRef()); return () }()
+        return { packagewithprotocols_foo__TypesOfArgumentsE__anyU20ExportedKotlinPackages_packagewithprotocols_ContainerProtocol__(receiver.__externalRCRef()); return () }()
     }
     public static func foo(
         _ receiver: main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass
     ) -> Swift.Void {
-        return { packagewithprotocols_foo__TypesOfArguments__main___ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass__(receiver.__externalRCRef()); return () }()
+        return { packagewithprotocols_foo__TypesOfArgumentsE__main___ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass__(receiver.__externalRCRef()); return () }()
     }
     public static func foo(
         _ receiver: main._ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass
     ) -> Swift.Void {
-        return { packagewithprotocols_foo__TypesOfArguments__main__ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass__(receiver.__externalRCRef()); return () }()
+        return { packagewithprotocols_foo__TypesOfArgumentsE__main__ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass__(receiver.__externalRCRef()); return () }()
     }
     public static func foo(
         _ receiver: any main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol
     ) -> Swift.Void {
-        return { packagewithprotocols_foo__TypesOfArguments__anyU20main__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol__(receiver.__externalRCRef()); return () }()
+        return { packagewithprotocols_foo__TypesOfArgumentsE__anyU20main__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol__(receiver.__externalRCRef()); return () }()
     }
 }
 extension ExportedKotlinPackages.repeating_conformances {

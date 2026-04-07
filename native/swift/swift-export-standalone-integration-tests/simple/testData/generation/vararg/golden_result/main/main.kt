@@ -80,8 +80,8 @@ public fun __root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPa
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else _result.objcPtr()
 }
 
-@ExportedBridge("__root___extension__TypesOfArguments__main_Accessor_Swift_Array_Swift_Double__Vararg___")
-public fun __root___extension__TypesOfArguments__main_Accessor_Swift_Array_Swift_Double__Vararg___(`receiver`: kotlin.native.internal.NativePtr, d: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("__root___extension__TypesOfArgumentsE__main_Accessor_Swift_Array_Swift_Double__Vararg___")
+public fun __root___extension__TypesOfArgumentsE__main_Accessor_Swift_Array_Swift_Double__Vararg___(`receiver`: kotlin.native.internal.NativePtr, d: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Accessor
     val __d = interpretObjCPointer<kotlin.collections.List<Double>>(d).toDoubleArray()
     val _result = run { __receiver.extension(*__d) }

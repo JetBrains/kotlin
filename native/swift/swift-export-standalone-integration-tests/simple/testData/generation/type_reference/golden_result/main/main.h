@@ -81,17 +81,17 @@ void * __root___Object_without_package_get();
 
 _Bool __root___combine__TypesOfArguments__main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(void * arg1, void * arg2, void * arg3, void * arg4);
 
-_Bool __root___extensionOnNullabeRef__TypesOfArguments__Swift_Optional_main_Class_without_package___(void * _Nullable receiver);
+_Bool __root___extensionOnNullabeRef__TypesOfArgumentsE__Swift_Optional_main_Class_without_package___(void * _Nullable receiver);
 
-_Bool __root___extensionOnNullablePrimitive__TypesOfArguments__Swift_Optional_Swift_Int32___(NSNumber * _Nullable receiver);
+_Bool __root___extensionOnNullablePrimitive__TypesOfArgumentsE__Swift_Optional_Swift_Int32___(NSNumber * _Nullable receiver);
 
-NSString * __root___extensionVarOnNullablePrimitive_get__TypesOfArguments__Swift_Optional_Swift_Int32___(NSNumber * _Nullable receiver);
+NSString * __root___extensionVarOnNullablePrimitive_get__TypesOfArgumentsE__Swift_Optional_Swift_Int32___(NSNumber * _Nullable receiver);
 
-_Bool __root___extensionVarOnNullablePrimitive_set__TypesOfArguments__Swift_Optional_Swift_Int32__Swift_String__(NSNumber * _Nullable receiver, NSString * v);
+_Bool __root___extensionVarOnNullablePrimitive_set__TypesOfArgumentsE__Swift_Optional_Swift_Int32__Swift_String__(NSNumber * _Nullable receiver, NSString * v);
 
-NSString * __root___extensionVarOnNullableRef_get__TypesOfArguments__Swift_Optional_main_Class_without_package___(void * _Nullable receiver);
+NSString * __root___extensionVarOnNullableRef_get__TypesOfArgumentsE__Swift_Optional_main_Class_without_package___(void * _Nullable receiver);
 
-_Bool __root___extensionVarOnNullableRef_set__TypesOfArguments__Swift_Optional_main_Class_without_package__Swift_String__(void * _Nullable receiver, NSString * v);
+_Bool __root___extensionVarOnNullableRef_set__TypesOfArgumentsE__Swift_Optional_main_Class_without_package__Swift_String__(void * _Nullable receiver, NSString * v);
 
 NSNumber * _Nullable __root___nullablePrim_get();
 

@@ -76,7 +76,7 @@ public func `extension`(
     _ receiver: main.Accessor,
     d: Swift.Double...
 ) -> Swift.Void {
-    return { __root___extension__TypesOfArguments__main_Accessor_Swift_Array_Swift_Double__Vararg___(receiver.__externalRCRef(), d.map { it in NSNumber(value: it) }); return () }()
+    return { __root___extension__TypesOfArgumentsE__main_Accessor_Swift_Array_Swift_Double__Vararg___(receiver.__externalRCRef(), d.map { it in NSNumber(value: it) }); return () }()
 }
 public func oneMore(
     a: Swift.String...,

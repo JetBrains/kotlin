@@ -370,22 +370,22 @@ public func combine(
 public func extensionOnNullabeRef(
     _ receiver: main.Class_without_package?
 ) -> Swift.Void {
-    return { __root___extensionOnNullabeRef__TypesOfArguments__Swift_Optional_main_Class_without_package___(receiver.map { it in it.__externalRCRef() } ?? nil); return () }()
+    return { __root___extensionOnNullabeRef__TypesOfArgumentsE__Swift_Optional_main_Class_without_package___(receiver.map { it in it.__externalRCRef() } ?? nil); return () }()
 }
 public func extensionOnNullablePrimitive(
     _ receiver: Swift.Int32?
 ) -> Swift.Void {
-    return { __root___extensionOnNullablePrimitive__TypesOfArguments__Swift_Optional_Swift_Int32___(receiver.map { it in NSNumber(value: it) } ?? nil); return () }()
+    return { __root___extensionOnNullablePrimitive__TypesOfArgumentsE__Swift_Optional_Swift_Int32___(receiver.map { it in NSNumber(value: it) } ?? nil); return () }()
 }
 public func getExtensionVarOnNullablePrimitive(
     _ receiver: Swift.Int32?
 ) -> Swift.String {
-    return __root___extensionVarOnNullablePrimitive_get__TypesOfArguments__Swift_Optional_Swift_Int32___(receiver.map { it in NSNumber(value: it) } ?? nil)
+    return __root___extensionVarOnNullablePrimitive_get__TypesOfArgumentsE__Swift_Optional_Swift_Int32___(receiver.map { it in NSNumber(value: it) } ?? nil)
 }
 public func getExtensionVarOnNullableRef(
     _ receiver: main.Class_without_package?
 ) -> Swift.String {
-    return __root___extensionVarOnNullableRef_get__TypesOfArguments__Swift_Optional_main_Class_without_package___(receiver.map { it in it.__externalRCRef() } ?? nil)
+    return __root___extensionVarOnNullableRef_get__TypesOfArgumentsE__Swift_Optional_main_Class_without_package___(receiver.map { it in it.__externalRCRef() } ?? nil)
 }
 public func nullable_input_prim(
     i: Swift.Int32?
@@ -479,13 +479,13 @@ public func setExtensionVarOnNullablePrimitive(
     _ receiver: Swift.Int32?,
     v: Swift.String
 ) -> Swift.Void {
-    return { __root___extensionVarOnNullablePrimitive_set__TypesOfArguments__Swift_Optional_Swift_Int32__Swift_String__(receiver.map { it in NSNumber(value: it) } ?? nil, v); return () }()
+    return { __root___extensionVarOnNullablePrimitive_set__TypesOfArgumentsE__Swift_Optional_Swift_Int32__Swift_String__(receiver.map { it in NSNumber(value: it) } ?? nil, v); return () }()
 }
 public func setExtensionVarOnNullableRef(
     _ receiver: main.Class_without_package?,
     v: Swift.String
 ) -> Swift.Void {
-    return { __root___extensionVarOnNullableRef_set__TypesOfArguments__Swift_Optional_main_Class_without_package__Swift_String__(receiver.map { it in it.__externalRCRef() } ?? nil, v); return () }()
+    return { __root___extensionVarOnNullableRef_set__TypesOfArgumentsE__Swift_Optional_main_Class_without_package__Swift_String__(receiver.map { it in it.__externalRCRef() } ?? nil, v); return () }()
 }
 extension main.INTERFACE where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
