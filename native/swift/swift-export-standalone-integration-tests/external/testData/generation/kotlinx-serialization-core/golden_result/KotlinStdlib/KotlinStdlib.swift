@@ -7340,6 +7340,75 @@ extension ExportedKotlinPackages.kotlin.ranges {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
+    open class CharProgression: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
+            public static var shared: ExportedKotlinPackages.kotlin.ranges.CharProgression.Companion {
+                get {
+                    return ExportedKotlinPackages.kotlin.ranges.CharProgression.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_CharProgression_Companion_get())
+                }
+            }
+            public func fromClosedRange(
+                rangeStart: Swift.Unicode.UTF16.CodeUnit,
+                rangeEnd: Swift.Unicode.UTF16.CodeUnit,
+                step: Swift.Int32
+            ) -> ExportedKotlinPackages.kotlin.ranges.CharProgression {
+                return ExportedKotlinPackages.kotlin.ranges.CharProgression.__createClassWrapper(externalRCRef: kotlin_ranges_CharProgression_Companion_fromClosedRange__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit_Swift_Unicode_UTF16_CodeUnit_Swift_Int32__(self.__externalRCRef(), rangeStart, rangeEnd, step))
+            }
+            package override init(
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                options: KotlinRuntime.KotlinBaseConstructionOptions
+            ) {
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+            }
+            private init() {
+                fatalError()
+            }
+        }
+        public final var first: Swift.Unicode.UTF16.CodeUnit {
+            get {
+                return kotlin_ranges_CharProgression_first_get(self.__externalRCRef())
+            }
+        }
+        public final var last: Swift.Unicode.UTF16.CodeUnit {
+            get {
+                return kotlin_ranges_CharProgression_last_get(self.__externalRCRef())
+            }
+        }
+        public final var step: Swift.Int32 {
+            get {
+                return kotlin_ranges_CharProgression_step_get(self.__externalRCRef())
+            }
+        }
+        open func iterator() -> ExportedKotlinPackages.kotlin.collections.CharIterator {
+            return ExportedKotlinPackages.kotlin.collections.CharIterator.__createClassWrapper(externalRCRef: kotlin_ranges_CharProgression_iterator(self.__externalRCRef()))
+        }
+        open func isEmpty() -> Swift.Bool {
+            return kotlin_ranges_CharProgression_isEmpty(self.__externalRCRef())
+        }
+        open func equals(
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            return kotlin_ranges_CharProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        }
+        public static func ==(
+            this: ExportedKotlinPackages.kotlin.ranges.CharProgression,
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            this.equals(other: other)
+        }
+        open func hashCode() -> Swift.Int32 {
+            return kotlin_ranges_CharProgression_hashCode(self.__externalRCRef())
+        }
+        open func toString() -> Swift.String {
+            return kotlin_ranges_CharProgression_toString(self.__externalRCRef())
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
     public final class UIntRange: ExportedKotlinPackages.kotlin.ranges.UIntProgression {
         public final class Companion: KotlinRuntime.KotlinBase {
             public var EMPTY: ExportedKotlinPackages.kotlin.ranges.UIntRange {
@@ -7425,6 +7494,75 @@ extension ExportedKotlinPackages.kotlin.ranges {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
+    open class UIntProgression: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
+            public static var shared: ExportedKotlinPackages.kotlin.ranges.UIntProgression.Companion {
+                get {
+                    return ExportedKotlinPackages.kotlin.ranges.UIntProgression.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_UIntProgression_Companion_get())
+                }
+            }
+            public func fromClosedRange(
+                rangeStart: Swift.UInt32,
+                rangeEnd: Swift.UInt32,
+                step: Swift.Int32
+            ) -> ExportedKotlinPackages.kotlin.ranges.UIntProgression {
+                return ExportedKotlinPackages.kotlin.ranges.UIntProgression.__createClassWrapper(externalRCRef: kotlin_ranges_UIntProgression_Companion_fromClosedRange__TypesOfArguments__Swift_UInt32_Swift_UInt32_Swift_Int32__(self.__externalRCRef(), rangeStart, rangeEnd, step))
+            }
+            package override init(
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                options: KotlinRuntime.KotlinBaseConstructionOptions
+            ) {
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+            }
+            private init() {
+                fatalError()
+            }
+        }
+        public final var first: Swift.UInt32 {
+            get {
+                return kotlin_ranges_UIntProgression_first_get(self.__externalRCRef())
+            }
+        }
+        public final var last: Swift.UInt32 {
+            get {
+                return kotlin_ranges_UIntProgression_last_get(self.__externalRCRef())
+            }
+        }
+        public final var step: Swift.Int32 {
+            get {
+                return kotlin_ranges_UIntProgression_step_get(self.__externalRCRef())
+            }
+        }
+        public final func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_ranges_UIntProgression_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
+        }
+        open func isEmpty() -> Swift.Bool {
+            return kotlin_ranges_UIntProgression_isEmpty(self.__externalRCRef())
+        }
+        open func equals(
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            return kotlin_ranges_UIntProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        }
+        public static func ==(
+            this: ExportedKotlinPackages.kotlin.ranges.UIntProgression,
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            this.equals(other: other)
+        }
+        open func hashCode() -> Swift.Int32 {
+            return kotlin_ranges_UIntProgression_hashCode(self.__externalRCRef())
+        }
+        open func toString() -> Swift.String {
+            return kotlin_ranges_UIntProgression_toString(self.__externalRCRef())
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
     public final class ULongRange: ExportedKotlinPackages.kotlin.ranges.ULongProgression {
         public final class Companion: KotlinRuntime.KotlinBase {
             public var EMPTY: ExportedKotlinPackages.kotlin.ranges.ULongRange {
@@ -7502,144 +7640,6 @@ extension ExportedKotlinPackages.kotlin.ranges {
             let __kt = kotlin_ranges_ULongRange_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_ranges_ULongRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_UInt64_Swift_UInt64__(__kt, start, endInclusive); return () }()
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-        }
-    }
-    open class CharProgression: KotlinRuntime.KotlinBase {
-        public final class Companion: KotlinRuntime.KotlinBase {
-            public static var shared: ExportedKotlinPackages.kotlin.ranges.CharProgression.Companion {
-                get {
-                    return ExportedKotlinPackages.kotlin.ranges.CharProgression.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_CharProgression_Companion_get())
-                }
-            }
-            public func fromClosedRange(
-                rangeStart: Swift.Unicode.UTF16.CodeUnit,
-                rangeEnd: Swift.Unicode.UTF16.CodeUnit,
-                step: Swift.Int32
-            ) -> ExportedKotlinPackages.kotlin.ranges.CharProgression {
-                return ExportedKotlinPackages.kotlin.ranges.CharProgression.__createClassWrapper(externalRCRef: kotlin_ranges_CharProgression_Companion_fromClosedRange__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit_Swift_Unicode_UTF16_CodeUnit_Swift_Int32__(self.__externalRCRef(), rangeStart, rangeEnd, step))
-            }
-            package override init(
-                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-                options: KotlinRuntime.KotlinBaseConstructionOptions
-            ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-            }
-            private init() {
-                fatalError()
-            }
-        }
-        public final var first: Swift.Unicode.UTF16.CodeUnit {
-            get {
-                return kotlin_ranges_CharProgression_first_get(self.__externalRCRef())
-            }
-        }
-        public final var last: Swift.Unicode.UTF16.CodeUnit {
-            get {
-                return kotlin_ranges_CharProgression_last_get(self.__externalRCRef())
-            }
-        }
-        public final var step: Swift.Int32 {
-            get {
-                return kotlin_ranges_CharProgression_step_get(self.__externalRCRef())
-            }
-        }
-        open func iterator() -> ExportedKotlinPackages.kotlin.collections.CharIterator {
-            return ExportedKotlinPackages.kotlin.collections.CharIterator.__createClassWrapper(externalRCRef: kotlin_ranges_CharProgression_iterator(self.__externalRCRef()))
-        }
-        open func isEmpty() -> Swift.Bool {
-            return kotlin_ranges_CharProgression_isEmpty(self.__externalRCRef())
-        }
-        open func equals(
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            return kotlin_ranges_CharProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-        }
-        public static func ==(
-            this: ExportedKotlinPackages.kotlin.ranges.CharProgression,
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            this.equals(other: other)
-        }
-        open func hashCode() -> Swift.Int32 {
-            return kotlin_ranges_CharProgression_hashCode(self.__externalRCRef())
-        }
-        open func toString() -> Swift.String {
-            return kotlin_ranges_CharProgression_toString(self.__externalRCRef())
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-        }
-    }
-    open class UIntProgression: KotlinRuntime.KotlinBase {
-        public final class Companion: KotlinRuntime.KotlinBase {
-            public static var shared: ExportedKotlinPackages.kotlin.ranges.UIntProgression.Companion {
-                get {
-                    return ExportedKotlinPackages.kotlin.ranges.UIntProgression.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_UIntProgression_Companion_get())
-                }
-            }
-            public func fromClosedRange(
-                rangeStart: Swift.UInt32,
-                rangeEnd: Swift.UInt32,
-                step: Swift.Int32
-            ) -> ExportedKotlinPackages.kotlin.ranges.UIntProgression {
-                return ExportedKotlinPackages.kotlin.ranges.UIntProgression.__createClassWrapper(externalRCRef: kotlin_ranges_UIntProgression_Companion_fromClosedRange__TypesOfArguments__Swift_UInt32_Swift_UInt32_Swift_Int32__(self.__externalRCRef(), rangeStart, rangeEnd, step))
-            }
-            package override init(
-                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-                options: KotlinRuntime.KotlinBaseConstructionOptions
-            ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-            }
-            private init() {
-                fatalError()
-            }
-        }
-        public final var first: Swift.UInt32 {
-            get {
-                return kotlin_ranges_UIntProgression_first_get(self.__externalRCRef())
-            }
-        }
-        public final var last: Swift.UInt32 {
-            get {
-                return kotlin_ranges_UIntProgression_last_get(self.__externalRCRef())
-            }
-        }
-        public final var step: Swift.Int32 {
-            get {
-                return kotlin_ranges_UIntProgression_step_get(self.__externalRCRef())
-            }
-        }
-        public final func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_ranges_UIntProgression_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
-        }
-        open func isEmpty() -> Swift.Bool {
-            return kotlin_ranges_UIntProgression_isEmpty(self.__externalRCRef())
-        }
-        open func equals(
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            return kotlin_ranges_UIntProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-        }
-        public static func ==(
-            this: ExportedKotlinPackages.kotlin.ranges.UIntProgression,
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            this.equals(other: other)
-        }
-        open func hashCode() -> Swift.Int32 {
-            return kotlin_ranges_UIntProgression_hashCode(self.__externalRCRef())
-        }
-        open func toString() -> Swift.String {
-            return kotlin_ranges_UIntProgression_toString(self.__externalRCRef())
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,

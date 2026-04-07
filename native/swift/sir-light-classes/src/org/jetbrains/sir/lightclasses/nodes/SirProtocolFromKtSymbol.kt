@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.*
 import org.jetbrains.kotlin.sir.util.SirSwiftConcurrencyModule
+import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.swiftFqName
+import org.jetbrains.kotlin.sir.util.unavailableTypes
+import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
@@ -57,6 +60,11 @@ internal open class SirProtocolFromKtSymbol(
     }
 
     override val protocols: List<SirProtocol> by lazyWithSessions {
+        val isUnavailable = this.isUnavailable
+        translatedProtocols.filter { isUnavailable || !it.isUnavailable }
+    }
+
+    internal val translatedProtocols: List<SirProtocol> by lazyWithSessions {
         ktSymbol.superTypes
             .mapNotNull { it.symbol as? KaClassSymbol }
             .filter { it.classKind == KaClassKind.INTERFACE }
@@ -70,7 +78,6 @@ internal open class SirProtocolFromKtSymbol(
                     ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name))
                 }
             }
-
     }
 
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
@@ -129,7 +136,8 @@ internal class SirMarkerProtocolFromKtSymbol(
     override val name: String get() = "_${target.name}"
     override val declarations: MutableList<SirDeclaration> get() = mutableListOf()
     override val superClass: SirNominalType? get() = null
-    override val protocols: List<SirProtocol> get() = target.protocols.filterIsInstance<SirProtocolFromKtSymbol>().map { it.existentialMarker }
+    override val protocols: List<SirProtocol>
+        get() = target.translatedProtocols.filterIsInstance<SirProtocolFromKtSymbol>().map { it.existentialMarker }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
         listOfNotNull(
@@ -180,7 +188,11 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
         )
     }
 
-    override val attributes: List<SirAttribute> get() = emptyList()
+    override val attributes: List<SirAttribute> by lazy {
+        buildList {
+            replaceOrAddPropagatedUnavailability { extendedType.unavailableTypes }
+        }
+    }
 
     override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
         ktSymbol.combinedDeclaredMemberScope
@@ -326,7 +338,12 @@ internal open class SirExistentialProtocolImplementationFromKtSymbol(
         )
     }
 
-    override val attributes: List<SirAttribute> by lazy { this.translatedOptInAttributes }
+    override val attributes: List<SirAttribute> by lazy {
+        buildList {
+            addAll(this@SirExistentialProtocolImplementationFromKtSymbol.translatedOptInAttributes)
+            replaceOrAddPropagatedUnavailability { SirNominalType(targetProtocol).unavailableTypes }
+        }
+    }
 
     override val declarations: MutableList<SirDeclaration> = mutableListOf()
 }
@@ -369,7 +386,11 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
 
     override val documentation: String? get() = null
 
-    override val attributes: List<SirAttribute> = emptyList()
+    override val attributes: List<SirAttribute> by lazy {
+        buildList {
+            replaceOrAddPropagatedUnavailability { extendedType.unavailableTypes }
+        }
+    }
 
     override val constraints: List<SirTypeConstraint> = emptyList()
 

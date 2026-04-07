@@ -114,7 +114,8 @@ public class SirTypeProviderImpl(
                             }
 
                             val classSymbol = kaType.symbol
-                            when (classSymbol.sirAvailability()) {
+                            when (val availability = classSymbol.sirAvailability()) {
+                                is SirAvailability.Available if availability.visibility < SirVisibility.PACKAGE -> null
                                 is SirAvailability.Available, is SirAvailability.Hidden ->
                                     if (classSymbol is KaClassSymbol && classSymbol.classKind == KaClassKind.INTERFACE) {
                                         SirExistentialType(classSymbol.toSir().allDeclarations.firstIsInstance<SirProtocol>())

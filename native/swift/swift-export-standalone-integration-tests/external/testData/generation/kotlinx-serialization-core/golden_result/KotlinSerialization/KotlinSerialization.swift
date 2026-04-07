@@ -52,44 +52,48 @@ public final class _ExportedKotlinPackages_kotlinx_serialization_encoding_Compos
         fatalError()
     }
 }
-@_spi(kotlinx$serialization$ExperimentalSerializationApi)
+@_spi(kotlinx$serialization$ExperimentalSerializationApi) @available(*, unavailable, message: "Declaration uses unsupported types")
 public func serializer(
     kClass: Swift.Never,
     typeArgumentsSerializers: [any ExportedKotlinPackages.kotlinx.serialization.KSerializer],
     isNullable: Swift.Bool
 ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
-    ExportedKotlinPackages.kotlinx.serialization.serializer(kClass: kClass, typeArgumentsSerializers: typeArgumentsSerializers, isNullable: isNullable)
+    fatalError()
 }
+@available(*, unavailable, message: "Declaration uses unsupported types")
 public func serializer(
     type: Swift.Never
 ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
-    ExportedKotlinPackages.kotlinx.serialization.serializer(type: type)
+    fatalError()
 }
-@_spi(kotlinx$serialization$ExperimentalSerializationApi)
+@_spi(kotlinx$serialization$ExperimentalSerializationApi) @available(*, unavailable, message: "Declaration uses unsupported types")
 public func serializer(
     _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
     kClass: Swift.Never,
     typeArgumentsSerializers: [any ExportedKotlinPackages.kotlinx.serialization.KSerializer],
     isNullable: Swift.Bool
 ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
-    ExportedKotlinPackages.kotlinx.serialization.serializer(receiver, kClass: kClass, typeArgumentsSerializers: typeArgumentsSerializers, isNullable: isNullable)
+    fatalError()
 }
+@available(*, unavailable, message: "Declaration uses unsupported types")
 public func serializer(
     _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
     type: Swift.Never
 ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
-    ExportedKotlinPackages.kotlinx.serialization.serializer(receiver, type: type)
+    fatalError()
 }
+@available(*, unavailable, message: "Declaration uses unsupported types")
 public func serializerOrNull(
     type: Swift.Never
 ) -> (any ExportedKotlinPackages.kotlinx.serialization.KSerializer)? {
-    ExportedKotlinPackages.kotlinx.serialization.serializerOrNull(type: type)
+    fatalError()
 }
+@available(*, unavailable, message: "Declaration uses unsupported types")
 public func serializerOrNull(
     _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
     type: Swift.Never
 ) -> (any ExportedKotlinPackages.kotlinx.serialization.KSerializer)? {
-    ExportedKotlinPackages.kotlinx.serialization.serializerOrNull(receiver, type: type)
+    fatalError()
 }
 extension ExportedKotlinPackages.kotlinx.serialization {
     public protocol BinaryFormat: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.SerialFormat {
@@ -163,13 +167,13 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         ) -> Swift.Void {
             return { kotlinx_serialization_ContextualSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), encoder.__externalRCRef(), value.__externalRCRef()); return () }()
         }
-        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+        @_spi(kotlinx$serialization$ExperimentalSerializationApi) @available(*, unavailable, message: "Declaration uses unsupported types")
         public init(
             serializableClass: Swift.Never
         ) {
             fatalError()
         }
-        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+        @_spi(kotlinx$serialization$ExperimentalSerializationApi) @available(*, unavailable, message: "Declaration uses unsupported types")
         public init(
             serializableClass: Swift.Never,
             fallbackSerializer: (any ExportedKotlinPackages.kotlinx.serialization.KSerializer)?,
@@ -233,8 +237,8 @@ extension ExportedKotlinPackages.kotlinx.serialization {
     }
     @_spi(kotlinx$serialization$InternalSerializationApi)
     public final class PolymorphicSerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractPolymorphicSerializer {
-        @_spi(kotlinx$serialization$InternalSerializationApi)
-        public override var baseClass: Swift.Never {
+        @_spi(kotlinx$serialization$InternalSerializationApi) @available(*, unavailable, message: "Declaration uses unsupported types")
+        public var baseClass: Swift.Never {
             @_spi(kotlinx$serialization$InternalSerializationApi)
             get {
                 fatalError()
@@ -251,7 +255,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         public func toString() -> Swift.String {
             return kotlinx_serialization_PolymorphicSerializer_toString(self.__externalRCRef())
         }
-        @_spi(kotlinx$serialization$InternalSerializationApi)
+        @_spi(kotlinx$serialization$InternalSerializationApi) @available(*, unavailable, message: "Declaration uses unsupported types")
         public init(
             baseClass: Swift.Never
         ) {
@@ -266,8 +270,8 @@ extension ExportedKotlinPackages.kotlinx.serialization {
     }
     @_spi(kotlinx$serialization$InternalSerializationApi)
     public final class SealedClassSerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractPolymorphicSerializer {
-        @_spi(kotlinx$serialization$InternalSerializationApi)
-        public override var baseClass: Swift.Never {
+        @_spi(kotlinx$serialization$InternalSerializationApi) @available(*, unavailable, message: "Declaration uses unsupported types")
+        public var baseClass: Swift.Never {
             @_spi(kotlinx$serialization$InternalSerializationApi)
             get {
                 fatalError()
@@ -294,7 +298,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         ) -> (any ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy)? {
             return { switch kotlinx_serialization_SealedClassSerializer_findPolymorphicSerializerOrNull__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), encoder.__externalRCRef(), value.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy; } }()
         }
-        @_spi(kotlinx$serialization$InternalSerializationApi)
+        @_spi(kotlinx$serialization$InternalSerializationApi) @available(*, unavailable, message: "Declaration uses unsupported types")
         public init(
             serialName: Swift.String,
             baseClass: Swift.Never,
@@ -349,7 +353,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi) @available(*, unavailable, message: "Declaration uses unsupported types")
     public static func serializer(
         kClass: Swift.Never,
         typeArgumentsSerializers: [any ExportedKotlinPackages.kotlinx.serialization.KSerializer],
@@ -357,12 +361,13 @@ extension ExportedKotlinPackages.kotlinx.serialization {
     ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
+    @available(*, unavailable, message: "Declaration uses unsupported types")
     public static func serializer(
         type: Swift.Never
     ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
-    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi) @available(*, unavailable, message: "Declaration uses unsupported types")
     public static func serializer(
         _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
         kClass: Swift.Never,
@@ -371,17 +376,20 @@ extension ExportedKotlinPackages.kotlinx.serialization {
     ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
+    @available(*, unavailable, message: "Declaration uses unsupported types")
     public static func serializer(
         _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
         type: Swift.Never
     ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
+    @available(*, unavailable, message: "Declaration uses unsupported types")
     public static func serializerOrNull(
         type: Swift.Never
     ) -> (any ExportedKotlinPackages.kotlinx.serialization.KSerializer)? {
         fatalError()
     }
+    @available(*, unavailable, message: "Declaration uses unsupported types")
     public static func serializerOrNull(
         _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
         type: Swift.Never
@@ -431,7 +439,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
     }
     @_spi(kotlinx$serialization$InternalSerializationApi)
     open class AbstractPolymorphicSerializer: KotlinRuntime.KotlinBase {
-        @_spi(kotlinx$serialization$InternalSerializationApi)
+        @_spi(kotlinx$serialization$InternalSerializationApi) @available(*, unavailable, message: "Declaration uses unsupported types")
         open var baseClass: Swift.Never {
             @_spi(kotlinx$serialization$InternalSerializationApi)
             get {
@@ -1473,7 +1481,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi) @available(*, unavailable, message: "Declaration uses unsupported types")
     public static func getCapturedKClass(
         _ receiver: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
     ) -> Swift.Never {
@@ -1545,6 +1553,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
     ) -> any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_serialization_descriptors_mapSerialDescriptor__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(keyDescriptor.__externalRCRef(), valueDescriptor.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
     }
+    @available(*, unavailable, message: "Declaration uses unsupported types")
     public static func serialDescriptor(
         type: Swift.Never
     ) -> any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {

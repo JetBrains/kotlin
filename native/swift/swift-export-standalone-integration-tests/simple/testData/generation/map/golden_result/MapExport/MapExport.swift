@@ -12,6 +12,7 @@ public func testMapAnyLong(
 ) -> [Swift.AnyHashable: Swift.Int64] {
     return __root___testMapAnyLong__TypesOfArguments__Swift_Dictionary_Swift_AnyHashable_Swift_Int64___(Dictionary(uniqueKeysWithValues: m.map { key, value in (key, NSNumber(value: value) )})) as! Swift.Dictionary<Swift.AnyHashable,Swift.Int64>
 }
+@available(*, unavailable, message: "Declaration uses unsupported types")
 public func testMapBarKey(
     m: Swift.Never
 ) -> Swift.Never {

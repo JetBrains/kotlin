@@ -7,6 +7,7 @@ public protocol Foo: KotlinRuntime.KotlinBase {
 @objc(_Foo)
 package protocol _Foo {
 }
+@available(*, unavailable, message: "Declaration uses unsupported types")
 public var testSetFoo: Swift.Never {
     get {
         fatalError()
@@ -22,6 +23,7 @@ public func testSetAny(
 ) -> Swift.Set<Swift.AnyHashable> {
     return __root___testSetAny__TypesOfArguments__Swift_Set_Swift_AnyHashable___(s) as! Swift.Set<Swift.AnyHashable>
 }
+@available(*, unavailable, message: "Declaration uses unsupported types")
 public func testSetFooParam(
     s: Swift.Never
 ) -> Swift.Never {

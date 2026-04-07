@@ -114,6 +114,7 @@ public func FlattenedPackageClass(
 ) -> ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass {
     return ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass.__createClassWrapper(externalRCRef: __root___FlattenedPackageClass__TypesOfArguments__Swift_Float__(f))
 }
+@available(*, unavailable, message: "Declaration uses unsupported types")
 public func annotationWithFactory(
     arg: any KotlinRuntimeSupport._KotlinBridgeable
 ) -> Swift.Never {

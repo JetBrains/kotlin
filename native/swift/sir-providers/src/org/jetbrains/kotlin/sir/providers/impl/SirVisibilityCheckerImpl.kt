@@ -101,7 +101,7 @@ public class SirVisibilityCheckerImpl(
             is KaNamedClassSymbol -> {
                 val exported = ktSymbol.isExported()
                 if (exported is SirAvailability.Available) {
-                    SirVisibility.PUBLIC
+                    exported.visibility
                 } else return@withSessions exported
             }
             is KaConstructorSymbol -> {
@@ -162,8 +162,8 @@ public class SirVisibilityCheckerImpl(
 
     private fun KaNamedClassSymbol.isExported(): SirAvailability = sirSession.withSessions {
 
-        if (hasDeprecatedAncestors()) {
-            return@withSessions SirAvailability.Unavailable("Has deprecated ancestors")
+        if (hasHiddenAncestors()) {
+            return@withSessions SirAvailability.Unavailable("Has hidden ancestors")
         }
 
         if (!isAllContainingSymbolsExported()) {
@@ -206,11 +206,11 @@ public class SirVisibilityCheckerImpl(
             it.getter?.deprecatedAnnotation?.level == DeprecationLevel.HIDDEN || it.setter?.deprecatedAnnotation?.level == DeprecationLevel.HIDDEN
         } == true
 
-    private fun KaClassSymbol.hasDeprecatedAncestors(): Boolean = sirSession.withSessions {
-        generateSequence(this@hasDeprecatedAncestors) {
-            it.superTypes.map { it.symbol }.findIsInstanceAnd<KaClassSymbol> { it.classKind != KaClassKind.INTERFACE }
-        }.any {
-            it.deprecatedAnnotation?.level.let { it == DeprecationLevel.HIDDEN || it == DeprecationLevel.ERROR }
+    private fun KaClassSymbol.hasHiddenAncestors(): Boolean = sirSession.withSessions {
+        generateSequence(this@hasHiddenAncestors) { symbol ->
+            symbol.superTypes.map { it.symbol }.findIsInstanceAnd<KaClassSymbol> { it.classKind != KaClassKind.INTERFACE }
+        }.drop(1).any { symbol ->
+            symbol.deprecatedAnnotation?.level.let { it == DeprecationLevel.HIDDEN }
         }
     }
 

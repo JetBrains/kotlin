@@ -151,3 +151,30 @@ fun SirDeclaration.conflictsWith(other: SirDeclaration): Boolean = when (this) {
     }
     else -> false
 }
+
+val SirDeclaration.isUnavailable: Boolean get() = attributes.any { it is SirAttribute.Available && it.unavailable }
+
+val SirType.unavailableTypes: List<SirType>
+    get() = when (this) {
+        is SirNominalType -> listOfNotNull(this.takeIf { typeDeclaration.isUnavailable }) + typeArguments.flatMap { it.unavailableTypes }
+        is SirExistentialType -> protocols.mapNotNull { (protocol, _) ->
+            protocol.takeIf { it.isUnavailable }?.let(::SirNominalType)
+        } + protocols.flatMap { (_, types) -> types.flatMap { it.unavailableTypes } }
+        is SirTupleType -> types.flatMap { it.second.unavailableTypes }
+        is SirFunctionalType -> (contextTypes + parameterTypes + errorType + returnType).flatMap { it.unavailableTypes }
+        is SirUnsupportedType -> listOf(this)
+        is SirErrorType -> emptyList()
+    }
+
+inline fun MutableList<SirAttribute>.replaceOrAddPropagatedUnavailability(unavailableTypes: () -> List<SirType>) {
+    if (this.any { it is SirAttribute.Available && it.unavailable }) return
+    val unavailableTypes = unavailableTypes()
+    if (unavailableTypes.isEmpty()) return
+    val message = if (unavailableTypes.any { it is SirUnsupportedType }) {
+        "Declaration uses unsupported types"
+    } else {
+        unavailableTypes.joinToString(prefix = "Unavailable type(s): ") { it.swiftName }
+    }
+    removeAll { it is SirAttribute.Available }
+    add(SirAttribute.Available(message, unavailable = true))
+}
