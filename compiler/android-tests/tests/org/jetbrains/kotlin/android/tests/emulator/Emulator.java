@@ -288,8 +288,12 @@ public class Emulator {
     private static void stopDdmsProcess() {
         if (SystemInfo.isUnix) {
             GeneralCommandLine pgrep = new GeneralCommandLine();
-            pgrep.setExePath(resolveUnixExecutable("/usr/bin/pgrep", "/bin/pgrep"));
-            pgrep.addParameter("-f");
+            if (SystemInfo.isMac) {
+                pgrep.setExePath(resolveUnixExecutable("/usr/bin/pgrep", "/bin/pgrep"));
+                pgrep.addParameter("-f");
+            } else {
+                pgrep.setExePath(resolveUnixExecutable("/usr/bin/pidof", "/bin/pidof"));
+            }
             pgrep.addParameter("java .* emulator");
             RunResult runResult = RunUtils.execute(pgrep);
             if (!runResult.getStatus()) return;
