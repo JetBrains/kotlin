@@ -51,6 +51,6 @@ class IrDiagnosticsHandler(testServices: TestServices) : AbstractIrHandler(testS
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        fullDiagnosticsRenderer.assertCollectedDiagnostics(testServices, ".fir.ir.diag.txt")
+        fullDiagnosticsRenderer.assertCollectedDiagnostics(testServices, ".ir.diag.txt")
     }
 }
