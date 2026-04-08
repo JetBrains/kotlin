@@ -318,6 +318,11 @@ internal class WrappedLhsInAssignmentWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WrappedLhsInAssignmentWarning
 
+internal class ParenthesizedPackageQualifierImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ParenthesizedPackageQualifier
+
 internal class UnsupportedArrayLiteralOutsideOfAnnotationErrorImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

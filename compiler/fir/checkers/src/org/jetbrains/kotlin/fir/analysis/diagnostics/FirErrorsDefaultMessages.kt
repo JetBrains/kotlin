@@ -679,6 +679,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_IGNORA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PACKAGE_CANNOT_BE_IMPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PACKAGE_CONFLICTS_WITH_CLASSIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PARAMETER_NAME_CHANGED_ON_OVERRIDE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PARENTHESIZED_PACKAGE_QUALIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLACEHOLDER_PROJECTION_IN_QUALIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL
@@ -1021,6 +1022,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             WRAPPED_LHS_IN_ASSIGNMENT,
             "Wrapping the left-hand side of assignments in parentheses, labels or annotations is not allowed."
+        )
+        map.put(
+            PARENTHESIZED_PACKAGE_QUALIFIER,
+            "Wrapping package qualifiers in parentheses is not allowed.",
         )
         map.put(
             UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION,

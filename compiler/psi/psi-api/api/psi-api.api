@@ -3910,6 +3910,7 @@ public final class org/jetbrains/kotlin/psi/psiUtil/PsiUtilsKt {
 	public static final fun getContainingKtFile (Lcom/intellij/psi/impl/source/tree/LazyParseablePsiElement;)Lorg/jetbrains/kotlin/psi/KtFile;
 	public static final fun getElementTextWithContext (Lcom/intellij/psi/PsiElement;)Ljava/lang/String;
 	public static final fun getEndOffset (Lcom/intellij/psi/PsiElement;)I
+	public static final fun getExplicitReceiverIfUnwrappable (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
 	public static final fun getIfChildIsInBranch (Lcom/intellij/psi/PsiElement;Lcom/intellij/psi/PsiElement;Lkotlin/jvm/functions/Function1;)Lcom/intellij/psi/PsiElement;
 	public static final fun getIfChildIsInBranches (Lcom/intellij/psi/PsiElement;Lcom/intellij/psi/PsiElement;Lkotlin/jvm/functions/Function1;)Lcom/intellij/psi/PsiElement;
 	public static final fun getNextLeafs (Lcom/intellij/psi/PsiElement;)Lkotlin/sequences/Sequence;

@@ -6169,6 +6169,12 @@ private fun KaDiagnosticConverterBuilder.addConversions135() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions136() {
+    add(FirErrors.PARENTHESIZED_PACKAGE_QUALIFIER) { firDiagnostic ->
+        ParenthesizedPackageQualifierImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER) { firDiagnostic ->
         MissingValOnAnnotationParameterImpl(
             firDiagnostic as KtPsiDiagnostic,

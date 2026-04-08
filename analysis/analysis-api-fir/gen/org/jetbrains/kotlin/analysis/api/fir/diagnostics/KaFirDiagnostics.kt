@@ -277,6 +277,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = WrappedLhsInAssignmentWarning::class
     }
 
+    interface ParenthesizedPackageQualifier : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ParenthesizedPackageQualifier::class
+    }
+
     interface UnsupportedArrayLiteralOutsideOfAnnotationError : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = UnsupportedArrayLiteralOutsideOfAnnotationError::class
     }
