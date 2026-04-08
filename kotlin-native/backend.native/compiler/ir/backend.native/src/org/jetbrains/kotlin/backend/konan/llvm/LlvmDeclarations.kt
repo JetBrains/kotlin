@@ -190,9 +190,9 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     }
 
     override fun visitClass(declaration: IrClass) {
-        // Skip external classes - their declarations come from the host module
+        // In hot-reload context, skip external classes, their declarations come from the host module.
         // (e.g., stdlib classes in hot reload bootstrap)
-        if (isExternal(declaration)) {
+        if (generationState.config.hotReloadEnabled && isExternal(declaration)) {
             super.visitClass(declaration)
             return
         }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 enum class HotReloadSplitMode {
-    NONE,
     GUEST,
     GUEST_IC,
     HOST;
@@ -14,7 +13,6 @@ enum class HotReloadSplitMode {
     companion object {
         @JvmStatic
         fun fromString(value: String): HotReloadSplitMode? = when (value.lowercase()) {
-            "none" -> NONE
             "guest" -> GUEST
             "guest-ic", "guest_ic" -> GUEST_IC
             "host" -> HOST

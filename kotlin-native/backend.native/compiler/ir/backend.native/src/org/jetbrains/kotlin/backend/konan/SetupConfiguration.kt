@@ -145,9 +145,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     // Handle the --hot-reload-split argument (accepts "host", "guest", or "guest-ic")
     arguments.hotReloadSplit?.let { modeString ->
         val mode = HotReloadSplitMode.fromString(modeString)
-        if (mode == null) {
-            report(ERROR, "Invalid --hot-reload-split value: '$modeString'. Expected 'host', 'guest', or 'guest-ic'.")
-        } else if (mode != HotReloadSplitMode.NONE) {
+        if (mode != null) {
             put(NativeConfigurationKeys.HOT_RELOAD_SPLIT, mode)
             report(STRONG_WARNING, "hot-code reload split compilation is an experimental feature, some code may not work as expected!")
 

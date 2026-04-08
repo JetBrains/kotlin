@@ -116,12 +116,12 @@ class NativeSecondStageCompilationConfig(
      * - HOST: Produce both host executable and bootstrap object (full build)
      * - GUEST: Produce only bootstrap object (fast incremental builds)
      */
-    val hotReloadSplitMode: HotReloadSplitMode = configuration.get(NativeConfigurationKeys.HOT_RELOAD_SPLIT) ?: HotReloadSplitMode.NONE
+    val hotReloadSplitMode: HotReloadSplitMode? = configuration.get(NativeConfigurationKeys.HOT_RELOAD_SPLIT)
 
     /**
      * Whether any hot reload split mode is enabled (HOST, GUEST, or GUEST_IC).
      */
-    val hotReloadEnabled: Boolean get() = hotReloadSplitMode != HotReloadSplitMode.NONE
+    val hotReloadEnabled: Boolean get() = hotReloadSplitMode != null
 
     /**
      * Whether we're compiling in HOST mode (full build with both host and bootstrap).

@@ -247,7 +247,9 @@ class CacheBuilder(
                 library in needFullRebuild -> {
                     buildLibraryCache(library, false, emptyList())
                     if (!isCInterop) {
-                        val cacheRoot = cacheRootDirectories[library]!!
+                        val cacheRoot = requireNotNull(cacheRootDirectories[library]) {
+                            "Cannot find cache root directory for library: $library"
+                        }
                         library.getFilesWithFqNames().forEach {
                             val fileId = CacheSupport.cacheFileId(it.fqName, it.filePath)
                             rebuiltArchives.add("$cacheRoot/$fileId/bin/lib$fileId.a")
@@ -257,7 +259,9 @@ class CacheBuilder(
                 caches[library] == null || filesToCache.isNotEmpty() -> {
                     buildLibraryCache(library, false, filesToCache)
                     if (!isCInterop) {
-                        val cacheRoot = cacheRootDirectories[library]!!
+                        val cacheRoot = requireNotNull(cacheRootDirectories[library]) {
+                            "Cannot find cache root directory for library: $library"
+                        }
                         if (caches[library] == null) {
                             // First build — all files
                             library.getFilesWithFqNames().forEach {
