@@ -16,7 +16,7 @@ fun main1(t: <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.test.Test<!>) {
     <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.test<!>.Test()
 
     val x1 = ::<!UNRESOLVED_REFERENCE!>_root_ide_package_<!>.<!UNRESOLVED_REFERENCE!>test<!>.testMe
-    val x2 = <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.test.Test<!>::foo
+    val x2 = <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.test<!>.Test::foo
 }
 
 // FILE: main.kt
@@ -36,13 +36,13 @@ fun main2(
     <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.test<!>.Test()
 
     val x1 = ::<!UNRESOLVED_REFERENCE!>_root_ide_package_<!>.<!UNRESOLVED_REFERENCE!>test<!>.testMe
-    val x2 = <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.test.Test<!>::foo
+    val x2 = <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.test<!>.Test::foo
 
     <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_<!>.myRootTestMe()
     <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_<!>.RootClass()
 
     val x3 = ::<!UNRESOLVED_REFERENCE!>_root_ide_package_<!>.<!UNRESOLVED_REFERENCE!>myRootTestMe<!>
-    val x4 = <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.RootClass<!>::foo
+    val x4 = <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_<!>.RootClass::foo
 
     <!ROOT_IDE_PACKAGE_DEPRECATED!>_root_ide_package_.kotlin<!>.Any()
 

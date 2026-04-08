@@ -95,6 +95,7 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
         name,
         qualifiedAccess,
         nonFatalDiagnosticsFromExpression,
+        explicitParent = null,
     ).takeIf { isUsedAsReceiver || it?.qualifier?.symbol == null }
 }
 
@@ -118,6 +119,7 @@ fun FirResolvedQualifier.continueQualifier(
         name,
         qualifiedAccess,
         nonFatalDiagnosticsFromExpression,
+        explicitParent = this,
         resolvedSymbolOriginForNextQualifierPart,
     )
 
@@ -153,7 +155,7 @@ fun FirResolvedQualifier.continueQualifier(
         nonFatalDiagnostics = nonFatalDiagnostics,
         extraTypeArguments = this@continueQualifier.typeArguments,
         candidate = candidate,
-        explicitParent = this,
+        explicitParent = this@continueQualifier,
     )
 }
 
@@ -174,6 +176,7 @@ private fun BodyResolveComponents.continueQualifierInPackage(
     name: Name,
     qualifiedAccess: FirQualifiedAccessExpression,
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
+    explicitParent: FirResolvedQualifier?,
     resolvedSymbolOrigin: FirResolvedSymbolOrigin = FirResolvedSymbolOrigin.Qualified,
 ): QualifierResolutionResult? {
     val childFqName = parentFqName.child(name)
@@ -189,7 +192,10 @@ private fun BodyResolveComponents.continueQualifierInPackage(
     val classId = ClassId.topLevel(childFqName)
     val symbol = symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
     val collector = FirTypeCandidateCollector(session, file, containingDeclarations)
-    collector.processCandidate(symbol, resolvedSymbolOrigin = resolvedSymbolOrigin)
+    collector.processCandidate(
+        symbol,
+        resolvedSymbolOrigin = if (annotatedPackageQualifiersForbidden) FirResolvedSymbolOrigin.Qualified else resolvedSymbolOrigin,
+    )
     val candidate = collector.getResult().resolvedCandidateOrNull()
 
     val nonFatalDiagnostics = extractNonFatalDiagnostics(
@@ -206,6 +212,7 @@ private fun BodyResolveComponents.continueQualifierInPackage(
         symbol = symbol,
         candidate = candidate,
         nonFatalDiagnostics = nonFatalDiagnostics,
+        explicitParent = explicitParent.takeIf { annotatedPackageQualifiersForbidden },
     )
 }
 
