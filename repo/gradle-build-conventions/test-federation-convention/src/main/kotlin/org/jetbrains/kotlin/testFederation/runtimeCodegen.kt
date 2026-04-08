@@ -72,22 +72,6 @@ abstract class GenerateTestFederationRuntimeCodeTask : DefaultTask() {
                 this += "|"
             }.trimMargin()
         )
-
-        outputDir.asFile.get().toPath().resolve("keys.kt").createParentDirectories().writeText(
-            buildString {
-                this += "|// This file is generated automatically. DO NOT MODIFY IT MANUALLY"
-                this += "|// See ${GenerateTestFederationRuntimeCodeTask::class.simpleName}"
-                this += "|"
-                this += "|package org.jetbrains.kotlin.testFederation"
-                this += "|"
-                this += "|const val TEST_FEDERATION_ENABLED_KEY = \"$TEST_FEDERATION_ENABLED_KEY\""
-                this += "|const val TEST_FEDERATION_ENABLED_ENV_KEY = \"$TEST_FEDERATION_ENABLED_ENV_KEY\""
-                this += "|const val TEST_FEDERATION_MODE_KEY = \"$TEST_FEDERATION_MODE_KEY\""
-                this += "|const val TEST_FEDERATION_MODE_ENV_KEY = \"$TEST_FEDERATION_MODE_ENV\""
-                this += "|const val TEST_FEDERATION_AFFECTED_DOMAINS_KEY = \"$TEST_FEDERATION_AFFECTED_DOMAINS_KEY\""
-                this += "|const val TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY = \"$TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY\""
-            }.trimMargin()
-        )
     }
 }
 

@@ -55,19 +55,25 @@ internal fun inferAffectedDomains(argumentString: String): Set<Domain>? {
     return Domain.fromArgumentString(argumentString)?.withAffectedDependencies()
 }
 
-internal fun Iterable<Domain>.withAffectedDependencies(): Set<Domain> {
-    val dependees = buildMap {
-        allDomainInfos.forEach { domainInfo ->
-            put(domainInfo.domain, mutableListOf())
-        }
-
-        allDomainInfos.forEach { domainInfo ->
-            domainInfo.fullyAffectedBy.forEach { dependency ->
-                get(dependency.domain)?.add(domainInfo.domain)
-            }
-        }
+/**
+ * 'Inverse' dependencies of domains
+ *
+ * `key`: Domain
+ * `value`: List of 'Domains' affected by the 'key' domain.
+ */
+private val domainDependees: Map<Domain, List<Domain>> = buildMap<Domain, MutableList<Domain>> {
+    allDomainInfos.forEach { domainInfo ->
+        put(domainInfo.domain, mutableListOf())
     }
 
-    return withClosure<Domain> { system -> dependees[system].orEmpty() }
+    allDomainInfos.forEach { domainInfo ->
+        domainInfo.fullyAffectedBy.forEach { dependency ->
+            get(dependency.domain)?.add(domainInfo.domain)
+        }
+    }
+}
+
+internal fun Iterable<Domain>.withAffectedDependencies(): Set<Domain> {
+    return withClosure<Domain> { system -> domainDependees[system].orEmpty() }
 }
 
