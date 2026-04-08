@@ -8,18 +8,13 @@ package org.jetbrains.kotlin.kotlinp.jvm.test
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
-import org.jetbrains.kotlin.test.configuration.commonConfigurationForJvmTest
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.setupJvmPipelineSteps
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
-import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliJvmFacade
-import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 
 abstract class AbstractKotlinpTest : AbstractKotlinCompilerTest() {
@@ -37,10 +32,8 @@ abstract class AbstractKotlinpTest : AbstractKotlinCompilerTest() {
 
         builder.useDirectives(KotlinpTestDirectives)
 
-        commonConfigurationForJvmTest(FrontendKinds.FIR, ::FirCliJvmFacade, ::Fir2IrCliJvmFacade, ::BackendCliJvmFacade)
-
         // We need PSI at least until scripts are supported in the LightTree (KT-60127).
-        configureFirParser(FirParser.Psi)
+        setupJvmPipelineSteps(FirParser.Psi)
 
         configureFirHandlersStep {
             commonFirHandlersForCodegenTest()

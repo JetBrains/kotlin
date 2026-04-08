@@ -8,18 +8,13 @@ package org.jetbrains.kotlin.test.runners.codegen
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
 import org.jetbrains.kotlin.test.backend.ir.IrConstCheckerHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.configuration.*
-import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliJvmFacade
-import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.jvm.JdkKindBoxTestChecker
 import org.jetbrains.kotlin.test.services.jvm.PureJvmCodegenBoxTestChecker
@@ -30,15 +25,7 @@ abstract class AbstractJvmBlackBoxCodegenTestBase(
 ) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
 
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
-        commonConfigurationForJvmTest(
-            FrontendKinds.FIR,
-            ::FirCliJvmFacade,
-            ::Fir2IrCliJvmFacade,
-            ::BackendCliJvmFacade,
-            additionalSourceProvider = ::MainFunctionForBlackBoxTestsSourceProvider
-        )
-
-        configureFirParser(parser)
+        setupJvmPipelineSteps(parser)
 
         configureFirHandlersStep {
             useHandlersAtFirst(
@@ -66,9 +53,8 @@ abstract class AbstractJvmBlackBoxCodegenTestBase(
         configureDumpHandlersForCodegenTest()
         configureBlackBoxTestSettings()
 
-        useAfterAnalysisCheckers(
-            ::BlackBoxCodegenSuppressor,
-        )
+        useAdditionalSourceProviders(::MainFunctionForBlackBoxTestsSourceProvider)
+        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
 
         configureJvmBoxCodegenSettings(includeAllDumpHandlers = true)
         enableMetaInfoHandler()

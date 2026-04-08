@@ -9,15 +9,10 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.JvmNewKotlinReflectCompatibilityCheck
-import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.*
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliJvmFacade
-import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
-import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
-import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
@@ -27,12 +22,7 @@ import org.jetbrains.kotlin.utils.bind
 abstract class AbstractJvmIrTextTest(val parser: FirParser) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
 
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
-        commonConfigurationForJvmTest(
-            FrontendKinds.FIR,
-            ::FirCliJvmFacade,
-            ::Fir2IrCliJvmFacade,
-            ::BackendCliJvmFacade
-        )
+        setupJvmPipelineSteps(parser)
         commonHandlersForCodegenTest()
         setupDefaultDirectivesForIrTextTest()
         configureIrHandlersStep {

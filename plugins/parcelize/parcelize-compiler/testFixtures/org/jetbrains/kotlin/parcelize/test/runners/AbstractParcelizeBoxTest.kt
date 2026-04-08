@@ -15,22 +15,17 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
-import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
-import org.jetbrains.kotlin.test.configuration.commonConfigurationForJvmTest
 import org.jetbrains.kotlin.test.configuration.configureCommonHandlersForBoxTest
+import org.jetbrains.kotlin.test.configuration.setupJvmPipelineSteps
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
-import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliJvmFacade
-import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.jvm.JvmBoxMainClassProvider
 import org.jetbrains.kotlin.test.services.service
@@ -47,15 +42,7 @@ abstract class AbstractParcelizeBoxTest : AbstractKotlinCompilerWithTargetBacken
             +ENABLE_PLUGIN_PHASES
         }
 
-        configureFirParser(FirParser.LightTree)
-
-        commonConfigurationForJvmTest(
-            FrontendKinds.FIR,
-            ::FirCliJvmFacade,
-            ::Fir2IrCliJvmFacade,
-            ::BackendCliJvmFacade,
-            additionalSourceProvider = ::MainFunctionForBlackBoxTestsSourceProvider
-        )
+        setupJvmPipelineSteps(FirParser.LightTree)
 
         configureFirHandlersStep {
             useHandlers(
@@ -70,15 +57,10 @@ abstract class AbstractParcelizeBoxTest : AbstractKotlinCompilerWithTargetBacken
         configureCommonHandlersForBoxTest()
 
         useCustomRuntimeClasspathProviders(::ParcelizeRuntimeClasspathProvider)
-
         useConfigurators(::ParcelizeEnvironmentConfigurator)
-
-        useAdditionalSourceProviders(::ParcelizeUtilSourcesProvider)
-
+        useAdditionalSourceProviders(::ParcelizeUtilSourcesProvider, ::MainFunctionForBlackBoxTestsSourceProvider)
         useAdditionalServices(service<JvmBoxMainClassProvider>(::ParcelizeMainClassProvider))
-
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor, ::FirMetaInfoDiffSuppressor)
-
         enableMetaInfoHandler()
     }
 }
