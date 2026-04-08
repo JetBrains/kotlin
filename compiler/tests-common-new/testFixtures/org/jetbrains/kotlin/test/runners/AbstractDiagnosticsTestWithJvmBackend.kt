@@ -35,19 +35,17 @@ import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConf
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
-abstract class AbstractDiagnosticsTestWithConverter<R : ResultingArtifact.FrontendOutput<R>> :
-    AbstractKotlinCompilerTest() {
-    abstract val targetFrontend: FrontendKind<R>
-    abstract val frontend: Constructor<FrontendFacade<R>>
-    abstract val converter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
-
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+// TODO: Unify this runner with phased ones (KT-73848)
+abstract class AbstractDiagnosticsTestWithConverter(val parser: FirParser) : AbstractKotlinCompilerTest() {
+    override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         globalDefaults {
-            frontend = targetFrontend
+            frontend = FrontendKinds.FIR
             targetBackend = TargetBackend.JVM_IR
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             dependencyKind = DependencyKind.Binary
         }
+
+        configureFirParser(parser)
 
         defaultDirectives {
             +JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
@@ -70,7 +68,7 @@ abstract class AbstractDiagnosticsTestWithConverter<R : ResultingArtifact.Fronte
             ::CoroutineHelpersSourceFilesProvider,
         )
 
-        facadeStep(frontend)
+        facadeStep(::FirFrontendFacade)
 
         useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
         firHandlersStep {
@@ -81,7 +79,7 @@ abstract class AbstractDiagnosticsTestWithConverter<R : ResultingArtifact.Fronte
             )
         }
 
-        facadeStep(converter)
+        facadeStep(::Fir2IrResultsConverter)
 
         irHandlersStep {
             useHandlers(
@@ -91,30 +89,9 @@ abstract class AbstractDiagnosticsTestWithConverter<R : ResultingArtifact.Fronte
     }
 }
 
-// TODO: Unify this runner with phased ones (KT-73848)
-abstract class AbstractFirDiagnosticsTestWithConverterBase(
-    val parser: FirParser
-) : AbstractDiagnosticsTestWithConverter<FirOutputArtifact>() {
-    override val targetFrontend: FrontendKind<FirOutputArtifact>
-        get() = FrontendKinds.FIR
+abstract class AbstractFirPsiDiagnosticsTestWithConverter : AbstractDiagnosticsTestWithConverter(FirParser.Psi)
 
-    override val frontend: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirFrontendFacade
-
-    override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrResultsConverter
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureFirParser(parser)
-    }
-}
-
-abstract class AbstractFirPsiDiagnosticsTestWithConverter : AbstractFirDiagnosticsTestWithConverterBase(FirParser.Psi)
-
-abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.FrontendOutput<R>> :
-    AbstractDiagnosticsTestWithConverter<R>() {
-
+abstract class AbstractDiagnosticsTestWithJvmBackend(parser: FirParser) : AbstractDiagnosticsTestWithConverter(parser) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
 
@@ -130,24 +107,5 @@ abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.Front
     }
 }
 
-abstract class AbstractFirDiagnosticsTestWithJvmIrBackendBase(
-    val parser: FirParser
-) : AbstractDiagnosticsTestWithJvmBackend<FirOutputArtifact>() {
-    override val targetFrontend: FrontendKind<FirOutputArtifact>
-        get() = FrontendKinds.FIR
-
-    override val frontend: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirFrontendFacade
-
-    override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrResultsConverter
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureFirParser(parser)
-    }
-}
-
-abstract class AbstractFirPsiDiagnosticsTestWithJvmIrBackend : AbstractFirDiagnosticsTestWithJvmIrBackendBase(FirParser.Psi)
-
-abstract class AbstractFirLightTreeDiagnosticsTestWithJvmIrBackend : AbstractFirDiagnosticsTestWithJvmIrBackendBase(FirParser.LightTree)
+abstract class AbstractFirPsiDiagnosticsTestWithJvmIrBackend : AbstractDiagnosticsTestWithJvmBackend(FirParser.Psi)
+abstract class AbstractFirLightTreeDiagnosticsTestWithJvmIrBackend : AbstractDiagnosticsTestWithJvmBackend(FirParser.LightTree)
