@@ -76,6 +76,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_HEADER_MODE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_HEADER_MODE_TYPE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_IGNORE_CONST_OPTIMIZATION_ERRORS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_IMPROVED_ALIAS_TRACKING
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_INLINE_CLASSES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_INTELLIJ_PLUGIN_ROOT
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_LIST_PHASES
@@ -231,6 +232,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_HEADER_MODE in this) { arguments.headerMode = get(X_HEADER_MODE)}
     if (X_HEADER_MODE_TYPE in this) { arguments.headerModeType = get(X_HEADER_MODE_TYPE).stringValue}
     if (X_IGNORE_CONST_OPTIMIZATION_ERRORS in this) { arguments.ignoreConstOptimizationErrors = get(X_IGNORE_CONST_OPTIMIZATION_ERRORS)}
+    if (X_IMPROVED_ALIAS_TRACKING in this) { arguments.improvedAliasTracking = get(X_IMPROVED_ALIAS_TRACKING)}
     if (X_INLINE_CLASSES in this) { arguments.inlineClasses = get(X_INLINE_CLASSES)}
     if (X_INTELLIJ_PLUGIN_ROOT in this) { arguments.intellijPluginRoot = get(X_INTELLIJ_PLUGIN_ROOT)}
     if (X_LIST_PHASES in this) { arguments.listPhases = get(X_LIST_PHASES)}
@@ -337,6 +339,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_HEADER_MODE] = arguments.headerMode } catch (_: NoSuchMethodError) {  }
     try { this[X_HEADER_MODE_TYPE] = arguments.headerModeType.let { HeaderMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xheader-mode-type value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[X_IGNORE_CONST_OPTIMIZATION_ERRORS] = arguments.ignoreConstOptimizationErrors } catch (_: NoSuchMethodError) {  }
+    try { this[X_IMPROVED_ALIAS_TRACKING] = arguments.improvedAliasTracking } catch (_: NoSuchMethodError) {  }
     try { this[X_INLINE_CLASSES] = arguments.inlineClasses } catch (_: NoSuchMethodError) {  }
     try { this[X_INTELLIJ_PLUGIN_ROOT] = arguments.intellijPluginRoot } catch (_: NoSuchMethodError) {  }
     try { this[X_LIST_PHASES] = arguments.listPhases } catch (_: NoSuchMethodError) {  }
@@ -438,6 +441,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_HEADER_MODE in this) { arguments.headerMode = get(X_HEADER_MODE)}
     if (X_HEADER_MODE_TYPE in this) { arguments.headerModeType = get(X_HEADER_MODE_TYPE).stringValue}
     if (X_IGNORE_CONST_OPTIMIZATION_ERRORS in this) { arguments.ignoreConstOptimizationErrors = get(X_IGNORE_CONST_OPTIMIZATION_ERRORS)}
+    if (X_IMPROVED_ALIAS_TRACKING in this) { arguments.improvedAliasTracking = get(X_IMPROVED_ALIAS_TRACKING)}
     if (X_INLINE_CLASSES in this) { arguments.inlineClasses = get(X_INLINE_CLASSES)}
     if (X_INTELLIJ_PLUGIN_ROOT in this) { arguments.intellijPluginRoot = get(X_INTELLIJ_PLUGIN_ROOT)}
     if (X_LOCAL_TYPE_ALIASES in this) { arguments.localTypeAliases = get(X_LOCAL_TYPE_ALIASES)}
@@ -639,6 +643,9 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_IGNORE_CONST_OPTIMIZATION_ERRORS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_IGNORE_CONST_OPTIMIZATION_ERRORS")
+
+    public val X_IMPROVED_ALIAS_TRACKING: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_IMPROVED_ALIAS_TRACKING")
 
     public val X_INLINE_CLASSES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_INLINE_CLASSES")
