@@ -108,7 +108,6 @@ val DEFAULT_UNUSED_DIAGNOSTICS = listOf(
  *
  * @param [testDataConsistencyHandler] is used to ensure consistency between `.kt` and `.xxx.kt` files if they are present.
  * Known usages:
- * - `.fir.kt` for diagnostics testdata shared between the K1 and K2
  * - `.latestLV.kt` for tests which run with latest LV instead of latest stable LV
  * - `.ll.kt` for AA tests
  * - `.reversed.fir.kt` for reversed AA tests

@@ -71,7 +71,6 @@ abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.Front
         setupDefaultDirectivesForIrTextTest()
         useAfterAnalysisCheckers(
             ::BlackBoxCodegenSuppressor,
-            ::FirIrDumpIdenticalChecker,
             ::PhasedPipelineChecker.bind(TestPhase.BACKEND)
         )
         enableMetaInfoHandler()

@@ -114,9 +114,6 @@ class IrTextDumpHandler(
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives, FirDiagnosticsDirectives)
 
-    override val additionalAfterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>
-        get() = listOf(::FirIrDumpIdenticalChecker)
-
     private val pathRelativizer = IrFileEntryPathRelativizer(testServices)
 
     private val baseDumper = MultiModuleInfoDumper()
@@ -173,7 +170,7 @@ class IrTextDumpHandler(
                 {
                     val classDump = info.findExternalClass(externalClassId).dump(dumpOptions)
                     val suffix = ".__${externalClassId.replace("/", ".")}"
-                    val expectedFile = baseFile.withSuffixAndExtension(suffix, getDumpExtension(ignoreFirIdentical = true))
+                    val expectedFile = baseFile.withSuffixAndExtension(suffix, getDumpExtension())
                     assertions.assertEqualsToFile(expectedFile, classDump)
                 }
             }
@@ -204,8 +201,8 @@ class IrTextDumpHandler(
         }
     }
 
-    private fun getDumpExtension(ignoreFirIdentical: Boolean = false): String {
-        return computeDumpExtension(testServices, customExtension ?: (if (byteCodeListingEnabled) DUMP_EXTENSION2 else DUMP_EXTENSION), ignoreFirIdentical || customExtension != null)
+    private fun getDumpExtension(): String {
+        return customExtension ?: (if (byteCodeListingEnabled) DUMP_EXTENSION2 else DUMP_EXTENSION)
     }
 }
 
