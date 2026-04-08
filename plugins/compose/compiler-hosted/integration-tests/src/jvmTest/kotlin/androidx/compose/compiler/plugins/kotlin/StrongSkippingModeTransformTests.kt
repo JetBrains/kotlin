@@ -285,6 +285,7 @@ class StrongSkippingModeTransformTests(
             class Holder<T> {
                 @Composable
                 fun Test(vararg x: T) {
+                    @Suppress("CAST_NEVER_SUCCEEDS_ERROR")
                     A(x as Int)
                 }
             }

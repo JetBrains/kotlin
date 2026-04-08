@@ -59,7 +59,6 @@ class XCTestCaseWrapper(invocation: NSInvocation, val testCase: TestCase) : XCTe
 
             // Make a stacktrace attachment, encoding it as source code.
             // This makes it appear as an attachment in the XCode test results for the failed test.
-            @Suppress("CAST_NEVER_SUCCEEDS")
             val stackAsPayload = (stackTrace.joinToString("\n") as? NSString)?.dataUsingEncoding(NSUTF8StringEncoding)
             val stackTraceAttachment = XCTAttachment.attachmentWithUniformTypeIdentifier(
                 identifier = UTTypeSourceCode.identifier,
@@ -164,7 +163,6 @@ class XCTestCaseWrapper(invocation: NSInvocation, val testCase: TestCase) : XCTe
             val selector = NSSelectorFromString(it)
             createRunMethod(selector)
             this.instanceMethodSignatureForSelector(selector)?.let { signature ->
-                @Suppress("CAST_NEVER_SUCCEEDS")
                 val invocation = NSInvocation.invocationWithMethodSignature(signature as NSMethodSignature)
                 invocation.setSelector(selector)
                 invocation

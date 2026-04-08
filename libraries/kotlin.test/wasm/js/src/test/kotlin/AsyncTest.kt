@@ -59,7 +59,7 @@ class AsyncTest {
 
     @Test
     fun checkCustomPromise(): CustomPromise {
-        @Suppress("CAST_NEVER_SUCCEEDS")
+        @Suppress("CAST_NEVER_SUCCEEDS_ERROR")
         return promise(10, "") as CustomPromise
     }
 
