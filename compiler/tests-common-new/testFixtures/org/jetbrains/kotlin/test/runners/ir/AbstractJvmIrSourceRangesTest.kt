@@ -5,17 +5,14 @@
 
 package org.jetbrains.kotlin.test.runners.ir
 
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SOURCE_RANGES_IR
-import org.jetbrains.kotlin.test.model.FrontendKind
-import org.jetbrains.kotlin.test.model.ResultingArtifact
+import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 
-abstract class AbstractJvmIrSourceRangesTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>>(
-    targetFrontend: FrontendKind<FrontendOutput>
-) : AbstractJvmIrTextTest<FrontendOutput>(targetFrontend) {
-
+abstract class AbstractJvmIrSourceRangesTest(parser: FirParser) : AbstractJvmIrTextTest(parser) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
@@ -27,3 +24,8 @@ abstract class AbstractJvmIrSourceRangesTest<FrontendOutput : ResultingArtifact.
         }
     }
 }
+
+open class AbstractFirLightTreeJvmIrSourceRangesTest : AbstractJvmIrSourceRangesTest(FirParser.LightTree)
+
+@FirPsiCodegenTest
+open class AbstractFirPsiJvmIrSourceRangesTest : AbstractJvmIrSourceRangesTest(FirParser.Psi)
