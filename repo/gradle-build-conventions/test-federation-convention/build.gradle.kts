@@ -24,6 +24,9 @@ kotlin {
     compilerOptions {
         allWarningsAsErrors.set(true)
         freeCompilerArgs.add("-Xsuppress-version-warnings")
+
+        //youtrack.jetbrains.com/issue/KT-85412
+        moduleName.set(project.name)
     }
 }
 
