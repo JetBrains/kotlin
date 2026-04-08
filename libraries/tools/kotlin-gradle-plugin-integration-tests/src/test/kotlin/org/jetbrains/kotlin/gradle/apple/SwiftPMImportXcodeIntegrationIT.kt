@@ -1138,6 +1138,61 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `integrateLinkagePackage preserves symlink path for local package dependencies`(version: GradleVersion) {
+        project("emptyxcode", version) {
+            val realPackageDir = projectPath.resolveSibling("realLocalSwiftPackage")
+            val symlinkPackagePath = "symlinkLocalSwiftPackage"
+            val symlinkPackageDir = projectPath.resolve(symlinkPackagePath)
+
+            createLocalSwiftPackage(realPackageDir)
+            symlinkPackageDir.createSymbolicLinkPointingTo(realPackageDir)
+
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    listOf(
+                        iosArm64(),
+                        iosSimulatorArm64()
+                    ).forEach {
+                        it.binaries.framework {
+                            baseName = "Shared"
+                            isStatic = true
+                        }
+                    }
+
+                    swiftPMDependencies {
+                        localSwiftPackage(
+                            directory = project.layout.projectDirectory.dir(symlinkPackagePath),
+                            products = listOf("LocalSwiftPackage"),
+                        )
+                    }
+                }
+            }
+
+            build(
+                "integrateLinkagePackage",
+                environmentVariables = EnvironmentalVariables(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                )
+            ) {
+                val manifestContent = projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/Package.swift").readText()
+
+                assertContains(
+                    manifestContent,
+                    "path: \"../../$symlinkPackagePath\"",
+                    message = "Manifest should preserve the configured symlink path for the local package"
+                )
+                assertFalse(
+                    manifestContent.contains("path: \"../../../${realPackageDir.name}\""),
+                    "Manifest should not rewrite the local package dependency to the symlink target path"
+                )
+            }
+        }
+    }
+
+    @GradleTest
     fun `integrateLinkagePackage with XCODEPROJ_PATH outside of the project with relative path`(version: GradleVersion) {
         project("emptyxcode", version) {
             initDefaultKmpWithLocalSPM()
