@@ -10,6 +10,7 @@ dependencies {
     api(project(":native:swift:swift-export-standalone"))
     implementation(project(":native:external-projects-test-utils"))
     api(testFixtures(project(":native:native.tests")))
+    compileOnly(testFederationRuntime)
 }
 
 sourceSets {
