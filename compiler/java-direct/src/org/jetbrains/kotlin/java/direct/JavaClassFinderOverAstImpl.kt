@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -28,6 +30,7 @@ import kotlin.io.path.isRegularFile
  */
 class JavaClassFinderOverAstImpl(
     private val sourceRoots: List<Path>,
+    private val debugLogFilePath: Path? = null,
 ) : JavaClassFinder {
 
     private data class FileEntry(
@@ -50,6 +53,8 @@ class JavaClassFinderOverAstImpl(
 
     // Cache: ClassId -> list of supertype ClassIds (direct only)
     private val supertypeCache: MutableMap<ClassId, List<ClassId>> = ConcurrentHashMap()
+
+    private val debugLogFile: File? = debugLogFilePath?.toFile()
 
     init {
         buildIndex()
@@ -104,6 +109,7 @@ class JavaClassFinderOverAstImpl(
             }
             if (resolved != null) result.add(resolved)
         }
+        debugLogFile?.appendText("findClasses: ${request.classId} ->\n  ${result.joinToString("\n  ") { it.classId?.asFqNameString() ?: it.name.asString() } }\n")
         return result
     }
 
