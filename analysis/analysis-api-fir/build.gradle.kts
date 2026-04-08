@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
+import org.jetbrains.kotlin.testFederation.isSmokeTest
 
 plugins {
     kotlin("jvm")
@@ -82,6 +84,9 @@ projectTests {
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
     ) {
         useJUnitPlatform()
+
+        @OptIn(TemporaryTestFederationApi::class)
+        isSmokeTest = true
 
         extensions.configure<TestInputsCheckExtension> {
             allowFlightRecorder = true
