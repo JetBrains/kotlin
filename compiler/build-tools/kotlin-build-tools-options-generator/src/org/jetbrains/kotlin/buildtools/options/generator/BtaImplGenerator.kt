@@ -23,7 +23,7 @@ internal data class CompatLayerConfig(
     /**
      * The Kotlin version of the currently running build.
      */
-    val currentKotlinVersion: KotlinReleaseVersion
+    val currentKotlinVersion: KotlinReleaseVersion,
 )
 
 @OptIn(ExperimentalArgumentApi::class)
@@ -393,9 +393,11 @@ internal class BtaImplGenerator(
                 )
             }
             argument.valueType.origin is StringArrayType -> {
+                maybeAddValidation(argument)
                 add(" ?: emptyArray()")
             }
             argument.valueType.origin is StringListType -> {
+                maybeAddValidation(argument)
                 add(
                     maybeGetNullabilitySign(argument) + ".%M()",
                     MemberName(KOTLIN_COLLECTIONS, "toTypedArray")
@@ -403,18 +405,26 @@ internal class BtaImplGenerator(
             }
             argument.valueType.origin is SearchPathType -> {
                 add(
-                    maybeGetNullabilitySign(argument) + ".%M { it.%M() }" + maybeGetNullabilitySign(argument) + ".%M(%T.pathSeparator)",
+                    maybeGetNullabilitySign(argument) + ".%M { it.%M() }",
                     MemberName(KOTLIN_COLLECTIONS, "map"),
                     MemberName(targetPackage, "absolutePathStringOrThrow", true),
+                )
+                maybeAddValidation(argument)
+                add(
+                    maybeGetNullabilitySign(argument) + ".%M(%T.pathSeparator)",
                     MemberName(KOTLIN_COLLECTIONS, "joinToString"),
                     ClassName(JAVA_IO, "File")
                 )
             }
             argument.valueType.origin is PathListType -> {
                 add(
-                    maybeGetNullabilitySign(argument) + ".%M { it.%M() }" + maybeGetNullabilitySign(argument) + ".%M()",
+                    maybeGetNullabilitySign(argument) + ".%M { it.%M() }",
                     MemberName(KOTLIN_COLLECTIONS, "map"),
                     MemberName(targetPackage, "absolutePathStringOrThrow", true),
+                )
+                maybeAddValidation(argument)
+                add(
+                    maybeGetNullabilitySign(argument) + ".%M()",
                     MemberName(KOTLIN_COLLECTIONS, "toTypedArray")
                 )
             }
@@ -718,6 +728,17 @@ internal class BtaImplGenerator(
                 argsVarName, info.fieldName, defaultsVarName, info.fieldName,
                 restrictedArgViolationClass, violationType, message,
             )
+        )
+    }
+
+    private fun CodeBlock.Builder.maybeAddValidation(argument: BtaCompilerArgument<*>) {
+        if (argument.delimiter == null) {
+            return
+        }
+
+        add(
+            maybeGetNullabilitySign(argument) + ".also { list -> list.%M(\"${argument.delimiter}\") }",
+            MemberName(targetPackage, "checkNoneContains", isExtension = true)
         )
     }
 }

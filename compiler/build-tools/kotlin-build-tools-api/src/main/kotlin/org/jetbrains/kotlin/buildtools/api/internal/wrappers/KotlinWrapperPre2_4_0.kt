@@ -727,3 +727,14 @@ internal class KotlinWrapperPre2_4_0(
         }
     }
 }
+
+private fun List<String>.checkNoneContains(other: CharSequence) {
+    val invalidItem = firstOrNull { it.contains(other) }
+    if (invalidItem != null) {
+        throw CompilerArgumentsParseException(
+            "Invalid character '${other}' found in argument '$invalidItem'. " +
+                    "This character is currently not supported in this context. " +
+                    "If you need its support, please let us know: https://youtrack.jetbrains.com/issue/KT-85553"
+        )
+    }
+}

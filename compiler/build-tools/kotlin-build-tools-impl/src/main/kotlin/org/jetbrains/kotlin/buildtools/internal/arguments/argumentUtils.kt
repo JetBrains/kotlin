@@ -45,3 +45,14 @@ internal fun Path.absolutePathStringOrThrow(): String = toFile().absolutePath
 internal fun <T> Array<out T>?.toListOrEmpty(): List<T> = this?.toList() ?: emptyList()
 
 internal fun <T, R> Array<out T>?.mapOrEmpty(transform: (T) -> R): List<R> = this?.map(transform) ?: emptyList()
+
+internal fun List<String>.checkNoneContains(other: CharSequence) {
+    val invalidItem = firstOrNull { it.contains(other) }
+    if (invalidItem != null) {
+        throw CompilerArgumentsParseException(
+            "Invalid character '${other}' found in argument '$invalidItem'. " +
+                    "This character is currently not supported in this context. " +
+                    "If you need its support, please let us know: https://youtrack.jetbrains.com/issue/KT-85553"
+        )
+    }
+}
