@@ -75,6 +75,13 @@ projectTests {
             val androidModuleRoot = rootDir.resolve("compiler/android-tests/android-module")
             extraPermissions.add("""permission java.io.FilePermission "${androidModuleRoot.absolutePath}", "read";""")
             extraPermissions.add("""permission java.io.FilePermission "${androidModuleRoot.absolutePath}/-", "read";""")
+            // Runtime jars are loaded from dist/kotlinc/lib by ForTestCompileRuntime.
+            val distDir = rootDir.resolve("dist")
+            extraPermissions.add("""permission java.io.FilePermission "${distDir.absolutePath}", "read";""")
+            extraPermissions.add("""permission java.io.FilePermission "${distDir.absolutePath}/-", "read";""")
+            // Some checks happen against relative paths (e.g. "dist/kotlinc/lib/kotlin-test.jar").
+            extraPermissions.add("""permission java.io.FilePermission "dist", "read";""")
+            extraPermissions.add("""permission java.io.FilePermission "dist/-", "read";""")
             // Android emulator setup writes AVD metadata under the provisioned SDK directory.
             val androidSdkRoot = rootDir.resolve("dependencies/android-sdk/build/androidSdk")
             extraPermissions.add("""permission java.io.FilePermission "${androidSdkRoot.absolutePath}", "read";""")
