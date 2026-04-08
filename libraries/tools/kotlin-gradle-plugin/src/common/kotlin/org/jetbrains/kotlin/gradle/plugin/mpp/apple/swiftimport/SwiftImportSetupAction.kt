@@ -734,7 +734,8 @@ private fun Project.registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
 }
 
 internal const val PROJECT_PATH_ENV = "XCODEPROJ_PATH"
-internal fun searchForGradlew(path: File): File? {
+internal fun searchForGradlew(path: File?): File? {
+    if (path == null) return null
     path.listFiles().firstOrNull { it.name == "gradlew" }?.let { return it }
     return searchForGradlew(path.parentFile)
 }

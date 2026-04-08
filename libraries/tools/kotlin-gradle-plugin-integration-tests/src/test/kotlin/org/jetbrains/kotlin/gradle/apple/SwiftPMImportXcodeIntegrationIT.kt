@@ -1266,6 +1266,67 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `integrateEmbedAndSign uses root project task path without duplicate separators`(version: GradleVersion) {
+        Assumptions.assumeTrue(version >= GradleVersion.version("8.14.4"))
+
+        project("emptyxcode-no-embedandsign", version) {
+            initDefaultKmpWithLocalSPM()
+
+            val pbxFile = projectPath.resolve("iosApp/iosApp.xcodeproj/project.pbxproj")
+
+            build(
+                "integrateEmbedAndSign",
+                environmentVariables = EnvironmentalVariables(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                    "GRADLEW_PATH" to projectPath.resolve("gradlew").absolutePathString(),
+                    "GRADLE_PROJECT_PATH" to ":",
+                )
+            ) {
+                val pbxFileContent = pbxFile.readText()
+
+                assertContains(
+                    pbxFileContent,
+                    "./gradlew :embedAndSignAppleFrameworkForXcode -i",
+                    message = "Generated embed-and-sign phase should target the root project task path",
+                )
+                assertFalse(
+                    pbxFileContent.contains("./gradlew ::embedAndSignAppleFrameworkForXcode -i"),
+                    "Generated embed-and-sign phase should not contain duplicate separators in the task path",
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `embedAndSignAppleFrameworkForXcode uses root gradlew for external xcode project`(version: GradleVersion) {
+        project("emptyxcode", version) {
+            initDefaultKmpWithLocalSPM()
+
+            val siblingIosAppPath = projectPath.parent.resolve("iosApp")
+            val iosAppXcodeProj = projectPath.resolve("iosApp").moveTo(siblingIosAppPath).resolve("iosApp.xcodeproj")
+            val xcodeBuildOutput = projectPath.resolve("build/xcodeOutput")
+
+            buildAndFail(
+                "embedAndSignAppleFrameworkForXcode",
+                environmentVariables = EnvironmentalVariables(
+                    "CONFIGURATION" to "Debug",
+                    "ARCHS" to "arm64",
+                    "SDK_NAME" to "iphonesimulator",
+                    "FRAMEWORKS_FOLDER_PATH" to "Frameworks",
+                    "TARGET_BUILD_DIR" to xcodeBuildOutput.absolutePathString(),
+                    "BUILT_PRODUCTS_DIR" to xcodeBuildOutput.absolutePathString(),
+                    "PROJECT_FILE_PATH" to iosAppXcodeProj.absolutePathString(),
+                )
+            ) {
+                assertOutputContains("Please integrate with synthetic import linkage project by")
+                assertOutputContains("XCODEPROJ_PATH='${iosAppXcodeProj.toRealPath().pathString}'")
+                assertOutputContains("'gradle'")
+                assertOutputDoesNotContain("path.parentFile must not be null")
+            }
+        }
+    }
+
+    @GradleTest
     fun `integrateLinkagePackage fails when embed-and-sign phase is absent`(version: GradleVersion) {
         project("emptyxcode-no-embedandsign", version) {
             initDefaultKmpWithLocalSPM()
