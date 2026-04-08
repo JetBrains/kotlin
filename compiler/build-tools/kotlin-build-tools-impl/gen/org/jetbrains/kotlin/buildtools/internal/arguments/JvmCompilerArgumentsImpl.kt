@@ -215,10 +215,10 @@ internal class JvmCompilerArgumentsImpl(
     if (X_JVM_DEFAULT in this) { arguments.jvmDefault = get(X_JVM_DEFAULT)}
     if (X_JVM_ENABLE_PREVIEW in this) { arguments.enableJvmPreview = get(X_JVM_ENABLE_PREVIEW)}
     if (X_JVM_EXPOSE_BOXED in this) { arguments.jvmExposeBoxed = get(X_JVM_EXPOSE_BOXED)}
-    if (X_KLIB in this) { arguments.klibLibraries = get(X_KLIB)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
+    if (X_KLIB in this) { arguments.klibLibraries = get(X_KLIB)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (X_LAMBDAS in this) { arguments.lambdas = get(X_LAMBDAS)?.stringValue}
     if (X_LINK_VIA_SIGNATURES in this) { arguments.linkViaSignatures = get(X_LINK_VIA_SIGNATURES)}
-    if (X_MODULE_PATH in this) { arguments.javaModulePath = get(X_MODULE_PATH)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
+    if (X_MODULE_PATH in this) { arguments.javaModulePath = get(X_MODULE_PATH)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (X_MULTIFILE_PARTS_INHERIT in this) { arguments.inheritMultifileParts = get(X_MULTIFILE_PARTS_INHERIT)}
     if (X_NO_CALL_ASSERTIONS in this) { arguments.noCallAssertions = get(X_NO_CALL_ASSERTIONS)}
     if (X_NO_NEW_JAVA_ANNOTATION_TARGETS in this) { arguments.noNewJavaAnnotationTargets = get(X_NO_NEW_JAVA_ANNOTATION_TARGETS)}
@@ -248,7 +248,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_VALIDATE_BYTECODE in this) { arguments.validateBytecode = get(X_VALIDATE_BYTECODE)}
     if (X_VALUE_CLASSES in this) { arguments.valueClasses = get(X_VALUE_CLASSES)}
     if (X_WHEN_EXPRESSIONS in this) { arguments.whenExpressionsGeneration = get(X_WHEN_EXPRESSIONS)?.stringValue}
-    if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
+    if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (D in this) { arguments.destination = get(D)}
     if (EXPRESSION in this) { arguments.expression = get(EXPRESSION)}
     if (INCLUDE_RUNTIME in this) { arguments.includeRuntime = get(INCLUDE_RUNTIME)}
@@ -385,10 +385,10 @@ internal class JvmCompilerArgumentsImpl(
     if (X_JVM_DEFAULT in this) { arguments.jvmDefault = get(X_JVM_DEFAULT)}
     if (X_JVM_ENABLE_PREVIEW in this) { arguments.enableJvmPreview = get(X_JVM_ENABLE_PREVIEW)}
     if (X_JVM_EXPOSE_BOXED in this) { arguments.jvmExposeBoxed = get(X_JVM_EXPOSE_BOXED)}
-    if (X_KLIB in this) { arguments.klibLibraries = get(X_KLIB)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
+    if (X_KLIB in this) { arguments.klibLibraries = get(X_KLIB)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (X_LAMBDAS in this) { arguments.lambdas = get(X_LAMBDAS)?.stringValue}
     if (X_LINK_VIA_SIGNATURES in this) { arguments.linkViaSignatures = get(X_LINK_VIA_SIGNATURES)}
-    if (X_MODULE_PATH in this) { arguments.javaModulePath = get(X_MODULE_PATH)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
+    if (X_MODULE_PATH in this) { arguments.javaModulePath = get(X_MODULE_PATH)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (X_MULTIFILE_PARTS_INHERIT in this) { arguments.inheritMultifileParts = get(X_MULTIFILE_PARTS_INHERIT)}
     if (X_NO_CALL_ASSERTIONS in this) { arguments.noCallAssertions = get(X_NO_CALL_ASSERTIONS)}
     if (X_NO_NEW_JAVA_ANNOTATION_TARGETS in this) { arguments.noNewJavaAnnotationTargets = get(X_NO_NEW_JAVA_ANNOTATION_TARGETS)}
@@ -418,7 +418,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_VALIDATE_BYTECODE in this) { arguments.validateBytecode = get(X_VALIDATE_BYTECODE)}
     if (X_VALUE_CLASSES in this) { arguments.valueClasses = get(X_VALUE_CLASSES)}
     if (X_WHEN_EXPRESSIONS in this) { arguments.whenExpressionsGeneration = get(X_WHEN_EXPRESSIONS)?.stringValue}
-    if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
+    if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (D in this) { arguments.destination = get(D)}
     if (EXPRESSION in this) { arguments.expression = get(EXPRESSION)}
     if (INCLUDE_RUNTIME in this) { arguments.includeRuntime = get(INCLUDE_RUNTIME)}

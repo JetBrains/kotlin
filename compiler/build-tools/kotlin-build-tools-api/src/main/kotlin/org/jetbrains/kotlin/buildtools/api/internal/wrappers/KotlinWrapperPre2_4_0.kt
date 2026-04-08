@@ -666,7 +666,10 @@ internal class KotlinWrapperPre2_4_0(
                     -> {
                     @Suppress("UNCHECKED_CAST")
                     val listValue = value as List<Path>?
-                    val stringValue = listValue?.joinToString(File.pathSeparator) { it.toFile().absolutePath }
+                    val stringValue =
+                        listValue?.map { it.toFile().absolutePath }
+                            ?.also { list -> list.checkNoneContains(File.pathSeparator) }
+                            ?.joinToString(File.pathSeparator)
                     val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
 
                     delegate[stringKey] = stringValue

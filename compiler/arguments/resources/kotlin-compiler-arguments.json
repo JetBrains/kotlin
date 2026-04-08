@@ -7328,7 +7328,7 @@
                                     "current": "Paths to cross-platform libraries in the .klib format.",
                                     "valueInVersions": []
                                 },
-                                "delimiter": null,
+                                "delimiter": "PathSeparator",
                                 "affectsCompilationOutcome": true,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
@@ -7457,7 +7457,7 @@
                                     "current": "Paths to Java 9+ modules.",
                                     "valueInVersions": []
                                 },
-                                "delimiter": null,
+                                "delimiter": "PathSeparator",
                                 "affectsCompilationOutcome": true,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
@@ -8839,7 +8839,7 @@
                                     "current": "List of directories and JAR/ZIP archives to search for user class files.",
                                     "valueInVersions": []
                                 },
-                                "delimiter": null,
+                                "delimiter": "PathSeparator",
                                 "affectsCompilationOutcome": true,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",

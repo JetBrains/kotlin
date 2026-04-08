@@ -36,6 +36,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         argumentType = SearchPathType.defaultNull
+        delimiter = KotlinCompilerArgument.Delimiter.PathSeparator
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0,
@@ -259,6 +260,7 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         argumentType = SearchPathType.defaultNull
+        delimiter = KotlinCompilerArgument.Delimiter.PathSeparator
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_4,
@@ -722,6 +724,7 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         argumentType = SearchPathType.defaultNull
+        delimiter = KotlinCompilerArgument.Delimiter.PathSeparator
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0,
