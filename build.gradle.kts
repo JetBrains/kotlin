@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.testFederation.TestFederationInferAffectedDomainsTask
 
 buildscript {
     dependencies {
@@ -78,6 +79,7 @@ plugins {
     id("gradle-plugins-documentation") apply false
     id("com.autonomousapps.dependency-analysis") version "3.6.1"
     id("project-tests-convention") apply false
+    id("test-federation-convention") apply false
     id("test-data-manager-root")
 }
 
@@ -612,6 +614,7 @@ val dependencyOnSnapshotReflectWhitelist = setOf(
 allprojects {
     if (!project.path.startsWith(":kotlin-ide.")) {
         pluginManager.apply("common-configuration")
+        pluginManager.apply("test-federation-convention")
     }
     if (!project.path.startsWith(":compiler:build-tools")) {
         pluginManager.apply("com.autonomousapps.dependency-analysis")
@@ -1313,3 +1316,5 @@ plugins.withType<WasmYarnPlugin> {
         version = libs.versions.yarn
     }
 }
+
+tasks.register<TestFederationInferAffectedDomainsTask>("inferAffectedDomains")

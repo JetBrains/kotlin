@@ -423,6 +423,7 @@ include(
     ":wasm:wasm.frontend",
     ":wasm:wasm.config",
     ":wasm:wasm.debug.browsers",
+    ":repo:test-federation-runtime",
     ":repo:codebase-tests",
     ":repo:artifacts-tests"
 )
