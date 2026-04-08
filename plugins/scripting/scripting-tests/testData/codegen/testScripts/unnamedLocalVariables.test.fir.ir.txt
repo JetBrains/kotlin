@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/unnamedLocalVariables.test.kts
             value: GET_VAR '<set-?>: kotlin.String declared in <root>.UnnamedLocalVariables_test.<set-result>' type=kotlin.String origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        CALL 'public final fun call (): kotlin.Unit declared in <root>.UnnamedLocalVariables_test' type=kotlin.Unit origin=null
+        CALL 'public final fun call (): kotlin.Int declared in <root>.UnnamedLocalVariables_test' type=kotlin.Int origin=null
           ARG <this>: GET_VAR '<this>: <root>.UnnamedLocalVariables_test declared in <root>.UnnamedLocalVariables_test' type=<root>.UnnamedLocalVariables_test origin=null
     CONSTRUCTOR visibility:public returnType:<root>.UnnamedLocalVariables_test [primary]
       VALUE_PARAMETER SCRIPT_CALL_PARAMETER kind:Regular name:args index:0 type:kotlin.Array<out kotlin.String>
@@ -34,12 +34,14 @@ FILE fqName:<root> fileName:/unnamedLocalVariables.test.kts
           receiver: GET_VAR '<this>: <root>.UnnamedLocalVariables_test declared in <root>.UnnamedLocalVariables_test' type=<root>.UnnamedLocalVariables_test origin=null
           value: GET_VAR 'args: kotlin.Array<out kotlin.String> declared in <root>.UnnamedLocalVariables_test.<init>' type=kotlin.Array<out kotlin.String> origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS SCRIPT_CLASS CLASS name:UnnamedLocalVariables_test modality:FINAL visibility:public superTypes:[org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript]' type=kotlin.Unit
-    FUN SCRIPT_K2 name:call visibility:public modality:FINAL returnType:kotlin.Unit
+    FUN SCRIPT_K2 name:call visibility:public modality:FINAL returnType:kotlin.Int
       VALUE_PARAMETER SCRIPT_THIS_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.UnnamedLocalVariables_test
       BLOCK_BODY
         CALL 'public final fun <set-result> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.UnnamedLocalVariables_test' type=kotlin.Unit origin=EQ
           ARG <this>: GET_VAR '<this>: <root>.UnnamedLocalVariables_test declared in <root>.UnnamedLocalVariables_test.call' type=<root>.UnnamedLocalVariables_test origin=EQ
           ARG <set-?>: CONST String type=kotlin.String value="OK"
+        RETURN type=kotlin.Nothing from='public final fun call (): kotlin.Int declared in <root>.UnnamedLocalVariables_test'
+          CONST Int type=kotlin.Int value=0
     FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:Regular name:args index:0 type:kotlin.Array<kotlin.String>
       EXPRESSION_BODY

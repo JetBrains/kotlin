@@ -1508,6 +1508,12 @@ private fun KaDiagnosticConverterBuilder.addConversions30() {
             token,
         )
     }
+    add(FirErrors.UNNAMED_PROPERTY_WITH_IMPLICIT_UNIT_TYPE) { firDiagnostic ->
+        UnnamedPropertyWithImplicitUnitTypeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.JVM_STATIC_ON_NON_PUBLIC_MEMBER) { firDiagnostic ->
         JvmStaticOnNonPublicMemberImpl(
             firDiagnostic as KtPsiDiagnostic,

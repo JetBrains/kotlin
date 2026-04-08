@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.requireFeatureSupport
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.isCatchParameter
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.isUnitOrFlexibleUnit
 import org.jetbrains.kotlin.name.SpecialNames
 
 object FirUnnamedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
@@ -45,6 +48,15 @@ object FirUnnamedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
 
         if (declaration.initializer == null && declaration.delegate == null && declaration.isCatchParameter != true) {
             reporter.reportOn(declaration.source, FirErrors.MUST_BE_INITIALIZED)
+        }
+
+        val returnTypeRef = declaration.returnTypeRef as? FirResolvedTypeRef ?: return
+
+        if (returnTypeRef.source?.kind is KtFakeSourceElementKind.ImplicitTypeRef && !isDesugaredComponentCall) {
+            val returnType = returnTypeRef.coneType.fullyExpandedType()
+            if (returnType.isUnitOrFlexibleUnit) {
+                reporter.reportOn(declaration.source, FirErrors.UNNAMED_PROPERTY_WITH_IMPLICIT_UNIT_TYPE)
+            }
         }
     }
 }

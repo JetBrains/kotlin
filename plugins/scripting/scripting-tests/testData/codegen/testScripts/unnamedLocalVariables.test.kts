@@ -4,8 +4,9 @@
 
 var result = "FAIL: call() must be called"
 
-fun call() {
+fun call(): Int {
     result = "OK"
+    return 0
 }
 
 val _ = call()
