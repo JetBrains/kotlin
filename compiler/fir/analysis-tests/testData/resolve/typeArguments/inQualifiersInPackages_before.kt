@@ -85,29 +85,29 @@ fun testJavaCallableReferences() {
     part1.part2.GenericJava<Int>::M
 
     // generic:
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1<Int>.part2.GenericJava<!>::S
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1<Int>.part2.GenericJava<!>::M
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.GenericJava<!>::S
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.GenericJava<!>::M
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED, WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1.part2<Int>.GenericJava<!>::S
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED, WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1.part2<Int>.GenericJava<!>::M
-    part1<Int>.part2.GenericJava<Int>::S
-    part1<Int>.part2.GenericJava<Int>::M
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.GenericJava<Int>::S
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.GenericJava<Int>::M
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.GenericJava<Int><!>::S
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.GenericJava<Int><!>::M
 
     // non-generic:
-    part1<Int>.part2.NonGenericJava::S
-    part1<Int>.part2.NonGenericJava::M
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.NonGenericJava::S
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.NonGenericJava::M
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.NonGenericJava<!>::S
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.NonGenericJava<!>::M
 }
 
 fun testJavaStatics() {
-    part1<Int>.part2.GenericJava.S()
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.GenericJava.S()
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.GenericJava<!>.S()
-    part1<Int>.part2.GenericJava<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.S()
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.GenericJava<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.S()
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.GenericJava<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!><!>.S()
 
-    part1<Int>.part2.NonGenericJava.S()
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.NonGenericJava.S()
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.NonGenericJava<!>.S()
 }
 
@@ -115,38 +115,38 @@ fun testKotlinCompanions() {
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1<Int>.part2<!>.Generic<!>
     part1.part2<Int>.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Generic<!>
 
-    part1<Int>.part2.Generic.toString()
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.Generic.toString()
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.Generic<!>.toString()
 
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1<Int>.part2<!>.NonGeneric<!>
     part1.part2<Int>.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NonGeneric<!>
 
-    part1<Int>.part2.NonGeneric.toString()
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.NonGeneric.toString()
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.NonGeneric<!>.toString()
 }
 
 fun testEnums() {
-    part1<Int>.part2.KtEnum.E
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.KtEnum.E
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.KtEnum<!>.E
 
-    part1<Int>.part2.KtEnum.valueOf("E")
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.KtEnum.valueOf("E")
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.KtEnum<!>.valueOf("E")
 
-    part1<Int>.part2.KtEnum::valueOf
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.KtEnum::valueOf
 }
 
 fun testKotlinCallableReferences() {
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1<Int>.part2.Generic<!>::M
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1<Int>.part2.Generic<!>::S
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.Generic<!>::M
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.Generic<!>::S
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED, WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1.part2<Int>.Generic<!>::M
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED, WRONG_NUMBER_OF_TYPE_ARGUMENTS!>part1.part2<Int>.Generic<!>::S
-    part1<Int>.part2.Generic<Int>::M
-    part1<Int>.part2.Generic<Int>::<!UNRESOLVED_REFERENCE!>S<!>
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.Generic<Int>::M
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.Generic<Int>::<!UNRESOLVED_REFERENCE!>S<!>
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.Generic<Int><!>::M
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.Generic<Int><!>::<!UNRESOLVED_REFERENCE!>S<!>
 
-    part1<Int>.part2.NonGeneric::M
-    part1<Int>.part2.NonGeneric::S
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.NonGeneric::M
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.NonGeneric::S
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.NonGeneric<!>::M
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.NonGeneric<!>::S
 }
@@ -155,46 +155,46 @@ fun testObjects() {
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1<Int>.part2<!>.Obj<!>
     part1.part2<Int>.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Obj<!>
 
-    part1<Int>.part2.Obj.M()
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.Obj.M()
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.Obj<!>.M()
 
-    part1<Int>.part2.Obj::M
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.Obj::M
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.Obj<!>::M
 }
 
 fun testNestedObjects() {
-    part1<Int>.part2.ClassWithNestedObjects.Obj
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.ClassWithNestedObjects.Obj
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.ClassWithNestedObjects<!>.Obj<!>
-    part1<Int>.part2.ClassWithNestedObjects.WithCompanion
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.ClassWithNestedObjects.WithCompanion
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.ClassWithNestedObjects<!>.WithCompanion<!>
-    part1<Int>.part2.ObjectWithNestedObjects.Obj
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.ObjectWithNestedObjects.Obj
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.ObjectWithNestedObjects<!>.Obj<!>
-    part1<Int>.part2.ObjectWithNestedObjects.WithCompanion
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.ObjectWithNestedObjects.WithCompanion
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.ObjectWithNestedObjects<!>.WithCompanion<!>
 }
 
 fun testGetClass() {
-    part1<Int>.part2.Obj::class
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.Obj::class
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.Obj<!>::class
-    part1<Int>.part2.Generic::class
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.Generic::class
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.Generic<!>::class
-    part1<Int>.part2.NonGeneric::class
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.NonGeneric::class
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.NonGeneric<!>::class
 }
 
 fun testThreeParts() {
-    part1<Int>.part2.part3.Function()
-    part1<Int>.part2.part3.Variable
-    part1<Int>.part2.part3.Obj
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.part3.Function()
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.part3.Variable
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.part3.Obj
 }
 
 fun testInner() {
-    part1<Int>.part2.WithInner.Inner::M
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int><!>.part2.WithInner.Inner::M
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.WithInner<!>.Inner::M
 }
 
 fun testAbracadabra() {
-    part1<Abracadabra>.part2.part3.Function()
+    part1<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Abracadabra><!>.part2.part3.Function()
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Abracadabra>.part3<!>.Obj<!>
     <!TYPE_ARGUMENTS_NOT_ALLOWED!>part1.part2.part3<<!UNRESOLVED_REFERENCE!>Abracadabra<!>><!>.Variable
 }

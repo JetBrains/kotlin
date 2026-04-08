@@ -26,6 +26,7 @@ org.jetbrains.kotlin.resolve.redundantTargetMap
 org.jetbrains.kotlin.resolve.source.PsiSourceElement
 org.jetbrains.kotlin.resolve.source.PsiSourceElement.psi
 org.jetbrains.kotlin.resolve.source.PsiSourceFile
+org.jetbrains.kotlin.resolve.source.getExplicitReceiverOfDotQualified(FlyweightCapableTreeStructure<LighterASTNode>)
 org.jetbrains.kotlin.resolve.source.getPsi()
 org.jetbrains.kotlin.resolve.source.hasUnwrappableAsExplicitReceiver()
 org.jetbrains.kotlin.types.expressions.OperatorConventions:ASSIGNMENT_OPERATIONS

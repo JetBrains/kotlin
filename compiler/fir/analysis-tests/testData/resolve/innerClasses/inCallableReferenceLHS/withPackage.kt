@@ -20,7 +20,7 @@ fun testWithPackage() {
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>org.example.foo<Int>.PackageTest<!>::class
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>org.example.foo<Int, String>.PackageTest<!>.A::class
 
-    org.example<Int, String>.foo.PackageTest.A::class
+    org.example<!TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING!><Int, String><!>.foo.PackageTest.A::class
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, classReference, functionDeclaration, inner, nullableType,

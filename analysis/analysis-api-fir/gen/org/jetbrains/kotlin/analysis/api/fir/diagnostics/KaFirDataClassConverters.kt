@@ -3887,6 +3887,12 @@ private fun KaDiagnosticConverterBuilder.addConversions87() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions88() {
+    add(FirErrors.PARENTHESIZED_PACKAGE_QUALIFIER.errorFactory) { firDiagnostic ->
+        ParenthesizedPackageQualifierErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE) { firDiagnostic ->
         InapplicableTargetPropertyImmutableImpl(
             firDiagnostic.a,
@@ -4102,6 +4108,12 @@ private fun KaDiagnosticConverterBuilder.addConversions91() {
 private fun KaDiagnosticConverterBuilder.addConversions92() {
     add(FirErrors.VARIABLE_EXPECTED) { firDiagnostic ->
         VariableExpectedImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.PARENTHESIZED_PACKAGE_QUALIFIER.warningFactory) { firDiagnostic ->
+        ParenthesizedPackageQualifierWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -4938,6 +4950,12 @@ private fun KaDiagnosticConverterBuilder.addConversions110() {
     add(FirErrors.INCONSISTENT_TYPE_PARAMETERS_IN_OF_OVERLOADS) { firDiagnostic ->
         InconsistentTypeParametersInOfOverloadsImpl(
             firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING) { firDiagnostic ->
+        TypeArgumentsNotAllowedInPackageQualifierWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -6169,12 +6187,6 @@ private fun KaDiagnosticConverterBuilder.addConversions135() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions136() {
-    add(FirErrors.PARENTHESIZED_PACKAGE_QUALIFIER) { firDiagnostic ->
-        ParenthesizedPackageQualifierImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER) { firDiagnostic ->
         MissingValOnAnnotationParameterImpl(
             firDiagnostic as KtPsiDiagnostic,

@@ -14,15 +14,15 @@ class Foo {
 }
 
 fun test() {
-    (@Resolved(42) p1).p2.p3.foo()
-    (@Resolved p1.p2).p3.Foo.Bar
-    (@Resolved p1.p2.p3).Foo.Bar
+    <!PARENTHESIZED_PACKAGE_QUALIFIER_WARNING!>(@Resolved(42) p1)<!>.p2.p3.foo()
+    <!PARENTHESIZED_PACKAGE_QUALIFIER_WARNING!>(@Resolved p1.p2)<!>.p3.Foo.Bar
+    <!PARENTHESIZED_PACKAGE_QUALIFIER_WARNING!>(@Resolved p1.p2.p3)<!>.Foo.Bar
     (@Resolved(42) p1.p2.p3.Foo).Bar
     @Resolved(42) p1.p2.p3.Foo.Bar
 
-    (@Unresolved p1).p2.p3.foo()
-    (@Unresolved p1.p2).p3.Foo.Bar
-    (@Unresolved p1.p2.p3).Foo.Bar
+    <!PARENTHESIZED_PACKAGE_QUALIFIER_WARNING!>(@Unresolved p1)<!>.p2.p3.foo()
+    <!PARENTHESIZED_PACKAGE_QUALIFIER_WARNING!>(@Unresolved p1.p2)<!>.p3.Foo.Bar
+    <!PARENTHESIZED_PACKAGE_QUALIFIER_WARNING!>(@Unresolved p1.p2.p3)<!>.Foo.Bar
     (@<!UNRESOLVED_REFERENCE!>Unresolved<!> p1.p2.p3.Foo).Bar
     @<!UNRESOLVED_REFERENCE!>Unresolved<!> p1.p2.p3.Foo.Bar
 

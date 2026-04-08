@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.source
 
 import com.intellij.lang.LighterASTNode
+import com.intellij.psi.util.elementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtNodeTypes.PREFIX_EXPRESSION
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentLhsIfUnwrappable
-import org.jetbrains.kotlin.psi.psiUtil.getExplicitReceiverIfUnwrappable
+import org.jetbrains.kotlin.psi.psiUtil.getExplicitReceiverOfDotQualified
 import org.jetbrains.kotlin.util.getChildren
 
 /**
@@ -47,16 +48,16 @@ fun LighterASTNode.getAssignmentLhsIfUnwrappable(tree: FlyweightCapableTreeStruc
         it?.tokenType in UNWRAPPABLE_TOKEN_TYPES
     }
 
-private fun LighterASTNode.getExplicitReceiverIfUnwrappable(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode? =
+fun LighterASTNode.getExplicitReceiverOfDotQualified(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode? =
     when {
         tokenType == DOT_QUALIFIED_EXPRESSION -> getChildren(tree).firstOrNull()
         else -> null
-    }?.takeIf { it.tokenType in UNWRAPPABLE_TOKEN_TYPES }
+    }
 
 fun KtSourceElement?.hasUnwrappableAsExplicitReceiver(): Boolean {
     return when (this) {
-        is KtLightSourceElement -> lighterASTNode.getExplicitReceiverIfUnwrappable(treeStructure) != null
-        is KtPsiSourceElement -> psi.getExplicitReceiverIfUnwrappable() != null
+        is KtLightSourceElement -> lighterASTNode.getExplicitReceiverOfDotQualified(treeStructure)?.tokenType in UNWRAPPABLE_TOKEN_TYPES
+        is KtPsiSourceElement -> psi.getExplicitReceiverOfDotQualified()?.elementType in UNWRAPPABLE_TOKEN_TYPES
         else -> false
     }
 }
