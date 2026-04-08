@@ -15,6 +15,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules.Companion.JS_SUFFIX
 import org.jetbrains.kotlin.gradle.utils.getFile
 
 @DisableCachingByDefault
@@ -40,7 +41,11 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
         val packageJsonFile = packageJson.getFile()
         val inputDirectory = packageJsonFile.parentFile
 
-        val modules = NpmProjectModules(inputDirectory)
+        val modules = NpmProjectModules(
+            inputDirectory,
+            packageJsonEntries = listOf("module", "main"),
+            indexFileSuffixes = listOf(JS_SUFFIX, ".mjs")
+        )
 
         val packageJsonContent = packageJsonFile.readText()
         val packageJsonObject = JsonParser.parseString(packageJsonContent).asJsonObject

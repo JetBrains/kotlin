@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinSimpleDevServerTask
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import kotlin.test.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class DevServerTaskTest {
@@ -63,6 +65,54 @@ class DevServerTaskTest {
         assertTrue(
             taskNames.none { it.contains("devServer", ignoreCase = true) },
             "Expected no devServer task for wasmJs nodejs target, but found tasks: ${taskNames.filter { it.contains("devServer", ignoreCase = true) }}"
+        )
+    }
+
+    @Test
+    fun `wasmJs browser devServer task has import map configured`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                @Suppress("OPT_IN_USAGE")
+                wasmJs {
+                    browser()
+                    binaries.executable()
+                }
+            }
+        }.evaluate()
+
+        val devServerTask = project.tasks
+            .filterIsInstance<KotlinSimpleDevServerTask>()
+            .first()
+
+        assertTrue(
+            devServerTask.importMapFile.isPresent,
+            "Expected importMapFile to be configured for wasmJs browser devServer task"
+        )
+        assertTrue(
+            devServerTask.npmRootDirectory.isPresent,
+            "Expected npmRootDirectory to be configured for wasmJs browser devServer task"
+        )
+    }
+
+    @Test
+    fun `js browser devServer task does not have import map configured`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                @Suppress("OPT_IN_USAGE")
+                js {
+                    browser()
+                    binaries.executable()
+                }
+            }
+        }.evaluate()
+
+        val devServerTask = project.tasks
+            .filterIsInstance<KotlinSimpleDevServerTask>()
+            .first()
+
+        assertFalse(
+            devServerTask.importMapFile.isPresent,
+            "Expected importMapFile to NOT be configured for js browser devServer task"
         )
     }
 }
