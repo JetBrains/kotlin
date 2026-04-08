@@ -184,31 +184,33 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         when (val packageIdentifier = identifierSynchronizationOrNull()) {
             is PackageResolvedSynchronization.Identifier -> {
                 val packageResolvedSynchronizationIdentifier = packageIdentifier.identifier
-                val aggregationService = SwiftPMLockTaskAggregationBuildService.registerIfAbsent(this)
+                kotlinExtension.targets.matching { it.supportsSwiftPMImport() }.all {
+                    val aggregationService = SwiftPMLockTaskAggregationBuildService.registerIfAbsent(this)
 
-                val projectPath = project.path
+                    val projectPath = project.path
 
-                aggregationService.get().contribute(
-                    identifier = packageResolvedSynchronizationIdentifier,
-                    projectPathContribution = projectPath,
-                )
+                    aggregationService.get().contribute(
+                        identifier = packageResolvedSynchronizationIdentifier,
+                        projectPathContribution = projectPath,
+                    )
 
-                val actualGeneratedClaimer = locateOrRegisterUmbrellaPackageGenerateTask(
-                    identifier = packageResolvedSynchronizationIdentifier,
-                    aggregationService = aggregationService,
-                    isMacOSHost = isMacOSHost,
-                )
-                val actualFetchClaimer = locateOrRegisterUmbrellaFetchTask(
-                    identifier = packageResolvedSynchronizationIdentifier,
-                    aggregationService = aggregationService,
-                    actualGeneratedClaimer = actualGeneratedClaimer,
-                    isMacOSHost = isMacOSHost,
-                )
+                    val actualGeneratedClaimer = locateOrRegisterUmbrellaPackageGenerateTask(
+                        identifier = packageResolvedSynchronizationIdentifier,
+                        aggregationService = aggregationService,
+                        isMacOSHost = isMacOSHost,
+                    )
+                    val actualFetchClaimer = locateOrRegisterUmbrellaFetchTask(
+                        identifier = packageResolvedSynchronizationIdentifier,
+                        aggregationService = aggregationService,
+                        actualGeneratedClaimer = actualGeneratedClaimer,
+                        isMacOSHost = isMacOSHost,
+                    )
 
-                syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure {
-                    it.dependsOn(actualFetchClaimer)
-                    it.onlyIf("Shared Package.resolved exists") {
-                        persistedPackageResolved.asFile.exists()
+                    syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure {
+                        it.dependsOn(actualFetchClaimer)
+                        it.onlyIf("Shared Package.resolved exists") {
+                            persistedPackageResolved.asFile.exists()
+                        }
                     }
                 }
             }
