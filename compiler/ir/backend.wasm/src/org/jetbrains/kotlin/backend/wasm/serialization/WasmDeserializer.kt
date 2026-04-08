@@ -217,6 +217,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 TypeTags.UNREACHABLE_TYPE -> WasmUnreachableType
                 TypeTags.V12 -> WasmV128
                 TypeTags.ARRAY_REF -> WasmArrayRef
+                TypeTags.CONT_TYPE -> WasmContRefType
                 else -> tagError(tag)
             }
         }
@@ -235,6 +236,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 HeapTypeTags.HEAP_GC_TYPE -> GcHeapTypeSymbol(deserializeIdSignature())
                 HeapTypeTags.HEAP_VT_TYPE -> VTableHeapTypeSymbol(deserializeIdSignature())
                 HeapTypeTags.HEAP_FUNC_TYPE -> FunctionHeapTypeSymbol(deserializeIdSignature())
+                HeapTypeTags.CONT -> WasmHeapType.Simple.Cont
+                HeapTypeTags.NO_CONT -> WasmHeapType.Simple.NoCont
                 else -> tagError(tag)
             }
         }
@@ -328,9 +331,22 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 ImmediateTags.VALUE_TYPE_VECTOR -> WasmImmediate.ValTypeVector(deserializeList(::deserializeType))
                 // This is the special case of BlockType.Value, which accepts a nullable WasmType. If is null, MSB is set to 1.
                 ImmediateTags.BLOCK_TYPE_NULL_VALUE -> WasmImmediate.BlockType.Value(null)
+                ImmediateTags.CONT_HANDLE -> deserializeWasmContHandle()
                 else -> tagError(tag)
             }
         }
+
+    private fun deserializeWasmContHandle(): WasmImmediate.ContHandle {
+        val type = withTag { tag ->
+            when (tag) {
+                ImmediateContTags.ON -> WasmImmediate.ContHandle.ContHandleType.ON
+                ImmediateContTags.ON_SWITCH -> WasmImmediate.ContHandle.ContHandleType.ON_SWITCH
+                else -> tagError(tag)
+            }
+        }
+        val immediates = deserializeList(::deserializeImmediate)
+        return WasmImmediate.ContHandle(type, immediates)
+    }
 
     private fun deserializeImmediateCatch(): WasmImmediate.Catch {
         val type = withTag { tag ->

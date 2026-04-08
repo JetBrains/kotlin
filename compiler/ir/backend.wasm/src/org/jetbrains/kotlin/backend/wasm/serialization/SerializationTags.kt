@@ -108,6 +108,11 @@ internal object ImmediateTags {
     const val BLOCK_TYPE_NULL_VALUE = 129u
 }
 
+internal object ImmediateContTags {
+    const val ON = 0u
+    const val ON_SWITCH = 1u
+}
+
 internal object ImmediateCatchTags {
     const val CATCH = 0u
     const val CATCH_REF = 1u
