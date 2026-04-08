@@ -507,6 +507,7 @@ enum class LanguageFeature(
     NativeTestProcessorBeforeSerialization(KOTLIN_2_4, "KT-83807"),
     JsAllowExportingValueClasses(sinceVersion = KOTLIN_2_4, "KT-72198"),
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = KOTLIN_2_4, "KT-64358"),
+    ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier(sinceVersion = KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-396"),
 
     // 2.5
 

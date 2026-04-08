@@ -85,118 +85,118 @@ fun testJavaCallableReferences() {
     part1.part2.GenericJava<Int>::M
 
     // generic:
-    part1<Int>.part2.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GenericJava<!>::S
-    part1<Int>.part2.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GenericJava<!>::M
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GenericJava<!><!>::S
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GenericJava<!><!>::M
-    part1<Int>.part2.GenericJava<Int>::S
-    part1<Int>.part2.GenericJava<Int>::M
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.GenericJava<Int><!>::S
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.GenericJava<Int><!>::M
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.GenericJava::S
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.GenericJava::M
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.GenericJava::S
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.GenericJava::M
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.GenericJava<Int>::S
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.GenericJava<Int>::M
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.GenericJava<Int>::S
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.GenericJava<Int>::M
 
     // non-generic:
-    part1<Int>.part2.NonGenericJava::S
-    part1<Int>.part2.NonGenericJava::M
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.NonGenericJava<!>::S
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.NonGenericJava<!>::M
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.NonGenericJava::S
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.NonGenericJava::M
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.NonGenericJava::S
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.NonGenericJava::M
 }
 
 fun testJavaStatics() {
-    part1<Int>.part2.GenericJava.S()
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.GenericJava<!>.S()
-    part1<Int>.part2.GenericJava<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.S()
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.GenericJava<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!><!>.S()
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.GenericJava.S()
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.GenericJava.S()
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.GenericJava<Int>.S()
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.GenericJava<Int>.S()
 
-    part1<Int>.part2.NonGenericJava.S()
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.NonGenericJava<!>.S()
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.NonGenericJava.S()
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.NonGenericJava.S()
 }
 
 fun testKotlinCompanions() {
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1<Int>.part2<!>.Generic<!>
-    part1.part2<Int>.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Generic<!>
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.Generic
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.Generic
 
-    part1<Int>.part2.Generic.toString()
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.Generic<!>.toString()
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.Generic.toString()
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.Generic.toString()
 
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1<Int>.part2<!>.NonGeneric<!>
-    part1.part2<Int>.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NonGeneric<!>
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.NonGeneric
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.NonGeneric
 
-    part1<Int>.part2.NonGeneric.toString()
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.NonGeneric<!>.toString()
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.NonGeneric.toString()
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.NonGeneric.toString()
 }
 
 fun testEnums() {
-    part1<Int>.part2.KtEnum.E
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.KtEnum<!>.E
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.KtEnum.E
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.KtEnum.E
 
-    part1<Int>.part2.KtEnum.valueOf("E")
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.KtEnum<!>.valueOf("E")
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.KtEnum.valueOf("E")
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.KtEnum.valueOf("E")
 
-    part1<Int>.part2.KtEnum::valueOf
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.KtEnum::valueOf
 }
 
 fun testKotlinCallableReferences() {
-    part1<Int>.part2.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Generic<!>::M
-    part1<Int>.part2.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Generic<!>::S
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Generic<!><!>::M
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Generic<!><!>::S
-    part1<Int>.part2.Generic<Int>::M
-    part1<Int>.part2.Generic<Int>::<!UNRESOLVED_REFERENCE!>S<!>
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.Generic<Int><!>::M
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.Generic<Int><!>::<!UNRESOLVED_REFERENCE!>S<!>
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.Generic::M
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.Generic::S
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.Generic::M
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.Generic::S
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.Generic<Int>::M
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.Generic<Int>::S
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.Generic<Int>::M
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.Generic<Int>::S
 
-    part1<Int>.part2.NonGeneric::M
-    part1<Int>.part2.NonGeneric::S
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.NonGeneric<!>::M
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.NonGeneric<!>::S
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.NonGeneric::M
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.NonGeneric::S
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.NonGeneric::M
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.NonGeneric::S
 }
 
 fun testObjects() {
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1<Int>.part2<!>.Obj<!>
-    part1.part2<Int>.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Obj<!>
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.Obj
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.Obj
 
-    part1<Int>.part2.Obj.M()
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.Obj<!>.M()
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.Obj.M()
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.Obj.M()
 
-    part1<Int>.part2.Obj::M
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.Obj<!>::M
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.Obj::M
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.Obj::M
 }
 
 fun testNestedObjects() {
-    part1<Int>.part2.ClassWithNestedObjects.Obj
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.ClassWithNestedObjects<!>.Obj<!>
-    part1<Int>.part2.ClassWithNestedObjects.WithCompanion
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.ClassWithNestedObjects<!>.WithCompanion<!>
-    part1<Int>.part2.ObjectWithNestedObjects.Obj
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.ObjectWithNestedObjects<!>.Obj<!>
-    part1<Int>.part2.ObjectWithNestedObjects.WithCompanion
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.ObjectWithNestedObjects<!>.WithCompanion<!>
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.ClassWithNestedObjects.Obj
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.ClassWithNestedObjects.Obj
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.ClassWithNestedObjects.WithCompanion
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.ClassWithNestedObjects.WithCompanion
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.ObjectWithNestedObjects.Obj
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.ObjectWithNestedObjects.Obj
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.ObjectWithNestedObjects.WithCompanion
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.ObjectWithNestedObjects.WithCompanion
 }
 
 fun testGetClass() {
-    part1<Int>.part2.Obj::class
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.Obj<!>::class
-    part1<Int>.part2.Generic::class
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.Generic<!>::class
-    part1<Int>.part2.NonGeneric::class
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.NonGeneric<!>::class
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.Obj::class
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.Obj::class
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.Generic::class
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.Generic::class
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.NonGeneric::class
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.NonGeneric::class
 }
 
 fun testThreeParts() {
-    part1<Int>.part2.part3.Function()
-    part1<Int>.part2.part3.Variable
-    part1<Int>.part2.part3.Obj
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.part3.Function()
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.part3.Variable
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.part3.Obj
 }
 
 fun testInner() {
-    part1<Int>.part2.WithInner.Inner::M
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.WithInner<!>.Inner::M
+    <!UNRESOLVED_REFERENCE!>part1<!><Int>.part2.WithInner.Inner::M
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><Int>.WithInner.Inner::M
 }
 
 fun testAbracadabra() {
-    part1<Abracadabra>.part2.part3.Function()
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Abracadabra>.part3<!>.Obj<!>
-    <!TYPE_ARGUMENTS_NOT_ALLOWED!>part1.part2.part3<<!UNRESOLVED_REFERENCE!>Abracadabra<!>><!>.Variable
+    <!UNRESOLVED_REFERENCE!>part1<!><<!UNRESOLVED_REFERENCE!>Abracadabra<!>>.part2.part3.Function()
+    part1.<!UNRESOLVED_REFERENCE!>part2<!><<!UNRESOLVED_REFERENCE!>Abracadabra<!>>.part3.Obj
+    part1.part2.<!UNRESOLVED_REFERENCE!>part3<!><<!UNRESOLVED_REFERENCE!>Abracadabra<!>>.Variable
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, classReference, companionObject, enumDeclaration, enumEntry,

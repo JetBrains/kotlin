@@ -229,6 +229,7 @@ public final class org/jetbrains/kotlin/config/LanguageFeature : java/lang/Enum 
 	public static final field ExtendedMainConvention Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field FixationEnhancementsIn22 Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field FixedUninitializedEnumCompanionCheck Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field ForbidAnnotationsWithUseSiteTargetOnExpressions Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field ForbidArrayLiteralsInNonAnnotationContexts Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field ForbidCaptureInlinableLambdasInJsCode Lorg/jetbrains/kotlin/config/LanguageFeature;

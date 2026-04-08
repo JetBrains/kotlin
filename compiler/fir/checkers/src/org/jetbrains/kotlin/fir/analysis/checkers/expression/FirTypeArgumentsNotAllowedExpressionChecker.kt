@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.ownTypeArguments
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
@@ -30,7 +31,10 @@ object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessExpressio
         if (explicitReceiver is FirResolvedQualifier) {
             val qualifierWithTypeArguments = explicitReceiver.lastQualifierPartWithTypeArguments() ?: return
 
-            if (explicitReceiver.symbol == null) {
+            if (explicitReceiver.symbol == null
+                // if it is enabled, we could not create a package qualifier receiver with type arguments in the first place
+                && LanguageFeature.ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier.isDisabled()
+            ) {
                 reporter.reportOn(explicitReceiver.source, FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED, "for packages")
             }
 

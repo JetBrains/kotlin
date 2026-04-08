@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.getDeprecationForCallSite
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.recordNameLookup
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
@@ -174,7 +176,7 @@ private fun FqName.continueQualifierInPackage(
     resolvedSymbolOrigin: FirResolvedSymbolOrigin = FirResolvedSymbolOrigin.Qualified,
 ): QualifierResolutionResult? {
     val childFqName = this.child(name)
-    if (components.symbolProvider.hasPackage(childFqName)) {
+    if (qualifiedAccess.canBePackagePartOfQualifier(components.session) && components.symbolProvider.hasPackage(childFqName)) {
         return components.buildResolvedQualifierResult(
             qualifiedAccess = qualifiedAccess,
             packageFqName = childFqName,
@@ -293,4 +295,24 @@ internal fun extractNonFatalDiagnostics(
     }
 
     return result?.toList() ?: prevDiagnostics
+}
+
+/**
+ * ```kotlin
+ * package part1.part2.part3
+ *
+ * fun foo() { }
+ * ```
+ * If the user wrote something like `part1.part2<Int>.part3.foo()` it is generally unclear what they wanted.
+ *
+ * This function forces (when the feature is on) for `part2` to become an unresolved `FirPropertyAccessExpression`.
+ * The reason for this is that we have better control over unresolved property accesses: we do not have a `FirResolvedQualifier` for each
+ * package part which means we may drop annotations and type arguments on these part from FIR (which is bad for AA).
+ */
+private fun FirQualifiedAccessExpression.canBePackagePartOfQualifier(session: FirSession): Boolean {
+    if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier)) {
+        return true
+    }
+
+    return annotations.isEmpty() && typeArguments.isEmpty()
 }
