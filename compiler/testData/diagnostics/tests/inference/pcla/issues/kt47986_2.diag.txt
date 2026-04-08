@@ -1,0 +1,3 @@
+/kt47986_2.kt:(217,225): error: Cannot infer type for type parameter 'K'. Specify it explicitly.
+
+/kt47986_2.kt:(264,267): error: Cannot infer type for type parameter 'L'. Specify it explicitly.

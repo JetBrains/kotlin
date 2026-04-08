@@ -1,0 +1,3 @@
+/reifiednessMismatches.kt:(369,380): error: Type parameters of operator 'of' must match type parameters of overload with 'vararg' parameter: 'fun <T> of(vararg ts: T): MyList1<T>'.
+
+/reifiednessMismatches.kt:(810,813): error: Type parameters of operator 'of' must match type parameters of overload with 'vararg' parameter: 'fun <reified T> of(vararg ts: T): MyList3<T>'.

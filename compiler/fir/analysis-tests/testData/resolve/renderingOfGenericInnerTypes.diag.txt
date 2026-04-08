@@ -1,0 +1,17 @@
+/renderingOfGenericInnerTypes.kt:(266,267): error: Initializer type mismatch: expected 'D', actual 'C<String>.D<Int>'.
+
+/renderingOfGenericInnerTypes.kt:(303,304): error: Initializer type mismatch: expected 'D', actual 'C<String>.D2<Int, Boolean>.E<Char, Long, Short>'.
+
+/renderingOfGenericInnerTypes.kt:(373,374): error: Initializer type mismatch: expected 'D', actual 'C.NonInner<String>'.
+
+/renderingOfGenericInnerTypes.kt:(458,459): error: Initializer type mismatch: expected 'D', actual 'Local<X (of fun <X> genTest)>'.
+
+/renderingOfGenericInnerTypes.kt:(554,555): error: Initializer type mismatch: expected 'D', actual 'Local2<String, X (of fun <X> genTest)>.Inner'.
+
+/renderingOfGenericInnerTypes.kt:(993,1020): error: Argument type mismatch: actual type is 'C<String>', but 'C<Int>' was expected.
+
+/renderingOfGenericInnerTypes.kt:(1039,1056): error: Cannot access 'fun <T> veryCunningCallee(): C.Inner<Long, T, Boolean>': it is private in 'foo.X'.
+
+/renderingOfGenericInnerTypes.kt:(1076,1114): error: Argument type mismatch: actual type is 'C<Long, String, Short>.Inner', but 'C<Long, String, Boolean>.Inner' was expected.
+
+/renderingOfGenericInnerTypes.kt:(1087,1104): error: Cannot access 'fun <T> veryCunningCallee(): C.Inner<Long, T, Short>': it is private in 'foo.X'.

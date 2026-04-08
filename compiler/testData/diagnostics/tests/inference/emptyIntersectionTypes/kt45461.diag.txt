@@ -1,0 +1,1 @@
+/kt45461.kt:(257,264): warning: Type argument for type parameter 'S' cannot be inferred because it has incompatible upper bounds: String, Int (multiple incompatible classes). This will become an error in a future release. See https://youtrack.jetbrains.com/issue/KT-51221.

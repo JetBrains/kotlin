@@ -1,0 +1,8 @@
+/NewWarnings.kt:(207,210): error: Type checking has run into a recursive problem. Easiest workaround: specify the types of your declarations explicitly.
+
+/NewWarnings.kt:(228,229): warning: The resolution result depends on the declaration order. This can lead to false-positive errors in the IDE. Specify the return type of 'val f: ??? (Recursive implicit type)' defined in 'Foo' explicitly.
+
+/NewWarnings.kt:(476,477): warning: The resolution result depends on the declaration order. This can lead to false-positive errors in the IDE. Specify the return type of 'val g: Boolean' defined in 'Bar' explicitly.
+/NoWarningsInCaseOfNullExplicitReceiver.kt:(147,151): error: Type checking has run into a recursive problem. Easiest workaround: specify the types of your declarations explicitly.
+
+/NoWarningsInCaseOfNullExplicitReceiver.kt:(167,171): error: Type checking has run into a recursive problem. Easiest workaround: specify the types of your declarations explicitly.

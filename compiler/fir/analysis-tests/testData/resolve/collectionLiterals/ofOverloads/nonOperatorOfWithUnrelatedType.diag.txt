@@ -1,0 +1,1 @@
+/nonOperatorOfWithUnrelatedType.kt:(314,316): error: Argument type mismatch: actual type is 'Int', but 'P' was expected.

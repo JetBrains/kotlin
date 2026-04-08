@@ -1,0 +1,11 @@
+/visibilityMismatches.kt:(183,185): error: Visibility of operator 'of' must be the same for all overloads: 'private' expected.
+
+/visibilityMismatches.kt:(231,239): error: Visibility of operator 'of' must be the same for all overloads: 'private' expected.
+
+/visibilityMismatches.kt:(311,320): error: Visibility of operator 'of' must be the same for all overloads: 'private' expected.
+
+/visibilityMismatches.kt:(404,410): error: Visibility of operator 'of' must be the same for all overloads: 'private' expected.
+
+/visibilityMismatches.kt:(820,822): error: Visibility of operator 'of' must be the same for all overloads: 'public' expected.
+
+/visibilityMismatches.kt:(967,974): error: Visibility of operator 'of' must be the same for all overloads: 'public' expected.
