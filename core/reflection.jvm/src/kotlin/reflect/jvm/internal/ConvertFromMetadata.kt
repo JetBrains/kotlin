@@ -225,7 +225,7 @@ internal fun KmVariance.toKVariance(): KVariance = when (this) {
 private fun KmClassifier.toMutableCollectionKClass(kClassifier: KClassifier): MutableCollectionKClass<*>? {
     val classId = (this as? KmClassifier.Class)?.name?.toClassId() ?: return null
     if (!JavaToKotlinClassMap.isMutable(classId)) return null
-    return getMutableCollectionKClass(classId.asSingleFqName(), kClassifier as KClass<*>)
+    return getMutableCollectionKClass(kClassifier as KClass<*>)
 }
 
 internal fun KmAnnotation.toAnnotation(classLoader: ClassLoader): Annotation =

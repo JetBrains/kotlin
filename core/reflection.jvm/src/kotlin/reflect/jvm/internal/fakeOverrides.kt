@@ -203,7 +203,7 @@ private val ReflectKCallable<*>.isJavaField: Boolean
 private val KClass<*>.fakeOverrideMembers: FakeOverrideMembers
     get() = when (this) {
         is KClassImpl<*> -> data.value.fakeOverrideMembers
-        is MutableCollectionKClass<*> -> klass.fakeOverrideMembers
+        is MutableCollectionKClass<*> -> readonlyClass.fakeOverrideMembers
         else -> error("Unknown type ${this::class}")
     }
 

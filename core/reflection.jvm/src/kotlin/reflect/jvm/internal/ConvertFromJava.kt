@@ -6,12 +6,10 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import java.lang.reflect.*
 import kotlin.reflect.*
 import kotlin.reflect.full.createType
@@ -173,11 +171,8 @@ internal val KClass<*>.isMappedBuiltin: Boolean
 
 private fun SimpleKType.createMutableCollectionType(javaType: Type): SimpleKType? {
     val klass = classifier as? KClass<*> ?: return null
-    val mutableFqName = JavaToKotlinClassMap.readOnlyToMutable(klass.qualifiedName?.let(::FqNameUnsafe)) ?: return null
-    return createJavaSimpleType(
-        javaType, classifier, arguments, isMarkedNullable,
-        mutableCollectionClass = getMutableCollectionKClass(mutableFqName, klass),
-    )
+    val mutableCollectionClass = getMutableCollectionKClass(klass) ?: return null
+    return createJavaSimpleType(javaType, classifier, arguments, isMarkedNullable, mutableCollectionClass)
 }
 
 private fun Class<*>.convertJavaClass(isForAnnotationParameter: Boolean): KClass<*> =

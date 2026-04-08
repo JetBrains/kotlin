@@ -8,7 +8,6 @@ package kotlin.reflect.jvm.internal.types
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinTypeFactory
@@ -47,11 +46,8 @@ internal fun createMutableCollectionKType(type: KType): KType {
         )
     }
 
-    val readonlyClass = (type as SimpleKType).classifier
-    val readonlyFqName = (readonlyClass as? KClass<*>)?.qualifiedName
+    val readonlyClass = (type as SimpleKType).classifier as? KClass<*>
         ?: throw KotlinReflectionInternalError("Non-class type cannot be a mutable collection type: $type")
-    val mutableFqName = JavaToKotlinClassMap.readOnlyToMutable(FqNameUnsafe(readonlyFqName))
-        ?: throw IllegalArgumentException("Not a readonly collection: $type")
 
     return SimpleKType(
         type.classifier,
@@ -62,7 +58,7 @@ internal fun createMutableCollectionKType(type: KType): KType {
         type.isDefinitelyNotNullType,
         type.isNothingType,
         type.isSuspendFunctionType,
-        getMutableCollectionKClass(mutableFqName, readonlyClass),
+        getMutableCollectionKClass(readonlyClass),
     )
 }
 
