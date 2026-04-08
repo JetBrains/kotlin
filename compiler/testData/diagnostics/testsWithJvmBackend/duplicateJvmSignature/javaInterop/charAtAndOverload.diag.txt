@@ -1,2 +1,0 @@
-/main.kt:22:18: error: This function accidentally overrides both 'fun get(index: Int): Char' defined in 'A' and a renamed function 'fun charAt(index: Int): Char' defined in 'A' from JVM point of view because of mixed Java/Kotlin hierarchy.
-This situation provokes a JVM clash and is forbidden. To fix it, delete either this or one of the overridden functions.

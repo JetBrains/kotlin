@@ -1,4 +1,0 @@
-/unclearTypeMismatch.kt:6:9: error: type mismatch: inferred type is Int but CharSequence was expected
-    foo(list)
-        ^^^^
-

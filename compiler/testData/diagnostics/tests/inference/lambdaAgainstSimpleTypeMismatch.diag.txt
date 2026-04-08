@@ -1,4 +1,0 @@
-/lambdaAgainstSimpleTypeMismatch.kt:7:9: error: type mismatch: inferred type is (String) -> Int but Int was expected
-    foo({ a: String -> 42 })
-        ^^^^^^^^^^^^^^^^^^^
-

@@ -1,4 +1,0 @@
-/test.kt:33:35: error: type mismatch: inferred type is JC but JI<Int> was expected
-class C1(client: JC) : JI<Int> by client
-                                  ^^^^^^
-
