@@ -56,7 +56,7 @@ import java.io.File
  * @property hostExecutable The file path to the host executable, which includes the runtime, launcher, and platform support.
  * @property bootstrapObject The file path to the bootstrap object file, which contains the compiled user code.
  */
-internal data class HotReloadFinalCompilationOutput(
+internal data class HotReloadLinkOutput(
         val hostExecutable: File,
         val bootstrapObject: File,
 )
@@ -86,7 +86,7 @@ internal data class HotReloadGuestCompilationOutput(
 /**
  * Result of guest-only hot reload compilation.
  */
-internal data class HotReloadGuestResult(
+internal data class HotReloadGuestLinkOutput(
         val guestObject: File,
 )
 
@@ -267,7 +267,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHot
         hotReloadOutput: HotReloadModuleCompilationOutput,
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
-): HotReloadFinalCompilationOutput {
+): HotReloadLinkOutput {
 
     // Compile host bitcode to object file
     val hostObjectFile = temporaryFiles.create(outputFiles.outputName, ".host.o")
@@ -316,7 +316,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHot
 
     runAndMeasurePhase(LinkerPhase, linkerPhaseInput)
 
-    return HotReloadFinalCompilationOutput(
+    return HotReloadLinkOutput(
             hostExecutable = File(outputFiles.nativeBinaryFile),
             bootstrapObject = bootstrapObjectFile,
     )
@@ -363,10 +363,9 @@ internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReloadGuest(
 internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHotReloadGuest(
         guestOutput: HotReloadGuestCompilationOutput,
         outputFiles: OutputFiles,
-        temporaryFiles: TempFiles,
-): HotReloadGuestResult {
+): HotReloadGuestLinkOutput {
     val (bootstrapObjectFile, ) = compileBootstrapObjectAndManifest(outputFiles, guestOutput)
-    return HotReloadGuestResult(bootstrapObjectFile)
+    return HotReloadGuestLinkOutput(bootstrapObjectFile)
 }
 
 /**
