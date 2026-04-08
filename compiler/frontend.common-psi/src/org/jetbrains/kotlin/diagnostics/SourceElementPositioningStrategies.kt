@@ -211,6 +211,15 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.REFERENCED_NAME_BY_QUALIFIED
     )
 
+    /**
+     * NB! The whole receiver including parentheses is marked, which is not true if we use the FIR source of the receiver
+     * element with [DEFAULT] positioning.
+     */
+    val RECEIVER_OF_DOT_QUALIFIED = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.RECEIVER_OF_DOT_QUALIFIED,
+        PositioningStrategies.RECEIVER_OF_DOT_QUALIFIED
+    )
+
     val DEPRECATION = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DEPRECATION,
         PositioningStrategies.DEPRECATION
