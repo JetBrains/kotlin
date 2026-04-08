@@ -72,6 +72,7 @@ import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.UnitStats
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -404,7 +405,7 @@ class JvmIrCodegenFactory(
         for (generateMultifileFacades in listOf(true, false)) {
             if (executor != null) {
                 val tasks = mutableListOf<CompletableFuture<Void>>()
-                val childrenStats = mutableListOf<UnitStats>()
+                val childrenStats = CopyOnWriteArrayList<UnitStats>()
 
                 for (irFile in module.files) {
                     tasks.add(

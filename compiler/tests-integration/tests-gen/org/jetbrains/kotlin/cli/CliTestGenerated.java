@@ -1726,6 +1726,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/nullabilityAnnotations.args");
     }
 
+    @TestMetadata("parallelBackendThreadsStatsCollection.args")
+    public void testParallelBackendThreadsStatsCollection() {
+      runTest("compiler/testData/cli/jvm/parallelBackendThreadsStatsCollection.args");
+    }
+
     @TestMetadata("progressiveModeOff.args")
     public void testProgressiveModeOff() {
       runTest("compiler/testData/cli/jvm/progressiveModeOff.args");
