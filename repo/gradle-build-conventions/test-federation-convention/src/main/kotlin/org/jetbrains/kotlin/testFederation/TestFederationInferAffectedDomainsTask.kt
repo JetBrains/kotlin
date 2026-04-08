@@ -13,6 +13,8 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
+import kotlin.io.path.name
 import kotlin.io.path.writeText
 
 
@@ -44,7 +46,7 @@ open class TestFederationInferAffectedDomainsTask : DefaultTask() {
 
     @OutputFile
     val affectedDomainsFile: RegularFileProperty = project.objects.fileProperty()
-        .value(project.layout.projectDirectory.file(".test-federation.affected-domains.txt"))
+        .value(project.layout.projectDirectory.file(".test-federation.affected-systems.txt"))
 
     @Input
     val defaultBranch: Property<Boolean> = project.objects.property(Boolean::class.java)
@@ -54,26 +56,33 @@ open class TestFederationInferAffectedDomainsTask : DefaultTask() {
     @TaskAction
     fun inferAffectedDomains() {
         val diffFile = diffFile.get().asFile.toPath()
+        if (diffFile.exists()) {
+            throw IllegalStateException("${diffFile.name} already exists")
+        }
         diffFile.parent.createDirectories()
         diffFile.writeText(diffService.get().diff.joinToString(System.lineSeparator()))
 
-        val affectedDomainsFile = this@TestFederationInferAffectedDomainsTask.affectedDomainsFile.get().asFile.toPath()
-        val affectedDomains = if (!defaultBranch.get()) this@TestFederationInferAffectedDomainsTask.affectedDomains.get() else {
+        val affectedSystemsFile = affectedDomainsFile.get().asFile.toPath()
+        if (affectedSystemsFile.exists()) {
+            throw IllegalStateException("${affectedSystemsFile.name} already exists")
+        }
+
+        val affectedTestSystems = if (!defaultBranch.get()) affectedDomains.get() else {
             logger.quiet("Default branch; All domains are marked as affected")
             Domain.entries.toSet()
         }
 
-        affectedDomainsFile.parent.createDirectories()
-        affectedDomainsFile.writeText(affectedDomains.joinToString(System.lineSeparator()))
+        affectedSystemsFile.parent.createDirectories()
+        affectedSystemsFile.writeText(affectedTestSystems.joinToString(System.lineSeparator()))
 
         /*
         Communicate with TeamCity:
         - Set the TEST_FEDERATION_AFFECTED_SUBSYSTEMS_KEY parameter
         - Add a build tag for each affected domain
          */
-        println("##teamcity[setParameter name='$TEST_FEDERATION_AFFECTED_DOMAINS_KEY' value='${affectedDomains.joinToString(";")}']")
-        affectedDomains.forEach { domain ->
-            println("##teamcity[addBuildTag 'Affected: $domain']")
+        println("##teamcity[setParameter name='$TEST_FEDERATION_AFFECTED_DOMAINS_KEY' value='${affectedTestSystems.joinToString(";")}']")
+        affectedTestSystems.forEach { testSystem ->
+            println("##teamcity[addBuildTag 'Affected: $testSystem']")
         }
     }
 }
