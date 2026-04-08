@@ -124,6 +124,7 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
                 testBaseDir.resolve("path/to/classes"),
             )
         ),
+        invalidArgumentValues = listOf(listOf(testBaseDir.resolve("path/with${File.pathSeparator}separator"))),
         runsNullableTest = true,
         valueString = { value -> value?.joinToString(File.pathSeparator) { it.toFile().absolutePath } },
         expectedArgumentStringsFor = { value -> listOf("-classpath", value) },
@@ -162,6 +163,7 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
                 testBaseDir.resolve("path/to/friend3"),
             )
         ),
+        invalidArgumentValues = listOf(listOf(testBaseDir.resolve("path/with,comma"))),
         valueString = { value -> value?.joinToString(",") { it.toFile().absolutePath } },
         expectedArgumentStringsFor = { value -> listOf("-Xfriend-paths=$value") },
     ),
@@ -184,6 +186,7 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
                 testBaseDir.resolve("path/to/module3"),
             )
         ),
+        invalidArgumentValues = listOf(listOf(testBaseDir.resolve("path/with${File.pathSeparator}separator"))),
         valueString = { value -> value?.joinToString(File.pathSeparator) { it.toFile().absolutePath } },
         expectedArgumentStringsFor = { value -> listOf("-Xmodule-path=$value") },
     ),
@@ -250,6 +253,7 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
                 testBaseDir.resolve("path/to/lib3.klib"),
             )
         ),
+        invalidArgumentValues = listOf(listOf(testBaseDir.resolve("path/with${File.pathSeparator}separator"))),
         valueString = { value -> value?.joinToString(File.pathSeparator) { it.toFile().absolutePath } },
         expectedArgumentStringsFor = { value -> listOf("-Xklib=$value") },
     ),
@@ -263,6 +267,7 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
                 testBaseDir.resolve("path/to/java/src3"),
             )
         ),
+        invalidArgumentValues = listOf(listOf(testBaseDir.resolve("path/with,comma"))),
         valueString = { value -> value?.joinToString(",") { it.toFile().absolutePath } },
         expectedArgumentStringsFor = { value -> listOf("-Xjava-source-roots=$value") },
     ),

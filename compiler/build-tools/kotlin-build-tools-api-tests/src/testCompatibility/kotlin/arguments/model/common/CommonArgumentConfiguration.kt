@@ -18,4 +18,10 @@ internal class CommonArgumentConfiguration<T>(
 
     val invalidArgumentValues: List<T> = commonArgumentTestDescriptor.invalidArgumentValues
     val invalidRawValues: List<String> = commonArgumentTestDescriptor.invalidRawValues
+
+    init {
+        require(invalidArgumentValues.isEmpty()) {
+            "'testInvalidArgumentConversionFails' is missing in 'CommonCompilerArgumentConversionTest' - add a test method for it before configuring this property"
+        }
+    }
 }

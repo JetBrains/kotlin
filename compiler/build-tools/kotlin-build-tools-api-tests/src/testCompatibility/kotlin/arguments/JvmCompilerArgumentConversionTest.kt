@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.buildtools.tests.arguments
 
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.AllJvmCompilerArgumentsWithBtaVersionsTest
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.InvalidRawValueJvmCompilerArgumentsWithBtaVersionsTest
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.JvmArgumentConfiguration
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.NullableJvmCompilerArgumentsWithBtaVersionsTest
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.*
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
@@ -108,6 +105,19 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
         assertEquals(
             getDefaultValueString(), getValueString(operation.compilerArguments[argumentKey])
         )
+    }
+
+    @InvalidArgumentValueJvmCompilerArgumentsWithBtaVersionsTest
+    @DisplayName("BTA argument with non-existent argument value fails conversion")
+    fun <T> JvmArgumentConfiguration<T>.testInvalidArgumentConversionFails() {
+        assumeArgumentSupported()
+        for (invalidValue in invalidArgumentValues) {
+            assertThrows<CompilerArgumentsParseException> {
+                kotlinToolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
+                    compilerArguments[argumentKey] = invalidValue
+                }.build()
+            }
+        }
     }
 
     @InvalidRawValueJvmCompilerArgumentsWithBtaVersionsTest

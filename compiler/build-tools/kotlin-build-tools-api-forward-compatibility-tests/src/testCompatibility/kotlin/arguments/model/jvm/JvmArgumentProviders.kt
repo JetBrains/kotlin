@@ -139,6 +139,7 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
                 testBaseDir.resolve("path/to/friend3").toFile().absolutePath,
             )
         ),
+        invalidArgumentValues = listOf(arrayOf(testBaseDir.resolve("path/with,comma").toFile().absolutePath)),
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-Xfriend-paths=$value") },
     ),
