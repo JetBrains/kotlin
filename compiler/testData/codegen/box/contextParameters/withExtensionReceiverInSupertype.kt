@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: ANDROID
 // LANGUAGE: +ContextParameters, +FunctionalTypeWithExtensionAsSupertype
-// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR
 // ^ IMPLEMENTING_FUNCTION_INTERFACE: Implementing function interface is prohibited in JavaScript
 

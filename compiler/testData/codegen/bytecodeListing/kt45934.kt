@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND: JVM_IR
 // FIR status: delegated implementation for `foo` is generated in `C`, which makes this code execute fine at runtime.
 //             For K1, invoking `C.foo` leads to AbstractMethodError, see KT-46120.
 //             Probably there should be a frontend error. (But if not, then K2 is correct.)

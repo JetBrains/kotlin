@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
-// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND: JS_IR
 
 open class ControlFlowInfo<K, V>(val map: Map<K, V>): Map<K, V> by map
 

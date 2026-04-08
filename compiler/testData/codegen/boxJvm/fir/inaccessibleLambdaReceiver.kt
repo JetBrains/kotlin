@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND: JVM_IR
 // Reason: java.lang.ClassNotFoundException: error.NonExistentClass (shouldn't work anyway due to MISSING_DEPENDENCY_CLASS)
 // ISSUE: KT-66743
 

@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND: JVM_IR
 // FIR status: value: 0 should have type Long
 // WITH_STDLIB
 

@@ -1,7 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
 // OPT_IN: kotlin.ExperimentalMultiplatform
 // NO_READ_WRITE_COMPARE
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND: JVM_IR
 
 package test
 

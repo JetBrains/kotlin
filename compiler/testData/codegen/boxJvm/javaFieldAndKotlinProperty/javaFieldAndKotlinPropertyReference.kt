@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // COMMENTED[LANGUAGE: +ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty] uncomment when KT-56386 is fixed
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND: JVM_IR
 // Reason: KT-56386 is not fixed yet
 
 // FILE: BaseJava.java

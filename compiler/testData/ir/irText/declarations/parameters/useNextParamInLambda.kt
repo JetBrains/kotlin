@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: ANY
+// IGNORE_BACKEND: ANY
 // accessing uninitialized parameter is illegal in FIR
 // LANGUAGE: -ProhibitIllegalValueParameterUsageInDefaultArguments
 // KT-61141: catches kotlin.Exception instead of java.lang.Exception

@@ -1,7 +1,7 @@
 // LANGUAGE: +SuspendConversion
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // WITH_STDLIB
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR, JS_IR_ES6, NATIVE, WASM_JS, WASM_WASI
+// IGNORE_BACKEND: JVM_IR, JS_IR, JS_IR_ES6, NATIVE, WASM_JS, WASM_WASI
 // IGNORE_BACKEND_K2_MULTI_MODULE: ANY
 // K2 status: java.lang.Integer cannot be cast to java.lang.String (inference changed due to KT-63558)
 

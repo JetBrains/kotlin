@@ -1,5 +1,4 @@
-// IGNORE_BACKEND: ANDROID
-// IGNORE_BACKEND_K2: ANY
+// IGNORE_BACKEND: ANY
 // IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // ^This code is not really supported and was allowed accidentally because of a bug in the corresponding checker.
 

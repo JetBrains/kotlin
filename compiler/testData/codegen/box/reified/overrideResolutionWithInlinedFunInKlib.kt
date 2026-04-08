@@ -8,7 +8,7 @@
 // after fixing everything here and in overrideResolution.kt,
 //   please delete this test and delete `LANGUAGE: -IrIntraModuleInlinerBeforeKlibSerialization -IrCrossModuleInlinerBeforeKlibSerialization` from `overrideResolutionWithInlinedFunInKlib.kt`
 
-// IGNORE_BACKEND_K2: NATIVE
+// IGNORE_BACKEND: NATIVE
 // ^^^ Test failed with: C C make make
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR, NATIVE
 // ^^^ after deserialization, for anonfuns within makeA and makeB: not only A.foo is listed in overridden symbols, but B.foo as well

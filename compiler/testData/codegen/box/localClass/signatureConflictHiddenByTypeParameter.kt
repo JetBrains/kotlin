@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND: JVM_IR
 // ISSUE: KT-9152
 // In fact shouldn't work on all backends (see the issue above), but works everywhere except K2/JVM combination
 

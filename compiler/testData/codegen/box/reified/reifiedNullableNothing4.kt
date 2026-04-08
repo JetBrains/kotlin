@@ -1,7 +1,6 @@
 // LANGUAGE: +NullableNothingInReifiedPosition
 // ISSUE: KT-54227
-// IGNORE_BACKEND: ANDROID
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND: JVM_IR
 
 fun box(): String {
     val arr = arrayOfNulls<Nothing?>(2)

@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND: JVM_IR
 // reason: incorrect result (FAIL B)
 // ISSUE: KT-63242, KT-66324
 

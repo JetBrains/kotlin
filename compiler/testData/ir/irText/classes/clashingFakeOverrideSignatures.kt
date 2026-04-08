@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: ANY
+// IGNORE_BACKEND: ANY
 //  ^ TODO decide if we want to fix KT-42020 for FIR as well
 
 // KT-61141: IrSimpleFunctionSymbolImpl for /Derived.foo|foo(kotlin.String){}[0] is already bound

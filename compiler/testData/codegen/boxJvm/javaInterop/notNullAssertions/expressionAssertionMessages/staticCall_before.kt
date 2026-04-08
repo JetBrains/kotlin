@@ -1,6 +1,6 @@
 // LANGUAGE: -NoSourceCodeInNotNullAssertionExceptions
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND: JVM_IR
 // FIR status: don't support legacy feature (KT-57570)
 // FILE: test.kt
 fun f(x: String) = "Fail 1"

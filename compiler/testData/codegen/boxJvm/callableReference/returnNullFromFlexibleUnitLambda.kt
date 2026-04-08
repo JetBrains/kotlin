@@ -4,7 +4,7 @@
 // DUMP_IR
 // FIR_IDENTICAL
 
-// IGNORE_BACKEND_K2: ANY
+// IGNORE_BACKEND: ANY
 // ^ This test results in compilation error on K2 (KT-66954)
 
 // FILE: A.java
