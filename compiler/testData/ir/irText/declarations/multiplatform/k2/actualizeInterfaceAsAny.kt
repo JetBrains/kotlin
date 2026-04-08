@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +MultiPlatformProjects +AllowAnyAsAnActualTypeForExpectInterface
 
 // MODULE: common

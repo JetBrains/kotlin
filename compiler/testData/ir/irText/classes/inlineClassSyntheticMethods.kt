@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +InlineClasses
 
 class C<T>(val t: T) {

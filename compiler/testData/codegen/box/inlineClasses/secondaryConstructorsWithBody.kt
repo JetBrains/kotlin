@@ -1,7 +1,6 @@
 // LANGUAGE: +ValueClassesSecondaryConstructorWithBody
 // CHECK_BYTECODE_LISTING
 // WITH_STDLIB
-// FIR_IDENTICAL
 // WORKS_WHEN_VALUE_CLASS
 
 val l = mutableListOf<Any>()

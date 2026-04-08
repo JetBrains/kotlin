@@ -3,7 +3,6 @@
 // CHECK_BYTECODE_LISTING
 // WITH_STDLIB
 // CHECK_BYTECODE_TEXT
-// FIR_IDENTICAL
 
 @JvmInline
 value class IC(val x: Int) {

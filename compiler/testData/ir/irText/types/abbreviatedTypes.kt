@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 typealias I = Int
 typealias L<T> = List<T>
 

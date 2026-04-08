@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 interface IA {
     operator fun get(index: String): Int
 }

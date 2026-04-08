@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 // FILE: asOnPlatformType.kt
 fun test() {

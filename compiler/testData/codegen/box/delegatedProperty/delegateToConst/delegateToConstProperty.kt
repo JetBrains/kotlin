@@ -1,5 +1,4 @@
 // CHECK_BYTECODE_LISTING
-// FIR_IDENTICAL
 
 operator fun Any?.getValue(thisRef: Any?, property: Any?) =
     if (this == a && thisRef == null) "OK" else "Failed"

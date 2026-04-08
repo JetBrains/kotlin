@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 fun runMe() {
     class Foo {

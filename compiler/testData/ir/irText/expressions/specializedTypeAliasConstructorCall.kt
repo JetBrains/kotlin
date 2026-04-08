@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 class Cell<T>(val value: T)
 
 typealias IntAlias = Cell<Int>

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 class Outer<T1> {
     inner class Inner<T2> {

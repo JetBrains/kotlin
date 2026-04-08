@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-56176
 
 typealias MyLong = Long

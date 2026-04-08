@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 fun test1d(x: Double, y: Double) = x == y
 fun test2d(x: Double, y: Double?) = x == y
 fun test3d(x: Double, y: Any) = x == y

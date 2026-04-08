@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 annotation class A1
 annotation class A2

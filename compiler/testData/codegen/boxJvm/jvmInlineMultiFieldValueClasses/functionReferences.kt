@@ -3,7 +3,6 @@
 // WITH_COROUTINES
 // TARGET_BACKEND: JVM_IR
 // LANGUAGE: +JvmInlineMultiFieldValueClasses
-// FIR_IDENTICAL
 
 // FILE: caller.kt
 import kotlin.coroutines.*

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 annotation class Test1(val x: Int)
 
 annotation class Test2(val x: Int = 0)

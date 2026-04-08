@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 interface In<in T>
 
 interface Inv<T> {

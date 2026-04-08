@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 class C {
     internal fun bar() {}
 }

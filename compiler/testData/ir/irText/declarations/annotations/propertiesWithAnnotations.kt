@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 annotation class TestAnn(val x: String)
 

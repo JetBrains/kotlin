@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-69965
 
 import kotlin.annotation.AnnotationRetention.*

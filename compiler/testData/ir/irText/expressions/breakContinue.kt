@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 fun test1() {
     while (true) { break }
     do { break } while (true)

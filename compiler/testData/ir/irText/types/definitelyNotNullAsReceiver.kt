@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +DefinitelyNonNullableTypes
 
 fun <T> (T & Any).foo() {}

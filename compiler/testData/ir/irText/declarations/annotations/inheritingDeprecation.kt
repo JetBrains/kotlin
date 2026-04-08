@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 interface IFoo {
     @Deprecated("")
     val prop: String get() = ""

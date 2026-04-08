@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 class Test1(val x: Int, val y: Int)
 
 class Test2(x: Int, val y: Int) {

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 enum class Enum { A }
 object A
 val a = 0

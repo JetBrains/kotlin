@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 fun testFun() {
     System.out.println("testFun")

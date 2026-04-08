@@ -1,5 +1,4 @@
 // CHECK_BYTECODE_LISTING
-// FIR_IDENTICAL
 // WITH_STDLIB
 
 import kotlin.test.*

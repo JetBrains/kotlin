@@ -3,7 +3,6 @@
 // IGNORE_BACKEND: ANDROID
 // WITH_STDLIB
 // DUMP_IR
-// FIR_IDENTICAL
 // LAMBDAS: CLASS
 // LANGUAGE: +ResolveTopLevelLambdasAsSyntheticCallArgument
 

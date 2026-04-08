@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 private interface I {
     fun fooString(): String
     fun barString(): String = "bar@I"

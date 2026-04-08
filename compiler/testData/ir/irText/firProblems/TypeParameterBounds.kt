@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +ClassTypeParameterAnnotations
 
 @Target(AnnotationTarget.TYPE)

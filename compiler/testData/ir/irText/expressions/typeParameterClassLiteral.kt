@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 inline fun <reified T : Any> classRefFun() = T::class
 

@@ -2,7 +2,6 @@
 // TARGET_BACKEND: JVM_IR
 // CHECK_BYTECODE_LISTING
 // WITH_STDLIB
-// FIR_IDENTICAL
 
 val l = mutableListOf<Any>()
 

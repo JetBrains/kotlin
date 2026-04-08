@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // IGNORE_BACKEND: JS_IR, WASM_JS
 
 // KT-61141: rethrows kotlin.Exception instead of java.lang.Exception

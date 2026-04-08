@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // CHECK_BYTECODE_LISTING
-// FIR_IDENTICAL
 
 class C {
     val s: String by this

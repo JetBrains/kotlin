@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 interface TestInterface<T> {
     interface TestNestedInterface<TT>
 }

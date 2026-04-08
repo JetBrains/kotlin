@@ -3,7 +3,6 @@
 // TARGET_BACKEND: JVM_IR
 // FULL_JDK
 // CHECK_BYTECODE_LISTING
-// FIR_IDENTICAL
 
 import java.io.*
 import kotlin.test.*

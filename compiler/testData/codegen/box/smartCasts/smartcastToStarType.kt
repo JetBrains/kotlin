@@ -1,5 +1,4 @@
 // ISSUE: KT-62863
-// FIR_IDENTICAL
 // DUMP_IR
 
 interface Base<out T> {

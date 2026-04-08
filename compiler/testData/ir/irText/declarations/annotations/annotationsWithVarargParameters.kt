@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 annotation class A(vararg val xs: String)
 
 @A("abc", "def") fun test1() {}

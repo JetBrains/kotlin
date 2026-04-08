@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 interface IFooBar {
     fun foo()
     fun bar()

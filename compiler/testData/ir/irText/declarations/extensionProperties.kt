@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 val String.test1 get() = 42
 

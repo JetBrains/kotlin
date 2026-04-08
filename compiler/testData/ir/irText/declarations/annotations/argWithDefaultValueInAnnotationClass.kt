@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// FIR_IDENTICAL
 // ISSUE: KT-52676
 
 // FILE: Keyboard.java

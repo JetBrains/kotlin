@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 fun testSimple() = Box<Long>(2L * 3)
 

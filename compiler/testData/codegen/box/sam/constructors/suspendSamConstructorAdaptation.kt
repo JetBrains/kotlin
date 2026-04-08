@@ -1,5 +1,4 @@
 // DUMP_IR
-// FIR_IDENTICAL
 
 fun interface FunInterface {
     suspend operator fun invoke()

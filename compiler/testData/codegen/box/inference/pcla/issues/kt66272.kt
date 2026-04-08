@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-66272
 
 data class DataClass(val data: String)

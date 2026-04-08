@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-62863
 class Bar<T>
 

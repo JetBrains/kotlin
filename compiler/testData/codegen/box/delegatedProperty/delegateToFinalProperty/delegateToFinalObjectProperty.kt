@@ -1,5 +1,4 @@
 // CHECK_BYTECODE_LISTING
-// FIR_IDENTICAL
 
 object O {
     val impl = 123

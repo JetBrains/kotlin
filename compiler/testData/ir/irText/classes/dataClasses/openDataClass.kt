@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // This test emulates 'allopen' compiler plugin.
 
 @Suppress("INCOMPATIBLE_MODIFIERS")

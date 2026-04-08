@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +BreakContinueInInlineLambdas
 // IGNORE_ERRORS
 // WITH_STDLIB

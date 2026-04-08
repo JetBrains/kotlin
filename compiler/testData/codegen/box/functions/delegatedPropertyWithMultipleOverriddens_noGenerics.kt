@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-55828
 // DUMP_IR
 

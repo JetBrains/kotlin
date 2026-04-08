@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // DUMP_IR
 fun box(): String {
     var x = 0

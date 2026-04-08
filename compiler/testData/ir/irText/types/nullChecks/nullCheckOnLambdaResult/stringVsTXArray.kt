@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
-// FIR_IDENTICAL
 
 // FILE: stringVsTXArray.kt
 fun <T> useTX(x: T, fn: () -> T) = fn()

@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM_IR
-// FIR_IDENTICAL
 
 // MODULE: lib
 

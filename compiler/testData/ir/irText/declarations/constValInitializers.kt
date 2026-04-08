@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 const val I0 = 0
 const val I1 = 1

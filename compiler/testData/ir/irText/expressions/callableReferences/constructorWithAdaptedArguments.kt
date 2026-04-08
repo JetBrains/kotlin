@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 fun use(fn: (Int) -> Any) = fn(42)
 
 class C(vararg xs: Int)

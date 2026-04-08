@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 annotation class TestAnn(val x: String)
 
 fun testFun(@TestAnn("testFun.x") x: Int) {}

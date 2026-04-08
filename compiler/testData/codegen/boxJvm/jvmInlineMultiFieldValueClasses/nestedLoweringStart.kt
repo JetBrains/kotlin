@@ -2,7 +2,6 @@
 // TARGET_BACKEND: JVM_IR
 // LANGUAGE: +JvmInlineMultiFieldValueClasses
 // CHECK_BYTECODE_LISTING
-// FIR_IDENTICAL
 
 @JvmInline
 value class Point(val x: Double, val y: Double)

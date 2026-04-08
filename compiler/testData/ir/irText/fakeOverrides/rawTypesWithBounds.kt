@@ -1,7 +1,6 @@
 // IGNORE_BACKEND: JKLIB
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
-// FIR_IDENTICAL
 
 // K1 fails to compute types for 'b19'. New reflect implementation computes the types correctly
 // KOTLIN_REFLECT_DUMP_MISMATCH
