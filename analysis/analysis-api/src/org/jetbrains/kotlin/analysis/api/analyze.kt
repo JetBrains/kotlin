@@ -8,12 +8,15 @@
 package org.jetbrains.kotlin.analysis.api
 
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
 import org.jetbrains.kotlin.analysis.api.projectStructure.withDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.psi.KtElement
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * Executes the given [action] in an [analysis session][KaSession] context.
@@ -23,12 +26,15 @@ import org.jetbrains.kotlin.psi.KtElement
  * Neither the analysis session nor any other [lifetime owners][org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner] may be leaked
  * outside the [analyze] block. Please consult the documentation of [KaSession] for important information about lifetime management.
  */
+@OptIn(ExperimentalContracts::class)
 public inline fun <R> analyze(
     useSiteElement: KtElement,
-    action: KaSession.() -> R
-): R =
-    KaSessionProvider.getInstance(useSiteElement.project)
+    action: KaSession.() -> R,
+): R {
+    contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
+    return KaSessionProvider.getInstance(useSiteElement.project)
         .analyze(useSiteElement, action)
+}
 
 /**
  * Executes the given [action] in an [analysis session][KaSession] context.

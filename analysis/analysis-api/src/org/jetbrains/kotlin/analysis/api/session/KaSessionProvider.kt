@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.psi.KtElement
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
+import kotlin.contracts.InvocationKind
 
 /**
  * Provides [KaSession]s by use-site [KtElement]s or [KaModule]s.
@@ -29,10 +32,13 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
     // compatibility, their implementations should not be changed unless absolutely necessary. It should be possible to put most
     // functionality into `beforeEnteringAnalysis` and/or `afterLeavingAnalysis`.
 
+    @OptIn(ExperimentalContracts::class)
     public inline fun <R> analyze(
         useSiteElement: KtElement,
         action: KaSession.() -> R,
     ): R {
+        contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
+
         val analysisSession = getAnalysisSession(useSiteElement)
 
         beforeEnteringAnalysis(analysisSession, useSiteElement)

@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.analysis.api.permissions
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry.KaExplicitAnalysisRestriction
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
+import kotlin.contracts.InvocationKind
 
 /**
  * Forbids [analyze][org.jetbrains.kotlin.analysis.api.analyze] to be called in the given [action].
@@ -36,8 +39,10 @@ public annotation class KaAllowAnalysisOnEdt
  * Analysis is not supposed to be invoked from the EDT, as it may cause freezes. Use at your own risk!
  */
 @KaAllowAnalysisOnEdt
-@OptIn(KaImplementationDetail::class)
+@OptIn(KaImplementationDetail::class, ExperimentalContracts::class)
 public inline fun <T> allowAnalysisOnEdt(action: () -> T): T {
+    contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
+
     val permissionRegistry = KaAnalysisPermissionRegistry.getInstance()
     if (permissionRegistry.isAnalysisAllowedOnEdt) return action()
 
