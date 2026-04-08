@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.test.runners.codegen
 
-import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.AsmLikeInstructionListingHandler
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
@@ -22,24 +20,24 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
-import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 
-abstract class AbstractAsmLikeInstructionListingTestBase<R : ResultingArtifact.FrontendOutput<R>>(
-    val targetFrontend: FrontendKind<R>,
-) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
-    abstract val frontendFacade: Constructor<FrontendFacade<R>>
-    abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
-    abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
-
+abstract class AbstractAsmLikeInstructionListingTestBase(val parser: FirParser) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
             +CHECK_ASM_LIKE_INSTRUCTIONS
         }
 
-        commonConfigurationForJvmTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
+        commonConfigurationForJvmTest(
+            FrontendKinds.FIR,
+            ::FirCliJvmFacade,
+            ::Fir2IrCliJvmFacade,
+            ::BackendCliJvmFacade,
+        )
+
+        configureFirParser(parser)
 
         configureFirHandlersStep {
             useHandlers(
@@ -64,25 +62,7 @@ abstract class AbstractAsmLikeInstructionListingTestBase<R : ResultingArtifact.F
     }
 }
 
-abstract class AbstractFirAsmLikeInstructionListingTestBase(val parser: FirParser) :
-    AbstractAsmLikeInstructionListingTestBase<FirOutputArtifact>(FrontendKinds.FIR) {
-
-    override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirCliJvmFacade
-
-    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrCliJvmFacade
-
-    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
-        get() = ::BackendCliJvmFacade
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureFirParser(parser)
-    }
-}
-
-open class AbstractFirLightTreeAsmLikeInstructionListingTest : AbstractFirAsmLikeInstructionListingTestBase(FirParser.LightTree)
+open class AbstractFirLightTreeAsmLikeInstructionListingTest : AbstractAsmLikeInstructionListingTestBase(FirParser.LightTree)
 
 @FirPsiCodegenTest
-open class AbstractFirPsiAsmLikeInstructionListingTest : AbstractFirAsmLikeInstructionListingTestBase(FirParser.Psi)
+open class AbstractFirPsiAsmLikeInstructionListingTest : AbstractAsmLikeInstructionListingTestBase(FirParser.Psi)
