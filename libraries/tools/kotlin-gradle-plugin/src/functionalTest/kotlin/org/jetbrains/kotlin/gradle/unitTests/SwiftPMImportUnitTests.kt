@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheti
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.swiftPMDependenciesForLockFilesResolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMDependenciesProvider
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -37,6 +38,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
+import kotlin.test.assertNotSame
 
 class SwiftPMImportUnitTests {
 
@@ -395,7 +397,7 @@ class SwiftPMImportUnitTests {
     }
 
     @Test
-    fun `test fetchSyntheticImportProjectPackages depends on syncPackageSwiftLockFileToSyntheticSwiftPMPackage when noSynchronization is set` () {
+    fun `test fetchSyntheticImportProjectPackages depends on syncPackageSwiftLockFileToSyntheticSwiftPMPackage when noSynchronization is set`() {
         val project = swiftPMImportProject(
             swiftPMDependencies = { layout ->
 
@@ -410,10 +412,14 @@ class SwiftPMImportUnitTests {
         project.evaluate()
 
         val fetchTask = project.tasks.findByName(FetchSyntheticImportProjectPackages.TASK_NAME)
-        val syncLockFileToPSyntheticSwiftPMPackageTask = project.tasks.findByName(SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME)
+        val syncLockFileToPSyntheticSwiftPMPackageTask =
+            project.tasks.findByName(SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME)
 
         assertNotNull(fetchTask, "${FetchSyntheticImportProjectPackages.TASK_NAME} should be registered")
-        assertNotNull(syncLockFileToPSyntheticSwiftPMPackageTask, "${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME} should be registered")
+        assertNotNull(
+            syncLockFileToPSyntheticSwiftPMPackageTask,
+            "${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME} should be registered"
+        )
 
         fetchTask.assertDependsOn(
             syncLockFileToPSyntheticSwiftPMPackageTask
@@ -577,6 +583,58 @@ class SwiftPMImportUnitTests {
 
         assertDoesNotThrow {
             swiftPMConsumer.transitiveSwiftPMDependenciesProvider().get()
+        }
+    }
+
+    @Test
+    fun `KT-85561 - umbrella task is only registered for Apple SwiftPM projects and not for non-Apple consumers`() {
+        val identifier = "default"
+
+        val rootProject = buildProject {
+            configureRepositoriesForTests()
+        }
+
+        val shared = swiftPMImportProject(
+            projectBuilder = {
+                withParent(rootProject)
+                withName("shared")
+            },
+            swiftPMDependencies = { layout ->
+                localSwiftPackage(
+                    directory = layout.projectDirectory.dir("my-custom-pkg"),
+                    products = listOf("ManifestPackage"),
+                )
+            }
+        )
+
+        val composeApp = buildProjectWithMPP(
+            projectBuilder = {
+                withParent(rootProject)
+                withName("composeApp")
+            },
+            preApplyCode = {
+                configureRepositoriesForTests()
+            },
+            code = {
+                kotlin {
+                    jvm()
+
+                    sourceSets.getByName("commonMain").dependencies {
+                        implementation(project(":shared"))
+                    }
+                }
+            }
+        )
+
+        shared.evaluate()
+        composeApp.evaluate()
+
+        val umbrellaTask = shared.assertContainsTaskInstance<GenerateSyntheticLinkageImportProject>(
+            GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(identifier)
+        )
+
+        assertDoesNotThrow {
+            umbrellaTask.taskDependencies.getDependencies(umbrellaTask)
         }
     }
 }
