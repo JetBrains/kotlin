@@ -17,18 +17,14 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_LISTING
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_EXTERNAL_CLASS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTICAL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
@@ -53,20 +49,6 @@ class IrTextDumpHandler(
     companion object {
         const val DUMP_EXTENSION = "ir.txt"
         const val DUMP_EXTENSION2 = "ir2.txt"
-
-        fun computeDumpExtension(
-            testServices: TestServices,
-            defaultExtension: String,
-            ignoreFirIdentical: Boolean = false,
-        ): String {
-            return if (
-                (!ignoreFirIdentical && FIR_IDENTICAL in testServices.moduleStructure.allDirectives)
-            ) {
-                defaultExtension
-            } else {
-                "fir.$defaultExtension"
-            }
-        }
 
         fun List<IrFile>.groupWithTestFiles(testServices: TestServices, ordered: Boolean = false): List<Pair<Pair<TestModule, TestFile>?, IrFile>> {
             return mapNotNull { irFile ->
@@ -112,7 +94,7 @@ class IrTextDumpHandler(
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives, FirDiagnosticsDirectives)
+        get() = listOf(CodegenTestDirectives)
 
     private val pathRelativizer = IrFileEntryPathRelativizer(testServices)
 

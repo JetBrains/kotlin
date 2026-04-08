@@ -14,15 +14,12 @@ import org.jetbrains.kotlin.ir.util.RenderIrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler.Companion.groupWithTestFiles
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler.Companion.renderFilePathForIrFile
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SOURCE_RANGES_IR
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -41,19 +38,7 @@ class IrSourceRangesDumpHandler(
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives, FirDiagnosticsDirectives)
-
-    override val additionalAfterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>
-        get() = listOf(::IdenticalChecker)
-
-    class IdenticalChecker(testServices: TestServices) : SimpleFirIrIdenticalChecker(testServices) {
-        override val dumpExtension: String
-            get() = DUMP_EXTENSION
-
-        override fun shouldRun(): Boolean {
-            return DUMP_SOURCE_RANGES_IR in testServices.moduleStructure.allDirectives
-        }
-    }
+        get() = listOf(CodegenTestDirectives)
 
     private val baseDumper = MultiModuleInfoDumper()
     private val buildersForSeparateFileDumps: MutableMap<File, StringBuilder> = mutableMapOf()
@@ -125,7 +110,7 @@ class IrSourceRangesDumpHandler(
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val moduleStructure = testServices.moduleStructure
         val defaultExpectedFile = moduleStructure.originalTestDataFiles.first()
-            .withExtension(getDumpExtension())
+            .withExtension(DUMP_EXTENSION)
         checkOneExpectedFile(defaultExpectedFile, baseDumper.generateResultingDump())
         buildersForSeparateFileDumps.entries.forEach { (expectedFile, dump) -> checkOneExpectedFile(expectedFile, dump.toString()) }
     }
@@ -136,9 +121,5 @@ class IrSourceRangesDumpHandler(
         } else {
             assertions.assertFileDoesntExist(expectedFile, DUMP_SOURCE_RANGES_IR)
         }
-    }
-
-    private fun getDumpExtension(ignoreFirIdentical: Boolean = false): String {
-        return IrTextDumpHandler.computeDumpExtension(testServices, DUMP_EXTENSION, ignoreFirIdentical)
     }
 }
