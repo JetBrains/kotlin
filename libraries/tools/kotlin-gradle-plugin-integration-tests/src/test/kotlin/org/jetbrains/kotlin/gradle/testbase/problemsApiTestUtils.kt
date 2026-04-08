@@ -16,7 +16,7 @@ import kotlin.test.assertTrue
 
 internal object ProblemsApiTestUtils {
     fun extractProblemReportUrl(output: String): String? {
-        val urlRegex = """file:///[^\s]+problems-report\.html""".toRegex()
+        val urlRegex = """file:///\S+problems-report\.html""".toRegex()
         return urlRegex.find(output)?.value
     }
 
@@ -77,6 +77,42 @@ internal fun BuildResult.assertProblemsReportContainsDiagnostic(
     )
 }
 
+internal fun BuildResult.assertProblemsReportContainsDiagnosticAtTaskLocations(
+    expectedProblemId: String,
+    expectedMessageSubstring: String,
+    expectedTaskPaths: Set<String>,
+    gradleVersion: GradleVersion,
+) {
+    val reportUrl = ProblemsApiTestUtils.extractProblemReportUrl(output)
+    assertNotNull(reportUrl, "Problems API HTML report URL not found in build output")
+
+    val reportContent = ProblemsApiTestUtils.readProblemReportContent(reportUrl)
+    val report = ProblemsApiTestUtils.parseProblemReportFromScript(reportContent, gradleVersion)
+
+    val matchingDiagnostics = report.diagnostics.filter { diagnostic ->
+        diagnostic.problemId.any { it.name == expectedProblemId } &&
+                (diagnostic.problemDetailsActual.contains(expectedMessageSubstring) ||
+                        diagnostic.contextualLabel.contains(expectedMessageSubstring))
+    }
+
+    assertTrue(
+        matchingDiagnostics.isNotEmpty(),
+        "Expected Problems API HTML report to contain a '$expectedProblemId' diagnostic " +
+                "with message containing '$expectedMessageSubstring', but none found.\n" +
+                "Report diagnostics: ${report.diagnostics.map { d -> "${d.problemId.map { it.name }} -> details: ${d.problemDetailsActual}}" }}"
+    )
+
+    assertTrue(
+        matchingDiagnostics.any { diagnostic ->
+            val taskPaths = diagnostic.locations.mapNotNull { it.taskPath }.toSet()
+            expectedTaskPaths.all(taskPaths::contains)
+        },
+        "Expected Problems API diagnostic '$expectedProblemId' with message '$expectedMessageSubstring' " +
+                "to contain task locations $expectedTaskPaths, but got " +
+                matchingDiagnostics.map { diagnostic -> diagnostic.locations.mapNotNull { it.taskPath }.toSet() }
+    )
+}
+
 @Serializable
 internal data class ProblemReport<PD : ProblemDiagnostic>(
     val diagnostics: List<PD>,
@@ -133,7 +169,10 @@ internal data class ProblemsApiDiagnosticG94(
 internal data class TextWrapper(val text: String)
 
 @Serializable
-internal data class ProblemsApiLocation(val pluginId: String = "")
+internal data class ProblemsApiLocation(
+    val pluginId: String = "",
+    val taskPath: String? = null,
+)
 
 @Serializable
 internal data class ProblemIdentifier(

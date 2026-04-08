@@ -51,10 +51,10 @@ internal class ProblemsApiCompilerMessageRenderer : CompilerMessageRenderer {
         }
     }
 
-    fun replayTo(problemsReporter: CompilerDiagnosticsProblemsReporter) {
+    fun replayTo(problemsReporter: CompilerDiagnosticsProblemsReporter, taskPath: String) {
         while (true) {
             val diagnostic = bufferedDiagnostics.poll() ?: break
-            problemsReporter.reportCompilerMessage(diagnostic.severity, diagnostic.message, diagnostic.location)
+            problemsReporter.reportCompilerMessage(diagnostic.severity, diagnostic.message, diagnostic.location, taskPath)
         }
     }
 }

@@ -10,6 +10,8 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import org.jetbrains.kotlin.gradle.testbase.assertProblemsReportContainsDiagnostic
+import org.jetbrains.kotlin.gradle.testbase.assertProblemsReportContainsDiagnosticAtTaskLocations
+import kotlin.io.path.appendText
 
 @DisplayName("Compiler Diagnostics Problems API tests")
 @GradleTestVersions(
@@ -71,6 +73,70 @@ class CompilerDiagnosticsProblemsApiIT : KGPBaseTest() {
                     "compiler-error",
                     "nresolved reference",
                     gradleVersion,
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("KT-85564 compiler errors should retain all affected task locations")
+    fun testCompilerErrorLocationsContainAllAffectedTasks(gradleVersion: GradleVersion) {
+        val expectedTaskPaths = setOf(
+            ":lib1:compileKotlin",
+            ":lib2:compileKotlin",
+        )
+
+        project("emptyKts", gradleVersion) {
+            settingsGradleKts.appendText(
+                """
+
+                include(":lib1", ":lib2")
+                """.trimIndent()
+            )
+
+            val buildScript = """
+                plugins {
+                    kotlin("jvm")
+                }
+
+                kotlin {
+                    compilerOptions {
+                        languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_4)
+                        apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_4)
+                        freeCompilerArgs.addAll(
+                            "-Xcontext-parameters",
+                            "-Xrender-internal-diagnostic-names",
+                            "-Werror",
+                        )
+                    }
+                }
+            """.trimIndent()
+
+            projectPath.source("lib1/build.gradle.kts") { buildScript }
+            projectPath.source("lib2/build.gradle.kts") { buildScript }
+
+            val source = """
+                package test
+
+                fun ok(): String = "ok"
+            """.trimIndent()
+
+            projectPath.source("lib1/src/main/kotlin/main.kt") { source }
+            projectPath.source("lib2/src/main/kotlin/main.kt") { source }
+
+            buildAndFail(":lib1:compileKotlin", ":lib2:compileKotlin", "--continue") {
+                assertTasksFailed(*expectedTaskPaths.toTypedArray())
+                assertProblemsReportContainsDiagnosticAtTaskLocations(
+                    expectedProblemId = "compiler-error",
+                    expectedMessageSubstring = "[REDUNDANT_CLI_ARG] The argument '-Xcontext-parameters' is redundant",
+                    expectedTaskPaths = expectedTaskPaths,
+                    gradleVersion = gradleVersion,
+                )
+                assertProblemsReportContainsDiagnosticAtTaskLocations(
+                    expectedProblemId = "compiler-error",
+                    expectedMessageSubstring = "warnings found and -Werror specified",
+                    expectedTaskPaths = expectedTaskPaths,
+                    gradleVersion = gradleVersion,
                 )
             }
         }

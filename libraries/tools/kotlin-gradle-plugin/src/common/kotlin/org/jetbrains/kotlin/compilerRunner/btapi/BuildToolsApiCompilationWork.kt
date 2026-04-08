@@ -87,6 +87,13 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     private val compilerDiagnosticsProblemsReporter: CompilerDiagnosticsProblemsReporter
         get() = parameters.compilerDiagnosticsProblemsReporterFactory.get().getInstance(objects)
 
+    private val aggregatedCompilerDiagnosticsProblemsReporter: CompilerDiagnosticsProblemsReporter
+        get() = AggregatedCompilerDiagnosticsReporter(
+            buildId = parameters.buildIdService.get().buildId,
+            buildFinishedListenerService = parameters.buildFinishedListenerService.get(),
+            delegate = compilerDiagnosticsProblemsReporter,
+        )
+
     private val metrics = if (workArguments.reportingSettings.buildReportOutputs.isNotEmpty()) {
         BuildMetricsReporterImpl()
     } else {
@@ -325,7 +332,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             throw e
         } finally {
             // Replay buffered compiler diagnostics on the worker thread (see ProblemsApiCompilerMessageRenderer).
-            compilerMessageRenderer.replayTo(compilerDiagnosticsProblemsReporter)
+            compilerMessageRenderer.replayTo(aggregatedCompilerDiagnosticsProblemsReporter, taskPath)
 
             val taskInfo = TaskExecutionInfo(
                 kotlinLanguageVersion = workArguments.kotlinLanguageVersion,

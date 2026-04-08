@@ -20,6 +20,7 @@ class ProblemsApiCompilerMessageRendererTest {
         val severity: Severity,
         val message: String,
         val location: SourceLocation?,
+        val taskPath: String,
     )
 
     private class RecordingCompilerDiagnosticsProblemsReporter : CompilerDiagnosticsProblemsReporter {
@@ -29,8 +30,9 @@ class ProblemsApiCompilerMessageRendererTest {
             severity: Severity,
             message: String,
             location: SourceLocation?,
+            taskPaths: Collection<String>,
         ) {
-            calls.add(RecordedCall(severity, message, location))
+            calls.add(RecordedCall(severity, message, location, taskPaths.single()))
         }
     }
 
@@ -105,13 +107,14 @@ class ProblemsApiCompilerMessageRendererTest {
 
         val location = SourceLocation("/tmp/src/Main.kt", 10, 5, -1, -1, null)
         renderer.render(Severity.ERROR, "Unresolved reference", location)
-        renderer.replayTo(reporter)
+        renderer.replayTo(reporter, ":compileKotlin")
 
         assertEquals(1, reporter.calls.size)
         val call = reporter.calls.first()
         assertEquals(Severity.ERROR, call.severity)
         assertEquals("Unresolved reference", call.message)
         assertEquals(location, call.location)
+        assertEquals(":compileKotlin", call.taskPath)
     }
 
     @Test
@@ -123,12 +126,13 @@ class ProblemsApiCompilerMessageRendererTest {
         severities.forEach { severity ->
             renderer.render(severity, "message for $severity", null)
         }
-        renderer.replayTo(reporter)
+        renderer.replayTo(reporter, ":compileKotlin")
 
         assertEquals(severities.size, reporter.calls.size)
         severities.forEachIndexed { index, severity ->
             assertEquals(severity, reporter.calls[index].severity)
             assertEquals("message for $severity", reporter.calls[index].message)
+            assertEquals(":compileKotlin", reporter.calls[index].taskPath)
         }
     }
 
@@ -138,8 +142,8 @@ class ProblemsApiCompilerMessageRendererTest {
         val renderer = ProblemsApiCompilerMessageRenderer()
 
         renderer.render(Severity.ERROR, "first", null)
-        renderer.replayTo(reporter)
-        renderer.replayTo(reporter)
+        renderer.replayTo(reporter, ":compileKotlin")
+        renderer.replayTo(reporter, ":compileKotlin")
 
         assertEquals(1, reporter.calls.size)
         assertEquals("first", reporter.calls.single().message)
