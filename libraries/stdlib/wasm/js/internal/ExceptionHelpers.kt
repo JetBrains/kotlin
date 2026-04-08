@@ -18,6 +18,7 @@ internal fun throwValue(t: Throwable): Nothing {
 }
 
 @Suppress("unused")
+@UsedFromCompilerGeneratedCode
 internal fun getJsError(t: Throwable): JsAny? =
     if (t is JsException) t.thrownValue else t.jsError
 

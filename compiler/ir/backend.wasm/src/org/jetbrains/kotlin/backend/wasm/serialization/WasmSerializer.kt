@@ -150,12 +150,18 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeList(funcType.resultTypes, ::serializeWasmType)
         }
 
+    private fun serializeWasmContType(funcType: WasmContType) =
+        serializeNamedModuleField(funcType) {
+            serializeInt(funcType.arity)
+            serializeIdSignature((funcType.funType as FunctionHeapTypeSymbol).type)
+        }
+
     private fun serializeWasmTypeDeclaration(typeDecl: WasmTypeDeclaration): Unit =
         when (typeDecl) {
             is WasmFunctionType -> withTag(TypeDeclarationTags.FUNCTION) { serializeWasmFunctionType(typeDecl) }
             is WasmStructDeclaration -> withTag(TypeDeclarationTags.STRUCT) { serializeWasmStructDeclaration(typeDecl) }
             is WasmArrayDeclaration -> withTag(TypeDeclarationTags.ARRAY) { serializeWasmArrayDeclaration(typeDecl) }
-            is WasmContType -> withTag(TypeDeclarationTags.CONT) { TODO() }
+            is WasmContType -> withTag(TypeDeclarationTags.CONT) { serializeWasmContType(typeDecl) }
         }
 
     private fun serializeWasmStructDeclaration(structDecl: WasmStructDeclaration) {
@@ -319,9 +325,19 @@ class WasmSerializer(outputStream: OutputStream) {
             is WasmImmediate.TableIdx -> withTag(ImmediateTags.TABLE_INDEX) { serializeWasmSymbolReadOnly(i.value) { serializeInt(it) } }
             is WasmImmediate.TagIdx -> withTag(ImmediateTags.TAG_INDEX) { serializeWasmSymbolReadOnly(i.value) { serializeInt(it) } }
             is WasmImmediate.ValTypeVector -> withTag(ImmediateTags.VALUE_TYPE_VECTOR) { serializeList(i.value, ::serializeWasmType) }
-            is WasmImmediate.ContHandle -> withTag(ImmediateTags.CONT_HANDLE) { TODO() }
+            is WasmImmediate.ContHandle -> withTag(ImmediateTags.CONT_HANDLE) { serializeWasmContHandle(i) }
             else -> error("Unknown WasmImmediate type: ${i::class.simpleName}")
         }
+
+    private fun serializeWasmContHandle(contHandle: WasmImmediate.ContHandle) {
+        val type = when (contHandle.type) {
+            WasmImmediate.ContHandle.ContHandleType.ON -> ImmediateContTags.ON
+            WasmImmediate.ContHandle.ContHandleType.ON_SWITCH -> ImmediateContTags.ON_SWITCH
+        }
+        withTag(type) {
+            serializeList(contHandle.immediates, ::serializeWasmImmediate)
+        }
+    }
 
     private fun serializeCatchImmediate(catch: WasmImmediate.Catch) {
         val type = when (catch.type) {
