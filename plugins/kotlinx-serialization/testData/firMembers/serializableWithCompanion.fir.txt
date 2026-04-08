@@ -53,6 +53,8 @@ FILE: serializableWithCompanion.kt
 
             public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
+            public final override fun typeParametersSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+
             private constructor(): R|com/example/WithCompanion.$serializer| {
                 super<R|kotlin/Any|>()
             }
@@ -94,6 +96,8 @@ FILE: serializableWithCompanion.kt
                 public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
             public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+
+            public final override fun typeParametersSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
             private constructor(): R|com/example/WithNamedCompanion.$serializer| {
                 super<R|kotlin/Any|>()

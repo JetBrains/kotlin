@@ -213,6 +213,14 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
     }
 
     public kotlinx.serialization.KSerializer[] typeParametersSerializers()
+    {
+        LABEL (L0)
+        LINENUMBER (12)
+          ICONST_0
+          ANEWARRAY (kotlinx/serialization/KSerializer)
+          ARETURN
+        LABEL (L1)
+    }
 }
 
 public final class ListOfUsers$Companion : java/lang/Object {
@@ -535,6 +543,14 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
     }
 
     public kotlinx.serialization.KSerializer[] typeParametersSerializers()
+    {
+        LABEL (L0)
+        LINENUMBER (9)
+          ICONST_0
+          ANEWARRAY (kotlinx/serialization/KSerializer)
+          ARETURN
+        LABEL (L1)
+    }
 }
 
 public final class OptionalUser$Companion : java/lang/Object {
@@ -933,6 +949,14 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
     }
 
     public kotlinx.serialization.KSerializer[] typeParametersSerializers()
+    {
+        LABEL (L0)
+        LINENUMBER (6)
+          ICONST_0
+          ANEWARRAY (kotlinx/serialization/KSerializer)
+          ARETURN
+        LABEL (L1)
+    }
 }
 
 public final class User$Companion : java/lang/Object {
