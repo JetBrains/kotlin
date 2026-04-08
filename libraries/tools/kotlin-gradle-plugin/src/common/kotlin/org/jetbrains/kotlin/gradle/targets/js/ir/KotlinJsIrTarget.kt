@@ -204,6 +204,7 @@ internal constructor(
             subTargetConfigurators.add(SwcConfigurator(this))
             subTargetConfigurators.add(LibraryConfigurator(this))
             subTargetConfigurators.add(WebpackConfigurator(this))
+            subTargetConfigurators.add(DevServerConfigurator(this))
         }
     }
 
