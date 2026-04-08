@@ -148,19 +148,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val SEPARATE_SIGNATURE_DUMP_FOR_K2 by directive(
-        description = """
-            Usually the signature dump must not differ between K1 and K2.
-            There are rare cases, however, when there is legitimate difference (for example, if the set of fake overrides is different).
-            Please always document the usage of this directive and carefully verify that the difference between K1 and K2 does
-            not affect IR linkage.
-            """.trimIndent()
-    )
-
-    val MUTE_SIGNATURE_COMPARISON_K2 by enumDirective<TargetBackend>(
-        description = "Ignores failures of signature dump comparison for tests with the $DUMP_SIGNATURES directive if the test uses the K2 frontend and the specified backend."
-    )
-
     // Besides a list of phases, also supports values `ALL_BEFORE`, `ALL_AFTER` and `ALL` for dumping
     // before all lowerings, after all lowerings and both before and after all lowerings, correspondingly.
     val DUMP_IR_FOR_GIVEN_PHASES by stringDirective(

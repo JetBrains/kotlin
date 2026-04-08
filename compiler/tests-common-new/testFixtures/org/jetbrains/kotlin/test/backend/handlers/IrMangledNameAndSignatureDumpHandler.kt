@@ -23,18 +23,11 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SIGNATURES
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.MUTE_SIGNATURE_COMPARISON_K2
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SEPARATE_SIGNATURE_DUMP_FOR_K2
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTICAL
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES_K1
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.BackendKind
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
@@ -43,7 +36,6 @@ import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.same
-import org.opentest4j.AssertionFailedError
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -59,13 +51,6 @@ private const val CHECK_MARKER = "// CHECK"
  * an expected output in a `*.sig.kt.txt` file located next to the test file.
  *
  * Can be enabled by specifying the [DUMP_SIGNATURES] directive.
- *
- * Other useful directives:
- * - [MUTE_SIGNATURE_COMPARISON_K2] can be used for muting the comparison result on the K2 frontend. The comparison will
- *   still be performed, and if it succeeds, the test will fail with a message reminding you to unmute it.
- * - [SEPARATE_SIGNATURE_DUMP_FOR_K2] acts like the inverse of [FIR_IDENTICAL], but it only affects signature dumps. Usually, signature
- *   dumps generated from K1 and K2 must be identical, but sometimes there are reasons to use separate dumps — in that case specify this
- *   directive.
  *
  * Since mangled names and signatures may be different depending on the backend, in order to reduce the number
  * of expectation files, this handler uses `// CHECK` blocks to compare the dump with an expectation in a smarter way than
@@ -108,36 +93,6 @@ class IrMangledNameAndSignatureDumpHandler(
 
     companion object {
         const val DUMP_EXTENSION = "sig.kt.txt"
-
-        private fun separateSignatureDirectiveNotPresent(testServices: TestServices): Boolean {
-            return SEPARATE_SIGNATURE_DUMP_FOR_K2 !in testServices.moduleStructure.allDirectives
-        }
-    }
-
-    override val additionalAfterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>
-        get() = listOf(::IdenticalChecker)
-
-    class IdenticalChecker(testServices: TestServices) : SimpleFirIrIdenticalChecker(testServices, trimLines = true) {
-        override val dumpExtension: String
-            get() = DUMP_EXTENSION
-
-        override fun markedAsIdentical(): Boolean {
-            return separateSignatureDirectiveNotPresent(testServices)
-        }
-
-        override fun processClassicFileIfContentIsIdentical(testDataFile: File) {
-            simpleChecker.removeDirectiveFromClassicFileAndAssert(testDataFile, SEPARATE_SIGNATURE_DUMP_FOR_K2)
-        }
-    }
-
-    private fun computeDumpExtension(): String {
-        return if (
-            separateSignatureDirectiveNotPresent(testServices)
-        ) {
-            DUMP_EXTENSION
-        } else {
-            "fir.$DUMP_EXTENSION"
-        }
     }
 
     private val dumper = MultiModuleInfoDumper("// MODULE: %s")
@@ -146,7 +101,7 @@ class IrMangledNameAndSignatureDumpHandler(
      * The file that stores the expected signatures of the test file.
      */
     private val expectedFile: File by lazy {
-        testServices.moduleStructure.originalTestDataFiles.first().withExtension(computeDumpExtension())
+        testServices.moduleStructure.originalTestDataFiles.first().withExtension(DUMP_EXTENSION)
     }
 
     /**
@@ -157,7 +112,7 @@ class IrMangledNameAndSignatureDumpHandler(
     private val checkBlockGroupIterator: Iterator<CheckBlockGroup> by lazy {
         try {
             parseAllCheckBlocks(expectedFile.readText())
-        } catch (e: FileNotFoundException) {
+        } catch (_: FileNotFoundException) {
             emptyList()
         }.iterator()
     }
@@ -193,13 +148,7 @@ class IrMangledNameAndSignatureDumpHandler(
             assertions.assertFileDoesntExist(expectedFile, DUMP_SIGNATURES)
             return
         }
-        val frontendKind = testServices.defaultsProvider.frontendKind
-        val muteDirectives = listOfNotNull(
-            MUTE_SIGNATURE_COMPARISON_K2.takeIf { frontendKind == FrontendKinds.FIR },
-        )
-        testServices.codegenSuppressionChecker.checkMuted<AssertionFailedError>(muteDirectives) {
-            assertions.assertEqualsToFile(expectedFile, dumper.generateResultingDump())
-        }
+        assertions.assertEqualsToFile(expectedFile, dumper.generateResultingDump())
     }
 
     private inner class DumpStrategy(
