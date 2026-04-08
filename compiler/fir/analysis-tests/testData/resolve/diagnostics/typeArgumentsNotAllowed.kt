@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier
 package rest
 
 abstract class Foo<T> {

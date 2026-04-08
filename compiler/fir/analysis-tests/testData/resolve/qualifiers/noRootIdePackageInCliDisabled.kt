@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -ForbidRootIdePackageInCli
+// LANGUAGE: -ForbidRootIdePackageInCli, +ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier
 // ISSUE: KT-81357
 
 // FILE: test.kt

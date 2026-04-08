@@ -507,7 +507,6 @@ enum class LanguageFeature(
     NativeTestProcessorBeforeSerialization(KOTLIN_2_4, "KT-83807"),
     JsAllowExportingValueClasses(sinceVersion = KOTLIN_2_4, "KT-72198"),
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = KOTLIN_2_4, "KT-64358"),
-    ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier(sinceVersion = KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-396"),
 
     // 2.5
 
@@ -520,6 +519,7 @@ enum class LanguageFeature(
     ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds(KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-358"),
     ForbidUselessTypeArgumentsIn25(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-390"),
     WrapContinuationForTailCallFunctions(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, "KT-74051"),
+    ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-396"),
     EagerLambdaAnalysis(sinceVersion = KOTLIN_2_5, "KT-51107"), // Do not hesitate to move it to KOTLIN_2_6 once it's introduced
 
     // End of 2.* language features --------------------------------------------------

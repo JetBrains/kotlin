@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier
 
 package p1.p2.p3
 

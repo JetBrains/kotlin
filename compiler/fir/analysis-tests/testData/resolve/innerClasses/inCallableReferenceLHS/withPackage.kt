@@ -17,10 +17,10 @@ fun testWithPackage() {
     org.example.foo.PackageTest<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING!><String, Int><!>.A::foo
     org.example.foo.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING!>PackageTest<!>.A<String, Int>::foo
 
-    org.example.<!UNRESOLVED_REFERENCE!>foo<!><Int>.PackageTest::class
-    org.example.<!UNRESOLVED_REFERENCE!>foo<!><Int, String>.PackageTest.A::class
+    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>org.example.foo<Int>.PackageTest<!>::class
+    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>org.example.foo<Int, String>.PackageTest<!>.A::class
 
-    org.<!UNRESOLVED_REFERENCE!>example<!><Int, String>.foo.PackageTest.A::class
+    org.example<Int, String>.foo.PackageTest.A::class
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, classReference, functionDeclaration, inner, nullableType,
