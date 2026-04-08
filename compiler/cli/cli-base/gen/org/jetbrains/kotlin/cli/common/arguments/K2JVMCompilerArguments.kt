@@ -178,6 +178,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         value = "-Xfriend-paths",
         valueDescription = "<path>",
         description = "Paths to output directories for friend modules (modules whose internals should be visible).",
+        delimiter = Argument.Delimiters.default,
     )
     var friendPaths: Array<String> = emptyArray()
         set(value) {
@@ -240,6 +241,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         value = "-Xjava-source-roots",
         valueDescription = "<path>",
         description = "Paths to directories with Java source files.",
+        delimiter = Argument.Delimiters.default,
     )
     var javaSourceRoots: Array<String> = emptyArray()
         set(value) {

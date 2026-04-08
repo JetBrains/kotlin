@@ -677,7 +677,7 @@ internal class KotlinWrapperPre2_4_0(
                     -> {
                     @Suppress("UNCHECKED_CAST")
                     val listValue = value as List<Path>
-                    val arrayValue = listValue.map { it.toFile().absolutePath }.toTypedArray()
+                    val arrayValue = listValue.map { it.toFile().absolutePath }.also { it.checkNoneContains(",") }.toTypedArray()
                     val arrayKey = JvmCompilerArguments.JvmCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
 
                     delegate[arrayKey] = arrayValue

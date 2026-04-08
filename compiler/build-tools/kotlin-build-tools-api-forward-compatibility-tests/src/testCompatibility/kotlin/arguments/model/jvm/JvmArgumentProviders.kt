@@ -245,6 +245,7 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
                 testBaseDir.resolve("path/to/java/src3").toFile().absolutePath,
             )
         ),
+        invalidArgumentValues = listOf(arrayOf(testBaseDir.resolve("path/with,comma").toFile().absolutePath)),
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-Xjava-source-roots=$value") },
     ),
