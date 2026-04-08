@@ -34,6 +34,7 @@ abstract class FirFunctionCall : FirQualifiedAccessExpression(), FirCall {
     abstract override val source: KtSourceElement?
     abstract override val nonFatalDiagnostics: List<ConeDiagnostic>
     abstract override val domainStatus: DomainStatus?
+    abstract override val domainReferences: DomainReferences?
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirNamedReference
     abstract val origin: FirFunctionCallOrigin
@@ -65,6 +66,8 @@ abstract class FirFunctionCall : FirQualifiedAccessExpression(), FirCall {
     abstract override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>)
 
     abstract override fun replaceDomainStatus(newDomainStatus: DomainStatus?)
+
+    abstract override fun replaceDomainReferences(newDomainReferences: DomainReferences?)
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 

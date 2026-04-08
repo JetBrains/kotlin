@@ -561,6 +561,17 @@ with bodies.""",
         }
 
     @Argument(
+        value = "-Ximproved-alias-tracking",
+        description = "Enable experimental improved alias tracking.",
+    )
+    @Enables(LanguageFeature.ImprovedAliasTracking)
+    var improvedAliasTracking: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xinline-classes",
         description = "Enable experimental inline classes.",
     )

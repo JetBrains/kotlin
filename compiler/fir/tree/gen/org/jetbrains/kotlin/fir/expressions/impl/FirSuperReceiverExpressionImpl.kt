@@ -34,6 +34,7 @@ internal class FirSuperReceiverExpressionImpl(
     override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var domainStatus: DomainStatus?,
+    override var domainReferences: DomainReferences?,
     override var calleeReference: FirSuperReference,
 ) : FirSuperReceiverExpression() {
     override val contextArguments: List<FirExpression>
@@ -114,6 +115,10 @@ internal class FirSuperReceiverExpressionImpl(
 
     override fun replaceDomainStatus(newDomainStatus: DomainStatus?) {
         domainStatus = newDomainStatus
+    }
+
+    override fun replaceDomainReferences(newDomainReferences: DomainReferences?) {
+        domainReferences = newDomainReferences
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirSuperReference) {

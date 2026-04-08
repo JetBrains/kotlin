@@ -37,6 +37,7 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
     override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var domainStatus: DomainStatus?,
+    override var domainReferences: DomainReferences?,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
     override val origin: FirFunctionCallOrigin,
@@ -137,6 +138,10 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
 
     override fun replaceDomainStatus(newDomainStatus: DomainStatus?) {
         domainStatus = newDomainStatus
+    }
+
+    override fun replaceDomainReferences(newDomainReferences: DomainReferences?) {
+        domainReferences = newDomainReferences
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

@@ -35,6 +35,7 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
     override var source: KtSourceElement? = null
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
     override var domainStatus: DomainStatus? = null
+    override var domainReferences: DomainReferences? = null
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     override lateinit var calleeReference: FirNamedReference
     override var origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular
@@ -52,6 +53,7 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
             source,
             nonFatalDiagnostics.toMutableOrEmpty(),
             domainStatus,
+            domainReferences,
             argumentList,
             calleeReference,
             origin,
@@ -84,6 +86,7 @@ inline fun buildFunctionCallCopy(original: FirFunctionCall, init: FirFunctionCal
     copyBuilder.source = original.source
     copyBuilder.nonFatalDiagnostics.addAll(original.nonFatalDiagnostics)
     copyBuilder.domainStatus = original.domainStatus
+    copyBuilder.domainReferences = original.domainReferences
     copyBuilder.argumentList = original.argumentList
     copyBuilder.calleeReference = original.calleeReference
     copyBuilder.origin = original.origin

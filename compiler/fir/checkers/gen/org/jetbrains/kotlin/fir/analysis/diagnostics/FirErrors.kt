@@ -902,6 +902,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val RETURN_VALUE_NOT_USED: KtDiagnosticFactory1<Name?> = KtDiagnosticFactory1("RETURN_VALUE_NOT_USED", WARNING, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, KtElement::class, getRendererFactory())
     val RETURN_VALUE_NOT_USED_COERCION: KtDiagnosticFactory1<Name?> = KtDiagnosticFactory1("RETURN_VALUE_NOT_USED_COERCION", WARNING, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, KtElement::class, getRendererFactory())
     val INVALIDATED_REFERENCE: KtDiagnosticFactory1<DomainStatus> = KtDiagnosticFactory1("INVALIDATED_REFERENCE", WARNING, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
+    val MULTIPLE_REFERENCES: KtDiagnosticFactory1<List<String>> = KtDiagnosticFactory1("MULTIPLE_REFERENCES", WARNING, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
 
     // Nullability
     val NULL_FOR_NONNULL_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NULL_FOR_NONNULL_TYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())

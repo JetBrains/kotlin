@@ -29,6 +29,7 @@ class FirWhenSubjectExpressionBuilder : FirQualifiedAccessExpressionBuilder, Fir
     override var source: KtSourceElement? = null
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
     override var domainStatus: DomainStatus? = null
+    override var domainReferences: DomainReferences? = null
     var contextSensitiveAlternative: FirPropertyAccessExpression? = null
     lateinit var calleeReference: FirNamedReference
 
@@ -39,6 +40,7 @@ class FirWhenSubjectExpressionBuilder : FirQualifiedAccessExpressionBuilder, Fir
             source,
             nonFatalDiagnostics.toMutableOrEmpty(),
             domainStatus,
+            domainReferences,
             contextSensitiveAlternative,
             calleeReference,
         )

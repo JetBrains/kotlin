@@ -33,6 +33,7 @@ internal class FirThisReceiverExpressionImpl(
     override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var domainStatus: DomainStatus?,
+    override var domainReferences: DomainReferences?,
     override var calleeReference: FirThisReference,
     override val isImplicit: Boolean,
 ) : FirThisReceiverExpression() {
@@ -112,6 +113,10 @@ internal class FirThisReceiverExpressionImpl(
 
     override fun replaceDomainStatus(newDomainStatus: DomainStatus?) {
         domainStatus = newDomainStatus
+    }
+
+    override fun replaceDomainReferences(newDomainReferences: DomainReferences?) {
+        domainReferences = newDomainReferences
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirThisReference) {

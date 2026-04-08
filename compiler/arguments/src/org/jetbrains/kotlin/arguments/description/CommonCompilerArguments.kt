@@ -1255,6 +1255,18 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
     }
 
     compilerArgument {
+        name = "Ximproved-alias-tracking"
+        description = "Enable experimental improved alias tracking.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.ImprovedAliasTracking))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    }
+
+    compilerArgument {
         name = "XXLanguage"
         description = """Enables/disables specified language feature.
 Warning: this flag is not intended for production use. If you want to configure the language behaviour use the

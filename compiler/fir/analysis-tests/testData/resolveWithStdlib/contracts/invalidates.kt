@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_DUMP
 // RENDER_DIAGNOSTIC_ARGUMENTS
+// LANGUAGE: +ImprovedAliasTracking
 
 import kotlin.contracts.*
 
@@ -21,14 +22,22 @@ fun test1() {
     val t = x.uses { it.n }
     val g = <!INVALIDATED_REFERENCE("INVALIDATED")!>x<!>.n
     val h = <!INVALIDATED_REFERENCE("INVALIDATED")!>x<!>
-    <!INVALIDATED_REFERENCE("INVALIDATED")!>x<!>.foo()
+    <!INVALIDATED_REFERENCE("INVALIDATED"), MULTIPLE_REFERENCES("[x, h]")!>x<!>.foo()
 }
 
 fun test2() {
     val x = A(1)
     val y = x
-    val t = x.uses { it.n }
-    <!INVALIDATED_REFERENCE("INVALIDATED")!>y<!>.foo()
+    val t = <!MULTIPLE_REFERENCES("[x, y]")!>x<!>.uses { it.n }
+    <!INVALIDATED_REFERENCE("INVALIDATED"), MULTIPLE_REFERENCES("[x, y]")!>y<!>.foo()
+}
+
+data class B(var n: Int)
+
+fun test3() {
+    val x = B(1)
+    val y = x
+    <!MULTIPLE_REFERENCES("[x, y]")!>y<!>.n = 2
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, contracts, funWithExtensionReceiver, functionDeclaration,

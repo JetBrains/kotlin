@@ -33,6 +33,7 @@ internal class FirWhenSubjectExpressionImpl(
     override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var domainStatus: DomainStatus?,
+    override var domainReferences: DomainReferences?,
     @property:FirIdeOnly
     override var contextSensitiveAlternative: FirPropertyAccessExpression?,
     override var calleeReference: FirNamedReference,
@@ -110,6 +111,10 @@ internal class FirWhenSubjectExpressionImpl(
 
     override fun replaceDomainStatus(newDomainStatus: DomainStatus?) {
         domainStatus = newDomainStatus
+    }
+
+    override fun replaceDomainReferences(newDomainReferences: DomainReferences?) {
+        domainReferences = newDomainReferences
     }
 
     override fun replaceContextSensitiveAlternative(newContextSensitiveAlternative: FirPropertyAccessExpression?) {

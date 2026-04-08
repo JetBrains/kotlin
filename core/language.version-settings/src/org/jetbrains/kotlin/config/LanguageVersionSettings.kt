@@ -619,6 +619,7 @@ enum class LanguageFeature(
     JvmLoadAnnotationsOnAnnotationProperties(sinceVersion = null, "KT-22463"),
     TreatProvideDelegateAsConventionName(sinceVersion = null, "KT-83538"),
     ExportKDocDocumentationToKlib(sinceVersion = null, "KT-83921"),
+    ImprovedAliasTracking(sinceVersion = null, issue = NO_ISSUE_SPECIFIED),
     ;
 
     constructor(

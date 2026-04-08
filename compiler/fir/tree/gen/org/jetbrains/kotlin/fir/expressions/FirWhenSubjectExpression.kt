@@ -35,6 +35,7 @@ abstract class FirWhenSubjectExpression : FirPropertyAccessExpression() {
     abstract override val source: KtSourceElement?
     abstract override val nonFatalDiagnostics: List<ConeDiagnostic>
     abstract override val domainStatus: DomainStatus?
+    abstract override val domainReferences: DomainReferences?
     /**
      * For resolved qualifier, it contains either null or a simple name property access which would be used for checking
      * if context-sensitive resolution might be used instead of the owner qualifier. 
@@ -77,6 +78,8 @@ abstract class FirWhenSubjectExpression : FirPropertyAccessExpression() {
     abstract override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>)
 
     abstract override fun replaceDomainStatus(newDomainStatus: DomainStatus?)
+
+    abstract override fun replaceDomainReferences(newDomainReferences: DomainReferences?)
 
     abstract override fun replaceContextSensitiveAlternative(newContextSensitiveAlternative: FirPropertyAccessExpression?)
 

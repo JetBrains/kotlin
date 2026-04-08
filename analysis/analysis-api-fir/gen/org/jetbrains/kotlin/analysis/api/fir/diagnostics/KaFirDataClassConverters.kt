@@ -8402,6 +8402,15 @@ private fun KaDiagnosticConverterBuilder.addConversions192() {
             token,
         )
     }
+    add(FirErrors.MULTIPLE_REFERENCES) { firDiagnostic ->
+        MultipleReferencesImpl(
+            firDiagnostic.a.map { string ->
+                string
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED) { firDiagnostic ->
         InlineSuspendFunctionTypeUnsupportedImpl(
             firDiagnostic as KtPsiDiagnostic,

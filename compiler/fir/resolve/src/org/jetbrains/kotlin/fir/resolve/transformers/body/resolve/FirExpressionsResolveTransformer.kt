@@ -235,7 +235,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
 
         if (result is FirQualifiedAccessExpression) {
-            result.replaceDomainStatus(dataFlowAnalyzer.getDomainStatus(result))
+            dataFlowAnalyzer.getDomainInformation(result)?.let { (status, references) ->
+                result.replaceDomainStatus(status)
+                result.replaceDomainReferences(references.map { (variable, stability) ->
+                    variable.toString() to stability
+                })
+            }
         }
 
         return result.addSmartcastIfNeeded(data)

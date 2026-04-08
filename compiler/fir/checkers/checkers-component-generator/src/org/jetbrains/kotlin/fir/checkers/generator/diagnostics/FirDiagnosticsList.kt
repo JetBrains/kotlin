@@ -1854,6 +1854,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INVALIDATED_REFERENCE by warning<KtExpression> {
             parameter<DomainStatus>("status")
         }
+        val MULTIPLE_REFERENCES by warning<KtExpression> {
+            parameter<List<String>>("references")
+        }
     }
 
     val NULLABILITY by object : DiagnosticGroup("Nullability") {

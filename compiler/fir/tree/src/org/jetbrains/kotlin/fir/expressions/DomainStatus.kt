@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.types.SmartcastStability
+
 enum class DomainStatus {
     OK,
     UNINITIALIZED,
@@ -18,3 +20,5 @@ enum class DomainStatus {
         else -> INVALIDATED
     }
 }
+
+typealias DomainReferences = List<Pair<String, SmartcastStability>>

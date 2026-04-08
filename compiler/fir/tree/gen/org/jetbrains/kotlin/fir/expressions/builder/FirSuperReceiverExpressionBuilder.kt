@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.DomainStatus
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirSuperReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSuperReceiverExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -34,6 +31,7 @@ class FirSuperReceiverExpressionBuilder : FirQualifiedAccessExpressionBuilder, F
     override var source: KtSourceElement? = null
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
     override var domainStatus: DomainStatus? = null
+    override var domainReferences: DomainReferences? = null
     lateinit var calleeReference: FirSuperReference
 
     override fun build(): FirSuperReceiverExpression {
@@ -45,6 +43,7 @@ class FirSuperReceiverExpressionBuilder : FirQualifiedAccessExpressionBuilder, F
             source,
             nonFatalDiagnostics.toMutableOrEmpty(),
             domainStatus,
+            domainReferences,
             calleeReference,
         )
     }

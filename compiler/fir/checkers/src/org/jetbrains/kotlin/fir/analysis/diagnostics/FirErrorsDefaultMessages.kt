@@ -556,6 +556,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_DEFAULTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE_DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_LABELS_ARE_FORBIDDEN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_REFERENCES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_OVERLOADS_OF_OPERATOR_OF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER
@@ -2879,6 +2880,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(INVALIDATED_REFERENCE, "May point to value that has been {0}.", TO_STRING)
+        map.put(MULTIPLE_REFERENCES, "Multiple references pointing to this value: {0}.", TO_STRING)
 
         map.put(MUST_BE_INITIALIZED, "Property must be initialized.")
         map.put(

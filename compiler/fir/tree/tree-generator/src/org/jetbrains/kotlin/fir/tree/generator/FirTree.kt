@@ -344,6 +344,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("source", sourceElementType, nullable = true, withReplace = true)
         +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true, withReplace = true)
         +field("domainStatus", domainStatusType, nullable = true, withReplace = true)
+        +field("domainReferences", domainReferencesType, nullable = true, withReplace = true)
     }
 
     val qualifiedErrorAccessExpression: Element by element(Expression) {

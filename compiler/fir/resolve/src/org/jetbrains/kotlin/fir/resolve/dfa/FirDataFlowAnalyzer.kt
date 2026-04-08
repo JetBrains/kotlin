@@ -268,10 +268,10 @@ abstract class FirDataFlowAnalyzer(
         return buildSmartCastStatement(flow, variable, typeStatement)
     }
 
-    fun getDomainStatus(expression: FirExpression): DomainStatus? {
+    fun getDomainInformation(expression: FirExpression): Pair<DomainStatus, Map<RealVariable, SmartcastStability>>? {
         val flow = currentSmartCastPosition ?: return null
         val variable = flow.getVariableWithoutUnwrappingAlias(expression, createReal = false) ?: return null
-        return logicSystem.getDomainStatus(flow, variable)
+        return logicSystem.getDomainStatus(flow, variable) to logicSystem.getDomainReferences(flow, variable)
     }
 
     open fun extractTypeStatementFrom(flow: Flow, variable: DataFlowVariable): TypeStatement? = flow.getTypeStatement(variable)

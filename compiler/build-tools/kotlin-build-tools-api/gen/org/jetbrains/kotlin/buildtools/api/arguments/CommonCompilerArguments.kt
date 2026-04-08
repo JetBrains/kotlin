@@ -398,6 +398,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_IGNORE_CONST_OPTIMIZATION_ERRORS", KotlinReleaseVersion(1, 9, 0))
 
     /**
+     * Enable experimental improved alias tracking.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_IMPROVED_ALIAS_TRACKING: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_IMPROVED_ALIAS_TRACKING", KotlinReleaseVersion(2, 4, 0))
+
+    /**
      * Enable experimental inline classes.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

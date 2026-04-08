@@ -36,6 +36,7 @@ class FirPropertyAccessExpressionBuilder : FirQualifiedAccessExpressionBuilder, 
     override var source: KtSourceElement? = null
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
     override var domainStatus: DomainStatus? = null
+    override var domainReferences: DomainReferences? = null
     var contextSensitiveAlternative: FirPropertyAccessExpression? = null
     lateinit var calleeReference: FirNamedReference
 
@@ -52,6 +53,7 @@ class FirPropertyAccessExpressionBuilder : FirQualifiedAccessExpressionBuilder, 
             source,
             nonFatalDiagnostics.toMutableOrEmpty(),
             domainStatus,
+            domainReferences,
             contextSensitiveAlternative,
             calleeReference,
         )
@@ -83,6 +85,7 @@ inline fun buildPropertyAccessExpressionCopy(original: FirPropertyAccessExpressi
     copyBuilder.source = original.source
     copyBuilder.nonFatalDiagnostics.addAll(original.nonFatalDiagnostics)
     copyBuilder.domainStatus = original.domainStatus
+    copyBuilder.domainReferences = original.domainReferences
     copyBuilder.contextSensitiveAlternative = original.contextSensitiveAlternative
     copyBuilder.calleeReference = original.calleeReference
     return copyBuilder.apply(init).build()

@@ -38,6 +38,7 @@ internal class FirComponentCallImpl(
     override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var domainStatus: DomainStatus?,
+    override var domainReferences: DomainReferences?,
     override var argumentList: FirArgumentList,
     override var explicitReceiver: FirExpression,
     override val componentIndex: Int,
@@ -136,6 +137,10 @@ internal class FirComponentCallImpl(
 
     override fun replaceDomainStatus(newDomainStatus: DomainStatus?) {
         domainStatus = newDomainStatus
+    }
+
+    override fun replaceDomainReferences(newDomainReferences: DomainReferences?) {
+        domainReferences = newDomainReferences
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

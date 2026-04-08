@@ -48,3 +48,22 @@ FILE: invalidates.kt
         )
         R|<local>/y|.R|/foo|()
     }
+    public final data class B : R|kotlin/Any| {
+        public constructor(n: R|kotlin/Int|): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var n: R|kotlin/Int| = R|<local>/n|
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(n: R|kotlin/Int| = this@R|/B|.R|/B.n|): R|B|
+
+    }
+    public final fun test3(): R|kotlin/Unit| {
+        lval x: R|B| = R|/B.B|(Int(1))
+        lval y: R|B| = R|<local>/x|
+        R|<local>/y|.R|/B.n| = Int(2)
+    }

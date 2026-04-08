@@ -34,6 +34,7 @@ abstract class FirSuperReceiverExpression : FirQualifiedAccessExpression() {
     abstract override val source: KtSourceElement?
     abstract override val nonFatalDiagnostics: List<ConeDiagnostic>
     abstract override val domainStatus: DomainStatus?
+    abstract override val domainReferences: DomainReferences?
     abstract override val calleeReference: FirSuperReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
@@ -63,6 +64,8 @@ abstract class FirSuperReceiverExpression : FirQualifiedAccessExpression() {
     abstract override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>)
 
     abstract override fun replaceDomainStatus(newDomainStatus: DomainStatus?)
+
+    abstract override fun replaceDomainReferences(newDomainReferences: DomainReferences?)
 
     abstract fun replaceCalleeReference(newCalleeReference: FirSuperReference)
 

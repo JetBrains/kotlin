@@ -127,6 +127,7 @@ val dfaType = generatedType("", "DfaType")
 
 val exhaustivenessStatusType = generatedType("expressions", "ExhaustivenessStatus")
 val domainStatusType = generatedType("expressions", "DomainStatus")
+val domainReferencesType = generatedType("expressions", "DomainReferences")
 
 val callableReferenceMappedArgumentsType = type("fir.resolve.calls", "CallableReferenceMappedArguments")
 

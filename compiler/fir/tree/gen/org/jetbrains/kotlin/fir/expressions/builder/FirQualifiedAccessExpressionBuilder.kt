@@ -13,10 +13,7 @@ package org.jetbrains.kotlin.fir.expressions.builder
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.DomainStatus
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 
@@ -32,5 +29,6 @@ interface FirQualifiedAccessExpressionBuilder {
     abstract var source: KtSourceElement?
     abstract val nonFatalDiagnostics: MutableList<ConeDiagnostic>
     abstract var domainStatus: DomainStatus?
+    abstract var domainReferences: DomainReferences?
     fun build(): FirQualifiedAccessExpression
 }

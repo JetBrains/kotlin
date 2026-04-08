@@ -30,6 +30,7 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessExpressionBuilder, Fi
     override var source: KtSourceElement? = null
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
     override var domainStatus: DomainStatus? = null
+    override var domainReferences: DomainReferences? = null
     lateinit var calleeReference: FirThisReference
     var isImplicit: Boolean = false
 
@@ -41,6 +42,7 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessExpressionBuilder, Fi
             source,
             nonFatalDiagnostics.toMutableOrEmpty(),
             domainStatus,
+            domainReferences,
             calleeReference,
             isImplicit,
         )
@@ -92,6 +94,7 @@ inline fun buildThisReceiverExpressionCopy(original: FirThisReceiverExpression, 
     copyBuilder.source = original.source
     copyBuilder.nonFatalDiagnostics.addAll(original.nonFatalDiagnostics)
     copyBuilder.domainStatus = original.domainStatus
+    copyBuilder.domainReferences = original.domainReferences
     copyBuilder.calleeReference = original.calleeReference
     copyBuilder.isImplicit = original.isImplicit
     return copyBuilder.apply(init).build()

@@ -32,6 +32,7 @@ class FirComponentCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, F
     override var source: KtSourceElement? = null
     val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
     var domainStatus: DomainStatus? = null
+    var domainReferences: DomainReferences? = null
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     lateinit var explicitReceiver: FirExpression
     var componentIndex: Int by kotlin.properties.Delegates.notNull<Int>()
@@ -47,6 +48,7 @@ class FirComponentCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, F
             source,
             nonFatalDiagnostics.toMutableOrEmpty(),
             domainStatus,
+            domainReferences,
             argumentList,
             explicitReceiver,
             componentIndex,
