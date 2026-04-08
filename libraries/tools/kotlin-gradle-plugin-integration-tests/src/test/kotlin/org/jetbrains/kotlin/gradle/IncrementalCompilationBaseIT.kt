@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.project
+import org.jetbrains.kotlin.testFederation.AffectedByCompiler
 
+@AffectedByCompiler
 abstract class IncrementalCompilationBaseIT : KGPBaseTest() {
 
     protected abstract val defaultProjectName: String
