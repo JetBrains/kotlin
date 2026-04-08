@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.BaseKotlinCompile
+import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
+import org.jetbrains.kotlin.testFederation.isSmokeTest
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 plugins {
@@ -87,7 +89,8 @@ val COMPILER_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.compilerClasspath
 
 fun Test.ensureExecutedAgainstExpectedBuildToolsImplVersion(version: BuildToolsVersion) {
     if (version.isCurrent) return
-    val compilerClasspathProperty = COMPILER_CLASSPATH_PROPERTY // to make the task action configuration cache-friendly, we have to copy it to a local var
+    val compilerClasspathProperty =
+        COMPILER_CLASSPATH_PROPERTY // to make the task action configuration cache-friendly, we have to copy it to a local var
     // the check is required for the case when Gradle substitutes external dependencies with project ones
     doFirst {
         // we cannot check systemProperties because the classpath is configured in addClasspathProperty via jvmArgumentProviders
@@ -196,6 +199,9 @@ testing {
                 targets.all {
                     projectTests {
                         testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+                            @OptIn(TemporaryTestFederationApi::class)
+                            isSmokeTest = true
+
                             ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
                             extensions.configure<TestInputsCheckExtension> {
@@ -241,7 +247,7 @@ testing {
                     addClasspathProperty(unpackedResourcesResolvable, "kotlin.test.templates.classpath")
                     extensions.configure<TestInputsCheckExtension> {
                         with(extraPermissions) {
-                            add("permission java.net.SocketPermission \"localhost\", \"connect,resolve,accept\";",)
+                            add("permission java.net.SocketPermission \"localhost\", \"connect,resolve,accept\";")
                             add("permission java.util.PropertyPermission \"java.rmi.server.hostname\", \"write\";")
 
                             // paths below are not expected to exist,
