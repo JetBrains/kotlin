@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.testFederation
 
+internal const val TEST_FEDERATION_ENABLED_KEY = "test.federation.enabled"
+internal const val TEST_FEDERATION_ENABLED_ENV_KEY = "TEST_FEDERATION_ENABLED"
+internal const val TEST_FEDERATION_MODE_KEY = "test.federation.mode"
+internal const val TEST_FEDERATION_MODE_ENV_KEY = "TEST_FEDERATION_MODE"
+internal const val TEST_FEDERATION_AFFECTED_DOMAINS_KEY = "test.federation.affected.domains"
+internal const val TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY = "TEST_FEDERATION_AFFECTED_DOMAINS"
+
 /**
  * @return true: If the test federation is enabled (typically only on CI environments)
  * false: Locally: All tests will be executed.
