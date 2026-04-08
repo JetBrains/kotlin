@@ -31,7 +31,7 @@ val testFederationMode: TestFederationMode?
 /**
  * @return All affected [Domain]s. Only relevant if the [testFederationEnabled] returns true
  */
-val testFederationAffectedDomains: List<Domain>?
+val testFederationAffectedDomains: Set<Domain>?
     get() {
         val raw = resolve(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY) ?: return null
         if (raw.isBlank()) return null
@@ -41,7 +41,7 @@ val testFederationAffectedDomains: List<Domain>?
                 "<none>" -> emptyList()
                 else -> listOf(Domain.valueOf(value))
             }
-        }
+        }.sorted().toSet()
     }
 
 private fun resolve(key: String, envKey: String): String? =
