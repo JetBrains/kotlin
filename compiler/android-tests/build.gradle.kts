@@ -91,6 +91,10 @@ projectTests {
             val androidSdkRoot = rootDir.resolve("dependencies/android-sdk/build/androidSdk")
             extraPermissions.add("""permission java.io.FilePermission "${androidSdkRoot.absolutePath}", "read";""")
             extraPermissions.add("""permission java.io.FilePermission "${androidSdkRoot.absolutePath}/-", "read,write,delete";""")
+            // Android generator reads test data to build apks.
+            val testDataRoot = rootDir.resolve("compiler/testData/codegen/")
+            extraPermissions.add("""permission java.io.FilePermission "${testDataRoot.absolutePath}", "read";""")
+            extraPermissions.add("""permission java.io.FilePermission "${testDataRoot.absolutePath}/-", "read";""")
             // Android tests execute temporary gradle wrappers/scripts in java.io.tmpdir.
             val tmpDir = File(System.getProperty("java.io.tmpdir"))
             extraPermissions.add("""permission java.io.FilePermission "${tmpDir.absolutePath}/-", "execute";""")
