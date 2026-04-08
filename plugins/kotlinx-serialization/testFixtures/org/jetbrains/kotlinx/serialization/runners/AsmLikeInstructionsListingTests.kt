@@ -13,9 +13,6 @@ import org.jetbrains.kotlinx.serialization.configureForKotlinxSerialization
 open class AbstractSerializationFirLightTreeAsmLikeInstructionsListingTest : AbstractFirLightTreeAsmLikeInstructionListingTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.defaultDirectives {
-            +AsmLikeInstructionListingDirectives.FIR_DIFFERENCE
-        }
         builder.configureForKotlinxSerialization()
     }
 }

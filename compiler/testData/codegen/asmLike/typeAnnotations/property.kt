@@ -2,9 +2,6 @@
 // RENDER_ANNOTATIONS
 // WITH_STDLIB
 
-// FIR_DIFFERENCE
-// ^ KT-67510 K2: difference in generation of JVM type annotations on property getter's type
-
 package foo
 
 @Target(AnnotationTarget.TYPE)

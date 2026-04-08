@@ -3,9 +3,6 @@
 // WITH_STDLIB
 // LANGUAGE: +JvmEnhancedBridges
 
-// FIR_DIFFERENCE
-// With FIR, the backend generates lambdas via invokedynamic by default.
-
 package foo
 
 @Target(AnnotationTarget.TYPE)
