@@ -9,17 +9,14 @@ import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.CHECK_ASM_LIKE_INSTRUCTIONS
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.CURIOUS_ABOUT
-import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.FIR_DIFFERENCE
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.INLINE_SCOPES_DIFFERENCE
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.LOCAL_VARIABLE_TABLE
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.RENDER_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
@@ -36,9 +33,7 @@ import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
 class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     companion object {
         const val DUMP_EXTENSION = "asm.txt"
-        const val IR_DUMP_EXTENSION = "asm.ir.txt"
         const val INLINE_SCOPES_DUMP_EXTENSION = "asm.scopes.txt"
-        const val FIR_DUMP_EXTENSION = "asm.fir.txt"
         const val LINE_SEPARATOR = "\n"
 
         val IGNORED_CLASS_VISIBLE_ANNOTATIONS = setOf(
@@ -380,19 +375,14 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val firDifference = FIR_DIFFERENCE in testServices.moduleStructure.allDirectives
         val inlineScopesDifference = INLINE_SCOPES_DIFFERENCE in testServices.moduleStructure.allDirectives
 
         val firstModule = testServices.moduleStructure.modules.first()
 
         val inlineScopesNumbersEnabled = firstModule.directives.contains(USE_INLINE_SCOPES_NUMBERS)
         val extension = when {
-            inlineScopesNumbersEnabled && inlineScopesDifference ->
-                INLINE_SCOPES_DUMP_EXTENSION
-            firDifference && testServices.defaultsProvider.frontendKind == FrontendKinds.FIR ->
-                FIR_DUMP_EXTENSION
-            else ->
-                DUMP_EXTENSION
+            inlineScopesNumbersEnabled && inlineScopesDifference -> INLINE_SCOPES_DUMP_EXTENSION
+            else -> DUMP_EXTENSION
         }
 
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
@@ -404,15 +394,5 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
         }
 
         assertions.assertEqualsToFile(file, baseDumper.generateResultingDump())
-
-        if (firDifference) {
-            val irDump = testDataFile.withExtension(IR_DUMP_EXTENSION)
-            val firDump = testDataFile.withExtension(FIR_DUMP_EXTENSION)
-            if (irDump.exists() && firDump.exists()) {
-                assertions.assertFalse(irDump.readText().trim() == firDump.readText().trim()) {
-                    "Dumps for classic frontend and FIR are identical. Please remove $FIR_DIFFERENCE directive and ${firDump.name} file"
-                }
-            }
-        }
     }
 }
