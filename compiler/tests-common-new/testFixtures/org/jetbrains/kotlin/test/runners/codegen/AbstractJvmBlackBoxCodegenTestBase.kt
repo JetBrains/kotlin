@@ -5,43 +5,66 @@
 
 package org.jetbrains.kotlin.test.runners.codegen
 
- import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
+import org.jetbrains.kotlin.test.backend.ir.IrConstCheckerHandler
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
-import org.jetbrains.kotlin.test.configuration.commonConfigurationForJvmTest
-import org.jetbrains.kotlin.test.configuration.configureCommonHandlersForBoxTest
-import org.jetbrains.kotlin.test.configuration.configureJvmBoxCodegenSettings
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
+import org.jetbrains.kotlin.test.configuration.*
+import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliJvmFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
+import org.jetbrains.kotlin.test.frontend.fir.handlers.*
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.services.jvm.JdkKindBoxTestChecker
+import org.jetbrains.kotlin.test.services.jvm.PureJvmCodegenBoxTestChecker
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 
-abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendOutput<R>>(
-    val targetFrontend: FrontendKind<R>,
+abstract class AbstractJvmBlackBoxCodegenTestBase(
+    val parser: FirParser,
 ) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
-    abstract val frontendFacade: Constructor<FrontendFacade<R>>
-    abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
-    abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
 
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+    override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         commonConfigurationForJvmTest(
-            targetFrontend,
-            frontendFacade,
-            frontendToBackendConverter,
-            backendFacade,
+            FrontendKinds.FIR,
+            ::FirCliJvmFacade,
+            ::Fir2IrCliJvmFacade,
+            ::BackendCliJvmFacade,
             additionalSourceProvider = ::MainFunctionForBlackBoxTestsSourceProvider
         )
 
+        configureFirParser(parser)
+
         configureFirHandlersStep {
-            useHandlers(
+            useHandlersAtFirst(
+                ::FirDumpHandler,
+                ::FirCfgDumpHandler,
+                ::FirResolvedTypesVerifier,
+                ::FirScopeDumpHandler,
                 ::FirDiagnosticsHandler
             )
         }
 
+        configureIrHandlersStep {
+            useHandlers(
+                ::IrDiagnosticsHandler,
+                ::IrConstCheckerHandler
+            )
+        }
+
+        forTestsMatching("compiler/testData/codegen/*") {
+            useAfterAnalysisCheckers(::PureJvmCodegenBoxTestChecker)
+            useAfterAnalysisCheckers(::JdkKindBoxTestChecker)
+        }
+
         configureCommonHandlersForBoxTest()
+        configureDumpHandlersForCodegenTest()
+        configureBlackBoxTestSettings()
 
         useAfterAnalysisCheckers(
             ::BlackBoxCodegenSuppressor,
@@ -51,3 +74,8 @@ abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.Frontend
         enableMetaInfoHandler()
     }
 }
+
+open class AbstractFirLightTreeBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase(FirParser.LightTree)
+
+@FirPsiCodegenTest
+open class AbstractFirPsiBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase(FirParser.Psi)
