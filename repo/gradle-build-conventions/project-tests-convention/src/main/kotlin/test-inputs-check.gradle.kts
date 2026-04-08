@@ -1,8 +1,12 @@
 import org.gradle.internal.os.OperatingSystem
 import java.io.IOException
 
+plugins {
+    java
+}
+
 dependencies {
-    "testImplementation"(project(":compiler:test-security-manager"))
+    testImplementation(project(":compiler:test-security-manager"))
 }
 
 val disableInputsCheck = project.providers.gradleProperty("kotlin.test.instrumentation.disable.inputs.check").orNull?.toBoolean() == true
@@ -109,7 +113,7 @@ tasks.withType<Test>().configureEach {
                     )
                 }
 
-            val inputPermissions: Set<String> = inputs.files.flatMapTo(HashSet<String>()) { file ->
+            val inputPermissions: Set<String> = inputs.files.flatMapTo(HashSet()) { file ->
                 if (file.isDirectory) {
                     addedDirs.add(file)
                     listOf(

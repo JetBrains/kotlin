@@ -68,7 +68,7 @@ projectTests {
 
     tasks.withType<Test> {
         workingDir(tasks.processTestResources.map { it.destinationDir }) // to let JUnit Foundation find the empty junit.properties and stop scanning
-        extensions.configure<TestInputsCheckExtension> {
+        testInputsCheck {
             with(extraPermissions) {
                 add("permission java.util.PropertyPermission \"kotlin.incremental.compilation\", \"write\";")
                 add("permission java.util.PropertyPermission \"kotlin.incremental.compilation.js\", \"write\";")

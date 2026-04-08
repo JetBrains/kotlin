@@ -26,7 +26,7 @@ fun ProjectTestsExtension.jsTestTask(
     jUnitMode = JUnitMode.JUnit5,
     skipInLocalBuild = skipInLocalBuild,
 ) {
-    extensions.configure<TestInputsCheckExtension> {
+    testInputsCheck {
         allowFlightRecorder.set(true)
     }
 

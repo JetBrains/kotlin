@@ -36,7 +36,7 @@ projectTests {
             "build/daemon"
         )
 
-        extensions.configure<TestInputsCheckExtension> {
+        testInputsCheck {
             with(extraPermissions) {
                 add("permission java.net.SocketPermission \"localhost\", \"listen,connect,resolve,accept\";",)
                 add("permission java.util.PropertyPermission \"java.rmi.server.hostname\", \"write\";")

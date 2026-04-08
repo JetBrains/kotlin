@@ -46,7 +46,7 @@ projectTests {
             JdkMajorVersion.JDK_21_0  // TestsWithJava21 and others
         )
     ) {
-        extensions.configure<TestInputsCheckExtension> {
+        testInputsCheck {
             allowFlightRecorder = true
         }
     }

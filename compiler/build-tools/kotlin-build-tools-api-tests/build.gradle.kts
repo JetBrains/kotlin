@@ -204,7 +204,7 @@ testing {
 
                             ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
-                            extensions.configure<TestInputsCheckExtension> {
+                            testInputsCheck {
                                 if (implVersion.version < KotlinToolingVersion(2, 2, 0, "snapshot")) {
                                     extraPermissions.add("permission java.util.PropertyPermission \"*\", \"read,write\";")
                                 }
@@ -245,7 +245,7 @@ testing {
                         "build/daemon"
                     )
                     addClasspathProperty(unpackedResourcesResolvable, "kotlin.test.templates.classpath")
-                    extensions.configure<TestInputsCheckExtension> {
+                    testInputsCheck {
                         with(extraPermissions) {
                             add("permission java.net.SocketPermission \"localhost\", \"connect,resolve,accept\";")
                             add("permission java.util.PropertyPermission \"java.rmi.server.hostname\", \"write\";")

@@ -46,7 +46,7 @@ projectTests {
             property.set("kotlin.wasm.test.root.out.dir")
             buildDirectory.set(layout.buildDirectory)
         }
-        extensions.configure<TestInputsCheckExtension> {
+        testInputsCheck {
             with(extraPermissions) {
                 add("permission java.util.PropertyPermission \"kotlin.incremental.compilation\", \"write\";")
                 add("permission java.util.PropertyPermission \"kotlin.incremental.compilation.js\", \"write\";")

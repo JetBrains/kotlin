@@ -58,7 +58,7 @@ testing {
                             "kotlin.daemon.custom.run.files.path.for.tests",
                             "build/daemon"
                         )
-                        extensions.configure<TestInputsCheckExtension> {
+                        testInputsCheck {
                             extraPermissions.set(
                                 listOfNotNull(
                                     "permission java.net.SocketPermission \"localhost\", \"connect,resolve,accept\";",
