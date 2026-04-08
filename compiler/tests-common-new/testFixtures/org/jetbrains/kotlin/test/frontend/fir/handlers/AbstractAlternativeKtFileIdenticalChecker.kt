@@ -6,24 +6,23 @@
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import org.jetbrains.kotlin.test.WrappedException
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.utils.FirIdenticalCheckerHelper
-import org.jetbrains.kotlin.test.utils.firTestDataFile
-import org.jetbrains.kotlin.test.utils.originalTestDataFile
-import java.io.File
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.TestFile
+import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceFileProvider
+import java.io.File
 
-abstract class AbstractFirIdenticalChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
-    protected inner class Helper : FirIdenticalCheckerHelper(testServices) {
-        override fun getClassicFileToCompare(testDataFile: File): File = testDataFile.originalTestDataFile
-        override fun getFirFileToCompare(testDataFile: File): File = testDataFile.firTestDataFile
-    }
-
+/**
+ * Some tests duplicate the original .kt file with different extension because they could report different diagnostic meta-info
+ * in them (e.g. tests for AA or with the latest LV). These duplicated `.kt` files should have their content to be identical
+ * to the base .kt file content (except the reported meta-infos).
+ *
+ * This class is a base for checkers which ensure that the duplicated `.kt` file content is identical to the base .kt file content.
+ */
+abstract class AbstractAlternativeKtFileIdenticalChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     protected abstract fun checkTestDataFile(testDataFile: File)
 
     override val order: Order
@@ -82,5 +81,13 @@ abstract class AbstractFirIdenticalChecker(testServices: TestServices) : AfterAn
         ).replace("\r", "")
 
         testServices.assertions.assertEquals(processedBaseContent, processedLlContent, message)
+    }
+
+    protected fun readContent(file: File, trimLines: Boolean): String {
+        return if (trimLines) {
+            file.readLines().joinToString("\n") { it.trimEnd() }.trim()
+        } else {
+            file.readText()
+        }
     }
 }
