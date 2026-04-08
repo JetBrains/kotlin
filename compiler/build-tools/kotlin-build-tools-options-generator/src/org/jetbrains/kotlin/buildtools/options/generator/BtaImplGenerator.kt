@@ -403,7 +403,9 @@ internal class BtaImplGenerator(
             }
             argument.valueType.origin is SearchPathType -> {
                 add(
-                    maybeGetNullabilitySign(argument) + ".%M(%T.pathSeparator)",
+                    maybeGetNullabilitySign(argument) + ".%M { it.%M() }" + maybeGetNullabilitySign(argument) + ".%M(%T.pathSeparator)",
+                    MemberName(KOTLIN_COLLECTIONS, "map"),
+                    MemberName(targetPackage, "absolutePathStringOrThrow", true),
                     MemberName(KOTLIN_COLLECTIONS, "joinToString"),
                     ClassName(JAVA_IO, "File")
                 )
