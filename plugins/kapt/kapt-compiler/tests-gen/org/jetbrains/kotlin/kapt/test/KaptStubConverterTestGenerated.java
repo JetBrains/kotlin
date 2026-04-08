@@ -887,6 +887,26 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   }
 
   @Nested
+  @TestMetadata("plugins/kapt/kapt-compiler/testData/converter/companionBlocksAndExtensions")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CompanionBlocksAndExtensions {
+    private void run(String fileName) {
+      runTest("plugins/kapt/kapt-compiler/testData/converter/companionBlocksAndExtensions/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInCompanionBlocksAndExtensions() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt/kapt-compiler/testData/converter/companionBlocksAndExtensions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() {
+      run("simple.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("plugins/kapt/kapt-compiler/testData/converter/jvmDefault")
   @TestDataPath("$PROJECT_ROOT")
   public class JvmDefault {

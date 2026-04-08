@@ -1,0 +1,92 @@
+/**
+ * public final class A : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: compBlockFun(Ljava/lang/String;)V
+ *   public final fun compBlockFun(k: kotlin/String (* = ... *)): kotlin/Unit
+ *
+ *   // field: compBlockVal:Ljava/lang/String;
+ *   // getter: getCompBlockVal()Ljava/lang/String;
+ *   public final val compBlockVal: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class A {
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String compBlockVal = "compBlockVal";
+
+    public A() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String getCompBlockVal() {
+        return null;
+    }
+
+    public static final void compBlockFun(@org.jetbrains.annotations.NotNull()
+    java.lang.String k) {
+    }
+}
+
+////////////////////
+
+
+public class J {
+}
+
+////////////////////
+
+
+/**
+ * package {
+ *
+ *   // signature: compExtFun(Ljava/lang/String;)V
+ *   public final fun A.compExtFun(k: kotlin/String (* = ... *)): kotlin/Unit
+ *
+ *   // signature: compExtFunJ(Ljava/lang/String;)V
+ *   public final fun J.compExtFunJ(k: kotlin/String (* = ... *)): kotlin/Unit
+ *
+ *   // field: compExtVal:Ljava/lang/String;
+ *   // getter: getCompExtVal()Ljava/lang/String;
+ *   public final val A.compExtVal: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // field: compExtValJ:Ljava/lang/String;
+ *   // getter: getCompExtValJ()Ljava/lang/String;
+ *   public final val J.compExtValJ: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class KKt {
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String compExtVal = "compExtVal";
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String compExtValJ = "compExtValJ";
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String getCompExtVal() {
+        return null;
+    }
+
+    public static final void compExtFun(@org.jetbrains.annotations.NotNull()
+    java.lang.String k) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String getCompExtValJ() {
+        return null;
+    }
+
+    public static final void compExtFunJ(@org.jetbrains.annotations.NotNull()
+    java.lang.String k) {
+    }
+}

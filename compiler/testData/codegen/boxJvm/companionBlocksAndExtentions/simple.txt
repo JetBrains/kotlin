@@ -1,0 +1,55 @@
+@kotlin.Metadata
+public final class A$Companion {
+    // source: 'k.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic static method compObjFun$default(p0: A$Companion, p1: java.lang.String, p2: int, p3: java.lang.Object): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method compObjFun(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public synthetic static method compObjStaticFun$default(p0: A$Companion, p1: java.lang.String, p2: int, p3: java.lang.Object): java.lang.String
+    public final @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method compObjStaticFun(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method getCompObjStaticVal$annotations(): void
+    public final @org.jetbrains.annotations.NotNull method getCompObjStaticVal(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getCompObjVal(): java.lang.String
+    public final inner class A$Companion
+}
+
+@kotlin.Metadata
+public final class A {
+    // source: 'k.kt'
+    public final static @org.jetbrains.annotations.NotNull field Companion: A$Companion
+    private final static @org.jetbrains.annotations.NotNull field compBlockVal: java.lang.String
+    private final static @org.jetbrains.annotations.NotNull field compObjStaticVal: java.lang.String
+    private final static @org.jetbrains.annotations.NotNull field compObjVal: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field memberVal: java.lang.String
+    static method <clinit>(): void
+    public method <init>(): void
+    public synthetic final static method access$getCompObjStaticVal$cp(): java.lang.String
+    public synthetic final static method access$getCompObjVal$cp(): java.lang.String
+    public synthetic static method compBlockFun$default(p0: java.lang.String, p1: int, p2: java.lang.Object): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method compBlockFun(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public final static @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method compObjStaticFun(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getCompBlockVal(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getCompObjStaticVal(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getMemberVal(): java.lang.String
+    public synthetic static method memberFun$default(p0: A, p1: java.lang.String, p2: int, p3: java.lang.Object): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method memberFun(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public final inner class A$Companion
+}
+
+@kotlin.Metadata
+public final class KKt {
+    // source: 'k.kt'
+    private final static @org.jetbrains.annotations.NotNull field compExtVal: java.lang.String
+    private final static @org.jetbrains.annotations.NotNull field compExtValJ: java.lang.String
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public synthetic static method compExtFun$default(p0: java.lang.String, p1: int, p2: java.lang.Object): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method compExtFun(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public synthetic static method compExtFunJ$default(p0: java.lang.String, p1: int, p2: java.lang.Object): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method compExtFunJ(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getCompExtVal(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getCompExtValJ(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method testJ(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method testK(): java.lang.String
+    public final inner class A$Companion
+}
