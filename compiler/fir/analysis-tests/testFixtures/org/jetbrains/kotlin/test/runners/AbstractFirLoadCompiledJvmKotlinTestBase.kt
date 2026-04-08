@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.test.runners
 
-import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.FirMetadataLoadingTestSuppressor
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.JvmLoadedMetadataDumpHandler
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
@@ -16,23 +18,21 @@ import org.jetbrains.kotlin.test.configuration.commonConfigurationForJvmTest
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
-import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.model.FrontendKinds
 
-abstract class AbstractFirLoadCompiledJvmKotlinTestBase<F : ResultingArtifact.FrontendOutput<F>> :
-    AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR)
-{
-    protected abstract val frontendKind: FrontendKind<F>
-    protected abstract val frontendFacade: Constructor<FrontendFacade<F>>
-    protected abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<F, IrBackendInput>>
-    protected abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
-    protected abstract val suppressDirective: SimpleDirective
-
+open class AbstractFirLoadK2CompiledJvmKotlinTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
-        commonConfigurationForJvmTest(frontendKind, frontendFacade, frontendToBackendConverter, backendFacade)
+        commonConfigurationForJvmTest(
+            FrontendKinds.FIR,
+            ::FirCliJvmFacade,
+            ::Fir2IrCliJvmFacade,
+            ::BackendCliJvmFacade,
+        )
+
+        configureFirParser(FirParser.LightTree)
+
         configureFirHandlersStep {
             useHandlers(::NoFirCompilationErrorsHandler)
         }
@@ -47,25 +47,7 @@ abstract class AbstractFirLoadCompiledJvmKotlinTestBase<F : ResultingArtifact.Fr
         }
 
         useAfterAnalysisCheckers(
-            { testServices -> FirMetadataLoadingTestSuppressor(testServices, suppressDirective) }
+            { testServices -> FirMetadataLoadingTestSuppressor(testServices, CodegenTestDirectives.IGNORE_FIR_METADATA_LOADING_K2) }
         )
-    }
-}
-
-open class AbstractFirLoadK2CompiledJvmKotlinTest : AbstractFirLoadCompiledJvmKotlinTestBase<FirOutputArtifact>() {
-    override val frontendKind: FrontendKind<FirOutputArtifact>
-        get() = FrontendKinds.FIR
-    override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirCliJvmFacade
-    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrCliJvmFacade
-    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
-        get() = ::BackendCliJvmFacade
-    override val suppressDirective: SimpleDirective
-        get() = CodegenTestDirectives.IGNORE_FIR_METADATA_LOADING_K2
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureFirParser(FirParser.LightTree)
     }
 }
