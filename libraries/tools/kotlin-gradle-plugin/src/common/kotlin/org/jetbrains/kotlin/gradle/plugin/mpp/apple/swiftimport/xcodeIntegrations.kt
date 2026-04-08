@@ -108,7 +108,7 @@ internal abstract class IntegrateEmbedAndSignIntoXcodeProject : DefaultTask() {
               exit 0
             fi
             cd "${'$'}${SRCROOT_ENV}/${relativeGradlewRootPath}"
-            ./gradlew ${gradleProjectPath}:${AppleXcodeTasks.embedAndSignTaskPrefix}${AppleXcodeTasks.embedAndSignTaskPostfix} -i
+            ./gradlew ${gradleTaskPath(gradleProjectPath, AppleXcodeTasks.embedAndSignTaskPrefix + AppleXcodeTasks.embedAndSignTaskPostfix)} -i
             """.trimIndent()
         )
     )
@@ -323,6 +323,17 @@ private fun generateRandomPBXObjectReference(): String {
     return messageDigest.digest(
         UUID.randomUUID().toString().toByteArray()
     ).joinToString(separator = "") { byte -> "%02x".format(byte) }.uppercase().subSequence(0, 24).toString()
+}
+
+internal fun gradleTaskPath(
+    gradleProjectPath: String,
+    taskName: String,
+): String {
+    return if (gradleProjectPath == ":") {
+        ":$taskName"
+    } else {
+        "$gradleProjectPath:$taskName"
+    }
 }
 
 internal fun linkageProductsReferencedInPBXObjects(project: XcodeProject): Set<String> {
