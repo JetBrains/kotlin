@@ -1,7 +1,6 @@
 // ISSUE: KT-66359
 
-// IGNORE_BACKEND_K1: ANY
-// REASON: "Could not load module <Error module>"
+// IGNORE_BACKEND: ANDROID
 
 fun box(): String {
     pcla {

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // Ignore Wasm and Native because they fail at runtime KT-67691
 // IGNORE_BACKEND_K2: WASM_JS, WASM_WASI, NATIVE
 class In<in K>

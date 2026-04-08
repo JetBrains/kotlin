@@ -1,6 +1,4 @@
 // FIR_IDENTICAL
-// IGNORE_BACKEND_K1: NATIVE
-// REASON: ClassicFrontendFacade.performNativeModuleResolve expects DependencyKind.Source, not DependencyKind.Binary
 // IGNORE_BACKEND: JKLIB
 // MODULE: m1
 // FILE: BaseFirBuilder.kt

@@ -1,7 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // OPT_IN: kotlin.ExperimentalMultiplatform
 // NO_READ_WRITE_COMPARE
-// IGNORE_BACKEND_K1: JVM_IR
 
 // MODULE: common
 // FILE: common.kt

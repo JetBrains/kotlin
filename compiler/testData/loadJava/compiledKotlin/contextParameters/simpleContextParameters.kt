@@ -1,5 +1,4 @@
 // LANGUAGE: +ContextParameters
-// IGNORE_BACKEND_K1: ANY
 // IGNORE K1
 // It's expected that in the fir.k1.txt dump, there are no context parameters because K1 doesn't handle them properly.
 // FirLoadK1CompiledJvmKotlinTestGenerated should actually just fail but instead it ignores frontend errors and compiles

@@ -1,7 +1,6 @@
 // ISSUE: KT-52757
 
-// IGNORE_BACKEND_K1: ANY
-// Reason: red code
+// IGNORE_BACKEND: ANDROID
 
 fun box(): String {
     build {

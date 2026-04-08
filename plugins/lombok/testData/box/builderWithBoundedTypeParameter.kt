@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K1: ANY
 // WITH_STDLIB
 
 // FILE: BoundedTypeParameter.java

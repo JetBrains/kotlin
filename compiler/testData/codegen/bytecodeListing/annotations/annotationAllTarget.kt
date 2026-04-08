@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K1: JVM_IR
-// ISSUE: KT-73256 (not supported in K1)
 // LANGUAGE: +AnnotationAllUseSiteTarget
 // WITH_STDLIB
 

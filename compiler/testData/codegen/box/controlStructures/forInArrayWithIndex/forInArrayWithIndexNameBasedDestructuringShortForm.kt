@@ -1,5 +1,5 @@
 // ISSUE: KT-80243
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // LANGUAGE: +NameBasedDestructuring, +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 

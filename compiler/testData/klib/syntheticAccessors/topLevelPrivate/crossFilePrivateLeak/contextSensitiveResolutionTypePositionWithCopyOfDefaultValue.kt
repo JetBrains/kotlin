@@ -1,5 +1,4 @@
 // ISSUE: KT-78245
-// IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 // FILE: A.kt

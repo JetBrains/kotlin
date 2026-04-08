@@ -1,6 +1,5 @@
 // LANGUAGE: +IntrinsicConstEvaluation
 // WITH_STDLIB
-// IGNORE_BACKEND_K1: JVM_IR, JS_IR, JS_IR_ES6, NATIVE, WASM
 
 import kotlin.experimental.and
 import kotlin.experimental.inv

@@ -1,5 +1,5 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // IGNORE_BACKEND_K2: WASM_JS, WASM_WASI, JS_IR, JS_IR_ES6
 import C.func
 

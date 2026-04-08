@@ -5,9 +5,6 @@
 // The test primarily tests reflect dumps (k1 vs new reflect), we don't need kt dumps
 // SKIP_KT_DUMP
 
-// Disable K1 since it reports: CONFLICTING_OVERLOADS: Conflicting overloads: public final fun <A, B> foo4(a: A): Unit defined in Foo, public final fun <B> foo4(a: B): Unit defined in Foo
-// IGNORE_BACKEND_K1: ANY
-
 // K1 reflect thinks that there is only one foo2, new reflect thinks that there are two foo2.
 // KT-83380
 // KOTLIN_REFLECT_DUMP_MISMATCH

@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // DUMP_IR
-// K1_STATUS: java.lang.AssertionError: There is still an unbound symbol after generation of IR module <main>
 
 fun <T> select(a: T, b: T) : T = a
 

@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K1: JVM_IR
 // MODULE: library
 // JVM_DEFAULT_MODE: disable
 // FILE: lib.kt

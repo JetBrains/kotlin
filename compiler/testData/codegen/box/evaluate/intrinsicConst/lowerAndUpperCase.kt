@@ -1,6 +1,5 @@
 // LANGUAGE: +IntrinsicConstEvaluation
 // WITH_STDLIB
-// IGNORE_BACKEND_K1: JVM_IR, JS_IR, JS_IR_ES6, NATIVE, WASM
 fun <T> T.id() = this
 
 const val lowercase1 = "lowercase".lowercase()

@@ -1,5 +1,4 @@
-// ISSUE: KT-66762: under K1, there's FAIL 1: . Expected <Hello!\n>, actual <>
-// IGNORE_BACKEND_K1: JVM_IR, JS_IR, JS_IR_ES6, WASM, NATIVE
+// ISSUE: KT-66762
 // IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: ANY:1.9
 // WITH_STDLIB
 import kotlin.test.*

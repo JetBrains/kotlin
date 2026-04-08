@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 
 annotation class A(val i: Int)
 annotation class B(val i: Int)

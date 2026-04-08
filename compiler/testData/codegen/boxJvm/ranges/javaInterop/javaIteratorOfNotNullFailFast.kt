@@ -1,6 +1,5 @@
 // LANGUAGE: +StrictJavaNullabilityAssertions
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K1: JVM_IR
 // WITH_STDLIB
 // JVM_TARGET: 1.8
 

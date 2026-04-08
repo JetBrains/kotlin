@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +BreakContinueInInlineLambdas +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 // ISSUE: KT-68975
 // See same test for codegen: compiler/testData/codegen/box/js/inlinedReturnBreakContinue/loopWithinInlineFunction.kt

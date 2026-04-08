@@ -1,6 +1,5 @@
 // LANGUAGE: +IntrinsicConstEvaluation
-// IGNORE_BACKEND_K1: ANY
-// ^^^^^^^^^^^^^^^^^^^^^^ Unsigned operations will not be supported in the legacy K1 frontend.
+// IGNORE_BACKEND: ANDROID
 // WITH_STDLIB
 fun <T> T.id() = this
 

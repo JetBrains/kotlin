@@ -2,7 +2,7 @@
 // WITH_STDLIB
 // ISSUE: KT-49283
 
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 
 fun takeListOfStrings(x: List<String>) {}
 

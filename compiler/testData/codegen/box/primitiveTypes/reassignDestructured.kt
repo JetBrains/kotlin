@@ -1,5 +1,5 @@
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // WITH_STDLIB
 // DUMP_IR
 // ISSUE: KT-64944

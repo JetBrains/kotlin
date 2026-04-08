@@ -1,7 +1,5 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// IGNORE_BACKEND_K1: JVM_IR
-// ^ K1 does not support coercing assigment to Any?
 
 // FILE: test.kt
 import kotlin.test.*

@@ -1,5 +1,4 @@
 // NO_CHECK_LAMBDA_INLINING
-// IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 // MODULE: lib

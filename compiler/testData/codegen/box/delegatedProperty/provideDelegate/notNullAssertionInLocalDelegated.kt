@@ -2,7 +2,7 @@
 // WITH_STDLIB
 // WITH_REFLECT
 // FIR_DUMP
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 
 
 import kotlin.reflect.KProperty

@@ -1,5 +1,5 @@
 // LANGUAGE: +DataFlowBasedExhaustiveness
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 
 fun foo(b: Boolean): Int {
     if (b == false) return 1

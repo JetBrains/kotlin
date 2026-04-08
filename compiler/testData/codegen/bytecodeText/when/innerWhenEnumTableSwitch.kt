@@ -1,5 +1,4 @@
 // See KT-62903
-// IGNORE_BACKEND_K1: JVM_IR
 
 enum class Level {
     O,

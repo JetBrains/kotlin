@@ -1,9 +1,8 @@
 // ISSUE: KT-57709
 // WITH_STDLIB
 
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // TARGET_BACKEND: JVM
-// REASON: red code (see corresponding diagnostic test)
 
 var result = ""
 

@@ -1,5 +1,4 @@
 // ISSUE: KT-66611
-// IGNORE_BACKEND_K1: JVM_IR, JS_IR, JS_IR_ES6, WASM
 
 annotation class A(vararg val xs: String)
 annotation class B(vararg val xa: A)

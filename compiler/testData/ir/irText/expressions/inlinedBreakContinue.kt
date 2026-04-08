@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K1: JS_IR, NATIVE
 // FIR_IDENTICAL
 // LANGUAGE: +BreakContinueInInlineLambdas
 // IGNORE_ERRORS

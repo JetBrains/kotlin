@@ -1,6 +1,6 @@
 // ISSUE: KT-75315
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 // FILE: JavaClass.java

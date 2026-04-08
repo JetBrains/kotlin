@@ -1,6 +1,5 @@
 // LANGUAGE: +BreakContinueInInlineLambdas
-// IGNORE_BACKEND_K1: ANY
-// Reason: break/continue in inline lambdas unsupported
+// IGNORE_BACKEND: ANDROID
 
 // FILE: lib.kt
 inline fun foo(block: () -> Unit) { block() }

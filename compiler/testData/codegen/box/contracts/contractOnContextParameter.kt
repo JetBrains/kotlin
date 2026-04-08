@@ -1,5 +1,5 @@
 // LANGUAGE: +ContextParameters
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // SKIP_IR_DESERIALIZATION_CHECKS
 // ^ Context parameter names aren't serialized to metadata yet KT-74546
 // MODULE: a

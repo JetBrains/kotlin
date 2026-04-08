@@ -1,7 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR
-// IGNORE REASON: multimodule MPP tests are not supported for K1
 // WITH_STDLIB
 
 // MODULE: m1-common

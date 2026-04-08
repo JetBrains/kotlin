@@ -1,5 +1,4 @@
 // LANGUAGE: +NameBasedDestructuring
-// IGNORE_BACKEND_K1: JVM_IR
 // ISSUE: KT-81555
 // simple.kts
 var result = "getter must be called"

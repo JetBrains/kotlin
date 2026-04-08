@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K1: ANY
-// ^KT-63431 CharBufferXAllInherited.create().get(0) is resolved incorrectly in K1
+// IGNORE_BACKEND: ANDROID
 
 // FILE: X.java
 public interface X {

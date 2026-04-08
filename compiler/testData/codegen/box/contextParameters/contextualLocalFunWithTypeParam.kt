@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // LANGUAGE: +ContextParameters
 
 fun <T> localWithTypeParam(b: T): T {

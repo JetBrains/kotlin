@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K1: ANY
 // WITH_STDLIB
 // ISSUE: KT-84058
 // LANGUAGE: +ForbidUselessTypeArgumentsIn25

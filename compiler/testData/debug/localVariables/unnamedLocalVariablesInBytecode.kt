@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K1: ANY
+
 // DUMP_IR
 // LANGUAGE: +UnnamedLocalVariables
 // FILE: test.kt

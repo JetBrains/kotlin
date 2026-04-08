@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K1: ANDROID
+// IGNORE_BACKEND: ANDROID
 // STATUS:
 //  This line has been added because of the `AndroidRunner` test.
 //  This test runner appends a path-like prefix to all fully-qualified names,

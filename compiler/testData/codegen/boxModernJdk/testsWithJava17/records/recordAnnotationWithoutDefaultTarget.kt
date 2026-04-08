@@ -1,5 +1,4 @@
-// IGNORE_BACKEND_K1: JVM_IR
-// ISSUE: KT-73256, KT-74382 (not supported in K1)
+// ISSUE: KT-73256, KT-74382
 // LANGUAGE: +AnnotationAllUseSiteTarget -PropertyParamAnnotationDefaultTargetMode
 
 // FILE: JavaFieldComponent.java

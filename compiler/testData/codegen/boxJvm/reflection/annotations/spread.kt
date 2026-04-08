@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
-// IGNORE_BACKEND_K1: JVM_IR
 
 @Retention(AnnotationRetention.RUNTIME)
 annotation class A(vararg val xs: String)

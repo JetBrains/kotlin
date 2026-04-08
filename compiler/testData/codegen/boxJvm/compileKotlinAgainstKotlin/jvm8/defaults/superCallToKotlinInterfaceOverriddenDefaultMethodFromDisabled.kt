@@ -1,6 +1,5 @@
 // LANGUAGE: +AllowSuperCallToJavaInterface
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K1: JVM_IR
 // MODULE: lib
 // JVM_DEFAULT_MODE: no-compatibility
 // FILE: I.kt

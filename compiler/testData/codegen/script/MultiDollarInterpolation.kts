@@ -1,7 +1,6 @@
 // LANGUAGE: +MultiDollarInterpolation
 // DIAGNOSTICS: -warnings
 // WITH_STDLIB
-// IGNORE_BACKEND_K1: JVM_IR
 // ISSUE: KT-69062
 
 fun box(): String {
