@@ -407,13 +407,13 @@ private fun StatementGenerator.applySuspendConversionForValueArgumentIfRequired(
             valueParameterType
 
     val irAdapterRefType = suspendFunType.toIrType()
-    return IrBlockImpl(expression.startOffset, expression.endOffset, irAdapterRefType, IrStatementOrigin.SUSPEND_CONVERSION)
+    return IrBlockImpl(expression.startOffset, expression.endOffset, irAdapterRefType, IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION)
         .apply {
             val irAdapterFunction = createFunctionForSuspendConversion(startOffset, endOffset, suspendConversionType, suspendFunType)
             // TODO add a bound receiver property to IrFunctionExpressionImpl?
             val irAdapterRef = IrFunctionReferenceImpl(
                 startOffset, endOffset, irAdapterRefType, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
-                null, IrStatementOrigin.SUSPEND_CONVERSION
+                null, IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION
             )
             statements.add(irAdapterFunction)
             statements.add(irAdapterRef.apply { arguments[0] = expression })
@@ -687,7 +687,7 @@ internal fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired
         val irSamType = substitutedSamType.toIrType()
 
         fun IrExpression.isFunctionReferenceAdapter() =
-            this is IrBlock && (origin == IrStatementOrigin.SUSPEND_CONVERSION || origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE)
+            this is IrBlock && (origin == IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION || origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE)
 
         fun IrExpression.applySamConversion() =
             IrTypeOperatorCallImpl(

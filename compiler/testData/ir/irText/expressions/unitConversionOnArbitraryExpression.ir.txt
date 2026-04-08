@@ -11,36 +11,36 @@ FILE fqName:<root> fileName:/unitConversionOnArbitraryExpression.kt
     VALUE_PARAMETER kind:Regular name:fn index:0 type:kotlin.Function0<kotlin.Int>
     BLOCK_BODY
       CALL 'public final fun useSuspendUnit (fn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION
+        ARG fn: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=FUNCTION_TYPE_EXPRESSION_CONVERSION
           FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion0 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:ExtensionReceiver name:$callee index:0 type:kotlin.Function0<kotlin.Int>
             BLOCK_BODY
               CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
                 ARG <this>: GET_VAR '$callee: kotlin.Function0<kotlin.Int> declared in <root>.testCombinedSuspendUnit.suspendConversion0' type=kotlin.Function0<kotlin.Int> origin=null
-          FUNCTION_REFERENCE 'local final fun suspendConversion0 ($callee: kotlin.Function0<kotlin.Int>): kotlin.Unit declared in <root>.testCombinedSuspendUnit' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion0 ($callee: kotlin.Function0<kotlin.Int>): kotlin.Unit declared in <root>.testCombinedSuspendUnit' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=FUNCTION_TYPE_EXPRESSION_CONVERSION reflectionTarget=null
             ARG $callee: GET_VAR 'fn: kotlin.Function0<kotlin.Int> declared in <root>.testCombinedSuspendUnit' type=kotlin.Function0<kotlin.Int> origin=null
   FUN name:testNonVal visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useUnit (fn: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.Function0<kotlin.Unit> origin=SUSPEND_CONVERSION
+        ARG fn: BLOCK type=kotlin.Function0<kotlin.Unit> origin=FUNCTION_TYPE_EXPRESSION_CONVERSION
           FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion0 visibility:local modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:ExtensionReceiver name:$callee index:0 type:kotlin.Function0<kotlin.String>
             BLOCK_BODY
               CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
                 ARG <this>: GET_VAR '$callee: kotlin.Function0<kotlin.String> declared in <root>.testNonVal.suspendConversion0' type=kotlin.Function0<kotlin.String> origin=null
-          FUNCTION_REFERENCE 'local final fun suspendConversion0 ($callee: kotlin.Function0<kotlin.String>): kotlin.Unit declared in <root>.testNonVal' type=kotlin.Function0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion0 ($callee: kotlin.Function0<kotlin.String>): kotlin.Unit declared in <root>.testNonVal' type=kotlin.Function0<kotlin.Unit> origin=FUNCTION_TYPE_EXPRESSION_CONVERSION reflectionTarget=null
             ARG $callee: CALL 'public final fun produceFun (): kotlin.Function0<kotlin.String> declared in <root>' type=kotlin.Function0<kotlin.String> origin=null
   FUN name:testSimple visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:fn index:0 type:kotlin.Function0<kotlin.String>
     BLOCK_BODY
       CALL 'public final fun useUnit (fn: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.Function0<kotlin.Unit> origin=SUSPEND_CONVERSION
+        ARG fn: BLOCK type=kotlin.Function0<kotlin.Unit> origin=FUNCTION_TYPE_EXPRESSION_CONVERSION
           FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion0 visibility:local modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:ExtensionReceiver name:$callee index:0 type:kotlin.Function0<kotlin.String>
             BLOCK_BODY
               CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
                 ARG <this>: GET_VAR '$callee: kotlin.Function0<kotlin.String> declared in <root>.testSimple.suspendConversion0' type=kotlin.Function0<kotlin.String> origin=null
-          FUNCTION_REFERENCE 'local final fun suspendConversion0 ($callee: kotlin.Function0<kotlin.String>): kotlin.Unit declared in <root>.testSimple' type=kotlin.Function0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+          FUNCTION_REFERENCE 'local final fun suspendConversion0 ($callee: kotlin.Function0<kotlin.String>): kotlin.Unit declared in <root>.testSimple' type=kotlin.Function0<kotlin.Unit> origin=FUNCTION_TYPE_EXPRESSION_CONVERSION reflectionTarget=null
             ARG $callee: GET_VAR 'fn: kotlin.Function0<kotlin.String> declared in <root>.testSimple' type=kotlin.Function0<kotlin.String> origin=null
   FUN name:useSuspendUnit visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:fn index:0 type:kotlin.coroutines.SuspendFunction0<kotlin.Unit>

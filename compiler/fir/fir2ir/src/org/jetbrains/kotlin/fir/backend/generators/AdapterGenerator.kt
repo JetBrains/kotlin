@@ -431,7 +431,7 @@ class AdapterGenerator(
                 )
             )
 
-        return if (this is IrBlock && (origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || origin == IrStatementOrigin.SUSPEND_CONVERSION)) {
+        return if (this is IrBlock && (origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || origin == IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION)) {
             // The IR for adapted callable references should be
             // BLOCK ADAPTED_FUNCTION_REFERENCE(FUN ADAPTER_FOR_CALLABLE_REFERENCE, TYPE_OP SAM_CONVERSION(FUNCTION_REFERENCE))
             // Therefore, we need to insert the cast as the last statement of the block, not around the block itself.
@@ -583,9 +583,9 @@ class AdapterGenerator(
             )
             val irAdapterRef = IrFunctionReferenceImpl(
                 startOffset, endOffset, expectedIrType, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
-                null, IrStatementOrigin.SUSPEND_CONVERSION
+                null, IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION
             )
-            IrBlockImpl(startOffset, endOffset, expectedIrType, IrStatementOrigin.SUSPEND_CONVERSION).apply {
+            IrBlockImpl(startOffset, endOffset, expectedIrType, IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION).apply {
                 statements.add(irAdapterFunction)
                 statements.add(irAdapterRef.apply { arguments[0] = this@applyConversionBetweenFunctionTypes })
             }

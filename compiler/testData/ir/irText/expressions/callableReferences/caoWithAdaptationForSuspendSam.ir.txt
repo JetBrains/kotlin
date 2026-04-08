@@ -157,7 +157,7 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSuspendSam.kt
           GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.test3' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
         CALL 'public final fun set (<this>: <root>.A, i: <root>.IFoo, newValue: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
           ARG <this>: GET_VAR 'val tmp_4: <root>.A declared in <root>.test3' type=<root>.A origin=null
-          ARG i: BLOCK type=<root>.IFoo origin=SUSPEND_CONVERSION
+          ARG i: BLOCK type=<root>.IFoo origin=FUNCTION_TYPE_EXPRESSION_CONVERSION
             FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion0 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:ExtensionReceiver name:$callee index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:Regular name:p0 index:1 type:kotlin.Int
@@ -166,12 +166,12 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSuspendSam.kt
                   ARG <this>: GET_VAR '$callee: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.test3.suspendConversion0' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
                   ARG p1: GET_VAR 'p0: kotlin.Int declared in <root>.test3.suspendConversion0' type=kotlin.Int origin=null
             TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
-              FUNCTION_REFERENCE 'local final fun suspendConversion0 ($callee: kotlin.Function1<kotlin.Int, kotlin.Unit>, p0: kotlin.Int): kotlin.Unit declared in <root>.test3' type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+              FUNCTION_REFERENCE 'local final fun suspendConversion0 ($callee: kotlin.Function1<kotlin.Int, kotlin.Unit>, p0: kotlin.Int): kotlin.Unit declared in <root>.test3' type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=FUNCTION_TYPE_EXPRESSION_CONVERSION reflectionTarget=null
                 ARG $callee: GET_VAR 'val tmp_5: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.test3' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
           ARG newValue: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
             ARG <this>: CALL 'public final fun get (<this>: <root>.A, i: <root>.IFoo): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
               ARG <this>: GET_VAR 'val tmp_4: <root>.A declared in <root>.test3' type=<root>.A origin=null
-              ARG i: BLOCK type=<root>.IFoo origin=SUSPEND_CONVERSION
+              ARG i: BLOCK type=<root>.IFoo origin=FUNCTION_TYPE_EXPRESSION_CONVERSION
                 FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion1 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:ExtensionReceiver name:$callee index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:Regular name:p0 index:1 type:kotlin.Int
@@ -180,7 +180,7 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSuspendSam.kt
                       ARG <this>: GET_VAR '$callee: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.test3.suspendConversion1' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
                       ARG p1: GET_VAR 'p0: kotlin.Int declared in <root>.test3.suspendConversion1' type=kotlin.Int origin=null
                 TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
-                  FUNCTION_REFERENCE 'local final fun suspendConversion1 ($callee: kotlin.Function1<kotlin.Int, kotlin.Unit>, p0: kotlin.Int): kotlin.Unit declared in <root>.test3' type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+                  FUNCTION_REFERENCE 'local final fun suspendConversion1 ($callee: kotlin.Function1<kotlin.Int, kotlin.Unit>, p0: kotlin.Int): kotlin.Unit declared in <root>.test3' type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=FUNCTION_TYPE_EXPRESSION_CONVERSION reflectionTarget=null
                     ARG $callee: GET_VAR 'val tmp_5: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.test3' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
             ARG other: CONST Int type=kotlin.Int value=1
   FUN name:test4 visibility:public modality:FINAL returnType:kotlin.Unit
@@ -219,7 +219,7 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSuspendSam.kt
             GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
         CALL 'public final fun set (<this>: <root>.A, i: <root>.IFoo, newValue: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
           ARG <this>: GET_VAR 'val tmp_8: <root>.A declared in <root>.test5' type=<root>.A origin=null
-          ARG i: BLOCK type=<root>.IFoo origin=SUSPEND_CONVERSION
+          ARG i: BLOCK type=<root>.IFoo origin=FUNCTION_TYPE_EXPRESSION_CONVERSION
             FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion0 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:ExtensionReceiver name:$callee index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:Regular name:p0 index:1 type:kotlin.Int
@@ -228,12 +228,12 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSuspendSam.kt
                   ARG <this>: GET_VAR '$callee: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.test5.suspendConversion0' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
                   ARG p1: GET_VAR 'p0: kotlin.Int declared in <root>.test5.suspendConversion0' type=kotlin.Int origin=null
             TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
-              FUNCTION_REFERENCE 'local final fun suspendConversion0 ($callee: kotlin.Function1<kotlin.Int, kotlin.Unit>, p0: kotlin.Int): kotlin.Unit declared in <root>.test5' type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+              FUNCTION_REFERENCE 'local final fun suspendConversion0 ($callee: kotlin.Function1<kotlin.Int, kotlin.Unit>, p0: kotlin.Int): kotlin.Unit declared in <root>.test5' type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=FUNCTION_TYPE_EXPRESSION_CONVERSION reflectionTarget=null
                 ARG $callee: GET_VAR 'val tmp_9: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.test5' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
           ARG newValue: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
             ARG <this>: CALL 'public final fun get (<this>: <root>.A, i: <root>.IFoo): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
               ARG <this>: GET_VAR 'val tmp_8: <root>.A declared in <root>.test5' type=<root>.A origin=null
-              ARG i: BLOCK type=<root>.IFoo origin=SUSPEND_CONVERSION
+              ARG i: BLOCK type=<root>.IFoo origin=FUNCTION_TYPE_EXPRESSION_CONVERSION
                 FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion1 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:ExtensionReceiver name:$callee index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:Regular name:p0 index:1 type:kotlin.Int
@@ -242,7 +242,7 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSuspendSam.kt
                       ARG <this>: GET_VAR '$callee: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.test5.suspendConversion1' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
                       ARG p1: GET_VAR 'p0: kotlin.Int declared in <root>.test5.suspendConversion1' type=kotlin.Int origin=null
                 TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
-                  FUNCTION_REFERENCE 'local final fun suspendConversion1 ($callee: kotlin.Function1<kotlin.Int, kotlin.Unit>, p0: kotlin.Int): kotlin.Unit declared in <root>.test5' type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
+                  FUNCTION_REFERENCE 'local final fun suspendConversion1 ($callee: kotlin.Function1<kotlin.Int, kotlin.Unit>, p0: kotlin.Int): kotlin.Unit declared in <root>.test5' type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=FUNCTION_TYPE_EXPRESSION_CONVERSION reflectionTarget=null
                     ARG $callee: GET_VAR 'val tmp_9: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.test5' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
             ARG other: CONST Int type=kotlin.Int value=1
   FUN name:test6 visibility:public modality:FINAL returnType:kotlin.Unit

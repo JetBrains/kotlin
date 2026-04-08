@@ -58,12 +58,12 @@ FILE fqName:<root> fileName:/TypeParameterInNestedClass.kt
         RETURN type=kotlin.Nothing from='public final fun withExponentialBackoff <W> (action: kotlin.Function0<W of <root>.Retry.withExponentialBackoff>): <root>.Retry.Builder<W of <root>.Retry.withExponentialBackoff> declared in <root>.Retry'
           CONSTRUCTOR_CALL 'public constructor <init> (action: kotlin.coroutines.SuspendFunction0<B of <root>.Retry.Builder>) declared in <root>.Retry.Builder' type=<root>.Retry.Builder<W of <root>.Retry.withExponentialBackoff> origin=null
             TYPE_ARG (of class) B: W of <root>.Retry.withExponentialBackoff
-            ARG action: BLOCK type=kotlin.coroutines.SuspendFunction0<W of <root>.Retry.withExponentialBackoff> origin=SUSPEND_CONVERSION
+            ARG action: BLOCK type=kotlin.coroutines.SuspendFunction0<W of <root>.Retry.withExponentialBackoff> origin=FUNCTION_TYPE_EXPRESSION_CONVERSION
               FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion0 visibility:local modality:FINAL returnType:W of <root>.Retry.withExponentialBackoff [suspend]
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:ExtensionReceiver name:$callee index:0 type:kotlin.Function0<W of <root>.Retry.withExponentialBackoff>
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun suspendConversion0 ($callee: kotlin.Function0<W of <root>.Retry.withExponentialBackoff>): W of <root>.Retry.withExponentialBackoff declared in <root>.Retry.withExponentialBackoff'
                     CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=W of <root>.Retry.withExponentialBackoff origin=null
                       ARG <this>: GET_VAR '$callee: kotlin.Function0<W of <root>.Retry.withExponentialBackoff> declared in <root>.Retry.withExponentialBackoff.suspendConversion0' type=kotlin.Function0<W of <root>.Retry.withExponentialBackoff> origin=null
-              FUNCTION_REFERENCE 'local final fun suspendConversion0 ($callee: kotlin.Function0<W of <root>.Retry.withExponentialBackoff>): W of <root>.Retry.withExponentialBackoff declared in <root>.Retry.withExponentialBackoff' type=kotlin.coroutines.SuspendFunction0<W of <root>.Retry.withExponentialBackoff> origin=SUSPEND_CONVERSION reflectionTarget=null
+              FUNCTION_REFERENCE 'local final fun suspendConversion0 ($callee: kotlin.Function0<W of <root>.Retry.withExponentialBackoff>): W of <root>.Retry.withExponentialBackoff declared in <root>.Retry.withExponentialBackoff' type=kotlin.coroutines.SuspendFunction0<W of <root>.Retry.withExponentialBackoff> origin=FUNCTION_TYPE_EXPRESSION_CONVERSION reflectionTarget=null
                 ARG $callee: GET_VAR 'action: kotlin.Function0<W of <root>.Retry.withExponentialBackoff> declared in <root>.Retry.withExponentialBackoff' type=kotlin.Function0<W of <root>.Retry.withExponentialBackoff> origin=null
