@@ -2,7 +2,6 @@
 // LANGUAGE: +BreakContinueInInlineLambdas
 // WITH_STDLIB
 // ISSUE: KT-1436
-// RENDER_DIAGNOSTICS_FULL_TEXT
 
 public inline fun <T, R> with(receiver: T, block: T.() -> R): R {
     return receiver.block()
