@@ -147,7 +147,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     private val fullDiagnosticsRenderer = FullDiagnosticsRenderer(DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT)
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        fullDiagnosticsRenderer.assertCollectedDiagnostics(testServices, ".fir.diag.txt")
+        fullDiagnosticsRenderer.assertCollectedDiagnostics(testServices, ".diag.txt")
     }
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {

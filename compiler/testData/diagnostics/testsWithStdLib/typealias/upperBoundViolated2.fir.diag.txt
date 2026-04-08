@@ -1,3 +1,0 @@
-/upperBoundViolated2.kt:(165,177): warning: Type argument is not within its bounds: type parameter 'K (of class Base<K : List<CharSequence>>)' must be subtype of 'List<CharSequence>', but actual: 'List<Any>'. This will become an error in future releases.
-
-/upperBoundViolated2.kt:(165,170): error: Unknown error: Inapplicable(INAPPLICABLE): /Base.Base.

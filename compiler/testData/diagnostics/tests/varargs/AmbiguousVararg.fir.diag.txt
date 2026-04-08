@@ -1,3 +1,0 @@
-/AmbiguousVararg.kt:(142,145): error: Overload resolution ambiguity between candidates:
-fun foo(vararg t: String): String
-fun foo(vararg t: Int): String

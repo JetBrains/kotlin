@@ -1,7 +1,0 @@
-/deprecatedError.kt:(332,333): error: 'class C : Any' is deprecated. alas.
-
-/deprecatedError.kt:(341,344): error: 'fun foo(s: String): Unit' is deprecated. alas.
-
-/deprecatedError.kt:(353,354): error: 'constructor(): C' is deprecated. alas.
-
-/deprecatedError.kt:(361,364): error: 'val bar: Int' is deprecated. alas.
