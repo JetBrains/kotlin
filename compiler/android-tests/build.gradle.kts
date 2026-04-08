@@ -82,6 +82,11 @@ projectTests {
             // Some checks happen against relative paths (e.g. "dist/kotlinc/lib/kotlin-test.jar").
             extraPermissions.add("""permission java.io.FilePermission "dist", "read";""")
             extraPermissions.add("""permission java.io.FilePermission "dist/-", "read";""")
+            // Android generator reads Gradle wrapper files from workingDir using relative paths.
+            extraPermissions.add("""permission java.io.FilePermission "gradle", "read";""")
+            extraPermissions.add("""permission java.io.FilePermission "gradle/-", "read";""")
+            extraPermissions.add("""permission java.io.FilePermission "gradlew", "read";""")
+            extraPermissions.add("""permission java.io.FilePermission "gradlew.bat", "read";""")
             // Android emulator setup writes AVD metadata under the provisioned SDK directory.
             val androidSdkRoot = rootDir.resolve("dependencies/android-sdk/build/androidSdk")
             extraPermissions.add("""permission java.io.FilePermission "${androidSdkRoot.absolutePath}", "read";""")
