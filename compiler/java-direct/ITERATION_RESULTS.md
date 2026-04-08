@@ -251,18 +251,18 @@ The key challenge was avoiding infinite recursion when accessing `FirJavaClass.s
 ### Root Cause Analysis
 **Problems #2 (`testClassFromJdkInLibrary`) and #8 (`testPseudoRawTypes`)** both define Java classes in JDK-sealed packages (`java.util.Date` and `java.util.Collection` respectively). On Java 9+, the module system seals these packages — user code cannot define classes there.
 
-The test backend (`AbstractJvmIrBackendFacade.transform`) compiles Java sources with in-process javac via `ToolProvider.getSystemJavaCompiler()`. In the **java-direct test worker JVM**, javac enforces the module seal: `error: package exists in another module: java.base`. In the **PSI test worker JVM**, the same in-process javac with identical options and files succeeds (`result=Success`).
+The test backend (`AbstractJvmIrBackendFacade.transform`) compiles Java sources with in-process javac via `ToolProvider.getSystemJavaCompiler()`. In the **java-direct test worker JVM** (JDK 17, pinned via `kotlin { jvmToolchain(17) }` in `build.gradle.kts`), javac enforces the module seal: `error: package exists in another module: java.base`. In the **PSI test worker JVM**, the same in-process javac with identical options and files succeeds (`result=Success`) because the PSI test worker uses a different javac version that is more lenient about sealed package enforcement.
 
 **Investigation verified:**
 - Both test workers use `jdkHome=null` (system compiler), identical javac options, identical source files
 - The compilation output directory contents are identical (`[META-INF]`)
-- The `JavaCompilerFacade.compileJavaFiles` code path is identical — the difference is purely environmental between Gradle test worker JVMs
+- The `JavaCompilerFacade.compileJavaFiles` code path is identical — the difference is the javac version used by each Gradle test worker JVM
 - The javac failure in `BackendCliJvmFacade.transform` throws `JavaCompilationError` → `ErrorFromFacade` → `processModule(library)` returns false → main module never compiled → diagnostic mismatch + missing JVM artifact cascade
 
 **Also confirmed** that problems #1, #3, #4 do NOT follow this pattern — they fail with genuine FIR diagnostic mismatches (no `JavaCompilationError`).
 
 ### Conclusion
-Both tests are **won't fix** — they test edge cases where Java sources shadow JDK classes, which is invalid on Java 9+. The PSI test worker's acceptance of this compilation is an environmental coincidence, not a feature java-direct needs to replicate.
+Both tests are **won't fix** — they test edge cases where Java sources shadow JDK classes, which is invalid on Java 9+. The java-direct test worker's JDK 17 javac correctly rejects this compilation; the PSI test worker's acceptance is version-specific behavior of its javac, not a feature java-direct needs to replicate.
 
 ### Test Results
 - Box: 1168/1168, Phased: 1451/1456, Total failing: 5

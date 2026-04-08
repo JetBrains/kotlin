@@ -394,21 +394,19 @@ This is a completely different error type — the Java sources failed to compile
 
 ### Why this happens — compilation pipeline analysis
 
-The test declares a class in package `java.util`, which conflicts with the JDK's `java.util` package. When the test infrastructure compiles the Java sources, the Java compiler (`javac`) may refuse to compile a class in a JDK package due to module system restrictions (Java 9+).
+Both test runners (PSI and java-direct) invoke in-process `javac` via `ToolProvider.getSystemJavaCompiler()` for the backend step (`AbstractJvmIrBackendFacade.transform` → `JavaCompilerFacade.compileJavaFiles`). The javac options and source files are identical. The failure is caused by the **javac version** used by each test worker being different.
 
-With PSI, the test infrastructure may use a different Java compilation approach (e.g., PSI's own Java parser which doesn't invoke `javac`) or configure the compilation to allow JDK package shadowing.
-
-With java-direct, the test infrastructure likely invokes `javac` to compile the Java sources (needed for the `RUN_PIPELINE_TILL: BACKEND` directive), and `javac` rejects the `java.util.Collection` class.
+`java-direct/build.gradle.kts` pins the test JVM to JDK 17 via `kotlin { jvmToolchain(17) }`. The `fir/analysis-tests` module (which hosts the PSI test) uses a different JVM. The in-process javac from the java-direct test worker's JDK 17 enforces sealed package restrictions strictly (`error: package exists in another module: java.base`), while the javac version in the PSI test worker happens to be more lenient and accepts the compilation.
 
 ### Approach to fix
 
-**Option A — Test infrastructure configuration**: Configure the Java compilation step for java-direct tests to allow JDK package shadowing (e.g., `--patch-module` or disabling module restrictions).
+**Option A — Align JVM version**: Remove or change `kotlin { jvmToolchain(17) }` in `java-direct/build.gradle.kts` so the test worker uses the same javac version as `fir/analysis-tests`.
 
-**Option B — Skip test**: If this is a fundamental limitation of the test setup (java-direct tests compile Java sources differently), this test could be muted or skipped for java-direct with documentation.
+**Option B — Add `DISABLE_JAVA_FACADE` as a default**: Prevent the backend from running `javac` for java-direct tests. Since java-direct reads Java sources directly, invoking `javac` for backend compilation is not needed for testing java-direct's parsing behavior. Adding `DISABLE_JAVA_FACADE` as a default directive in `JavaDirectConfigurator` would skip the javac step entirely.
 
-**Option C — Investigate PSI test runner**: Check how the PSI test runner handles this test — specifically whether it actually compiles the Java sources with `javac` or uses PSI parsing only.
+**Option C — Skip the test**: Mute the test for java-direct with documentation.
 
-**Recommended**: Option C first, then Option A.
+**Recommended**: Option B — `DISABLE_JAVA_FACADE` is the architecturally correct approach since java-direct tests shouldn't need javac compilation to verify Java source parsing.
 
 ---
 
@@ -418,7 +416,7 @@ With java-direct, the test infrastructure likely invokes `javac` to compile the 
 
 Both tests define Java classes in JDK-sealed packages (`java.util.Date` in #2, `java.util.Collection` in #8). On Java 9+, the JVM module system seals these packages — user code cannot define classes there. The in-process `javac` (via `ToolProvider.getSystemJavaCompiler()`) in the **java-direct test worker JVM** enforces this and refuses compilation with `error: package exists in another module: java.base`.
 
-The **PSI test worker JVM** happens to accept the same in-process javac compilation (verified: identical javac options, identical files, `result=Success` in PSI vs `result=InProcess` failure in java-direct). The exact cause of this environmental difference between Gradle test workers was not identified, but the compilation options and files are provably identical.
+The **PSI test worker JVM** accepts the same in-process javac compilation (verified: identical javac options, identical files, `result=Success` in PSI vs `result=InProcess` failure in java-direct). The difference is the **javac version**: `java-direct/build.gradle.kts` pins the test JVM to JDK 17 via `kotlin { jvmToolchain(17) }`, while `fir/analysis-tests` uses a different JVM whose javac version is more lenient about sealed package enforcement.
 
 **Why this can't be fixed in java-direct main code:**
 - The failure occurs in the shared test backend (`AbstractJvmIrBackendFacade.transform` → `JavaCompilerFacade.compileJavaFiles`) during the javac step, not in any java-direct code
@@ -426,7 +424,7 @@ The **PSI test worker JVM** happens to accept the same in-process javac compilat
 - This prevents the main module from being processed (its configuration creation needs the library's JVM artifact)
 - The diagnostic mismatch is a consequence of the main module never being compiled
 
-**What these tests actually test:** Kotlin's behavior when Java source files shadow JDK classes. In real production code, such files cannot be compiled with javac on Java 9+. The tests rely on the PSI test worker's ability to compile them, which is an environmental coincidence.
+**What these tests actually test:** Kotlin's behavior when Java source files shadow JDK classes. In real production code, such files cannot be compiled with javac on Java 9+. The java-direct test worker's stricter javac (JDK 17) correctly rejects this; the PSI test worker's acceptance is version-specific behavior.
 
 ---
 
