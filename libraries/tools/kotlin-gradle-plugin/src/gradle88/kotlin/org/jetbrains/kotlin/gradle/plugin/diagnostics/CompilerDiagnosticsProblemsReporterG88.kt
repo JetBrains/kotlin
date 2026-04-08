@@ -10,7 +10,6 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.problems.ProblemGroup
 import org.gradle.api.problems.Problems
-import org.gradle.api.problems.Severity
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
@@ -25,6 +24,7 @@ internal abstract class CompilerDiagnosticsProblemsReporterG88 @Inject construct
         severity: CompilerMessageRenderer.Severity,
         message: String,
         location: CompilerMessageRenderer.SourceLocation?,
+        taskPaths: Collection<String>,
     ) {
         val gradleSeverity = severity.toGradleSeverity() ?: return
         val diagnosticGroup = severity.toDiagnosticGroup()
@@ -37,6 +37,7 @@ internal abstract class CompilerDiagnosticsProblemsReporterG88 @Inject construct
                     .details(message)
                     .severity(gradleSeverity)
                     .applySourceLocation(location)
+                    .applyTaskPathLocations(taskPaths)
             }
         } catch (e: NoSuchMethodError) {
             logger.error("Can't invoke reporter method:", e)

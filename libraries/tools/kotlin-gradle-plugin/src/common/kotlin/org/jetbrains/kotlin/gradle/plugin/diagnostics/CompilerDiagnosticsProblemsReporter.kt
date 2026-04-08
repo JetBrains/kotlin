@@ -22,7 +22,15 @@ internal interface CompilerDiagnosticsProblemsReporter {
         severity: CompilerMessageRenderer.Severity,
         message: String,
         location: CompilerMessageRenderer.SourceLocation?,
+        taskPaths: Collection<String>,
     )
+
+    fun reportCompilerMessage(
+        severity: CompilerMessageRenderer.Severity,
+        message: String,
+        location: CompilerMessageRenderer.SourceLocation?,
+        taskPath: String,
+    ) = reportCompilerMessage(severity, message, location, listOf(taskPath))
 
     interface Factory : VariantImplementationFactories.VariantImplementationFactory {
         fun getInstance(objects: ObjectFactory): CompilerDiagnosticsProblemsReporter
@@ -38,6 +46,7 @@ internal abstract class DefaultCompilerDiagnosticsProblemsReporter @Inject const
         severity: CompilerMessageRenderer.Severity,
         message: String,
         location: CompilerMessageRenderer.SourceLocation?,
+        taskPaths: Collection<String>,
     ) {
         val gradleSeverity = severity.toGradleSeverity() ?: return
         val diagnosticGroup = severity.toDiagnosticGroup()
@@ -54,6 +63,7 @@ internal abstract class DefaultCompilerDiagnosticsProblemsReporter @Inject const
                     .details(message)
                     .severity(gradleSeverity)
                     .applySourceLocation(location)
+                    .applyTaskPathLocations(taskPaths)
             }
         } catch (e: NoSuchMethodError) {
             logger.error("Can't invoke reporter method:", e)
@@ -72,6 +82,7 @@ internal abstract class NoOpCompilerDiagnosticsProblemsReporter : CompilerDiagno
         severity: CompilerMessageRenderer.Severity,
         message: String,
         location: CompilerMessageRenderer.SourceLocation?,
+        taskPaths: Collection<String>,
     ) {
     }
 
@@ -120,6 +131,30 @@ internal fun ProblemSpec.applySourceLocation(location: CompilerMessageRenderer.S
         line > 0 -> lineInFileLocation(path, line)
         else -> fileLocation(path)
     }
+}
+
+internal fun ProblemSpec.applyTaskPathLocation(taskPath: String): ProblemSpec {
+    if (taskPath.isBlank()) return this
+
+    val taskLocationMethod = javaClass.methods.firstOrNull { method ->
+        method.parameterCount == 1 &&
+                method.parameterTypes.singleOrNull() == String::class.java &&
+                (method.name == "taskLocation" || method.name == "taskPathLocation")
+    } ?: return this
+
+    taskLocationMethod.isAccessible = true
+    taskLocationMethod.invoke(this, taskPath)
+    return this
+}
+
+internal fun ProblemSpec.applyTaskPathLocations(taskPaths: Collection<String>): ProblemSpec {
+    taskPaths
+        .asSequence()
+        .filter { it.isNotBlank() }
+        .distinct()
+        .sorted()
+        .forEach { applyTaskPathLocation(it) }
+    return this
 }
 
 internal val CompilerMessageRenderer.SourceLocation.locationLength: Int

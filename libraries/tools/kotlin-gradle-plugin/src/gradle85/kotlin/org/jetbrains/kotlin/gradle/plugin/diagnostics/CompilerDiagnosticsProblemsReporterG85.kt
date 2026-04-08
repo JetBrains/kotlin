@@ -14,6 +14,7 @@ internal abstract class CompilerDiagnosticsProblemsReporterG85 : CompilerDiagnos
         severity: CompilerMessageRenderer.Severity,
         message: String,
         location: CompilerMessageRenderer.SourceLocation?,
+        taskPaths: Collection<String>,
     ) {
         // Gradle 8.5 does not provide the Problems API service, so compiler diagnostics are still
         // reported through regular compiler output and this reporter intentionally does nothing.

@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 import org.gradle.api.problems.ProblemSpec
 import org.gradle.api.problems.Severity
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.applyTaskPathLocation
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.DiagnosticGroup
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.applySourceLocation
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.locationLength
@@ -24,6 +25,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 class CompilerDiagnosticsProblemsReporterHelpersTest {
 
@@ -107,12 +109,82 @@ class CompilerDiagnosticsProblemsReporterHelpersTest {
         assertEquals(1, unknownEnd.locationLength)
     }
 
+    @Test
+    fun `applyTaskPathLocation should use taskLocation when available`() {
+        val spec = TaskLocationProblemSpec()
+
+        val result = spec.applyTaskPathLocation(":compileKotlin")
+
+        assertSame(spec, result)
+        assertEquals(":compileKotlin", spec.recordedTaskPath)
+    }
+
+    @Test
+    fun `applyTaskPathLocation should use taskPathLocation when available`() {
+        val spec = TaskPathLocationProblemSpec()
+
+        val result = spec.applyTaskPathLocation(":compileKotlin")
+
+        assertSame(spec, result)
+        assertEquals(":compileKotlin", spec.recordedTaskPath)
+    }
+
+    @Test
+    fun `applyTaskPathLocation should no-op when task location method is unavailable`() {
+        val spec = BasicProblemSpec()
+
+        val result = spec.applyTaskPathLocation(":compileKotlin")
+
+        assertSame(spec, result)
+        assertTrue(spec.calls.isEmpty())
+    }
+
     private fun createProblemSpecProxy(handler: RecordingProblemSpecHandler): ProblemSpec {
         return Proxy.newProxyInstance(
             javaClass.classLoader,
             arrayOf(ProblemSpec::class.java),
             handler,
         ) as ProblemSpec
+    }
+
+    private open class BasicProblemSpec : ProblemSpec {
+        val calls = mutableListOf<String>()
+
+        override fun contextualLabel(contextualLabel: String): ProblemSpec = this.also { calls += "contextualLabel" }
+        override fun documentedAt(documentationUrl: String): ProblemSpec = this.also { calls += "documentedAt" }
+        override fun fileLocation(path: String): ProblemSpec = this.also { calls += "fileLocation" }
+        override fun lineInFileLocation(path: String, line: Int): ProblemSpec = this.also { calls += "lineInFileLocation" }
+        override fun lineInFileLocation(path: String, line: Int, column: Int): ProblemSpec = this.also { calls += "lineInFileLocation" }
+        override fun lineInFileLocation(path: String, line: Int, column: Int, length: Int): ProblemSpec =
+            this.also { calls += "lineInFileLocation" }
+
+        override fun offsetInFileLocation(path: String, offset: Int, length: Int): ProblemSpec =
+            this.also { calls += "offsetInFileLocation" }
+
+        override fun stackLocation(): ProblemSpec = this.also { calls += "stackLocation" }
+        override fun details(details: String): ProblemSpec = this.also { calls += "details" }
+        override fun solution(solution: String): ProblemSpec = this.also { calls += "solution" }
+        override fun <T : org.gradle.api.problems.AdditionalData> additionalData(
+            type: Class<T>,
+            config: org.gradle.api.Action<in T>,
+        ): ProblemSpec = this.also { calls += "additionalData" }
+
+        override fun withException(exception: Throwable): ProblemSpec = this.also { calls += "withException" }
+        override fun severity(severity: Severity): ProblemSpec = this.also { calls += "severity" }
+    }
+
+    private class TaskLocationProblemSpec : BasicProblemSpec() {
+        var recordedTaskPath: String? = null
+
+        @Suppress("unused")
+        fun taskLocation(taskPath: String): ProblemSpec = this.also { recordedTaskPath = taskPath }
+    }
+
+    private class TaskPathLocationProblemSpec : BasicProblemSpec() {
+        var recordedTaskPath: String? = null
+
+        @Suppress("unused")
+        fun taskPathLocation(taskPath: String): ProblemSpec = this.also { recordedTaskPath = taskPath }
     }
 
     private class RecordingProblemSpecHandler : InvocationHandler {

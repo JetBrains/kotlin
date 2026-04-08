@@ -22,6 +22,7 @@ internal abstract class CompilerDiagnosticsProblemsReporterG811 @Inject construc
         severity: CompilerMessageRenderer.Severity,
         message: String,
         location: CompilerMessageRenderer.SourceLocation?,
+        taskPaths: Collection<String>,
     ) {
         val gradleSeverity = severity.toGradleSeverity() ?: return
         val diagnosticGroup = severity.toDiagnosticGroup()
@@ -34,6 +35,7 @@ internal abstract class CompilerDiagnosticsProblemsReporterG811 @Inject construc
                     .details(message)
                     .severity(gradleSeverity)
                     .applySourceLocation(location)
+                    .applyTaskPathLocations(taskPaths)
             }
         } catch (e: NoSuchMethodError) {
             logger.error("Can't invoke reporter method:", e)

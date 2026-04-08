@@ -14,6 +14,7 @@ internal abstract class CompilerDiagnosticsProblemsReporterG76 : CompilerDiagnos
         severity: CompilerMessageRenderer.Severity,
         message: String,
         location: CompilerMessageRenderer.SourceLocation?,
+        taskPaths: Collection<String>,
     ) {
         // Gradle < 8.6 does not provide the Problems API, so compiler diagnostics are reported only via
         // regular compiler output rendered by Build Tools API and this reporter intentionally does nothing.
