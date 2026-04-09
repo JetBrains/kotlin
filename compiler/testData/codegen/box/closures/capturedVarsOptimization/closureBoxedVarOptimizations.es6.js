@@ -1,7 +1,7 @@
 function captureVarInInlineLambda() {
   var any = new Object();
-  var byte = 1;
-  var short = 2;
+  var byte = toByte(1);
+  var short = toShort(2);
   var int = 3;
   var long = 4n;
   var float = 5.0;
@@ -10,8 +10,8 @@ function captureVarInInlineLambda() {
   var boolean = true;
   // Inline function 'run' call
   any = null;
-  byte = 101;
-  short = 102;
+  byte = toByte(101);
+  short = toShort(102);
   int = 103;
   long = 104n;
   float = 105.0;
@@ -21,8 +21,8 @@ function captureVarInInlineLambda() {
 }
 function captureVarInLocalClassInInlineLambda() {
   var any = {_v: new Object()};
-  var byte = {_v: 1};
-  var short = {_v: 2};
+  var byte = {_v: toByte(1)};
+  var short = {_v: toShort(2)};
   var int = {_v: 3};
   var long = {_v: 4n};
   var float = {_v: 5.0};
@@ -34,8 +34,8 @@ function captureVarInLocalClassInInlineLambda() {
 }
 function captureValueClassVar() {
   var any = {_v: new AnyWrapper(_AnyWrapper___init__impl__jd5khy(new Object()))};
-  var byte = {_v: new ByteWrapper(_ByteWrapper___init__impl__bcpnw2(1))};
-  var short = {_v: new ShortWrapper(_ShortWrapper___init__impl__bdjki2(2))};
+  var byte = {_v: new ByteWrapper(_ByteWrapper___init__impl__bcpnw2(toByte(1)))};
+  var short = {_v: new ShortWrapper(_ShortWrapper___init__impl__bdjki2(toShort(2)))};
   var int = {_v: new IntWrapper(_IntWrapper___init__impl__y2azvh(3))};
   var long = {_v: new LongWrapper(_LongWrapper___init__impl__et53uq(4n))};
   var float = {_v: new FloatWrapper(_FloatWrapper___init__impl__87f78q(5.0))};
@@ -47,8 +47,8 @@ function captureValueClassVar() {
 function captureValueClassVar$lambda($any, $byte, $short, $int, $long, $float, $double, $char, $boolean) {
   return () => {
     $any._v = new AnyWrapper(_AnyWrapper___init__impl__jd5khy(null));
-    $byte._v = new ByteWrapper(_ByteWrapper___init__impl__bcpnw2(101));
-    $short._v = new ShortWrapper(_ShortWrapper___init__impl__bdjki2(102));
+    $byte._v = new ByteWrapper(_ByteWrapper___init__impl__bcpnw2(toByte(101)));
+    $short._v = new ShortWrapper(_ShortWrapper___init__impl__bdjki2(toShort(102)));
     $int._v = new IntWrapper(_IntWrapper___init__impl__y2azvh(103));
     $long._v = new LongWrapper(_LongWrapper___init__impl__et53uq(104n));
     $float._v = new FloatWrapper(_FloatWrapper___init__impl__87f78q(105.0));

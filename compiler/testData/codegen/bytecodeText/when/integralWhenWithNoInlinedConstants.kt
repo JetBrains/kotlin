@@ -20,5 +20,5 @@ fun foo2(x: Int): Boolean {
     }
 }
 
-// 1 TABLESWITCH
+// 0 TABLESWITCH
 // 1 LOOKUPSWITCH

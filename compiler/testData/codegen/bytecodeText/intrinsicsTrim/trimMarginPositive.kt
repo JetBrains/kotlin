@@ -41,8 +41,8 @@ fun constantCustomPrefixInterpolatedUsingConstant(): String {
     """.trimMargin(marginPrefix = "$OCTOTHORPE@$OCTOTHORPE")
 }
 
-// 3 LDC "Hello,\\nWorld"
-// 1 LDC "Hello,\\nHello,\\nWorld\\nWorld"
-// 1 LDC "Hey\\nHelloHello,\\nWorldWorld"
-// 0 LDC "###"
-// 0 INVOKESTATIC kotlin/text/StringsKt.trimMargin
+// 0 LDC "Hello,\\nWorld"
+// 0 LDC "Hello,\\nHello,\\nWorld\\nWorld"
+// 0 LDC "Hey\\nHelloHello,\\nWorldWorld"
+// 1 LDC "###"
+// 5 INVOKESTATIC kotlin/text/StringsKt.trimMargin

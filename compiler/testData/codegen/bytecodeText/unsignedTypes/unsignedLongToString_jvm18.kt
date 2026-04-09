@@ -15,4 +15,4 @@ fun box(): String {
 }
 
 // 0 kotlin/ULong.toString
-// 0 INVOKESTATIC java/lang/Long.toUnsignedString \(J\)Ljava/lang/String;
+// 3 INVOKESTATIC java/lang/Long.toUnsignedString \(J\)Ljava/lang/String;

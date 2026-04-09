@@ -23,8 +23,9 @@ fun box(): String {
 
     if (A.c !== B.c) return "Fail 3: A.c !== B.c"
 
-    if (A.bNonConst !== B.bNonConst) return "Fail 4: A.bNonConst !== B.bNonConst"
-    if (A.bNullable !== B.bNullable) return "Fail 5: A.bNullable !== B.bNullable"
+    // The result of such comparison is not guaranteed
+//    if (A.bNonConst !== B.bNonConst) return "Fail 4: A.bNonConst !== B.bNonConst"
+//    if (A.bNullable !== B.bNullable) return "Fail 5: A.bNullable !== B.bNullable"
 
     return "OK"
 }

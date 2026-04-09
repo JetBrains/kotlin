@@ -26,6 +26,7 @@ fun test(): Long {
 // EXPECTATIONS NATIVE
 // test.kt:6 box
 // test.kt:9 test
+// test.kt:10 test
 // test.kt:11 test
 // test.kt:12 test
 // test.kt:16 test
@@ -39,7 +40,8 @@ fun test(): Long {
 
 // EXPECTATIONS WASM
 // test.kt:6 $box (4)
-// test.kt:11 $test (8)
+// test.kt:10 $test (8, 13, 8)
+// test.kt:11 $test (8, 13, 8)
 // test.kt:12 $test (15, 8)
 // test.kt:6 $box (4)
 // test.kt:7 $box (1)

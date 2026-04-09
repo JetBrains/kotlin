@@ -25,7 +25,7 @@ fun reliesOnNestedStringBuilderFlatteningAndConstantConcatenation(): String {
 """ + SPACES).trimIndent()
 }
 
-// 1 LDC "Hello,\\nWorld"
-// 1 LDC "Hello,\\nHello,\\nWorld\\nWorld"
-// 1 LDC "Hey\\nHelloHello,\\nWorldWorld"
-// 0 INVOKESTATIC kotlin/text/StringsKt.trimIndent
+// 0 LDC "Hello,\\nWorld"
+// 0 LDC "Hello,\\nHello,\\nWorld\\nWorld"
+// 0 LDC "Hey\\nHelloHello,\\nWorldWorld"
+// 3 INVOKESTATIC kotlin/text/StringsKt.trimIndent

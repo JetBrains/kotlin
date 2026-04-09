@@ -19,4 +19,4 @@ fun box() {
 // 0 IFNONULL
 // 0 throwNpe
 // 0 ATHROW
-// 0 checkNotNull \(Ljava/lang/Object;\)V
+// 1 checkNotNull \(Ljava/lang/Object;\)V

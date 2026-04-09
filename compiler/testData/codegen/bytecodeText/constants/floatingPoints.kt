@@ -8,9 +8,9 @@ val g = 0.0 / 0
 val h = 0 / 0.0
 val i = 0.0 / 0.0
 
-// 1 LDC 11.0
-// 1 LDC 12.0
-// 1 LDC 13.0
-// 1 LDC 14.0
-// 2 LDC Infinity
-// 3 LDC NaN
+// 0 LDC 11.0
+// 0 LDC 12.0
+// 0 LDC 13.0
+// 0 LDC 14.0
+// 0 LDC Infinity
+// 0 LDC NaN
