@@ -16,9 +16,6 @@ import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterCommonChecker
-import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterConstGetterPreprocessor
-import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNamePreprocessor
-import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterPreprocessorData
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.parentAsClass
 
@@ -60,28 +57,15 @@ fun IrFile.runConstOptimizations(
     inlineConstTracker: InlineConstTracker? = null,
     suppressExceptions: Boolean = false,
 ) {
-    val preprocessedFile = this.preprocessForConstTransformer(interpreter, mode)
-
     val checker = IrInterpreterCommonChecker()
     val irConstExpressionTransformer = IrConstAllTransformer(
         IrConstEvaluationContext(
-            interpreter, preprocessedFile, mode, checker, inlineConstTracker,
+            interpreter, this, mode, checker, inlineConstTracker,
             { _, _, _ -> }, { _, _, _ -> },
             suppressExceptions
         )
     )
-    preprocessedFile.transform(irConstExpressionTransformer, IrConstExpressionTransformer.Data())
-}
-
-private fun IrFile.preprocessForConstTransformer(
-    interpreter: IrInterpreter,
-    mode: EvaluationMode,
-): IrFile {
-    val preprocessors = setOf(IrInterpreterKCallableNamePreprocessor(), IrInterpreterConstGetterPreprocessor())
-    val preprocessedFile = preprocessors.fold(this) { file, preprocessor ->
-        preprocessor.preprocess(file, IrInterpreterPreprocessorData(mode, interpreter.irBuiltIns))
-    }
-    return preprocessedFile
+    this.transform(irConstExpressionTransformer, IrConstExpressionTransformer.Data())
 }
 
 fun InlineConstTracker.reportOnIr(irFile: IrFile, field: IrField, value: IrConst) {
