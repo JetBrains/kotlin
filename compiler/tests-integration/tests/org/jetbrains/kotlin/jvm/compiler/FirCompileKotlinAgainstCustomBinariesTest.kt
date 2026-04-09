@@ -62,7 +62,7 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
     }
 
     fun testReleaseCompilerAgainstPreReleaseFeatureJs() {
-        val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled() } ?: return
+        val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled(LanguageVersion.LATEST_STABLE) } ?: return
 
         val poisonedLibrary = compileJsLibrary(
             libraryName = "poisonedLibrary",
@@ -84,7 +84,7 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
     }
 
     fun testReleaseCompilerWithoutUsageOfPreReleaseFeatureJs() {
-        val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled() } ?: return
+        val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled(LanguageVersion.LATEST_STABLE) } ?: return
 
         val poisonedLibrary = compileJsLibrary(
             libraryName = "poisonedLibrary",

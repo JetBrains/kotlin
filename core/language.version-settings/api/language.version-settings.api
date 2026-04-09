@@ -543,6 +543,7 @@ public final class org/jetbrains/kotlin/config/LanguageFeature : java/lang/Enum 
 	public final fun getBehaviorAfterSinceVersion ()Lorg/jetbrains/kotlin/config/LanguageFeatureBehaviorAfterSinceVersion;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getForcesPreReleaseBinaries ()Z
+	public final fun getForcesPreReleaseBinariesBefore ()Lorg/jetbrains/kotlin/config/LanguageVersion;
 	public final fun getHintUrl ()Ljava/lang/String;
 	public final fun getIssue ()Ljava/lang/String;
 	public final fun getPresentableName ()Ljava/lang/String;
@@ -675,7 +676,7 @@ public final class org/jetbrains/kotlin/config/LanguageVersionSettingsImpl$Compa
 
 public final class org/jetbrains/kotlin/config/LanguageVersionSettingsKt {
 	public static final field NO_ISSUE_SPECIFIED Ljava/lang/String;
-	public static final fun forcesPreReleaseBinariesIfEnabled (Lorg/jetbrains/kotlin/config/LanguageFeature;)Z
+	public static final fun forcesPreReleaseBinariesIfEnabled (Lorg/jetbrains/kotlin/config/LanguageFeature;Lorg/jetbrains/kotlin/config/LanguageVersion;)Z
 	public static final fun getCustomizedEffectivelyDisabledLanguageFeatures (Lorg/jetbrains/kotlin/config/LanguageVersionSettings;)Ljava/util/Set;
 	public static final fun getCustomizedEffectivelyEnabledLanguageFeatures (Lorg/jetbrains/kotlin/config/LanguageVersionSettings;)Ljava/util/Set;
 	public static final fun isEnabledByDefault (Lorg/jetbrains/kotlin/config/LanguageVersionSettings;Lorg/jetbrains/kotlin/config/LanguageFeature;)Z

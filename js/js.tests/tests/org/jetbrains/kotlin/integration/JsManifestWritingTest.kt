@@ -35,7 +35,7 @@ class JsManifestWritingTest : TestCaseWithTmpdir() {
     fun testEnableAndDisableLanguageFeatures() {
         jsStdlib?.let { lib ->
             val poisoningFeature =
-                LanguageFeature.entries.first { it.forcesPreReleaseBinariesIfEnabled() }
+                LanguageFeature.entries.first { it.forcesPreReleaseBinariesIfEnabled(LanguageVersion.LATEST_STABLE) }
             val enabledLanguageFeature = LanguageFeature.entries.first { it.sinceVersion == LanguageVersion.FIRST_SUPPORTED }
 
             runCompiler(

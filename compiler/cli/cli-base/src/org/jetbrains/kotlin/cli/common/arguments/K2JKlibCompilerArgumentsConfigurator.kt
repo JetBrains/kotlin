@@ -27,9 +27,10 @@ class K2JKlibCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator
     override fun configureLanguageFeatures(
         arguments: CommonCompilerArguments,
         reporter: Reporter,
+        languageVersion: LanguageVersion,
     ): MutableMap<LanguageFeature, LanguageFeature.State> = with(arguments) {
         require(this is K2JKlibCompilerArguments)
-        val result = super.configureLanguageFeatures(arguments, reporter)
+        val result = super.configureLanguageFeatures(arguments, reporter, languageVersion)
         if (typeEnhancementImprovementsInStrictMode) {
             result[LanguageFeature.TypeEnhancementImprovementsInStrictMode] = LanguageFeature.State.ENABLED
         }

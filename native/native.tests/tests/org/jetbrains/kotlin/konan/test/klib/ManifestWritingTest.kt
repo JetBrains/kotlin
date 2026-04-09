@@ -182,7 +182,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testEnableAndDisableLanguageFeatures() {
-        val poisoningFeature = LanguageFeature.entries.first { it.forcesPreReleaseBinariesIfEnabled() }
+        val poisoningFeature = LanguageFeature.entries.first { it.forcesPreReleaseBinariesIfEnabled(LanguageVersion.LATEST_STABLE) }
         val enabledLanguageFeature = LanguageFeature.entries.first { it.sinceVersion == LanguageVersion.FIRST_SUPPORTED }
 
         val compilationResult = compileLibrary(

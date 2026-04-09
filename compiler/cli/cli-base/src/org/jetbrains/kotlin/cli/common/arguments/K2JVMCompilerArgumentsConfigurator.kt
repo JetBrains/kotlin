@@ -65,9 +65,10 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
     override fun configureLanguageFeatures(
         arguments: CommonCompilerArguments,
         reporter: Reporter,
+        languageVersion: LanguageVersion,
     ): MutableMap<LanguageFeature, LanguageFeature.State> = with(arguments) {
         require(this is K2JVMCompilerArguments)
-        val result = super.configureLanguageFeatures(arguments, reporter)
+        val result = super.configureLanguageFeatures(arguments, reporter, languageVersion)
         result.configureJvmLanguageFeatures(this)
 
         if (indyAllowAnnotatedLambdas == true) {

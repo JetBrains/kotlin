@@ -30,10 +30,11 @@ class K2NativeCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsCo
 
     override fun configureLanguageFeatures(
         arguments: CommonCompilerArguments,
-        reporter: Reporter
+        reporter: Reporter,
+        languageVersion: LanguageVersion
     ): MutableMap<LanguageFeature, LanguageFeature.State> = with(arguments) {
         require(this is K2NativeCompilerArguments)
-        val result = super.configureLanguageFeatures(arguments, reporter)
+        val result = super.configureLanguageFeatures(arguments, reporter, languageVersion)
         result.configureNativeLanguageFeatures(this)
         return result
     }

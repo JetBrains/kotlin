@@ -53,6 +53,7 @@ enum class LanguageFeature(
     val issue: String,
     private val enabledInProgressiveMode: Boolean = false,
     val forcesPreReleaseBinaries: Boolean = false,
+    val forcesPreReleaseBinariesBefore: LanguageVersion? = null,
     val testOnly: Boolean = false,
     val hintUrl: String? = null,
     val behaviorAfterSinceVersion: LanguageFeatureBehaviorAfterSinceVersion = CannotBeDisabled,
@@ -637,6 +638,10 @@ enum class LanguageFeature(
         if (testOnly && sinceVersion != null) {
             error("$this: should be enabled by default since version $sinceVersion but is test only")
         }
+
+        if (!forcesPreReleaseBinaries && forcesPreReleaseBinariesBefore != null) {
+            error("$this: forcesPreReleaseBinariesBefore is not null but forcesPreReleaseBinaries is false")
+        }
     }
 
     val presentableName: String
@@ -815,7 +820,7 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
 
     override fun isPreRelease(): Boolean = languageVersion.isPreRelease() ||
             specificFeatures.any { (feature, state) ->
-                state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()
+                state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled(languageVersion)
             }
 
     companion object {
@@ -830,9 +835,9 @@ fun LanguageVersion.isPreRelease(): Boolean {
     return KotlinCompilerVersion.isPreRelease() && this == LanguageVersion.LATEST_STABLE
 }
 
-fun LanguageFeature.forcesPreReleaseBinariesIfEnabled(): Boolean {
+fun LanguageFeature.forcesPreReleaseBinariesIfEnabled(languageVersion: LanguageVersion): Boolean {
     val isFeatureNotReleasedYet = sinceVersion?.isStable != true
-    return isFeatureNotReleasedYet && forcesPreReleaseBinaries
+    return isFeatureNotReleasedYet && forcesPreReleaseBinaries && forcesPreReleaseBinariesBefore.let { it == null || languageVersion <= it }
 }
 
 fun LanguageVersionSettings.getCustomizedEffectivelyEnabledLanguageFeatures(): Set<LanguageFeature> {
