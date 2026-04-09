@@ -57,6 +57,8 @@ class ObjCInteropFacade(val testServices: TestServices) : AbstractTestFacade<Res
         val expectedArtifact = KLIB(testServices.klibEnvironmentConfigurator.getKlibArtifactDir(testServices, module.name))
 
         val staticLibraries = cSourceFiles.map {
+            // `compileWithClangToStaticLibrary` invokes `clang` executable from either XCode or Llvm toolchains.
+            // Should `clang` be not found, please check Gradle dependencies on the binary folder containing the ` clang ` tool
             compileWithClangToStaticLibrary(
                 testRunSettings = settings,
                 clangMode = when (it.extension) {
