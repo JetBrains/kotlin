@@ -582,7 +582,7 @@ enum class LanguageFeature(
     JvmInlineMultiFieldValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
     JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
     AllowAnyAsAnActualTypeForExpectInterface(sinceVersion = null, issue = "KT-79308"),
-    CompanionBlocksAndExtensions(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true),
+    CompanionBlocksAndExtensions(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true, forcesPreReleaseBinariesBefore = KOTLIN_2_5),
     NameBasedDestructuring(sinceVersion = null, "KT-19627"),
     DeprecateNameMismatchInShortDestructuringWithParentheses(sinceVersion = null, "KT-19627"),
     EnableNameBasedDestructuringShortForm(sinceVersion = null, "KT-19627"),
