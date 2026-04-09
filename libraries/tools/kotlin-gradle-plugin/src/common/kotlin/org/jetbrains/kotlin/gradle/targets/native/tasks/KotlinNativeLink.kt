@@ -427,11 +427,6 @@ constructor(
     @get:Classpath
     protected val friendModule: FileCollection = objectFactory.fileCollection().from({ compilation.friendPaths })
 
-    @Suppress("DEPRECATION_ERROR")
-    private val resolvedConfiguration = LazyResolvedConfigurationWithArtifacts(
-        project.configurations.getByName(compilation.compileDependencyConfigurationName)
-    )
-
     @get:Internal
     open val outputFile: Provider<File>
         get() = destinationDirectory.flatMap {
