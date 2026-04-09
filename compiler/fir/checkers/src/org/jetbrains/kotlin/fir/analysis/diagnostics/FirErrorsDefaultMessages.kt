@@ -3971,5 +3971,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             COMPANION_EXTENSION_NULLABLE_RECEIVER,
             "Companion extension receiver type cannot be nullable.",
         )
+        map.put(FirErrors.IE_DIAGNOSTIC, "''{0}''", STRING)
     }
 }
