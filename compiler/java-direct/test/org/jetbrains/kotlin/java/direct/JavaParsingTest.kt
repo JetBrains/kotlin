@@ -600,7 +600,7 @@ class JavaParsingTest {
         val tempDir = kotlin.io.path.createTempDirectory("java-direct-test")
         try {
             val helloFile = tempDir.resolve("Hello.java")
-            java.nio.file.Files.writeString(helloFile, """
+            helloFile.toFile().writeText("""
                 package example;
                 
                 public class Hello {

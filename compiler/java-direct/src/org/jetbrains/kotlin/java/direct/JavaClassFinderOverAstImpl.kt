@@ -237,13 +237,9 @@ class JavaClassFinderOverAstImpl(
         }
     }
 
+    // TODO: check the uses; the io errors shoulbe probably propagated
     private fun tryReadFile(path: Path): CharSequence? = try {
-        Files.newByteChannel(path, StandardOpenOption.READ).use { ch ->
-            val bytes = ByteArray(ch.size().toInt())
-            Files.readAllBytes(path)
-        }
-        // simpler approach
-        Files.readString(path, StandardCharsets.UTF_8)
+        path.toFile().readText()
     } catch (_: IOException) {
         null
     }
