@@ -4487,6 +4487,14 @@ private fun KaDiagnosticConverterBuilder.addConversions101() {
             token,
         )
     }
+    add(FirErrors.REIFIED_TYPE_UNSAFE_SUBSTITUTION) { firDiagnostic ->
+        ReifiedTypeUnsafeSubstitutionImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND) { firDiagnostic ->
         ExpectedFunctionSourceWithDefaultArgumentsNotFoundImpl(
             firDiagnostic as KtPsiDiagnostic,

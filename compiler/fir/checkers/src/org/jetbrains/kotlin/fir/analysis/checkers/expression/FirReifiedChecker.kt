@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isCastErased
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -148,6 +149,12 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             reporter.reportOn(source, FirErrors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, typeArgument)
         } else if (typeArgument is ConeIntersectionType) {
             reporter.reportOn(source, FirErrors.TYPE_INTERSECTION_AS_REIFIED, typeParameter, typeArgument.intersectedTypes)
+        } else if (isExplicit
+            && typeParameter.resolvedAnnotationClassIds.any { it == StandardClassIds.Annotations.WarnOnErased }
+            && isCastErased(context.session.builtinTypes.anyType.coneType, typeArgument)
+        ) {
+            val erasedType = (typeArgument as? ConeClassLikeType)?.replaceArgumentsWithStarProjections() ?: typeArgument
+            reporter.reportOn(source, FirErrors.REIFIED_TYPE_UNSAFE_SUBSTITUTION, typeArgument, erasedType)
         }
     }
 

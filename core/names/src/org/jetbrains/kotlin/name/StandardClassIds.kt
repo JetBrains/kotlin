@@ -227,6 +227,7 @@ object StandardClassIds {
         val InlineOnly = "InlineOnly".internalId()
 
         val OnlyInputTypes = "OnlyInputTypes".internalId()
+        val WarnOnErased = "WarnOnErased".internalId()
 
         val RestrictsSuspension = "RestrictsSuspension".coroutinesId()
 

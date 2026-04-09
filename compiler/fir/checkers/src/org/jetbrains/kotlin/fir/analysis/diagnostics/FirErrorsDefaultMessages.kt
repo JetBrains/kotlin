@@ -733,6 +733,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SPREAD_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_VISIBILITY_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_UNSAFE_SUBSTITUTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_PARAMETER_IN_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_PARAMETER_NO_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_PARAMETER_ON_ALIAS
@@ -2154,6 +2155,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             REIFIED_TYPE_FORBIDDEN_SUBSTITUTION,
             "Cannot use ''{0}'' as reified type parameter.",
+            RENDER_TYPE,
+        )
+        map.put(
+            REIFIED_TYPE_UNSAFE_SUBSTITUTION,
+            "The type argument ''{0}'' will be checked as ''{1}'' at runtime due to type erasure. Elements that match ''{1}'' but not ''{0}'' will also pass the check.",
+            RENDER_TYPE,
             RENDER_TYPE,
         )
         map.put(

@@ -2171,6 +2171,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val type: KaType
     }
 
+    interface ReifiedTypeUnsafeSubstitution : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ReifiedTypeUnsafeSubstitution::class
+        val type: KaType
+        val erasedType: KaType
+    }
+
     interface DefinitelyNonNullableAsReified : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = DefinitelyNonNullableAsReified::class
     }

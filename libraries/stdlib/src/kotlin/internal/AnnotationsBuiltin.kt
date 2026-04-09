@@ -16,6 +16,14 @@ package kotlin.internal
 internal annotation class PureReifiable
 
 /**
+ * When applied to a reified type parameter, the compiler reports a warning if the type argument
+ * has generic type parameters that will be erased at runtime (e.g. `List<String>` erased to `List<*>`).
+ */
+@Target(AnnotationTarget.TYPE_PARAMETER)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class WarnOnErased
+
+/**
  * Specifies that the corresponding built-in method exists depending on platform.
  * Current implementation for JVM looks whether method with same JVM descriptor exists in the module JDK.
  * For example MutableMap.remove(K, V) available only if corresponding
