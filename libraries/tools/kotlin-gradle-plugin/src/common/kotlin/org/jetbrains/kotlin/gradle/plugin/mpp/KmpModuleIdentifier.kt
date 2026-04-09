@@ -15,34 +15,34 @@ import java.io.Serializable
 
 
 internal data class KmpModuleIdentifier(
-    val moduleId: ModuleId?,
-    val componentId: ComponentId,
+    val groupAndName: GradleGroupAndName?,
+    val componentId: GradleComponentId,
 ) : Serializable {
 
-    data class ModuleId(
+    data class GradleGroupAndName(
         val group: String,
         val name: String,
     ) : Serializable
 
-    sealed interface ComponentId : Serializable
+    sealed interface GradleComponentId : Serializable
 
     data class ModuleComponentId(
         val group: String,
         val name: String,
-    ) : ComponentId
+    ) : GradleComponentId
 
     data class ProjectComponentId(
         val projectPath: String,
         val buildPath: String,
-    ) : ComponentId
+    ) : GradleComponentId
 
     companion object {
         fun from(
             component: ResolvedComponentResult,
             buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
         ): KmpModuleIdentifier {
-            val moduleId = try {
-                component.moduleVersion?.let { ModuleId(it.group, it.name) }
+            val gradleGroupAndName = try {
+                component.moduleVersion?.let { GradleGroupAndName(it.group, it.name) }
             } catch (_: Exception) {
                 null
             }
@@ -59,7 +59,7 @@ internal data class KmpModuleIdentifier(
                 else -> error("Unexpected Component Identifier: '$id' of type ${id.javaClass}")
             }
 
-            return KmpModuleIdentifier(moduleId, componentId)
+            return KmpModuleIdentifier(gradleGroupAndName, componentId)
         }
     }
 
@@ -67,8 +67,8 @@ internal data class KmpModuleIdentifier(
         if (this === other) return true
         if (other !is KmpModuleIdentifier) return false
 
-        if (moduleId != null && other.moduleId != null) {
-            return moduleId == other.moduleId
+        if (groupAndName != null && other.groupAndName != null) {
+            return groupAndName == other.groupAndName
         }
 
         // fall back to component matching when a module version is not available on any of the compared identifiers
@@ -76,14 +76,14 @@ internal data class KmpModuleIdentifier(
     }
 
     override fun hashCode(): Int {
-        if (moduleId != null) {
-            return 31 * moduleId.group.hashCode() + moduleId.name.hashCode()
+        if (groupAndName != null) {
+            return 31 * groupAndName.group.hashCode() + groupAndName.name.hashCode()
         }
         return componentId.hashCode()
     }
 
     override fun toString(): String {
-        val modulePart = moduleId?.let { "moduleVersion=${it.group}:${it.name}" } ?: "moduleVersion=null"
+        val modulePart = groupAndName?.let { "moduleVersion=${it.group}:${it.name}" } ?: "moduleVersion=null"
         val componentPart = when (componentId) {
             is ProjectComponentId -> "project ${componentId.buildPath}${componentId.projectPath}"
             is ModuleComponentId -> "module ${componentId.group}:${componentId.name}"
