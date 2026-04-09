@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.RuntimeClasspathJsProvider
+import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.targetPlatform
 import java.io.File
@@ -24,6 +25,10 @@ private val defaultClassPath by lazy {
     classPath.split(separator).map { File(it) }
 }
 
+private val composeLibraries by lazy {
+    defaultClassPath.filter { it.absolutePath.contains("androidx.compose") }
+}
+
 private val jsClassPath by lazy {
     val classPath = System.getProperty(JS_RUNTIME_PATHS) ?: error("System property \"$JS_RUNTIME_PATHS\" is not found")
     val separator = File.pathSeparator ?: error("File path separator is null")
@@ -35,12 +40,18 @@ class ComposeJvmClasspathConfigurator(testServices: TestServices) : EnvironmentC
         val platform = module.targetPlatform(testServices)
         when {
             platform.isJvm() -> {
-                defaultClassPath.filter { it.absolutePath.contains("androidx.compose") }.forEach {
+                composeLibraries.forEach {
                     configuration.addJvmClasspathRoot(it)
                 }
             }
             else -> error("CodeGen API and compiler tests with Compose compiler plugin are currently supporting only JVM")
         }
+    }
+}
+
+class ComposeJvmClasspathProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
+    override fun runtimeClassPaths(module: TestModule): List<File> {
+        return composeLibraries
     }
 }
 

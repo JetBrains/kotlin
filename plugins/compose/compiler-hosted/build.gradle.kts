@@ -62,6 +62,10 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(testFixtures(project(":js:js.tests")))
 
+
+    testImplementation(testFixtures(project(":kotlinx-serialization-compiler-plugin")))
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.0")
+
     // compose runtime for tests
     testImplementation(composeRuntime()) { isTransitive = false }
     testImplementation(composeRuntimeAnnotations()) { isTransitive = false }
