@@ -33,6 +33,7 @@ OUT_DIR=$(mktemp -d)
 trap 'rm -rf $TMP_DIR $COMPILER_LOG $OUT_DIR' EXIT
 
 KOTLIN_TEST_JAR="dist/kotlinc/lib/kotlin-test.jar"
+PLUGIN_JAR="dist/kotlinc/lib/kotlin-serialization-compiler-plugin.jar"
 
 PASSED=0
 FAILED=0
@@ -110,7 +111,7 @@ for file in $(find $TESTS_DIR -name "*.kt"); do
     cat "$file" > "$TMP_FILE"
     printf '\n fun main() { println(box()) } \n' >> "$TMP_FILE"
 
-    $NATIVE_IMAGE_BIN $NATIVE_IMAGE_ARGS $EXTRA_CP $LANGUAGE_FLAGS -d "$OUT_DIR" "$TMP_FILE" &> $COMPILER_LOG
+    $NATIVE_IMAGE_BIN $NATIVE_IMAGE_ARGS -Xplugin="$PLUGIN_JAR" $EXTRA_CP $LANGUAGE_FLAGS -d "$OUT_DIR" "$TMP_FILE" &> $COMPILER_LOG
   fi
 
   if [ $? -ne 0 ]; then

@@ -230,11 +230,19 @@ object PluginCliParser {
         configuration: CompilerConfiguration,
         parentDisposable: Disposable,
     ) {
-        val classLoader = createClassLoader(pluginClasspaths ?: emptyList(), parentDisposable)
+        val pluginClasspathsList = pluginClasspaths?.toList() ?: emptyList()
+        System.err.println("[PluginCliParser] Loading plugins from classpaths: $pluginClasspathsList")
+        val classLoader = createClassLoader(pluginClasspathsList, parentDisposable)
         val componentRegistrars = ServiceLoaderLite.loadImplementations(ComponentRegistrar::class.java, classLoader)
+        for (registrar in componentRegistrars) {
+            System.err.println("[PluginCliParser] Loaded legacy ComponentRegistrar: ${registrar::class.qualifiedName}")
+        }
         configuration.addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
 
         val compilerPluginRegistrars = ServiceLoaderLite.loadImplementations(CompilerPluginRegistrar::class.java, classLoader)
+        for (registrar in compilerPluginRegistrars) {
+            System.err.println("[PluginCliParser] Loaded CompilerPluginRegistrar: ${registrar.pluginId} (${registrar::class.qualifiedName})")
+        }
 
         val registrarsById = compilerPluginRegistrars
             .filter {

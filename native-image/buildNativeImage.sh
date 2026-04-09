@@ -74,6 +74,9 @@ $NATIVE_IMAGE_BIN \
   -H:+AddAllCharsets \
   -H:+UnlockExperimentalVMOptions \
   -H:+AllowJRTFileSystem \
+  -H:+RuntimeClassLoading \
+  -H:EnableURLProtocols=jar \
+  --verbose \
   -cp $CLASSPATH \
   -o kotlinc-native \
   org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
