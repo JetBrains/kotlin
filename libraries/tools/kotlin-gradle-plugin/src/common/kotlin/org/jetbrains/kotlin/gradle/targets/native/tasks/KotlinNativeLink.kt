@@ -87,7 +87,8 @@ constructor(
         }
     }
 
-    @Deprecated("Visibility will be lifted to private in Kotlin 2.3.", level = DeprecationLevel.ERROR)
+    // Used by IDEA import, should be addressed via KTIJ-38346
+    @Deprecated("Visibility will be lifted to private in future Kotlin releases", level = DeprecationLevel.ERROR)
     @get:Internal
     val compilation: KotlinNativeCompilation
         get() = binary.compilation
