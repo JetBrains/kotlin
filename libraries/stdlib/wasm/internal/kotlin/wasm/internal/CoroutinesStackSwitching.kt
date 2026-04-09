@@ -70,10 +70,9 @@ internal fun nullableContrefIntrinsic(): contref1? {
 internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturnStackSwitching(block: (Continuation<T>) -> Any?): T {
     val completion = getContinuation<T>() as Continuation<T>
 
-    // Mark the outer WasmContinuation as suspended so that resumeWasmContinuationAndReturnResult
-    // always returns COROUTINE_SUSPENDED and result is always delivered via completion.resumeWith,
-    // even when the block calls resume synchronously before returning COROUTINE_SUSPENDED.
-    (completion as? WasmContinuation<*, *>)?.wasSuspended = true
+//  actually this code handled correctness tests that aimed to simulate suspension via returning COROUTINE_SUSPENDED
+//  such a hack isn't needed
+//    (completion as? WasmContinuation<*, *>)?.wasSuspended = true
     val wasmContBox = WasmContinuationBox(nullableContrefIntrinsic())
     val freshCont = WasmContinuation<T, T>(wasmContBox, completion)
     wasmContBox.pendingSuspend = true
