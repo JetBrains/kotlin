@@ -40,7 +40,7 @@ class JavaDirectIT {
         val outStream = ByteArrayOutputStream()
         val exitCodeDirect = K2JVMCompiler().exec(
             PrintStream(outStream),
-            "-XXLanguage:+${LanguageFeature.JavaDirect.name}",
+//            "-XXLanguage:+${LanguageFeature.JavaDirect.name}",
             "-d", tempDir.toFile().resolve("out").absolutePath,
             *(files.map { it.absolutePath }.toTypedArray())
         )
