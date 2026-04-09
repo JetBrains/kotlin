@@ -124,6 +124,7 @@ interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
     /**
      * @suppress
      */
+    // This API is used in IDEA to create run tasks, should be fixed via KTIJ-38347
     @Deprecated(
         "Use defaultSourceSet.name instead. Scheduled for removal in Kotlin 2.3",
         ReplaceWith("defaultSourceSet.name"),
