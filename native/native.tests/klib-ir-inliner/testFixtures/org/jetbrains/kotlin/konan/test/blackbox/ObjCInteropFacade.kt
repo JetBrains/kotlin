@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.model.SourcesKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.ModuleStructureExtractor.Companion.CINTEROP_SOURCE_EXTENSIONS
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import kotlin.collections.flatMap
 import kotlin.io.extension
@@ -53,7 +54,7 @@ class ObjCInteropFacade(val testServices: TestServices) : AbstractTestFacade<Res
             it.name.substringAfterLast(".") in CINTEROP_SOURCE_EXTENSIONS
         }
 
-        val expectedArtifact = KLIB(defRealFileFolder.resolve(module.name + ".klib"))
+        val expectedArtifact = KLIB(testServices.klibEnvironmentConfigurator.getKlibArtifactDir(testServices, module.name))
 
         val staticLibraries = cSourceFiles.map {
             compileWithClangToStaticLibrary(
@@ -78,6 +79,7 @@ class ObjCInteropFacade(val testServices: TestServices) : AbstractTestFacade<Res
             add(defFile.canonicalPath)
             add("-target")
             add(targets.testTarget.name)
+            add("-nopack")  // without `-nopack`, cinterop will create klib as not `expectedArtifact.klibFile.canonicalPath`, but will add `.klib` suffix
             add("-o")
             add(expectedArtifact.klibFile.canonicalPath)
             add("-no-default-libs")
