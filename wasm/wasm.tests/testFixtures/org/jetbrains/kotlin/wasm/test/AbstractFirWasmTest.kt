@@ -387,6 +387,7 @@ open class AbstractFirWasmJsBenchmarkTest(
         builder.defaultDirectives {
             +WasmEnvironmentConfigurationDirectives.GENERATE_DWARF
             +WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
+            +WasmEnvironmentConfigurationDirectives.WASM_COROUTINES_STACK_SWITCHING
         }
     }
 }

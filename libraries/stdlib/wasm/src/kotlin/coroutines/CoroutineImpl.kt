@@ -14,7 +14,7 @@ internal abstract class CoroutineImpl<T> : Continuation<T> {
     protected var state = 0
     protected var exceptionState = 0
     internal var result: Any? = null
-    protected var exception: Throwable? = null
+    internal var exception: Throwable? = null
     protected var finallyPath: Array<Int>? = null
 
     protected abstract val _context: CoroutineContext?

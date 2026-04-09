@@ -8,6 +8,7 @@ package kotlin.coroutines
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.ResumeIntrinsicResult
+import kotlin.wasm.internal.nullableContrefIntrinsic
 import kotlin.wasm.internal.reftypes.contref1
 import kotlin.wasm.internal.resumeThrowImpl
 import kotlin.wasm.internal.resumeWithImpl
@@ -59,43 +60,45 @@ internal abstract class CoroutineImplStackSwitching<T, R>(
     }
 }
 
+internal class WasmContinuationBox(var wasmContinuation: contref1?, var pendingSuspend: Boolean = false)
+
 internal class WasmContinuation<T, R>(
-    internal var wasmContBox: contref1,
+    internal val wasmContBox: WasmContinuationBox,
     completion: Continuation<R>,
     rethrowExceptions: Boolean = false
 ) : CoroutineImplStackSwitching<T, R>(completion, rethrowExceptions) {
 
-    private var isResumed = false
-    private var isFreshInstance = true
+    override fun resumeWith(result: Result<T>) {
+
+        // Handle synchronous resume inside user's block
+        if (wasmContBox.pendingSuspend) {
+            this.result = result.getOrNull()
+            this.exception = result.exceptionOrNull()
+            wasmContBox.pendingSuspend = false
+            return
+        }
+        super.resumeWith(result)
+    }
+
     override fun doResume(): Any? {
-        do {
-            require(!isResumed) { "WasmContinuation can be resumed only once" }
-            isResumed = true
+        // Avoid reentrant resumptions
+        val wasmCont = wasmContBox.wasmContinuation ?: run {
+            val e = exception
+            if (e != null) throw e
+            return result
+        }
+        wasmContBox.wasmContinuation = nullableContrefIntrinsic()  // consume before calling resume to prevent re-use
 
-            val resultValue = if (isFreshInstance && exception == null) {
-                require(result == Unit || result == resultContinuation)
-                isFreshInstance = false
-                resultContinuation
-            } else result
-            val resumeResult: ResumeIntrinsicResult = exception?.let {
-                resumeThrowImpl(it, wasmContBox)
-            } ?: resumeWithImpl(resultValue, wasmContBox)
+        val resumeResult: ResumeIntrinsicResult = exception?.let {
+            resumeThrowImpl(it, wasmCont)
+        } ?: resumeWithImpl(this, wasmCont)
 
-            wasmContBox = resumeResult.remainingFunction ?: return resumeResult.result
-            isResumed = false
+        // Do NOT writeback remainingFunction here: buildResumeIntrinsicSuspendResult
+        // already updated the inner coroutine's WasmContinuationBox correctly.
+        if (resumeResult.remainingFunction != null) {
             wasSuspended = true
-            if (resumeResult.result === COROUTINE_SUSPENDED) return COROUTINE_SUSPENDED
-            require(resumeResult.suspendBody != null)
-            val suspendBodyResult = try {
-                resumeResult.suspendBody(this).takeIf { it !== COROUTINE_SUSPENDED }?.let { Result.success(it) }
-            } catch (e: Throwable) {
-                Result.failure(e)
-            }
-            if (suspendBodyResult == null) {
-                return COROUTINE_SUSPENDED
-            }
-            result = suspendBodyResult.getOrNull()
-            exception = suspendBodyResult.exceptionOrNull()
-        } while (true)
+            return COROUTINE_SUSPENDED
+        }
+        return resumeResult.result
     }
 }
