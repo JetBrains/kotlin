@@ -343,7 +343,7 @@ class FusStatisticsIT : KGPBaseTest() {
             build("help", "-Pkotlin.session.logger.root.path=$projectPath") {
                 assertOutputDoesNotContainFusErrors()
                 fusStatisticsDirectory.assertFusReportContains(
-                    "KSP_GRADLE_PLUGIN_VERSION=2.3.6"
+                    "KSP_GRADLE_PLUGIN_VERSION=1.9.22"
                 )
             }
         }

@@ -115,7 +115,7 @@ interface TestVersions {
         const val DOKKA = "1.8.10"
         const val DOKKA_V2 = "2.1.0"
 
-        const val KSP = "2.3.6"
+        const val KSP = "1.9.22-1.0.16"
     }
 
     object Compose {

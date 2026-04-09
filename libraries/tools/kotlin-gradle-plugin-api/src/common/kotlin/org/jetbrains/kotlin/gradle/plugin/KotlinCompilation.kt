@@ -122,6 +122,16 @@ interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
     val allKotlinSourceSets: Set<KotlinSourceSet>
 
     /**
+     * @suppress
+     */
+    @Deprecated(
+        "Use defaultSourceSet.name instead. Scheduled for removal in Kotlin 2.3",
+        ReplaceWith("defaultSourceSet.name"),
+        level = DeprecationLevel.ERROR
+    )
+    val defaultSourceSetName: String get() = defaultSourceSet.name
+
+    /**
      * The [KotlinSourceSet] by default associated with this compilation.
      */
     val defaultSourceSet: KotlinSourceSet
