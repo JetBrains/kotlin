@@ -21,6 +21,9 @@ fun main() {
             testClass<AbstractJsLightTreePluginBlackBoxCodegenForComposeTest> {
                 model("js")
             }
+            testClass<AbstractComposeWithSerializationBoxTest> {
+                model("withSerialization")
+            }
         }
     }
 }
