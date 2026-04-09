@@ -1,5 +1,4 @@
-// RUN_PIPELINE_TILL: FIR2IR
-// ^Changing to BACKEND leads to KT-81814
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ContextParameters +DisableMaxTypeDepthFromInitialConstraints
 // ISSUE: KT-81441
 interface K<F, A>
