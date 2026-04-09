@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -123,8 +124,23 @@ abstract class NativeEnvironmentConfigurator(
             System.setProperty("kotlin.native.home", it.absolutePath)
         }
 
-        val dependencies = module.regularDependencies.map { getKlibArtifactDir(testServices, it.dependencyModule.name).absolutePath }
-        val friends = module.friendDependencies.map { getKlibArtifactDir(testServices, it.dependencyModule.name).absolutePath }
+        fun getKlibArtifact(description: DependencyDescription): String =
+            getKlibArtifactDir(testServices, description.dependencyModule.name).let {
+                if (it.exists())
+                    it.absolutePath
+                else {  // cinterop tool creates not a folder but a zipped file with `klib` extension
+                    (it.absolutePath + ".klib").also {
+                        require(File(it).exists()) { "Internal error: dependency does not exist: neither $it nor $it.klib" }
+                    }
+                }
+            }
+
+        val dependencies = module.regularDependencies.map { getKlibArtifact(it) }
+        val friends = module.friendDependencies.map {
+            getKlibArtifactDir(testServices, it.dependencyModule.name).also {
+                require(it.exists()) { "Internal error: friend dependency does not exist: ${it.absolutePath}" }
+            }.absolutePath
+        }
 
         val runtimeDependencies = getRuntimeLibraryProviders(module).flatMap { provider ->
             // Ignore `KlibNativeDistributionLibraryProvider`, because it is anyway applied in loadNativeKlibs().
