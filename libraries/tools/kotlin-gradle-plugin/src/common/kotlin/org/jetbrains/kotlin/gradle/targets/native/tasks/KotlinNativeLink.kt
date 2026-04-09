@@ -87,7 +87,9 @@ constructor(
         }
     }
 
-    private val compilation: KotlinNativeCompilation
+    @Deprecated("Visibility will be lifted to private in Kotlin 2.3.", level = DeprecationLevel.ERROR)
+    @get:Internal
+    val compilation: KotlinNativeCompilation
         get() = binary.compilation
 
     final override val toolOptions: KotlinCommonCompilerToolOptions = objectFactory
@@ -95,6 +97,7 @@ constructor(
 
     override val destinationDirectory: DirectoryProperty = binary.outputDirectoryProperty
 
+    @Suppress("DEPRECATION_ERROR")
     @get:Internal
     internal val konanTarget = compilation.konanTarget
 
@@ -111,6 +114,7 @@ constructor(
     override val libraries: ConfigurableFileCollection = objectFactory.fileCollection().from(
         {
             // Avoid resolving these dependencies during task graph construction when we can't build the target:
+            @Suppress("DEPRECATION_ERROR")
             if (konanTarget.enabledOnCurrentHostForBinariesCompilation) compilation.compileDependencyFiles.exclude(excludeDependencies)
             else objectFactory.fileCollection()
         }
@@ -141,6 +145,7 @@ constructor(
         binary.buildType.name.lowercase(Locale.ROOT).replaceFirstChar { it.titlecase(Locale.ROOT) }
     }
 
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         message = "Use toolOptions to configure the task",
         level = DeprecationLevel.ERROR,
@@ -268,6 +273,7 @@ constructor(
         else -> objectFactory.property(false)
     }
 
+    @Suppress("DEPRECATION_ERROR")
     @get:Input
     val target: String = compilation.konanTarget.name
 
@@ -416,8 +422,14 @@ constructor(
         }
     }
 
+    @Suppress("DEPRECATION_ERROR")
     @get:Classpath
     protected val friendModule: FileCollection = objectFactory.fileCollection().from({ compilation.friendPaths })
+
+    @Suppress("DEPRECATION_ERROR")
+    private val resolvedConfiguration = LazyResolvedConfigurationWithArtifacts(
+        project.configurations.getByName(compilation.compileDependencyConfigurationName)
+    )
 
     @get:Internal
     open val outputFile: Provider<File>

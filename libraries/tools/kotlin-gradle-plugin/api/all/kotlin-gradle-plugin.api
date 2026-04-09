@@ -6064,6 +6064,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeLink : org/j
 	public final fun getBaseName ()Ljava/lang/String;
 	public final fun getBinary ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary;
 	public final fun getBinaryOptions ()Ljava/util/Map;
+	public final fun getCompilation ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;
 	public fun getCompilerPluginClasspath ()Lorg/gradle/api/file/FileCollection;
 	public final fun getCompilerPluginOptions ()Lorg/jetbrains/kotlin/gradle/tasks/CompilerPluginOptions;
 	public final fun getDebuggable ()Z
