@@ -102,6 +102,9 @@ sourceSets {
 val swiftExportEmbeddableJar = runtimeJarWithRelocation {
     configureEmbeddableCompilerRelocation()
 }
+swiftExportEmbeddableJar.configure {
+    manifest.attributes["Multi-Release"] = true
+}
 registerSwiftExportEmbeddableValidationTasks(swiftExportEmbeddableJar)
 
 sourcesJar { exclude("**") } // empty Jar, no public sources
