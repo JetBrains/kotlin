@@ -25,6 +25,7 @@ lib/kotlin-annotations-jvm.jar
 lib/kotlin-compiler.jar
 lib/kotlin-daemon-client.jar
 lib/kotlin-daemon.jar
+lib/kotlin-java-direct.jar
 lib/kotlin-main-kts.jar
 lib/kotlin-metadata-jvm-sources.jar
 lib/kotlin-metadata-jvm.jar
