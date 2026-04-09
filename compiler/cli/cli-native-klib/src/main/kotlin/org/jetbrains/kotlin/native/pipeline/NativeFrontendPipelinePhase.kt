@@ -21,9 +21,10 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
-import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
+import org.jetbrains.kotlin.fir.ImplicitIntegerCoercionModuleCapability
 import org.jetbrains.kotlin.konan.config.konanPrintFiles
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.metadata.isCommonizedCInteropLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.NativeFirstStagePhaseContext
 import org.jetbrains.kotlin.native.createFirstStageCompilationConfig
@@ -67,7 +68,8 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         val mainModuleName = Name.special("<${config.moduleId}>")
         files.forEach { checkSyntaxErrors(it) }
         val dependencyList = DependencyListForCliModule.build {
-            val (interopLibs, regularLibs) = config.loadedKlibs.all.partition { it.isCInteropLibrary() }
+            val (interopLibs, other) = config.loadedKlibs.all.partition { it.isCInteropLibrary() }
+            val (commonizedInteropLibs, regularLibs) = other.partition { it.isCommonizedCInteropLibrary() }
             defaultDependenciesSet(mainModuleName) {
                 dependencies(regularLibs.map { it.libraryFile.absolutePath })
                 friendDependencies(config.friendModuleFiles.map { it.absolutePath })
@@ -80,6 +82,14 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
                         FirModuleCapabilities.create(listOf(ImplicitIntegerCoercionModuleCapability))
                     )
                 dependencies(interopModuleData, interopLibs.map { it.libraryFile.absolutePath })
+            }
+            if (commonizedInteropLibs.isNotEmpty()) {
+                val interopModuleData =
+                    FirBinaryDependenciesModuleData(
+                        Name.special("<regular dependencies of $mainModuleName>"),
+                        FirModuleCapabilities.create(listOf(CommonizedModuleCapability))
+                    )
+                dependencies(interopModuleData, commonizedInteropLibs.map { it.libraryFile.absolutePath })
             }
             // TODO: !!! dependencies module data?
         }

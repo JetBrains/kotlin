@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.isMarkedAsCommonizedModule
+import org.jetbrains.kotlin.fir.isMarkedWithImplicitIntegerCoercion
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -247,10 +249,13 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         }
 
         val classSymbol = type.fullyExpandedType().lookupTag.toSymbol() ?: return null
+        val abbreviation = type.abbreviatedTypeOrSelf//.toSymbol()
 
-        val effectiveVisibility = when (classSymbol) {
-            is FirRegularClassSymbol -> classSymbol.effectiveVisibility
-            is FirTypeAliasSymbol -> classSymbol.effectiveVisibility
+        val effectiveVisibility = when {
+//            abbreviation.isMarkedWithImplicitIntegerCoercion -> EffectiveVisibility.Internal
+            abbreviation.isMarkedAsCommonizedModule -> EffectiveVisibility.Internal
+            classSymbol is FirRegularClassSymbol -> classSymbol.effectiveVisibility
+            classSymbol is FirTypeAliasSymbol -> classSymbol.effectiveVisibility
             else -> null
         }
 
