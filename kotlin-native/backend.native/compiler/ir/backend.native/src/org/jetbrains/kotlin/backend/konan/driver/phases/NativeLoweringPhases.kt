@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.lower.KCallableAndEnumNameInlineLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
@@ -378,6 +379,11 @@ internal val inlineAllFunctionsPhase = createFileLoweringPhase(
         name = "InlineAllFunctions",
 )
 
+private val kCallableAndEnumNameInlineLowering = createFileLoweringPhase(
+        lowering = ::KCallableAndEnumNameInlineLowering,
+        name = "KCallableAndEnumNameInlineLowering",
+)
+
 private val typeOfProcessingLowering = createFileLoweringPhase(
         lowering = ::TypeOfProcessingLowering,
         name = "TypeOfProcessingLowering",
@@ -615,6 +621,7 @@ internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = li
 )
 
 internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
+        kCallableAndEnumNameInlineLowering,
         typeOfProcessingLowering,
         specializeSharedVariableBoxes,
         interopPhase,

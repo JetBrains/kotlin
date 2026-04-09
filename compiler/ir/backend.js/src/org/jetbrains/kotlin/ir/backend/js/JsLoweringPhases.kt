@@ -153,6 +153,7 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::createValidateIrAfterInliningAllFunctions,
     // END: Common Native/JS/Wasm prefix.
 
+    ::KCallableAndEnumNameInlineLowering,
     ::createConstEvaluationPhase,
     ::CopyInlineFunctionBodyLowering,
     ::RemoveInlineDeclarationsWithReifiedTypeParametersLowering,

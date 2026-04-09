@@ -373,7 +373,6 @@ private class Fir2IrPipeline(
 
         mainIrFragment.files.forEach { irFile ->
             irFile.transform(ConstInliner(irFile, inlineConstTracker), null)
-            irFile.transform(KCallableAndEnumNameInliner(irBuiltIns), null)
         }
     }
 

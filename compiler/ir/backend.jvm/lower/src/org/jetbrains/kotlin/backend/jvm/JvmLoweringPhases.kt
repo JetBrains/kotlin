@@ -21,6 +21,7 @@ private val jvmModulePhases1 = createModulePhases(
     ::JvmK1IrValidationBeforeLoweringPhase,
     ::ProcessOptionalAnnotations,
     ::JvmExpectDeclarationRemover,
+    ::KCallableAndEnumNameInlineLowering,
     ::ConstEvaluationLowering,
     ::FileClassLowering,
     ::JvmStaticInObjectLowering,

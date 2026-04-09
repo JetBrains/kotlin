@@ -1,42 +1,56 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.pipeline
+package org.jetbrains.kotlin.backend.common.lower
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.linkage.partial.reflectionTargetLinkageError
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrCallableReference
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrRichCallableReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.ir.util.propertyIfAccessor
 import org.jetbrains.kotlin.ir.util.toIrConst
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.SpecialNames
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
-class KCallableAndEnumNameInliner(private val irBuiltIns: IrBuiltIns) : IrTransformer<Nothing?>() {
-    override fun visitCall(expression: IrCall, data: Nothing?): IrElement {
+class KCallableAndEnumNameInlineLowering(context: CommonBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
+    private val irBuiltIns = context.irBuiltIns
+
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildren(this, null)
+    }
+
+    override fun visitCall(expression: IrCall): IrExpression {
         return when {
             expression.isInterpretableKCallableNameCall(irBuiltIns) -> {
-                inlineCallableName(expression) ?: visitExpression(expression, data)
+                inlineCallableName(expression) ?: visitExpression(expression)
             }
             expression.isEnumName() -> {
-                inlineEnumName(expression) ?: visitExpression(expression, data)
+                inlineEnumName(expression) ?: visitExpression(expression)
             }
-            else -> visitExpression(expression, data)
+            else -> visitExpression(expression)
         }
     }
 
-    private fun inlineCallableName(expression: IrCall): IrElement? {
+    private fun inlineCallableName(expression: IrCall): IrExpression? {
         val callableReference = expression.dispatchReceiver
         if (callableReference !is IrCallableReference<*> && callableReference !is IrRichCallableReference<*>) return null
 
