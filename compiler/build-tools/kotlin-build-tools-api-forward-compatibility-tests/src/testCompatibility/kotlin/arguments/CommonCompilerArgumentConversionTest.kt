@@ -20,6 +20,7 @@ import org.junit.jupiter.api.assertThrows
 import java.nio.file.Paths
 
 @OptIn(ExperimentalCompilerArgument::class)
+@Suppress("DEPRECATION")
 internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
 
     @AllCommonCompilerArgumentsWithBtaVersionsTest
