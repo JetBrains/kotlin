@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.runners.codegen.AbstractFirBlackBoxCodegenTestBase
+import org.jetbrains.kotlin.test.runners.codegen.AbstractJvmBlackBoxCodegenTestBase
 
-abstract class AbstractJavaUsingAstBoxTest : AbstractFirBlackBoxCodegenTestBase(FirParser.LightTree) {
+abstract class AbstractJavaUsingAstBoxTest : AbstractJvmBlackBoxCodegenTestBase(FirParser.LightTree) {
     override fun configure(builder: TestConfigurationBuilder) {
         with(builder) {
             useConfigurators(
