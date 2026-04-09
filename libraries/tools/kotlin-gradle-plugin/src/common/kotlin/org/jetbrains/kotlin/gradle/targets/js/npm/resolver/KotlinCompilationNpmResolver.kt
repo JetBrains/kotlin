@@ -133,11 +133,12 @@ class KotlinCompilationNpmResolver(
         }
 
         if (compilation.wasmTarget != null) {
-            project.registerTask<KotlinImportMapGenerateTask>(compilation.disambiguateName("importMap")) {
+            project.registerTask<KotlinImportMapGenerateTask>(npmProject.generateImportMapTaskName) {
                 it.npmRootDir.set(nodeJsRoot.rootPackageDirectory)
                 it.installArtifacts.from(nodeJsRoot.npmInstallTaskProvider.map { it.additionalFiles })
                 it.packageJson.fileProvider(packageJsonTaskHolder.flatMap { it.packageJson })
-                it.importMapFile.set(npmProject.dir.map { it.file("importmap.json") })
+                it.importMapFile.set(project.layout.buildDirectory.file("tmp/${it.name}/importmap.json"))
+                it.importMapLoaderFile.set(project.layout.buildDirectory.file("tmp/${it.name}/importmap-loader.js"))
             }
         }
     }

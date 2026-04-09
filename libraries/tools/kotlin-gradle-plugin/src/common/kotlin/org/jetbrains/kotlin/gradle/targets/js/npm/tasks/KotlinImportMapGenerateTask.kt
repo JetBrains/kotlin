@@ -34,6 +34,9 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
     @get:OutputFile
     abstract val importMapFile: RegularFileProperty
 
+    @get:OutputFile
+    abstract val importMapLoaderFile: RegularFileProperty
+
     @TaskAction
     fun generate() {
         val importMap = mutableMapOf<String, String>()
@@ -58,6 +61,19 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
         val result = mapOf("imports" to importMap)
         val gson = GsonBuilder().setPrettyPrinting().create()
         importMapFile.asFile.get().writeText(gson.toJson(result))
+
+        importMapLoaderFile.asFile.get().writeText(
+            """
+            |fetch('/${importMapFile.asFile.get().name}')
+            |  .then(r => r.json())
+            |  .then(map => {
+            |    const script = document.createElement('script');
+            |    script.type = 'importmap';
+            |    script.textContent = JSON.stringify(map);
+            |    document.head.appendChild(script);
+            |  });
+            """.trimMargin()
+        )
     }
 
     private fun modulePath(
@@ -67,5 +83,9 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
         val resolvedFile = modules.resolve(moduleName) ?: error("Module $moduleName not found")
         val relativePath = resolvedFile.relativeTo(npmRootDir.getFile()).path
         return "/$relativePath"
+    }
+
+    companion object {
+        const val NAME = "generateImportMap"
     }
 }

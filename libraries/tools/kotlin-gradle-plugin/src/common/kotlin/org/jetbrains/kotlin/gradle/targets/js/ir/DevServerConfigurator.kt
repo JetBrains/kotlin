@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
-import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinImportMapGenerateTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
+import org.jetbrains.kotlin.gradle.utils.named
 import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
@@ -61,11 +62,10 @@ internal class DevServerConfigurator(
     }
 
     private fun configureImportMap(task: KotlinSimpleDevServerTask, compilation: KotlinJsIrCompilation) {
-        val importMapTaskName = compilation.disambiguateName("importMap")
-        val importMapTask = project.tasks.findByName(importMapTaskName) as? KotlinImportMapGenerateTask ?: return
+        val importMapTaskName = compilation.npmProject.generateImportMapTaskName
+        val importMapTask = project.tasks.named<KotlinImportMapGenerateTask>(importMapTaskName)
 
-        task.dependsOn(importMapTask)
-        task.importMapFile.set(importMapTask.importMapFile)
+        task.importMapFile.set(importMapTask.flatMap { it.importMapFile })
 
         val nodeJsRoot = subTarget.target.webTargetVariant(
             { project.rootProject.kotlinNodeJsRootExtension },
