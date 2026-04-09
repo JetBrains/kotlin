@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 
+@Suppress("DEPRECATION")
 class LookupTrackerTest : BaseCompilationTest() {
     @Test
     @DisplayName("LOOKUP_TRACKER can be set using the deprecated Option")

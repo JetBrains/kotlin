@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 
 @OptIn(ExperimentalCompilerArgument::class)
+@Suppress("DEPRECATION")
 internal class ScriptResolverEnvironmentSpecialCharsTest {
 
     @DisplayName("ScriptResolverEnvironment entry with comma in value is converted to '-Xscript-resolver-environment' argument")
