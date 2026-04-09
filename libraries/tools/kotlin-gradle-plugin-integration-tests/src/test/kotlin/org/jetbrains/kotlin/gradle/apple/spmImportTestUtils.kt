@@ -355,10 +355,28 @@ internal fun addSwiftPmGitTag(
     runGit("tag", tag, repoDir = repoDir)
 }
 
-internal fun TestProject.initDefaultKmp(extra: KotlinMultiplatformExtension.() -> Unit = {}) {
+internal fun TestProject.initKmpPluginsOnly() {
     plugins {
         kotlin("multiplatform")
     }
+}
+
+internal fun TestProject.initJvmKmp(
+    extra: KotlinMultiplatformExtension.() -> Unit = {},
+) {
+    initKmpPluginsOnly()
+    buildScriptInjection {
+        project.applyMultiplatform {
+            jvm()
+            extra()
+        }
+    }
+}
+
+internal fun TestProject.initDefaultKmp(
+    extra: KotlinMultiplatformExtension.() -> Unit = {},
+) {
+    initKmpPluginsOnly()
     buildScriptInjection {
         project.applyMultiplatform {
             listOf(
@@ -424,40 +442,55 @@ internal fun TestProject.selectedPersistedPackageResolvedPath(
             projectPath.resolve("Package.resolved")
     }
 
+internal fun TestProject.initJvmSwiftPmProject(
+    cacheDirFile: File,
+    extra: KotlinMultiplatformExtension.() -> Unit,
+) {
+    initJvmKmp {
+        configureSwiftPmTestArgs(cacheDirFile)
+        extra()
+    }
+}
+
 internal fun TestProject.initSwiftPmProject(
     cacheDirFile: File,
     extra: KotlinMultiplatformExtension.() -> Unit,
 ) {
     initDefaultKmp {
-        project.tasks
-            .withType(FetchSyntheticImportProjectPackages::class.java)
-            .configureEach { task ->
-                task.additionalXcodeArgs.set(
-                    listOf(
-                        "-packageFingerprintPolicy", "warn",
-                        "-packageCachePath", cacheDirFile.path,
-                    )
-                )
-                task.additionalSwiftPackageResolveArgs.set(
-                    listOf(
-                        "--resolver-fingerprint-checking", "warn",
-                    )
-                )
-            }
-
-        project.tasks
-            .withType(ConvertSyntheticSwiftPMImportProjectIntoDefFile::class.java)
-            .configureEach { task ->
-                task.additionalXcodeArgs.set(
-                    listOf(
-                        "-packageFingerprintPolicy", "warn",
-                        "-packageCachePath", cacheDirFile.path,
-                    )
-                )
-            }
-
+        configureSwiftPmTestArgs(cacheDirFile)
         extra()
     }
+}
+
+private fun KotlinMultiplatformExtension.configureSwiftPmTestArgs(
+    cacheDirFile: File,
+) {
+    project.tasks
+        .withType(FetchSyntheticImportProjectPackages::class.java)
+        .configureEach { task ->
+            task.additionalXcodeArgs.set(
+                listOf(
+                    "-packageFingerprintPolicy", "warn",
+                    "-packageCachePath", cacheDirFile.path,
+                )
+            )
+            task.additionalSwiftPackageResolveArgs.set(
+                listOf(
+                    "--resolver-fingerprint-checking", "warn",
+                )
+            )
+        }
+
+    project.tasks
+        .withType(ConvertSyntheticSwiftPMImportProjectIntoDefFile::class.java)
+        .configureEach { task ->
+            task.additionalXcodeArgs.set(
+                listOf(
+                    "-packageFingerprintPolicy", "warn",
+                    "-packageCachePath", cacheDirFile.path,
+                )
+            )
+        }
 }
 
 internal fun LockFileTestFixture.createRepo(
@@ -586,8 +619,8 @@ internal data class SwiftPmPinState(
     val branch: String? = null,
 )
 
-private val swiftPmJson = Json {
-    ignoreUnknownKeys = true
+private object SwiftPmJsonHolder {
+    val json = Json { ignoreUnknownKeys = true }
 }
 
 
@@ -597,7 +630,7 @@ internal fun SwiftPmPackageResolved.ignoreRevisions(): SwiftPmPackageResolved =
 internal fun SwiftPmPackageResolved.ignoreTopLevelVersion(): SwiftPmPackageResolved =
     copy(version = -1)
 
-internal fun parsePackageResolved(jsonString: String): SwiftPmPackageResolved = swiftPmJson.decodeFromString(jsonString)
+internal fun parsePackageResolved(jsonString: String): SwiftPmPackageResolved = SwiftPmJsonHolder.json.decodeFromString(jsonString)
 
 // Package.resolved DTO
 
@@ -679,8 +712,10 @@ data class SwiftPackageTarget(
 
 // endregion
 
-private val appleToolJson = Json {
-    ignoreUnknownKeys = true
+private object AppleToolChainJsonHolder {
+    val json = Json {
+        ignoreUnknownKeys = true
+    }
 }
 
 private inline fun <reified T> runAppleToolCommand(
@@ -696,7 +731,7 @@ private inline fun <reified T> runAppleToolCommand(
         "Failed to run command ${command.joinToString(" ")} at $workingDir: ${result.output}"
     }
     val jsonContent = outputFile?.readText() ?: result.output
-    return appleToolJson.decodeFromString<T>(jsonContent)
+    return AppleToolChainJsonHolder.json.decodeFromString<T>(jsonContent)
 }
 
 fun describeSwiftPackage(packagePath: Path): SwiftPackageDescription {
@@ -1001,7 +1036,7 @@ fun TestProject.assertApplicationRunsAndObjCRuntimeDoesntEmitInStderr(
 
 fun PublishedProject.assertSwiftPMMetadataVariantExistsInRootComponent() {
     val gradleMetadata = rootComponent.gradleMetadata.readText().let {
-        swiftPmJson.decodeFromString<GradleMetadata>(it)
+        SwiftPmJsonHolder.json.decodeFromString<GradleMetadata>(it)
     }
 
     assertEquals(
