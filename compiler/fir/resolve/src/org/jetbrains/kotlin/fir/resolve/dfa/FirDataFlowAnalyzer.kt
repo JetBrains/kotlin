@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
+import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
@@ -209,6 +210,8 @@ abstract class FirDataFlowAnalyzer(
     private val any = components.session.builtinTypes.anyType.coneType
     private val nullableNothing = components.session.builtinTypes.nullableNothingType.coneType
 
+    private val localScopes get() = components.towerDataContext.localScopes
+
     // ----------------------------------- Requests -----------------------------------
 
     /**
@@ -271,8 +274,19 @@ abstract class FirDataFlowAnalyzer(
     fun getDomainInformation(expression: FirExpression): Pair<DomainStatus, Map<RealVariable, SmartcastStability>>? {
         val flow = currentSmartCastPosition ?: return null
         val variable = flow.getVariableWithoutUnwrappingAlias(expression, createReal = false) ?: return null
-        return logicSystem.getDomainStatus(flow, variable) to logicSystem.getDomainReferences(flow, variable)
+        val references = logicSystem.getDomainReferences(flow, variable).filterKeys { reference ->
+            localScopes.any { localScope -> reference in localScope }
+        }
+        return logicSystem.getDomainStatus(flow, variable) to references
     }
+
+    private operator fun FirLocalScope.contains(symbol: FirBasedSymbol<*>): Boolean =
+        symbol in properties.values || symbol in classLikeSymbols.values || functions.keys.any { symbol in functions[it] }
+
+    private operator fun FirLocalScope.contains(variable: RealVariable): Boolean =
+        (variable.symbol.origin.fromSource && variable.symbol in this) ||
+                variable.dispatchReceiver?.let { it in this } == true ||
+                variable.extensionReceiver?.let { it in this } == true
 
     open fun extractTypeStatementFrom(flow: Flow, variable: DataFlowVariable): TypeStatement? = flow.getTypeStatement(variable)
 

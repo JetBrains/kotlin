@@ -6,19 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import kotlinx.collections.immutable.*
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.DfaType
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.utils.isActual
-import org.jetbrains.kotlin.fir.declarations.utils.isClass
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expressions.DomainStatus
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.SmartcastStability
@@ -316,19 +307,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
 
     fun getDomainReferences(flow: Flow, variable: DataFlowVariable): Map<RealVariable, SmartcastStability> =
         flow.getDomains(variable).filter { it !is Domain.Unreachable }.flatMapTo(mutableSetOf()) { domain ->
-            flow.getReferences(domain).filterIsInstance<RealVariable>().filter {
-                val symbol = it.symbol
-                when {
-                    symbol.origin is FirDeclarationOrigin.Synthetic -> false
-                    symbol is FirRegularClassSymbol -> symbol.classKind != ClassKind.OBJECT && symbol.classKind != ClassKind.ENUM_ENTRY
-                    symbol is FirEnumEntrySymbol -> false
-                    symbol is FirCallableSymbol -> {
-                        val name = symbol.name
-                        !name.isSpecial && name.asString().any { c -> c != '_' }
-                    }
-                    else -> true
-                }
-            }
+            flow.getReferences(domain).filterIsInstance<RealVariable>()
         }.associateWith { it.getStability(flow, session) }
 
     private fun approveOperationStatement(
