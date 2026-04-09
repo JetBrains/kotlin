@@ -17,11 +17,11 @@ private val gson = GsonBuilder()
     .setStrictness(Strictness.LENIENT)
     .setPrettyPrinting()
     .serializeNulls()
-    .registerTypeHierarchyAdapter(KmpModuleIdentifier.ComponentId::class.java, KmpModuleIdentifierComponentIdAdapter)
+    .registerTypeHierarchyAdapter(KmpModuleIdentifier.GradleComponentId::class.java, KmpModuleIdentifierComponentIdAdapter)
     .create()
 
-internal object KmpModuleIdentifierComponentIdAdapter : JsonSerializer<KmpModuleIdentifier.ComponentId>, JsonDeserializer<KmpModuleIdentifier.ComponentId> {
-    override fun serialize(src: KmpModuleIdentifier.ComponentId, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
+internal object KmpModuleIdentifierComponentIdAdapter : JsonSerializer<KmpModuleIdentifier.GradleComponentId>, JsonDeserializer<KmpModuleIdentifier.GradleComponentId> {
+    override fun serialize(src: KmpModuleIdentifier.GradleComponentId, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         return JsonObject().also {
             when (src) {
                 is KmpModuleIdentifier.ModuleComponentId -> {
@@ -38,7 +38,7 @@ internal object KmpModuleIdentifierComponentIdAdapter : JsonSerializer<KmpModule
         }
     }
 
-    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): KmpModuleIdentifier.ComponentId {
+    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): KmpModuleIdentifier.GradleComponentId {
         require(json.isJsonObject) { "Expected JsonObject, got ${json.javaClass}" }
         require(json.asJsonObject.has("type")) { "JsonObject must contain 'type' property" }
         json as JsonObject
