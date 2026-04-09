@@ -45,15 +45,13 @@ internal class DevServerConfigurator(
                 ) { task ->
                     task.description = "start a simple development server serving ${mode.name.toLowerCaseAsciiOnly()} files"
 
-                    task.dependsOn(linkSyncTask)
-
                     task.contentDirectory.fileProvider(
-                        project.provider { linkSyncTask.get().destinationDirectory.get() }
+                        linkSyncTask.flatMap { it.destinationDirectory }
                     )
 
-                    configureImportMap(task, compilation)
+                    task.host.convention("localhost")
 
-                    task.doNotTrackState("Tracked by dev server")
+                    configureImportMap(task, compilation)
 
                     runTaskConfigurations.all {
                         it.execute(task)

@@ -39,22 +39,22 @@ internal abstract class KotlinSimpleDevServerTask : DefaultTask() {
     @get:Internal
     abstract val npmRootDirectory: DirectoryProperty
 
-    init {
-        port.convention(8080)
-        host.convention("localhost")
-    }
-
     @TaskAction
     fun start() {
         val rootDir = contentDirectory.get().asFile
         val serverHost = host.get()
-        val serverPort = port.get()
+        val serverPort = port.getOrElse(findFreePort())
 
         val importMapModuleDirectories = parseImportMapModuleDirectories()
 
         val server = HttpServer.create(InetSocketAddress(serverHost, serverPort), 0)
         server.createContext("/") { exchange ->
-            handleRequest(exchange, rootDir, importMapModuleDirectories)
+            handleRequest(
+                exchange,
+                rootDir,
+                npmRootDirectory.getFile(),
+                importMapModuleDirectories
+            )
         }
         server.executor = null
 
@@ -65,6 +65,12 @@ internal abstract class KotlinSimpleDevServerTask : DefaultTask() {
             logger.lifecycle("Serving ${importMapModuleDirectories.size} node_modules from import map")
         }
         logger.lifecycle("Press Ctrl+C to stop the server")
+
+        try {
+            Thread.currentThread().join()
+        } catch (_: InterruptedException) {
+            server.stop(0)
+        }
     }
 
     /**
@@ -73,7 +79,7 @@ internal abstract class KotlinSimpleDevServerTask : DefaultTask() {
      * The import map contains entries like `"moduleName": "node_modules/moduleName/main.js"`.
      * The paths are relative to [npmRootDirectory].
      */
-    private fun parseImportMapModuleDirectories(): Map<String, File> {
+    private fun parseImportMapModuleDirectories(): Set<File> {
         val mapFile = importMapFile.getFile()
 
         val npmRoot = npmRootDirectory.getFile()
@@ -81,14 +87,13 @@ internal abstract class KotlinSimpleDevServerTask : DefaultTask() {
         val importMapObject = JsonParser.parseString(importMapContent).asJsonObject
         val imports = importMapObject.getAsJsonObject("imports") ?: error("No imports in import map $mapFile")
 
-        val moduleDirectories = mutableMapOf<String, File>()
-        imports.entrySet()
-            .associate { (moduleName, path) ->
+        return imports.entrySet()
+            .map { (_, path) ->
                 val relativePath = path.asString.trimStart('/')
                 val moduleMainFile = npmRoot.resolve(relativePath)
-                moduleName to moduleMainFile.resolveModuleDirectory()
-            }
-        return moduleDirectories
+                moduleMainFile.resolveModuleDirectory()
+            }.distinct()
+            .toSet()
     }
 
     private fun File.resolveModuleDirectory(): File {
@@ -100,10 +105,20 @@ internal abstract class KotlinSimpleDevServerTask : DefaultTask() {
         return packageJsonCandidate.parentFile
     }
 
-    private fun handleRequest(exchange: HttpExchange, rootDir: File, importMapModuleDirectories: Map<String, File>) {
+    private fun handleRequest(
+        exchange: HttpExchange,
+        contentRootDir: File,
+        npmRootDir: File,
+        importMapModuleDirectories: Set<File>,
+    ) {
         val path = exchange.requestURI.path.trimStart('/')
 
-        val file = resolveFile(path, rootDir, importMapModuleDirectories)
+        val file = resolveFile(
+            path,
+            contentRootDir,
+            npmRootDir,
+            importMapModuleDirectories
+        )
 
         if (file == null || !file.exists() || !file.isFile) {
             val notFound = "404 Not Found".toByteArray()
@@ -124,26 +139,31 @@ internal abstract class KotlinSimpleDevServerTask : DefaultTask() {
     /**
      * Resolves the requested path to a file.
      *
-     * Requests starting with `node_modules/` are resolved against the import map module directories.
-     * For example, a request to `node_modules/lit/index.js` will look up the `lit` module directory
-     * from the import map and serve `index.js` from it.
-     * All other requests are resolved relative to the [rootDir].
+     * All from [contentRootDir] are resolved relative to the [contentRootDir] if it exists
+     *
+     * Requests from [importMapModuleDirectories] are resolved against the import map module directories.
      */
-    private fun resolveFile(path: String, rootDir: File, importMapModuleDirectories: Map<String, File>): File? {
+    private fun resolveFile(
+        path: String,
+        contentRootDir: File,
+        npmRootDir: File,
+        importMapModuleDirectories: Set<File>,
+    ): File? {
         if (path.isEmpty()) {
-            return File(rootDir, "index.html")
+            return File(contentRootDir, "index.html")
         }
 
-        if (importMapModuleDirectories.isNotEmpty()) {
-            importMapModuleDirectories.entries.forEach { (_, moduleDir) ->
-                val resolvedFile = npmRootDirectory.getFile().resolve(path)
-                if (resolvedFile.startsWith(moduleDir)) return resolvedFile
-            }
+        contentRootDir.resolve(path)
+            .takeIf { it.normalize().startsWith(contentRootDir.normalize()) }
+            ?.takeIf { it.exists() }
+            ?.let { return it }
 
-            return null
+        importMapModuleDirectories.forEach { moduleDir ->
+            val resolvedFile = npmRootDir.resolve(path)
+            if (resolvedFile.startsWith(moduleDir)) return resolvedFile
         }
 
-        return File(rootDir, path)
+        return null
     }
 
     private fun addCorsHeaders(exchange: HttpExchange) {
@@ -164,5 +184,16 @@ internal abstract class KotlinSimpleDevServerTask : DefaultTask() {
         fileName.endsWith(".ico") -> "image/x-icon"
         fileName.endsWith(".map") -> "application/json"
         else -> "application/octet-stream"
+    }
+
+    fun findFreePort(startPort: Int = 8080): Int {
+        var port = startPort
+        while (true) {
+            try {
+                java.net.ServerSocket(port).use { return port }
+            } catch (_: Exception) {
+                port++
+            }
+        }
     }
 }
