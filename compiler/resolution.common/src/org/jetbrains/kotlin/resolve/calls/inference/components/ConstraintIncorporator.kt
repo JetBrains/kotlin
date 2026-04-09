@@ -66,14 +66,14 @@ class ConstraintIncorporator(
 
     // \alpha is typeVariable, \beta -- other type variable registered in ConstraintStorage
     context(c: Context)
-    fun incorporate(typeVariable: TypeVariableMarker, constraint: Constraint) {
+    fun incorporate(typeVariable: TypeVariableMarker, constraint: Constraint, originalConstraint: Constraint) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         // we shouldn't incorporate recursive constraint -- It is too dangerous
         if (constraint.areThereRecursiveConstraints(typeVariable)) return
 
         directWithVariable(typeVariable, constraint)
-        insideOtherConstraint(typeVariable, constraint)
+        insideOtherConstraint(typeVariable, constraint, originalConstraint)
     }
 
     context(c: Context)
@@ -158,6 +158,7 @@ class ConstraintIncorporator(
     private fun insideOtherConstraint(
         typeVariable: TypeVariableMarker,
         constraint: Constraint,
+        originalConstraint: Constraint,
     ) {
         if (typeVariable in constraint.derivedFrom) return
         val freshTypeConstructor = typeVariable.freshTypeConstructor()
@@ -170,6 +171,7 @@ class ConstraintIncorporator(
                     generateNewConstraintForSecondIncorporationKind(
                         typeVariable,
                         constraint,
+                        originalConstraint,
                         storageForOtherVariable.typeVariable,
                         otherConstraint
                     )
@@ -187,12 +189,19 @@ class ConstraintIncorporator(
         causeOfIncorporationVariable: TypeVariableMarker,
         // \alpha <: Number
         causeOfIncorporationConstraint: Constraint,
+        originalConstraint: Constraint,
         // \beta
         otherVariable: TypeVariableMarker,
         // \beta <: Inv<\alpha>
         otherConstraint: Constraint,
     ) {
-        if (causeOfIncorporationVariable in otherConstraint.derivedFrom) return
+        if (causeOfIncorporationVariable in otherConstraint.derivedFrom ||
+            causeOfIncorporationConstraint.kind == ConstraintKind.EQUALITY &&
+            originalConstraint.position.initialConstraint.position !is FixVariableConstraintPosition<*> &&
+            !causeOfIncorporationConstraint.type.contains { it.isTypeVariableType() }
+        ) {
+            return
+        }
         val (type, needApproximation) = computeConstraintTypeForSecondIncorporationKind(
             causeOfIncorporationVariable, causeOfIncorporationConstraint, otherConstraint
         )

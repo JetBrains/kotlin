@@ -200,7 +200,7 @@ class ConstraintInjector(
             }
 
             if (constraintToIncorporate != null) {
-                constraintIncorporator.incorporate(typeVariable, constraintToIncorporate)
+                constraintIncorporator.incorporate(typeVariable, constraintToIncorporate, constraint)
             }
         }
     }
