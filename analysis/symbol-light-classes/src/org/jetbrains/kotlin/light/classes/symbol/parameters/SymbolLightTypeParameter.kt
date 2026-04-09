@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
@@ -53,7 +52,7 @@ internal class SymbolLightTypeParameter private constructor(
         parent = parent,
         index = index,
         typeParameterSymbolPointer = typeParameterSymbol.createPointer(),
-        kotlinOrigin = typeParameterSymbol.sourcePsiSafe(),
+        kotlinOrigin = typeParameterSymbol.psiForLightClasses(),
     )
 
     private val ktModule: KaModule get() = parent.ktModule

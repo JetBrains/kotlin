@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.light.classes.symbol.SymbolFakeFile
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
+import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import javax.swing.Icon
 
@@ -44,7 +45,10 @@ internal abstract class SymbolLightClassBase protected constructor(val ktModule:
     }
 
     open fun contentModificationTrackers(): List<ModificationTracker> = listOf(
-        KotlinAsJavaSupportBase.getInstance(project).outOfBlockModificationTracker(this)
+        when (originKind) {
+            LightClassOriginKind.BINARY -> KotlinAsJavaSupportBase.getInstance(project).librariesTracker(this)
+            LightClassOriginKind.SOURCE -> KotlinAsJavaSupportBase.getInstance(project).outOfBlockModificationTracker(this)
+        }
     )
 
     override fun getFields(): Array<PsiField> = ownFields.toArrayIfNotEmptyOrDefault(PsiField.EMPTY_ARRAY)

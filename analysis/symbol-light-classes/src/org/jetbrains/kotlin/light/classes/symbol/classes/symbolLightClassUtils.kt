@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumE
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForProperty
 import org.jetbrains.kotlin.light.classes.symbol.isJvmField
 import org.jetbrains.kotlin.light.classes.symbol.mapType
+import org.jetbrains.kotlin.light.classes.symbol.psiForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod.Companion.createPropertyAccessors
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
 import org.jetbrains.kotlin.name.ClassId
@@ -72,12 +73,18 @@ internal fun createLightClassNoCache(
 }
 
 internal fun KtClassOrObject.contentModificationTrackers(): List<ModificationTracker> {
-    val outOfBlockTracker = KotlinAsJavaSupportBase.getInstance(project).outOfBlockModificationTracker(this)
+    val kotlinAsJavaSupport = KotlinAsJavaSupportBase.getInstance(project)
+    val contentTracker = if (containingKtFile.isCompiled) {
+        kotlinAsJavaSupport.librariesTracker(this)
+    } else {
+        kotlinAsJavaSupport.outOfBlockModificationTracker(this)
+    }
+
     return if (isLocal) {
         val file = containingKtFile
-        listOf(outOfBlockTracker, ModificationTracker { file.modificationStamp })
+        listOf(contentTracker, ModificationTracker { file.modificationStamp })
     } else {
-        listOf(outOfBlockTracker)
+        listOf(contentTracker)
     }
 }
 
@@ -559,7 +566,7 @@ internal fun KaSession.createInnerClasses(
     val result = SmartList<SymbolLightClassBase>()
 
     declarationContainer.staticDeclaredMemberScope.classifiers.filterIsInstance<KaNamedClassSymbol>().mapNotNullTo(result) {
-        val classOrObjectDeclaration = it.sourcePsiSafe<KtClassOrObject>()
+        val classOrObjectDeclaration = it.psiForLightClasses<KtClassOrObject>()
         if (classOrObjectDeclaration != null) {
             classOrObjectDeclaration.toLightClass() as? SymbolLightClassBase
         } else {

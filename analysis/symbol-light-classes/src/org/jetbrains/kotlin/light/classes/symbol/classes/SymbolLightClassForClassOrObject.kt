@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
+import org.jetbrains.kotlin.light.classes.symbol.psiForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod.Companion.createPropertyAccessors
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor.Companion.createConstructors
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
@@ -282,7 +283,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classSymbol.staticDeclaredMemberScope.callables
             .filterIsInstance<KaEnumEntrySymbol>()
             .mapNotNullTo(result) {
-                val enumEntry = it.sourcePsiSafe<KtEnumEntry>()
+                val enumEntry = it.psiForLightClasses<KtEnumEntry>()
                 val name = enumEntry?.name ?: return@mapNotNullTo null
                 SymbolLightFieldForEnumEntry(
                     enumEntry = enumEntry,

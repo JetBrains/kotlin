@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.*
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
+import org.jetbrains.kotlin.light.classes.symbol.psiForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
@@ -204,7 +205,7 @@ internal class SymbolLightConstructor private constructor(
             isJvmExposedBoxed: Boolean,
         ): KtLightMethod = noArgConstructor(
             visibility = primaryConstructor.compilerVisibility.externalDisplayName,
-            declaration = primaryConstructor.sourcePsiSafe(),
+            declaration = primaryConstructor.psiForLightClasses(),
             methodIndex = METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR,
             isJvmExposedBoxed = isJvmExposedBoxed,
             functionSymbolPointer = primaryConstructor.createPointer(),

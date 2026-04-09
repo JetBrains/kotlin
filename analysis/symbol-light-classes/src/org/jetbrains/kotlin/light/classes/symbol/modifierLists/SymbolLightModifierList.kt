@@ -37,8 +37,8 @@ internal sealed class SymbolLightModifierList<out T : KtLightElement<KtModifierL
     override fun isWritable() = false
     override val givenAnnotations: List<KtLightAbstractAnnotation> get() = invalidAccess()
 
-    override fun equals(other: Any?): Boolean = this === other || other is SymbolLightModifierList<*> && other.kotlinOrigin == kotlinOrigin
-    override fun hashCode(): Int = kotlinOrigin.hashCode()
+    override fun equals(other: Any?): Boolean = this === other || other is SymbolLightModifierList<*> && other.owner == owner
+    override fun hashCode(): Int = owner.hashCode()
 
     override fun setModifierProperty(name: String, value: Boolean) = cannotModify()
     override fun checkSetModifierProperty(name: String, value: Boolean) = throw IncorrectOperationException()

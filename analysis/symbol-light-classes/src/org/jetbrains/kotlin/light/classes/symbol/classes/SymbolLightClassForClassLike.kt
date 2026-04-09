@@ -43,7 +43,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
         classSymbol: SType,
         manager: PsiManager,
     ) : this(
-        classOrObjectDeclaration = classSymbol.sourcePsiSafe(),
+        classOrObjectDeclaration = classSymbol.psiForLightClasses(),
         classSymbolPointer = kotlin.run {
             @Suppress("UNCHECKED_CAST")
             classSymbol.createPointer() as KaSymbolPointer<SType>
@@ -136,7 +136,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
         return compareSymbolPointers(classSymbolPointer, other.classSymbolPointer)
     }
 
-    override fun hashCode(): Int = classOrObjectDeclaration.hashCode()
+    override fun hashCode(): Int = classOrObjectDeclaration?.hashCode() ?: getQualifiedName().hashCode()
 
     private val _name: String? by lazyPub {
         withClassSymbol { it.name?.asString() }
@@ -160,7 +160,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     override fun getElementType(): IStubElementType<out StubElement<*>, *>? = classOrObjectDeclaration?.elementType
     override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = classOrObjectDeclaration?.stub
 
-    override val originKind: LightClassOriginKind get() = LightClassOriginKind.SOURCE
+    override val originKind: LightClassOriginKind get() = ktModule.lightClassOriginKind()
 
     /**
      * [org.jetbrains.kotlin.psi.KtNamedDeclarationStub.getFqName] is needed to properly cover the case

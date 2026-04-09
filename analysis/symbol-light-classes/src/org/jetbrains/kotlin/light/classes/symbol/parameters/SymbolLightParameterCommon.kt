@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -32,7 +31,7 @@ internal abstract class SymbolLightParameterCommon(
     ) : this(
         parameterSymbolPointer = parameterSymbol.createPointer(),
         containingMethod = containingMethod,
-        kotlinOrigin = parameterSymbol.sourcePsiSafe(),
+        kotlinOrigin = parameterSymbol.psiForLightClasses(),
     )
 
     private val _name: String by lazyPub {

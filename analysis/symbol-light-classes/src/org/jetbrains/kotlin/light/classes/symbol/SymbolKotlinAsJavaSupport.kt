@@ -191,6 +191,10 @@ internal class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupport
     }
 
     override fun createInstanceOfDecompiledLightClass(classOrObject: KtClassOrObject): KtLightClass? {
+        if (project.areSymbolLightClassesEnabledForLibraries()) {
+            return createInstanceOfLightClass(classOrObject)
+        }
+
         val lightClass = DecompiledLightClassesFactory.getLightClassForDecompiledClassOrObject(classOrObject, project)
         if (lightClass != null) {
             return lightClass
@@ -210,6 +214,10 @@ internal class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupport
     }
 
     override fun createInstanceOfDecompiledLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade? {
+        if (project.areSymbolLightClassesEnabledForLibraries()) {
+            return createInstanceOfLightFacade(facadeFqName, files)
+        }
+
         val lightClass = DecompiledLightClassesFactory.createLightFacadeForDecompiledKotlinFile(project, facadeFqName, files)
         if (lightClass != null) {
             return lightClass

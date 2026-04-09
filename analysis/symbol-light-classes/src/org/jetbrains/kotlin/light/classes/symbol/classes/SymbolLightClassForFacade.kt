@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsPr
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasInlineOnlyAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
+import org.jetbrains.kotlin.light.classes.symbol.lightClassOriginKind
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
@@ -46,12 +47,6 @@ internal class SymbolLightClassForFacade(
 
     init {
         require(files.isNotEmpty())
-        /*
-        Actually, here should be the following check
-        require(files.all { it.getKtModule() is KaSourceModule })
-        but it is quite expensive
-         */
-        require(files.none { it.isCompiled })
     }
 
     private fun <T> withFileSymbols(action: KaSession.(List<KaFileSymbol>) -> T): T =
@@ -209,7 +204,7 @@ internal class SymbolLightClassForFacade(
 
     override fun hashCode() = facadeClassFqName.hashCode()
     override fun toString(): String = "${this::class.simpleName.orEmpty()}:$facadeClassFqName"
-    override val originKind: LightClassOriginKind get() = LightClassOriginKind.SOURCE
+    override val originKind: LightClassOriginKind get() = ktModule.lightClassOriginKind()
     override fun getText() = firstFileInFacade.text ?: ""
     override fun getTextRange(): TextRange = firstFileInFacade.textRange ?: TextRange.EMPTY_RANGE
     override fun getTextOffset() = firstFileInFacade.textOffset

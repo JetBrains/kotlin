@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterface
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -32,6 +33,9 @@ import java.util.*
 
 internal fun <L : Any> L.invalidAccess(): Nothing =
     error("Cls delegate shouldn't be accessed for symbol light classes! Qualified name: ${javaClass.name}")
+
+internal inline fun <reified PSI : PsiElement> KaSymbol.psiForLightClasses(): PSI? =
+    sourcePsiSafe<PSI>() ?: psiSafe<PSI>()
 
 internal fun KaSession.getContainingSymbolsWithSelf(symbol: KaDeclarationSymbol): Sequence<KaDeclarationSymbol> =
     generateSequence(symbol) { it.containingDeclaration }
@@ -326,7 +330,13 @@ internal inline fun <R : PsiElement, T> R.cachedValue(
     crossinline computer: () -> T,
 ): T = CachedValuesManager.getCachedValue(this) {
     val value = computer()
-    val specialTrackers = (this as? SymbolLightClassBase)?.contentModificationTrackers()
+    val specialTrackers = when (this) {
+        is SymbolLightClassBase -> contentModificationTrackers()
+        is PsiMember -> (containingClass as? SymbolLightClassBase)?.contentModificationTrackers()
+        is PsiParameter -> (declarationScope as? SymbolLightMethodBase)?.containingClass?.contentModificationTrackers()
+        is PsiRecordComponent -> (containingClass as? SymbolLightClassBase)?.contentModificationTrackers()
+        else -> null
+    }
     if (specialTrackers != null) {
         CachedValueProvider.Result.create(value, specialTrackers)
     } else {

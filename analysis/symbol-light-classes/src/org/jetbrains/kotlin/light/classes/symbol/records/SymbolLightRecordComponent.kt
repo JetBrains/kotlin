@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -41,7 +40,7 @@ internal class SymbolLightRecordComponent private constructor(
         backingFieldSymbolPointer = backingFieldSymbol.createPointer(),
         parent = parent,
         containingClass = containingClass,
-        kotlinOrigin = parameterSymbol.sourcePsiSafe(),
+        kotlinOrigin = parameterSymbol.psiForLightClasses(),
     )
 
     private val kaModule: KaModule get() = containingClass.ktModule

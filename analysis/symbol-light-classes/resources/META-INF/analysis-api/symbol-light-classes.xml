@@ -4,5 +4,12 @@
         serviceInterface="org.jetbrains.kotlin.asJava.KotlinAsJavaSupport"
         serviceImplementation="org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinAsJavaSupport"
     />
+
+    <registryKey
+        defaultValue="false"
+        description="Build library light classes with symbol light classes instead of decompiled light classes"
+        key="kotlin.symbol.light.classes.for.libraries"
+        restartRequired="true"
+    />
   </extensions>
 </idea-plugin>

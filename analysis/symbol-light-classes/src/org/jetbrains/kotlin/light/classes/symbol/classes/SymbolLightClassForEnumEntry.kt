@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.light.classes.symbol.codeReferences.SymbolLightPsiJa
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
+import org.jetbrains.kotlin.light.classes.symbol.lightClassOriginKind
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor.Companion.createConstructors
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
@@ -160,6 +161,6 @@ internal class SymbolLightClassForEnumEntry(
     override fun isAnnotationType(): Boolean = false
     override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean = false
     override val kotlinOrigin: KtEnumEntry get() = enumConstant.kotlinOrigin
-    override val originKind: LightClassOriginKind = LightClassOriginKind.SOURCE
+    override val originKind: LightClassOriginKind = ktModule.lightClassOriginKind()
     override fun isValid(): Boolean = enumConstant.isValid
 }

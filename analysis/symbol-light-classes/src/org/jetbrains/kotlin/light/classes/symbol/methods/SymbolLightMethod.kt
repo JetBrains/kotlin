@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
-import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
@@ -30,6 +28,7 @@ import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameter
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightSuspendContinuationParameter
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightValueParameter
+import org.jetbrains.kotlin.light.classes.symbol.psiForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -66,8 +65,8 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
         containingClass = containingClass,
         methodIndex = methodIndex,
         valueParameterPickMask = valueParameterPickMask,
-        functionDeclaration = functionSymbol.sourcePsiSafe(),
-        kotlinOrigin = functionSymbol.sourcePsiSafe() ?: lightMemberOrigin?.originalElement ?: functionSymbol.psiSafe<KtDeclaration>(),
+        functionDeclaration = functionSymbol.psiForLightClasses(),
+        kotlinOrigin = functionSymbol.psiForLightClasses() ?: lightMemberOrigin?.originalElement,
         isJvmExposedBoxed = isJvmExposedBoxed,
     )
 
@@ -156,7 +155,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
                 compareSymbolPointers(functionSymbolPointer, other.functionSymbolPointer)
     }
 
-    override fun hashCode(): Int = kotlinOrigin.hashCode()
+    override fun hashCode(): Int = functionDeclaration?.hashCode() ?: kotlinOrigin?.hashCode() ?: methodIndex
 
     override fun suppressWildcards(): Boolean? =
         withFunctionSymbol { functionSymbol ->

@@ -71,9 +71,9 @@ internal class SymbolLightAccessorMethod private constructor(
         containingClass,
         methodIndex = if (propertyAccessorSymbol is KaPropertyGetterSymbol) METHOD_INDEX_FOR_GETTER else METHOD_INDEX_FOR_SETTER,
         isGetter = propertyAccessorSymbol is KaPropertyGetterSymbol,
-        propertyAccessorDeclaration = propertyAccessorSymbol.sourcePsiSafe(),
+        propertyAccessorDeclaration = propertyAccessorSymbol.psiForLightClasses(),
         propertyAccessorSymbolPointer = propertyAccessorSymbol.createPointer(),
-        containingPropertyDeclaration = containingPropertySymbol.sourcePsiSafe(),
+        containingPropertyDeclaration = containingPropertySymbol.psiForLightClasses(),
         containingPropertySymbolPointer = containingPropertySymbol.createPointer(),
         isTopLevel = isTopLevel,
         suppressStatic = suppressStatic,
@@ -287,7 +287,7 @@ internal class SymbolLightAccessorMethod private constructor(
         return compareSymbolPointers(propertyAccessorSymbolPointer, other.propertyAccessorSymbolPointer)
     }
 
-    override fun hashCode(): Int = propertyAccessorDeclaration?.hashCode() ?: containingPropertyDeclaration.hashCode()
+    override fun hashCode(): Int = propertyAccessorDeclaration?.hashCode() ?: containingPropertyDeclaration?.hashCode() ?: methodIndex
 
     private val _parametersList by lazyPub {
         val baseParameterPopulator: (LightParameterListBuilder) -> Unit = if (!isGetter) {
@@ -582,7 +582,7 @@ internal class SymbolLightAccessorMethod private constructor(
                     LightMemberOriginForDeclaration(
                         originalElement = originalElement,
                         originKind = JvmDeclarationOriginKind.OTHER,
-                        auxiliaryOriginalElement = accessor.sourcePsiSafe<KtDeclaration>() ?: sourcePsiFromProperty()
+                        auxiliaryOriginalElement = accessor.psiForLightClasses<KtDeclaration>() ?: sourcePsiFromProperty()
                     )
                 }
 
