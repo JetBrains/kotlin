@@ -1,0 +1,2 @@
+fun b(x: Int) = x.toString()
+fun b(x: Any) = x.toString()

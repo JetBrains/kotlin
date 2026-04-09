@@ -9,34 +9,53 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ArgumentsSource
 
 /**
- * Parameterized test annotation for validating forward compatibility of all JVM compiler arguments.
+ * Parameterized test annotation for validating backward compatibility of all JVM compiler arguments
+ * across Build Tools API versions (BTAv1 and BTAv2).
  *
- * This annotation generates test cases for every JVM compiler argument to ensure
- * forward compatibility guarantees are maintained.
+ * This annotation generates test cases for every JVM compiler argument, testing each argument
+ * with both BTA versions to ensure backward compatibility guarantees are maintained.
  *
- * @see AllJvmCompilerArgumentsArgumentProvider
+ * @see AllJvmCompilerArgumentsWithBtaVersionsArgumentProvider
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)
 @ParameterizedTest(name = "{0}: {displayName}")
 @ArgumentsSource(
-    AllJvmCompilerArgumentsArgumentProvider::class
+    AllJvmCompilerArgumentsWithBtaVersionsArgumentProvider::class
 )
 annotation class AllJvmCompilerArgumentsWithBtaVersionsTest
 
 /**
- * Parameterized test annotation for validating forward compatibility of JVM compiler arguments
- * that reject invalid string values.
+ * Parameterized test annotation for validating backward compatibility of enum-typed JVM compiler arguments
+ * across Build Tools API versions (BTAv1 and BTAv2).
  *
- * This annotation generates test cases specifically for JVM compiler arguments where setting
- * an invalid string value should throw [org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException].
+ * This annotation generates test cases specifically for JVM compiler arguments with enum types,
+ * testing each enum argument with both BTA versions to verify backward compatibility.
  *
- * @see InvalidValueJvmCompilerArgumentsArgumentProvider
+ * @see EnumJvmCompilerArgumentsWithBtaVersionsArgumentProvider
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)
 @ParameterizedTest(name = "{0}: {displayName}")
 @ArgumentsSource(
-    InvalidValueJvmCompilerArgumentsArgumentProvider::class
+    EnumJvmCompilerArgumentsWithBtaVersionsArgumentProvider::class
 )
-annotation class InvalidValueJvmCompilerArgumentsWithBtaVersionsTest
+annotation class EnumJvmCompilerArgumentsWithBtaVersionsTest
+
+
+/**
+ * Parameterized test annotation for validating backward compatibility of nullable JVM compiler arguments
+ * across Build Tools API versions (BTAv1 and BTAv2).
+ *
+ * This annotation generates test cases specifically for JVM compiler arguments with nullable types,
+ * testing each nullable argument with both BTA versions to ensure backward compatibility.
+ *
+ * @see NullableJvmCompilerArgumentsWithBtaVersionsArgumentProvider
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(AnnotationRetention.RUNTIME)
+@ParameterizedTest(name = "{0}: {displayName}")
+@ArgumentsSource(
+    NullableJvmCompilerArgumentsWithBtaVersionsArgumentProvider::class
+)
+annotation class NullableJvmCompilerArgumentsWithBtaVersionsTest

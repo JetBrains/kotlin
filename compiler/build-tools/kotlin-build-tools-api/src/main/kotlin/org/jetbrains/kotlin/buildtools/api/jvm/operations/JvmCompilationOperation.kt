@@ -137,7 +137,7 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
         @Deprecated(
             message = "The shrunkClasspathSnapshot parameter is no longer required",
             replaceWith = ReplaceWith("snapshotBasedIcConfigurationBuilder(workingDirectory, sourcesChanges, dependenciesSnapshotFiles)"),
-            level = DeprecationLevel.WARNING
+            level = DeprecationLevel.HIDDEN
         )
         public fun snapshotBasedIcConfigurationBuilder(
             workingDirectory: Path,
@@ -264,38 +264,6 @@ public inline fun JvmCompilationOperation.Builder.snapshotBasedIcConfiguration(
         callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
     }
     return snapshotBasedIcConfigurationBuilder(workingDirectory, sourcesChanges, dependenciesSnapshotFiles).apply(
-        builderAction
-    ).build()
-}
-
-/**
- * Convenience function for creating a [JvmSnapshotBasedIncrementalCompilationConfiguration] with options configured by [builderAction].
- *
- * @deprecated The shrunkClasspathSnapshot parameter is no longer required. Use the 3-parameter overload instead.
- * Will be promoted to an error in KT-83937.
- * @return an immutable `JvmSnapshotBasedIncrementalCompilationConfiguration`.
- * @see JvmCompilationOperation.Builder.snapshotBasedIcConfigurationBuilder
- * @since 2.3.20
- */
-@Deprecated(
-    message = "The shrunkClasspathSnapshot parameter is no longer required",
-    replaceWith = ReplaceWith("snapshotBasedIcConfiguration(workingDirectory, sourcesChanges, dependenciesSnapshotFiles, builderAction)"),
-    level = DeprecationLevel.WARNING
-)
-@OptIn(ExperimentalContracts::class)
-@ExperimentalBuildToolsApi
-public inline fun JvmCompilationOperation.Builder.snapshotBasedIcConfiguration(
-    workingDirectory: Path,
-    sourcesChanges: SourcesChanges,
-    dependenciesSnapshotFiles: List<Path>,
-    shrunkClasspathSnapshot: Path,
-    builderAction: JvmSnapshotBasedIncrementalCompilationConfiguration.Builder.() -> Unit = {},
-): JvmSnapshotBasedIncrementalCompilationConfiguration {
-    contract {
-        callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
-    }
-    @Suppress("DEPRECATION")
-    return snapshotBasedIcConfigurationBuilder(workingDirectory, sourcesChanges, dependenciesSnapshotFiles, shrunkClasspathSnapshot).apply(
         builderAction
     ).build()
 }

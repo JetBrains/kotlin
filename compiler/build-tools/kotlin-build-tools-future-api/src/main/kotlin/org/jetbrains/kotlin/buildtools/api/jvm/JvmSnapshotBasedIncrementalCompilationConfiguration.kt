@@ -2,7 +2,7 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
+@file:Suppress("DEPRECATION_ERROR", "DEPRECATION")
 package org.jetbrains.kotlin.buildtools.api.jvm
 
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
@@ -36,28 +36,70 @@ interface JvmIncrementalCompilationConfiguration
  *
  * @see JvmCompilationOperation.Builder.snapshotBasedIcConfigurationBuilder
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @ExperimentalBuildToolsApi
-open class JvmSnapshotBasedIncrementalCompilationConfiguration(
-    val workingDirectory: Path,
-    val sourcesChanges: SourcesChanges,
-    val dependenciesSnapshotFiles: List<Path>,
-    @Deprecated("This property is no longer required and will be removed in a future release.") val shrunkClasspathSnapshot: Path,
-    @Deprecated("Use `get` directly instead or a `Builder` instance to set options. This property will be removed in a future release.") // Hide in 2.4, remove in 2.7
-    open val options: JvmSnapshotBasedIncrementalCompilationOptions,
+public open class JvmSnapshotBasedIncrementalCompilationConfiguration
+@Deprecated(
+    "Instantiating this class directly will not be possible and it will become abstract in a future release. Use `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.",
+    level = DeprecationLevel.ERROR
+)
+constructor(
+    public val workingDirectory: Path,
+    public val sourcesChanges: SourcesChanges,
+    public val dependenciesSnapshotFiles: List<Path>,
+    @Deprecated("This property is no longer required and will be removed in a future release.")
+    public val shrunkClasspathSnapshot: Path,
+    @Deprecated("Use `get` directly instead or a `Builder` instance to set options. This property will be removed in a future release.", level = DeprecationLevel.ERROR)
+    public open val options: JvmSnapshotBasedIncrementalCompilationOptions,
 ) : JvmIncrementalCompilationConfiguration, BaseIncrementalCompilationConfiguration {
 
-    constructor(
+    /**
+     * This is not used in current versions of BTA, but is used to fill in the non-nullable `options` field that exists for earlier versions.
+     */
+    private object DUMMY_OPTIONS : JvmSnapshotBasedIncrementalCompilationOptions {
+        override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>): V {
+            TODO("Not yet implemented")
+        }
+
+        override fun <V> set(
+            key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>,
+            value: V,
+        ) {
+            TODO("Not yet implemented")
+        }
+
+        override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
+            TODO("Not yet implemented")
+        }
+    }
+
+    @Deprecated("Instantiating this class directly will not be possible and it will become abstract in a future release. Use `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.")
+    @Suppress("DEPRECATION_ERROR")
+    public constructor(
         workingDirectory: Path,
         sourcesChanges: SourcesChanges,
         dependenciesSnapshotFiles: List<Path>,
-        options: JvmSnapshotBasedIncrementalCompilationOptions,
     ) : this(
         workingDirectory,
         sourcesChanges,
         dependenciesSnapshotFiles,
         workingDirectory.resolve("classpath-snapshot"),
-        options,
+        DUMMY_OPTIONS
+    )
+
+    @Deprecated("Instantiating this class directly will not be possible and it will become abstract in a future release. Use `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.")
+    @Suppress("DEPRECATION_ERROR")
+    public constructor(
+        workingDirectory: Path,
+        sourcesChanges: SourcesChanges,
+        dependenciesSnapshotFiles: List<Path>,
+        shrunkClasspathSnapshot: Path,
+    ) : this(
+        workingDirectory,
+        sourcesChanges,
+        dependenciesSnapshotFiles,
+        shrunkClasspathSnapshot,
+        DUMMY_OPTIONS
     )
 
     /**
@@ -65,27 +107,27 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
      *
      * @since 2.3.20
      */
-    interface Builder : BaseIncrementalCompilationConfiguration.Builder {
+    public interface Builder : BaseIncrementalCompilationConfiguration.Builder {
         /**
          * The working directory for the IC operation to store internal objects
          *
          * @since 2.3.20
          */
-        val workingDirectory: Path
+        public val workingDirectory: Path
 
         /**
          * Changes in the source files, which can be unknown, to-be-calculated, or known
          *
          * @since 2.3.20
          */
-        val sourcesChanges: SourcesChanges
+        public val sourcesChanges: SourcesChanges
 
         /**
          * A list of paths to dependency snapshot files produced by [org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation].
          *
          * @since 2.3.20
          */
-        val dependenciesSnapshotFiles: List<Path>
+        public val dependenciesSnapshotFiles: List<Path>
 
         /**
          * The path to the shrunk classpath snapshot file from a previous compilation.
@@ -94,7 +136,7 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
          * @since 2.3.20
          */
         @Deprecated("This property is no longer required and will be removed in a future release.")
-        val shrunkClasspathSnapshot: Path
+        public val shrunkClasspathSnapshot: Path
 
         /**
          * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
@@ -103,21 +145,21 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
          * @throws IllegalStateException if the option was not set and has no default value
          * @since 2.3.20
          */
-        operator fun <V> get(key: Option<V>): V
+        public operator fun <V> get(key: Option<V>): V
 
         /**
          * Set the [value] for option specified by [key], overriding any previous value for that option.
          *
          * @since 2.3.20
          */
-        operator fun <V> set(key: Option<V>, value: V)
+        public operator fun <V> set(key: Option<V>, value: V)
 
         /**
          * Creates an immutable instance of [JvmSnapshotBasedIncrementalCompilationConfiguration] based on the configuration of this builder.
          *
          * @since 2.3.20
          */
-        fun build(): JvmSnapshotBasedIncrementalCompilationConfiguration
+        public fun build(): JvmSnapshotBasedIncrementalCompilationConfiguration
     }
 
     /**
@@ -125,7 +167,7 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
      *
      * @since 2.3.20
      */
-    open fun toBuilder(): Builder {
+    public open fun toBuilder(): Builder {
         error("To use `toBuilder` you must instantiate this object through a Builder obtained from `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder()`.")
     }
 
@@ -135,7 +177,7 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
      * @see get
      * @see set
      */
-    class Option<V> internal constructor(id: String) : JvmSnapshotBasedIncrementalCompilationOptions.Option<V>(id)
+    public class Option<V> internal constructor(id: String) : BaseOption<V>(id)
 
     /**
      * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
@@ -143,7 +185,7 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
      * @return the previously set value for an option
      * @throws IllegalStateException if the option was not set and has no default value
      */
-    open operator fun <V> get(key: Option<V>): V {
+    public open operator fun <V> get(key: Option<V>): V {
         error("To use `get` and `set` you must instantiate this object through `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.")
     }
 
@@ -151,7 +193,7 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
      * Set the [value] for option specified by [key], overriding any previous value for that option.
      */
     @Deprecated("Use `JvmCompilationOperation.Builder.snapshotBasedIcConfigurationBuilder` to create a `Builder` instead.")
-    open operator fun <V> set(key: Option<V>, value: V) {
+    public open operator fun <V> set(key: Option<V>, value: V) {
         error("To use `get` and `set` you must instantiate this object through `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.")
     }
 
@@ -159,7 +201,7 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
         error("To use `get` and `set` you must instantiate this object through `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.")
     }
 
-    companion object {
+    public companion object {
 
         /**
          * The root project directory, used for computing relative paths for source files in the incremental compilation caches.
@@ -174,7 +216,7 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
             )
         )
         @JvmField
-        val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR")
+        public val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR")
 
         /**
          * The build directory, used for computing relative paths for output files in the incremental compilation caches.
@@ -189,13 +231,13 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
             )
         )
         @JvmField
-        val MODULE_BUILD_DIR: Option<Path?> = Option("MODULE_BUILD_DIR")
+        public val MODULE_BUILD_DIR: Option<Path?> = Option("MODULE_BUILD_DIR")
 
         /**
          * Controls whether incremental compilation will analyze Java files precisely for better changes detection.
          */
         @JvmField
-        val PRECISE_JAVA_TRACKING: Option<Boolean> = Option("PRECISE_JAVA_TRACKING")
+        public val PRECISE_JAVA_TRACKING: Option<Boolean> = Option("PRECISE_JAVA_TRACKING")
 
         /**
          * Controls whether incremental compilation should perform file-by-file backup of previously compiled files
@@ -209,7 +251,7 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
             )
         )
         @JvmField
-        val BACKUP_CLASSES: Option<Boolean> = Option("BACKUP_CLASSES")
+        public val BACKUP_CLASSES: Option<Boolean> = Option("BACKUP_CLASSES")
 
         /**
          * Controls whether caches should remain in memory
@@ -223,7 +265,7 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
             )
         )
         @JvmField
-        val KEEP_IC_CACHES_IN_MEMORY: Option<Boolean> = Option("KEEP_IC_CACHES_IN_MEMORY")
+        public val KEEP_IC_CACHES_IN_MEMORY: Option<Boolean> = Option("KEEP_IC_CACHES_IN_MEMORY")
 
         /**
          * Controls whether the non-incremental mode of the incremental compiler is forced.
@@ -238,7 +280,7 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
             )
         )
         @JvmField
-        val FORCE_RECOMPILATION: Option<Boolean> = Option("FORCE_RECOMPILATION")
+        public val FORCE_RECOMPILATION: Option<Boolean> = Option("FORCE_RECOMPILATION")
 
         /**
          * The directories that the compiler will clean in the case of fallback to non-incremental compilation.
@@ -256,7 +298,7 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
             )
         )
         @JvmField
-        val OUTPUT_DIRS: Option<Set<Path>?> = Option("OUTPUT_DIRS")
+        public val OUTPUT_DIRS: Option<Set<Path>?> = Option("OUTPUT_DIRS")
 
         /**
          * Controls whether classpath snapshots comparing should be avoided.
@@ -264,7 +306,7 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
          * Can be used as an optimization if the check is already performed by the API consumer.
          */
         @JvmField
-        val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> = Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES")
+        public val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> = Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES")
 
         /**
          * Controls whether the *experimental* incremental runner based on Kotlin compiler FIR is used.
@@ -272,7 +314,7 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
          */
         @JvmField
         @ExperimentalCompilerArgument
-        val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER")
+        public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER")
 
         /**
          * By default, with the K2 compiler and KMP, we recompile the whole module if any common sources are recompiled.
@@ -288,7 +330,7 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
         )
         @JvmField
         @ExperimentalCompilerArgument
-        val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> =
+        public val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> =
             Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM")
 
         /**
@@ -309,7 +351,7 @@ open class JvmSnapshotBasedIncrementalCompilationConfiguration(
         )
         @JvmField
         @ExperimentalCompilerArgument
-        val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> = Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION")
+        public val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> = Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION")
     }
 }
 

@@ -70,7 +70,7 @@ internal val JvmSnapshotBasedIncrementalCompilationConfiguration.classpathChange
     get() {
         val options = toOptions()
         val snapshotFiles =
-            ClasspathSnapshotFiles(dependenciesSnapshotFiles.map { it.toFile() }, shrunkClasspathSnapshot.toFile().parentFile)
+            ClasspathSnapshotFiles(options.dependenciesSnapshotFiles.map { it.toFile() }, options.workingDirectory.resolve("shrunk-classpath-snapshot.bin").toFile().parentFile)
         return when {
             !snapshotFiles.shrunkPreviousClasspathSnapshotFile.exists() -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot(
                 snapshotFiles

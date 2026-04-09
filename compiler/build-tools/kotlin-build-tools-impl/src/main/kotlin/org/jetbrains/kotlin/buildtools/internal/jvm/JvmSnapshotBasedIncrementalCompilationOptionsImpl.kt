@@ -7,8 +7,10 @@
 package org.jetbrains.kotlin.buildtools.internal.jvm
 
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.internal.*
+import java.nio.file.Path
 
 internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl internal constructor(
     public override val options: Options = Options(JvmSnapshotBasedIncrementalCompilationOptions::class),
@@ -41,6 +43,13 @@ internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl internal constr
     override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
         return options[key]
     }
+
+    override val workingDirectory: Path
+        get() = TODO("Not yet implemented")
+    override val sourcesChanges: SourcesChanges
+        get() = TODO("Not yet implemented")
+    override val dependenciesSnapshotFiles: List<Path>
+        get() = TODO("Not yet implemented")
 
     override fun <V> get(key: BaseOptionWithDefault<V>): V {
         return options[key]

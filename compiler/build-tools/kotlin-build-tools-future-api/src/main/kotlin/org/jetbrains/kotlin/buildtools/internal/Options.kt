@@ -52,3 +52,9 @@ class Options(
         }
     }
 }
+
+
+fun initializeOptions(klazz: KClass<*>, options: Options) {
+    klazz.toString()
+    options.toString()
+}

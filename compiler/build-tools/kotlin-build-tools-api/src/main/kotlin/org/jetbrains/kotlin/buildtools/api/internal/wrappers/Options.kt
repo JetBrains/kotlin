@@ -1,0 +1,78 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.buildtools.api.internal.wrappers
+
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
+import kotlin.reflect.KClass
+
+@ExperimentalBuildToolsApi
+internal class Options(
+    private val optionsName: String,
+) : DeepCopyable<Options> {
+    constructor(typeForName: KClass<*>) : this(typeForName.qualifiedName ?: typeForName.toString())
+
+    private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
+
+    operator fun <V> set(key: BaseOption<V>, value: Any?) {
+        optionsMap[key.id] = value
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    operator fun <V> get(key: BaseOption<V>): V = get(key.id)
+
+    operator fun <V> get(key: BaseOptionWithDefault<V>): V = get(key.id)
+
+    operator fun <V> set(key: BaseOptionWithDefault<V>, value: Any?) {
+        optionsMap[key.id] = value
+    }
+
+    operator fun set(key: String, value: Any?) {
+        optionsMap[key] = value
+    }
+
+    operator fun <V> get(key: String): V {
+        @Suppress("UNCHECKED_CAST")
+        return when (key) {
+            in optionsMap -> optionsMap[key] as V
+            else -> error("$key was not set in $optionsName")
+        }
+    }
+
+    override fun deepCopy(): Options {
+        return Options(optionsName).also { newOptions ->
+            newOptions.optionsMap.putAll(optionsMap.entries.map {
+                it.key to when (val value = it.value) {
+                    is DeepCopyable<*> -> value.deepCopy()
+                    else -> value
+                }
+            })
+        }
+    }
+}
+
+@OptIn(ExperimentalBuildToolsApi::class)
+internal fun initializeOptions(klazz: KClass<*>, options: Options) {
+    // Use Java reflection to avoid triggering Kotlin reflection hierarchy resolution,
+    // which fails when running against an older API version that doesn't have all supertypes.
+    var jClass: Class<*>? = klazz.java
+    while (jClass != null && jClass != Any::class.java) {
+        val companionClass = jClass.declaredClasses.firstOrNull { it.simpleName == "Companion" }
+        if (companionClass != null) {
+            val companionField = try { jClass.getDeclaredField("Companion") } catch (_: NoSuchFieldException) { null }
+            val companionInstance = companionField?.also { it.isAccessible = true }?.get(null)
+            if (companionInstance != null) {
+                companionClass.declaredMethods.filter { method ->
+                    BaseOptionWithDefault::class.java.isAssignableFrom(method.returnType)
+                }.forEach { method ->
+                    @Suppress("UNCHECKED_CAST") val option = method.invoke(companionInstance) as BaseOptionWithDefault<*>
+                    options[option.id] = option.defaultValue
+                }
+            }
+        }
+        jClass = jClass.superclass
+    }
+}

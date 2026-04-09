@@ -6,11 +6,25 @@ plugins {
     id("test-inputs-check")
 }
 
-val btaApiVersion = "2.3.0"
+repositories {
+    mavenLocal()
+}
+
+val btaApiVersion = "2.4.253-SNAPSHOT"
 
 val buildToolsApiImpl = configurations.dependencyScope("buildToolsApiImpl")
 val buildToolsApiImplResolvable = configurations.resolvable("buildToolsApiImplResolvable") {
     extendsFrom(buildToolsApiImpl.get())
+}
+
+val unpackedResources by configurations.dependencyScope("unpackedResources")
+val unpackedResourcesResolvable by configurations.resolvable("unpackedResourcesResolvable") {
+    // Wire the dependency declarations
+    extendsFrom(unpackedResources)
+    // These attributes must be compatible with the producer
+    attributes {
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.RESOURCES))
+    }
 }
 
 dependencies {
@@ -24,6 +38,9 @@ dependencies {
     testRuntimeOnly(libs.junit.platform.launcher)
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-impl"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
+    unpackedResources(project(":compiler:build-tools:kotlin-build-tools-api-forward-compatibility-tests")) {
+        isTransitive = false
+    }
 }
 
 kotlin {
@@ -53,6 +70,8 @@ testing {
             targets.all {
                 projectTests {
                     testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+
+                        addClasspathProperty(unpackedResourcesResolvable, "kotlin.test.templates.classpath")
                         systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
                         systemProperty(
                             "kotlin.daemon.custom.run.files.path.for.tests",

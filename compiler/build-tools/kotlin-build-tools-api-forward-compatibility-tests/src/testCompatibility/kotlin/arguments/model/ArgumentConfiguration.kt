@@ -11,11 +11,12 @@ import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
-import org.jetbrains.kotlin.buildtools.tests.toolchain
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 
 internal abstract class ArgumentConfiguration<T>(
+    val kotlinToolchain: KotlinToolchains,
     private val argumentTestDescriptor: ArgumentTestDescriptor<T>,
 ) {
     private val argumentName: String = argumentTestDescriptor.argumentName
@@ -35,7 +36,7 @@ internal abstract class ArgumentConfiguration<T>(
             ?: actualCommonCompilerArguments.arguments.firstOrNull { it.name == argumentName }
             ?: error("Argument '$argumentName' not found.")
 
-        val kotlinToolingVersion = KotlinToolingVersion(toolchain.getCompilerVersion())
+        val kotlinToolingVersion = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())
         return argument.defaultValueString(kotlinToolingVersion.toKotlinReleaseVersion())
     }
 

@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.common
 
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.CommonCompilerArgument
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.ArgumentConfiguration
 
 internal class CommonArgumentConfiguration<T>(
+    kotlinToolchain: KotlinToolchains,
     commonArgumentTestDescriptor: CommonArgumentTestDescriptor<T>,
-) : ArgumentConfiguration<T>(commonArgumentTestDescriptor) {
+) : ArgumentConfiguration<T>(kotlinToolchain, commonArgumentTestDescriptor) {
     val argumentKey: CommonCompilerArgument<T> = commonArgumentTestDescriptor.argument
     val argumentValues: List<T> = commonArgumentTestDescriptor.argumentValues
-    val invalidValue: T? = commonArgumentTestDescriptor.invalidArgumentValue
 }

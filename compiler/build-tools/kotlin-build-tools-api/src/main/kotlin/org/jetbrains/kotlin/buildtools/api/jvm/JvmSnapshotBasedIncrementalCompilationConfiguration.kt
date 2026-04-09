@@ -32,76 +32,17 @@ public interface JvmIncrementalCompilationConfiguration
  * @property workingDirectory the working directory for the IC operation to store internal objects.
  * @property sourcesChanges changes in the source files, which can be unknown, to-be-calculated, or known.
  * @property dependenciesSnapshotFiles a list of paths to dependency snapshot files produced by [org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation].
- * @property shrunkClasspathSnapshot The path to the shrunk classpath snapshot file from a previous compilation.
- * @property options an option set produced by [JvmCompilationOperation.createSnapshotBasedIcOptions]
  *
  * @see JvmCompilationOperation.Builder.snapshotBasedIcConfigurationBuilder
  */
 @Suppress("DEPRECATION_ERROR")
 @ExperimentalBuildToolsApi
-public open class JvmSnapshotBasedIncrementalCompilationConfiguration
-@Deprecated(
-    "Instantiating this class directly will not be possible and it will become abstract in a future release. Use `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.",
-    level = DeprecationLevel.ERROR
-)
-constructor(
-    public val workingDirectory: Path,
-    public val sourcesChanges: SourcesChanges,
-    public val dependenciesSnapshotFiles: List<Path>,
-    @Deprecated("This property is no longer required and will be removed in a future release.")
-    public val shrunkClasspathSnapshot: Path,
-    @Deprecated("Use `get` directly instead or a `Builder` instance to set options. This property will be removed in a future release.", level = DeprecationLevel.ERROR)
-    public open val options: JvmSnapshotBasedIncrementalCompilationOptions,
-) : JvmIncrementalCompilationConfiguration, BaseIncrementalCompilationConfiguration {
+public interface JvmSnapshotBasedIncrementalCompilationConfiguration : JvmIncrementalCompilationConfiguration, BaseIncrementalCompilationConfiguration {
 
-    /**
-     * This is not used in current versions of BTA, but is used to fill in the non-nullable `options` field that exists for earlier versions.
-     */
-    private object DUMMY_OPTIONS : JvmSnapshotBasedIncrementalCompilationOptions {
-        override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>): V {
-            TODO("Not yet implemented")
-        }
+    public val workingDirectory: Path
+    public val sourcesChanges: SourcesChanges
+    public val dependenciesSnapshotFiles: List<Path>
 
-        override fun <V> set(
-            key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>,
-            value: V,
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
-            TODO("Not yet implemented")
-        }
-    }
-
-    @Deprecated("Instantiating this class directly will not be possible and it will become abstract in a future release. Use `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.")
-    @Suppress("DEPRECATION_ERROR")
-    public constructor(
-        workingDirectory: Path,
-        sourcesChanges: SourcesChanges,
-        dependenciesSnapshotFiles: List<Path>,
-    ) : this(
-        workingDirectory,
-        sourcesChanges,
-        dependenciesSnapshotFiles,
-        workingDirectory.resolve("classpath-snapshot"),
-        DUMMY_OPTIONS
-    )
-
-    @Deprecated("Instantiating this class directly will not be possible and it will become abstract in a future release. Use `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.")
-    @Suppress("DEPRECATION_ERROR")
-    public constructor(
-        workingDirectory: Path,
-        sourcesChanges: SourcesChanges,
-        dependenciesSnapshotFiles: List<Path>,
-        shrunkClasspathSnapshot: Path,
-    ) : this(
-        workingDirectory,
-        sourcesChanges,
-        dependenciesSnapshotFiles,
-        shrunkClasspathSnapshot,
-        DUMMY_OPTIONS
-    )
 
     /**
      * A builder for [JvmIncrementalCompilationConfiguration].
@@ -130,14 +71,14 @@ constructor(
          */
         public val dependenciesSnapshotFiles: List<Path>
 
-        /**
-         * The path to the shrunk classpath snapshot file from a previous compilation.
-         * @deprecated The property is no longer required. Will be promoted to an error in KT-83937.
-         *
-         * @since 2.3.20
-         */
-        @Deprecated("This property is no longer required and will be removed in a future release.")
-        public val shrunkClasspathSnapshot: Path
+//        /**
+//         * The path to the shrunk classpath snapshot file from a previous compilation.
+//         * @deprecated The property is no longer required. Will be promoted to an error in KT-83937.
+//         *
+//         * @since 2.3.20
+//         */
+//        @Deprecated("This property is no longer required and will be removed in a future release.")
+//        public val shrunkClasspathSnapshot: Path
 
         /**
          * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
@@ -168,9 +109,7 @@ constructor(
      *
      * @since 2.3.20
      */
-    public open fun toBuilder(): Builder {
-        error("To use `toBuilder` you must instantiate this object through a Builder obtained from `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder()`.")
-    }
+    public fun toBuilder(): Builder
 
     /**
      * An option for configuring a [JvmSnapshotBasedIncrementalCompilationConfiguration].
@@ -186,21 +125,8 @@ constructor(
      * @return the previously set value for an option
      * @throws IllegalStateException if the option was not set and has no default value
      */
-    public open operator fun <V> get(key: Option<V>): V {
-        error("To use `get` and `set` you must instantiate this object through `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.")
-    }
+    public operator fun <V> get(key: Option<V>): V
 
-    /**
-     * Set the [value] for option specified by [key], overriding any previous value for that option.
-     */
-    @Deprecated("Use `JvmCompilationOperation.Builder.snapshotBasedIcConfigurationBuilder` to create a `Builder` instead.")
-    public open operator fun <V> set(key: Option<V>, value: V) {
-        error("To use `get` and `set` you must instantiate this object through `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.")
-    }
-
-    override operator fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
-        error("To use `get` and `set` you must instantiate this object through `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.")
-    }
 
     public companion object {
 

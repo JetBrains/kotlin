@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm
 
+import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.ArgumentTestDescriptor
 
@@ -12,12 +13,15 @@ internal class JvmArgumentTestDescriptor<T>(
     override val argumentName: String,
     override val argument: JvmCompilerArguments.JvmCompilerArgument<T>,
     override val argumentValues: List<T>,
-    override val invalidArgumentValue: T? = null,
-    val valueString: (T?) -> String?,
-    val expectedArgumentStringsFor: (String) -> List<String>,
+    override val runsEnumTest: Boolean = false,
+    override val runsNullableTest: Boolean = false,
+    override val skipBtaV1: Boolean = false,
+    private val valueString: (T?) -> String?,
+    private val expectedArgumentStringsFor: (String) -> List<String>,
 ) : ArgumentTestDescriptor<T> {
-    override fun getValueString(argument: T?): String? = valueString.invoke(argument)
+    override val availableSinceVersion: KotlinReleaseVersion = argument.availableSinceVersion
 
-    override fun expectedArgumentStringsFor(value: String): List<String> =
-        expectedArgumentStringsFor.invoke(value)
+    override fun getValueString(argument: T?): String? = valueString(argument)
+
+    override fun expectedArgumentStringsFor(value: String): List<String> = expectedArgumentStringsFor.invoke(value)
 }

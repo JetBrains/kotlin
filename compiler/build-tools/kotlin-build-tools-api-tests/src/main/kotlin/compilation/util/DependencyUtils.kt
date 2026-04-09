@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.util
 
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SharedApiClassesClassLoader
+import org.jetbrains.kotlin.buildtools.api.daemonExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import java.io.File
+import java.net.URL
 import java.net.URLClassLoader
 import kotlin.io.path.toPath
 
@@ -28,3 +32,21 @@ val btaClassloader = initializeBtaClassloader()
 
 val currentKotlinStdlibLocation
     get() = btaClassloader.loadClass(KotlinVersion::class.qualifiedName).protectionDomain.codeSource.location.toURI().toPath()
+
+fun load(classpathUrlsArray: Array<URL>, compilationOperation: JvmCompilationOperation){
+    val toolchains = KotlinToolchains.loadImplementation(
+        URLClassLoader(
+            classpathUrlsArray,
+            SharedApiClassesClassLoader()
+        )
+    )
+    toolchains.toString()
+    toolchains.createBuildSession().use { session ->
+        val result = session.executeOperation(
+            compilationOperation,
+            toolchains.daemonExecutionPolicy(),
+        )
+    }
+
+
+}

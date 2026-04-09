@@ -224,7 +224,7 @@ private class JvmCompilationOperationV1Adapter private constructor(
     ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
 
         return JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter(
-            workingDirectory, sourcesChanges, dependenciesSnapshotFiles, shrunkClasspathSnapshot
+            workingDirectory, sourcesChanges, dependenciesSnapshotFiles
         )
     }
 
@@ -278,7 +278,7 @@ private class JvmCompilationOperationV1Adapter private constructor(
                 icConfig.sourcesChanges,
                 @Suppress("DEPRECATION_ERROR") ClasspathSnapshotBasedIncrementalCompilationApproachParameters(
                     icConfig.dependenciesSnapshotFiles.map(Path::toFile),
-                    icConfig.shrunkClasspathSnapshot.toFile()
+                    icConfig.workingDirectory.resolve("shrunk-classpath-snapshot.bin").toFile()
                 ),
                 snapshotBasedConfigV1
             )
@@ -311,63 +311,57 @@ private class JvmCompilationOperationV1Adapter private constructor(
     }
 
     @Suppress("DEPRECATION_ERROR")
-    private class JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter(
-        workingDirectory: Path,
-        sourcesChanges: SourcesChanges,
-        dependenciesSnapshotFiles: List<Path>,
-        shrunkClasspathSnapshot: Path,
-        private val options2: Options = Options(JvmSnapshotBasedIncrementalCompilationConfiguration::class),
-    ) : JvmSnapshotBasedIncrementalCompilationConfiguration(
-        workingDirectory,
-        sourcesChanges,
-        dependenciesSnapshotFiles,
-        shrunkClasspathSnapshot,
-    ), JvmSnapshotBasedIncrementalCompilationConfiguration.Builder,
+    private class JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter private constructor(
+        private val options: Options = Options(JvmSnapshotBasedIncrementalCompilationConfiguration::class),
+        override val workingDirectory: Path,
+        override val sourcesChanges: SourcesChanges,
+        override val dependenciesSnapshotFiles: List<Path>,
+    ) : JvmSnapshotBasedIncrementalCompilationConfiguration, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder,
         DeepCopyable<JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter> {
 
         constructor(
             workingDirectory: Path,
             sourcesChanges: SourcesChanges,
             dependenciesSnapshotFiles: List<Path>,
-            option: Options = Options(JvmSnapshotBasedIncrementalCompilationConfiguration::class),
         ) : this(
+            Options(JvmSnapshotBasedIncrementalCompilationConfiguration::class),
             workingDirectory,
             sourcesChanges,
-            dependenciesSnapshotFiles,
-            workingDirectory.resolve("shrunk-classpath-snapshot.bin"),
-            option
+            dependenciesSnapshotFiles
         )
 
+        override fun toBuilder(): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder = deepCopy()
+
         override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>): V {
-            return options2[key]
+            return options[key]
         }
 
         override fun <V> set(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>, value: V) {
-            options2[key] = value
+            options[key] = value
         }
 
         override fun build(): JvmSnapshotBasedIncrementalCompilationConfiguration = deepCopy()
 
         operator fun <V> get(key: Option<V>): V {
-            return options2[key]
+            return options[key]
         }
 
         operator fun <V> set(key: Option<V>, value: V) {
-            options2[key] = value
+            options[key] = value
         }
 
         override fun deepCopy(): JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter {
             return JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter(
-                workingDirectory, sourcesChanges, dependenciesSnapshotFiles, shrunkClasspathSnapshot, options2.deepCopy()
+                options.deepCopy(), workingDirectory, sourcesChanges, dependenciesSnapshotFiles
             )
         }
 
         override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
-            return options2[key]
+            return options[key]
         }
 
         override fun <V> set(key: BaseIncrementalCompilationConfiguration.Option<V>, value: V) {
-            options2[key] = value
+            options[key] = value
         }
 
         class Option<V> : BaseOptionWithDefault<V> {

@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm
 
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.JvmCompilerArgument
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.ArgumentConfiguration
 
 internal class JvmArgumentConfiguration<T>(
+    kotlinToolchain: KotlinToolchains,
     jvmArgumentTestDescriptor: JvmArgumentTestDescriptor<T>,
-) : ArgumentConfiguration<T>(jvmArgumentTestDescriptor) {
+) : ArgumentConfiguration<T>(kotlinToolchain, jvmArgumentTestDescriptor) {
     val argumentKey: JvmCompilerArgument<T> = jvmArgumentTestDescriptor.argument
     val argumentValues: List<T> = jvmArgumentTestDescriptor.argumentValues
-    val invalidValue: T? = jvmArgumentTestDescriptor.invalidArgumentValue
 }

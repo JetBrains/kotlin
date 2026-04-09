@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsIm
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.jvm.HasSnapshotBasedIcOptionsAccessor
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
+import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl2
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.PRECISE_JAVA_TRACKING
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.USE_FIR_RUNNER
@@ -134,12 +135,20 @@ internal class JvmCompilationOperationImpl private constructor(
         dependenciesSnapshotFiles: List<Path>,
         shrunkClasspathSnapshot: Path,
     ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
-        return JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
-            workingDirectory,
-            sourcesChanges,
-            dependenciesSnapshotFiles,
-            shrunkClasspathSnapshot
-        )
+        return if (JvmSnapshotBasedIncrementalCompilationConfiguration::class.java.isInterface) {
+            JvmSnapshotBasedIncrementalCompilationConfigurationImpl2(
+                workingDirectory,
+                sourcesChanges,
+                dependenciesSnapshotFiles,
+            )
+        } else {
+            JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
+                workingDirectory,
+                sourcesChanges,
+                dependenciesSnapshotFiles,
+                shrunkClasspathSnapshot
+            )
+        }
     }
 
     override fun snapshotBasedIcConfigurationBuilder(
@@ -147,17 +156,20 @@ internal class JvmCompilationOperationImpl private constructor(
         sourcesChanges: SourcesChanges,
         dependenciesSnapshotFiles: List<Path>,
     ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
-        return JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
-            workingDirectory,
-            sourcesChanges,
-            dependenciesSnapshotFiles,
-            /**
-             * The filename "shrunk-classpath-snapshot.bin" is a placeholder.
-             * ClasspathSnapshotFiles uses only the parent directory (workingDirectory) to create the actual file.
-             * This logic will be cleaned up with KT-83937.
-             */
-            workingDirectory.resolve("shrunk-classpath-snapshot.bin")
-        )
+        return if (JvmSnapshotBasedIncrementalCompilationConfiguration::class.java.isInterface) {
+            JvmSnapshotBasedIncrementalCompilationConfigurationImpl2(
+                workingDirectory,
+                sourcesChanges,
+                dependenciesSnapshotFiles,
+            )
+        } else {
+            JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
+                workingDirectory,
+                sourcesChanges,
+                dependenciesSnapshotFiles,
+                workingDirectory.resolve("shrunk-classpath-snapshot.bin")
+            )
+        }
     }
 
     private fun getKotlinFilenameExtensions(): Set<String> =
@@ -181,7 +193,7 @@ internal class JvmCompilationOperationImpl private constructor(
         return when (val aggregatedIcConfiguration: JvmIncrementalCompilationConfiguration? = get(INCREMENTAL_COMPILATION)) {
             is JvmSnapshotBasedIncrementalCompilationConfiguration -> {
                 val aggregatedIcConfigurationOptions = aggregatedIcConfiguration.toOptions()
-                val sourcesChanges = aggregatedIcConfiguration.sourcesChanges
+                val sourcesChanges = aggregatedIcConfiguration.toOptions().sourcesChanges
                 val classpathChanges = aggregatedIcConfiguration.classpathChanges
                 if (aggregatedIcConfigurationOptions[USE_FIR_RUNNER]) {
                     checkJvmFirRequirements(compilerArguments)
@@ -189,7 +201,7 @@ internal class JvmCompilationOperationImpl private constructor(
                 IncrementalCompilationOptions(
                     sourcesChanges,
                     classpathChanges = classpathChanges,
-                    workingDir = aggregatedIcConfiguration.workingDirectory.toFile(),
+                    workingDir = aggregatedIcConfiguration.toOptions().workingDirectory.toFile(),
                     compilerMode = CompilerMode.INCREMENTAL_COMPILER,
                     targetPlatform = targetPlatform,
                     reportCategories = reportCategories,
@@ -284,7 +296,7 @@ internal class JvmCompilationOperationImpl private constructor(
         )
         val incrementalCompiler = if (aggregatedIcConfigurationOptions[USE_FIR_RUNNER] && checkJvmFirRequirements(compilerArguments)) {
             getFirRunner(
-                icConfiguration.workingDirectory,
+                icConfiguration.toOptions().workingDirectory,
                 buildReporter,
                 aggregatedIcConfigurationOptions,
                 classpathChanges,
@@ -293,7 +305,7 @@ internal class JvmCompilationOperationImpl private constructor(
             )
         } else {
             getNonFirRunner(
-                icConfiguration.workingDirectory,
+                icConfiguration.toOptions().workingDirectory,
                 buildReporter,
                 aggregatedIcConfigurationOptions,
                 classpathChanges,
@@ -311,7 +323,7 @@ internal class JvmCompilationOperationImpl private constructor(
         val configurationInputs =
             makeConfigurationInputs(aggregatedIcConfigurationOptions, verifiedPreciseJavaTracking)
         val compilationResult = incrementalCompiler.compile(
-            kotlinSources, arguments, loggerAdapter, icConfiguration.sourcesChanges.asChangedFiles, fileLocations, configurationInputs,
+            kotlinSources, arguments, loggerAdapter, icConfiguration.toOptions().sourcesChanges.asChangedFiles, fileLocations, configurationInputs,
         ).asCompilationResult
 
         metricsReporter.endMeasureGc()
