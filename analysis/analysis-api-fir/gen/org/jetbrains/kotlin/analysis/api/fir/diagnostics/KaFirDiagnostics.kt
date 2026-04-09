@@ -3784,6 +3784,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val status: DomainStatus
     }
 
+    interface TwoReferences : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = TwoReferences::class
+        val references: List<String>
+    }
+
     interface MultipleReferences : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = MultipleReferences::class
         val references: List<String>

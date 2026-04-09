@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.fir.DfaType
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.utils.memberDeclarationNameOrNull
 import org.jetbrains.kotlin.fir.expressions.DomainStatus
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.types.*
@@ -307,7 +309,10 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
 
     fun getDomainReferences(flow: Flow, variable: DataFlowVariable): Map<RealVariable, SmartcastStability> =
         flow.getDomains(variable).filter { it !is Domain.Unreachable }.flatMapTo(mutableSetOf()) { domain ->
-            flow.getReferences(domain).filterIsInstance<RealVariable>()
+            flow.getReferences(domain).filterIsInstance<RealVariable>().filter {
+                val symbol = it.symbol
+                symbol.origin !is FirDeclarationOrigin.Synthetic && it.symbol.memberDeclarationNameOrNull?.isSpecial != true
+            }
         }.associateWith { it.getStability(flow, session) }
 
     private fun approveOperationStatement(

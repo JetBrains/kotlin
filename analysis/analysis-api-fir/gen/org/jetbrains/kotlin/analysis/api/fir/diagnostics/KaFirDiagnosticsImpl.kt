@@ -4534,6 +4534,12 @@ internal class InvalidatedReferenceImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.InvalidatedReference
 
+internal class TwoReferencesImpl(
+    override val references: List<String>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.TwoReferences
+
 internal class MultipleReferencesImpl(
     override val references: List<String>,
     firDiagnostic: KtPsiDiagnostic,

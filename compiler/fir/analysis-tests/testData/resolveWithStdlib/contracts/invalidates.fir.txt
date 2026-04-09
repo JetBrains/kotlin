@@ -67,3 +67,15 @@ FILE: invalidates.kt
         lval y: R|B| = R|<local>/x|
         R|<local>/y|.R|/B.n| = Int(2)
     }
+    public final fun test4(): R|kotlin/Unit| {
+        lval x: R|B| = R|/B.B|(Int(1))
+        lval <destruct>: R|B| = R|<local>/x|
+        lval n: R|kotlin/Int| = R|<local>/<destruct>|.R|/B.component1|()
+        R|<local>/x|.R|/B.n| = Int(2)
+    }
+    public final fun test5(): R|kotlin/Unit| {
+        lval x: R|B| = R|/B.B|(Int(1))
+        lval y: R|B| = R|<local>/x|
+        lval z: R|B| = R|<local>/y|
+        R|<local>/x|.R|/B.n| = Int(2)
+    }

@@ -802,6 +802,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.THROWABLE_TYPE_MI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOO_MANY_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TRIM_MARGIN_BLANK_PREFIX
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TWO_REFERENCES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION
@@ -2880,6 +2881,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(INVALIDATED_REFERENCE, "May point to value that has been {0}.", TO_STRING)
+        map.put(TWO_REFERENCES, "Two references pointing to this value: {0}.", TO_STRING)
         map.put(MULTIPLE_REFERENCES, "Multiple references pointing to this value: {0}.", TO_STRING)
 
         map.put(MUST_BE_INITIALIZED, "Property must be initialized.")

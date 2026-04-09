@@ -35,13 +35,12 @@ object FirInvalidatedExpressionChecker : FirQualifiedAccessExpressionChecker(Mpp
 
         if (!expression.hasResolvedType || !expression.resolvedType.isPrimitiveNumberOrNullableType) {
             val references = expression.domainReferences
-            if (references != null && references.size > 1) {
-                reporter.reportOn(
-                    expression.source,
-                    FirErrors.MULTIPLE_REFERENCES,
-                    references.map { it.first },
-                    context
-                )
+            when {
+                references == null || references.size < 2 -> null
+                references.size == 2 -> FirErrors.TWO_REFERENCES
+                else -> FirErrors.MULTIPLE_REFERENCES
+            }?.also { warning ->
+                reporter.reportOn(expression.source, warning, references!!.map { it.first }, context)
             }
         }
     }

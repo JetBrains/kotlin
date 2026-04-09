@@ -478,6 +478,15 @@ private fun KaDiagnosticConverterBuilder.addConversions4() {
             token,
         )
     }
+    add(FirErrors.TWO_REFERENCES) { firDiagnostic ->
+        TwoReferencesImpl(
+            firDiagnostic.a.map { string ->
+                string
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.CAN_BE_VAL_DELAYED_INITIALIZATION) { firDiagnostic ->
         CanBeValDelayedInitializationImpl(
             firDiagnostic as KtPsiDiagnostic,
