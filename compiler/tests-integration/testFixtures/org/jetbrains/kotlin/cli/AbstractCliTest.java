@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.util.PerformanceManager;
@@ -81,6 +82,22 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         return new Pair<>(output.toString(), ExitCode.OK);
     }
 
+    @Nullable
+    private static String computeRootDir() {
+        String roots = System.getProperty("kotlin.testData.roots");
+        if (roots == null) return null;
+        for (String root : roots.split(";")) {
+            int eq = root.indexOf('=');
+            if (eq < 0) continue;
+            String relativePath = root.substring(0, eq);
+            String absolutePath = root.substring(eq + 1);
+            if (absolutePath.endsWith(relativePath)) {
+                return absolutePath.substring(0, absolutePath.length() - relativePath.length());
+            }
+        }
+        return null;
+    }
+
     @NotNull
     public static String getNormalizedCompilerOutput(
             @NotNull String pureOutput,
@@ -89,9 +106,29 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             @NotNull String tmpdir
     ) {
         String testDataAbsoluteDir = new File(testDataDir).getAbsolutePath();
+
+        // Compute rootDir-relative path for the testData dir, so that absolute paths
+        // in compiler output become rootDir-relative (matching expected .out files)
+        String rootDir = computeRootDir();
+        String testDataReplacement;
+        if (rootDir != null) {
+            testDataReplacement = testDataAbsoluteDir.startsWith(rootDir)
+                    ? testDataAbsoluteDir.substring(rootDir.length())
+                    : TESTDATA_DIR;
+        } else {
+            testDataReplacement = TESTDATA_DIR;
+        }
+
         String output = pureOutput
-                .replace(testDataAbsoluteDir, TESTDATA_DIR)
-                .replace(FileUtil.toSystemIndependentName(testDataAbsoluteDir), TESTDATA_DIR);
+                .replace(testDataAbsoluteDir, testDataReplacement)
+                .replace(FileUtil.toSystemIndependentName(testDataAbsoluteDir), testDataReplacement);
+
+        // Replace remaining rootDir prefixes so that other absolute paths become rootDir-relative
+        if (rootDir != null) {
+            output = output.replace(rootDir, "");
+            output = output.replace(FileUtil.toSystemIndependentName(rootDir), "");
+        }
+
         String normalizedOutputWithoutExitCode = CompilerTestUtil.normalizeCompilerOutput(output, tmpdir);
 
         return exitCode == null ? normalizedOutputWithoutExitCode : (normalizedOutputWithoutExitCode + exitCode + "\n");
@@ -298,30 +335,63 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         }
     }
 
+    private static String resolveThirdPartyPath(String defaultRelativePath) {
+        String property = System.getProperty(defaultRelativePath);
+        return property != null ? property : new File(defaultRelativePath).getPath();
+    }
+
+    @Nullable
+    private static String cachedRootDir;
+    private static boolean rootDirComputed = false;
+
+    @Nullable
+    private static String getRootDir() {
+        if (!rootDirComputed) {
+            cachedRootDir = computeRootDir();
+            rootDirComputed = true;
+        }
+        return cachedRootDir;
+    }
+
+    private static String resolveRootRelativePath(@NotNull String str) {
+        String rootDir = getRootDir();
+        if (rootDir == null) return str;
+
+        // Resolve paths that are relative to rootDir (dist/, libraries/, plugins/, third-party/)
+        String[] knownPrefixes = {"dist/", "libraries/", "plugins/", "third-party/"};
+        for (String prefix : knownPrefixes) {
+            str = str.replace("=" + prefix, "=" + rootDir + prefix);
+            if (str.startsWith(prefix)) {
+                str = rootDir + str;
+            }
+        }
+        return str;
+    }
+
     private static String replaceTestPaths(@NotNull String str, @NotNull File testDataDir, @NotNull String tempDir) {
-        return str
+        return resolveRootRelativePath(str
                 .replace("$TEMP_DIR$", tempDir)
-                .replace(TESTDATA_DIR, testDataDir.getAbsolutePath())
+                .replace(TESTDATA_DIR, testDataDir.getAbsolutePath()))
                 .replace(
                         "$FOREIGN_ANNOTATIONS_DIR$",
-                        new File(ThirdPartyAnnotationPathsKt.FOREIGN_ANNOTATIONS_SOURCES_PATH).getPath()
+                        resolveThirdPartyPath(ThirdPartyAnnotationPathsKt.FOREIGN_ANNOTATIONS_SOURCES_PATH)
                 )
                 .replace(
                         "$JSR_305_DECLARATIONS$",
-                        new File(ThirdPartyAnnotationPathsKt.JSR_305_SOURCES_PATH).getPath()
+                        resolveThirdPartyPath(ThirdPartyAnnotationPathsKt.JSR_305_SOURCES_PATH)
                 )
                 .replace(
                         "$FOREIGN_JAVA8_ANNOTATIONS_DIR$",
-                        new File(ThirdPartyAnnotationPathsKt.FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH).getPath()
+                        resolveThirdPartyPath(ThirdPartyAnnotationPathsKt.FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH)
                 ).replace(
                         "$JDK_17$",
                         KtTestUtil.getJdk17Home().getPath()
                 ).replace(
                         "$STDLIB_JS$",
-                        PathUtil.getKotlinPathsForCompiler().getJsStdLibKlibPath().getAbsolutePath()
+                        ForTestCompileRuntime.stdlibJsForTests().getAbsolutePath()
                 ).replace(
                         "$STDLIB_WASM_JS$",
-                        PathUtil.getKotlinPathsForCompiler().getWasmJsStdLibKlibPath().getAbsolutePath()
+                        ForTestCompileRuntime.wasmJsStdlibForTests().getAbsolutePath()
                 );
     }
 

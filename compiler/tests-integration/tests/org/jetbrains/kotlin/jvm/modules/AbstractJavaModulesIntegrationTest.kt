@@ -79,7 +79,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         return { actual ->
             TestDataAssertions.assertEqualsToFile(
                 if (languageVersion.usesK2 && expectedFirFile.exists()) expectedFirFile else File(testDataDirectory, "$moduleName.txt"),
-                getNormalizedCompilerOutput(actual, null, testDataPath, tmpdir.absolutePath)
+                getNormalizedCompilerOutput(actual, null, testDataDirectory.path, tmpdir.absolutePath)
             )
         }
     }

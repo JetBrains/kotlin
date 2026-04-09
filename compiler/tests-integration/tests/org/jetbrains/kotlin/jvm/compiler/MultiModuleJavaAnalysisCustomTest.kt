@@ -24,6 +24,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -248,6 +249,6 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
     }
 
     companion object {
-        val PATH_TO_TEST_ROOT_DIR = "compiler/testData/multiModule/java/custom"
+        val PATH_TO_TEST_ROOT_DIR = ForTestCompileRuntime.transformTestDataPath("compiler/testData/multiModule/java/custom").path
     }
 }

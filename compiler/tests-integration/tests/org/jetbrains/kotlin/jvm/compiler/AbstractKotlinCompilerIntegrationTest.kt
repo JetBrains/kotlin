@@ -16,12 +16,12 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.JavaCompilationResult
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
@@ -31,7 +31,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
     protected abstract val testDataPath: String
 
     protected val testDataDirectory: File
-        get() = File(testDataPath, getTestName(true))
+        get() = File(ForTestCompileRuntime.transformTestDataPath(testDataPath), getTestName(true))
 
     protected fun getTestDataFileWithExtension(extension: String): File {
         return File(testDataDirectory, "${getTestName(true)}.$extension")
@@ -163,7 +163,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
 
         if (compiler is K2JSCompiler) {
             args.add(K2JSCompilerArguments::libraries.cliArgument)
-            args.add((classpath + PathUtil.kotlinPathsForCompiler.jsStdLibKlibPath).joinToString(File.pathSeparator))
+            args.add((classpath + ForTestCompileRuntime.stdlibJsForTests()).joinToString(File.pathSeparator))
             args.add(K2JSCompilerArguments::irProduceKlibDir.cliArgument)
             args.add(K2JSCompilerArguments::outputDir.cliArgument)
             args.add(output.path)

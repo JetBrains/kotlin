@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -45,7 +45,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
     ) {
         val executableFileName = if (SystemInfo.isWindows) "$executableName.bat" else executableName
-        val launcherFile = File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/$executableFileName")
+        val launcherFile = File(ForTestCompileRuntime.distKotlincForTests(), "bin/$executableFileName")
         assertTrue("Launcher script not found, run dist task: ${launcherFile.absolutePath}", launcherFile.exists())
 
         // For some reason, IntelliJ's ExecUtil screws quotes up on windows.
@@ -96,7 +96,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     }
 
     private val testDataDirectory: String
-        get() = KtTestUtil.getTestDataPathBase() + "/launcher"
+        get() = KtTestUtil.getTestDataFileLocatedInCompilerTestData("launcher").path
 
     private fun kotlincInProcess(vararg args: String) {
         val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), args.toList())
@@ -129,7 +129,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     }
 
     fun testKotlinJvmContextClassLoader() {
-        val kotlinTestJar = File(PathUtil.kotlinPathsForDistDirectory.homePath, "lib/kotlin-test.jar")
+        val kotlinTestJar = ForTestCompileRuntime.kotlinTestJarForTests()
         assertTrue("kotlin-main-kts.jar not found, run dist task: ${kotlinTestJar.absolutePath}", kotlinTestJar.exists())
         kotlincInProcess(
             K2JVMCompilerArguments::classpath.cliArgument, kotlinTestJar.path,
@@ -151,7 +151,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             "$testDataDirectory/emptyMain.kt",
             K2JSCompilerArguments::suppressWarnings.cliArgument,
             K2JSCompilerArguments::libraries.cliArgument,
-            PathUtil.kotlinPathsForCompiler.jsStdLibKlibPath.absolutePath,
+            ForTestCompileRuntime.stdlibJsForTests().absolutePath,
             K2JSCompilerArguments::irProduceKlibDir.cliArgument,
             K2JSCompilerArguments::outputDir.cliArgument,
             tmpdir.path,
@@ -167,7 +167,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             "$testDataDirectory/emptyMain.kt",
             KotlinWasmCompilerArguments::suppressWarnings.cliArgument,
             KotlinWasmCompilerArguments::libraries.cliArgument,
-            PathUtil.kotlinPathsForCompiler.wasmJsStdLibKlibPath.absolutePath,
+            ForTestCompileRuntime.wasmJsStdlibForTests().absolutePath,
             KotlinWasmCompilerArguments::irProduceKlibDir.cliArgument,
             KotlinWasmCompilerArguments::outputDir.cliArgument,
             tmpdir.path,

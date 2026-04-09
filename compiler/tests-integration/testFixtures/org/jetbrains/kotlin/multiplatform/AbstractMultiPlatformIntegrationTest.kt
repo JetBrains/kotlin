@@ -10,16 +10,13 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
 
 abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
     fun doTest(directoryPath: String) {
@@ -32,7 +29,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
         val jvm2Src = File(root, "jvm2.kt").takeIf(File::exists)
 
         val tmpdir = KtTestUtil.tmpDir(getTestName(true))
-        val stdlibCommon = findStdlibCommon().absolutePath
+        val stdlibCommon = ForTestCompileRuntime.stdlibCommonForTests().absolutePath
 
         val commonDest = File(tmpdir, "common").absolutePath
         val jvmDest = File(tmpdir, "jvm").absolutePath.takeIf { jvmSrc != null }
@@ -59,7 +56,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
                         commonSrc,
                         "-Xir-produce-klib-dir",
                         "-libraries",
-                        PathUtil.kotlinPathsForCompiler.jsStdLibKlibPath.absolutePath,
+                        ForTestCompileRuntime.stdlibJsForTests().absolutePath,
                         "-ir-output-dir",
                         jsDest!!,
                         "-ir-output-name",
@@ -92,20 +89,8 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
             }
         }
 
-        TestDataAssertions.assertEqualsToFile(File(root, "output.txt"), result.replace('\\', '/'))
-    }
-
-    private fun findStdlibCommon(): File {
-        // Take kotlin-stdlib-common.klib from dist/ when it's there
-        val fromDist = File("dist/common/kotlin-stdlib-common.klib")
-        if (fromDist.isFile) return fromDist
-
-        val stdlibCommonLibsDir = "libraries/stdlib/common/build/libs"
-        val commonLibs = Files.newDirectoryStream(Paths.get(stdlibCommonLibsDir)).use(Iterable<Path>::toList)
-        return commonLibs.sorted().findLast {
-            val name = it.toFile().name
-            !name.endsWith("-javadoc.jar") && !name.endsWith("-sources.jar") && !name.contains("coroutines")
-        }?.toFile() ?: error("kotlin-stdlib-common is not found in $stdlibCommonLibsDir")
+        val normalizedResult = normalizeAbsolutePaths(result.replace('\\', '/'))
+        TestDataAssertions.assertEqualsToFile(File(root, "output.txt"), normalizedResult)
     }
 
     private fun CLICompiler<*>.compile(sources: File, commonSources: File?, vararg mainArguments: String): String = buildString {
@@ -122,5 +107,22 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
 
     private fun loadExtraArguments(sources: List<File>): List<String> = sources.flatMap { source ->
         InTextDirectivesUtils.findListWithPrefixes(source.readText(), "// ADDITIONAL_COMPILER_ARGUMENTS:")
+    }
+
+    private fun normalizeAbsolutePaths(output: String): String {
+        val roots = System.getProperty("kotlin.testData.roots") ?: return output
+        for (root in roots.split(";")) {
+            val eq = root.indexOf('=')
+            if (eq < 0) continue
+            val relativePath = root.substring(0, eq)
+            val absolutePath = root.substring(eq + 1)
+            if (absolutePath.endsWith(relativePath)) {
+                val rootDir = absolutePath.substring(0, absolutePath.length - relativePath.length)
+                return output
+                    .replace(rootDir, "")
+                    .replace(rootDir.replace('/', File.separatorChar).replace('\\', File.separatorChar), "")
+            }
+        }
+        return output
     }
 }

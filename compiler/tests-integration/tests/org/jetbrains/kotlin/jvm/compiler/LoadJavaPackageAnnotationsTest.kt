@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
@@ -37,7 +38,7 @@ import java.io.File
 
 class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
     companion object {
-        private const val TEST_DATA_PATH = "compiler/testData/loadJavaPackageAnnotations/"
+        private val TEST_DATA_PATH = ForTestCompileRuntime.transformTestDataPath("compiler/testData/loadJavaPackageAnnotations/").path
     }
 
     private fun doTest(useJavac: Boolean, configurator: (CompilerConfiguration) -> Unit) {

@@ -9,7 +9,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import java.io.File
 
 class ProgramWithDependencyOnCompiler(
@@ -28,7 +28,7 @@ class ProgramWithDependencyOnCompiler(
             listOf(
                 programSource.path,
                 "-d", program.absolutePath,
-                "-cp", PathUtil.kotlinPathsForDistDirectory.compilerPath.absolutePath,
+                "-cp", File(ForTestCompileRuntime.distKotlincForTests(), "lib/kotlin-compiler.jar").absolutePath,
             ),
         )
         TestCase.assertEquals("Compilation failed:\n$output", ExitCode.OK, exitCode)
@@ -39,7 +39,7 @@ class ProgramWithDependencyOnCompiler(
         "-cp",
         listOf(
             program.absolutePath,
-            PathUtil.kotlinPathsForDistDirectory.compilerPath.absolutePath,
+            File(ForTestCompileRuntime.distKotlincForTests(), "lib/kotlin-compiler.jar").absolutePath,
         ).joinToString(File.pathSeparator),
         "ProgramKt",
         *arguments,

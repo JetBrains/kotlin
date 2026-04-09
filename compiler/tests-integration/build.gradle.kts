@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val compilerModules: Array<String> by rootProject.extra
@@ -73,26 +74,52 @@ projectTests {
         ),
         jUnitMode = JUnitMode.JUnit4
     ) {
-        dependsOn(":dist")
-        dependsOn(":kotlin-stdlib:compileKotlinWasmJs")
-
-        workingDir = rootDir
-
         useJUnitPlatform()
 
         systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-        val antLauncherJarPathProvider = project.provider {
-            antLauncherJar.asPath
-        }
-        doFirst {
-            systemProperty("kotlin.ant.classpath", antLauncherJarPathProvider.get())
-            systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
+        systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
+        systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
+
+        testInputsCheck {
+            with(extraPermissions) {
+                add("""permission java.util.PropertyPermission "kotlin.language.settings", "write";""")
+                add("""permission java.util.PropertyPermission "kotlin.test.is.pre.release", "write";""")
+                add("""permission java.util.PropertyPermission "java.awt.headless", "write";""")
+                // jline/REPL tests need broad property access and command execution
+                add("""permission java.util.PropertyPermission "*", "read,write";""")
+                add("""permission java.lang.RuntimePermission "loadLibrary.*";""")
+                add("""permission java.io.FilePermission "<<ALL FILES>>", "execute";""")
+                add("""permission java.lang.RuntimePermission "getenv.*";""")
+                // PathUtil auto-discovery tries to read dist/ relative to CWD
+                add("""permission java.io.FilePermission "dist", "read";""")
+                add("""permission java.io.FilePermission "dist/-", "read";""")
+                // Integration tests execute launcher scripts from dist
+                add("""permission java.io.FilePermission "${rootDir.absolutePath}/dist/-", "execute";""")
+                // Compiler checks relative paths for source files
+                add("""permission java.io.FilePermission "${projectDir.absolutePath}/-", "read";""")
+            }
         }
     }
 
     testGenerator("org.jetbrains.kotlin.TestGeneratorForTestsIntegrationTestsKt")
 
     withJvmStdlibAndReflect()
+    withTestJar()
+    withAnnotations()
+    withJsRuntime()
+    withWasmRuntime()
+    withStdlibCommon()
+    withMockJdkRuntime()
+    withMockJdkAnnotationsJar()
+    withThirdPartyAnnotations()
+    withThirdPartyJava8Annotations()
+    withThirdPartyJsr305()
+    withScriptingPlugin()
+    withScriptRuntime()
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
+
+    testData(project(":compiler").isolated, "testData")
 }
 
 testsJar()

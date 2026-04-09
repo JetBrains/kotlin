@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
-import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.util.toJvmMetadataVersion
 import java.io.File
 import java.util.jar.JarFile
@@ -44,7 +44,7 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
     }
 
     fun testPreReleaseFlagIsConsistentBetweenBootstrapAndCurrentCompiler() {
-        val bootstrapCompiler = JarFile(PathUtil.kotlinPathsForCompiler.compilerPath)
+        val bootstrapCompiler = JarFile(File(ForTestCompileRuntime.distKotlincForTests(), "lib/kotlin-compiler.jar"))
         val classFromBootstrapCompiler = bootstrapCompiler.getEntry(LanguageFeature::class.java.name.replace(".", "/") + ".class")
         checkPreReleaseness(
             bootstrapCompiler.getInputStream(classFromBootstrapCompiler).readBytes(),
@@ -53,7 +53,7 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
     }
 
     fun testPreReleaseFlagIsConsistentBetweenStdlibAndCurrentCompiler() {
-        val stdlib = JarFile(PathUtil.kotlinPathsForCompiler.stdlibPath)
+        val stdlib = JarFile(ForTestCompileRuntime.runtimeJarForTests())
         val classFromStdlib = stdlib.getEntry(KotlinVersion::class.java.name.replace(".", "/") + ".class")
         checkPreReleaseness(
             stdlib.getInputStream(classFromStdlib).readBytes(),

@@ -111,6 +111,24 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static List<File> scriptingPluginClasspathForTests() {
+        String classpathString = getProperty(KOTLIN_SCRIPTING_PLUGIN_CLASSPATH, null);
+        if (classpathString == null) {
+            return Collections.emptyList();
+        }
+
+        List<File> list = new ArrayList<>();
+        for (String entry : classpathString.split(",")) {
+            File file = new File(entry);
+            if (file.exists()) {
+                list.add(file);
+            }
+        }
+
+        return list;
+    }
+
+    @NotNull
     public static List<File> testScriptDefinitionClasspathForTests() {
         String classpathString = getProperty(KOTLIN_TEST_SCRIPT_DEFINITION_CLASSPATH, null);
         if (classpathString == null) {
@@ -175,6 +193,11 @@ public class ForTestCompileRuntime {
     @NotNull
     public static File stdlibJsForTests() {
         return propertyOrDist(KOTLIN_JS_STDLIB_KLIB_PATH, "dist/kotlinc/lib/kotlin-stdlib-js.klib");
+    }
+
+    @NotNull
+    public static File wasmJsStdlibForTests() {
+        return propertyOrDist(KOTLIN_WASM_JS_STDLIB_KLIB_PATH, "dist/kotlinc/lib/kotlin-stdlib-wasm-js.klib");
     }
 
     @NotNull

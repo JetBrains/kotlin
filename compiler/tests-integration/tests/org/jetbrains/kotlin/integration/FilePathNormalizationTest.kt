@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.integration
 
 import com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.cli.AbstractCliTest
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -107,7 +108,7 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
                     this += outputFile.path
                     this += "-cp"
                     this += listOfNotNull(
-                        PathUtil.kotlinPathsForDistDirectory.compilerPath.absolutePath,
+                        File(ForTestCompileRuntime.distKotlincForTests(), "lib/kotlin-compiler.jar").absolutePath,
                         classpath?.path
                     ).joinToString(File.pathSeparator)
                 }
@@ -121,7 +122,7 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
                 tmpdir,
                 "-cp",
                 listOf(
-                    PathUtil.kotlinPathsForDistDirectory.compilerPath.absolutePath,
+                    File(ForTestCompileRuntime.distKotlincForTests(), "lib/kotlin-compiler.jar").absolutePath,
                     outDir.path,
                     classpath.path
                 ).joinToString(File.pathSeparator),
