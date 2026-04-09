@@ -189,7 +189,6 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
      <: kotlin/Comparable<TypeVariable(T)>?
      <: kotlin/Comparable<TypeVariable(S) & Any>?
      <: kotlin/String?
-     <: kotlin/Comparable<kotlin/String>?
      = kotlin/Nothing
      <: kotlin/Comparable<kotlin/Nothing>?
      <: kotlin/Long
@@ -213,7 +212,6 @@ TypeVariable(T) --- Readiness(
      >: TypeVariable(S) & Any
      <: kotlin/Comparable<TypeVariable(S) & Any>
      = kotlin/String
-     <: kotlin/Comparable<kotlin/String>
      >: kotlin/Nothing
      <: kotlin/Comparable<kotlin/Nothing>
 ********************************
@@ -234,8 +232,8 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     )
      <: kotlin/Comparable<TypeVariable(T)>
      = kotlin/String
-     <: kotlin/Comparable<kotlin/String>
      >: kotlin/Nothing
      <: kotlin/Comparable<kotlin/Nothing>
+     <: kotlin/Comparable<kotlin/String> (inferred during fixation)
     FIXED TO: kotlin/String
 ********************************

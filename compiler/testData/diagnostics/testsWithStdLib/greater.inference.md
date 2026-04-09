@@ -292,15 +292,12 @@ R|<local>/countExpr|.greater#<R|kotlin/String|, R|kotlin/Nothing|>(String(0))
     1. `TypeVariable(S) <: kotlin/String?`
 9. Combine `TypeVariable(T) == kotlin/String` with `TypeVariable(T) <: kotlin/Comparable<TypeVariable(T)>`
     1. `TypeVariable(T) <: kotlin/String`
-    2. `TypeVariable(T) <: kotlin/Comparable<kotlin/String>`
-10. Combine `TypeVariable(T) == kotlin/String` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(T)>?`
-    1. `TypeVariable(S) <: kotlin/Comparable<kotlin/String>?`
-11. `TypeVariable(S) == kotlin/Nothing` _from TypeParameter R|kotlin/Nothing|_
-12. Combine `TypeVariable(S) == kotlin/Nothing` with `TypeVariable(S) <: TypeVariable(T)?`
+10. `TypeVariable(S) == kotlin/Nothing` _from TypeParameter R|kotlin/Nothing|_
+11. Combine `TypeVariable(S) == kotlin/Nothing` with `TypeVariable(S) <: TypeVariable(T)?`
     1. `kotlin/Nothing <: TypeVariable(T)`
-13. Combine `TypeVariable(S) == kotlin/Nothing` with `TypeVariable(T) <: kotlin/Comparable<TypeVariable(S) & Any>`
+12. Combine `kotlin/Nothing <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/Comparable<TypeVariable(T)>`
     1. `TypeVariable(T) <: kotlin/Comparable<kotlin/Nothing>`
-14. Combine `TypeVariable(S) == kotlin/Nothing` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(S) & Any>?`
+13. Combine `kotlin/Nothing <: TypeVariable(T)` with `TypeVariable(S) <: kotlin/Comparable<TypeVariable(T)>?`
     1. `TypeVariable(S) <: kotlin/Comparable<kotlin/Nothing>?`
 
 ##### Resolution Stages > CheckExtensionReceiver:

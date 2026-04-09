@@ -94,6 +94,6 @@ CHOSEN for fixation: TypeVariable(E) --- Readiness(
     )
      <: kotlin/Enum<TypeVariable(E)>
      = MyEnum
-     <: kotlin/Enum<MyEnum>
+     <: kotlin/Enum<MyEnum> (inferred during fixation)
     FIXED TO: MyEnum
 ********************************
