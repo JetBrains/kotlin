@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Compan
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_ADD_MODULES
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_ASSERTIONS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_FRIEND_PATHS
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_IGNORED_ANNOTATIONS_FOR_BRIDGES
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JAVA_SOURCE_ROOTS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JDK_RELEASE
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JSPECIFY_ANNOTATIONS
@@ -262,5 +263,14 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
         ),
         valueString = { value -> value },
         expectedArgumentStringsFor = { value -> listOf("-Xprofile=$value") },
+    ),
+    JvmArgumentTestDescriptor(
+        argumentName = "Xignored-annotations-for-bridges",
+        argument = X_IGNORED_ANNOTATIONS_FOR_BRIDGES,
+        argumentValues = listOf(
+            arrayOf("com.example.MyAnnotation", "*")
+        ),
+        valueString = { value -> value?.joinToString(",") },
+        expectedArgumentStringsFor = { value -> listOf("-Xignored-annotations-for-bridges=$value") },
     ),
 )
