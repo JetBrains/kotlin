@@ -35,6 +35,7 @@ class ConstraintIncorporator(
 
     interface Context : TypeSystemInferenceExtensionContext {
         val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
+        val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
 
         fun getVariablesWithConstraintsContainingGivenTypeVariable(
             variableConstructorMarker: TypeConstructorMarker,
@@ -66,14 +67,14 @@ class ConstraintIncorporator(
 
     // \alpha is typeVariable, \beta -- other type variable registered in ConstraintStorage
     context(c: Context)
-    fun incorporate(typeVariable: TypeVariableMarker, constraint: Constraint) {
+    fun incorporate(typeVariable: TypeVariableMarker, constraint: Constraint, originalConstraint: Constraint) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         // we shouldn't incorporate recursive constraint -- It is too dangerous
         if (constraint.areThereRecursiveConstraints(typeVariable)) return
 
         directWithVariable(typeVariable, constraint)
-        insideOtherConstraint(typeVariable, constraint)
+        insideOtherConstraint(typeVariable, constraint, originalConstraint)
     }
 
     context(c: Context)
@@ -158,6 +159,7 @@ class ConstraintIncorporator(
     private fun insideOtherConstraint(
         typeVariable: TypeVariableMarker,
         constraint: Constraint,
+        originalConstraint: Constraint,
     ) {
         if (typeVariable in constraint.derivedFrom) return
         val freshTypeConstructor = typeVariable.freshTypeConstructor()
@@ -170,6 +172,7 @@ class ConstraintIncorporator(
                     generateNewConstraintForSecondIncorporationKind(
                         typeVariable,
                         constraint,
+                        originalConstraint,
                         storageForOtherVariable.typeVariable,
                         otherConstraint
                     )
@@ -187,12 +190,25 @@ class ConstraintIncorporator(
         causeOfIncorporationVariable: TypeVariableMarker,
         // \alpha <: Number
         causeOfIncorporationConstraint: Constraint,
+        originalConstraint: Constraint,
         // \beta
         otherVariable: TypeVariableMarker,
         // \beta <: Inv<\alpha>
         otherConstraint: Constraint,
     ) {
-        if (causeOfIncorporationVariable in otherConstraint.derivedFrom) return
+        if (causeOfIncorporationVariable in otherConstraint.derivedFrom ||
+            // Soon the constraint will be used to fix the variable as EQUALITY constraints are the most prioritized (with a few exceptions),
+            // so we can wait with the constraint incorporation to avoid constraint explosion, as described in KT-66469
+            causeOfIncorporationConstraint.kind == ConstraintKind.EQUALITY &&
+            // We don't want to block variable fixation at all
+            originalConstraint.position.initialConstraint.position !is FixVariableConstraintPosition<*> &&
+            // To be used in variable fixation, the constraint must have a proper type
+            causeOfIncorporationConstraint.type.isProperTypeForFixation(c.notFixedTypeVariables.keys) { t ->
+                !t.contains { c.notFixedTypeVariables.containsKey(it.typeConstructor()) }
+            }
+        ) {
+            return
+        }
         val (type, needApproximation) = computeConstraintTypeForSecondIncorporationKind(
             causeOfIncorporationVariable, causeOfIncorporationConstraint, otherConstraint
         )

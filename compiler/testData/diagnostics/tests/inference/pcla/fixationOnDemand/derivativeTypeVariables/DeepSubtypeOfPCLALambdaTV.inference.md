@@ -533,11 +533,9 @@ R?C|<local>/otvOwner|.provide#()
 1. `TypeVariable(OT) == ScopeOwner` _from Fix variable OT_
 2. Combine `TypeVariable(PNT) <: TypeVariable(OT)` with `TypeVariable(OT) == ScopeOwner`
     1. `TypeVariable(PNT) <: ScopeOwner`
-3. Combine `TypeVariable(OT) == ScopeOwner` with `TypeVariable(PNT) <: CapturedType(in TypeVariable(OT))`
-    1. `TypeVariable(PNT) <: CapturedType(in ScopeOwner)`
-4. Combine `ScopeOwner <: TypeVariable(PNT)` with `TypeVariable(PNT) <: ScopeOwner`
+3. Combine `ScopeOwner <: TypeVariable(PNT)` with `TypeVariable(PNT) <: ScopeOwner`
     1. `TypeVariable(PNT) == ScopeOwner`
-5. Combine `TypeVariable(PNT) == ScopeOwner` with `TypeVariable(PNT) <: TypeVariable(OT)`
+4. Combine `TypeVariable(PNT) == ScopeOwner` with `TypeVariable(PNT) <: TypeVariable(OT)`
     1. `ScopeOwner <: TypeVariable(OT)`
 
 ### Call 15

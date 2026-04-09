@@ -454,16 +454,6 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
     1. `TypeVariable(R) <: kotlin/Comparable<kotlin/Int!>?`
 12. Combine `kotlin/Int! <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Int!`
     1. `TypeVariable(W) == kotlin/Int!`
-13. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(W) <: kotlin/Comparable<in TypeVariable(W)!>!`
-    1. `TypeVariable(W) <: kotlin/Comparable<in kotlin/Int!>!`
-14. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(E) <: TypeVariable(W)!`
-    1. `TypeVariable(E) <: kotlin/Int!`
-15. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(E) <: kotlin/Comparable<in TypeVariable(W)!>?`
-    1. `TypeVariable(E) <: kotlin/Comparable<in kotlin/Int!>?`
-16. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(R) <: kotlin/Comparable<in TypeVariable(W)!>?`
-    1. `TypeVariable(R) <: kotlin/Comparable<in kotlin/Int!>?`
-17. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(R) <: kotlin/Comparable<in TypeVariable(W)!>!`
-    1. `TypeVariable(R) <: kotlin/Comparable<in kotlin/Int!>!`
 
 #### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) @IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C↩`
 ##### Continue Call Completion:
