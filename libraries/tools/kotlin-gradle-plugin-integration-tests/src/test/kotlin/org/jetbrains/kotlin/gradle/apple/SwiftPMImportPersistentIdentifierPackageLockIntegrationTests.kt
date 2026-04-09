@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.apple
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.apple.initSwiftPmProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
@@ -188,10 +189,6 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     val manifestDescription = describeSwiftPackage(umbrellaPackageManifest.parent)
 
-                    print(
-                        "The generate Package.swift is" +
-                                "$manifestDescription"
-                    )
                     assertEquals(
                         listOf("_fuzz", "_").sorted(),
                         manifestDescription.dependencies.map { it.identity }.sorted()
@@ -682,6 +679,156 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                     )
                 }
 
+            }
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    fun `identifier synchronization ignores non-Apple consumer projects when generating umbrella lock`(
+        version: GradleVersion,
+    ) {
+        val rootIdentifier = "root"
+        val sharedIdentifier = "shared"
+        val sharedProjectName = "shared"
+        val sharedRepoName = "SharedPackage"
+
+        project("empty", version) {
+            withLockFileFixture(
+                packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(rootIdentifier),
+            ){
+                val sharedRepo = repoRef(sharedRepoName).also {
+                    createRepo(it.name, listOf("1.0.0"))
+                }
+
+                initJvmSwiftPmProject(cacheDirFile){
+                    sourceSets.getByName("commonMain").dependencies {
+                        implementation(project(":$sharedProjectName"))
+                    }
+
+                    swiftPMDependencies {
+                        packageResolvedSynchronization = identifier(rootIdentifier)
+                    }
+                }
+
+                val sharedProject = project("empty", version) {
+                    withLockFileFixture(
+                        packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(sharedProjectName),
+                    ) {
+                        initSwiftPmProject(cacheDirFile) {
+                            swiftPMDependencies {
+                                packageResolvedSynchronization = identifier(sharedIdentifier)
+
+                                swiftPackage(
+                                    url = url(sharedRepo.url),
+                                    version = from("1.0.0"),
+                                    products = listOf(product(sharedRepo.name)),
+                                )
+                            }
+                        }
+                    }
+                }
+
+                include(sharedProject, sharedProjectName)
+
+
+                val umbrellaRootPackageManifest =
+                    projectPath.resolve(".swiftpm-locks/$rootIdentifier/swiftImport/Package.swift")
+
+                val umbrellaSharedPackageManifest =
+                    projectPath.resolve(".swiftpm-locks/$sharedIdentifier/swiftImport/Package.swift")
+
+                val sharedPersistedPackageResolved = projectPath.resolve(".swiftpm-locks/$sharedIdentifier/swiftImport/Package.resolved")
+                val rootPersistedPackageResolved = persistedPackageResolvedSyncPath
+
+                val expectedSharedGenerateUmbrellaPackageTaskName =
+                    GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(sharedIdentifier)
+
+                val expectedSharedFetchUmbrellaPackageTaskName =
+                    FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(sharedIdentifier)
+
+                val expectedRootGenerateUmbrellaPackageTaskName =
+                    GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(rootIdentifier)
+
+                val expectedRootFetchUmbrellaPackageTaskName =
+                    FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(rootIdentifier)
+
+
+                build(":$sharedProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}") {
+
+
+                    // umbrella generate should be picked by shared
+                    assertTasksExecuted(
+                        ":$sharedProjectName:$expectedSharedGenerateUmbrellaPackageTaskName"
+                    )
+
+
+                    // umbrella fetch should be picked by shared
+                    assertTasksExecuted(
+                        ":$sharedProjectName:$expectedSharedFetchUmbrellaPackageTaskName"
+                    )
+
+                    // root should not be part of umbrella generate neither fetch.
+                    assertTasksAreNotInTaskGraph(
+                        ":$expectedRootGenerateUmbrellaPackageTaskName",
+                        ":$expectedRootFetchUmbrellaPackageTaskName",
+                    )
+
+                    assertFileExists(
+                        umbrellaSharedPackageManifest,
+                        "Umbrella Package.swift should be generated"
+                    )
+
+                    val manifestDescription = describeSwiftPackage(umbrellaSharedPackageManifest.parent)
+
+                    assertTrue(
+                        manifestDescription.dependencies.any { it.identity == "_$sharedProjectName" },
+                        "Apple SwiftPM project must be included in umbrella Package.swift"
+                    )
+
+                    assertTrue(
+                        manifestDescription.dependencies.none { it.identity == "_" },
+                        "Non-Apple consumer project must not be included in umbrella Package.swift"
+                    )
+
+                    assertResolvedVersions(
+                        persistedPackageResolved = sharedPersistedPackageResolved,
+                        expectedPins = listOf(
+                            sharedRepo to "1.0.0",
+                        ),
+                    )
+
+                    assertResolvedVersions(
+                        persistedPackageResolved = sharedProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
+                        checkoutRepoDir = sharedProject.projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
+                        expectedPins = listOf(
+                            sharedRepo to "1.0.0",
+                        ),
+                    )
+                }
+
+
+                build(":${FetchSyntheticImportProjectPackages.TASK_NAME}") {
+
+
+                    // no generate nor fetch tasks should be registered
+                    assertTasksAreNotInTaskGraph(
+                        ":$sharedProjectName:$expectedSharedGenerateUmbrellaPackageTaskName",
+                        ":$sharedProjectName:$expectedSharedFetchUmbrellaPackageTaskName",
+                        ":$expectedRootGenerateUmbrellaPackageTaskName",
+                        ":$expectedRootFetchUmbrellaPackageTaskName",
+                    )
+
+                    assertFileNotExists(
+                        umbrellaRootPackageManifest,
+                        "Umbrella Package.swift should not be generated"
+                    )
+
+                    assertFileNotExists(
+                        rootPersistedPackageResolved,
+                        "Umbrella Package.resolved should be generated"
+                    )
+                }
             }
         }
     }
