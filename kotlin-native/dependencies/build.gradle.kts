@@ -28,6 +28,10 @@ val update by tasks.registering {
     }
 }
 
+val updateHostTarget by tasks.registering {
+    dependsOn(nativeDependencies.targetDependency())
+}
+
 // TODO: This sort of task probably belongs to :kotlin-native
 val rmDotKonan by tasks.registering(Delete::class) {
     val dir = System.getenv("KONAN_DATA_DIR") ?: "${System.getProperty("user.home")}/.konan"

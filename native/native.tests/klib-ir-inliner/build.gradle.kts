@@ -44,6 +44,9 @@ projectTests {
         allowParallelExecution = true,
         requirePlatformLibs = true,
     ) {
+        // KT-85080: explicitly trigger download of native dependencies, so ObjCInteropFacade can invoke clang on 1st compilation stage
+        dependsOn(project(":kotlin-native:dependencies").tasks.named("updateHostTarget"))
+
         // To workaround KTI-2421, we make these tests run on JDK 11 instead of the project-default JDK 8.
         // Kotlin test infra uses reflection to access JDK internals.
         // With JDK 11, some JVM args are required to silence the warnings caused by that:
