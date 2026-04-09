@@ -51,7 +51,7 @@ projectTests {
                 add("permission java.util.PropertyPermission \"kotlin.incremental.compilation\", \"write\";")
                 add("permission java.util.PropertyPermission \"kotlin.incremental.compilation.js\", \"write\";")
                 // The plugin-sandbox compiler plugin generates synthetic source files (like AllOpenGenerated.kt),
-                // and later on the compiler asserts that the synthetic file does not exist via !File.exists()
+                // and later on the compiler asserts that the synthetic file must not exist
                 add("""permission java.io.FilePermission "${projectDir.absolutePath}/-", "read";""")
             }
         }
@@ -62,14 +62,12 @@ projectTests {
     withJvmStdlibAndReflect()
     withJsRuntime()
     withWasmRuntime()
-    @OptIn(KotlinCompilerDistUsage::class)
-    withDist()
     withMockJdkAnnotationsJar()
     withPluginSandboxJar()
     withPluginSandboxAnnotations()
 
     testData(project.isolated, "testData")
-    testData(project(":js:js.translator").isolated, "testData")
+    testData(project(":js:js.translator").isolated, "testData/moduleEmulation.js")
 }
 
 testsJar()

@@ -81,8 +81,6 @@ projectTests {
     testData(project(":jps:jps-plugin").isolated, "testData")
     withJsRuntime()
     withJvmStdlibAndReflect()
-    @OptIn(KotlinCompilerDistUsage::class)
-    withDist()
     withMockJdkAnnotationsJar()
 }
 

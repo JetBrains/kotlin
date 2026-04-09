@@ -148,7 +148,6 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
             moduleName = testDir.name
             destination = destinationDir.path
             classpath = compileClasspath
-            kotlinHome = ForTestCompileRuntime.distKotlincForTests().absolutePath
         }
 
     private val compileClasspath =
