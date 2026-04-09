@@ -319,6 +319,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
         JvmCompilerArguments.X_ADD_MODULES,
         JvmCompilerArguments.SCRIPT_TEMPLATES,
         JvmCompilerArguments.X_SCRIPT_RESOLVER_ENVIRONMENT,
+        JvmCompilerArguments.X_IGNORED_ANNOTATIONS_FOR_BRIDGES,
             -> {
             if (value == null) return emptyArray<String>() as V
 
@@ -472,6 +473,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
             JvmCompilerArguments.X_ADD_MODULES,
             JvmCompilerArguments.SCRIPT_TEMPLATES,
             JvmCompilerArguments.X_SCRIPT_RESOLVER_ENVIRONMENT,
+            JvmCompilerArguments.X_IGNORED_ANNOTATIONS_FOR_BRIDGES,
                 -> {
                 if (value == null) return emptyList<String>() as T
 
