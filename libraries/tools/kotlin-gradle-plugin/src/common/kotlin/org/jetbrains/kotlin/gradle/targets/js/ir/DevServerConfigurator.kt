@@ -62,6 +62,8 @@ internal class DevServerConfigurator(
     }
 
     private fun configureImportMap(task: KotlinSimpleDevServerTask, compilation: KotlinJsIrCompilation) {
+        if (compilation.wasmTarget == null) return
+
         val importMapTaskName = compilation.npmProject.generateImportMapTaskName
         val importMapTask = project.tasks.named<KotlinImportMapGenerateTask>(importMapTaskName)
 

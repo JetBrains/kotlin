@@ -60,18 +60,15 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
 
         val result = mapOf("imports" to importMap)
         val gson = GsonBuilder().setPrettyPrinting().create()
-        importMapFile.asFile.get().writeText(gson.toJson(result))
+        val resultImportMapFile = importMapFile.getFile()
+        resultImportMapFile.writeText(gson.toJson(result))
 
-        importMapLoaderFile.asFile.get().writeText(
+        importMapLoaderFile.getFile().writeText(
             """
-            |fetch('/${importMapFile.asFile.get().name}')
-            |  .then(r => r.json())
-            |  .then(map => {
-            |    const script = document.createElement('script');
-            |    script.type = 'importmap';
-            |    script.textContent = JSON.stringify(map);
-            |    document.head.appendChild(script);
-            |  });
+            |const script = document.createElement('script');
+            |script.type = 'importmap';
+            |script.textContent = JSON.stringify(${gson.toJson(result)});
+            |document.currentScript.after(script);
             """.trimMargin()
         )
     }

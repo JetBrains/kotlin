@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.compilationDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
+import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
@@ -133,13 +134,21 @@ class KotlinCompilationNpmResolver(
         }
 
         if (compilation.wasmTarget != null) {
-            project.registerTask<KotlinImportMapGenerateTask>(npmProject.generateImportMapTaskName) {
+            val importMapTaskHolder = project.registerTask<KotlinImportMapGenerateTask>(npmProject.generateImportMapTaskName) {
                 it.npmRootDir.set(nodeJsRoot.rootPackageDirectory)
                 it.installArtifacts.from(nodeJsRoot.npmInstallTaskProvider.map { it.additionalFiles })
                 it.packageJson.fileProvider(packageJsonTaskHolder.flatMap { it.packageJson })
                 it.importMapFile.set(project.layout.buildDirectory.file("tmp/${it.name}/importmap.json"))
                 it.importMapLoaderFile.set(project.layout.buildDirectory.file("tmp/${it.name}/importmap-loader.js"))
             }
+
+            compilation.binaries
+                .withType(JsIrBinary::class.java)
+                .configureEach { binary ->
+                    binary.linkSyncTask.configure { syncTask ->
+                        syncTask.from.from(importMapTaskHolder.map { it.importMapLoaderFile })
+                    }
+                }
         }
     }
 

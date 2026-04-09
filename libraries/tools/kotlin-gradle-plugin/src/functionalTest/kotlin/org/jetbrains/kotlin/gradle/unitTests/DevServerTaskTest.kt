@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.gradle.targets.js.ir.DefaultIncrementalSyncTask
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinSimpleDevServerTask
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
@@ -91,6 +92,34 @@ class DevServerTaskTest {
         assertTrue(
             devServerTask.npmRootDirectory.isPresent,
             "Expected npmRootDirectory to be configured for wasmJs browser devServer task"
+        )
+    }
+
+    @Test
+    fun `wasmJs browser compileSync task includes import map files`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                @Suppress("OPT_IN_USAGE")
+                wasmJs {
+                    browser()
+                    binaries.executable()
+                }
+            }
+        }.evaluate()
+
+        val compileSyncTask = project.tasks
+            .filterIsInstance<DefaultIncrementalSyncTask>()
+            .first { it.name.contains("compileSync", ignoreCase = true) }
+
+        val fromFiles = compileSyncTask.from.files.map { it.name }.toSet()
+
+        assertTrue(
+            fromFiles.any { it == "importmap.json" },
+            "Expected importmap.json to be included in compileSync task inputs, but found: $fromFiles"
+        )
+        assertTrue(
+            fromFiles.any { it == "importmap-loader.js" },
+            "Expected importmap-loader.js to be included in compileSync task inputs, but found: $fromFiles"
         )
     }
 

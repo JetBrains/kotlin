@@ -27,6 +27,7 @@ internal abstract class KotlinSimpleDevServerTask : DefaultTask() {
     abstract val contentDirectory: DirectoryProperty
 
     @get:Input
+    @get:Optional
     abstract val port: Property<Int>
 
     @get:Input
