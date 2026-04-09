@@ -140,6 +140,15 @@ public final class org/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$S
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/CompilerMessageRendererKt {
+	public static final fun render (Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer;Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation;Ljava/lang/String;)Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilerMessageRendererWithDiagnosticId : org/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer {
+	public fun render (Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation;)Ljava/lang/String;
+	public abstract fun render (Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation;Ljava/lang/String;)Ljava/lang/String;
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/DelicateBuildToolsApi : java/lang/annotation/Annotation {
 }
 
