@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators
 
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
-import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryDecompiledTestConfigurator
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
@@ -36,6 +35,6 @@ object SymbolLightClassesDecompiledJsTestConfigurator : SymbolLightClassesDecomp
 
 object SymbolLightClassesDecompiledSlcJvmTestConfigurator : SymbolLightClassesDecompiledTestConfigurator(
     JvmPlatforms.defaultJvmPlatform,
-    listOf("lib").withAdditionalVariant("slc"),
+    listOf("lib.slc"),
     additionalServiceRegistrars = listOf(AnalysisApiSymbolLightClassesLibrarySlcTestServiceRegistrar),
 )
