@@ -11,12 +11,14 @@ import org.jetbrains.kotlin.gradle.mpp.KmpIncrementalITBase
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 
 /**
  * Basic smoke tests assert that the baseline IC is reasonable: if we do a local change, only a local rebuild is performed.
  */
 @DisplayName("Basic incremental scenarios with KMP - K2")
 @MppGradlePluginTests
+@OsCondition(supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
 
     override val defaultBuildOptions: BuildOptions
