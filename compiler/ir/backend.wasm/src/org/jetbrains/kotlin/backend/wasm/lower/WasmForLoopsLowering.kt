@@ -24,8 +24,9 @@ import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
  */
 class WasmForLoopsLowering(context: WasmBackendContext) : ForLoopsLowering(context) {
     override val loopBodyTransformer: ForLoopBodyTransformer? =
-        if (context.configuration.getBoolean(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION))
-            WasmBCEForLoopBodyTransformer()
-        else
-            null
+        null
+        //if (context.configuration.getBoolean(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION))
+        //    WasmBCEForLoopBodyTransformer()
+        //else
+        //    null
 }
