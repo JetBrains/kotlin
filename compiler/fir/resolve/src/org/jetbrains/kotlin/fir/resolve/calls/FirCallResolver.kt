@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -460,8 +461,13 @@ class FirCallResolver(
             }
         }
 
+        // Retry as function call and report FUNCTION_CALL_EXPECTED if it resolves.
         var functionCallExpected = false
-        if (result.candidates.isEmpty() && qualifiedAccess !is FirFunctionCall) {
+        if (result.candidates.isEmpty() &&
+            qualifiedAccess !is FirFunctionCall &&
+            // Don't report FUNCTION_CALL_EXPECTED in name-based destructuring, it's not helpful.
+            qualifiedAccess.source?.kind != KtFakeSourceElementKind.DesugaredNameBasedDestructuring
+        ) {
             val newResult = collectCandidates(qualifiedAccess, callee.name, CallKind.Function, resolutionMode = resolutionMode)
             if (newResult.candidates.isNotEmpty()) {
                 result = newResult

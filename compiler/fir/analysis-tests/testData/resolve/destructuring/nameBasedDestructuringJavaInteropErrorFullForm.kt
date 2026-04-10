@@ -102,7 +102,7 @@ fun javaFieldsVisibleNegative() {
 
 fun javaSyntheticPropsNegative() {
     (
-    val <!FUNCTION_CALL_EXPECTED!>hasReady<!>,
+    val <!UNRESOLVED_REFERENCE!>hasReady<!>,
     val <!UNRESOLVED_REFERENCE!>`void`<!>,
     val <!UNRESOLVED_REFERENCE!>number<!>,
     val <!UNRESOLVED_REFERENCE!>staticNumber<!>,
@@ -149,7 +149,7 @@ fun javaInteropForLoopNegative() {
 
 fun destructuringJavaListMethodNegative() {
     val list = java.util.ArrayList<String>()
-    (val bad = <!FUNCTION_CALL_EXPECTED!>clear<!>) = list
+    (val bad = <!UNRESOLVED_REFERENCE!>clear<!>) = list
 }
 
 fun destructuringJavaEnumNegative() {
