@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.base
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiEnumConstant
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
@@ -154,11 +156,30 @@ abstract class AbstractSymbolLightClassesTestBase(
         val fqName = FqName(fqname)
         val parentFqName = fqName.parent().takeUnless(FqName::isRoot) ?: return null
         val enumClass = JavaElementFinder.getInstance(project).findClass(parentFqName.asString(), scope) ?: return null
-        val kotlinEnumClass = enumClass.unwrapped?.safeAs<KtClass>()?.takeIf(KtClass::isEnum) ?: return null
 
         val enumEntryName = fqName.shortName().asString()
-        enumClass.findInnerClassByName(enumEntryName, false)?.let { return it }
+        if (isTestAgainstCompiledCode) {
+            enumClass.fields
+                .filterIsInstance<PsiEnumConstant>()
+                .firstOrNull { it.name == enumEntryName }
+                ?.initializingClass
+                ?.let { return it }
 
+            enumClass.findInnerClassByName(enumEntryName, false)?.let { return it }
+
+            val kotlinLightClass = (enumClass as? KtLightClass)?.kotlinOrigin?.safeAs<KtClass>()?.takeIf(KtClass::isEnum)
+            if (kotlinLightClass != null) {
+                return kotlinLightClass.declarations.firstNotNullOfOrNull {
+                    if (it is KtEnumEntry && it.name == enumEntryName) {
+                        it
+                    } else {
+                        null
+                    }
+                }?.toLightClass()
+            }
+        }
+
+        val kotlinEnumClass = enumClass.unwrapped?.safeAs<KtClass>()?.takeIf(KtClass::isEnum) ?: return null
         return kotlinEnumClass.declarations.firstNotNullOfOrNull {
             if (it is KtEnumEntry && it.name == enumEntryName) {
                 it
