@@ -1,0 +1,60 @@
+@kotlin.jvm.JvmInline()
+public final class Some /* Some*/ {
+  @org.jetbrains.annotations.NotNull()
+  private final @org.jetbrains.annotations.NotNull() java.lang.String value;
+}
+
+public final class SomeClass /* SomeClass*/ {
+  @org.jetbrains.annotations.NotNull()
+  private @org.jetbrains.annotations.NotNull() java.lang.String memberProp;
+
+  public  SomeClass();//  .ctor()
+}
+
+public abstract interface SomeInterface /* SomeInterface*/ {
+  public static final class DefaultImpls /* SomeInterface.DefaultImpls*/ {
+  }
+}
+
+public final class ValueClassInSignatureKt /* ValueClassInSignatureKt*/ {
+  @org.jetbrains.annotations.NotNull()
+  private static @org.jetbrains.annotations.NotNull() java.lang.String topLevelProp;
+
+  @kotlin.jvm.JvmName()
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsAndJvmName();//  withJvmOverloadsAndJvmName()
+
+  @kotlin.jvm.JvmName()
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsAndJvmName(int);//  withJvmOverloadsAndJvmName(int)
+
+  @kotlin.jvm.JvmName()
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsAndJvmName(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  withJvmOverloadsAndJvmName(int, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @kotlin.jvm.JvmName()
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsAndJvmName(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, int);//  withJvmOverloadsAndJvmName(int, @org.jetbrains.annotations.NotNull() java.lang.String, int)
+
+  @kotlin.jvm.JvmName()
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsAndJvmName(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  withJvmOverloadsAndJvmName(int, @org.jetbrains.annotations.NotNull() java.lang.String, int, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloads();//  withJvmOverloads()
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloads(int);//  withJvmOverloads(int)
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsInDifferentPositions();//  withJvmOverloadsInDifferentPositions()
+
+  @kotlin.jvm.JvmOverloads()
+  public static final void withJvmOverloadsInDifferentPositions(int);//  withJvmOverloadsInDifferentPositions(int)
+
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String getTopLevelProp();//  getTopLevelProp()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String topLevelFunInReturn();//  topLevelFunInReturn()
+}

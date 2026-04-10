@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -40,7 +41,8 @@ internal class KaFirFileSymbol private constructor(
 
     override fun createPointer(): KaSymbolPointer<KaFileSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource()
-            ?: TODO("Creating pointers for not PSI-backed files or files from a library is not supported yet")
+            ?: backingPsi?.let { KaBasePsiSymbolPointer.createForSymbolFromPsi(it, KaFileSymbol::class, this) }
+            ?: TODO("Creating pointers for file symbols without backing PSI is not supported yet")
     }
 
     override val annotations: KaAnnotationList
