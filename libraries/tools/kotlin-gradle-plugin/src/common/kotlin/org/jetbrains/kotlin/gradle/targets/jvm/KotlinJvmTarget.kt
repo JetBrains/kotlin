@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
@@ -258,7 +259,7 @@ abstract class KotlinJvmTarget @Inject constructor(
         .newInstance<KotlinJvmCompilerOptionsDefault>()
         .apply {
             moduleName.convention(
-                project.moduleName(project.baseModuleName())
+                project.jvmModuleName(project.baseModuleName(), project.kotlinExtension.compilerVersion)
             )
             DefaultKotlinJavaToolchain.wireJvmTargetToToolchain(
                 this,
