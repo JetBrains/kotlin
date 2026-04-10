@@ -49,7 +49,7 @@ public final class PropertyAnnotationsKt /* PropertyAnnotationsKt*/ {
 
   private static int jvmFlags;
 
-  public static final int constProperty;
+  public static final int constProperty = 1 /* initializer type: int */ /* constant value 1 */;
 
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() java.lang.String getNonNullable();//  getNonNullable()

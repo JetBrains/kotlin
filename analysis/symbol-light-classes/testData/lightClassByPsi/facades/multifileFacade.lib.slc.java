@@ -3,9 +3,9 @@ public final class multifileFacade /* multifileFacade*/ {
 
   private static final int y;
 
-  public static final int x1;
+  public static final int x1 = 42 /* initializer type: int */ /* constant value 42 */;
 
-  public static final int y1;
+  public static final int y1 = 42 /* initializer type: int */ /* constant value 42 */;
 
   private static final int privateFoo();//  privateFoo()
 

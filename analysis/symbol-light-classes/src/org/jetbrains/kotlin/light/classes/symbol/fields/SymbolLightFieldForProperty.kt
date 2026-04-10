@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiers
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.load.java.structure.impl.NotEvaluatedConstAware
 import org.jetbrains.kotlin.name.JvmStandardClassIds.TRANSIENT_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmStandardClassIds.VOLATILE_ANNOTATION_CLASS_ID
@@ -149,6 +150,13 @@ internal class SymbolLightFieldForProperty private constructor(
 
     override fun getName(): String = _name
 
+    private val binaryDelegate: PsiField? by lazyPub {
+        containingClass.binaryLightClassDelegate?.findField(
+            targetDeclaration = kotlinOrigin,
+            preferredName = _name,
+        )
+    }
+
     private fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
         in GranularModifiersBox.VISIBILITY_MODIFIERS -> {
             val visibility = withPropertySymbol { propertySymbol ->
@@ -252,7 +260,13 @@ internal class SymbolLightFieldForProperty private constructor(
             }
         }
 
-    override fun getInitializer(): PsiExpression? = _initializer
+    override fun getInitializer(): PsiExpression? {
+        if (containingClass.originKind == LightClassOriginKind.BINARY) {
+            binaryDelegate?.initializer?.let { return it }
+        }
+
+        return _initializer
+    }
 
     private val _constantValue by lazyPub {
         _initializerValue?.value?.takeIf {
@@ -267,7 +281,13 @@ internal class SymbolLightFieldForProperty private constructor(
         }
     }
 
-    override fun computeConstantValue(): Any? = _constantValue
+    override fun computeConstantValue(): Any? {
+        if (containingClass.originKind == LightClassOriginKind.BINARY) {
+            binaryDelegate?.computeConstantValue()?.let { return it }
+        }
+
+        return _constantValue
+    }
 
     override fun isNotYetComputed(): Boolean {
         return withPropertySymbol { propertySymbol -> (propertySymbol as? KaKotlinPropertySymbol)?.isConst == true }
