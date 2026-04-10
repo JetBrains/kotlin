@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.descriptors.runtime.structure
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import java.lang.reflect.Array
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
+import kotlin.reflect.KClass
 
 val Class<*>.safeClassLoader: ClassLoader
     get() = classLoader ?: ClassLoader.getSystemClassLoader()
@@ -29,10 +29,10 @@ val Class<*>.safeClassLoader: ClassLoader
 fun Class<*>.isEnumClassOrSpecializedEnumEntryClass(): Boolean =
     Enum::class.java.isAssignableFrom(this)
 
-private val PRIMITIVE_CLASSES =
+private val PRIMITIVE_CLASSES: List<KClass<*>> =
     listOf(Boolean::class, Byte::class, Char::class, Double::class, Float::class, Int::class, Long::class, Short::class)
-private val WRAPPER_TO_PRIMITIVE = PRIMITIVE_CLASSES.map { it.javaObjectType to it.javaPrimitiveType }.toMap()
-private val PRIMITIVE_TO_WRAPPER = PRIMITIVE_CLASSES.map { it.javaPrimitiveType to it.javaObjectType }.toMap()
+private val WRAPPER_TO_PRIMITIVE: Map<Class<*>, Class<*>?> = PRIMITIVE_CLASSES.associate { it.javaObjectType to it.javaPrimitiveType }
+private val PRIMITIVE_TO_WRAPPER: Map<Class<*>?, Class<*>> = PRIMITIVE_CLASSES.associate { it.javaPrimitiveType to it.javaObjectType }
 
 val Class<*>.primitiveByWrapper: Class<*>?
     get() = WRAPPER_TO_PRIMITIVE[this]

@@ -37,9 +37,10 @@ internal abstract class KotlinKProperty<out V>(
     }
 
     override val returnType: KType by lazy(PUBLICATION) {
-        kmProperty.returnType.toKType(container.jClass.classLoader, typeParameterTable.value, if (isLocalDelegated) null else fun(): Type {
-            return caller.returnType
-        })
+        kmProperty.returnType.toKType(
+            container.jClass.classLoader, typeParameterTable.value,
+            computeJavaType = if (isLocalDelegated) null else fun(): Type = caller.returnType,
+        )
     }
 
     val typeParameterTable: Lazy<TypeParameterTable> = lazy(PUBLICATION) {
