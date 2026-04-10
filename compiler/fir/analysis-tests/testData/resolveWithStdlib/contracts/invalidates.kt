@@ -29,7 +29,7 @@ fun test2() {
     val x = A(1)
     val y = x
     val t = <!TWO_REFERENCES("[x, y]")!>x<!>.uses { it.n }
-    <!INVALIDATED_REFERENCE("INVALIDATED"), TWO_REFERENCES("[x, y]")!>y<!>.foo()
+    <!INVALIDATED_REFERENCE("INVALIDATED")!>y<!>.foo()
 }
 
 data class B(var n: Int)

@@ -14,9 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.DomainStatus
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.isDisabled
-import org.jetbrains.kotlin.fir.types.hasResolvedType
-import org.jetbrains.kotlin.fir.types.isPrimitiveNumberOrNullableType
-import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirInvalidatedExpressionChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -31,17 +28,6 @@ object FirInvalidatedExpressionChecker : FirQualifiedAccessExpressionChecker(Mpp
                 status,
                 context
             )
-        }
-
-        if (!expression.hasResolvedType || !expression.resolvedType.isPrimitiveNumberOrNullableType) {
-            val references = expression.domainReferences
-            when {
-                references == null || references.size < 2 -> null
-                references.size == 2 -> FirErrors.TWO_REFERENCES
-                else -> FirErrors.MULTIPLE_REFERENCES
-            }?.also { warning ->
-                reporter.reportOn(expression.source, warning, references!!.map { it.first }, context)
-            }
         }
     }
 
