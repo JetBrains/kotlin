@@ -22,13 +22,13 @@ fun test1() {
     val t = x.uses { it.n }
     val g = <!INVALIDATED_REFERENCE("INVALIDATED")!>x<!>.n
     val h = <!INVALIDATED_REFERENCE("INVALIDATED")!>x<!>
-    <!INVALIDATED_REFERENCE("INVALIDATED"), TWO_REFERENCES("[x, h]")!>x<!>.foo()
+    <!INVALIDATED_REFERENCE("INVALIDATED"), MULTIPLE_REFERENCES("[x, h]")!>x<!>.foo()
 }
 
 fun test2() {
     val x = A(1)
     val y = x
-    val t = <!TWO_REFERENCES("[x, y]")!>x<!>.uses { it.n }
+    val t = <!MULTIPLE_REFERENCES("[x, y]")!>x<!>.uses { it.n }
     <!INVALIDATED_REFERENCE("INVALIDATED")!>y<!>.foo()
 }
 
@@ -37,7 +37,7 @@ data class B(var n: Int)
 fun test3() {
     val x = B(1)
     val y = x
-    <!TWO_REFERENCES("[x, y]")!>y<!>.n = 2
+    <!MULTIPLE_REFERENCES("[x, y]")!>y<!>.n = 2
 }
 
 fun test4() {
@@ -49,8 +49,16 @@ fun test4() {
 fun test5() {
     val x = B(1)
     val y = x
-    val z = <!TWO_REFERENCES("[x, y]")!>y<!>
+    val z = <!MULTIPLE_REFERENCES("[x, y]")!>y<!>
     <!MULTIPLE_REFERENCES("[x, y, z]")!>x<!>.n = 2
+}
+
+data class C(var b: B)
+
+fun test6() {
+    val x = C(B(1))
+    var y = x.b
+    <!TWO_REFERENCES("[/C.b(x), y]")!>y<!>.n = 2
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, contracts, funWithExtensionReceiver, functionDeclaration,

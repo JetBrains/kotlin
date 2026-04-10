@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.types.hasResolvedType
+import org.jetbrains.kotlin.fir.types.isNullableString
 import org.jetbrains.kotlin.fir.types.isPrimitiveOrNullablePrimitive
+import org.jetbrains.kotlin.fir.types.isString
+import org.jetbrains.kotlin.fir.types.isUnsignedTypeOrNullableUnsignedType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 
@@ -39,12 +42,16 @@ object FirMultipleReferencesChecker : FirFunctionChecker(MppCheckerKind.Common) 
         override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
             qualifiedAccessExpression.acceptChildren(this)
 
-            if (qualifiedAccessExpression.hasResolvedType && qualifiedAccessExpression.resolvedType.isPrimitiveOrNullablePrimitive) return
+            if (qualifiedAccessExpression.hasResolvedType) {
+                val type = qualifiedAccessExpression.resolvedType
+                if (type.isPrimitiveOrNullablePrimitive || type.isUnsignedTypeOrNullableUnsignedType || type.isString || type.isNullableString) return
+            }
+
             val references = qualifiedAccessExpression.domainReferences?.map { it.first } ?: return
             val problem = when {
                 references in alreadyReported -> null
                 references.size < 2 -> null
-                references.size == 2 -> FirErrors.TWO_REFERENCES
+                references.oneSimpleAndOneProperty() -> FirErrors.TWO_REFERENCES
                 else -> FirErrors.MULTIPLE_REFERENCES
             }
             if (problem != null) {
@@ -53,4 +60,7 @@ object FirMultipleReferencesChecker : FirFunctionChecker(MppCheckerKind.Common) 
             }
         }
     }
+
+    fun List<String>.oneSimpleAndOneProperty(): Boolean =
+        size == 2 && any { it.contains("(") } && any { !it.contains("(") }
 }

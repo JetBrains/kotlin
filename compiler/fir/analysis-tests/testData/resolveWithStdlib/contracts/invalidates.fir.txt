@@ -79,3 +79,22 @@ FILE: invalidates.kt
         lval z: R|B| = R|<local>/y|
         R|<local>/x|.R|/B.n| = Int(2)
     }
+    public final data class C : R|kotlin/Any| {
+        public constructor(b: R|B|): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var b: R|B| = R|<local>/b|
+            public get(): R|B|
+            public set(value: R|B|): R|kotlin/Unit|
+
+        public final operator fun component1(): R|B|
+
+        public final fun copy(b: R|B| = this@R|/C|.R|/C.b|): R|C|
+
+    }
+    public final fun test6(): R|kotlin/Unit| {
+        lval x: R|C| = R|/C.C|(R|/B.B|(Int(1)))
+        lvar y: R|B| = R|<local>/x|.R|/C.b|
+        R|<local>/y|.R|/B.n| = Int(2)
+    }
