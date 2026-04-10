@@ -131,7 +131,7 @@ class ScriptingWithExplanationCompilerTest {
 
     @Test // KT-85105
     fun testScriptExplainWithObjectLiteral() {
-        runScriptAndValidateExplain("$TEST_DATA_DIR/destructuringDecls.kts", expectedExitCode = ExitCode.COMPILATION_ERROR)
+        runScriptAndValidateExplain("$TEST_DATA_DIR/objectLiteral.kts", expectedExitCode = ExitCode.COMPILATION_ERROR)
     }
 }
 
@@ -149,7 +149,7 @@ private fun runScriptAndValidateExplain(
     val explainExpectedFile = dir.resolve("$baseName.explain")
 
     withTempFile { tempExplainFile ->
-        val (_, err, ret) = captureOutErrRet {
+        val (out, err, ret) = captureOutErrRet {
             runScriptWithExplain(scriptPath, tempExplainFile.absolutePath)
         }
         assertEquals(expectedExitCode, ret) { "Expected exit code $expectedExitCode, actual $ret\n$err" }
