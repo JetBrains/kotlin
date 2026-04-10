@@ -21,14 +21,14 @@ import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
 internal abstract class BaseScenarioModule private constructor(
-    internal val module: Module,
+    internal val module: Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>,
     internal val outputs: MutableSet<String>,
     private val strategyConfig: ExecutionPolicy,
     private val icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
 ) : ScenarioModule {
     // make a copy of the outputs to avoid them being shared between different tests
     constructor(
-        module: Module,
+        module: Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>,
         outputs: Collection<String>,
         strategyConfig: ExecutionPolicy,
         icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
@@ -73,7 +73,7 @@ internal abstract class BaseScenarioModule private constructor(
 
     override fun compile(
         forceOutput: LogLevel?,
-        assertions: context(Module, ScenarioModule) CompilationOutcome.() -> Unit,
+        assertions: context(Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>, ScenarioModule) CompilationOutcome.() -> Unit,
     ) {
         module.compileIncrementally(
             getSourcesChanges(),
@@ -97,7 +97,7 @@ internal abstract class BaseScenarioModule private constructor(
 }
 
 internal class ExternallyTrackedScenarioModuleImpl(
-    module: Module,
+    module: Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>,
     outputs: MutableSet<String>,
     strategyConfig: ExecutionPolicy,
     icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
@@ -130,7 +130,7 @@ internal class ExternallyTrackedScenarioModuleImpl(
 
     override fun getSourcesChanges() = sourcesChanges
 
-    override fun compile(forceOutput: LogLevel?, assertions: context(Module, ScenarioModule) CompilationOutcome.() -> Unit) {
+    override fun compile(forceOutput: LogLevel?, assertions: context(Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>, ScenarioModule) CompilationOutcome.() -> Unit) {
         super.compile(forceOutput) {
             assertions()
 
@@ -156,7 +156,7 @@ internal class ExternallyTrackedScenarioModuleImpl(
 }
 
 internal class AutoTrackedScenarioModuleImpl(
-    module: Module,
+    module: Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>,
     outputs: MutableSet<String>,
     strategyConfig: ExecutionPolicy,
     icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
@@ -165,7 +165,7 @@ internal class AutoTrackedScenarioModuleImpl(
 }
 
 private class ScenarioDsl(
-    private val project: Project,
+    private val project: JvmProject,
     private val strategyConfig: ExecutionPolicy,
 ) : Scenario {
     @Synchronized
@@ -200,10 +200,9 @@ private class ScenarioDsl(
 }
 
 fun BaseCompilationTest.scenario(kotlinToolchains: KotlinToolchains, strategyConfig: ExecutionPolicy, action: Scenario.() -> Unit) {
-    action(ScenarioDsl(Project(kotlinToolchains, strategyConfig, workingDirectory), strategyConfig))
+    action(ScenarioDsl(JvmProject(kotlinToolchains, strategyConfig, workingDirectory), strategyConfig))
 }
 
 fun BaseCompilationTest.scenario(executionStrategy: CompilerExecutionStrategyConfiguration, action: Scenario.() -> Unit) {
     scenario(executionStrategy.first, executionStrategy.second, action)
 }
-

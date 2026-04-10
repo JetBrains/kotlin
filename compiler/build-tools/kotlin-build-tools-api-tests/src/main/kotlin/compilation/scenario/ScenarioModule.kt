@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ExecutionOutcome
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
@@ -52,7 +54,7 @@ interface ScenarioModule {
 
     fun compile(
         forceOutput: LogLevel? = null,
-        assertions: context(Module, ScenarioModule) CompilationOutcome.() -> Unit = {},
+        assertions: context(Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>, ScenarioModule) CompilationOutcome.() -> Unit = {},
     )
 
     fun executeCompiledCode(

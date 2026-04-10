@@ -194,14 +194,14 @@ class OutputsBackupErrorHandlingTest : BaseCompilationTest() {
     }
 
     companion object {
-        context(module: Module)
+        context(module: Module<*, *, *>)
         fun assertOutputFileExists(relativePath: String) {
             assertTrue(module.outputDirectory.resolve(relativePath).exists()) {
                 "$relativePath should exist in output directory after failed compilation with backup"
             }
         }
 
-        context(module: Module)
+        context(module: Module<*, *, *>)
         fun assertOutputFileDoesNotExist(relativePath: String) {
             assertFalse(module.outputDirectory.resolve(relativePath).exists()) {
                 "$relativePath should not exist in output directory after failed compilation without backup"

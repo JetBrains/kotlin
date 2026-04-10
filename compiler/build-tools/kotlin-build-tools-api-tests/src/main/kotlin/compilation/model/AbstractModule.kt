@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.model
 
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
@@ -52,19 +53,19 @@ private class CompilationOutcomeImpl(
 data class AbstractModuleCacheKey(
     val moduleName: String,
     val dependencies: List<DependencyScenarioDslCacheKey>,
-    val compilationArguments: (JvmCompilationOperation.Builder) -> Unit,
+    val compilationArguments: Function1<*, Unit>,
 ) : DependencyScenarioDslCacheKey
 
 val EXPLICIT_NULL_MODULE_NAME_MARKER = "###null_module_name###"
 
-abstract class AbstractModule(
-    override val project: Project,
+abstract class AbstractModule<O : BaseCompilationOperation, B : BaseCompilationOperation.Builder, IC: BaseIncrementalCompilationConfiguration.Builder>(
+    override val project: AbstractProject<*, *, *>,
     final override val moduleName: String,
     val moduleDirectory: Path,
     val dependencies: List<Dependency>,
     override val defaultStrategyConfig: ExecutionPolicy,
-    final override val moduleCompilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
-) : Module {
+    final override val moduleCompilationConfigAction: (B) -> Unit,
+) : Module<O, B, IC> {
     override val sourcesDirectory: Path
         get() = moduleDirectory.resolve("src")
 
@@ -89,9 +90,9 @@ abstract class AbstractModule(
     override fun compileAndThrow(
         strategyConfig: ExecutionPolicy,
         forceOutput: LogLevel?,
-        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
-        compilationAction: (JvmCompilationOperation) -> Unit,
-        assertions: context(Module) CompilationOutcome.(Throwable) -> Unit,
+        compilationConfigAction: (B) -> Unit,
+        compilationAction: (O) -> Unit,
+        assertions: context(Module<O, B, IC>) CompilationOutcome.(Throwable) -> Unit,
     ): Throwable {
         val kotlinLogger = TestKotlinLogger()
         try {
@@ -109,9 +110,9 @@ abstract class AbstractModule(
     override fun compile(
         strategyConfig: ExecutionPolicy,
         forceOutput: LogLevel?,
-        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
-        compilationAction: (JvmCompilationOperation) -> Unit,
-        assertions: context(Module) CompilationOutcome.() -> Unit
+        compilationConfigAction: (B) -> Unit,
+        compilationAction: (O) -> Unit,
+        assertions: context(Module<O, B, IC>) CompilationOutcome.() -> Unit
     ): CompilationResult {
         val kotlinLogger = TestKotlinLogger()
         val result = compileImpl(
@@ -127,7 +128,7 @@ abstract class AbstractModule(
     private fun processOutcome(
         kotlinLogger: TestKotlinLogger,
         result: CompilationResult?,
-        assertions: context(Module) CompilationOutcome.() -> Unit,
+        assertions: context(Module<O, B, IC>) CompilationOutcome.() -> Unit,
         forceOutput: LogLevel?,
     ) {
         val outcome = CompilationOutcomeImpl(kotlinLogger.logMessagesByLevel, result)
@@ -152,8 +153,8 @@ abstract class AbstractModule(
 
     protected abstract fun compileImpl(
         strategyConfig: ExecutionPolicy,
-        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
-        compilationAction: (JvmCompilationOperation) -> Unit,
+        compilationConfigAction: (B) -> Unit,
+        compilationAction: (O) -> Unit,
         kotlinLogger: TestKotlinLogger,
     ): CompilationResult
 

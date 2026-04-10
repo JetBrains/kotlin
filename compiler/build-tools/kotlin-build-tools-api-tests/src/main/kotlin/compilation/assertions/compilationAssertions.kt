@@ -27,7 +27,7 @@ fun CompilationOutcome.expectFailWithError(expectedErrorLines: Set<Regex>) {
  * @param classFqn The fully qualified name of the class to inspect.
  * @param expectedDeclarations The set of expected class declarations.
  */
-context(module: Module)
+context(module: Module<*, *, *>)
 fun assertClassDeclarationsContain(classFqn: String, expectedDeclarations: Set<String>) {
     val javaHome = System.getProperty("java.home")
     val javapPath = File(javaHome, "bin/javap").let {

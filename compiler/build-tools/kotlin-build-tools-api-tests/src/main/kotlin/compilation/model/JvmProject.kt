@@ -7,32 +7,29 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
-import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinStdlibLocation
 import java.nio.file.Path
-import java.nio.file.Paths
-import kotlin.io.path.copyToRecursively
-import kotlin.io.path.createDirectories
-import kotlin.io.path.isDirectory
 
-class Project(
-    val kotlinToolchain: KotlinToolchains,
-    val defaultStrategyConfig: ExecutionPolicy,
-    val projectDirectory: Path,
-) : AutoCloseable {
-    private val invalidModuleNameCharactersRegex = """[\\/\r\n\t]""".toRegex()
-    private val kotlinBuild = kotlinToolchain.createBuildSession()
-
-    fun module(
+class JvmProject(
+    kotlinToolchain: KotlinToolchains,
+    defaultStrategyConfig: ExecutionPolicy,
+    projectDirectory: Path,
+) : AbstractProject<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>(
+    kotlinToolchain,
+    defaultStrategyConfig,
+    projectDirectory,
+) {
+    override fun module(
         moduleName: String,
-        dependencies: List<Dependency> = emptyList(),
-        snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
-        stdlibClasspath: List<Path>? = null,
-        moduleCompilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
-    ): Module {
+        dependencies: List<Dependency>,
+        snapshotConfig: SnapshotConfig,
+        stdlibClasspath: List<Path>?,
+        moduleCompilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
+    ): JvmModule {
         val moduleDirectory = projectDirectory.resolve(moduleName)
         val sanitizedModuleName = moduleName.replace(invalidModuleNameCharactersRegex, "_")
         val module = JvmModule(
@@ -49,26 +46,17 @@ class Project(
                 currentKotlinStdlibLocation // compile against the provided stdlib
             )
         )
-        module.sourcesDirectory.createDirectories()
-        val templatePath = Paths.get(System.getProperty("kotlin.test.templates.classpath") + "/modules/$moduleName")
-        assert(templatePath.isDirectory()) {
-            "Template for $moduleName not found. Expected template directory path is $templatePath"
-        }
-        templatePath.copyToRecursively(module.sourcesDirectory, followLinks = false)
+        initModule(module, moduleName)
         return module
-    }
-
-    override fun close() {
-        kotlinBuild.close()
     }
 }
 
-fun BaseCompilationTest.project(kotlinToolchain: KotlinToolchains, strategyConfig: ExecutionPolicy, action: Project.() -> Unit) {
-    Project(kotlinToolchain, strategyConfig, workingDirectory).use { project ->
+fun BaseCompilationTest.project(kotlinToolchain: KotlinToolchains, strategyConfig: ExecutionPolicy, action: JvmProject.() -> Unit) {
+    JvmProject(kotlinToolchain, strategyConfig, workingDirectory).use { project ->
         project.action()
     }
 }
 
-fun BaseCompilationTest.project(executionStrategy: CompilerExecutionStrategyConfiguration, action: Project.() -> Unit) {
+fun BaseCompilationTest.project(executionStrategy: CompilerExecutionStrategyConfiguration, action: JvmProject.() -> Unit) {
     project(executionStrategy.first, executionStrategy.second, action)
 }

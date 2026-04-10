@@ -223,7 +223,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         }
     }
 
-    private fun Module.checkRestrictedArgument(
+    private fun Module<JvmCompilationOperation, JvmCompilationOperation.Builder>.checkRestrictedArgument(
         vararg argumentAliases: String,
         errorSince: KotlinReleaseVersion,
         configuredArgs: List<String>,
@@ -236,7 +236,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         additionalCompilationAssertions = additionalCompilationAssertions,
     )
 
-    private fun Module.checkRestrictedArguments(
+    private fun Module<JvmCompilationOperation, JvmCompilationOperation.Builder>.checkRestrictedArguments(
         vararg restrictedArgs: Pair<List<String>, KotlinReleaseVersion>,
         configuredArgs: List<String>,
         expectedCompilationError: Boolean = false,

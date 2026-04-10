@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DependencyScenarioDslCacheKey
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.SnapshotConfig
@@ -32,7 +33,7 @@ internal object GlobalCompiledProjectsCache {
     private val compiledProjectsCache = mutableMapOf<GlobalCompiledProjectsCacheKey, Pair<MutableSet<String>, Path>>()
 
     fun getProjectFromCache(
-        module: Module,
+        module: Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>,
         strategyConfig: ExecutionPolicy,
         snapshotConfig: SnapshotConfig,
         icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
@@ -53,7 +54,7 @@ internal object GlobalCompiledProjectsCache {
     }
 
     fun putProjectIntoCache(
-        module: Module,
+        module: Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>,
         strategyConfig: ExecutionPolicy,
         snapshotConfig: SnapshotConfig,
         icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
