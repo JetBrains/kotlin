@@ -45,7 +45,9 @@ abstract class CollectTestDataTask : DefaultTask() {
         outFile.parentFile.mkdirs()
 
         val text = directories.flatMap { directory ->
-            directory.asFileTree.matching { include("**/*.kt", "**/*.kt.can-freeze-ide") }.files
+            directory.asFileTree.matching {
+                include("**/*.kt", "**/*.kts", "**/*.kt.can-freeze-ide")
+            }.files
         }.sorted().joinToString("\n") {
             it.relativeTo(rootDir).path.replace('\\', '/')
         }
