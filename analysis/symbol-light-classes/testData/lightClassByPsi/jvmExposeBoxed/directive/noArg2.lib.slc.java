@@ -2,4 +2,14 @@
 public final class Z /* Z*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.Object value;
+
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.Object getValue();//  getValue()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public  Z();//  .ctor()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public  Z(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.Object)
 }

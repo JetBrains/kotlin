@@ -17,9 +17,22 @@ public final class ValueClass /* pack.ValueClass*/ implements pack.Interface {
   private final int value;
 
   private int regularVariable;
+
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() pack.ValueClassImpl getValue();//  getValue()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public  ValueClass(@org.jetbrains.annotations.NotNull() pack.ValueClassImpl);//  .ctor(@org.jetbrains.annotations.NotNull() pack.ValueClassImpl)
 }
 
 @kotlin.jvm.JvmInline()
 public final class ValueClassImpl /* pack.ValueClassImpl*/ implements pack.Interface {
   private final int int;
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public  ValueClassImpl(int);//  .ctor(int)
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final int getInt();//  getInt()
 }

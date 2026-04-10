@@ -17,6 +17,12 @@ public final class Baz /* Baz*/ {
 @kotlin.jvm.JvmInline()
 public final class IntWrapper /* IntWrapper*/ {
   private final int s;
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public  IntWrapper(int);//  .ctor(int)
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final int getS();//  getS()
 }
 
 public final class JvmOverloadsReturnTypeJvmNameDirectiveKt /* JvmOverloadsReturnTypeJvmNameDirectiveKt*/ {

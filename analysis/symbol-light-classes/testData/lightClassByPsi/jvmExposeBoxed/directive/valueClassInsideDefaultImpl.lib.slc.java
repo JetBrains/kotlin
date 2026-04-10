@@ -10,4 +10,11 @@ public abstract interface BaseInterface /* one.BaseInterface*/ {
 public final class MyValueClass /* one.MyValueClass*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String str;
+
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getStr();//  getStr()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public  MyValueClass(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
 }

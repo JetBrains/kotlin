@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryFallbackDependenciesModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -61,11 +65,14 @@ internal fun KaSession.jvmExposeBoxedMode(callableSymbol: KaCallableSymbol): Jvm
     }
 
     val module = containingClass?.containingModule ?: callableSymbol.containingModule
-    val isFeatureEnabled = when (module) {
-        is KaSourceModule -> module.languageVersionSettings.getFlag(JvmAnalysisFlags.implicitJvmExposeBoxed)
-        is KaScriptModule -> module.languageVersionSettings.getFlag(JvmAnalysisFlags.implicitJvmExposeBoxed)
-        else -> false
+    val languageVersionSettings = when (module) {
+        is KaSourceModule -> module.languageVersionSettings
+        is KaScriptModule -> module.languageVersionSettings
+        is KaLibraryModule, is KaLibrarySourceModule, is KaLibraryFallbackDependenciesModule ->
+            KotlinProjectStructureProvider.getInstance(module.project).libraryLanguageVersionSettings
+        else -> null
     }
+    val isFeatureEnabled = languageVersionSettings?.getFlag(JvmAnalysisFlags.implicitJvmExposeBoxed) == true
 
     return if (isFeatureEnabled) JvmExposeBoxedMode.IMPLICIT else JvmExposeBoxedMode.NONE
 }

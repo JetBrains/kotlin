@@ -6,6 +6,25 @@ public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() StringWrapper.Companion Companion;
 
+  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmStatic()
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String unwrap(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  unwrap(@org.jetbrains.annotations.NotNull() StringWrapper)
+
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getS();//  getS()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() StringWrapper getStaticVariable();//  getStaticVariable()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public  StringWrapper(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public static final void setStaticVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  setStaticVariable(@org.jetbrains.annotations.NotNull() StringWrapper)
+
   @kotlin.jvm.JvmStatic()
   public static final void regularStaticFunction();//  regularStaticFunction()
 
@@ -17,6 +36,18 @@ public final class StringWrapper /* StringWrapper*/ {
 }
 
 public static final class Companion /* StringWrapper.Companion*/ {
+  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmStatic()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String unwrap(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  unwrap(@org.jetbrains.annotations.NotNull() StringWrapper)
+
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() StringWrapper getStaticVariable();//  getStaticVariable()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final void setStaticVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  setStaticVariable(@org.jetbrains.annotations.NotNull() StringWrapper)
+
   @kotlin.jvm.JvmStatic()
   public final void regularStaticFunction();//  regularStaticFunction()
 

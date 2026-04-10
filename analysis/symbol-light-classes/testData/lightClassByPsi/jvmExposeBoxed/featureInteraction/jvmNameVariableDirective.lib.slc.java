@@ -1,4 +1,10 @@
 public final class Foo /* Foo*/ {
+  @kotlin.jvm.JvmExposeBoxed()
+  public final void setFoo2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  setFoo2(@org.jetbrains.annotations.NotNull() StringWrapper)
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final void setFoo3(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  setFoo3(int, @org.jetbrains.annotations.NotNull() StringWrapper)
+
   @kotlin.jvm.JvmName()
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getFoo1();//  getFoo1()
@@ -28,4 +34,11 @@ public final class Foo /* Foo*/ {
 public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;
+
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getS();//  getS()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public  StringWrapper(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
 }

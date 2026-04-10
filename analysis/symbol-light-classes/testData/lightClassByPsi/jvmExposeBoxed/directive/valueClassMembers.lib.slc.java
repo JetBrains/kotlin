@@ -15,12 +15,40 @@ public final class ValueClass /* pack.ValueClass*/ {
 
   private static final int companionProperty;
 
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() pack.OriginalClass getOriginal();//  getOriginal()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() pack.ValueClass getPropertyWithValueClassType();//  getPropertyWithValueClassType()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public  ValueClass(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() pack.OriginalClass);//  .ctor(@org.jetbrains.annotations.NotNull() pack.OriginalClass)
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final int getProperty();//  getProperty()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final void funWithSelfParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() pack.ValueClass);//  funWithSelfParameter(@org.jetbrains.annotations.NotNull() pack.ValueClass)
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final void funWithoutParameters();//  funWithoutParameters()
+
   class Companion ...
 
   class RegularObject ...
 }
 
 public static final class Companion /* pack.ValueClass.Companion*/ {
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.Nullable() pack.ValueClass companionFunctionWithValueClassType();//  companionFunctionWithValueClassType()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.Nullable() pack.ValueClass getCompanionPropertyWithValueClassType();//  getCompanionPropertyWithValueClassType()
+
   private  Companion();//  .ctor()
 
   public final int getCompanionProperty();//  getCompanionProperty()
