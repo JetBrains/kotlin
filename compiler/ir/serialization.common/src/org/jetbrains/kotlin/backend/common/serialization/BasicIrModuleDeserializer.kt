@@ -46,8 +46,6 @@ abstract class BasicIrModuleDeserializer(
 
     protected open val ir: KlibIrComponent get() = klib.irOrFail
 
-    override val moduleDependencies: Collection<IrModuleDeserializer> = emptyList()
-
     override fun fileDeserializers(): Collection<IrFileDeserializer> {
         return fileToDeserializerMap.values.filterNot { strategyResolver(it.file.fileEntry.name).onDemand }
     }

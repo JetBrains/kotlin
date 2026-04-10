@@ -79,7 +79,7 @@ class JKlibIrLinker(
         strategyResolver: (String) -> DeserializationStrategy,
     ): IrModuleDeserializer {
         if (klib == null) {
-            return MetadataJVMModuleDeserializer(moduleDescriptor, emptyList())
+            return MetadataJVMModuleDeserializer(moduleDescriptor)
         }
 
         val libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
@@ -156,7 +156,6 @@ class JKlibIrLinker(
 
     private inner class MetadataJVMModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
-        dependencies: List<IrModuleDeserializer>,
     ) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
         override val klib: KotlinLibrary get() = error("'klib' is not available for ${this::class.java}")
 
@@ -203,7 +202,6 @@ class JKlibIrLinker(
         }
 
         override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
-        override val moduleDependencies: Collection<IrModuleDeserializer> = dependencies
 
         override val kind
             get() = IrModuleDeserializerKind.SYNTHETIC
@@ -247,13 +245,11 @@ class JKlibIrLinker(
 
     override fun createCurrentModuleDeserializer(
         moduleFragment: IrModuleFragment,
-        dependencies: Collection<IrModuleDeserializer>,
-    ): IrModuleDeserializer = JvmCurrentModuleDeserializer(moduleFragment, dependencies)
+    ): IrModuleDeserializer = JvmCurrentModuleDeserializer(moduleFragment)
 
     private inner class JvmCurrentModuleDeserializer(
         moduleFragment: IrModuleFragment,
-        dependencies: Collection<IrModuleDeserializer>,
-    ) : CurrentModuleDeserializer(moduleFragment, dependencies) {
+    ) : CurrentModuleDeserializer(moduleFragment) {
         override fun declareIrSymbol(symbol: IrSymbol) {
             val descriptor = symbol.descriptor
 

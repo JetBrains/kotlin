@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.isPublicApi
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
@@ -193,16 +192,12 @@ abstract class KotlinIrLinker(
         return resolveModuleDeserializer(file)?.referencePropertyByLocalSignature(file, idSignature)
     }
 
-    protected open fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer =
-        CurrentModuleDeserializer(moduleFragment, dependencies)
+    protected open fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment): IrModuleDeserializer =
+        CurrentModuleDeserializer(moduleFragment)
 
     override fun init(moduleFragment: IrModuleFragment?) {
         if (moduleFragment != null) {
-            val currentModuleDependencies = moduleFragment.descriptor.allDependencyModules.map {
-                deserializersForModules[it.name.asString()]
-                    ?: NoDeserializerForModule(it.name, null).raiseIssue(messageCollector)
-            }
-            val currentModuleDeserializer = createCurrentModuleDeserializer(moduleFragment, currentModuleDependencies)
+            val currentModuleDeserializer = createCurrentModuleDeserializer(moduleFragment)
             deserializersForModules[moduleFragment.name.asString()] =
                 maybeWrapWithBuiltInAndInit(moduleFragment.descriptor, currentModuleDeserializer)
         }

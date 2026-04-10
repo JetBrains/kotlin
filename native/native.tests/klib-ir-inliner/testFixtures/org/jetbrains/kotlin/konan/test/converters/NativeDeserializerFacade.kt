@@ -199,7 +199,6 @@ object CInteropModuleDeserializerFactoryMock : CInteropModuleDeserializerFactory
     override fun createIrModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
         klib: KotlinLibrary,
-        moduleDependencies: Collection<IrModuleDeserializer>,
     ): IrModuleDeserializer {
         TODO("TODO (KT-85312): Implement IR deserialization for C-interop libraries in tests")
     }

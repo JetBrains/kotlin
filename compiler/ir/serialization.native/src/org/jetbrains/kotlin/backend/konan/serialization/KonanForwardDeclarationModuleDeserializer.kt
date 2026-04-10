@@ -83,7 +83,6 @@ internal class KonanForwardDeclarationModuleDeserializer(
     override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
 
     override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
-    override val moduleDependencies: Collection<IrModuleDeserializer> = emptyList()
 
     override val kind get() = IrModuleDeserializerKind.SYNTHETIC
 }

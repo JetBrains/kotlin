@@ -61,7 +61,7 @@ class JvmIrLinker(
             return JvmModuleDeserializer(moduleDescriptor, klib, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT, strategyResolver)
         }
 
-        return MetadataJVMModuleDeserializer(moduleDescriptor, emptyList())
+        return MetadataJVMModuleDeserializer(moduleDescriptor)
     }
 
     private inner class JvmModuleDeserializer(
@@ -100,11 +100,10 @@ class JvmIrLinker(
         }
     }
 
-    override fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer =
-        JvmCurrentModuleDeserializer(moduleFragment, dependencies)
+    override fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment): IrModuleDeserializer =
+        JvmCurrentModuleDeserializer(moduleFragment)
 
-    private inner class JvmCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>) :
-        CurrentModuleDeserializer(moduleFragment, dependencies) {
+    private inner class JvmCurrentModuleDeserializer(moduleFragment: IrModuleFragment) : CurrentModuleDeserializer(moduleFragment) {
 
         override fun declareIrSymbol(symbol: IrSymbol) {
             val descriptor = symbol.descriptor
@@ -128,7 +127,7 @@ class JvmIrLinker(
         }
     }
 
-    private inner class MetadataJVMModuleDeserializer(moduleDescriptor: ModuleDescriptor, dependencies: List<IrModuleDeserializer>) :
+    private inner class MetadataJVMModuleDeserializer(moduleDescriptor: ModuleDescriptor) :
         IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
 
         override val klib get() = error("'klib' is not available for ${this::class.java}")
@@ -172,7 +171,6 @@ class JvmIrLinker(
         }
 
         override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
-        override val moduleDependencies: Collection<IrModuleDeserializer> = dependencies
 
         override val kind get() = IrModuleDeserializerKind.SYNTHETIC
     }

@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.psi2ir.lazy.IrLazyClass
 internal class KonanInteropModuleDeserializer(
     moduleDescriptor: ModuleDescriptor,
     override val klib: KotlinLibrary,
-    override val moduleDependencies: Collection<IrModuleDeserializer>,
     private val isLibraryCached: Boolean,
     private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
     private val stubGenerator: DeclarationStubGenerator,

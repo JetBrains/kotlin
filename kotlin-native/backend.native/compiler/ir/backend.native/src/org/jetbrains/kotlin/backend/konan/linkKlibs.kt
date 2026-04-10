@@ -265,11 +265,9 @@ internal class KonanCInteropModuleDeserializerFactory(
     override fun createIrModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,
             klib: KotlinLibrary,
-            moduleDependencies: Collection<IrModuleDeserializer>,
     ): IrModuleDeserializer = KonanInteropModuleDeserializer(
             moduleDescriptor,
             klib,
-            moduleDependencies,
             cachedLibraries.isLibraryCached(klib),
             cenumsProvider,
             stubGenerator,

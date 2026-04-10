@@ -99,8 +99,6 @@ abstract class IrModuleDeserializer(private val _moduleDescriptor: ModuleDescrip
 
     abstract val moduleFragment: IrModuleFragment
 
-    abstract val moduleDependencies: Collection<IrModuleDeserializer>
-
     open val strategyResolver: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_DECLARATION_HEADERS }
 
     abstract val kind: IrModuleDeserializerKind
@@ -235,7 +233,6 @@ class IrModuleDeserializerWithBuiltIns(
     }
 
     override val moduleFragment: IrModuleFragment get() = delegate.moduleFragment
-    override val moduleDependencies: Collection<IrModuleDeserializer> get() = emptyList()
     override val kind get() = delegate.kind
 
     override fun fileDeserializers(): Collection<IrFileDeserializer> {
@@ -253,7 +250,6 @@ class IrModuleDeserializerWithBuiltIns(
 
 open class CurrentModuleDeserializer(
     override val moduleFragment: IrModuleFragment,
-    override val moduleDependencies: Collection<IrModuleDeserializer>
 ) : IrModuleDeserializer(moduleFragment.descriptor, KotlinAbiVersion.CURRENT) {
     override val klib get() = error("'klib' is not available for ${this::class.java}")
 

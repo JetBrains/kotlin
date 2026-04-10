@@ -130,13 +130,6 @@ class SignatureIdNotFoundInModuleWithDependencies(
     }
 }
 
-class NoDeserializerForModule(moduleName: Name, idSignature: IdSignature?) : KotlinIrLinkerIssue() {
-    override val errorMessage = buildString {
-        append("Could not load module ${moduleName.asString()}")
-        if (idSignature != null) append(" in an attempt to find deserializer for symbol ${idSignature.render()}.")
-    }
-}
-
 class SymbolTypeMismatch(
     private val cause: IrSymbolTypeMismatchException,
 ) : KotlinIrLinkerIssue() {
