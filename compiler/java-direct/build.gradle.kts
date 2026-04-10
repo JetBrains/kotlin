@@ -23,6 +23,9 @@ dependencies {
     implementation(project(":compiler:plugin-api"))
     implementation(project(":compiler:cli"))
 
+    embedded(libs.org.jetbrains.syntax.api) { isTransitive = false }
+    embedded(libs.org.jetbrains.java.syntax.jvm) { isTransitive = false }
+
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))

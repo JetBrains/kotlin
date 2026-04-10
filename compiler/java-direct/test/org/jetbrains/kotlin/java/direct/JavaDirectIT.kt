@@ -26,6 +26,7 @@ class JavaDirectIT {
         val exitCodePsi = K2JVMCompiler().exec(
             PrintStream(outStream),
             "-d", tempDir.toFile().resolve("out").absolutePath,
+            "-XXLanguage:-${LanguageFeature.JavaDirect.name}",
             *(files.map { it.absolutePath }.toTypedArray())
         )
         assert(exitCodePsi == ExitCode.OK)
