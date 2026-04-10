@@ -404,8 +404,8 @@ class CocoaPodsIT : KGPBaseTest() {
     @GradleTest
     fun testCinteropExplicitHeaderAndFmodules(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
-            buildGradleKts.addPod("AFNetworking", "headers = \"AFNetworking.h\"")
-            buildWithCocoapodsWrapper("cinteropAFNetworkingIosArm64") {
+            buildGradleKts.addPod("Reachability", "headers = \"Reachability.h\"")
+            buildWithCocoapodsWrapper("cinteropReachabilityIosArm64") {
                 assertOutputDoesNotContain("-compiler-option -fmodules")
             }
         }
@@ -1147,9 +1147,9 @@ class CocoaPodsIT : KGPBaseTest() {
                 """
                     ios.deploymentTarget = "15.0"
                     
-                    pod("AFNetworking", version="4.0.1")            
+                    pod("MBProgressHUD", version="1.2.0")            
                     pod("SDWebImage", version="5.21.5")
-                    pod("Reachability", version="3.7.6")
+                    pod("Masonry", version="1.1.0")
                     pod("Sentry", version="9.3.0", headers="Sentry.h")
             
                     pod("Intercom") {
@@ -1160,17 +1160,17 @@ class CocoaPodsIT : KGPBaseTest() {
             )
 
             build(":iosArm64Binaries") {
-                assertTasksExecuted(":podBuildAFNetworkingIos")
+                assertTasksExecuted(":podBuildMBProgressHUDIos")
                 assertTasksExecuted(":podBuildIntercomIos")
-                assertTasksExecuted(":podBuildReachabilityIos")
+                assertTasksExecuted(":podBuildMasonryIos")
                 assertTasksExecuted(":podBuildSDWebImageIos")
                 assertTasksExecuted(":podBuildSentryIos")
             }
 
             build(":iosArm64Binaries") {
-                assertTasksUpToDate(":podBuildAFNetworkingIos")
+                assertTasksUpToDate(":podBuildMBProgressHUDIos")
                 assertTasksUpToDate(":podBuildIntercomIos")
-                assertTasksUpToDate(":podBuildReachabilityIos")
+                assertTasksUpToDate(":podBuildMasonryIos")
                 assertTasksUpToDate(":podBuildSDWebImageIos")
                 assertTasksUpToDate(":podBuildSentryIos")
             }
