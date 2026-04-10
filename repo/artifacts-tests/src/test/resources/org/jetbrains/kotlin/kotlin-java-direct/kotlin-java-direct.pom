@@ -41,13 +41,13 @@
     <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>syntax-api-jvm</artifactId>
-      <version>0.3.372</version>
+      <version>0.3.374</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>java-syntax-jvm</artifactId>
-      <version>0.3.372</version>
+      <version>0.3.374</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>

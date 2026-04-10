@@ -44,10 +44,6 @@ sourceSets {
 
 optInToExperimentalCompilerApi()
 
-kotlin {
-    jvmToolchain(17)
-}
-
 publish()
 
 runtimeJar()
