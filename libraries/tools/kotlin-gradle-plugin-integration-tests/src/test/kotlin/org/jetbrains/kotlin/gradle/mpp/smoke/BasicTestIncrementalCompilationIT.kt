@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Basic incremental scenarios with tests in KMP - K2")
-@MppGradlePluginTests
+@NativeGradlePluginTests
 open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
 
     override val defaultBuildOptions: BuildOptions
