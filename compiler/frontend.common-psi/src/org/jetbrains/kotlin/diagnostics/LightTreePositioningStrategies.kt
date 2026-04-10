@@ -686,7 +686,7 @@ object LightTreePositioningStrategies {
                 }
             }
             val nodeToStart = when (node.tokenType) {
-                in QUALIFIED_ACCESS -> tree.findLastChildByType(node, KtNodeTypes.CALL_EXPRESSION) ?: node
+                in QUALIFIED_ACCESS -> tree.selector(node) ?: node
                 KtNodeTypes.CLASS -> tree.findLastChildByType(node, KtNodeTypes.SUPER_TYPE_LIST) ?: node
                 else -> node
             }

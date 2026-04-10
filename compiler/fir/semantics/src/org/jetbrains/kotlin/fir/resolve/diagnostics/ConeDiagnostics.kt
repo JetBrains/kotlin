@@ -91,7 +91,8 @@ class ConeUnresolvedNameError(
 class ConeFunctionCallExpectedError(
     val name: Name,
     val hasValueParameters: Boolean,
-    override val candidates: Collection<AbstractCallCandidate<*>>
+    override val candidates: Collection<AbstractCallCandidate<*>>,
+    val originalDiagnostic: ConeDiagnostic?,
 ) : ConeDiagnosticWithCandidates {
     override val reason: String get() = "Function call expected: $name(${if (hasValueParameters) "..." else ""})"
 }
