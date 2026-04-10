@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightIdentifier
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
@@ -46,7 +47,15 @@ private fun PsiAnnotation.toSupportedBinaryDelegateAnnotation(owner: PsiElement)
     JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION.asString(),
         -> SymbolLightSimpleAnnotation(qualifiedName, owner)
 
-    JvmStandardClassIds.JVM_NAME.asString()
+    StandardNames.FqNames.mustBeDocumented.asString(),
+    StandardNames.FqNames.repeatable.asString(),
+    StandardNames.FqNames.retention.asString(),
+    StandardNames.FqNames.target.asString(),
+    JvmAnnotationNames.DOCUMENTED_ANNOTATION.asString(),
+    JvmStandardClassIds.JVM_NAME.asString(),
+    JvmAnnotationNames.REPEATABLE_ANNOTATION.asString(),
+    JvmAnnotationNames.RETENTION_ANNOTATION.asString(),
+    JvmAnnotationNames.TARGET_ANNOTATION.asString(),
         -> BinaryDelegateLightAnnotation(this, owner)
 
     else -> null

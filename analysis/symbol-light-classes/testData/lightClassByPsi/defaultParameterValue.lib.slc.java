@@ -8,6 +8,9 @@ public enum Em /* Em*/ {
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() Em valueOf(@org.jetbrains.annotations.NotNull() java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(@org.jetbrains.annotations.NotNull() java.lang.String)
 
+  @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<@org.jetbrains.annotations.NotNull() Em> getEntries();//  getEntries()
+
   private  Em();//  .ctor()
 }
 

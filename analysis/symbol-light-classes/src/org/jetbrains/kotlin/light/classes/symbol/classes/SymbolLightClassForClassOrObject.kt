@@ -7,8 +7,13 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryFallbackDependenciesModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -20,6 +25,8 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.light.classes.symbol.annotations.BinaryDelegateAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.DeduplicatingAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ExcludeAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
@@ -27,7 +34,6 @@ import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
-import org.jetbrains.kotlin.light.classes.symbol.psiForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod.Companion.createPropertyAccessors
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor.Companion.createConstructors
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
@@ -98,7 +104,8 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(ktModule, classSymbolPointer),
-                annotationFilter = ExcludeAnnotationFilter.JvmExposeBoxed,
+                additionalAnnotationsProvider = BinaryDelegateAnnotationsProvider { binaryLightClassDelegate?.clsDelegate },
+                annotationFilter = DeduplicatingAnnotationFilter(ExcludeAnnotationFilter.JvmExposeBoxed),
             ),
         )
     }
@@ -158,9 +165,15 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     }
 
     private fun isEnumEntriesDisabled(): Boolean {
-        return (ktModule as? KaSourceModule)
-            ?.languageVersionSettings
-            ?.supportsFeature(LanguageFeature.EnumEntries) != true
+        val languageVersionSettings = when (ktModule) {
+            is KaSourceModule -> ktModule.languageVersionSettings
+            is KaScriptModule -> ktModule.languageVersionSettings
+            is KaLibraryModule, is KaLibrarySourceModule, is KaLibraryFallbackDependenciesModule ->
+                KotlinProjectStructureProvider.getInstance(project).libraryLanguageVersionSettings
+            else -> null
+        }
+
+        return languageVersionSettings?.supportsFeature(LanguageFeature.EnumEntries) != true
     }
 
     private fun KaSession.addMethodsFromDataClass(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
@@ -305,13 +318,19 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     private fun KaSession.addFieldsForEnumEntries(result: MutableList<PsiField>, classSymbol: KaNamedClassSymbol) {
         if (!isEnum) return
 
+        val enumEntriesByName = classOrObjectDeclaration
+            ?.declarations
+            ?.filterIsInstance<KtEnumEntry>()
+            ?.associateBy { it.name }
+            .orEmpty()
+
         classSymbol.staticDeclaredMemberScope.callables
             .filterIsInstance<KaEnumEntrySymbol>()
-            .mapNotNullTo(result) {
-                val enumEntry = it.psiForLightClasses<KtEnumEntry>()
-                val name = enumEntry?.name ?: return@mapNotNullTo null
+            .mapTo(result) { enumEntrySymbol ->
+                val name = enumEntrySymbol.name.asString()
                 SymbolLightFieldForEnumEntry(
-                    enumEntry = enumEntry,
+                    enumEntrySymbol = enumEntrySymbol,
+                    enumEntry = enumEntriesByName[name],
                     enumEntryName = name,
                     containingClass = this@SymbolLightClassForClassOrObject,
                 )

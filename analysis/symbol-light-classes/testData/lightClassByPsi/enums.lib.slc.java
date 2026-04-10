@@ -21,6 +21,9 @@ public enum Color /* Color*/ {
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() Color valueOf(@org.jetbrains.annotations.NotNull() java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(@org.jetbrains.annotations.NotNull() java.lang.String)
 
+  @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<@org.jetbrains.annotations.NotNull() Color> getEntries();//  getEntries()
+
   private  Color(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   private  Color(int);//  .ctor(int)
@@ -40,6 +43,9 @@ public enum Direction /* Direction*/ {
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() Direction valueOf(@org.jetbrains.annotations.NotNull() java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(@org.jetbrains.annotations.NotNull() java.lang.String)
 
+  @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<@org.jetbrains.annotations.NotNull() Direction> getEntries();//  getEntries()
+
   private  Direction();//  .ctor()
 }
 
@@ -56,6 +62,9 @@ public abstract enum IntArithmetics /* IntArithmetics*/ implements java.util.fun
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() IntArithmetics valueOf(@org.jetbrains.annotations.NotNull() java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(@org.jetbrains.annotations.NotNull() java.lang.String)
 
+  @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<@org.jetbrains.annotations.NotNull() IntArithmetics> getEntries();//  getEntries()
+
   private  IntArithmetics();//  .ctor()
 }
 
@@ -71,6 +80,9 @@ public abstract enum ProtocolState /* ProtocolState*/ {
 
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() ProtocolState valueOf(@org.jetbrains.annotations.NotNull() java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<@org.jetbrains.annotations.NotNull() ProtocolState> getEntries();//  getEntries()
 
   private  ProtocolState();//  .ctor()
 }

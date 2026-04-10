@@ -116,8 +116,9 @@ private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
     if (ktEnumEntry.body == null) return null
 
     val symbolLightClass = ktEnumEntry.containingClass()?.toLightClass() as? SymbolLightClassForClassOrObject ?: return null
+    val enumEntryName = ktEnumEntry.name ?: return null
     val targetField = symbolLightClass.ownFields.firstOrNull {
-        it is SymbolLightFieldForEnumEntry && it.kotlinOrigin == ktEnumEntry
+        it is SymbolLightFieldForEnumEntry && (it.kotlinOrigin == ktEnumEntry || it.name == enumEntryName)
     } ?: return null
 
     return (targetField as? SymbolLightFieldForEnumEntry)?.initializingClass as? KtLightClass

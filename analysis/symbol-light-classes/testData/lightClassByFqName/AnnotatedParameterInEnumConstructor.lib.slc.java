@@ -2,6 +2,9 @@ public enum AnnotatedParameterInEnumConstructor /* test.AnnotatedParameterInEnum
   A;
 
   @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<@org.jetbrains.annotations.NotNull() test.AnnotatedParameterInEnumConstructor> getEntries();//  getEntries()
+
+  @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() test.AnnotatedParameterInEnumConstructor @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()

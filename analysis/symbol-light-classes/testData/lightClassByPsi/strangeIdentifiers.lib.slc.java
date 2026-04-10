@@ -40,6 +40,9 @@ public enum StrangeEnum /* StrangeEnum*/ {
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() StrangeEnum valueOf(@org.jetbrains.annotations.NotNull() java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(@org.jetbrains.annotations.NotNull() java.lang.String)
 
+  @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<@org.jetbrains.annotations.NotNull() StrangeEnum> getEntries();//  getEntries()
+
   private  StrangeEnum(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
 }
 

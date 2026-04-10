@@ -11,7 +11,11 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.light.classes.symbol.annotations.AlwaysAllowedAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AbstractClassAdditionalAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.BinaryDelegateAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.CompositeAdditionalAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.DeduplicatingAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
@@ -69,7 +73,11 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
         ),
         annotationsBox = GranularAnnotationsBox(
             annotationsProvider = SymbolAnnotationsProvider(ktModule, classSymbolPointer),
-            additionalAnnotationsProvider = AbstractClassAdditionalAnnotationsProvider,
+            additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
+                AbstractClassAdditionalAnnotationsProvider,
+                BinaryDelegateAnnotationsProvider { binaryLightClassDelegate?.clsDelegate },
+            ),
+            annotationFilter = DeduplicatingAnnotationFilter(AlwaysAllowedAnnotationFilter),
         ),
     )
 

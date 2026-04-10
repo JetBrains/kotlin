@@ -154,13 +154,13 @@ internal class SymbolLightClassForEnumEntry(
 
     // probably should be dropped after KT-54798
     override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, kotlinOrigin)
-    override fun getName(): String? = kotlinOrigin.name
+    override fun getName(): String = kotlinOrigin?.name ?: enumConstant.name
 
     override fun isDeprecated(): Boolean = false
     override fun isInterface(): Boolean = false
     override fun isAnnotationType(): Boolean = false
     override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean = false
-    override val kotlinOrigin: KtEnumEntry get() = enumConstant.kotlinOrigin
+    override val kotlinOrigin: KtEnumEntry? get() = enumConstant.kotlinOrigin
     override val originKind: LightClassOriginKind = ktModule.lightClassOriginKind()
     override fun isValid(): Boolean = enumConstant.isValid
 }

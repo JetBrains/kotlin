@@ -4,6 +4,9 @@ public enum E /* p.E*/ {
   @kotlin.Deprecated() Entry3;
 
   @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<@org.jetbrains.annotations.NotNull() p.E> getEntries();//  getEntries()
+
+  @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() p.E @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
