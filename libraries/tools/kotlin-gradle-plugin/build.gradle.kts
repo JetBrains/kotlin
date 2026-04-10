@@ -71,6 +71,8 @@ tasks.withType<Test>().configureEach {
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_21_0))
 }
 
+extensions.extraProperties.set("kotlin.test.cacheable.tasks", setOf("lincheckTest"))
+
 tasks.register<Test>("lincheckTest") {
     classpath = sourceSets.test.get().runtimeClasspath
     testClassesDirs = sourceSets.test.get().output.classesDirs

@@ -412,7 +412,14 @@ fun Project.configureTests() {
         val projectPath = project.path
         val hasTestInputCheckPlugin = plugins.hasPlugin("test-inputs-check")
         if (!hasTestInputCheckPlugin) {
-            outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
+            @Suppress("UNCHECKED_CAST")
+            val cacheableTestTasks = project.extensions.extraProperties.let {
+                if (it.has("kotlin.test.cacheable.tasks")) it.get("kotlin.test.cacheable.tasks") as Set<String>
+                else emptySet()
+            }
+            if (name !in cacheableTestTasks) {
+                outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
+            }
         }
         doFirst {
             if (!hasTestInputCheckPlugin) {
