@@ -7,8 +7,7 @@ fun foo(x: ClassWithWrongAbiVersion) {
 compiler/testData/cli/jvm/wrongAbiVersion.kt:4:5: error: unresolved reference 'bar'.
     bar()
     ^^^
-compiler/testData/cli/jvm/wrongAbiVersion.kt:6:7: error: unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-fun String.replaceIndent(newIndent: String = ...): String
+compiler/testData/cli/jvm/wrongAbiVersion.kt:6:7: error: candidate 'fun String.replaceIndent(newIndent: String = ...): String' is inapplicable because of a receiver type mismatch.
     1.replaceIndent(2, 3)
       ^^^^^^^^^^^^^
 COMPILATION_ERROR

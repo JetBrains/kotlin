@@ -346,7 +346,7 @@ internal class UnresolvedReferenceImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnresolvedReference
 
 internal class UnresolvedReferenceWrongReceiverImpl(
-    override val candidates: List<KaSymbol>,
+    override val candidate: KaSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnresolvedReferenceWrongReceiver

@@ -161,7 +161,7 @@ fun case_14(x: Any) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float")!>x<!>.<!UNRESOLVED_REFERENCE!>NaN<!>
         } else {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>x<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>x<!>.<!MISSING_DEPENDENCY_CLASS, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
         }
     }
 }

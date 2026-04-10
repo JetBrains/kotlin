@@ -78,8 +78,7 @@
 
 /arrayLiteralsInCallsReturningAnnotations.kt:(1017,1019): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
 
-/arrayLiteralsInCallsReturningAnnotations.kt:(1020,1029): error: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-fun Array<String>.returnFoo(param: Array<String>): Foo
+/arrayLiteralsInCallsReturningAnnotations.kt:(1020,1029): error: Candidate 'fun Array<String>.returnFoo(param: Array<String>): Foo' is inapplicable because of a receiver type mismatch.
 
 /arrayLiteralsInCallsReturningAnnotations.kt:(1030,1032): error: Array literals outside of annotations are unsupported.
 

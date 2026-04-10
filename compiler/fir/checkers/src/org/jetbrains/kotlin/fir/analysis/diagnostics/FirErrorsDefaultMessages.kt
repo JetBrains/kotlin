@@ -1043,8 +1043,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             UNRESOLVED_REFERENCE_WRONG_RECEIVER,
-            "Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:{0}",
-            SYMBOLS_ON_NEXT_LINES,
+            "Candidate ''{0}'' is inapplicable because of a receiver type mismatch.",
+            SYMBOL,
         )
         map.put(
             INACCESSIBLE_OUTER_CLASS_RECEIVER,

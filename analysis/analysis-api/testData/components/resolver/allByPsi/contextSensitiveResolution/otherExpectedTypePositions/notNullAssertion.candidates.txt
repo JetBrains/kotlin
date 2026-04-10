@@ -2404,8 +2404,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun MyClass.contains(that: MyClass): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun MyClass.contains(that: MyClass): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2445,8 +2444,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun <T : Comparable<T>, R : ClosedRange<T>, Iterable<T>> R.contains(element: T?): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T : Comparable<T>, R : ClosedRange<T>, Iterable<T>> R.contains(element: T?): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2485,8 +2483,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun <T : Comparable<T>, R : OpenEndRange<T>, Iterable<T>> R.contains(element: T?): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T : Comparable<T>, R : OpenEndRange<T>, Iterable<T>> R.contains(element: T?): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2523,8 +2520,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Byte>.contains(value: Int): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Byte>.contains(value: Int): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2561,8 +2557,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Byte>.contains(value: Long): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Byte>.contains(value: Long): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2599,8 +2594,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Byte>.contains(value: Short): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Byte>.contains(value: Short): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2637,8 +2631,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Double>.contains(value: Float): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Double>.contains(value: Float): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2675,8 +2668,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Float>.contains(value: Double): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Float>.contains(value: Double): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2713,8 +2705,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Int>.contains(value: Byte): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Int>.contains(value: Byte): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2751,8 +2742,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Int>.contains(value: Long): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Int>.contains(value: Long): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2789,8 +2779,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Int>.contains(value: Short): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Int>.contains(value: Short): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2827,8 +2816,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Long>.contains(value: Byte): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Long>.contains(value: Byte): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2865,8 +2853,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Long>.contains(value: Int): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Long>.contains(value: Int): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2903,8 +2890,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Long>.contains(value: Short): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Long>.contains(value: Short): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2941,8 +2927,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Short>.contains(value: Byte): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Short>.contains(value: Byte): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2979,8 +2964,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Short>.contains(value: Int): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Short>.contains(value: Int): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -3017,8 +3001,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Short>.contains(value: Long): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Short>.contains(value: Long): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1242,1243): 'a'
@@ -3127,8 +3110,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun MyClass.contains(that: MyClass): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun MyClass.contains(that: MyClass): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -3168,8 +3150,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun <T : Comparable<T>, R : ClosedRange<T>, Iterable<T>> R.contains(element: T?): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T : Comparable<T>, R : ClosedRange<T>, Iterable<T>> R.contains(element: T?): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -3208,8 +3189,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun <T : Comparable<T>, R : OpenEndRange<T>, Iterable<T>> R.contains(element: T?): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T : Comparable<T>, R : OpenEndRange<T>, Iterable<T>> R.contains(element: T?): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -3246,8 +3226,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Byte>.contains(value: Int): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Byte>.contains(value: Int): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -3284,8 +3263,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Byte>.contains(value: Long): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Byte>.contains(value: Long): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -3322,8 +3300,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Byte>.contains(value: Short): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Byte>.contains(value: Short): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -3360,8 +3337,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Double>.contains(value: Float): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Double>.contains(value: Float): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -3398,8 +3374,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Float>.contains(value: Double): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Float>.contains(value: Double): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -3436,8 +3411,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Int>.contains(value: Byte): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Int>.contains(value: Byte): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -3474,8 +3448,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Int>.contains(value: Long): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Int>.contains(value: Long): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -3512,8 +3485,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Int>.contains(value: Short): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Int>.contains(value: Short): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -3550,8 +3522,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Long>.contains(value: Byte): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Long>.contains(value: Byte): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -3588,8 +3559,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Long>.contains(value: Int): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Long>.contains(value: Int): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -3626,8 +3596,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Long>.contains(value: Short): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Long>.contains(value: Short): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -3664,8 +3633,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Short>.contains(value: Byte): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Short>.contains(value: Byte): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -3702,8 +3670,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Short>.contains(value: Int): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Short>.contains(value: Int): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -3740,8 +3707,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun ClosedRange<Short>.contains(value: Long): Boolean>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ClosedRange<Short>.contains(value: Long): Boolean' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
@@ -3817,8 +3783,7 @@ KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun <T : Comparable<T>> T.rangeTo(that: T): ClosedRange<T>>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T : Comparable<T>> T.rangeTo(that: T): ClosedRange<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtDotQualifiedExpression(1248,1267): 'MyClass.myClassProp'
@@ -3955,8 +3920,7 @@ KtOperationReferenceExpression(1267,1269): '..'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun <T : Comparable<T>> T.rangeTo(that: T): ClosedRange<T>>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T : Comparable<T>> T.rangeTo(that: T): ClosedRange<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1269,1284): 'NestedInheritor'

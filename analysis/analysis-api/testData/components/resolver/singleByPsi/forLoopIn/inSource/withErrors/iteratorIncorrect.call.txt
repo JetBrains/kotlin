@@ -23,8 +23,7 @@ KtForExpression(23,37): 'for(i in f) {}'
           typeArgumentsMapping = {}
           valueArgumentMapping = {}
       ]
-      diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-      fun Int.iterator(): Any>
+      diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Int.iterator(): Any' is inapplicable because of a receiver type mismatch.>
     nextCallAttempt = KaCallResolutionError:
       candidateCalls = []
       diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next'.>

@@ -4,8 +4,7 @@ KtForExpression(23,37): 'for(i in f) {}'
     usesContextSensitiveResolution: false
     attempt: KaCompoundSymbolResolutionError
       attempts[0]: KaSymbolResolutionError
-        diagnostic: ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-        fun Int.iterator(): Any>
+        diagnostic: ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Int.iterator(): Any' is inapplicable because of a receiver type mismatch.>
       attempts[1]: KaSymbolResolutionError
         diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext'.>
       attempts[2]: KaSymbolResolutionError

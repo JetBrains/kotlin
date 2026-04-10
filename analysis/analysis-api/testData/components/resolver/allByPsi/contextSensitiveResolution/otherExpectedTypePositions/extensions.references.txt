@@ -84,8 +84,7 @@ KtNameReferenceExpression(240,243): 'bar'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    val MyClass2.Companion.bar: MyClass2>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'val MyClass2.Companion.bar: MyClass2' is inapplicable because of a receiver type mismatch.>
     symbols:
       (in ROOT) val MyClass2.Companion.bar: MyClass2
 

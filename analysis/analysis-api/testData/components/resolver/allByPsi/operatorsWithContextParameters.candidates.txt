@@ -3258,8 +3258,7 @@ KtBinaryExpression(1136,1141): 'b + 1'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.plus(b: Int): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.plus(b: Int): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1136,1137): 'b'
@@ -3391,8 +3390,7 @@ KtOperationReferenceExpression(1138,1139): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.plus(b: Int): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.plus(b: Int): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtConstantExpression(1140,1141): '1'
@@ -3477,8 +3475,7 @@ KtPrefixExpression(1150,1152): '+b'
         callableId = /unaryPlus
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.unaryPlus(): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.unaryPlus(): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtOperationReferenceExpression(1150,1151): '+'
@@ -3560,8 +3557,7 @@ KtOperationReferenceExpression(1150,1151): '+'
         callableId = /unaryPlus
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.unaryPlus(): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.unaryPlus(): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1151,1152): 'b'
@@ -3693,8 +3689,7 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.get(b: Int): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.get(b: Int): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1161,1162): 'b'
@@ -3860,8 +3855,7 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.set(b: Int, x: A): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.set(b: Int, x: A): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtArrayAccessExpression(1174,1178): 'b[1]'
@@ -4003,8 +3997,7 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.set(b: Int, x: A): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.set(b: Int, x: A): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1174,1175): 'b'
@@ -4170,8 +4163,7 @@ KtOperationReferenceExpression(1179,1180): '='
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.set(b: Int, x: A): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.set(b: Int, x: A): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtCallExpression(1181,1184): 'A()'
@@ -4292,8 +4284,7 @@ KtCallExpression(1193,1196): 'b()'
         callableId = /invoke
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.invoke(): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.invoke(): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1193,1194): 'b'
@@ -4428,8 +4419,7 @@ KtBinaryExpression(1205,1211): 'b += 1'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.plusAssign(b: Int): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.plusAssign(b: Int): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1205,1206): 'b'
@@ -4561,8 +4551,7 @@ KtOperationReferenceExpression(1207,1209): '+='
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.plusAssign(b: Int): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.plusAssign(b: Int): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtConstantExpression(1210,1211): '1'
@@ -5689,8 +5678,7 @@ KtBinaryExpression(1376,1381): 'b + 1'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.plus(b: Int): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.plus(b: Int): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1376,1377): 'b'
@@ -5799,8 +5787,7 @@ KtOperationReferenceExpression(1378,1379): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.plus(b: Int): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.plus(b: Int): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtConstantExpression(1380,1381): '1'
@@ -5862,8 +5849,7 @@ KtPrefixExpression(1386,1388): '+b'
         callableId = /unaryPlus
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.unaryPlus(): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.unaryPlus(): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtOperationReferenceExpression(1386,1387): '+'
@@ -5922,8 +5908,7 @@ KtOperationReferenceExpression(1386,1387): '+'
         callableId = /unaryPlus
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.unaryPlus(): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.unaryPlus(): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1387,1388): 'b'
@@ -6032,8 +6017,7 @@ KtArrayAccessExpression(1393,1397): 'b[1]'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.get(b: Int): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.get(b: Int): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1393,1394): 'b'
@@ -6176,8 +6160,7 @@ KtBinaryExpression(1402,1412): 'b[1] = A()'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.set(b: Int, x: A): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.set(b: Int, x: A): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtArrayAccessExpression(1402,1406): 'b[1]'
@@ -6296,8 +6279,7 @@ KtArrayAccessExpression(1402,1406): 'b[1]'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.set(b: Int, x: A): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.set(b: Int, x: A): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1402,1403): 'b'
@@ -6440,8 +6422,7 @@ KtOperationReferenceExpression(1407,1408): '='
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.set(b: Int, x: A): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.set(b: Int, x: A): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtCallExpression(1409,1412): 'A()'
@@ -6539,8 +6520,7 @@ KtCallExpression(1417,1420): 'b()'
         callableId = /invoke
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.invoke(): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.invoke(): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1417,1418): 'b'
@@ -6652,8 +6632,7 @@ KtBinaryExpression(1425,1431): 'b += 1'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.plusAssign(b: Int): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.plusAssign(b: Int): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1425,1426): 'b'
@@ -6762,8 +6741,7 @@ KtOperationReferenceExpression(1427,1429): '+='
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    context(a: A) fun A.plusAssign(b: Int): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.plusAssign(b: Int): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtConstantExpression(1430,1431): '1'

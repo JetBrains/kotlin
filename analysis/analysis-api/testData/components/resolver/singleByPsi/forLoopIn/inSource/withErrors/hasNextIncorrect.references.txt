@@ -5,8 +5,7 @@ KtForExpression(23,37): 'for(i in f) {}'
     attempt: KaCompoundSymbolResolutionError
       attempts[0]: KaSymbolResolutionSuccess
       attempts[1]: KaSymbolResolutionError
-        diagnostic: ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-        fun Int.hasNext(): Boolean>
+        diagnostic: ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Int.hasNext(): Boolean' is inapplicable because of a receiver type mismatch.>
     symbols:
       0: (in Foo) operator fun iterator(): Iterator
       1: (in Iterator) operator fun next(): kotlin.Any

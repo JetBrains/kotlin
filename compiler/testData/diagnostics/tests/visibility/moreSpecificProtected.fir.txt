@@ -127,7 +127,7 @@ FILE: moreSpecificProtected.kt
                 ($subj$ is R|C|) ->  {
                     R|<local>/b|.R|/C.fromC|
                     R|<local>/b|.R|/A.foo|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M3|>(checkType@fun R|CheckTypeInv<M3>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-                        this@R|special/anonymous|.R|/_<None of the following candidates is applicable because of receiver type mismatch: [/_]>#|<R|M2Sub|>()
+                        this@R|special/anonymous|.R|/_<Candidate is inapplicable because of receiver type mismatch: /_>#|<R|M2Sub|>()
                     }
                     )
                     R|<local>/b|.R|/A.foo|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M3|>(checkType@fun R|CheckTypeInv<M3>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
@@ -135,7 +135,7 @@ FILE: moreSpecificProtected.kt
                     }
                     )
                     R|<local>/b|.R|/B.baz|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M5Sub|>(checkType@fun R|CheckTypeInv<M5Sub>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-                        this@R|special/anonymous|.R|/_<None of the following candidates is applicable because of receiver type mismatch: [/_]>#|<R|M6|>()
+                        this@R|special/anonymous|.R|/_<Candidate is inapplicable because of receiver type mismatch: /_>#|<R|M6|>()
                     }
                     )
                     R|<local>/b|.R|/B.baz|(R|<local>/d|, R|<local>/d|).R|/checkType|<R|M5Sub|>(checkType@fun R|CheckTypeInv<M5Sub>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
