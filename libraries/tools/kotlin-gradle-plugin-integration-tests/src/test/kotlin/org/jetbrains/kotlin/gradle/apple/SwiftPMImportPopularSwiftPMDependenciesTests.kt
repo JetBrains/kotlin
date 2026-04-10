@@ -1247,7 +1247,14 @@ private fun TestProject.testVisibleSignatures(
     commonizerBasePath: Path = projectPath,
     commonizeTask: String = "commonizeCInterop",
 ) {
-    val metadataDump = commonizeAndDumpCinteropSignatures(commonizerBasePath, commonizeTask)
+    val metadataDump = try {
+        commonizeAndDumpCinteropSignatures(commonizerBasePath, commonizeTask)
+    } catch (t: Throwable) {
+        dumpDatadogFocus(commonizerBasePath, "after-commonize-failure")
+        throw t
+    }
+
+    dumpDatadogFocus(commonizerBasePath, "after-commonize-success")
 
     val actualSignatures = mutableMapOf<String, MutableList<String>>()
     metadataDump.lines().forEach { line ->
@@ -1262,6 +1269,63 @@ private fun TestProject.testVisibleSignatures(
         expectedCinteropAPIs.prettyPrinted,
         actualSignatures.mapValues { it.value.joinToString("\n").trimIndent() }.prettyPrinted,
     )
+}
+
+private fun TestProject.dumpDatadogFocus(basePath: Path, tag: String) {
+    val interestingFiles = listOf(
+        "build/kotlin/swiftImportDefs/iphoneos/arm64.def",
+        "build/kotlin/swiftImportDefs/iphonesimulator/arm64.def",
+        "build/kotlin/swiftImportDd/dd_iphoneos/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/DatadogCore.modulemap",
+        "build/kotlin/swiftImportDd/dd_iphoneos/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/DatadogInternal.modulemap",
+        "build/kotlin/swiftImportDd/dd_iphonesimulator/Build/Intermediates.noindex/GeneratedModuleMaps-iphonesimulator/DatadogCore.modulemap",
+        "build/kotlin/swiftImportDd/dd_iphonesimulator/Build/Intermediates.noindex/GeneratedModuleMaps-iphonesimulator/DatadogInternal.modulemap",
+        "build/kotlin/swiftImportDd/dd_iphoneos/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/DatadogCore-Swift.h",
+        "build/kotlin/swiftImportDd/dd_iphoneos/Build/Intermediates.noindex/GeneratedModuleMaps-iphoneos/DatadogInternal-Swift.h",
+        "build/kotlin/swiftImportDd/dd_iphonesimulator/Build/Intermediates.noindex/GeneratedModuleMaps-iphonesimulator/DatadogCore-Swift.h",
+        "build/kotlin/swiftImportDd/dd_iphonesimulator/Build/Intermediates.noindex/GeneratedModuleMaps-iphonesimulator/DatadogInternal-Swift.h",
+    )
+
+    val needles = listOf(
+        "DDCoreLoggerLevel",
+        "setVerbosityLevel",
+        "verbosityLevel",
+        "@import DatadogInternal",
+    )
+
+    println("==== Datadog focus dump: $tag ====")
+
+    interestingFiles.forEach { relative ->
+        val path = basePath.resolve(relative)
+        println("PATH: $path exists=${path.exists()}")
+
+        if (!path.exists() || !path.isRegularFile()) return@forEach
+
+        val text = runCatching { path.readText() }.getOrElse {
+            println("Failed to read $path: ${it.message}")
+            return@forEach
+        }
+
+        println("--- FILE: $path ---")
+
+        if (path.name.endsWith(".def") || path.name.endsWith(".modulemap")) {
+            println(text)
+        } else {
+            val lines = text.lines()
+            needles.forEach { needle ->
+                val hits = lines.withIndex().filter { needle in it.value }
+                hits.forEach { hit ->
+                    val start = maxOf(0, hit.index - 5)
+                    val end = minOf(lines.lastIndex, hit.index + 5)
+                    println(">>> needle=$needle line=${hit.index + 1}")
+                    for (i in start..end) {
+                        println("${i + 1}: ${lines[i]}")
+                    }
+                }
+            }
+        }
+    }
+
+    println("==== End Datadog focus dump: $tag ====")
 }
 
 private fun TestProject.testPackageManifest(
