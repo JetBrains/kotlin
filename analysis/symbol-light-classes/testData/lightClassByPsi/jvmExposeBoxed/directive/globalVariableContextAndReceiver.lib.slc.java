@@ -9,6 +9,13 @@ public final class A /* A*/ {
 
   @kotlin.jvm.JvmExposeBoxed()
   public  A(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
+
+  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
+
+  public int hashCode();//  hashCode()
 }
 
 public final class GlobalVariableContextAndReceiverKt /* GlobalVariableContextAndReceiverKt*/ {
@@ -31,4 +38,11 @@ public final class Z /* Z*/ {
 
   @kotlin.jvm.JvmExposeBoxed()
   public  Z(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
+
+  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
+
+  public int hashCode();//  hashCode()
 }

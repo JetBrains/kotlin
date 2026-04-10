@@ -198,7 +198,11 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         val generatedFunctionsFromAny = classSymbol.memberScope
             .callables(EQUALS, HASHCODE_NAME, TO_STRING)
             .filterIsInstance<KaNamedFunctionSymbol>()
-            .filter { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }
+            .filter {
+                // Precompiled value classes may deserialize Any methods from metadata as regular SOURCE members
+                // instead of SOURCE_MEMBER_GENERATED. Accept them here so library SLC stays consistent with source SLC.
+                it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED || it.isLibraryValueClassAnyMethodFallback(classSymbol)
+            }
 
         val functionsFromAnyByName = generatedFunctionsFromAny.associateBy { it.name }
 
@@ -206,6 +210,27 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         functionsFromAnyByName[TO_STRING]?.let { createMethodFromAny(it, result) }
         functionsFromAnyByName[HASHCODE_NAME]?.let { createMethodFromAny(it, result) }
         functionsFromAnyByName[EQUALS]?.let { createMethodFromAny(it, result) }
+    }
+
+    private fun shouldUseLibraryGeneratedAnyMethodsFallback(classSymbol: KaNamedClassSymbol): Boolean {
+        return classOrObjectDeclaration?.containingKtFile?.isCompiled == true || classSymbol.origin == KaSymbolOrigin.LIBRARY
+    }
+
+    private fun KaNamedFunctionSymbol.matchesAnyMethodSignature(): Boolean {
+        if (isExtension || contextParameters.isNotEmpty()) return false
+
+        return when (name) {
+            HASHCODE_NAME, TO_STRING -> valueParameters.isEmpty()
+            EQUALS -> valueParameters.size == 1
+            else -> false
+        }
+    }
+
+    private fun KaNamedFunctionSymbol.isLibraryValueClassAnyMethodFallback(classSymbol: KaNamedClassSymbol): Boolean {
+        return classSymbol.isInline &&
+                shouldUseLibraryGeneratedAnyMethodsFallback(classSymbol) &&
+                !isOverride &&
+                matchesAnyMethodSignature()
     }
 
     private fun KaSession.addDelegatesToInterfaceMethods(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {

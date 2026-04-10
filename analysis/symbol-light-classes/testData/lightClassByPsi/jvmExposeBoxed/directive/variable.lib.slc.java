@@ -16,4 +16,11 @@ public final class StringWrapper /* StringWrapper*/ {
 
   @kotlin.jvm.JvmExposeBoxed()
   public final void setOk(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setOk(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
+
+  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
+
+  public int hashCode();//  hashCode()
 }
