@@ -141,7 +141,7 @@ internal open class TypeVisitorPrinter(
         printFunctionDeclaration(
             name = "visitAnnotationUsage",
             parameters = listOfNotNull(
-                FunctionParameter("annotationUsage", IrTree.constructorCall),
+                FunctionParameter("annotationUsage", IrTree.annotation),
                 FunctionParameter("data", visitorDataType).takeIf { hasDataParameter },
             ),
             returnType = StandardTypes.unit,

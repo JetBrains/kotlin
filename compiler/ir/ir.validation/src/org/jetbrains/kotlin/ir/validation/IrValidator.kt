@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrReplSnippet
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -97,7 +99,7 @@ private class IrFileValidator(
         }
     }
 
-    override fun visitAnnotationUsage(annotationUsage: IrConstructorCall) {
+    override fun visitAnnotationUsage(annotationUsage: IrAnnotation) {
         context.withinAnnotationUsageSubTree {
             super.visitAnnotationUsage(annotationUsage)
         }

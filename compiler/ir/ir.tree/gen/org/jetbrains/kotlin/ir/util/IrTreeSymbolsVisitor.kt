@@ -25,7 +25,7 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
         type.classifierOrNull?.let { visitSymbol(container, it) }
     }
 
-    override fun visitAnnotationUsage(annotationUsage: IrConstructorCall) {
+    override fun visitAnnotationUsage(annotationUsage: IrAnnotation) {
         visitReferencedConstructor(annotationUsage, annotationUsage.symbol)
         visitTypeRecursively(annotationUsage, annotationUsage.type)
         visitElement(annotationUsage)
