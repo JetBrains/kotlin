@@ -390,29 +390,31 @@ internal fun patchDesignationPathIfNeeded(target: FirElementWithResolveState, ta
 private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targetPath: List<FirDeclaration>): List<FirDeclaration>? {
     val targetModule = target.llFirModuleData.ktModule
 
-    if (targetModule is KaDanglingFileModule && targetModule.resolutionMode == KaDanglingFileResolutionMode.IGNORE_SELF) {
-        val targetPsiFile = targetModule.files.singleOrNull() ?: return targetPath
-
-        val contextModule = targetModule.contextModule
-        val contextResolutionFacade = contextModule.getResolutionFacade(contextModule.project)
-
-        return buildList {
-            for (targetPathDeclaration in targetPath) {
-                val targetPathPsi = targetPathDeclaration.psi ?: return null
-                if (targetPathPsi !is KtClassOrObject && targetPathPsi !is KtScript && targetPathPsi !is KtFile) return null
-
-                val originalPathPsi = targetPathPsi.unwrapCopy(targetPsiFile) ?: return null
-                val originalPathDeclaration = when (originalPathPsi) {
-                    is KtClassOrObject -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirRegularClassSymbol>(contextResolutionFacade)?.fir
-                    is KtScript -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirScriptSymbol>(contextResolutionFacade)?.fir
-                    is KtFile -> originalPathPsi.getOrBuildFirFile(contextResolutionFacade)
-                    else -> null
-                } ?: return null
-
-                add(originalPathDeclaration)
-            }
-        }
+    if (targetModule !is KaDanglingFileModule || targetModule.resolutionMode != KaDanglingFileResolutionMode.IGNORE_SELF) {
+        return null
     }
 
-    return targetPath
+    val targetPsiFile = targetModule.files.singleOrNull() ?: return null
+
+    val contextModule = targetModule.contextModule
+    val contextResolutionFacade = contextModule.getResolutionFacade(contextModule.project)
+
+    return buildList {
+        for (targetPathDeclaration in targetPath) {
+            val targetPathPsi = targetPathDeclaration.psi ?: return null
+            if (targetPathPsi !is KtClassOrObject && targetPathPsi !is KtScript && targetPathPsi !is KtFile) {
+                return null
+            }
+
+            val originalPathPsi = targetPathPsi.unwrapCopy(targetPsiFile) ?: return null
+            val originalPathDeclaration = when (originalPathPsi) {
+                is KtClassOrObject -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirRegularClassSymbol>(contextResolutionFacade)?.fir
+                is KtScript -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirScriptSymbol>(contextResolutionFacade)?.fir
+                is KtFile -> originalPathPsi.getOrBuildFirFile(contextResolutionFacade)
+                else -> null
+            } ?: return null
+
+            add(originalPathDeclaration)
+        }
+    }
 }
