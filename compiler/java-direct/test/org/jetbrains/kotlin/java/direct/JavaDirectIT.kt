@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.java.direct
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.ByteArrayOutputStream
@@ -29,11 +31,11 @@ class JavaDirectIT {
             "-XXLanguage:-${LanguageFeature.JavaDirect.name}",
             *(files.map { it.absolutePath }.toTypedArray())
         )
-        assert(exitCodePsi == ExitCode.OK)
+        assertTrue(exitCodePsi == ExitCode.OK)
     }
 
     @Test
-    fun testEnableViaLanguageFeature(@TempDir tempDir: java.nio.file.Path) {
+    fun testEnableViaLanguageFeature(@TempDir tempDir: Path) {
         val files = createFilesForPseudoRawTypesTest(tempDir)
         val logFile = tempDir.resolve("log.txt")
 
@@ -46,10 +48,10 @@ class JavaDirectIT {
             *(files.map { it.absolutePath }.toTypedArray())
         )
         System.clearProperty(JAVA_DIRECT_DEBUG_LOG_PROPERTY_NAME)
-        assert(exitCodeDirect == ExitCode.OK)
+        assertTrue(exitCodeDirect == ExitCode.OK)
         val logText = logFile.toFile().readText()
-        assert(logText.contains("test.Usage"))
-        assert(logText.contains("java.util.Collection"))
+        assertTrue(logText.contains("test.Usage"))
+        assertTrue(logText.contains("java.util.Collection"))
     }
 }
 

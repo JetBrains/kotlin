@@ -23,10 +23,125 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.isRegularFile
 
 /**
+ * Size threshold (in bytes) for eager vs. lightweight indexing.
+ * Files at or below this size are parsed fully during [JavaClassFinderOverAstImpl.buildIndex],
+ * and the resulting [JavaClass] instances are cached immediately (no re-parse on first access).
+ * Files above this size are indexed via a lightweight line scanner that extracts only the package
+ * name and top-level class names without invoking the parser.
+ */
+private const val SMALL_FILE_SIZE_THRESHOLD = 4096L
+
+private val PACKAGE_REGEX = Regex("""\bpackage\s+([\w.]+)\s*;""")
+private val DECLARATION_REGEX = Regex("""\b(class|interface|enum|record)\s+([A-Za-z_]\w*)""")
+
+/**
+ * Result of lightweight (no-parse) file scanning.
+ */
+internal data class LightweightFileInfo(
+    val packageName: String?,
+    val topLevelClassNames: Set<String>,
+)
+
+/**
+ * Strips single-line (`//`) and block (`/* */`) comments from a line.
+ * Tracks block comment state across lines.
+ *
+ * @return pair of (effective text with comments removed, whether still inside a block comment)
+ */
+private fun stripLineComments(line: String, inBlockComment: Boolean): Pair<String, Boolean> {
+    val sb = StringBuilder()
+    var inComment = inBlockComment
+    var i = 0
+    while (i < line.length) {
+        if (inComment) {
+            val endIdx = line.indexOf("*/", i)
+            if (endIdx >= 0) {
+                inComment = false
+                i = endIdx + 2
+            } else {
+                return sb.toString() to true
+            }
+        } else {
+            if (i + 1 < line.length) {
+                if (line[i] == '/' && line[i + 1] == '/') {
+                    return sb.toString() to false
+                }
+                if (line[i] == '/' && line[i + 1] == '*') {
+                    inComment = true
+                    i += 2
+                    continue
+                }
+            }
+            sb.append(line[i])
+            i++
+        }
+    }
+    return sb.toString() to inComment
+}
+
+/**
+ * Extracts package name and top-level class/interface/enum/record names from a Java file
+ * without invoking the parser. Scans the file line by line, stripping comments and tracking
+ * brace depth to distinguish top-level declarations from nested ones.
+ *
+ * This is much cheaper than full parsing and is used for indexing large files.
+ */
+internal fun extractFileInfoLightweight(path: Path): LightweightFileInfo? {
+    var packageName: String? = null
+    val classNames = mutableSetOf<String>()
+    var inBlockComment = false
+    var braceDepth = 0
+
+    Files.newBufferedReader(path, StandardCharsets.UTF_8).use { reader ->
+        var rawLine = reader.readLine()
+        while (rawLine != null) {
+            val (effective, stillInComment) = stripLineComments(rawLine, inBlockComment)
+            inBlockComment = stillInComment
+
+            if (effective.isNotBlank()) {
+                val depthBeforeLine = braceDepth
+                for (ch in effective) {
+                    when (ch) {
+                        '{' -> braceDepth++
+                        '}' -> braceDepth--
+                    }
+                }
+
+                if (packageName == null && depthBeforeLine == 0) {
+                    PACKAGE_REGEX.find(effective)?.let {
+                        packageName = it.groupValues[1]
+                    }
+                }
+
+                if (depthBeforeLine == 0) {
+                    DECLARATION_REGEX.find(effective)?.let {
+                        classNames.add(it.groupValues[2])
+                    }
+                }
+            }
+
+            rawLine = reader.readLine()
+        }
+    }
+
+    if (classNames.isEmpty()) return null
+    return LightweightFileInfo(packageName, classNames)
+}
+
+/**
  * A simple JavaClassFinder implementation over the direct Java AST parser used in this module.
  *
  * It scans provided [sourceRoots] for `.java` files, indexes packages and top-level class names,
  * and lazily parses files to produce [JavaClassOverAst] instances. Results are cached by [ClassId].
+ *
+ * Indexing strategy depends on file size:
+ * - **Small files** (≤ [SMALL_FILE_SIZE_THRESHOLD] bytes): parsed eagerly during index build;
+ *   [JavaClass] instances are created and cached immediately, so the first [findClass] call is
+ *   a cache hit with no additional parsing.
+ * - **Large files**: indexed via lightweight line scanning ([extractFileInfoLightweight]) that
+ *   extracts only the package name and top-level class names without invoking the parser.
+ *   The full parse happens lazily on first [findClass] access, at which point **all** top-level
+ *   classes in the file are cached to avoid re-parsing for sibling classes.
  */
 class JavaClassFinderOverAstImpl(
     private val sourceRoots: List<Path>,
@@ -191,6 +306,20 @@ class JavaClassFinderOverAstImpl(
         packageAnnotationNodes[packageFqName] ?: emptyList()
 
     private fun tryBuildFileEntry(path: Path): FileEntry? {
+        val fileSize = try { Files.size(path) } catch (_: IOException) { return null }
+
+        return if (fileSize <= SMALL_FILE_SIZE_THRESHOLD) {
+            tryBuildFileEntryWithFullParse(path)
+        } else {
+            tryBuildFileEntryLightweight(path)
+        }
+    }
+
+    /**
+     * Small-file path: parse the file fully and cache all [JavaClassOverAst] instances
+     * so that subsequent [findClass] calls are pure cache hits.
+     */
+    private fun tryBuildFileEntryWithFullParse(path: Path): FileEntry? {
         val source = tryReadFile(path) ?: return null
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
         val root = buildSyntaxTree(builder, source)
@@ -205,14 +334,44 @@ class JavaClassFinderOverAstImpl(
 
         if (classNames.isEmpty()) return null
 
+        val fileBaseName = path.fileName.toString().removeSuffix(".java")
+        if (!classNames.contains(fileBaseName)) return null
+
+        // Eagerly create and cache all top-level JavaClass instances.
+        // Uses the resolution context's localClassProvider to ensure the same instances
+        // are shared between the class cache and the context's local class cache
+        // (FIR matches type parameters by object identity).
+        val resolutionContext = JavaResolutionContext.create(root, classFinderProvider = { this })
+        for (className in classNames) {
+            val classId = ClassId(packageFqName, FqName(className), isLocal = false)
+            if (classId !in classCache) {
+                val javaClass = resolutionContext.findLocalClass(Name.identifier(className))
+                if (javaClass != null) {
+                    classCache[classId] = javaClass
+                }
+            }
+        }
+
+        return FileEntry(path, packageFqName, classNames)
+    }
+
+    /**
+     * Large-file path: extract package name and top-level class names by scanning
+     * the file line by line without invoking the parser.
+     * The full parse is deferred to [parseTopLevelClassFromFile] on first access.
+     */
+    private fun tryBuildFileEntryLightweight(path: Path): FileEntry? {
+        val info = extractFileInfoLightweight(path) ?: return null
+        val packageFqName = if (info.packageName != null) FqName(info.packageName) else FqName.ROOT
+
         // Only create an entry when the file's base name matches at least one declared class.
         // This matches PSI's behavior per KT-4455: a file like "E.java" that only declares
         // class "F" (no class "E") is not indexed — the classes it contains are not accessible
         // to the compiler unless they appear as return/parameter types within the same .java file.
         val fileBaseName = path.fileName.toString().removeSuffix(".java")
-        if (!classNames.contains(fileBaseName)) return null
+        if (!info.topLevelClassNames.contains(fileBaseName)) return null
 
-        return FileEntry(path, packageFqName, classNames)
+        return FileEntry(path, packageFqName, info.topLevelClassNames)
     }
 
     private fun parseTopLevelClassFromFile(file: FileEntry, simpleName: String): JavaClassOverAst? {
@@ -229,12 +388,23 @@ class JavaClassFinderOverAstImpl(
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
         val root = buildSyntaxTree(builder, source)
         val resolutionContext = JavaResolutionContext.create(root, classFinderProvider = { this })
-        val node = root.getChildrenByType("CLASS").firstOrNull { n ->
-            n.findChildByType("IDENTIFIER")?.text == simpleName
-        } ?: return null
-        return JavaClassOverAst(node, resolutionContext, outerClass = null).also {
-            classCache[classId] = it
+
+        // Cache ALL top-level classes from this file to avoid re-parsing for sibling classes.
+        // Uses findLocalClass to ensure consistent instances with the context's local class cache.
+        val allClassNames = root.getChildrenByType("CLASS").mapNotNull {
+            it.findChildByType("IDENTIFIER")?.text
         }
+        for (className in allClassNames) {
+            val cid = ClassId(file.packageFqName, FqName(className), isLocal = false)
+            if (cid !in classCache) {
+                val javaClass = resolutionContext.findLocalClass(Name.identifier(className))
+                if (javaClass != null) {
+                    classCache[cid] = javaClass
+                }
+            }
+        }
+
+        return classCache[classId] as? JavaClassOverAst
     }
 
     // TODO: check the uses; the io errors shoulbe probably propagated
@@ -280,11 +450,24 @@ class JavaClassFinderOverAstImpl(
     }
 
     /**
-     * Parses just enough of a class to extract its direct supertypes.
-     * This is lightweight - only reads extends/implements clauses.
+     * Returns the direct supertype [ClassId]s for a class (only same-package source classes).
+     * Prefers the cached [JavaClass] instance to avoid re-parsing. Falls back to file parsing
+     * only when the class hasn't been cached yet.
      */
     internal fun getDirectSupertypes(classId: ClassId): List<ClassId> {
         return supertypeCache.getOrPut(classId) {
+            val packageFqName = classId.packageFqName
+
+            // Fast path: use the cached JavaClassOverAst's AST node directly.
+            // IMPORTANT: we read raw JAVA_CODE_REFERENCE text from the node, NOT classifierQualifiedName,
+            // because the latter triggers resolution which can circle back into getDirectSupertypes
+            // via findInnerClassFromSupertypes → collectInheritedInnerClasses.
+            val cachedClass = classCache[classId]
+            if (cachedClass is JavaClassOverAst) {
+                return@getOrPut extractSupertypeRefsFromNode(cachedClass.node, packageFqName)
+            }
+
+            // Slow path: parse the file (should be rare after indexing improvements)
             val files = findFilesForClass(classId)
             if (files.isEmpty()) return@getOrPut emptyList()
 
@@ -293,29 +476,32 @@ class JavaClassFinderOverAstImpl(
             val builder = parseJavaToSyntaxTreeBuilder(source, 0)
             val root = buildSyntaxTree(builder, source)
 
-            val packageFqName = extractPackageName(root)
             val classNode = findClassInTree(root, classId) ?: return@getOrPut emptyList()
-
-            val supertypes = mutableListOf<ClassId>()
-
-            classNode.findChildByType("EXTENDS_LIST")
-                ?.getChildrenByType("JAVA_CODE_REFERENCE")
-                ?.forEach { ref ->
-                    resolveSupertypeReference(ref.text, packageFqName)?.let {
-                        supertypes.add(it)
-                    }
-                }
-
-            classNode.findChildByType("IMPLEMENTS_LIST")
-                ?.getChildrenByType("JAVA_CODE_REFERENCE")
-                ?.forEach { ref ->
-                    resolveSupertypeReference(ref.text, packageFqName)?.let {
-                        supertypes.add(it)
-                    }
-                }
-
-            supertypes
+            extractSupertypeRefsFromNode(classNode, packageFqName)
         }
+    }
+
+    /**
+     * Extracts supertype [ClassId]s from extends/implements clauses of an AST node.
+     * Uses raw text from JAVA_CODE_REFERENCE nodes — no type resolution involved.
+     */
+    private fun extractSupertypeRefsFromNode(classNode: JavaSyntaxNode, packageFqName: FqName): List<ClassId> {
+        val supertypes = mutableListOf<ClassId>()
+        classNode.findChildByType("EXTENDS_LIST")
+            ?.getChildrenByType("JAVA_CODE_REFERENCE")
+            ?.forEach { ref ->
+                resolveSupertypeReference(ref.text, packageFqName)?.let {
+                    supertypes.add(it)
+                }
+            }
+        classNode.findChildByType("IMPLEMENTS_LIST")
+            ?.getChildrenByType("JAVA_CODE_REFERENCE")
+            ?.forEach { ref ->
+                resolveSupertypeReference(ref.text, packageFqName)?.let {
+                    supertypes.add(it)
+                }
+            }
+        return supertypes
     }
 
     /**
@@ -361,12 +547,6 @@ class JavaClassFinderOverAstImpl(
         return index[packageFqName]?.get(topLevelName) ?: emptyList()
     }
 
-    private fun extractPackageName(root: JavaSyntaxNode): FqName {
-        val packageStmt = root.findChildByType("PACKAGE_STATEMENT")
-        val packageName = packageStmt?.findChildByType("JAVA_CODE_REFERENCE")?.text
-        return if (packageName != null) FqName(packageName) else FqName.ROOT
-    }
-
     private fun findClassInTree(root: JavaSyntaxNode, classId: ClassId): JavaSyntaxNode? {
         val segments = classId.relativeClassName.pathSegments().map { it.asString() }
         if (segments.isEmpty()) return null
@@ -395,6 +575,13 @@ class JavaClassFinderOverAstImpl(
     }
 
     private fun getInnerClassNames(classId: ClassId): Set<String> {
+        // Fast path: use the cached JavaClass (no file I/O, no parsing)
+        val cachedClass = classCache[classId]
+        if (cachedClass != null) {
+            return cachedClass.innerClassNames.map { it.asString() }.toSet()
+        }
+
+        // Slow path: parse the file (should be rare after indexing improvements)
         val files = findFilesForClass(classId)
         if (files.isEmpty()) return emptySet()
 
