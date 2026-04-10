@@ -6,9 +6,12 @@
 
 #include "PassesProfileHandler.h"
 
+#include "llvm/IR/Analysis.h"
+#include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/Module.h"
 #include "llvm/Passes/PassBuilder.h"
 #include "llvm/Passes/StandardInstrumentations.h"
+#include "llvm/Support/Casting.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Transforms/Utils/Cloning.h"
@@ -106,6 +109,37 @@ private:
   SmallVector<cl::Option *> ModifiedOptions;
 };
 
+struct KotlinAlloc : PassInfoMixin<KotlinAlloc> {
+  PreservedAnalyses run(Module &M, ModuleAnalysisManager &) {
+    if (!runImpl(M))
+      return PreservedAnalyses::all();
+    return PreservedAnalyses::none();
+  }
+
+  bool runImpl(Module &M) {
+    auto CalleeImpl = M.getOrInsertFunction(
+      "AllocInstance",
+      PointerType::get(M.getContext(), 0),
+      PointerType::get(M.getContext(), 0),
+      PointerType::get(M.getContext(), 0)
+    );
+    for (auto &F : M) {
+      for (auto &BB : F) {
+        for (auto &I : BB) {
+          if (auto *CI = dyn_cast<CallInst>(&I)) {
+            if (auto *Callee = CI->getCalledFunction()) {
+              if (Callee->getName() == "llvm.kotlin.alloc") {
+                CI->setCalledFunction(CalleeImpl);
+              }
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+};
+
 } // namespace
 
 LLVMErrorRef LLVMKotlinRunPasses(LLVMModuleRef M, const char *Passes,
@@ -128,6 +162,14 @@ LLVMErrorRef LLVMKotlinRunPasses(LLVMModuleRef M, const char *Passes,
   PTO.MaxDevirtIterations = 0;
   PassInstrumentationCallbacks PIC;
   PassBuilder PB(Machine, PTO, std::nullopt, &PIC);
+
+  PB.registerPipelineParsingCallback([](StringRef Name, ModulePassManager &PM, ArrayRef<PassBuilder::PipelineElement>) -> bool {
+    if (Name == "kotlin-alloc") {
+      PM.addPass(KotlinAlloc());
+      return true;
+    }
+    return false;
+  });
 
   LoopAnalysisManager LAM;
   FunctionAnalysisManager FAM;

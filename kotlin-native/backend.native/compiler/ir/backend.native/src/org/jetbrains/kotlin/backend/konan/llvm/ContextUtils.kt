@@ -360,14 +360,16 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
                 functionType)
     }
 
-    private fun llvmIntrinsic(name: String, type: LLVMTypeRef, vararg attributes: String): LlvmCallable {
+    private fun llvmIntrinsic(name: String, type: LLVMTypeRef, returnsObjectType: Boolean, vararg attributes: String): LlvmCallable {
         val result = LLVMAddFunction(module, name, type)!!
         attributes.forEach {
             val kindId = getLlvmAttributeKindId(it)
             addLlvmFunctionEnumAttribute(result, kindId)
         }
-        return LlvmCallable(type, false, result, LlvmFunctionAttributeProvider.copyFromExternal(result))
+        return LlvmCallable(type, returnsObjectType, result, LlvmFunctionAttributeProvider.copyFromExternal(result))
     }
+
+    private fun llvmIntrinsic(name: String, type: LLVMTypeRef, vararg attributes: String) = llvmIntrinsic(name, type, false, *attributes)
 
     internal fun externalFunction(llvmFunctionProto: LlvmFunctionProto): LlvmCallable {
         if (llvmFunctionProto.origin != null) {
@@ -590,6 +592,13 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
             *listOfNotNull(
                     "nounwind",
             ).toTypedArray()
+    )
+
+    val llvmKotlinAlloc = llvmIntrinsic(
+            "llvm.kotlin.alloc",
+            functionType(pointerType, isVarArg = false, pointerType, pointerType),
+            returnsObjectType = true,
+            "nounwind"
     )
 
     var tlsCount = 0
