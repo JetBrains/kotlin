@@ -123,6 +123,7 @@ struct KotlinAlloc : PassInfoMixin<KotlinAlloc> {
       PointerType::get(M.getContext(), 0),
       PointerType::get(M.getContext(), 0)
     );
+    bool Changed = false;
     for (auto &F : M) {
       for (auto &BB : F) {
         for (auto &I : BB) {
@@ -130,13 +131,14 @@ struct KotlinAlloc : PassInfoMixin<KotlinAlloc> {
             if (auto *Callee = CI->getCalledFunction()) {
               if (Callee->getName() == "llvm.kotlin.alloc") {
                 CI->setCalledFunction(CalleeImpl);
+                Changed = true;
               }
             }
           }
         }
       }
     }
-    return false;
+    return Changed;
   }
 };
 
