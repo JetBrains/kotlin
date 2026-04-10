@@ -15,14 +15,62 @@ import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.KotlinDecla
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.asJava.KtClsJavaBasedLightClass
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
+import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+
+internal enum class CompiledFacadeKind(
+    val isDeclarationFile: Boolean,
+    val isMultifile: Boolean,
+) {
+    FILE_FACADE(isDeclarationFile = true, isMultifile = false),
+    MULTIFILE_CLASS(isDeclarationFile = false, isMultifile = true),
+    MULTIFILE_CLASS_PART(isDeclarationFile = true, isMultifile = true),
+}
+
+internal data class CompiledFacadeFileInfo(
+    val facadeFqName: FqName,
+    val kind: CompiledFacadeKind,
+)
+
+internal fun KtFile.compiledFacadeFileInfo(): CompiledFacadeFileInfo? {
+    val file = this as? KtClsFile ?: return null
+    val binaryClass = KotlinBinaryClassCache
+        .getKotlinBinaryClassOrClassFileContent(file.virtualFile, MetadataVersion.INSTANCE)
+        ?.let { it as? KotlinClassFinder.Result.KotlinClass }
+        ?.kotlinJvmBinaryClass
+        ?: return null
+    val header = binaryClass.classHeader
+
+    return when (header.kind) {
+        KotlinClassHeader.Kind.FILE_FACADE ->
+            CompiledFacadeFileInfo(binaryClass.classId.asSingleFqName(), CompiledFacadeKind.FILE_FACADE)
+
+        KotlinClassHeader.Kind.MULTIFILE_CLASS ->
+            CompiledFacadeFileInfo(binaryClass.classId.asSingleFqName(), CompiledFacadeKind.MULTIFILE_CLASS)
+
+        KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
+            val multifileClassName = header.multifileClassName ?: return null
+            CompiledFacadeFileInfo(
+                JvmClassName.byInternalName(multifileClassName).fqNameForTopLevelClassMaybeWithDollars,
+                CompiledFacadeKind.MULTIFILE_CLASS_PART,
+            )
+        }
+
+        else -> null
+    }
+}
 
 internal data class BinaryLightClassDelegate(
     val file: KtClsFile,
     val clsDelegate: PsiClass,
+    private val useSignatureFallback: Boolean = false,
 ) {
     private val searcher: KotlinDeclarationInCompiledFileSearcher
         get() = KotlinDeclarationInCompiledFileSearcher.getInstance()
@@ -33,16 +81,38 @@ internal data class BinaryLightClassDelegate(
         preferredName: String? = null,
         isGetter: Boolean? = null,
     ): PsiMethod? {
-        if (targetDeclaration == null) return null
-
-        val candidates = clsDelegate.methods.filter { method ->
+        val signatureCandidates = clsDelegate.methods.filter { method ->
             method.parameterList.parametersCount == parameterCount &&
-                    (isGetter == null || (method.returnType != PsiTypes.voidType()) == isGetter) &&
-                    matches(targetDeclaration, searcher.findDeclarationInCompiledFile(file, method))
+                    (isGetter == null || (method.returnType != PsiTypes.voidType()) == isGetter)
         }
 
+        val declarationCandidates = targetDeclaration?.let { declaration ->
+            signatureCandidates.filter { method ->
+                matches(declaration, searcher.findDeclarationInCompiledFile(file, method))
+            }
+        }.orEmpty()
+
+        return selectCandidate(declarationCandidates, preferredName)
+            ?: if (useSignatureFallback) selectFallbackCandidate(signatureCandidates, preferredName) else null
+    }
+
+    private fun selectCandidate(
+        candidates: List<PsiMethod>,
+        preferredName: String?,
+    ): PsiMethod? {
         return if (preferredName != null) {
             candidates.firstOrNull { it.name == preferredName } ?: candidates.firstOrNull()
+        } else {
+            candidates.firstOrNull()
+        }
+    }
+
+    private fun selectFallbackCandidate(
+        candidates: List<PsiMethod>,
+        preferredName: String?,
+    ): PsiMethod? {
+        return if (preferredName != null) {
+            candidates.firstOrNull { it.name == preferredName }
         } else {
             candidates.firstOrNull()
         }
@@ -52,14 +122,33 @@ internal data class BinaryLightClassDelegate(
         targetDeclaration: KtDeclaration?,
         preferredName: String? = null,
     ): PsiField? {
-        if (targetDeclaration == null) return null
+        val declarationCandidates = targetDeclaration?.let { declaration ->
+            clsDelegate.fields.filter { field ->
+                matches(declaration, searcher.findDeclarationInCompiledFile(file, field))
+            }
+        }.orEmpty()
 
-        val candidates = clsDelegate.fields.filter { field ->
-            matches(targetDeclaration, searcher.findDeclarationInCompiledFile(file, field))
-        }
+        return selectCandidate(declarationCandidates, preferredName)
+            ?: if (useSignatureFallback) selectFallbackCandidate(clsDelegate.fields.toList(), preferredName) else null
+    }
 
+    private fun selectCandidate(
+        candidates: List<PsiField>,
+        preferredName: String?,
+    ): PsiField? {
         return if (preferredName != null) {
             candidates.firstOrNull { it.name == preferredName } ?: candidates.firstOrNull()
+        } else {
+            candidates.firstOrNull()
+        }
+    }
+
+    private fun selectFallbackCandidate(
+        candidates: List<PsiField>,
+        preferredName: String?,
+    ): PsiField? {
+        return if (preferredName != null) {
+            candidates.firstOrNull { it.name == preferredName }
         } else {
             candidates.firstOrNull()
         }
@@ -89,5 +178,5 @@ internal fun createBinaryLightClassDelegate(
     val file = files.firstOrNull { it.javaFileFacadeFqName == facadeClassFqName } as? KtClsFile ?: return null
     val lightClass = DecompiledLightClassesFactory.createLightFacadeForDecompiledKotlinFile(project, facadeClassFqName, files.toList())
         as? KtClsJavaBasedLightClass ?: return null
-    return BinaryLightClassDelegate(file, lightClass.clsDelegate)
+    return BinaryLightClassDelegate(file, lightClass.clsDelegate, useSignatureFallback = true)
 }

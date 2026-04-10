@@ -25,6 +25,10 @@ import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.light.classes.symbol.BinaryLightClassDelegate
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
+import org.jetbrains.kotlin.light.classes.symbol.compiledFacadeFileInfo
+import org.jetbrains.kotlin.light.classes.symbol.annotations.AlwaysAllowedAnnotationFilter
+import org.jetbrains.kotlin.light.classes.symbol.annotations.BinaryDelegateAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.DeduplicatingAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
@@ -56,12 +60,20 @@ internal class SymbolLightClassForFacade(
         createBinaryLightClassDelegate(project, facadeClassFqName, files)
     }
 
+    private val declarationFiles: List<KtFile> by lazyPub {
+        files.filter { file ->
+            file.compiledFacadeFileInfo()?.let { info ->
+                info.facadeFqName == facadeClassFqName && info.kind.isDeclarationFile
+            } ?: true
+        }.ifEmpty { files.toList() }
+    }
+
     private fun <T> withFileSymbols(action: KaSession.(List<KaFileSymbol>) -> T): T =
         analyzeForLightClasses(ktModule) {
-            action(files.map { it.symbol })
+            action(declarationFiles.map { it.symbol })
         }
 
-    private val firstFileInFacade: KtFile get() = files.first()
+    private val firstFileInFacade: KtFile get() = declarationFiles.first()
 
     @OptIn(KaImplementationDetail::class)
     override fun getModifierList(): PsiModifierList = cachedValue {
@@ -77,7 +89,9 @@ internal class SymbolLightClassForFacade(
                         annotatedSymbolPointer = analyzeForLightClasses(ktModule) {
                             firstFileInFacade.symbol.createPointer()
                         },
-                    )
+                    ),
+                    additionalAnnotationsProvider = BinaryDelegateAnnotationsProvider { binaryLightClassDelegate?.clsDelegate },
+                    annotationFilter = DeduplicatingAnnotationFilter(AlwaysAllowedAnnotationFilter),
                 )
             },
         )
@@ -109,7 +123,14 @@ internal class SymbolLightClassForFacade(
         }
     }
 
-    override val multiFileClass: Boolean get() = files.size > 1 || firstFileInFacade.isJvmMultifileClassFile
+    override val multiFileClass: Boolean
+        get() = declarationFiles.size > 1 ||
+                declarationFiles.any(KtFile::isJvmMultifileClassFile) ||
+                files.any { file ->
+                    file.compiledFacadeFileInfo()?.let { info ->
+                        info.facadeFqName == facadeClassFqName && info.kind.isMultifile
+                    } == true
+                }
 
     private fun loadFieldsFromFile(
         fileScope: KaScope,
@@ -181,11 +202,12 @@ internal class SymbolLightClassForFacade(
     override fun getQualifiedName(): String = facadeClassFqName.asString()
     override fun getNameIdentifier(): PsiIdentifier? = null
 
-    override fun isValid() = files.all {
-        it.isValid && facadeClassFqName == it.javaFileFacadeFqName
-    } && files.any {
-        it.hasTopLevelCallables()
-    }
+    override fun isValid() = files.all { file ->
+        file.isValid && (
+                file.compiledFacadeFileInfo()?.facadeFqName == facadeClassFqName ||
+                        facadeClassFqName == file.javaFileFacadeFqName
+                )
+    } && declarationFiles.any(KtFile::hasTopLevelCallables)
 
     override fun getNavigationElement() = firstFileInFacade
 

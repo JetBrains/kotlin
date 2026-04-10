@@ -112,11 +112,66 @@ internal class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupport
     @KaCachedService
     private val projectStructureProvider by lazyPub { KotlinProjectStructureProvider.getInstance(project) }
 
+    private data class CompiledFacadeFiles(
+        val declarationFiles: List<KtClsFile>,
+        val representativeFile: KtClsFile?,
+    ) {
+        val allFiles: List<KtFile>
+            get() = buildList {
+                addAll(declarationFiles)
+                representativeFile?.takeUnless(declarationFiles::contains)?.let(::add)
+            }
+
+        val anchorFile: KtClsFile?
+            get() = declarationFiles.firstOrNull() ?: representativeFile
+    }
+
     private fun PsiElement.getModuleIfSupportEnabled(): KaModule? {
         return projectStructureProvider.getModule(
             element = this,
             useSiteModule = null,
         ).takeIf(KaModule::isLightClassSupportAvailable)
+    }
+
+    private fun collectCompiledFacadeFiles(
+        facadeFqName: FqName,
+        searchScope: GlobalSearchScope,
+    ): CompiledFacadeFiles? {
+        val declarationProvider = project.createDeclarationProvider(searchScope, contextualModule = null)
+        val candidates = (declarationProvider.findInternalFilesForFacade(facadeFqName) + declarationProvider.findFilesForFacade(facadeFqName))
+            .filterIsInstance<KtClsFile>()
+            .distinctBy(KtFile::virtualFilePath)
+            .mapNotNull { file ->
+                file.compiledFacadeFileInfo()?.takeIf { it.facadeFqName == facadeFqName }?.let { file to it.kind }
+            }
+
+        if (candidates.isEmpty()) return null
+
+        val declarationFiles = candidates.filter { it.second.isDeclarationFile }.map { it.first }
+        val representativeFile = candidates.firstOrNull { !it.second.isDeclarationFile }?.first
+            ?: candidates.firstOrNull { it.second == CompiledFacadeKind.FILE_FACADE }?.first
+            ?: declarationFiles.firstOrNull()
+
+        return CompiledFacadeFiles(
+            declarationFiles = declarationFiles.ifEmpty { listOfNotNull(representativeFile) },
+            representativeFile = representativeFile,
+        )
+    }
+
+    private fun createCompiledLightFacade(
+        facadeFqName: FqName,
+        module: KaModule,
+        files: CompiledFacadeFiles,
+    ): KtLightClassForFacade? {
+        if (files.allFiles.none(KtFile::hasTopLevelCallables)) return null
+        return SymbolLightClassForFacade(facadeFqName, files.allFiles, module)
+    }
+
+    private fun KtClassOrObject.isSyntheticCompiledMultifilePartClass(): Boolean {
+        val info = containingKtFile.compiledFacadeFileInfo() ?: return false
+        return containingKtFile.isCompiled &&
+                info.kind == CompiledFacadeKind.MULTIFILE_CLASS_PART &&
+                parent == containingKtFile
     }
 
     override fun findClassOrObjectDeclarationsInPackage(
@@ -209,6 +264,10 @@ internal class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupport
     }
 
     override fun createInstanceOfLightClass(classOrObject: KtClassOrObject): KtLightClass? {
+        if (project.areSymbolLightClassesEnabledForLibraries() && classOrObject.isSyntheticCompiledMultifilePartClass()) {
+            return null
+        }
+
         val module = classOrObject.getModuleIfSupportEnabled() ?: return null
         return createSymbolLightClassNoCache(classOrObject, module)
     }
@@ -241,6 +300,44 @@ internal class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupport
 
     override fun librariesTracker(element: PsiElement): ModificationTracker {
         return project.createProjectWideLibraryModificationTracker()
+    }
+
+    override fun getLightFacade(file: KtFile): KtLightClassForFacade? {
+        if (!file.isValid || !project.areSymbolLightClassesEnabledForLibraries()) {
+            return super.getLightFacade(file)
+        }
+
+        val clsFile = file as? KtClsFile ?: return super.getLightFacade(file)
+        val facadeInfo = clsFile.compiledFacadeFileInfo() ?: return super.getLightFacade(file)
+        val module = file.findModule() as? KaLibraryModule ?: return super.getLightFacade(file)
+        if (facadeInfo.kind == CompiledFacadeKind.MULTIFILE_CLASS) return null
+
+        return cacheLightClass(file) {
+            val compiledFacadeFiles = collectCompiledFacadeFiles(facadeInfo.facadeFqName, module.contentSearchScope)
+            val value = compiledFacadeFiles?.let { createCompiledLightFacade(facadeInfo.facadeFqName, module, it) }
+            CachedValueProvider.Result.createSingleDependency(value, librariesTracker(file))
+        }
+    }
+
+    override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtLightClassForFacade> {
+        if (!project.areSymbolLightClassesEnabledForLibraries()) {
+            return super.getFacadeClasses(facadeFqName, scope)
+        }
+
+        val compiledFacadeFiles = collectCompiledFacadeFiles(facadeFqName, scope)
+        if (compiledFacadeFiles != null) {
+            val module = compiledFacadeFiles.anchorFile?.findModule() as? KaLibraryModule
+            return listOfNotNull(module?.let { createCompiledLightFacade(facadeFqName, it, compiledFacadeFiles) })
+        }
+
+        val compiledCandidates = project.createDeclarationProvider(scope, contextualModule = null)
+            .findFilesForFacade(facadeFqName)
+            .filterIsInstance<KtClsFile>()
+        if (compiledCandidates.isNotEmpty()) {
+            return emptyList()
+        }
+
+        return super.getFacadeClasses(facadeFqName, scope)
     }
 
     override fun createInstanceOfLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade? {
