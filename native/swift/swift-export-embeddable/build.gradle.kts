@@ -226,10 +226,7 @@ projectTests {
     testData(project(":native:swift:swift-export-standalone-integration-tests:external").isolated, "testData")
     testData(project(":native:swift:swift-export-standalone-integration-tests:coroutines").isolated, "testData")
 
-    nativeTestTask(
-        "testSimpleITWithEmbeddable",
-        allowUnsafe = true, // KT-85212
-    ) {
+    nativeTestTask("testSimpleITWithEmbeddable") {
         classpath = files(
             // swift-export-embeddable and its runtime dependencies is what KGP will see in SwiftExportAction
             swiftExportEmbeddableJar,
@@ -247,11 +244,7 @@ projectTests {
         }
     }
 
-    nativeTestTaskWithExternalDependencies(
-        "testExternalITWithEmbeddable",
-        requirePlatformLibs = true,
-        allowUnsafe = true, // KT-85212
-    ) {
+    nativeTestTaskWithExternalDependencies("testExternalITWithEmbeddable", requirePlatformLibs = true) {
         classpath = files(
             // swift-export-embeddable and its runtime dependencies is what KGP will see in SwiftExportAction
             swiftExportEmbeddableJar,
@@ -269,11 +262,7 @@ projectTests {
         }
     }
 
-    nativeTestTaskWithExternalDependencies(
-        "testCoroutinesITWithEmbeddable",
-        requirePlatformLibs = true,
-        allowUnsafe = true, // KT-85212
-    ) {
+    nativeTestTaskWithExternalDependencies("testCoroutinesITWithEmbeddable", requirePlatformLibs = true) {
         classpath = files(
             // swift-export-embeddable and its runtime dependencies is what KGP will see in SwiftExportAction
             swiftExportEmbeddableJar,

@@ -35,8 +35,5 @@ sourceSets {
 testsJar()
 
 projectTests {
-    objCExportHeaderGeneratorTestTask(
-        "test",
-        allowUnsafe = true, // KT-85212
-    )
+    objCExportHeaderGeneratorTestTask("test")
 }

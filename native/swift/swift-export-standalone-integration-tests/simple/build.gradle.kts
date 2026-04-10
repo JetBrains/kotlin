@@ -36,11 +36,7 @@ sourceSets {
 projectTests {
     testData(isolated, "testData")
 
-    nativeTestTask(
-        "test",
-        requirePlatformLibs = true,
-        allowUnsafe = true, // KT-85212
-    ) {
+    nativeTestTask("test", requirePlatformLibs = true) {
         dependsOn(":kotlin-native:distInvalidateStaleCaches")
         extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
             allowFlightRecorder.set(true)
