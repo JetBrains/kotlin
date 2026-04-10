@@ -7,8 +7,14 @@ package org.jetbrains.kotlin.light.classes.symbol.decompiled
 
 import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesStructureByFqNameTest
 import org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators.SymbolLightClassesDecompiledJvmTestConfigurator
+import org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators.SymbolLightClassesDecompiledSlcJvmTestConfigurator
 
 abstract class AbstractSymbolLightClassesStructureByFqNameForLibraryTest : AbstractSymbolLightClassesStructureByFqNameTest(
     configurator = SymbolLightClassesDecompiledJvmTestConfigurator,
+    stopIfCompilationErrorDirectivePresent = true,
+)
+
+abstract class AbstractSymbolLightClassesStructureByFqNameForLibrarySlcTest : AbstractSymbolLightClassesStructureByFqNameTest(
+    configurator = SymbolLightClassesDecompiledSlcJvmTestConfigurator,
     stopIfCompilationErrorDirectivePresent = true,
 )

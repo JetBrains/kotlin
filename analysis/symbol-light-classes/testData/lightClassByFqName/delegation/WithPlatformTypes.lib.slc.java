@@ -1,0 +1,6 @@
+public final class WithPlatformTypes /* WithPlatformTypes*/ implements p.J {
+  @org.jetbrains.annotations.NotNull()
+  public @<error>() @org.jetbrains.annotations.NotNull() java.lang.String foo(@org.jetbrains.annotations.NotNull() @<error>() @org.jetbrains.annotations.NotNull() java.lang.String);//  foo(@<error>() @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  public  WithPlatformTypes(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() p.J);//  .ctor(@org.jetbrains.annotations.NotNull() p.J)
+}

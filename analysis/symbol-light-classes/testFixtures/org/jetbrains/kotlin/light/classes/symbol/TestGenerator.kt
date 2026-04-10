@@ -27,6 +27,10 @@ fun main(args: Array<String>) {
                 testClass<AbstractSymbolLightClassesStructureForLibraryTest> {
                     model("structure", pattern = TestGeneratorUtil.KT)
                 }
+
+                testClass<AbstractSymbolLightClassesStructureForLibrarySlcTest> {
+                    model("structure", pattern = TestGeneratorUtil.KT)
+                }
             }
 
             run {
@@ -35,6 +39,10 @@ fun main(args: Array<String>) {
                 }
 
                 testClass<AbstractSymbolLightClassesStructureByFqNameForLibraryTest> {
+                    model("structureByFqName", pattern = TestGeneratorUtil.KT)
+                }
+
+                testClass<AbstractSymbolLightClassesStructureByFqNameForLibrarySlcTest> {
                     model("structureByFqName", pattern = TestGeneratorUtil.KT)
                 }
             }
@@ -59,6 +67,10 @@ fun main(args: Array<String>) {
 
             run {
                 testClass<AbstractSymbolLightClassesNestedClassesConsistencyForLibraryTest> {
+                    model("libraryNestedClassesConsistency", pattern = TestGeneratorUtil.KT)
+                }
+
+                testClass<AbstractSymbolLightClassesNestedClassesConsistencyForLibrarySlcTest> {
                     model("libraryNestedClassesConsistency", pattern = TestGeneratorUtil.KT)
                 }
             }
@@ -95,15 +107,18 @@ private fun TestGroup.lightClassesByPsiTests() {
     testClass<AbstractJsSymbolLightClassesByPsiForSourceTest>(init = sourceModelInit)
 
     testClass<AbstractSymbolLightClassesByPsiForLibraryTest>(init = libraryModelInit)
+    testClass<AbstractSymbolLightClassesByPsiForLibrarySlcTest>(init = libraryModelInit)
     testClass<AbstractJsSymbolLightClassesByPsiForLibraryTest>(init = libraryModelInit)
 
     testClass<AbstractSymbolLightClassesMatcherByPsiForLibraryTest>(init = libraryModelInit)
 
     testClass<AbstractSymbolLightClassesParentingByPsiForSourceTest>(init = sourceModelInit)
     testClass<AbstractSymbolLightClassesParentingByPsiForLibraryTest>(init = libraryModelInit)
+    testClass<AbstractSymbolLightClassesParentingByPsiForLibrarySlcTest>(init = libraryModelInit)
 
     testClass<AbstractSymbolLightClassesEqualityByPsiForSourceTest>(init = sourceModelInit)
     testClass<AbstractSymbolLightClassesEqualityByPsiForLibraryTest>(init = libraryModelInit)
+    testClass<AbstractSymbolLightClassesEqualityByPsiForLibrarySlcTest>(init = libraryModelInit)
 }
 
 private fun lightClassesByFqNameTestsInit(
@@ -121,11 +136,14 @@ private fun TestGroup.lightClassesByFqNameTests() {
     testClass<AbstractJsSymbolLightClassesByFqNameForSourceTest>(init = sourceModelInit)
 
     testClass<AbstractSymbolLightClassesByFqNameForLibraryTest>(init = libraryModelInit)
+    testClass<AbstractSymbolLightClassesByFqNameForLibrarySlcTest>(init = libraryModelInit)
     testClass<AbstractJsSymbolLightClassesByFqNameForLibraryTest>(init = libraryModelInit)
 
     testClass<AbstractSymbolLightClassesParentingByFqNameForSourceTest>(init = sourceModelInit)
     testClass<AbstractSymbolLightClassesParentingByFqNameForLibraryTest>(init = libraryModelInit)
+    testClass<AbstractSymbolLightClassesParentingByFqNameForLibrarySlcTest>(init = libraryModelInit)
 
     testClass<AbstractSymbolLightClassesEqualityByFqNameForSourceTest>(init = sourceModelInit)
     testClass<AbstractSymbolLightClassesEqualityByFqNameForLibraryTest>(init = libraryModelInit)
+    testClass<AbstractSymbolLightClassesEqualityByFqNameForLibrarySlcTest>(init = libraryModelInit)
 }

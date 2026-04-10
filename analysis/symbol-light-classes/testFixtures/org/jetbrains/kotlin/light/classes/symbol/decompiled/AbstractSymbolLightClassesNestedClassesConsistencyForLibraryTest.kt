@@ -7,9 +7,16 @@ package org.jetbrains.kotlin.light.classes.symbol.decompiled
 
 import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesNestedClassesConsistencyTestBase
 import org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators.SymbolLightClassesDecompiledJvmTestConfigurator
+import org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators.SymbolLightClassesDecompiledSlcJvmTestConfigurator
 
 abstract class AbstractSymbolLightClassesNestedClassesConsistencyForLibraryTest :
     AbstractSymbolLightClassesNestedClassesConsistencyTestBase(
         SymbolLightClassesDecompiledJvmTestConfigurator,
+        isTestAgainstCompiledCode = true,
+    )
+
+abstract class AbstractSymbolLightClassesNestedClassesConsistencyForLibrarySlcTest :
+    AbstractSymbolLightClassesNestedClassesConsistencyTestBase(
+        SymbolLightClassesDecompiledSlcJvmTestConfigurator,
         isTestAgainstCompiledCode = true,
     )

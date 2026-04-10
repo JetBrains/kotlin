@@ -7,9 +7,16 @@ package org.jetbrains.kotlin.light.classes.symbol.decompiled
 
 import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesEqualityByPsiTest
 import org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators.SymbolLightClassesDecompiledJvmTestConfigurator
+import org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators.SymbolLightClassesDecompiledSlcJvmTestConfigurator
 
 abstract class AbstractSymbolLightClassesEqualityByPsiForLibraryTest :
     AbstractSymbolLightClassesEqualityByPsiTest(
         SymbolLightClassesDecompiledJvmTestConfigurator,
+        stopIfCompilationErrorDirectivePresent = true
+    )
+
+abstract class AbstractSymbolLightClassesEqualityByPsiForLibrarySlcTest :
+    AbstractSymbolLightClassesEqualityByPsiTest(
+        SymbolLightClassesDecompiledSlcJvmTestConfigurator,
         stopIfCompilationErrorDirectivePresent = true
     )
