@@ -2876,35 +2876,48 @@ internal class LocationInfo(val scope: DIScopeOpaqueRef,
                             val column: Int,
                             val inlinedAt: LocationInfo? = null)
 
-internal fun NativeGenerationState.generateRuntimeConstantsModule() : LLVMModuleRef {
-    val llvmModule = LLVMModuleCreateWithNameInContext("constants", llvmContext)!!
-    LLVMSetDataLayout(llvmModule, runtime.dataLayout)
-    val static = StaticData(llvmModule, llvm)
+internal object RuntimeConstantNames {
+    const val NEED_DEBUG_INFO: String = "Kotlin_needDebugInfo"
+    const val RUNTIME_ASSERTS_MODE: String = "Kotlin_runtimeAssertsMode"
+    const val DISABLE_MMAP: String = "Kotlin_disableMmap"
+    const val CONCURRENT_WEAK_SWEEP: String = "Kotlin_concurrentWeakSweep"
+    const val GC_MARK_SINGLE_THREADED: String = "Kotlin_gcMarkSingleThreaded"
+    const val FIXED_BLOCK_PAGE_SIZE: String = "Kotlin_fixedBlockPageSize"
+    const val PAGED_ALLOCATOR: String = "Kotlin_pagedAllocator"
+    const val RUNTIME_LOGS: String = "Kotlin_runtimeLogs"
+    const val HOT_RELOAD: String = "Kotlin_hotReload"
+}
 
+internal fun NativeGenerationState.generateRuntimeConstantsModule(): LLVMModuleRef {
+    val llvmModule = LLVMModuleCreateWithNameInContext("constants", llvmContext)!!.apply {
+        LLVMSetDataLayout(this, runtime.dataLayout)
+    }
+
+    val static = StaticData(llvmModule, llvm)
     fun setRuntimeConstGlobal(name: String, value: ConstValue, linkage: LLVMLinkage = LLVMLinkage.LLVMExternalLinkage) {
         val global = static.placeGlobal(name, value)
         global.setConstant(true)
         global.setLinkage(linkage)
     }
 
-    setRuntimeConstGlobal("Kotlin_needDebugInfo", llvm.constInt32(if (shouldContainDebugInfo()) 1 else 0))
-    setRuntimeConstGlobal("Kotlin_runtimeAssertsMode", llvm.constInt32(config.runtimeAssertsMode.value))
-    setRuntimeConstGlobal("Kotlin_disableMmap", llvm.constInt32(if (config.disableMmap) 1 else 0))
-
     val runtimeLogs = ConstArray(llvm.int32Type, LoggingTag.entries.sortedBy { it.ord }.map {
         config.runtimeLogs[it]!!.ord.let { llvm.constInt32(it) }
     })
-    // Use weak linkage for Kotlin_runtimeLogs when building caches, so user code can override with strong linkage
+
+    // Use weak linkage for runtimeLogs and hotReload when building caches,
+    // so user code can override those symbols with strong linkage.
     val isCache = config.produce == CompilerOutputKind.STATIC_CACHE || config.produce == CompilerOutputKind.DYNAMIC_CACHE
-    val runtimeLogsLinkage = if (isCache) LLVMLinkage.LLVMWeakAnyLinkage else LLVMLinkage.LLVMExternalLinkage
-    setRuntimeConstGlobal("Kotlin_runtimeLogs", runtimeLogs, runtimeLogsLinkage)
-    setRuntimeConstGlobal("Kotlin_concurrentWeakSweep", llvm.constInt32(if (context.config.concurrentWeakSweep) 1 else 0))
-    setRuntimeConstGlobal("Kotlin_gcMarkSingleThreaded", llvm.constInt32(if (config.gcMarkSingleThreaded) 1 else 0))
-    setRuntimeConstGlobal("Kotlin_fixedBlockPageSize", llvm.constInt32(config.fixedBlockPageSize.toInt()))
-    setRuntimeConstGlobal("Kotlin_pagedAllocator", llvm.constInt32(if (config.pagedAllocator) 1 else 0))
-    setRuntimeConstGlobal("Kotlin_hotReload", llvm.constInt32(if (config.hotReloadEnabled) 1 else 0))
+    val sharedRuntimeConstantsLinkage = if (isCache) LLVMLinkage.LLVMWeakAnyLinkage else LLVMLinkage.LLVMExternalLinkage
 
-
+    setRuntimeConstGlobal(RuntimeConstantNames.NEED_DEBUG_INFO, llvm.constInt32(if (shouldContainDebugInfo()) 1 else 0))
+    setRuntimeConstGlobal(RuntimeConstantNames.RUNTIME_ASSERTS_MODE, llvm.constInt32(config.runtimeAssertsMode.value))
+    setRuntimeConstGlobal(RuntimeConstantNames.DISABLE_MMAP, llvm.constInt32(if (config.disableMmap) 1 else 0))
+    setRuntimeConstGlobal(RuntimeConstantNames.CONCURRENT_WEAK_SWEEP, llvm.constInt32(if (context.config.concurrentWeakSweep) 1 else 0))
+    setRuntimeConstGlobal(RuntimeConstantNames.GC_MARK_SINGLE_THREADED, llvm.constInt32(if (config.gcMarkSingleThreaded) 1 else 0))
+    setRuntimeConstGlobal(RuntimeConstantNames.FIXED_BLOCK_PAGE_SIZE, llvm.constInt32(config.fixedBlockPageSize.toInt()))
+    setRuntimeConstGlobal(RuntimeConstantNames.PAGED_ALLOCATOR, llvm.constInt32(if (config.pagedAllocator) 1 else 0))
+    setRuntimeConstGlobal(RuntimeConstantNames.RUNTIME_LOGS, runtimeLogs, sharedRuntimeConstantsLinkage)
+    setRuntimeConstGlobal(RuntimeConstantNames.HOT_RELOAD, llvm.constInt32(0), sharedRuntimeConstantsLinkage)
 
     return llvmModule
 }

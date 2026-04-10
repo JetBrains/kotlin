@@ -55,17 +55,14 @@ extern "C" KInt Konan_run_start(const int argc, const char** argv) {
 
 #ifdef KONAN_HOT_RELOAD
 
-    // 1) Find bootstrap file, fail if this wasn't found.
-    // 2) From the HotReload module, load the bootstrap file, and return the konan_start symbol
-    const auto KonanStart = HotReloadImpl::Instance().LoadBootstrapFile(bootstrapPath);
+    HotReloadImpl::Instance().LoadBootstrapFile(bootstrapPath);
+    const auto KonanStart = HotReloadImpl::Instance().LookupForKonanStart();
 
-    // 3) Run the symbol if not null
     if (KonanStart != nullptr) {
         return KonanStart(args.obj());
     }
 
-    // Something failed while loading the boostrap object, return a failure code
-    std::fprintf(stderr, "error :: could not load expected bootstrap file %s\n", kExpectedBootstrapFilePath);
+    std::fprintf(stderr, "error :: could not load expected bootstrap file at path: %s\n", kExpectedBootstrapFilePath);
     return EXIT_FAILURE;
 
 #else
@@ -75,11 +72,6 @@ extern "C" KInt Konan_run_start(const int argc, const char** argv) {
 
 extern "C" RUNTIME_EXPORT int Init_and_run_start(const int argc, const char** argv, const int memoryDeInit) {
     Kotlin_initRuntimeIfNeeded();
-
-#ifdef KONAN_HOT_RELOAD
-    // TODO: let's initialize the hot-reload module here, but maybe it should be done globally
-    HotReload::InitModule();
-#endif
 
     Kotlin_mm_switchThreadStateRunnable();
 

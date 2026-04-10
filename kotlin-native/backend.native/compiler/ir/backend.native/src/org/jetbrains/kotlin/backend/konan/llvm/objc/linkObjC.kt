@@ -10,6 +10,8 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.isFinalBinary
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportConverterConstants
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.buildWritableTypeInfoValue
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.objcexport.NSNumberKind
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
@@ -38,75 +40,38 @@ internal fun patchObjCRuntimeModule(generationState: NativeGenerationState): LLV
  */
 internal fun createObjCExportConvertersModule(llvmContext: LLVMContextRef): LLVMModuleRef {
     val module = LLVMModuleCreateWithNameInContext("objc_export_converters", llvmContext)!!
+    val pointerType = LLVMPointerTypeInContext(llvmContext, 0)!!
 
-    // Get the WritableTypeInfo struct type from runtime
-    // WritableTypeInfo contains: { TypeInfoObjCExportAddition }
-    // TypeInfoObjCExportAddition contains: { convertToRetained (i8*), objCClass (i8*), swiftClass (i8*), typeAdapter (i8*) }
-    val int8PtrType = LLVMPointerType(LLVMInt8TypeInContext(llvmContext), 0)!!
-
-    // Create the TypeInfoObjCExportAddition struct type: { i8*, i8*, i8*, i8* }
-    val objCExportAdditionType = memScoped {
-        val elementTypes = allocArrayOf(int8PtrType, int8PtrType, int8PtrType, int8PtrType)
-        LLVMStructTypeInContext(llvmContext, elementTypes, 4, 0)!!
+    // Recreate the runtime struct types as named structs so they match the runtime's type identity.
+    val objCExportAdditionType = LLVMStructCreateNamed(llvmContext, "struct.TypeInfoObjCExportAddition")!!.also {
+        memScoped {
+            val fields = allocArrayOf(pointerType, pointerType, pointerType, pointerType)
+            LLVMStructSetBody(it, fields, 4, 0)
+        }
+    }
+    val writableTypeInfoType = LLVMStructCreateNamed(llvmContext, "struct.WritableTypeInfo")!!.also {
+        memScoped {
+            val fields = allocArrayOf(objCExportAdditionType)
+            LLVMStructSetBody(it, fields, 1, 0)
+        }
     }
 
-    // Create the WritableTypeInfo struct type: { TypeInfoObjCExportAddition }
-    val writableTypeInfoType = memScoped {
-        val elementTypes = allocArrayOf(objCExportAdditionType)
-        LLVMStructTypeInContext(llvmContext, elementTypes, 1, 0)!!
-    }
-
-    // Converter function type: id (*)(ObjHeader*) -> i8* (*)(i8*)
+    // Converter function type: i8* (*)(i8*)
     val converterFuncType = memScoped {
-        val paramTypes = allocArrayOf(int8PtrType)
-        LLVMFunctionType(int8PtrType, paramTypes, 1, 0)!!
+        val paramTypes = allocArrayOf(pointerType)
+        LLVMFunctionType(pointerType, paramTypes, 1, 0)!!
     }
 
-    // Helper to declare an external converter function
-    fun declareConverter(name: String): LLVMValueRef {
-        return LLVMAddFunction(module, name, converterFuncType)!!
-    }
+    for (entry in ObjCExportConverterConstants.standardConverters) {
+        val converterFunc = LLVMAddFunction(module, entry.converterFunctionName, converterFuncType)!!
+        val converterPtr = constPointer(LLVMConstBitCast(converterFunc, pointerType)!!)
 
-    // Helper to create WritableTypeInfo global with a converter
-    fun createWritableTypeInfo(symbolName: String, converter: LLVMValueRef) {
-        // Create the struct value: { { converter, null, null, null } }
-        val nullPtr = LLVMConstNull(int8PtrType)!!
-        val converterPtr = LLVMConstBitCast(converter, int8PtrType)!!
+        val value = buildWritableTypeInfoValue(writableTypeInfoType, objCExportAdditionType, convertToRetained = converterPtr)
 
-        val objCExportAddition = memScoped {
-            val values = allocArrayOf(converterPtr, nullPtr, nullPtr, nullPtr)
-            LLVMConstStructInContext(llvmContext, values, 4, 0)!!
-        }
-
-        val writableTypeInfo = memScoped {
-            val values = allocArrayOf(objCExportAddition)
-            LLVMConstStructInContext(llvmContext, values, 1, 0)!!
-        }
-
-        // Create the global with external linkage (overrides common linkage from stdlib-cache.a)
-        val global = LLVMAddGlobal(module, writableTypeInfoType, symbolName)!!
-        LLVMSetInitializer(global, writableTypeInfo)
+        val global = LLVMAddGlobal(module, writableTypeInfoType, entry.writableTypeInfoSymbolName)!!
+        LLVMSetInitializer(global, value.llvm)
         LLVMSetLinkage(global, LLVMLinkage.LLVMExternalLinkage)
     }
-
-    // Declare converter functions (these are defined in stdlib-cache.a runtime)
-    val stringConverter = declareConverter("Kotlin_ObjCExport_CreateRetainedNSStringFromKString")
-    val listConverter = declareConverter("Kotlin_Interop_CreateRetainedNSArrayFromKList")
-    val mutableListConverter = declareConverter("Kotlin_Interop_CreateRetainedNSMutableArrayFromKList")
-    val setConverter = declareConverter("Kotlin_Interop_CreateRetainedNSSetFromKSet")
-    val mutableSetConverter = declareConverter("Kotlin_Interop_CreateRetainedKotlinMutableSetFromKSet")
-    val mapConverter = declareConverter("Kotlin_Interop_CreateRetainedNSDictionaryFromKMap")
-    val mutableMapConverter = declareConverter("Kotlin_Interop_CreateRetainedKotlinMutableDictionaryFromKMap")
-
-    // Create WritableTypeInfo globals for special classes
-    // Symbol names follow the pattern: ktypew:<FQName>
-    createWritableTypeInfo("ktypew:kotlin.String", stringConverter)
-    createWritableTypeInfo("ktypew:kotlin.collections.List", listConverter)
-    createWritableTypeInfo("ktypew:kotlin.collections.MutableList", mutableListConverter)
-    createWritableTypeInfo("ktypew:kotlin.collections.Set", setConverter)
-    createWritableTypeInfo("ktypew:kotlin.collections.MutableSet", mutableSetConverter)
-    createWritableTypeInfo("ktypew:kotlin.collections.Map", mapConverter)
-    createWritableTypeInfo("ktypew:kotlin.collections.MutableMap", mutableMapConverter)
 
     return module
 }

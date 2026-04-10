@@ -130,6 +130,9 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
         if (config.produce == CompilerOutputKind.TEST_BUNDLE) {
             add(RuntimeModule.XCTEST_LAUNCHER)
         }
+        if (config.produce == CompilerOutputKind.FRAMEWORK && config.hotReloadEnabled) {
+            add(RuntimeModule.HOT_RELOAD)
+        }
     }
 
     val runtimeBitcodeFiles = resolveRuntimeModules(runtimeModulesConfig, config) + bitcodePartOfStdlib
@@ -146,9 +149,14 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
             runtimeBitcodeFiles.takeIf { generationState.shouldLinkRuntimeNativeLibraries }.orEmpty()
     )
     val additionalModules = parseBitcodeFiles(additionalBitcodeFiles)
+
+    val hotReloadOverride = if (config.hotReloadEnabled && !generationState.producedLlvmModuleContainsStdlib) {
+        config.overrideRuntimeConstants(generationState.llvmContext, config.runtimeLogs)
+    } else null
+
     return LlvmModules(
             runtimeModules.ifNotEmpty { this + generationState.generateRuntimeConstantsModule() } ?: emptyList(),
-            additionalModules + listOfNotNull(patchObjCRuntimeModule(generationState))
+            additionalModules + listOfNotNull(patchObjCRuntimeModule(generationState)) + listOfNotNull(hotReloadOverride)
     )
 }
 

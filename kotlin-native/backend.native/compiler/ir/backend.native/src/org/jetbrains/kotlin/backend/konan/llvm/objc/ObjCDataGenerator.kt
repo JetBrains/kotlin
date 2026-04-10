@@ -101,6 +101,8 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
         fun emitInstanceMethodList(): ConstPointer {
             if (instanceMethods.isEmpty()) return llvm.nullPointer
 
+            // TODO: for hot-reload on iOS Frameworks, we need to create thunks to trigger JIT initialization.
+            // TODO: Idea: the thunk load the proper selector from the JIT engine, using fast-path.
             val methodStructs = instanceMethods.map {
                 Struct(methodType, selectors.get(it.selector), encodings.get(it.encoding), it.imp)
             }

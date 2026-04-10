@@ -7,15 +7,39 @@
 #include "llvm/Support/MemoryBuffer.h"
 
 #include <mach-o/dyld.h>
+#include <dlfcn.h>
+#include <cstring>
+
+extern "C" void KNHR_LoadObjCStubAddress();
 
 namespace kotlin::hot::orc::plugins {
 
-llvm::Expected<std::unique_ptr<MachOHostDataSymbolGenerator>> MachOHostDataSymbolGenerator::CreateForCurrentProcess() {
-    const char* execPath = _dyld_get_image_name(0);
-    if (!execPath)
-        return llvm::make_error<llvm::StringError>("Failed to get executable path", llvm::inconvertibleErrorCode());
+/// Find the dyld image index for the image containing the Kotlin/Native runtime.
+/// Returns -1 if not found.
+static int findHostImageIndex() {
+    Dl_info info;
+    if (!dladdr(reinterpret_cast<void*>(&KNHR_LoadObjCStubAddress), &info) || !info.dli_fname)
+        return -1;
 
-    auto slide = static_cast<uint64_t>(_dyld_get_image_vmaddr_slide(0));
+    const uint32_t imageCount = _dyld_image_count();
+    for (uint32_t i = 0; i < imageCount; i++) {
+        const char* name = _dyld_get_image_name(i);
+        if (name && strcmp(name, info.dli_fname) == 0)
+            return static_cast<int>(i);
+    }
+    return -1;
+}
+
+llvm::Expected<std::unique_ptr<MachOHostDataSymbolGenerator>> MachOHostDataSymbolGenerator::CreateForCurrentProcess() {
+    int imageIndex = findHostImageIndex();
+    if (imageIndex < 0)
+        return llvm::make_error<llvm::StringError>("Failed to find host image in dyld image list", llvm::inconvertibleErrorCode());
+
+    const char* execPath = _dyld_get_image_name(imageIndex);
+    if (!execPath)
+        return llvm::make_error<llvm::StringError>("Failed to get image path", llvm::inconvertibleErrorCode());
+
+    auto slide = static_cast<uint64_t>(_dyld_get_image_vmaddr_slide(imageIndex));
 
     auto bufOrErr = llvm::MemoryBuffer::getFile(execPath);
     if (!bufOrErr)
@@ -38,7 +62,6 @@ llvm::Expected<std::unique_ptr<MachOHostDataSymbolGenerator>> MachOHostDataSymbo
         unsigned flags = *flagsOrErr;
         if (flags & llvm::object::SymbolRef::SF_Undefined) continue;
         if (flags & llvm::object::SymbolRef::SF_FormatSpecific) continue;
-        if (!(flags & llvm::object::SymbolRef::SF_Global)) continue;
 
         auto nameOrErr = sym.getName();
         if (!nameOrErr) { llvm::consumeError(nameOrErr.takeError()); continue; }

@@ -88,6 +88,10 @@ ALWAYS_INLINE inline bool hotReloadEnabled() noexcept {
     return Kotlin_hotReload != 0;
 }
 
+ALWAYS_INLINE inline bool hotReloadInFramework() noexcept {
+    return Kotlin_hotReload == 2;
+}
+
 bool gcMutatorsCooperate() noexcept;
 uint32_t auxGCThreads() noexcept;
 uint32_t concurrentMarkMaxIterations() noexcept;

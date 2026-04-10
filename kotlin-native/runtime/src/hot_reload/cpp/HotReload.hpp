@@ -10,7 +10,7 @@
 
 namespace kotlin::hot {
 
-/// Public interface for HotReload - does not expose LLVM dependencies.
+/// Public interface for HotReload, does not expose LLVM dependencies.
 /// The full implementation with LLVM types is in HotReload.cpp.
 class HotReload {
 public:
@@ -20,8 +20,9 @@ public:
 } // namespace kotlin::hot
 
 extern "C" {
-    void Kotlin_native_internal_HotReload_perform(ObjHeader*, const ObjHeader* dylibPath);
+    void Kotlin_native_internal_HotReload_perform(ObjHeader*, const ObjHeader* objectPath);
     void Kotlin_native_internal_HotReload_invokeSuccessCallback();
+    void* KNHR_LoadObjCStubAddress(const char* name);
 }
 
 #endif

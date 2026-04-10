@@ -29,6 +29,10 @@ import llvm.LLVMParseBitcodeInContext2
 import llvm.LLVMSetGlobalConstant
 import llvm.LLVMSetInitializer
 import llvm.LLVMSetLinkage
+import llvm.LLVMTypeRef
+import llvm.LLVMValueRef
+import org.jetbrains.kotlin.backend.konan.llvm.RuntimeConstantNames
+import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModulesConfig
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CCallMode
@@ -39,120 +43,79 @@ import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import kotlin.collections.orEmpty
 
-/**
- * Collects bitcode modules for the hot reload host.
- *
- * When launcherOnly=true (default for hot reload):
- * - Only includes the hot reload launcher module
- * - C++ runtime and stdlib come from libstdlib-cache.a at link time
- * - This avoids duplicate symbols because host.o has no overlap with stdlib-cache.a
- *
- * When launcherOnly=false:
- * - Includes C++ runtime bitcode (GC, MM, allocator, etc.)
- * - Hot reload launcher
- *
- * @param config The Konan configuration
- * @param llvmContext The LLVM context to use for parsing bitcode
- * @param launcherOnly If true, only include launcher (C++ runtime comes from stdlib-cache.a)
- * @return List of parsed LLVM modules
- */
-internal fun collectHostModulesForHotReload(
-        config: NativeSecondStageCompilationConfig,
+// Those values are used from the runtime to check if hot-reload module is enabled,
+// and in what mode. When updating this enum class, please take a look at `CompilerConstants.hpp`
+private enum class HotReloadOrigin(val id: Int) {
+    NONE(0),
+    PROGRAM(1),
+    FRAMEWORK(2);
+
+    companion object {
+        fun of(config: NativeSecondStageCompilationConfig): HotReloadOrigin {
+            if (!config.hotReloadEnabled) return NONE
+            return when (config.produce) {
+                CompilerOutputKind.PROGRAM -> PROGRAM
+                CompilerOutputKind.FRAMEWORK -> FRAMEWORK
+                else -> NONE
+            }
+        }
+    }
+}
+
+internal fun collectHostModulesForProgramHotReload(
+        generationState: NativeGenerationState,
         llvmContext: LLVMContextRef,
-        launcherOnly: Boolean = false,
         runtimeLogs: Map<LoggingTag, LoggingLevel>? = null
 ): List<LLVMModuleRef> {
+    val config = generationState.config
     val runtimeModulesConfig = RuntimeModulesConfig(config)
 
-    fun MutableList<String>.add(module: RuntimeModule) = add(runtimeModulesConfig.absolutePathFor(module))
-
-    val bitcodeFiles = if (launcherOnly) {
-        // Include hot reload launcher + hot reload module, C++ runtime and stdlib will come from libstdlib-cache.a at link time
-        buildList {
-            if (config.produce == CompilerOutputKind.PROGRAM) {
-                // Hot reload implementation (HotReloadImpl, JITLink integration)
-                if (runtimeModulesConfig.containsHotReloadRuntime) add(RuntimeModule.HOT_RELOAD)
-                // Hot reload launcher (Konan_main, Init_and_run_start)
-                add(RuntimeModule.HOT_RELOAD_LAUNCHER)
-            }
-        }
-    } else {
-        // Include full C++ runtime (for non-hot-reload use cases)
-        resolveRuntimeModules(runtimeModulesConfig, config) + buildList {
-            if (config.produce == CompilerOutputKind.PROGRAM) {
-                add(RuntimeModule.HOT_RELOAD_LAUNCHER)
-            }
+    val bitcodeFiles = buildList {
+        if (runtimeModulesConfig.containsHotReloadRuntime) {
+            add(runtimeModulesConfig.absolutePathFor(RuntimeModule.HOT_RELOAD))
+            add(runtimeModulesConfig.absolutePathFor(RuntimeModule.HOT_RELOAD_LAUNCHER))
         }
     }
 
-    fun parseBitcodeFiles(files: List<String>): List<LLVMModuleRef> = files.mapNotNull { bitcodeFile ->
-        memScoped {
-            val bufRef = alloc<LLVMMemoryBufferRefVar>()
-            val errorRef = allocPointerTo<ByteVar>()
-
-            val res = LLVMCreateMemoryBufferWithContentsOfFile(bitcodeFile, bufRef.ptr, errorRef.ptr)
-            if (res != 0) {
-                // Failed to load bitcode file
-                return@mapNotNull null
-            }
-
-            val memoryBuffer = bufRef.value
-            try {
-                val moduleRef = alloc<LLVMModuleRefVar>()
-                val parseRes = LLVMParseBitcodeInContext2(llvmContext, memoryBuffer, moduleRef.ptr)
-                if (parseRes != 0) {
-                    // Failed to parse bitcode file
-                    return@mapNotNull null
-                }
-                moduleRef.value
-            } finally {
-                LLVMDisposeMemoryBuffer(memoryBuffer)
-            }
-        }
+    fun parseBitcodeFiles(files: List<String>): List<LLVMModuleRef> = files.map { bitcodeFile ->
+        parseBitcodeFile(generationState, generationState.messageCollector, llvmContext, bitcodeFile)
     }
 
-    val hostModules = parseBitcodeFiles(bitcodeFiles)
+    return parseBitcodeFiles(bitcodeFiles) + config.overrideRuntimeConstants(llvmContext, runtimeLogs)
+}
 
-    // If runtimeLogs is provided, generate a constants module with strong linkage
-    // This overrides the weak Kotlin_runtimeLogs from stdlib-cache.a
-    val modulesWithConstants = if (runtimeLogs != null) {
-        val constantsModule = generateRuntimeLogsModule(llvmContext, runtimeLogs)
-        hostModules + constantsModule
-    } else {
-        hostModules
+private fun LLVMModuleRef.addStrongLinkageConstant(name: String, type: LLVMTypeRef, initializer: LLVMValueRef) {
+    LLVMAddGlobal(this, type, name)!!.apply {
+        LLVMSetInitializer(this, initializer)
+        LLVMSetGlobalConstant(this, 1)
+        LLVMSetLinkage(this, LLVMLinkage.LLVMExternalLinkage)
     }
-
-    return modulesWithConstants
 }
 
 /**
- * Generates a minimal LLVM module containing only the Kotlin_runtimeLogs constant with strong linkage.
- * This overrides the weak symbol from stdlib-cache.a, allowing user-specified logging levels.
+ * Generates a minimal LLVM module containing only the runtime constants with strong linkage.
  */
-private fun generateRuntimeLogsModule(
+internal fun NativeSecondStageCompilationConfig.overrideRuntimeConstants(
         llvmContext: LLVMContextRef,
-        runtimeLogs: Map<LoggingTag, LoggingLevel>
+        runtimeLogs: Map<LoggingTag, LoggingLevel>?
 ): LLVMModuleRef {
-    val module = LLVMModuleCreateWithNameInContext("runtime_logs", llvmContext)!!
 
-    val int32Type = LLVMInt32TypeInContext(llvmContext)
+    // Override weak symbols from the cache with a stronger one
+    val module = LLVMModuleCreateWithNameInContext("strong_constants", llvmContext)!!
+    val int32Type = LLVMInt32TypeInContext(llvmContext)!!
 
-    // Create the array of log levels (one for each LoggingTag)
-    val logLevels = LoggingTag.entries.sortedBy { it.ord }.map { tag ->
-        val level = runtimeLogs[tag] ?: LoggingLevel.None
-        LLVMConstInt(int32Type, level.ord.toLong(), 0)
+    val hotReloadOrigin = HotReloadOrigin.of(this@overrideRuntimeConstants)
+    module.addStrongLinkageConstant(RuntimeConstantNames.HOT_RELOAD, int32Type, LLVMConstInt(int32Type, hotReloadOrigin.id.toLong(), 0)!!)
+
+    if (runtimeLogs != null) {
+        val logLevels = LoggingTag.entries.sortedBy { it.ord }.map { tag ->
+            val level = runtimeLogs[tag] ?: LoggingLevel.None
+            LLVMConstInt(int32Type, level.ord.toLong(), 0)
+        }
+        val arrayType = LLVMArrayType(int32Type, logLevels.size)!!
+        val arrayConstant = LLVMConstArray(int32Type, logLevels.toCValues(), logLevels.size)!!
+        module.addStrongLinkageConstant(RuntimeConstantNames.RUNTIME_LOGS, arrayType, arrayConstant)
     }
-
-    // Create the array type and constant array
-    val arrayType = LLVMArrayType(int32Type, logLevels.size)!!
-    val arrayConstant = LLVMConstArray(int32Type, logLevels.toCValues(), logLevels.size)!!
-
-    // Create the global variable with STRONG linkage (External)
-    // This will override the weak symbol from stdlib-cache.a
-    val global = LLVMAddGlobal(module, arrayType, "Kotlin_runtimeLogs")!!
-    LLVMSetInitializer(global, arrayConstant)
-    LLVMSetGlobalConstant(global, 1)
-    LLVMSetLinkage(global, LLVMLinkage.LLVMExternalLinkage)
 
     return module
 }
@@ -191,13 +154,13 @@ internal fun linkLibraryBitcodeForHotReload(
 
     // Collect all bitcode files to link into bootstrap (interop stubs only, no runtime)
     val bitcodeFilesToLink = buildList<String> {
+        // NOTE: We intentionally skip:
+        // - RuntimeModule.LAUNCHER (goes to host)
+        // - Runtime modules (MM, GC, alloc), they're in libstdlib-cache.a
+        // - config.nativeLibraries, user native libraries (may need to revisit)
         addAll(generatedBitcodeFiles.map { it.absoluteFile.normalize().path })
         addAll(additionalProducedBitcodeFiles)
         addAll(bitcodeLibraries)
-        // NOTE: We intentionally skip:
-        // - RuntimeModule.LAUNCHER (goes to host)
-        // - Runtime modules (MM, GC, alloc) - they're in libstdlib-cache.a
-        // - config.nativeLibraries - user native libraries (may need to revisit)
     }
 
     if (bitcodeFilesToLink.isEmpty()) {

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.reportCompilationWarning
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode
 import org.jetbrains.kotlin.konan.config.saveLlvmIr
 import org.jetbrains.kotlin.konan.target.*

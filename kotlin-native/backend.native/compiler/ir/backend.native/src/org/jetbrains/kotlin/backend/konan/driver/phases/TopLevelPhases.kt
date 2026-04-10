@@ -235,6 +235,30 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                             )
                         }
 
+                        config.isCompilingHotReloadFramework -> {
+                            // Framework compilation is harder to split at the moment, because we would need to modify the
+                            // Objective-C part quite heavily. So, in we decided to embed the user code within the final
+                            // framework plus the bootstrap (to fix linking issues with Swift compilation).
+                            // At runtime, the code actual code used is the bootstrap's one.
+
+                            val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
+
+                            generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, cExportFiles)
+
+                            val dependenciesTrackingResult = generationState.dependenciesTracker.collectResult()
+                            val depsFilePath = config.writeSerializedDependencies
+                            if (!depsFilePath.isNullOrEmpty()) {
+                                depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(dependenciesTrackingResult))
+                            }
+
+                            val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult)
+                            generationStateEngine.compileAndLinkForHotReloadFramework(
+                                    moduleCompilationOutput,
+                                    outputFiles,
+                                    tempFiles,
+                            )
+                        }
+
                         config.isCompilingGuestCodeOnly -> {
 
                             val bootstrapBitcodeFile = tempFiles.create("bootstrap", ".bc").javaFile()

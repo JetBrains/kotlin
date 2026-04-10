@@ -8,6 +8,7 @@
 #include <fstream>
 #include <utility>
 #include <unistd.h>
+#include <dlfcn.h>
 
 #include "Memory.h"
 #include "Natives.h"
@@ -36,11 +37,13 @@
 #include "llvm/ExecutionEngine/Orc/MemoryMapper.h"
 
 #if KONAN_OBJC_INTEROP
-#include "ObjCExportInit.h"
 
-// Extern declaration for the weak symbol defined in ObjCInterop.mm
-// This needs to be set from JIT'd code before ObjC class creation
+#include "ObjCExportInit.h"
+#include "objc_support/ObjectPtr.hpp"
+#include <CoreFoundation/CoreFoundation.h>
+
 extern "C" __attribute__((weak)) const char* Kotlin_ObjCInterop_uniquePrefix;
+
 #endif
 
 using namespace kotlin;
@@ -61,7 +64,13 @@ static constexpr auto kDefaultBrewOrcRuntimePath =
         "~/.konan/dependencies/llvm-21-aarch64-macos-dev-93/lib/clang/21/lib/darwin/liborc_rt_osx.a";
 // endregion
 
+
 static ManuallyScoped<HotReloadImpl> globalDataInstance{};
+
+// Flag indicating if the running program has initialized its bootstrap object.
+// This flag is used mainly for framework initialization.
+static std::atomic_bool hasBeenBootstrapped{false};
+
 static llvm::ExitOnError ExitOnErr;
 
 /// Forward declarations for GC functions.
@@ -133,15 +142,79 @@ void visitObjectGraph(ObjHeader* startObject, F processingFunction) {
 
 // region Extern "C" functions
 
+static std::string findBootstrapPathInFramework() {
+
+    using namespace objc_support;
+
+    Dl_info info{};
+    if (!dladdr(reinterpret_cast<void*>(&KNHR_LoadObjCStubAddress), &info) || !info.dli_fname)
+        return "";
+
+    const object_ptr<CFStringRef> binaryPath{CFStringCreateWithCString(nullptr, info.dli_fname, kCFStringEncodingUTF8)};
+    if (!binaryPath) return "";
+
+    const object_ptr<CFURLRef> binaryURL{CFURLCreateWithFileSystemPath(nullptr, binaryPath.get(), kCFURLPOSIXPathStyle, false)};
+    if (!binaryURL) return "";
+
+    const object_ptr<CFURLRef> frameworkURL{CFURLCreateCopyDeletingLastPathComponent(nullptr, binaryURL.get())};
+    if (!frameworkURL) return "";
+
+    const object_ptr<CFBundleRef> bundle{CFBundleCreate(nullptr, frameworkURL.get())};
+    if (!bundle) return "";
+
+    const object_ptr<CFURLRef> resourceURL{CFBundleCopyResourceURL(bundle.get(), CFSTR("bootstrap"), CFSTR("o"), nullptr)};
+    if (!resourceURL) return "";
+
+    char path[PATH_MAX];
+    if (!CFURLGetFileSystemRepresentation(resourceURL.get(), true, reinterpret_cast<UInt8*>(path), PATH_MAX)) {
+        return "";
+    }
+
+    return std::string{path};
+}
+
+static void ensureBootstrapped() {
+
+    bool expected = false;
+    if (!hasBeenBootstrapped.compare_exchange_strong(expected, true)) {
+        return;
+    }
+
+    Kotlin_initRuntimeIfNeeded();
+
+    // Now, we need to understand if the runtime is running from a framework.
+    // In that case, the boostrap object is located within the loaded
+    // framework at runtime.
+    if (compiler::hotReloadInFramework()) {
+        auto bootstrapObjectPath = findBootstrapPathInFramework();
+        if (bootstrapObjectPath.empty()) {
+            HRLogError("Could not find bootstrap object path in framework. Application will fail to launch.");
+            return;
+        }
+        HotReloadImpl::Instance().LoadBootstrapFile(bootstrapObjectPath);
+    }
+
+    // If that's not the case, it means the application has been compiled in `program` mode.
+    // Meaning that the boostrap object will be loaded by the hot_launcher component.
+    // We do not do anything in this case.
+}
+
 extern "C" {
+
 void Kotlin_native_internal_HotReload_perform(ObjHeader* obj, const ObjHeader* dylibPathStr) {
     AssertThreadState(ThreadState::kRunnable);
-
     // TODO: fix implementation. This is not a priority function atm.
-
     // const auto dylibPath = kotlin::to_string<KStringConversionMode::UNCHECKED>(dylibPathStr);
     // HotReloadImpl::Instance().Reload(dylibPath);
 }
+
+void* KNHR_LoadObjCStubAddress(const char* name) {
+    ensureBootstrapped();
+    void* address = HotReloadImpl::Instance().LookupForSymbolInBootstrap(name);
+    HRLogInfo("Loading ObjC stub address for symbol: %s. value: %p", name, address);
+    return address;
+}
+
 }
 
 // endregion
@@ -164,6 +237,17 @@ HotReloadImpl& HotReloadImpl::Instance() noexcept {
 
 StatsCollector& HotReloadImpl::GetStatsCollector() noexcept {
     return statsCollector_;
+}
+
+void* HotReloadImpl::LookupForSymbolInBootstrap(const char* symbolName) const {
+    auto BootstrapJD = jit_->getJITDylibByName(kBootstrapJdName);
+    auto sym = jit_->lookup(*BootstrapJD, symbolName);
+    if (!sym) {
+        llvm::consumeError(sym.takeError());
+        HRLogError("failed to lookup symbol '%s' in BootstrapJD", symbolName);
+        return nullptr;
+    }
+    return sym->toPtr<void*>();
 }
 
 void HotReloadImpl::StartServer() {
@@ -305,93 +389,70 @@ void HotReloadImpl::InitializeObjCUniquePrefixFromJIT(llvm::orc::JITDylib& Boots
         return;
     }
 
-    HRLogDebug("Found _Kotlin_ObjCInterop_uniquePrefix @ 0x%llx -> \"%s\"", prefixResult->getAddress().getValue(), jitPrefix);
-
     // Set the runtime's weak symbol to the JIT value
     Kotlin_ObjCInterop_uniquePrefix = jitPrefix;
     HRLogDebug("ObjC unique prefix initialized: \"%s\"", Kotlin_ObjCInterop_uniquePrefix);
 }
 
+struct ObjCAdapterTable {
+    const ObjCTypeAdapter** entries = nullptr;
+    int count = 0;
+};
+
+template <typename T>
+std::optional<T> LookupOptional(llvm::orc::ExecutionSession& es, const llvm::orc::JITDylibSearchOrder& order, const llvm::orc::SymbolStringPtr& name, const char* logLabel) {
+    auto result = es.lookup(order, name);
+    if (!result) {
+        llvm::consumeError(result.takeError());
+        HRLogWarning("%s not found in JIT'd code", logLabel);
+        return std::nullopt;
+    }
+    return *result->getAddress().toPtr<T*>();
+}
+
+ObjCAdapterTable LookupObjCExportAdapters(llvm::orc::ExecutionSession& ES, llvm::orc::JITDylib& BootstrapJD, const char* adaptersSym, const char* adaptersNumSym) {
+    const ObjCTypeAdapter** adapters = nullptr;
+    int numAdapters = 0;
+
+    const auto bootstrapSearchOrder = llvm::orc::makeJITDylibSearchOrder({&BootstrapJD}, llvm::orc::JITDylibLookupFlags::MatchAllSymbols);
+
+    const auto adaptersName = ES.intern(adaptersSym);
+    const auto adaptersNumName = ES.intern(adaptersNumSym);
+
+    const auto adaptersResult = LookupOptional<const ObjCTypeAdapter**>(ES, bootstrapSearchOrder, adaptersName, adaptersSym);
+    const auto adaptersNumResult = LookupOptional<int>(ES, bootstrapSearchOrder, adaptersNumName, adaptersNumSym);
+
+    if (adaptersResult.has_value()) {
+        adapters = adaptersResult.value();
+    }
+
+    if (adaptersNumResult.has_value()) {
+        numAdapters = adaptersNumResult.value();
+    }
+
+    return {adapters, numAdapters};
+}
+
 /// Initialize ObjC type adapters from symbols defined in JIT'd code.
 /// This looks up the adapter arrays from the JIT and passes them to the runtime.
-///
-/// NOTE: We do NOT check _Kotlin_ObjCExport_initTypeAdapters flag here because:
-/// - That flag is a weak symbol with default value (false) in host.kexe
-/// - The actual adapter arrays are in bootstrap.o (JIT-loaded code)
-/// - DynamicLibrarySearchGenerator finds the host's weak default first
-/// So we directly look for the adapter arrays themselves.
 void HotReloadImpl::InitializeObjCAdaptersFromJIT(llvm::orc::JITDylib& BootstrapJD) const {
-    auto& ES = jit_->getExecutionSession();
+    /// We do NOT check _Kotlin_ObjCExport_initTypeAdapters flag here because:
+    /// - That flag is a weak symbol with default value (false) in host.kexe
+    /// - The actual adapter arrays are in bootstrap.o (JIT-loaded code)
+    /// - DynamicLibrarySearchGenerator finds the host's weak default first
+    /// So we directly look for the adapter arrays themselves.
 
     HRLogDebug("Looking up ObjC type adapter symbols from JIT (BootstrapJD)...");
 
-    // Symbol names for ObjC type adapters (with underscore prefix for macOS)
-    const auto classAdaptersName = ES.intern("_Kotlin_ObjCExport_sortedClassAdapters");
-    const auto classAdaptersNumName = ES.intern("_Kotlin_ObjCExport_sortedClassAdaptersNum");
-    const auto protocolAdaptersName = ES.intern("_Kotlin_ObjCExport_sortedProtocolAdapters");
-    const auto protocolAdaptersNumName = ES.intern("_Kotlin_ObjCExport_sortedProtocolAdaptersNum");
+    auto& ES = jit_->getExecutionSession();
+    auto clazzAdapters = LookupObjCExportAdapters(ES, BootstrapJD, "_Kotlin_ObjCExport_sortedClassAdapters", "_Kotlin_ObjCExport_sortedClassAdaptersNum");
+    auto protoAdapters = LookupObjCExportAdapters(ES, BootstrapJD, "_Kotlin_ObjCExport_sortedProtocolAdapters", "_Kotlin_ObjCExport_sortedProtocolAdaptersNum");
 
-    // Look up from BootstrapJD where bootstrap.o defines the real adapter arrays.
-    // MainJD's DynamicLibrarySearchGenerator would find the host's weak null symbols instead.
-    // Use MatchAllSymbols because these data symbols are "private external" (N_PEXT) in the
-    // object file, which maps to Scope::Hidden in JITLink. The default MatchExportedSymbolsOnly
-    // would skip them.
-    auto bootstrapSearchOrder = llvm::orc::makeJITDylibSearchOrder({&BootstrapJD}, llvm::orc::JITDylibLookupFlags::MatchAllSymbols);
-
-    // Look up class adapters
-    const ObjCTypeAdapter** classAdapters = nullptr;
-    int classAdaptersNum = 0;
-
-    auto classAdaptersResult = ES.lookup(bootstrapSearchOrder, classAdaptersName);
-    if (!classAdaptersResult) {
-        llvm::consumeError(classAdaptersResult.takeError());
-        HRLogDebug("_Kotlin_ObjCExport_sortedClassAdapters not found");
-    } else {
-        // The symbol is a pointer to array, so we dereference once to get the array pointer
-        classAdapters = *classAdaptersResult->getAddress().toPtr<const ObjCTypeAdapter***>();
-        HRLogDebug(
-                "Found _Kotlin_ObjCExport_sortedClassAdapters @ 0x%llx -> 0x%llx", classAdaptersResult->getAddress().getValue(),
-                (unsigned long long)classAdapters);
-    }
-
-    auto classAdaptersNumResult = ES.lookup(bootstrapSearchOrder, classAdaptersNumName);
-    if (!classAdaptersNumResult) {
-        llvm::consumeError(classAdaptersNumResult.takeError());
-        HRLogDebug("_Kotlin_ObjCExport_sortedClassAdaptersNum not found");
-    } else {
-        classAdaptersNum = *classAdaptersNumResult->getAddress().toPtr<int*>();
-        HRLogDebug("Found _Kotlin_ObjCExport_sortedClassAdaptersNum = %d", classAdaptersNum);
-    }
-
-    // Look up protocol adapters
-    const ObjCTypeAdapter** protocolAdapters = nullptr;
-    int protocolAdaptersNum = 0;
-
-    auto protocolAdaptersResult = ES.lookup(bootstrapSearchOrder, protocolAdaptersName);
-    if (!protocolAdaptersResult) {
-        llvm::consumeError(protocolAdaptersResult.takeError());
-        HRLogDebug("_Kotlin_ObjCExport_sortedProtocolAdapters not found");
-    } else {
-        protocolAdapters = *protocolAdaptersResult->getAddress().toPtr<const ObjCTypeAdapter***>();
-        HRLogDebug(
-                "Found _Kotlin_ObjCExport_sortedProtocolAdapters @ 0x%llx -> 0x%llx", protocolAdaptersResult->getAddress().getValue(),
-                (unsigned long long)protocolAdapters);
-    }
-
-    auto protocolAdaptersNumResult = ES.lookup(bootstrapSearchOrder, protocolAdaptersNumName);
-    if (!protocolAdaptersNumResult) {
-        llvm::consumeError(protocolAdaptersNumResult.takeError());
-        HRLogDebug("_Kotlin_ObjCExport_sortedProtocolAdaptersNum not found");
-    } else {
-        protocolAdaptersNum = *protocolAdaptersNumResult->getAddress().toPtr<int*>();
-        HRLogDebug("Found _Kotlin_ObjCExport_sortedProtocolAdaptersNum = %d", protocolAdaptersNum);
-    }
-
-    HRLogDebug("Found %d class adapters and %d protocol adapters from JIT", classAdaptersNum, protocolAdaptersNum);
+    HRLogDebug("Found %d class adapters and %d protocol adapters from JIT", clazzAdapters.count, protoAdapters.count);
 
     // Initialize adapters in the runtime
-    if (classAdaptersNum > 0 || protocolAdaptersNum > 0) {
-        Kotlin_ObjCExport_initializeTypeAdaptersWithPointers(classAdapters, classAdaptersNum, protocolAdapters, protocolAdaptersNum);
+    if (clazzAdapters.count > 0 || protoAdapters.count > 0) {
+        Kotlin_ObjCExport_initializeTypeAdaptersWithPointers(clazzAdapters.entries, clazzAdapters.count, protoAdapters.entries  , protoAdapters.count);
         HRLogDebug("ObjC type adapters initialized from JIT");
     } else {
         HRLogDebug("No ObjC type adapters found in JIT'd code");
@@ -433,7 +494,9 @@ llvm::Error HotReloadImpl::RedirectStubsToImpl(llvm::orc::JITDylib& JD, const st
         for (auto& SymName : symbolNames) {
             triggerSymbols.add(es.intern(SymName));
         }
-        auto triggerResult = es.lookup(llvm::orc::makeJITDylibSearchOrder({&JD}), std::move(triggerSymbols));
+        auto triggerResult = es.lookup(
+                llvm::orc::makeJITDylibSearchOrder({&JD}, llvm::orc::JITDylibLookupFlags::MatchAllSymbols),
+                std::move(triggerSymbols));
         if (!triggerResult) {
             return triggerResult.takeError();
         }
@@ -443,7 +506,9 @@ llvm::Error HotReloadImpl::RedirectStubsToImpl(llvm::orc::JITDylib& JD, const st
     llvm::orc::SymbolMap dests{};
     for (auto& symName : symbolNames) {
         auto implName = symName + kImplSymbolSuffix;
-        auto symOrErr = es.lookup(llvm::orc::makeJITDylibSearchOrder({&JD}), es.intern(implName));
+        auto symOrErr = es.lookup(
+                llvm::orc::makeJITDylibSearchOrder({&JD}, llvm::orc::JITDylibLookupFlags::MatchAllSymbols),
+                es.intern(implName));
         if (!symOrErr) {
             HRLogWarning("Failed to lookup impl symbol %s", implName.c_str());
             llvm::consumeError(symOrErr.takeError());
@@ -476,7 +541,22 @@ void HotReloadImpl::LoadCacheDependencies(const std::string_view bootstrapFilePa
 
     manifestFile.close();
 }
-KonanStartFunc HotReloadImpl::LoadBootstrapFile(const std::string_view bootstrapFilePath) {
+
+KonanStartFunc HotReloadImpl::LookupForKonanStart() const {
+    auto& es = jit_->getExecutionSession();
+
+    auto bootstrapJD = es.getJITDylibByName(kBootstrapJdName);
+    if (!bootstrapJD) {
+        HRLogError("Bootstrap JITDylib not found");
+        return nullptr;
+    }
+
+    // Trigger materialization via Konan_start lookup
+    const auto KonanStartSymbol = ExitOnErr(es.lookup(llvm::orc::makeJITDylibSearchOrder(bootstrapJD), es.intern(kKonanStartSymbol)));
+    return KonanStartSymbol.toPtr<KonanStartFunc>();
+}
+
+void HotReloadImpl::LoadBootstrapFile(const std::string_view bootstrapFilePath) {
     HRLogDebug("Loading bootstrap file: %s", bootstrapFilePath.data());
 
     auto& es = jit_->getExecutionSession();
@@ -502,10 +582,10 @@ KonanStartFunc HotReloadImpl::LoadBootstrapFile(const std::string_view bootstrap
     const auto objMemoryBuff = ReadObjectFileFromPath(bootstrapFilePath);
     if (!objMemoryBuff) {
         HRLogError("Failed to parse bootstrap object file, the application cannot be started.");
-        return nullptr;
+        return;
     }
 
-    auto bootstrapObject = KotlinObjectFile::Create(*objMemoryBuff, jit_->getExecutionSession().getSymbolStringPool());
+    const auto bootstrapObject = KotlinObjectFile::Create(*objMemoryBuff, jit_->getExecutionSession().getSymbolStringPool());
 
     // Create redirectable stubs in StubsJD (addr=0, will be redirected after materialization)
     ExitOnErr(CreateRedirectableStubs(bootstrapObject.functions));
@@ -514,7 +594,7 @@ KonanStartFunc HotReloadImpl::LoadBootstrapFile(const std::string_view bootstrap
     std::unordered_set<std::string> classSymbols{};
 
     for (auto functionSym : bootstrapObject.functions) functionSymbols.insert(functionSym);
-    for (auto classSym : bootstrapObject.functions) classSymbols.insert(classSym);
+    for (auto classSym : bootstrapObject.classes) classSymbols.insert(classSym);
 
     latestLoadedFunctionSymbols_ = functionSymbols;
     latestLoadedClassSymbols_ = classSymbols;
@@ -546,8 +626,8 @@ KonanStartFunc HotReloadImpl::LoadBootstrapFile(const std::string_view bootstrap
 
     ExitOnErr(RedirectStubsToImpl(bootstrapJD, latestLoadedFunctionSymbols_));
 
-    // Trigger materialization via Konan_start lookup
-    const auto KonanStartSymbol = ExitOnErr(es.lookup(llvm::orc::makeJITDylibSearchOrder(&bootstrapJD), es.intern(kKonanStartSymbol)));
+    // TODO: remove this: used to trigger materialization
+    // auto _ignored = es.lookup(llvm::orc::makeJITDylibSearchOrder(&bootstrapJD), es.intern(kKonanStartSymbol));
 
     // Call _Konan_constructors from JIT'd code to register InitNodes from all cache libraries.
     // The runtime was initialized before bootstrap.o was loaded, so the InitNode list was empty
@@ -581,7 +661,6 @@ KonanStartFunc HotReloadImpl::LoadBootstrapFile(const std::string_view bootstrap
     InitializeObjCAdaptersFromJIT(bootstrapJD);
 #endif
 
-    return KonanStartSymbol.toPtr<KonanStartFunc>();
 }
 
 bool HotReloadImpl::LoadObjectsAndUpdateFunctionStubs(const std::vector<std::string>& objectPaths) {
@@ -598,10 +677,21 @@ bool HotReloadImpl::LoadObjectsAndUpdateFunctionStubs(const std::vector<std::str
 
     jds_.push_back(&reloadedJD);
 
-    // ReloadJD links to StubsJD so _kfun: refs resolve via stubs
     reloadedJD.addToLinkOrder(*getStubsJD());
-    // Link reload dylib to main dylib for runtime symbol access
     reloadedJD.addToLinkOrder(jit_->getMainJITDylib());
+
+    // Add generators directly to reloadJD so host symbols are resolvable
+    // during materialization (generators on linked JITDylibs may not fire).
+    if (auto hostGen = MachOHostDataSymbolGenerator::CreateForCurrentProcess()) {
+        reloadedJD.addGenerator(std::move(*hostGen));
+    } else {
+        llvm::consumeError(hostGen.takeError());
+    }
+    if (auto dlsymGen = llvm::orc::DynamicLibrarySearchGenerator::GetForCurrentProcess(jit_->getDataLayout().getGlobalPrefix())) {
+        reloadedJD.addGenerator(std::move(*dlsymGen));
+    } else {
+        llvm::consumeError(dlsymGen.takeError());
+    }
 
     std::unordered_set<std::string> loadedFunctionSymbols;
     std::unordered_set<std::string> loadedClassSymbols;
@@ -644,9 +734,7 @@ bool HotReloadImpl::LoadObjectsAndUpdateFunctionStubs(const std::vector<std::str
 
     // Redirect stubs to point to new implementations
     if (auto err = RedirectStubsToImpl(reloadedJD, latestLoadedFunctionSymbols_)) {
-        ExitOnErr(handleErrors(std::move(err), [](const llvm::jitlink::JITLinkError& error) {
-            HRLogError("Failed to redirect stubs to implementation after reload: %s", error.getErrorMessage().c_str());
-        }));
+        HRLogError("RedirectStubsToImpl failed: %s\n", llvm::toString(std::move(err)).c_str());
         return false;
     }
 

@@ -117,7 +117,11 @@ internal class Linker(
                     Family.OSX -> "Versions/A/$dylibName"
                     else -> error(target)
                 }
-                additionalLinkerArgs = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath")
+                additionalLinkerArgs = buildList {
+                    if (!config.hotReloadEnabled) add("-dead_strip")
+                    add("-install_name")
+                    add("@rpath/${framework.name}/$dylibRelativePath")
+                }
                 val dylibPath = framework.child(dylibRelativePath)
                 dylibPath.parentFile.mkdirs()
                 executable = dylibPath.absolutePath

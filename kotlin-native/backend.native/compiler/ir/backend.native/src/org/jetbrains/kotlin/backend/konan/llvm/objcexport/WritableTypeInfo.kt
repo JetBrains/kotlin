@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 
-import kotlinx.cinterop.toKString
 import llvm.LLVMLinkage
-import llvm.LLVMPrintTypeToString
+import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.ConstPointer
 import org.jetbrains.kotlin.backend.konan.llvm.ConstValue
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.ContextUtils
 import org.jetbrains.kotlin.backend.konan.llvm.StaticData
 import org.jetbrains.kotlin.backend.konan.llvm.Struct
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
-import org.jetbrains.kotlin.backend.konan.llvm.llvmType
 import org.jetbrains.kotlin.backend.konan.llvm.replaceExternalWeakOrCommonGlobal
 import org.jetbrains.kotlin.backend.konan.llvm.writableTypeInfoSymbolName
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -111,10 +109,10 @@ private fun CodeGenerator.setWritableTypeInfo(
         writableTypeInfoValue: Struct,
 ) {
     if (isExternal(irClass)) {
-        // For hot reload bootstrap: Skip setting writable type info for external classes (stdlib).
+        // For hot reload guest: Skip setting writable type info for external classes (stdlib).
         // The host's stdlib-cache.a already has these properly configured.
         // Creating local definitions would cause TypeInfo pointer mismatches at runtime.
-        if (context.config.hotReloadEnabled) {
+        if (context.config.hotReloadGuestMode) {
             return
         }
         // Note: this global replaces the external one with common linkage.
@@ -134,28 +132,41 @@ private fun CodeGenerator.setWritableTypeInfo(
     }
 }
 
-private fun CodeGenerator.buildWritableTypeInfoValue(
+/**
+ * Builds a WritableTypeInfo constant struct value.
+ *
+ * Decoupled from [CodeGenerator] so it can be used both by the normal compilation pipeline
+ * and by the hot-reload HOST module builder (which has no [CodeGenerator] context).
+ */
+internal fun buildWritableTypeInfoValue(
+        writableTypeInfoType: LLVMTypeRef,
+        typeInfoObjCExportAddition: LLVMTypeRef,
         convertToRetained: ConstPointer?,
-        objCClass: ConstPointer?,
+        objCClass: ConstPointer? = null,
         swiftClass: ConstPointer? = null,
-        typeAdapter: ConstPointer?
+        typeAdapter: ConstPointer? = null,
 ): Struct {
-    if (convertToRetained != null) {
-        val expectedType = llvm.pointerType
-        assert(convertToRetained.llvmType == expectedType) {
-            "Expected: ${LLVMPrintTypeToString(expectedType)!!.toKString()} " +
-                    "found: ${LLVMPrintTypeToString(convertToRetained.llvmType)!!.toKString()}"
-        }
-    }
-
     val objCExportAddition = Struct(
-            runtime.typeInfoObjCExportAddition,
+            typeInfoObjCExportAddition,
             convertToRetained,
             objCClass,
             swiftClass,
             typeAdapter
     )
 
-    val writableTypeInfoType = runtime.writableTypeInfoType!!
     return Struct(writableTypeInfoType, objCExportAddition)
 }
+
+private fun CodeGenerator.buildWritableTypeInfoValue(
+        convertToRetained: ConstPointer?,
+        objCClass: ConstPointer?,
+        swiftClass: ConstPointer? = null,
+        typeAdapter: ConstPointer?
+): Struct = buildWritableTypeInfoValue(
+        writableTypeInfoType = runtime.writableTypeInfoType!!,
+        typeInfoObjCExportAddition = runtime.typeInfoObjCExportAddition,
+        convertToRetained = convertToRetained,
+        objCClass = objCClass,
+        swiftClass = swiftClass,
+        typeAdapter = typeAdapter,
+)

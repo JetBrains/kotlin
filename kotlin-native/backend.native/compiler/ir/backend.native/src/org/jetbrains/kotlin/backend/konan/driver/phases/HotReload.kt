@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.impl.javaFile
 import java.io.File
 
@@ -50,17 +51,6 @@ import java.io.File
  *
  */
 
-/**
- * Represents the output generated from a hot reload compilation process.
- *
- * @property hostExecutable The file path to the host executable, which includes the runtime, launcher, and platform support.
- * @property bootstrapObject The file path to the bootstrap object file, which contains the compiled user code.
- */
-internal data class HotReloadLinkOutput(
-        val hostExecutable: File,
-        val bootstrapObject: File,
-)
-
 sealed interface HotReloadCompilationOutput {
     val bootstrapBitcodeFile: File
     val dependenciesTrackingResult: DependenciesTrackingResult
@@ -83,13 +73,6 @@ internal data class HotReloadGuestCompilationOutput(
         override val dependenciesTrackingResult: DependenciesTrackingResult,
 ) : HotReloadCompilationOutput
 
-/**
- * Result of guest-only hot reload compilation.
- */
-internal data class HotReloadGuestLinkOutput(
-        val guestObject: File,
-)
-
 private data class BootstrapCompilationMetadata(
         val bootstrapObject: File,
         val forceLoadCaches: List<String>,
@@ -99,18 +82,14 @@ private data class BootstrapCompilationMetadata(
 
 private const val MANIFEST_DEPS_FILE_EXTENSION: String = "cache-deps"
 
-/**
- * The compiler will produce the host executable, plus the bootstrap guest code.
- */
 val NativeSecondStageCompilationConfig.isCompilingHostCode: Boolean
     get() = hotReloadHostMode && produce == CompilerOutputKind.PROGRAM
 
-/**
- * The compiler will emit only an object file containing guest code.
- */
 val NativeSecondStageCompilationConfig.isCompilingGuestCodeOnly: Boolean
     get() = hotReloadGuestMode && produce == CompilerOutputKind.PROGRAM
 
+val NativeSecondStageCompilationConfig.isCompilingHotReloadFramework: Boolean
+    get() = hotReloadHostMode && produce == CompilerOutputKind.FRAMEWORK
 
 internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReload(
         userModule: IrModuleFragment,
@@ -145,16 +124,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReload(
     }
 
     try {
-        // Collect ONLY the launcher module (no C++ runtime, no stdlib)
-        // C++ runtime and stdlib will come from libstdlib-cache.a
-        // Pass runtimeLogs to generate strong Kotlin_runtimeLogs that overrides weak symbol from cache
-        val hostModules = collectHostModulesForHotReload(
-                context.config, hostLlvmContext,
-                launcherOnly = true,
-                runtimeLogs = context.config.runtimeLogs
-        )
-
-        // Create host module and link everything into it
+        val hostModules = collectHostModulesForProgramHotReload(context, hostLlvmContext, context.config.runtimeLogs)
         val hostModule = LLVMModuleCreateWithNameInContext("host", hostLlvmContext)!!
         hostModules.forEach { mod ->
             val failed = LLVMLinkModules2(hostModule, mod)
@@ -206,7 +176,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReload(
             }
         }
 
-        // Define entry `Konan_main` as entry-point from the hot-reload launcher
+        // Define entry `Konan_main` as entry-point from the hot-reload launcher.
         insertAliasToEntryPoint(context, hostModule)
 
         // Write host bitcode
@@ -259,7 +229,6 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegenForHotReload(
 
     // Link library bitcode (interop stubs like knifunptr_*) into bootstrap
     // This is needed for platform library interop to work
-    // NOTE: We skip runtime modules (MM, GC, alloc) - they're in libstdlib-cache.a
     linkLibraryBitcodeForHotReload(context, generatedBitcodeFiles)
 }
 
@@ -267,7 +236,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHot
         hotReloadOutput: HotReloadModuleCompilationOutput,
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
-): HotReloadLinkOutput {
+) {
 
     // Compile host bitcode to object file
     val hostObjectFile = temporaryFiles.create(outputFiles.outputName, ".host.o")
@@ -279,12 +248,20 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHot
             compileBootstrapObjectAndManifest(outputFiles, hotReloadOutput)
 
     // TODO: add frameworks with weak linking, since SKIA uses newer CoreGraphics API
-    // TODO: Just update macOS (on my side)
-    val weakFrameworkFlags = listOf(
-            "Foundation", "CoreFoundation", "CoreGraphics", "CoreText",
-            "CoreServices", "AppKit", "Metal", "QuartzCore", "OpenGL",
-            "Security", "SystemConfiguration", "IOKit",
-    ).flatMap { listOf("-Wl,-weak_framework,$it") }
+    val weakFrameworks = if (context.config.target.family == Family.OSX) {
+        listOf(
+                "Foundation", "CoreFoundation", "CoreGraphics", "CoreText",
+                "CoreServices", "AppKit", "Metal", "QuartzCore", "OpenGL",
+                "Security", "SystemConfiguration", "IOKit",
+        )
+    } else {
+        // iOS, tvOS, watchOS
+        listOf(
+                "Foundation", "CoreFoundation", "CoreGraphics", "CoreText",
+                "UIKit", "Metal", "QuartzCore", "Security",
+        )
+    }
+    val weakFrameworkFlags = weakFrameworks.flatMap { listOf("-Wl,-weak_framework,$it") }
 
     val configurables = context.config.platform.configurables
 
@@ -298,6 +275,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHot
             "-L${configurables.absoluteLlvmHome}/lib",
             "-Wl,-rpath,${configurables.absoluteLlvmHome}/lib",
             "-Wl,-undefined,dynamic_lookup",
+            "-Wl,-export_dynamic",
     ) + weakFrameworkFlags + forceLoadFlags + configurables.llvmJitLibs
 
     val existingLinkerArgs = context.config.configuration.getList(NativeConfigurationKeys.LINKER_ARGS)
@@ -315,11 +293,75 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHot
     )
 
     runAndMeasurePhase(LinkerPhase, linkerPhaseInput)
+}
 
-    return HotReloadLinkOutput(
-            hostExecutable = File(outputFiles.nativeBinaryFile),
-            bootstrapObject = bootstrapObjectFile,
-    )
+private fun isForceLoadCache(path: String): Boolean {
+    // At the moment, it gets very hard to load at runtime object files not coming from the K/N compiler
+    // (e.g., skiko raises different issues, so it is embedded within the actual host).
+    return path.contains("stdlib-cache") || path.contains("skiko")
+}
+
+/**
+ * Compiles and links a framework for hot-reload.
+ *
+ * The framework binary contains the full module (runtime + user code + ObjC stubs + class metadata).
+ * The user code in the binary is dead weight, live execution goes through JITLink.
+ */
+internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHotReloadFramework(
+        moduleOutput: ModuleCompilationOutput,
+        outputFiles: OutputFiles,
+        temporaryFiles: TempFiles,
+) {
+    /*
+    * Additionally, user code is compiled into a separate bootstrap.o (with stdlib as external),
+    * loaded via JITLink at startup. The `knhr_stub_*` functions in the framework resolve their
+    * IMPs from the JIT'd bootstrap code via `KNHR_LoadObjCStubAddress`.
+    *
+    * The bootstrap.o and its cache-deps manifest are placed inside the framework bundle
+    * so the runtime can locate them via CFBundle at startup.
+    */
+
+    val configurables = context.config.platform.configurables
+
+    val bootstrapObjectFile = File(outputFiles.outputName + ".bootstrap.o")
+    runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleOutput.bitcodeFile, bootstrapObjectFile))
+
+    // Resolve cache binaries needed by the bootstrap guest code
+    val resolvedCaches = resolveCacheBinaries(context.config.cachedLibraries, moduleOutput.dependenciesTrackingResult)
+    val (_, jitCaches) = resolvedCaches.static.partition(::isForceLoadCache)
+
+    // Write the cache-deps manifest (list of static library paths for JIT to load at runtime)
+    val cacheManifestFile = File(bootstrapObjectFile.path + ".$MANIFEST_DEPS_FILE_EXTENSION")
+    cacheManifestFile.writeText(jitCaches.joinToString("\n"))
+
+    val jitLinkerFlags = listOf(
+            "-L${configurables.absoluteLlvmHome}/lib",
+            "-Wl,-rpath,${configurables.absoluteLlvmHome}/lib",
+            "-Wl,-undefined,dynamic_lookup",
+            "-Wl,-export_dynamic",
+    ) + configurables.llvmJitLibs
+
+    val existingLinkerArgs = context.config.configuration.getList(NativeConfigurationKeys.LINKER_ARGS)
+    context.config.configuration.put(NativeConfigurationKeys.LINKER_ARGS, existingLinkerArgs + jitLinkerFlags)
+
+    compileAndLink(moduleOutput, outputFiles.mainFileName, outputFiles, temporaryFiles)
+
+    // Bundle bootstrap.o + manifest into the framework
+    // On iOS (flat layout), files go directly in the .framework/ directory.
+    // On macOS (versioned layout), files go in Versions/A/Resources/.
+    // CFBundleCopyResourceURL handles both layouts transparently at runtime.
+    val frameworkDir = File(outputFiles.mainFileName)
+    val resourcesDir = when (context.config.target.family) {
+        Family.IOS, Family.TVOS, Family.WATCHOS -> frameworkDir
+        Family.OSX -> File(frameworkDir, "Versions/A/Resources").also { it.mkdirs() }
+        else -> error("Unsupported target family for framework: ${context.config.target.family}")
+    }
+
+    bootstrapObjectFile.copyTo(File(resourcesDir, "bootstrap.o"), true)
+    val manifestSrc = File("${bootstrapObjectFile.path}.$MANIFEST_DEPS_FILE_EXTENSION")
+    if (manifestSrc.exists()) {
+        manifestSrc.copyTo(File(resourcesDir, "bootstrap.o.$MANIFEST_DEPS_FILE_EXTENSION"), true)
+    }
 }
 
 /**
@@ -337,7 +379,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReloadGuest(
 
     // Generate user code into bootstrap module
     // Current context has HotReloadBootstrapLlvmModuleSpecification
-    // This makes stdlib types appear as "external" - they won't be generated,
+    // This makes stdlib types appear as "external", they won't be generated,
     // instead they'll be imported from host at runtime via JITLink
     runBackendCodegenForHotReload(userModule, irBuiltIns, cExportFiles)
 
@@ -363,9 +405,8 @@ internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReloadGuest(
 internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHotReloadGuest(
         guestOutput: HotReloadGuestCompilationOutput,
         outputFiles: OutputFiles,
-): HotReloadGuestLinkOutput {
-    val (bootstrapObjectFile, ) = compileBootstrapObjectAndManifest(outputFiles, guestOutput)
-    return HotReloadGuestLinkOutput(bootstrapObjectFile)
+) {
+    compileBootstrapObjectAndManifest(outputFiles, guestOutput)
 }
 
 /**
@@ -379,18 +420,14 @@ private fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileBootstrapObjec
 
     // This is the final bootstrap.o that will be loaded by JITLink
     // The bootstrap is not a temporary file (at least for now), since it needs to be loaded by the runtime to start the actual program
-    val bootstrapObjectFile = File(outputFiles.outputName + ".bootstrap.o")
+    val bootstrapObjectFile = File("${outputFiles.outputName}.bootstrap.o")
     runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(guestOutput.bootstrapBitcodeFile, bootstrapObjectFile))
 
     // Resolve cache binaries (stdlib, platform libs, etc.) that the host must link against
     val resolvedCaches = resolveCacheBinaries(context.config.cachedLibraries, guestOutput.dependenciesTrackingResult)
+    val (forceLoadCaches, jitCaches) = resolvedCaches.static.partition(::isForceLoadCache)
 
-    val isForceLoadCache = { path: String ->
-        path.contains("stdlib-cache") || path.contains("skiko")
-    }
-    val (forceLoadCaches, jitCaches) = resolvedCaches.static.partition(isForceLoadCache)
-
-    val cacheManifestFile = File(outputFiles.outputName + ".bootstrap.o.$MANIFEST_DEPS_FILE_EXTENSION")
+    val cacheManifestFile = File("${outputFiles.outputName}.bootstrap.o.$MANIFEST_DEPS_FILE_EXTENSION")
     cacheManifestFile.writeText(jitCaches.joinToString("\n"))
 
     return BootstrapCompilationMetadata(bootstrapObjectFile, forceLoadCaches, jitCaches, resolvedCaches)

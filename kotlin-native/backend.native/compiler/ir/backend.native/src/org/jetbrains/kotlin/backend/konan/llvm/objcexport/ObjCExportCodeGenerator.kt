@@ -9,6 +9,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.driver.phases.isCompilingHotReloadFramework
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.name.Name
@@ -292,6 +294,21 @@ internal class ObjCExportCodeGenerator(
 
     internal val unitContinuationToRetainedCompletionConverter: LlvmCallable by lazy {
         generateUnitContinuationToRetainedCompletionConverter(blockGenerator)
+    }
+
+    /**
+     * Stub used as bridge between Objective-C and Kotlin/Native hot-reloaded code.
+     * When invoked the first time, the HR runtime will resolve the symbol
+     * to the proper entrypoint created at compilation time.
+     */
+    internal val hrLoadObjcStubAddress by lazy {
+        val proto = LlvmFunctionSignature(
+                returnType = LlvmRetType(llvm.pointerType, isObjectType = false),
+                parameterTypes = listOf(LlvmParamType(llvm.pointerType))
+        ).toProto("KNHR_LoadObjCStubAddress", null, LLVMLinkage.LLVMExternalLinkage)
+        llvm.externalFunction(proto).also {
+            setFunctionNoUnwind(it.toConstPointer().llvm)
+        }
     }
 
     // Caution! Arbitrary methods shouldn't be called from Runnable thread state.
@@ -716,39 +733,20 @@ private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {
 }
 
 private fun ObjCExportCodeGenerator.emitCollectionConverters() {
-
-    fun importConverter(name: String): ConstPointer =
-            llvm.externalNativeRuntimeFunction(name, kotlinToObjCFunctionType).toConstPointer()
-
-    bindObjCExportConvertToRetained(
-            irBuiltIns.listClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedNSArrayFromKList")
+    val collectionClasses: Map<String, IrClass> = mapOf(
+            "kotlin.collections.List" to irBuiltIns.listClass.owner,
+            "kotlin.collections.MutableList" to irBuiltIns.mutableListClass.owner,
+            "kotlin.collections.Set" to irBuiltIns.setClass.owner,
+            "kotlin.collections.MutableSet" to irBuiltIns.mutableSetClass.owner,
+            "kotlin.collections.Map" to irBuiltIns.mapClass.owner,
+            "kotlin.collections.MutableMap" to irBuiltIns.mutableMapClass.owner,
     )
 
-    bindObjCExportConvertToRetained(
-            irBuiltIns.mutableListClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedNSMutableArrayFromKList")
-    )
-
-    bindObjCExportConvertToRetained(
-            irBuiltIns.setClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedNSSetFromKSet")
-    )
-
-    bindObjCExportConvertToRetained(
-            irBuiltIns.mutableSetClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedKotlinMutableSetFromKSet")
-    )
-
-    bindObjCExportConvertToRetained(
-            irBuiltIns.mapClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedNSDictionaryFromKMap")
-    )
-
-    bindObjCExportConvertToRetained(
-            irBuiltIns.mutableMapClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedKotlinMutableDictionaryFromKMap")
-    )
+    for (entry in ObjCExportConverterConstants.standardConverters) {
+        val irClass = collectionClasses[entry.kotlinFqName] ?: continue // skip String
+        val converter = llvm.externalNativeRuntimeFunction(entry.converterFunctionName, kotlinToObjCFunctionType).toConstPointer()
+        bindObjCExportConvertToRetained(irClass, converter)
+    }
 }
 
 private fun ObjCExportFunctionGenerationContextBuilder.setupBridgeDebugInfo() {
@@ -765,7 +763,8 @@ private inline fun ObjCExportCodeGenerator.generateObjCImpBy(
 ): LlvmCallable {
     val functionType = objCFunctionType(generationState, methodBridge)
     val functionName = "objc2kotlin_$suffix"
-    val result = functionGenerator(functionType.toProto(functionName, null, LLVMLinkage.LLVMInternalLinkage)) {
+    val linkage = if (context.config.isCompilingHotReloadFramework) LLVMLinkage.LLVMExternalLinkage else LLVMLinkage.LLVMInternalLinkage
+    val result = functionGenerator(functionType.toProto(functionName, null, linkage)) {
         if (debugInfo) {
             this.setupBridgeDebugInfo()
         }
@@ -1701,7 +1700,53 @@ private fun ObjCExportCodeGenerator.objCToKotlinMethodAdapter(
 ): ObjCToKotlinMethodAdapter {
     selectorsToDefine[selector] = methodBridge
 
-    return codegen.ObjCToKotlinMethodAdapter(selector, getEncoding(methodBridge), imp)
+    val actualImp = if (context.config.isCompilingHotReloadFramework)
+        generateHotReloadStub(methodBridge, imp)
+    else
+        imp
+
+    return codegen.ObjCToKotlinMethodAdapter(selector, getEncoding(methodBridge), actualImp)
+}
+
+private fun ObjCExportCodeGenerator.generateHotReloadStub(
+        methodBridge: MethodBridge,
+        imp: LlvmCallable
+): LlvmCallable {
+    val impName = imp.name ?: error("Found a stub without implementation name.")
+
+    val slotName = "knhr_slot_$impName"
+    val slot = staticData.placeGlobal(slotName, llvm.nullPointer, false)
+
+    val functionType = objCFunctionType(generationState, methodBridge)
+    val stubProto = functionType.toProto("knhr_stub_$impName", null, LLVMLinkage.LLVMInternalLinkage)
+
+    return generateFunctionNoRuntime(codegen, stubProto) {
+
+        val entryBB = currentBlock
+        val l = load(llvm.pointerType, slot.llvmGlobal)
+        val isNull = icmpEq(l, llvm.kNull)
+
+        val slowPath = basicBlock("sp", null)
+        val fastPath = basicBlock("fp", null)
+
+        condBr(isNull, slowPath, fastPath)
+
+        positionAtEnd(slowPath)
+        val res = call(hrLoadObjcStubAddress, listOf(staticData.cStringLiteral(impName).llvm))
+        store(res, slot.llvmGlobal)
+
+        br(fastPath)
+
+        positionAtEnd(fastPath)
+
+        val impFinalPhi = phi(llvm.pointerType, "imp")
+        addPhiIncoming(impFinalPhi, (slowPath to res), (entryBB to l))
+
+        val args = (0..<function.numParams).map { param(it) }
+        val result = LlvmCallable(impFinalPhi, functionType).buildCall(builder, args)
+
+        ret(result)
+    }
 }
 
 private fun ObjCExportCodeGenerator.createUnitInstanceAdapter(selector: String) =

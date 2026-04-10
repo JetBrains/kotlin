@@ -56,9 +56,14 @@ public:
     void Reload(const std::vector<std::string>& objectPaths) noexcept;
 
     /// Load bootstrap file and return the Konan_start symbol.
-    KonanStartFunc LoadBootstrapFile(std::string_view bootstrapFilePath);
+    void LoadBootstrapFile(std::string_view bootstrapFilePath);
 
     StatsCollector& GetStatsCollector() noexcept;
+
+    // Fetch a symbol within the bootstrap image
+    void* LookupForSymbolInBootstrap(const char* symbolName) const;
+
+    KonanStartFunc LookupForKonanStart() const;
 
 private:
     void StartServer();
