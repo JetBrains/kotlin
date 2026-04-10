@@ -3,12 +3,14 @@ public final class Some /* Some*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String value;
 
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
-
+  @java.lang.Override()
   public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
 
+  @java.lang.Override()
   public int hashCode();//  hashCode()
+
+  @java.lang.Override()
+  public java.lang.String toString();//  toString()
 }
 
 public final class SomeClass /* SomeClass*/ {
@@ -27,25 +29,25 @@ public final class ValueClassInSignatureKt /* ValueClassInSignatureKt*/ {
   @org.jetbrains.annotations.NotNull()
   private static @org.jetbrains.annotations.NotNull() java.lang.String topLevelProp;
 
-  @kotlin.jvm.JvmName()
+  @kotlin.jvm.JvmName(name = "specialName")
   @kotlin.jvm.JvmOverloads()
-  public static final void withJvmOverloadsAndJvmName();//  withJvmOverloadsAndJvmName()
+  public static final void specialName();//  specialName()
 
-  @kotlin.jvm.JvmName()
+  @kotlin.jvm.JvmName(name = "specialName")
   @kotlin.jvm.JvmOverloads()
-  public static final void withJvmOverloadsAndJvmName(int);//  withJvmOverloadsAndJvmName(int)
+  public static final void specialName(int);//  specialName(int)
 
-  @kotlin.jvm.JvmName()
+  @kotlin.jvm.JvmName(name = "specialName")
   @kotlin.jvm.JvmOverloads()
-  public static final void withJvmOverloadsAndJvmName(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  withJvmOverloadsAndJvmName(int, @org.jetbrains.annotations.NotNull() java.lang.String)
+  public static final void specialName(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  specialName(int, @org.jetbrains.annotations.NotNull() java.lang.String)
 
-  @kotlin.jvm.JvmName()
+  @kotlin.jvm.JvmName(name = "specialName")
   @kotlin.jvm.JvmOverloads()
-  public static final void withJvmOverloadsAndJvmName(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, int);//  withJvmOverloadsAndJvmName(int, @org.jetbrains.annotations.NotNull() java.lang.String, int)
+  public static final void specialName(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, int);//  specialName(int, @org.jetbrains.annotations.NotNull() java.lang.String, int)
 
-  @kotlin.jvm.JvmName()
+  @kotlin.jvm.JvmName(name = "specialName")
   @kotlin.jvm.JvmOverloads()
-  public static final void withJvmOverloadsAndJvmName(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  withJvmOverloadsAndJvmName(int, @org.jetbrains.annotations.NotNull() java.lang.String, int, @org.jetbrains.annotations.NotNull() java.lang.String)
+  public static final void specialName(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  specialName(int, @org.jetbrains.annotations.NotNull() java.lang.String, int, @org.jetbrains.annotations.NotNull() java.lang.String)
 
   @kotlin.jvm.JvmOverloads()
   public static final void withJvmOverloads();//  withJvmOverloads()

@@ -15,6 +15,7 @@ public abstract interface BaseIntProperty /* BaseIntProperty*/<T>  {
 }
 
 public final class DelegatingBoolean /* DelegatingBoolean*/ implements BaseBoolean<@org.jetbrains.annotations.NotNull() java.lang.Boolean> {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Boolean boolean();//  boolean()
 
@@ -24,6 +25,7 @@ public final class DelegatingBoolean /* DelegatingBoolean*/ implements BaseBoole
 public final class DelegatingBooleanProperty /* DelegatingBooleanProperty*/ implements BaseBooleanProperty<@org.jetbrains.annotations.NotNull() java.lang.Boolean> {
   private final boolean booleanProperty;
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Boolean getBooleanProperty();//  getBooleanProperty()
 
@@ -31,6 +33,7 @@ public final class DelegatingBooleanProperty /* DelegatingBooleanProperty*/ impl
 }
 
 public final class DelegatingInt /* DelegatingInt*/ implements BaseInt<@org.jetbrains.annotations.NotNull() java.lang.Integer> {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer int();//  int()
 
@@ -40,6 +43,7 @@ public final class DelegatingInt /* DelegatingInt*/ implements BaseInt<@org.jetb
 public final class DelegatingIntProperty /* DelegatingIntProperty*/ implements BaseIntProperty<@org.jetbrains.annotations.NotNull() java.lang.Integer> {
   private final int intProperty;
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer getIntProperty();//  getIntProperty()
 

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightSetterPar
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
 import org.jetbrains.kotlin.load.java.JvmAbi.getterName
 import org.jetbrains.kotlin.load.java.JvmAbi.setterName
+import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -110,7 +111,20 @@ internal class SymbolLightAccessorMethod private constructor(
         }
     }
 
-    override fun getName(): String = _name
+    override val binaryDelegate: PsiMethod? by lazyPub {
+        containingClass.binaryLightClassDelegate?.findMethod(
+            targetDeclaration = containingPropertyDeclaration,
+            parameterCount = parameterList.parametersCount,
+            preferredName = _name,
+            isGetter = isGetter,
+        )
+    }
+
+    override fun getName(): String = binaryDelegate?.name ?: _name
+
+    private val useBinaryDelegateMethodAnnotations: Boolean by lazyPub {
+        containingClass.originKind == LightClassOriginKind.BINARY && binaryDelegate != null
+    }
 
     private val _typeParameterList: PsiTypeParameterList? by lazyPub {
         hasTypeParameters().ifTrue {
@@ -195,26 +209,44 @@ internal class SymbolLightAccessorMethod private constructor(
                     annotatedSymbolPointer = propertyAccessorSymbolPointer,
                 ),
                 additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
-                    NullabilityAnnotationsProvider {
-                        val nullabilityApplicable = isGetter &&
-                                !(isParameter && this.containingClass.isAnnotationType) &&
-                                !modifierList.hasModifierProperty(PsiModifier.PRIVATE)
+                    if (containingClass.originKind == LightClassOriginKind.BINARY && !useBinaryDelegateMethodAnnotations) {
+                        KotlinDeclarationNullabilityAnnotationsProvider { propertyAccessorDeclaration }
+                    } else {
+                        EmptyAdditionalAnnotationsProvider
+                    },
+                    if (useBinaryDelegateMethodAnnotations) {
+                        BinaryDelegateAnnotationsProvider { binaryDelegate }
+                    } else {
+                        EmptyAdditionalAnnotationsProvider
+                    },
+                    if (useBinaryDelegateMethodAnnotations) {
+                        EmptyAdditionalAnnotationsProvider
+                    } else {
+                        NullabilityAnnotationsProvider {
+                            val nullabilityApplicable = isGetter &&
+                                    !(isParameter && this.containingClass.isAnnotationType) &&
+                                    !modifierList.hasModifierProperty(PsiModifier.PRIVATE)
 
-                        if (nullabilityApplicable) {
-                            withPropertySymbol { propertySymbol ->
-                                when {
-                                    propertySymbol.isLateInit || shouldEnforceBoxedReturnType(propertySymbol) -> NullabilityAnnotation.NON_NULLABLE
-                                    else -> getRequiredNullabilityAnnotation(propertySymbol.returnType)
+                            if (nullabilityApplicable) {
+                                withPropertySymbol { propertySymbol ->
+                                    when {
+                                        propertySymbol.isLateInit || shouldEnforceBoxedReturnType(propertySymbol) -> NullabilityAnnotation.NON_NULLABLE
+                                        else -> getRequiredNullabilityAnnotation(propertySymbol.returnType)
+                                    }
                                 }
+                            } else {
+                                NullabilityAnnotation.NOT_REQUIRED
                             }
-                        } else {
-                            NullabilityAnnotation.NOT_REQUIRED
                         }
                     },
                     MethodAdditionalAnnotationsProvider,
                     JvmExposeBoxedAdditionalAnnotationsProvider,
                 ),
-                annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
+                annotationFilter = if (useBinaryDelegateMethodAnnotations) {
+                    DeduplicatingAnnotationFilter(jvmExposeBoxedAwareAnnotationFilter)
+                } else {
+                    jvmExposeBoxedAwareAnnotationFilter
+                },
             ),
         )
     }
@@ -231,6 +263,29 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, containingPropertyDeclaration)
 
+    private fun shouldUseBinaryDelegateReturnType(annotatedReturnType: PsiType): Boolean {
+        if (!useBinaryDelegateMethodAnnotations || !isGetter) return false
+        if (binaryDelegate?.returnTypeElement?.text?.contains('@') == true) return false
+        if (annotatedReturnType.hasNestedNullabilityAnnotations()) return true
+
+        return !modifierList.hasModifierProperty(PsiModifier.PRIVATE) &&
+                binaryDelegateReturnTypeNullabilityState() == BinaryDelegateReturnTypeNullability.NOT_REQUIRED &&
+                annotatedReturnType.topLevelNullability() == NullabilityAnnotation.NON_NULLABLE
+    }
+
+    private fun binaryDelegateTopLevelReturnTypeNullability(annotatedReturnType: PsiType): NullabilityAnnotation {
+        return when (binaryDelegateReturnTypeNullabilityState()) {
+            BinaryDelegateReturnTypeNullability.NON_NULLABLE -> NullabilityAnnotation.NON_NULLABLE
+            BinaryDelegateReturnTypeNullability.NULLABLE -> NullabilityAnnotation.NULLABLE
+            BinaryDelegateReturnTypeNullability.CONFLICTING,
+                -> annotatedReturnType.topLevelNullability()
+
+            BinaryDelegateReturnTypeNullability.NOT_REQUIRED ->
+                if (modifierList.hasModifierProperty(PsiModifier.PRIVATE)) annotatedReturnType.topLevelNullability()
+                else NullabilityAnnotation.NOT_REQUIRED
+        }
+    }
+
     private val _returnedType: PsiType by lazyPub {
         if (!isGetter) return@lazyPub PsiTypes.voidType()
 
@@ -242,13 +297,32 @@ internal class SymbolLightAccessorMethod private constructor(
             else
                 KaTypeMappingMode.RETURN_TYPE
 
-            ktType.asPsiType(
+            val annotatedReturnType = ktType.asPsiType(
                 this@SymbolLightAccessorMethod,
                 allowErrorTypes = true,
                 typeMappingMode,
                 containingClass.isAnnotationType,
                 suppressWildcards(),
                 allowNonJvmPlatforms = true,
+            )
+
+            if (annotatedReturnType == null || !shouldUseBinaryDelegateReturnType(annotatedReturnType)) {
+                return@withPropertySymbol annotatedReturnType
+            }
+
+            val rawReturnType = ktType.asPsiType(
+                this@SymbolLightAccessorMethod,
+                allowErrorTypes = true,
+                typeMappingMode,
+                containingClass.isAnnotationType,
+                suppressWildcards(),
+                preserveAnnotations = false,
+                allowNonJvmPlatforms = true,
+            )
+
+            rawReturnType?.withTopLevelNullabilityAnnotation(
+                binaryDelegateTopLevelReturnTypeNullability(annotatedReturnType),
+                this@SymbolLightAccessorMethod,
             )
         } ?: nonExistentType()
     }
@@ -338,7 +412,7 @@ internal class SymbolLightAccessorMethod private constructor(
         }
     }
 
-    override fun isOverride(): Boolean = _isOverride
+    override fun isOverride(): Boolean = _isOverride || binaryDelegateOverrides()
 
     private val _defaultValue: PsiAnnotationMemberValue? by lazyPub {
         if (!containingClass.isAnnotationType) return@lazyPub null

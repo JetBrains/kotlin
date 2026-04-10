@@ -1,7 +1,6 @@
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno /* Anno*/ {
-  @org.jetbrains.annotations.NotNull()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.String p();//  p()
+  public abstract java.lang.String p();//  p()
 }
 
 public final class C /* C*/ {

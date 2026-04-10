@@ -5,45 +5,57 @@ public abstract class CList /* test.CList*/ implements java.util.List<@org.jetbr
 public abstract class CList2 /* test.CList2*/ implements java.util.List<@org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.collections.List<@org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.jvm.internal.markers.KMappedMarker {
   private final int size;
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() kotlin.UInt> iterator();//  iterator()
+  public @org.jetbrains.annotations.NotNull() java.util.Iterator<kotlin.UInt> iterator();//  iterator()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() kotlin.UInt> subList(int, int);//  subList(int, int)
+  public @org.jetbrains.annotations.NotNull() java.util.List<kotlin.UInt> subList(int, int);//  subList(int, int)
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() kotlin.UInt> listIterator();//  listIterator()
+  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<kotlin.UInt> listIterator();//  listIterator()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() kotlin.UInt> listIterator(int);//  listIterator(int)
+  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<kotlin.UInt> listIterator(int);//  listIterator(int)
 
-  public  CList2();//  .ctor()
-
+  @java.lang.Override()
   public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() kotlin.UInt>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
+  @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
+
+  public  CList2();//  .ctor()
 
   public int getSize();//  getSize()
 }
 
 public class CList3 /* test.CList3*/ implements java.util.List<@org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.collections.List<@org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.jvm.internal.markers.KMappedMarker {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() kotlin.UInt> iterator();//  iterator()
+  public @org.jetbrains.annotations.NotNull() java.util.Iterator<kotlin.UInt> iterator();//  iterator()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() kotlin.UInt> subList(int, int);//  subList(int, int)
+  public @org.jetbrains.annotations.NotNull() java.util.List<kotlin.UInt> subList(int, int);//  subList(int, int)
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() kotlin.UInt> listIterator();//  listIterator()
+  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<kotlin.UInt> listIterator();//  listIterator()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() kotlin.UInt> listIterator(int);//  listIterator(int)
+  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<kotlin.UInt> listIterator(int);//  listIterator(int)
 
-  public  CList3();//  .ctor()
-
+  @java.lang.Override()
   public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() kotlin.UInt>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
+  @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
+
+  public  CList3();//  .ctor()
 
   public int getSize();//  getSize()
 }

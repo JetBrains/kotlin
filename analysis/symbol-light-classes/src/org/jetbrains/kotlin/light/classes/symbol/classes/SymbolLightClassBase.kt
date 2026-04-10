@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.light.classes.symbol.BinaryLightClassDelegate
 import org.jetbrains.kotlin.light.classes.symbol.SymbolFakeFile
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
@@ -36,6 +37,7 @@ import javax.swing.Icon
 
 internal abstract class SymbolLightClassBase protected constructor(val ktModule: KaModule, manager: PsiManager) :
     LightElement(manager, KotlinLanguage.INSTANCE), PsiClass, KtExtensibleLightClass {
+    internal open val binaryLightClassDelegate: BinaryLightClassDelegate? get() = null
 
     private val contentFinderCache by lazyPub {
         ClassContentFinderCache(

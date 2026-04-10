@@ -14,22 +14,32 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/ implements test.IMutab
 
   private final int size;
 
+  @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() java.lang.String put(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  put(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public void clear();//  clear()
+
+  @java.lang.Override()
+  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String>)
 
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() java.lang.String remove(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String> getValues();//  getValues()
+  public @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String> getValues();//  getValues()
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String> getKeys();//  getKeys()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<java.lang.String> getKeys();//  getKeys()
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String>> getEntries();//  getEntries()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<java.util.Map.Entry<java.lang.String, java.lang.String>> getEntries();//  getEntries()
 
   @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() java.lang.String get(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -40,30 +50,34 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/ implements test.IMutab
 
   public boolean containsValue(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  containsValue(@org.jetbrains.annotations.NotNull() java.lang.String)
 
-  public boolean isEmpty();//  isEmpty()
-
   public int getSize();//  getSize()
-
-  public void clear();//  clear()
-
-  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String>)
 }
 
 public class CMutableMap3 /* test.CMutableMap3*/ implements test.IMutableMap {
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String> getValues();//  getValues()
+  @java.lang.Override()
+  @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() java.lang.String put(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  put(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public void clear();//  clear()
+
+  @java.lang.Override()
+  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String>)
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String> getKeys();//  getKeys()
+  public @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String> getValues();//  getValues()
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String>> getEntries();//  getEntries()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<java.lang.String> getKeys();//  getKeys()
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<java.util.Map.Entry<java.lang.String, java.lang.String>> getEntries();//  getEntries()
 
   @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() java.lang.String get(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
-
-  @org.jetbrains.annotations.Nullable()
-  public @org.jetbrains.annotations.Nullable() java.lang.String put(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  put(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
 
   @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() java.lang.String remove(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -74,13 +88,7 @@ public class CMutableMap3 /* test.CMutableMap3*/ implements test.IMutableMap {
 
   public boolean containsValue(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  containsValue(@org.jetbrains.annotations.NotNull() java.lang.String)
 
-  public boolean isEmpty();//  isEmpty()
-
   public int getSize();//  getSize()
-
-  public void clear();//  clear()
-
-  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String>)
 }
 
 public abstract interface IMutableMap /* test.IMutableMap*/ extends java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.MutableMap<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableMap {

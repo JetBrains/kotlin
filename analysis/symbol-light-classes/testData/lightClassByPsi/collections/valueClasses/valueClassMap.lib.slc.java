@@ -14,35 +14,37 @@ public abstract class CMap2 /* test.CMap2*/ implements java.util.Map<@org.jetbra
 
   private final int size;
 
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() kotlin.UInt> getValues();//  getValues()
+  @java.lang.Override()
+  public boolean isEmpty();//  isEmpty()
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.util.Map.Entry<@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt>> getEntries();//  getEntries()
+  public @org.jetbrains.annotations.NotNull() java.util.Collection<kotlin.UInt> getValues();//  getValues()
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() kotlin.UInt> getKeys();//  getKeys()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<java.util.Map.Entry<kotlin.UInt, kotlin.UInt>> getEntries();//  getEntries()
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<kotlin.UInt> getKeys();//  getKeys()
 
   public  CMap2();//  .ctor()
-
-  public boolean isEmpty();//  isEmpty()
 
   public int getSize();//  getSize()
 }
 
 public class CMap3 /* test.CMap3*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.collections.Map<@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.jvm.internal.markers.KMappedMarker {
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() kotlin.UInt> getValues();//  getValues()
+  @java.lang.Override()
+  public boolean isEmpty();//  isEmpty()
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.util.Map.Entry<@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt>> getEntries();//  getEntries()
+  public @org.jetbrains.annotations.NotNull() java.util.Collection<kotlin.UInt> getValues();//  getValues()
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() kotlin.UInt> getKeys();//  getKeys()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<java.util.Map.Entry<kotlin.UInt, kotlin.UInt>> getEntries();//  getEntries()
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<kotlin.UInt> getKeys();//  getKeys()
 
   public  CMap3();//  .ctor()
-
-  public boolean isEmpty();//  isEmpty()
 
   public int getSize();//  getSize()
 }

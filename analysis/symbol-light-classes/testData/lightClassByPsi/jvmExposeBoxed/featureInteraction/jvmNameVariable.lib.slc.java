@@ -1,25 +1,25 @@
 public final class Foo /* Foo*/ {
-  @kotlin.jvm.JvmName()
+  @kotlin.jvm.JvmName(name = "foo11")
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String getFoo1();//  getFoo1()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String foo11();//  foo11()
 
-  @kotlin.jvm.JvmName()
+  @kotlin.jvm.JvmName(name = "foo41")
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String getFoo2();//  getFoo2()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String foo41(int);//  foo41(int)
 
-  @kotlin.jvm.JvmName()
+  @kotlin.jvm.JvmName(name = "fooGetter21")
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String getFoo3(int);//  getFoo3(int)
+  public final @org.jetbrains.annotations.NotNull() java.lang.String fooGetter21();//  fooGetter21()
 
-  @kotlin.jvm.JvmName()
+  @kotlin.jvm.JvmName(name = "fooGetter31")
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String getFoo4(int);//  getFoo4(int)
+  public final @org.jetbrains.annotations.NotNull() java.lang.String fooGetter31(int);//  fooGetter31(int)
 
-  @kotlin.jvm.JvmName()
-  public final void setFoo2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setFoo2(@org.jetbrains.annotations.NotNull() java.lang.String)
+  @kotlin.jvm.JvmName(name = "fooSetter21")
+  public final void fooSetter21(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  fooSetter21(@org.jetbrains.annotations.NotNull() java.lang.String)
 
-  @kotlin.jvm.JvmName()
-  public final void setFoo3(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setFoo3(int, @org.jetbrains.annotations.NotNull() java.lang.String)
+  @kotlin.jvm.JvmName(name = "fooSetter31")
+  public final void fooSetter31(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  fooSetter31(int, @org.jetbrains.annotations.NotNull() java.lang.String)
 
   public  Foo();//  .ctor()
 }
@@ -29,10 +29,12 @@ public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;
 
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
-
+  @java.lang.Override()
   public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
 
+  @java.lang.Override()
   public int hashCode();//  hashCode()
+
+  @java.lang.Override()
+  public java.lang.String toString();//  toString()
 }

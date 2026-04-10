@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiers
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
+import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.JvmStandardClassIds.STRICTFP_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -56,7 +57,19 @@ internal class SymbolLightSimpleMethod private constructor(
         }
     }
 
-    override fun getName(): String = _name
+    override val binaryDelegate: PsiMethod? by lazyPub {
+        containingClass.binaryLightClassDelegate?.findMethod(
+            targetDeclaration = functionDeclaration ?: kotlinOrigin,
+            parameterCount = parameterList.parametersCount,
+            preferredName = _name,
+        )
+    }
+
+    override fun getName(): String = binaryDelegate?.name ?: _name
+
+    private val useBinaryDelegateMethodAnnotations: Boolean by lazyPub {
+        containingClass.originKind == LightClassOriginKind.BINARY && binaryDelegate != null
+    }
 
     private val _typeParameterList: PsiTypeParameterList? by lazyPub {
         hasTypeParameters().ifTrue {
@@ -152,23 +165,41 @@ internal class SymbolLightSimpleMethod private constructor(
                     ktModule = ktModule,
                     annotatedSymbolPointer = functionSymbolPointer,
                 ),
-                annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
+                annotationFilter = if (useBinaryDelegateMethodAnnotations) {
+                    DeduplicatingAnnotationFilter(jvmExposeBoxedAwareAnnotationFilter)
+                } else {
+                    jvmExposeBoxedAwareAnnotationFilter
+                },
                 additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
-                    NullabilityAnnotationsProvider {
-                        if (modifierList.hasModifierProperty(PsiModifier.PRIVATE)) {
-                            NullabilityAnnotation.NOT_REQUIRED
-                        } else {
-                            withFunctionSymbol { functionSymbol ->
-                                when {
-                                    functionSymbol.isSuspend -> { // Any?
-                                        NullabilityAnnotation.NULLABLE
-                                    }
-                                    shouldEnforceBoxedReturnType(functionSymbol) -> {
-                                        NullabilityAnnotation.NON_NULLABLE
-                                    }
-                                    else -> {
-                                        val returnType = functionSymbol.returnType
-                                        if (isVoidType(returnType)) NullabilityAnnotation.NOT_REQUIRED else getRequiredNullabilityAnnotation(returnType)
+                    if (containingClass.originKind == LightClassOriginKind.BINARY && !useBinaryDelegateMethodAnnotations) {
+                        KotlinDeclarationNullabilityAnnotationsProvider { functionDeclaration }
+                    } else {
+                        EmptyAdditionalAnnotationsProvider
+                    },
+                    if (useBinaryDelegateMethodAnnotations) {
+                        BinaryDelegateAnnotationsProvider { binaryDelegate }
+                    } else {
+                        EmptyAdditionalAnnotationsProvider
+                    },
+                    if (useBinaryDelegateMethodAnnotations) {
+                        EmptyAdditionalAnnotationsProvider
+                    } else {
+                        NullabilityAnnotationsProvider {
+                            if (modifierList.hasModifierProperty(PsiModifier.PRIVATE)) {
+                                NullabilityAnnotation.NOT_REQUIRED
+                            } else {
+                                withFunctionSymbol { functionSymbol ->
+                                    when {
+                                        functionSymbol.isSuspend -> { // Any?
+                                            NullabilityAnnotation.NULLABLE
+                                        }
+                                        shouldEnforceBoxedReturnType(functionSymbol) -> {
+                                            NullabilityAnnotation.NON_NULLABLE
+                                        }
+                                        else -> {
+                                            val returnType = functionSymbol.returnType
+                                            if (isVoidType(returnType)) NullabilityAnnotation.NOT_REQUIRED else getRequiredNullabilityAnnotation(returnType)
+                                        }
                                     }
                                 }
                             }
@@ -183,7 +214,7 @@ internal class SymbolLightSimpleMethod private constructor(
 
     override fun isConstructor(): Boolean = false
 
-    override fun isOverride(): Boolean = _isOverride
+    override fun isOverride(): Boolean = _isOverride || binaryDelegateOverrides()
 
     private val _isOverride: Boolean by lazyPub {
         withFunctionSymbol { it.isOverride }
@@ -192,6 +223,29 @@ internal class SymbolLightSimpleMethod private constructor(
     private fun KaSession.isVoidType(type: KaType): Boolean {
         val expandedType = type.fullyExpandedType
         return expandedType.isUnitType && !expandedType.isMarkedNullable
+    }
+
+    private fun shouldUseBinaryDelegateReturnType(annotatedReturnType: PsiType): Boolean {
+        if (!useBinaryDelegateMethodAnnotations) return false
+        if (binaryDelegate?.returnTypeElement?.text?.contains('@') == true) return false
+        if (annotatedReturnType.hasNestedNullabilityAnnotations()) return true
+
+        return !modifierList.hasModifierProperty(PsiModifier.PRIVATE) &&
+                binaryDelegateReturnTypeNullabilityState() == BinaryDelegateReturnTypeNullability.NOT_REQUIRED &&
+                annotatedReturnType.topLevelNullability() == NullabilityAnnotation.NON_NULLABLE
+    }
+
+    private fun binaryDelegateTopLevelReturnTypeNullability(annotatedReturnType: PsiType): NullabilityAnnotation {
+        return when (binaryDelegateReturnTypeNullabilityState()) {
+            BinaryDelegateReturnTypeNullability.NON_NULLABLE -> NullabilityAnnotation.NON_NULLABLE
+            BinaryDelegateReturnTypeNullability.NULLABLE -> NullabilityAnnotation.NULLABLE
+            BinaryDelegateReturnTypeNullability.CONFLICTING,
+                -> annotatedReturnType.topLevelNullability()
+
+            BinaryDelegateReturnTypeNullability.NOT_REQUIRED ->
+                if (modifierList.hasModifierProperty(PsiModifier.PRIVATE)) annotatedReturnType.topLevelNullability()
+                else NullabilityAnnotation.NOT_REQUIRED
+        }
     }
 
     private val _returnedType: PsiType by lazyPub {
@@ -207,13 +261,32 @@ internal class SymbolLightSimpleMethod private constructor(
             else
                 KaTypeMappingMode.RETURN_TYPE
 
-            ktType.asPsiType(
+            val annotatedReturnType = ktType.asPsiType(
                 this@SymbolLightSimpleMethod,
                 allowErrorTypes = true,
                 typeMappingMode,
                 this@SymbolLightSimpleMethod.containingClass.isAnnotationType,
                 suppressWildcards = suppressWildcards(),
                 allowNonJvmPlatforms = true,
+            )
+
+            if (annotatedReturnType == null || !shouldUseBinaryDelegateReturnType(annotatedReturnType)) {
+                return@withFunctionSymbol annotatedReturnType
+            }
+
+            val rawReturnType = ktType.asPsiType(
+                this@SymbolLightSimpleMethod,
+                allowErrorTypes = true,
+                typeMappingMode,
+                this@SymbolLightSimpleMethod.containingClass.isAnnotationType,
+                suppressWildcards = suppressWildcards(),
+                preserveAnnotations = false,
+                allowNonJvmPlatforms = true,
+            )
+
+            rawReturnType?.withTopLevelNullabilityAnnotation(
+                binaryDelegateTopLevelReturnTypeNullability(annotatedReturnType),
+                this@SymbolLightSimpleMethod,
             )
         } ?: nonExistentType()
     }

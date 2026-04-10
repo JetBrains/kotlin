@@ -51,34 +51,7 @@ public final class UnsafePropertyInitializersKt /* UnsafePropertyInitializersKt*
   private static final @org.jetbrains.annotations.Nullable() java.lang.String nullable;
 
   @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.lang.Character @org.jetbrains.annotations.NotNull() [] getArrayOfCharObjects();//  getArrayOfCharObjects()
-
-  @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.lang.Double @org.jetbrains.annotations.NotNull() [] getArrayOfDoubleObjects();//  getArrayOfDoubleObjects()
-
-  @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.lang.Float @org.jetbrains.annotations.NotNull() [] getArrayOfFloatObjects();//  getArrayOfFloatObjects()
-
-  @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.lang.Integer @org.jetbrains.annotations.NotNull() [] getArrayOfIntObjects();//  getArrayOfIntObjects()
-
-  @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.lang.Long @org.jetbrains.annotations.NotNull() [] getArrayOfLongObjects();//  getArrayOfLongObjects()
-
-  @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [] getArrayOfStrings();//  getArrayOfStrings()
-
-  @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [] getEmptyArayOfStrings();//  getEmptyArayOfStrings()
-
-  @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String> getListOfStrings();//  getListOfStrings()
-
-  @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() kotlin.annotation.AnnotationTarget @org.jetbrains.annotations.NotNull() [] getArrayOfEnums();//  getArrayOfEnums()
-
-  @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.Nullable() java.lang.Object @org.jetbrains.annotations.NotNull() [] getArrayOfNAny();//  getArrayOfNAny()
+  public static final @org.jetbrains.annotations.NotNull() java.util.List<java.lang.String> getListOfStrings();//  getListOfStrings()
 
   @org.jetbrains.annotations.NotNull()
   public static final char @org.jetbrains.annotations.NotNull() [] getArrayOfCharPrimitives();//  getArrayOfCharPrimitives()
@@ -94,6 +67,33 @@ public final class UnsafePropertyInitializersKt /* UnsafePropertyInitializersKt*
 
   @org.jetbrains.annotations.NotNull()
   public static final int @org.jetbrains.annotations.NotNull() [] getEmptyArayOfInts();//  getEmptyArayOfInts()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final java.lang.Character @org.jetbrains.annotations.NotNull() [] getArrayOfCharObjects();//  getArrayOfCharObjects()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final java.lang.Double @org.jetbrains.annotations.NotNull() [] getArrayOfDoubleObjects();//  getArrayOfDoubleObjects()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final java.lang.Float @org.jetbrains.annotations.NotNull() [] getArrayOfFloatObjects();//  getArrayOfFloatObjects()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final java.lang.Integer @org.jetbrains.annotations.NotNull() [] getArrayOfIntObjects();//  getArrayOfIntObjects()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final java.lang.Long @org.jetbrains.annotations.NotNull() [] getArrayOfLongObjects();//  getArrayOfLongObjects()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final java.lang.Object @org.jetbrains.annotations.NotNull() [] getArrayOfNAny();//  getArrayOfNAny()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final java.lang.String @org.jetbrains.annotations.NotNull() [] getArrayOfStrings();//  getArrayOfStrings()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final java.lang.String @org.jetbrains.annotations.NotNull() [] getEmptyArayOfStrings();//  getEmptyArayOfStrings()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final kotlin.annotation.AnnotationTarget @org.jetbrains.annotations.NotNull() [] getArrayOfEnums();//  getArrayOfEnums()
 
   @org.jetbrains.annotations.NotNull()
   public static final long @org.jetbrains.annotations.NotNull() [] getArrayOfLongPrimitives();//  getArrayOfLongPrimitives()

@@ -1,7 +1,6 @@
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface A /* A*/ {
-  @org.jetbrains.annotations.NotNull()
-  public abstract int @org.jetbrains.annotations.NotNull() [] x();//  x()
+  public abstract int[] x();//  x()
 }
 
 public final class AnnotationWithVaragArgumentsKt /* AnnotationWithVaragArgumentsKt*/ {
@@ -25,33 +24,26 @@ public final class AnnotationWithVaragArgumentsKt /* AnnotationWithVaragArgument
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface B /* B*/ {
-  @org.jetbrains.annotations.NotNull()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.String x();//  x()
+  public abstract int[] y();//  y()
 
-  @org.jetbrains.annotations.NotNull()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.String z();//  z()
+  public abstract java.lang.String x();//  x()
 
-  @org.jetbrains.annotations.NotNull()
-  public abstract int @org.jetbrains.annotations.NotNull() [] y();//  y()
+  public abstract java.lang.String z();//  z()
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface C /* C*/ {
-  @org.jetbrains.annotations.NotNull()
-  public abstract @org.jetbrains.annotations.NotNull() A a();//  a()
+  public abstract A a();//  a()
 
-  @org.jetbrains.annotations.NotNull()
-  public abstract @org.jetbrains.annotations.NotNull() B b();//  b()
+  public abstract B b();//  b()
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface D /* D*/ {
-  @org.jetbrains.annotations.NotNull()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [] x();//  x()
+  public abstract java.lang.String[] x();//  x()
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface E /* E*/ {
-  @org.jetbrains.annotations.NotNull()
-  public abstract @org.jetbrains.annotations.NotNull() D d();//  d()
+  public abstract D d();//  d()
 }

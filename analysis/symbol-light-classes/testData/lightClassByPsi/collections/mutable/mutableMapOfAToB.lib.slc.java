@@ -18,22 +18,32 @@ public abstract class ABMutableMap2 /* test.ABMutableMap2*/ implements java.util
 
   private final int size;
 
+  @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() test.B put(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.B);//  put(@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B)
+
+  @java.lang.Override()
+  public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public void clear();//  clear()
+
+  @java.lang.Override()
+  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>)
 
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() test.B remove(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  remove(@org.jetbrains.annotations.NotNull() test.A)
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() test.B> getValues();//  getValues()
+  public @org.jetbrains.annotations.NotNull() java.util.Collection<test.B> getValues();//  getValues()
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.util.Map.Entry<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>> getEntries();//  getEntries()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<java.util.Map.Entry<test.A, test.B>> getEntries();//  getEntries()
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() test.A> getKeys();//  getKeys()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<test.A> getKeys();//  getKeys()
 
   @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() test.B get(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  get(@org.jetbrains.annotations.NotNull() test.A)
@@ -44,30 +54,34 @@ public abstract class ABMutableMap2 /* test.ABMutableMap2*/ implements java.util
 
   public boolean containsValue(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.B);//  containsValue(@org.jetbrains.annotations.NotNull() test.B)
 
-  public boolean isEmpty();//  isEmpty()
-
   public int getSize();//  getSize()
-
-  public void clear();//  clear()
-
-  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>)
 }
 
 public class ABMutableMap3 /* test.ABMutableMap3*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.collections.MutableMap<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMutableMap {
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() test.B> getValues();//  getValues()
+  @java.lang.Override()
+  @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() test.B put(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.B);//  put(@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B)
+
+  @java.lang.Override()
+  public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public void clear();//  clear()
+
+  @java.lang.Override()
+  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>)
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.util.Map.Entry<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>> getEntries();//  getEntries()
+  public @org.jetbrains.annotations.NotNull() java.util.Collection<test.B> getValues();//  getValues()
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() test.A> getKeys();//  getKeys()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<java.util.Map.Entry<test.A, test.B>> getEntries();//  getEntries()
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<test.A> getKeys();//  getKeys()
 
   @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() test.B get(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  get(@org.jetbrains.annotations.NotNull() test.A)
-
-  @org.jetbrains.annotations.Nullable()
-  public @org.jetbrains.annotations.Nullable() test.B put(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.B);//  put(@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B)
 
   @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() test.B remove(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  remove(@org.jetbrains.annotations.NotNull() test.A)
@@ -78,13 +92,7 @@ public class ABMutableMap3 /* test.ABMutableMap3*/ implements java.util.Map<@org
 
   public boolean containsValue(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.B);//  containsValue(@org.jetbrains.annotations.NotNull() test.B)
 
-  public boolean isEmpty();//  isEmpty()
-
   public int getSize();//  getSize()
-
-  public void clear();//  clear()
-
-  public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>)
 }
 
 public final class B /* test.B*/ {

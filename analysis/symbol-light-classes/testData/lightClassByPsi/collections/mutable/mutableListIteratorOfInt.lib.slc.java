@@ -3,49 +3,63 @@ public abstract class SMutableListIterator /* test.SMutableListIterator*/ implem
 }
 
 public abstract class SMutableListIterator2 /* test.SMutableListIterator2*/ implements java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.collections.MutableListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMutableListIterator {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer next();//  next()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer previous();//  previous()
 
-  public  SMutableListIterator2();//  .ctor()
-
+  @java.lang.Override()
   public boolean hasNext();//  hasNext()
 
+  @java.lang.Override()
   public boolean hasPrevious();//  hasPrevious()
 
+  @java.lang.Override()
   public int nextIndex();//  nextIndex()
 
+  @java.lang.Override()
   public int previousIndex();//  previousIndex()
 
-  public void add(int);//  add(int)
-
+  @java.lang.Override()
   public void remove();//  remove()
+
+  public  SMutableListIterator2();//  .ctor()
+
+  public void add(int);//  add(int)
 
   public void set(int);//  set(int)
 }
 
 public class SMutableListIterator3 /* test.SMutableListIterator3*/ implements java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.collections.MutableListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMutableListIterator {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer next();//  next()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer previous();//  previous()
 
-  public  SMutableListIterator3();//  .ctor()
-
+  @java.lang.Override()
   public boolean hasNext();//  hasNext()
 
+  @java.lang.Override()
   public boolean hasPrevious();//  hasPrevious()
 
+  @java.lang.Override()
   public int nextIndex();//  nextIndex()
 
+  @java.lang.Override()
   public int previousIndex();//  previousIndex()
 
-  public void add(int);//  add(int)
-
+  @java.lang.Override()
   public void remove();//  remove()
+
+  public  SMutableListIterator3();//  .ctor()
+
+  public void add(int);//  add(int)
 
   public void set(int);//  set(int)
 }

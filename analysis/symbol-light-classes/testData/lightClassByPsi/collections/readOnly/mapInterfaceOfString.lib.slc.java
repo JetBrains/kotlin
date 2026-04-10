@@ -14,14 +14,17 @@ public abstract class CMap2 /* test.CMap2*/ implements test.IMap {
 
   private final int size;
 
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String> getValues();//  getValues()
+  @java.lang.Override()
+  public boolean isEmpty();//  isEmpty()
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String> getKeys();//  getKeys()
+  public @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String> getValues();//  getValues()
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String>> getEntries();//  getEntries()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<java.lang.String> getKeys();//  getKeys()
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<java.util.Map.Entry<java.lang.String, java.lang.String>> getEntries();//  getEntries()
 
   @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() java.lang.String get(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -32,20 +35,21 @@ public abstract class CMap2 /* test.CMap2*/ implements test.IMap {
 
   public boolean containsValue(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  containsValue(@org.jetbrains.annotations.NotNull() java.lang.String)
 
-  public boolean isEmpty();//  isEmpty()
-
   public int getSize();//  getSize()
 }
 
 public class CMap3 /* test.CMap3*/ implements test.IMap {
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String> getValues();//  getValues()
+  @java.lang.Override()
+  public boolean isEmpty();//  isEmpty()
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String> getKeys();//  getKeys()
+  public @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String> getValues();//  getValues()
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String>> getEntries();//  getEntries()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<java.lang.String> getKeys();//  getKeys()
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<java.util.Map.Entry<java.lang.String, java.lang.String>> getEntries();//  getEntries()
 
   @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() java.lang.String get(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -55,8 +59,6 @@ public class CMap3 /* test.CMap3*/ implements test.IMap {
   public boolean containsKey(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   public boolean containsValue(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  containsValue(@org.jetbrains.annotations.NotNull() java.lang.String)
-
-  public boolean isEmpty();//  isEmpty()
 
   public int getSize();//  getSize()
 }

@@ -5,28 +5,35 @@ public abstract class CList /* test.CList*/ implements test.IList {
 public abstract class CList2 /* test.CList2*/ implements test.IList {
   private final int size;
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String get(int);//  get(int)
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
+  public @org.jetbrains.annotations.NotNull() java.util.Iterator<java.lang.String> iterator();//  iterator()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String> subList(int, int);//  subList(int, int)
+  public @org.jetbrains.annotations.NotNull() java.util.List<java.lang.String> subList(int, int);//  subList(int, int)
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String> listIterator();//  listIterator()
+  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<java.lang.String> listIterator();//  listIterator()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String> listIterator(int);//  listIterator(int)
+  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<java.lang.String> listIterator(int);//  listIterator(int)
+
+  @java.lang.Override()
+  public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>)
+
+  @java.lang.Override()
+  public boolean isEmpty();//  isEmpty()
 
   public  CList2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IList);//  .ctor(@org.jetbrains.annotations.NotNull() test.IList)
 
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
-
-  public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>)
-
-  public boolean isEmpty();//  isEmpty()
 
   public int getSize();//  getSize()
 
@@ -36,28 +43,35 @@ public abstract class CList2 /* test.CList2*/ implements test.IList {
 }
 
 public class CList3 /* test.CList3*/ implements test.IList {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String get(int);//  get(int)
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
+  public @org.jetbrains.annotations.NotNull() java.util.Iterator<java.lang.String> iterator();//  iterator()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String> subList(int, int);//  subList(int, int)
+  public @org.jetbrains.annotations.NotNull() java.util.List<java.lang.String> subList(int, int);//  subList(int, int)
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String> listIterator();//  listIterator()
+  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<java.lang.String> listIterator();//  listIterator()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String> listIterator(int);//  listIterator(int)
+  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<java.lang.String> listIterator(int);//  listIterator(int)
+
+  @java.lang.Override()
+  public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>)
+
+  @java.lang.Override()
+  public boolean isEmpty();//  isEmpty()
 
   public  CList3();//  .ctor()
 
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
-
-  public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>)
-
-  public boolean isEmpty();//  isEmpty()
 
   public int getSize();//  getSize()
 

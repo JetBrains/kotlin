@@ -12,12 +12,16 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.light.classes.symbol.*
+import org.jetbrains.kotlin.light.classes.symbol.annotations.CompositeAdditionalAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAdditionalAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.KotlinDeclarationNullabilityAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.NullabilityAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.suppressWildcardMode
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
+import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal abstract class SymbolLightParameterCommon(
@@ -48,7 +52,14 @@ internal abstract class SymbolLightParameterCommon(
                     ktModule = ktModule,
                     annotatedSymbolPointer = parameterSymbolPointer,
                 ),
-                additionalAnnotationsProvider = NullabilityAnnotationsProvider(::typeNullability),
+                additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
+                    if (method.containingClass.originKind == LightClassOriginKind.BINARY) {
+                        KotlinDeclarationNullabilityAnnotationsProvider { kotlinOrigin }
+                    } else {
+                        EmptyAdditionalAnnotationsProvider
+                    },
+                    NullabilityAnnotationsProvider(::typeNullability),
+                ),
             ),
         )
     }

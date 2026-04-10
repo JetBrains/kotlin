@@ -40,6 +40,6 @@ internal class NullabilityAnnotationsProvider(private val lazyNullabilityType: L
     override fun isSpecialQualifier(qualifiedName: String): Boolean = false
 }
 
-private val String.isNullOrNotNullQualifiedName: Boolean
+internal val String.isNullOrNotNullQualifiedName: Boolean
     get() = this == JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.asString() ||
             this == JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION.asString()

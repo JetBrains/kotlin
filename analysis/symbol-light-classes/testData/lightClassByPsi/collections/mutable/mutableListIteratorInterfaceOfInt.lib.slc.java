@@ -3,49 +3,63 @@ public abstract class CListIterator /* test.CListIterator*/ implements test.IMut
 }
 
 public abstract class CListIterator2 /* test.CListIterator2*/ implements test.IMutableListIterator {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer next();//  next()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer previous();//  previous()
 
-  public  CListIterator2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IMutableListIterator);//  .ctor(@org.jetbrains.annotations.NotNull() test.IMutableListIterator)
-
+  @java.lang.Override()
   public boolean hasNext();//  hasNext()
 
+  @java.lang.Override()
   public boolean hasPrevious();//  hasPrevious()
 
+  @java.lang.Override()
   public int nextIndex();//  nextIndex()
 
+  @java.lang.Override()
   public int previousIndex();//  previousIndex()
 
-  public void add(int);//  add(int)
-
+  @java.lang.Override()
   public void remove();//  remove()
+
+  public  CListIterator2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IMutableListIterator);//  .ctor(@org.jetbrains.annotations.NotNull() test.IMutableListIterator)
+
+  public void add(int);//  add(int)
 
   public void set(int);//  set(int)
 }
 
 public class CListIterator3 /* test.CListIterator3*/ implements test.IMutableListIterator {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer next();//  next()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer previous();//  previous()
 
-  public  CListIterator3();//  .ctor()
-
+  @java.lang.Override()
   public boolean hasNext();//  hasNext()
 
+  @java.lang.Override()
   public boolean hasPrevious();//  hasPrevious()
 
+  @java.lang.Override()
   public int nextIndex();//  nextIndex()
 
+  @java.lang.Override()
   public int previousIndex();//  previousIndex()
 
-  public void add(int);//  add(int)
-
+  @java.lang.Override()
   public void remove();//  remove()
+
+  public  CListIterator3();//  .ctor()
+
+  public void add(int);//  add(int)
 
   public void set(int);//  set(int)
 }

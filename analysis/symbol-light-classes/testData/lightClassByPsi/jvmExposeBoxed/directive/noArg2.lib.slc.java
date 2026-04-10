@@ -3,6 +3,15 @@ public final class Z /* Z*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.Object value;
 
+  @java.lang.Override()
+  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
+
+  @java.lang.Override()
+  public int hashCode();//  hashCode()
+
+  @java.lang.Override()
+  public java.lang.String toString();//  toString()
+
   @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.Object getValue();//  getValue()
@@ -12,11 +21,4 @@ public final class Z /* Z*/ {
 
   @kotlin.jvm.JvmExposeBoxed()
   public  Z(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.Object)
-
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
-
-  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
-
-  public int hashCode();//  hashCode()
 }

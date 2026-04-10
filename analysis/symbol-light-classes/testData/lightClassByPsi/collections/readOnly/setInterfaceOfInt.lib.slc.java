@@ -5,31 +5,37 @@ public abstract class CSet /* test.CSet*/ implements test.ISet {
 public abstract class CSet2 /* test.CSet2*/ implements test.ISet {
   private final int size;
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> iterator();//  iterator()
+  public @org.jetbrains.annotations.NotNull() java.util.Iterator<java.lang.Integer> iterator();//  iterator()
+
+  @java.lang.Override()
+  public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public boolean isEmpty();//  isEmpty()
 
   public  CSet2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.ISet);//  .ctor(@org.jetbrains.annotations.NotNull() test.ISet)
 
   public boolean contains(int);//  contains(int)
 
-  public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
-
-  public boolean isEmpty();//  isEmpty()
-
   public int getSize();//  getSize()
 }
 
 public class CSet3 /* test.CSet3*/ implements test.ISet {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> iterator();//  iterator()
+  public @org.jetbrains.annotations.NotNull() java.util.Iterator<java.lang.Integer> iterator();//  iterator()
+
+  @java.lang.Override()
+  public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public boolean isEmpty();//  isEmpty()
 
   public  CSet3();//  .ctor()
 
   public boolean contains(int);//  contains(int)
-
-  public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
-
-  public boolean isEmpty();//  isEmpty()
 
   public int getSize();//  getSize()
 }

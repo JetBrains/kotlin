@@ -3,15 +3,17 @@ public abstract class SMutableIterable /* test.SMutableIterable*/ implements jav
 }
 
 public abstract class SMutableIterable2 /* test.SMutableIterable2*/ implements java.lang.Iterable<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.collections.MutableIterable<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMutableIterable {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> iterator();//  iterator()
+  public @org.jetbrains.annotations.NotNull() java.util.Iterator<java.lang.Integer> iterator();//  iterator()
 
   public  SMutableIterable2();//  .ctor()
 }
 
 public class SMutableIterable3 /* test.SMutableIterable3*/ implements java.lang.Iterable<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.collections.MutableIterable<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMutableIterable {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> iterator();//  iterator()
+  public @org.jetbrains.annotations.NotNull() java.util.Iterator<java.lang.Integer> iterator();//  iterator()
 
   public  SMutableIterable3();//  .ctor()
 }

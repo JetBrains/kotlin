@@ -22,16 +22,19 @@ public final class CCollection6 /* test.CCollection6*/ implements java.util.Coll
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() test.CCollection6 INSTANCE;
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
+  public @org.jetbrains.annotations.NotNull() java.util.Iterator<java.lang.String> iterator();//  iterator()
+
+  @java.lang.Override()
+  public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>)
+
+  @java.lang.Override()
+  public boolean isEmpty();//  isEmpty()
 
   private  CCollection6();//  .ctor()
 
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
-
-  public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>)
-
-  public boolean isEmpty();//  isEmpty()
 
   public int getSize();//  getSize()
 }

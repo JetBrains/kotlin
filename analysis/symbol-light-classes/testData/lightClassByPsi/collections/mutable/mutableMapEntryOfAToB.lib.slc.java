@@ -13,13 +13,16 @@ public abstract class ABMutableMapEntry2 /* test.ABMutableMapEntry2*/ implements
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() test.B value;
 
+  @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() test.B setValue(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.B);//  setValue(@org.jetbrains.annotations.NotNull() test.B)
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() test.A getKey();//  getKey()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() test.B getValue();//  getValue()
 
@@ -27,12 +30,15 @@ public abstract class ABMutableMapEntry2 /* test.ABMutableMapEntry2*/ implements
 }
 
 public class ABMutableMapEntry3 /* test.ABMutableMapEntry3*/ implements java.util.Map.Entry<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.collections.MutableMap.MutableEntry<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMutableMap$Entry {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() test.A getKey();//  getKey()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() test.B getValue();//  getValue()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() test.B setValue(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.B);//  setValue(@org.jetbrains.annotations.NotNull() test.B)
 

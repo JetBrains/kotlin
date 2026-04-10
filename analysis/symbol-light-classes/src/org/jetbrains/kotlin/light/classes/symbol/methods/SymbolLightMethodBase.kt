@@ -21,19 +21,24 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.checkIsMangled
+import org.jetbrains.kotlin.asJava.classes.annotateByTypeAnnotationProvider
 import org.jetbrains.kotlin.asJava.classes.KotlinLightReferenceListBuilder
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.mangleInternalName
+import org.jetbrains.kotlin.light.classes.symbol.NullabilityAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
+import org.jetbrains.kotlin.light.classes.symbol.asAnnotationQualifier
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.typeForValueClass
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 
 internal abstract class SymbolLightMethodBase(
     lightMemberOrigin: LightMemberOrigin?,
@@ -41,6 +46,8 @@ internal abstract class SymbolLightMethodBase(
     protected val methodIndex: Int,
     val isJvmExposedBoxed: Boolean,
 ) : SymbolLightMemberBase<PsiMethod>(lightMemberOrigin, containingClass), KtLightMethod {
+    internal open val binaryDelegate: PsiMethod? get() = null
+
     override fun getBody(): PsiCodeBlock? = null
 
     override fun getReturnTypeElement(): PsiTypeElement? = null
@@ -143,6 +150,57 @@ internal abstract class SymbolLightMethodBase(
     protected val jvmExposeBoxedAwareAnnotationFilter: AnnotationFilter
         get() = if (isJvmExposedBoxed) ExcludeAnnotationFilter.JvmName else ExcludeAnnotationFilter.JvmExposeBoxed
 
+    protected fun binaryDelegateOverrides(): Boolean {
+        val delegate = binaryDelegate ?: return false
+        return delegate.hasAnnotation(JvmAnnotationNames.OVERRIDE_ANNOTATION.asString()) || delegate.findSuperMethods().isNotEmpty()
+    }
+
+    protected fun binaryDelegateReturnTypeNullabilityState(): BinaryDelegateReturnTypeNullability {
+        val delegate = binaryDelegate ?: return BinaryDelegateReturnTypeNullability.NOT_REQUIRED
+        val hasNotNull = delegate.hasAnnotation(JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.asString())
+        val hasNullable = delegate.hasAnnotation(JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION.asString())
+        return when {
+            hasNotNull && hasNullable -> BinaryDelegateReturnTypeNullability.CONFLICTING
+            hasNotNull -> BinaryDelegateReturnTypeNullability.NON_NULLABLE
+            hasNullable -> BinaryDelegateReturnTypeNullability.NULLABLE
+            else -> BinaryDelegateReturnTypeNullability.NOT_REQUIRED
+        }
+    }
+
+    protected fun binaryDelegateReturnTypeNullability(): NullabilityAnnotation {
+        return when (binaryDelegateReturnTypeNullabilityState()) {
+            BinaryDelegateReturnTypeNullability.NON_NULLABLE -> NullabilityAnnotation.NON_NULLABLE
+            BinaryDelegateReturnTypeNullability.NULLABLE -> NullabilityAnnotation.NULLABLE
+            BinaryDelegateReturnTypeNullability.NOT_REQUIRED,
+            BinaryDelegateReturnTypeNullability.CONFLICTING,
+                -> NullabilityAnnotation.NOT_REQUIRED
+        }
+    }
+
+    protected fun PsiType.withTopLevelNullabilityAnnotation(nullability: NullabilityAnnotation, owner: PsiElement): PsiType {
+        val qualifier = nullability.asAnnotationQualifier ?: return this
+        return annotateByTypeAnnotationProvider(sequenceOf(listOf(SymbolLightSimpleAnnotation(qualifier, owner))))
+    }
+
+    protected fun PsiType.topLevelNullability(): NullabilityAnnotation = when {
+        annotations.any { it.qualifiedName == JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.asString() } -> NullabilityAnnotation.NON_NULLABLE
+        annotations.any { it.qualifiedName == JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION.asString() } -> NullabilityAnnotation.NULLABLE
+        else -> NullabilityAnnotation.NOT_REQUIRED
+    }
+
+    protected fun PsiType.hasNestedNullabilityAnnotations(): Boolean = when (this) {
+        is PsiArrayType -> componentType.hasNullabilityAnnotationsDeep()
+        is PsiClassType -> parameters.any { parameter -> parameter.hasNullabilityAnnotationsDeep() }
+        is PsiWildcardType -> bound?.hasNullabilityAnnotationsDeep() == true
+        else -> false
+    }
+
+    protected fun KaType.containsFlexibleTypes(): Boolean = when (this) {
+        is KaFlexibleType -> true
+        is KaClassType -> typeArguments.any { typeProjection -> typeProjection.type?.containsFlexibleTypes() == true }
+        else -> false
+    }
+
     // Inspired by KotlinTypeMapper#forceBoxedReturnType
     protected fun KaSession.shouldEnforceBoxedReturnType(symbol: KaCallableSymbol): Boolean {
         val returnType = symbol.returnType
@@ -169,5 +227,22 @@ internal abstract class SymbolLightMethodBase(
 
     private fun isInlineClassType(type: KaType): Boolean {
         return ((type as? KaClassType)?.symbol as? KaNamedClassSymbol)?.isInline == true
+    }
+}
+
+internal enum class BinaryDelegateReturnTypeNullability {
+    NOT_REQUIRED,
+    NON_NULLABLE,
+    NULLABLE,
+    CONFLICTING,
+}
+
+private fun PsiType.hasNullabilityAnnotationsDeep(): Boolean {
+    if (annotations.any { annotation -> annotation.qualifiedName?.isNullOrNotNullQualifiedName == true }) return true
+    return when (this) {
+        is PsiArrayType -> componentType.hasNullabilityAnnotationsDeep()
+        is PsiClassType -> parameters.any { parameter -> parameter.hasNullabilityAnnotationsDeep() }
+        is PsiWildcardType -> bound?.hasNullabilityAnnotationsDeep() == true
+        else -> false
     }
 }

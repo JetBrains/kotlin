@@ -18,14 +18,11 @@ public final class A()B() /* A()B()*/ {
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno /* Anno*/ {
-  @org.jetbrains.annotations.NotNull()
-  public abstract @org.jetbrains.annotations.NotNull() StrangeEnum size();//  size()
+  public abstract StrangeEnum size();//  size()
 
-  @org.jetbrains.annotations.NotNull()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.String A B();//  A B()
+  public abstract java.lang.String A B();//  A B()
 
-  @org.jetbrains.annotations.NotNull()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.String name();//  name()
+  public abstract java.lang.String name();//  name()
 }
 
 public enum StrangeEnum /* StrangeEnum*/ {
@@ -60,7 +57,7 @@ public final class Test /* Test*/ {
   public final @org.jetbrains.annotations.NotNull() java.lang.String getStrange name();//  getStrange name()
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() !A@> getStrangeType();//  getStrangeType()
+  public final @org.jetbrains.annotations.NotNull() java.util.List<!A@> getStrangeType();//  getStrangeType()
 
   public  Test();//  .ctor()
 

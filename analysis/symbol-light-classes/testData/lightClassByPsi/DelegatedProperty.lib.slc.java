@@ -75,12 +75,15 @@ public static final class Derived /* Container.Derived*/ extends Container.Base 
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() error.NonExistentClass d$delegate;
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String getB();//  getB()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String getC();//  getC()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String getD();//  getD()
 

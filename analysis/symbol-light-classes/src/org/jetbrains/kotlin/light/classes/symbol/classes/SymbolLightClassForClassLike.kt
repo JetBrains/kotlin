@@ -56,6 +56,10 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
         return classOrObjectDeclaration?.contentModificationTrackers() ?: super.contentModificationTrackers()
     }
 
+    override val binaryLightClassDelegate: BinaryLightClassDelegate? by lazyPub {
+        createBinaryLightClassDelegate(project, classOrObjectDeclaration)
+    }
+
     override val kotlinOrigin: KtClassOrObject? get() = classOrObjectDeclaration
 
     internal inline fun <T> withClassSymbol(crossinline action: KaSession.(SType) -> T): T =

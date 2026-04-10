@@ -21,18 +21,20 @@ public final class Baz /* Baz*/ {
 public final class IntWrapper /* IntWrapper*/ {
   private final int s;
 
+  @java.lang.Override()
+  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
+
+  @java.lang.Override()
+  public int hashCode();//  hashCode()
+
+  @java.lang.Override()
+  public java.lang.String toString();//  toString()
+
   @kotlin.jvm.JvmExposeBoxed()
   public  IntWrapper(int);//  .ctor(int)
 
   @kotlin.jvm.JvmExposeBoxed()
   public final int getS();//  getS()
-
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
-
-  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
-
-  public int hashCode();//  hashCode()
 }
 
 public final class JvmOverloadsReturnTypeDirectiveKt /* JvmOverloadsReturnTypeDirectiveKt*/ {

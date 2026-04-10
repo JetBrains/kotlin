@@ -9,9 +9,11 @@ public abstract class CMapEntry2 /* test.CMapEntry2*/ implements test.IMapEntry 
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String value;
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String getKey();//  getKey()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String getValue();//  getValue()
 
@@ -19,9 +21,11 @@ public abstract class CMapEntry2 /* test.CMapEntry2*/ implements test.IMapEntry 
 }
 
 public class CMapEntry3 /* test.CMapEntry3*/ implements test.IMapEntry {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String getKey();//  getKey()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String getValue();//  getValue()
 

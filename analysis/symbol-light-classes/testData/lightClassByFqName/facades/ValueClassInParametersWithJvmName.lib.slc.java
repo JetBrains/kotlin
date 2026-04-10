@@ -1,27 +1,27 @@
 public final class ValueClassInParametersWithJvmNameKt /* one.ValueClassInParametersWithJvmNameKt*/ {
   @kotlin.jvm.JvmName()
-  @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.lang.String getGetter();//  getGetter()
-
-  @kotlin.jvm.JvmName()
-  @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.lang.String getSetterAndGetter();//  getSetterAndGetter()
-
-  @kotlin.jvm.JvmName()
-  @org.jetbrains.annotations.Nullable()
-  public static final @org.jetbrains.annotations.Nullable() java.lang.String functionWithValueClassInReturnWithJvmName();//  functionWithValueClassInReturnWithJvmName()
-
-  @kotlin.jvm.JvmName()
   public static final void functionWithValueClassInReceiverWithJvmName(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  functionWithValueClassInReceiverWithJvmName(@org.jetbrains.annotations.NotNull() java.lang.String)
 
-  @kotlin.jvm.JvmName()
-  public static final void methodWithJvmName(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  methodWithJvmName(@org.jetbrains.annotations.NotNull() java.lang.String)
+  @kotlin.jvm.JvmName(name = "_functionWithValueClassInReturnWithJvmName")
+  @org.jetbrains.annotations.Nullable()
+  public static final @org.jetbrains.annotations.Nullable() java.lang.String _functionWithValueClassInReturnWithJvmName();//  _functionWithValueClassInReturnWithJvmName()
 
-  @kotlin.jvm.JvmName()
-  public static final void setSetter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setSetter(@org.jetbrains.annotations.NotNull() java.lang.String)
+  @kotlin.jvm.JvmName(name = "_methodWithJvmName")
+  public static final void _methodWithJvmName(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  _methodWithJvmName(@org.jetbrains.annotations.NotNull() java.lang.String)
 
-  @kotlin.jvm.JvmName()
-  public static final void setSetterAndGetter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setSetterAndGetter(@org.jetbrains.annotations.NotNull() java.lang.String)
+  @kotlin.jvm.JvmName(name = "get_getter")
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String get_getter();//  get_getter()
+
+  @kotlin.jvm.JvmName(name = "get_setterAndGetter")
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String get_setterAndGetter();//  get_setterAndGetter()
+
+  @kotlin.jvm.JvmName(name = "set_setter")
+  public static final void set_setter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  set_setter(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @kotlin.jvm.JvmName(name = "set_setterAndGetter")
+  public static final void set_setterAndGetter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  set_setterAndGetter(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() java.lang.String getNothing();//  getNothing()

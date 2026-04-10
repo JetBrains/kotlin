@@ -7,13 +7,13 @@ public abstract interface A /* A*/<T>  {
 public abstract interface B /* B*/ {
   @kotlin.jvm.JvmSuppressWildcards()
   @org.jetbrains.annotations.NotNull()
-  public abstract @org.jetbrains.annotations.NotNull() In<@org.jetbrains.annotations.NotNull() Open> foo();//  foo()
+  public abstract @org.jetbrains.annotations.NotNull() In<Open> foo();//  foo()
 }
 
 public final class Container /* Container*/ {
   @kotlin.jvm.JvmSuppressWildcards()
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Open> bar();//  bar()
+  public final @org.jetbrains.annotations.NotNull() Out<Open> bar();//  bar()
 
   @kotlin.jvm.JvmSuppressWildcards()
   public final int bar(boolean, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() In<@org.jetbrains.annotations.NotNull() java.lang.Long>, @kotlin.jvm.JvmSuppressWildcards() long);//  bar(boolean, @org.jetbrains.annotations.NotNull() In<@org.jetbrains.annotations.NotNull() java.lang.Long>, @kotlin.jvm.JvmSuppressWildcards() long)
@@ -28,10 +28,10 @@ public final class Container /* Container*/ {
   public final void zoo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Open>>>, @org.jetbrains.annotations.NotNull() @kotlin.jvm.JvmSuppressWildcards() @org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Open>);//  zoo(@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Open>>>, @kotlin.jvm.JvmSuppressWildcards() @org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Open>)
 
   @org.jetbrains.annotations.NotNull()
-  public final @kotlin.jvm.JvmSuppressWildcards() @org.jetbrains.annotations.NotNull() OutPair<@org.jetbrains.annotations.NotNull() Final, @kotlin.jvm.JvmSuppressWildcards() @org.jetbrains.annotations.NotNull() OutPair<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Final>, @org.jetbrains.annotations.NotNull() Out<@kotlin.jvm.JvmSuppressWildcards() @org.jetbrains.annotations.NotNull() Final>>> falseTrueFalse();//  falseTrueFalse()
+  public final @org.jetbrains.annotations.NotNull() OutPair<Final, OutPair<Out<Final>, Out<Final>>> falseTrueFalse();//  falseTrueFalse()
 
   @org.jetbrains.annotations.NotNull()
-  public final @kotlin.jvm.JvmSuppressWildcards() @org.jetbrains.annotations.NotNull() OutPair<@org.jetbrains.annotations.NotNull() Open, ? extends @kotlin.jvm.JvmWildcard() @org.jetbrains.annotations.NotNull() OutPair<@org.jetbrains.annotations.NotNull() Open, ? extends @kotlin.jvm.JvmWildcard() @org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Open>>> combination();//  combination()
+  public final @org.jetbrains.annotations.NotNull() OutPair<Open, ? extends OutPair<Open, ? extends Out<Open>>> combination();//  combination()
 
   public  Container();//  .ctor()
 
@@ -54,19 +54,19 @@ public final class ContainerForPropertyAndAccessors /* ContainerForPropertyAndAc
   private final @org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Open>>> deepOpen;
 
   @org.jetbrains.annotations.NotNull()
-  public final @kotlin.jvm.JvmSuppressWildcards() @org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Open> getZoo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() Open>>>);//  getZoo(@org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() Open>>>)
+  public final @org.jetbrains.annotations.NotNull() In<? super java.lang.Object> getSimpleIn();//  getSimpleIn()
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() In<? super @kotlin.jvm.JvmWildcard() @org.jetbrains.annotations.Nullable() java.lang.Object> getSimpleIn();//  getSimpleIn()
+  public final @org.jetbrains.annotations.NotNull() Out<? extends Final> getSimpleOut();//  getSimpleOut()
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() Out<? extends @kotlin.jvm.JvmWildcard() @org.jetbrains.annotations.NotNull() Final> getSimpleOut();//  getSimpleOut()
+  public final @org.jetbrains.annotations.NotNull() Out<Open> getBar();//  getBar()
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Open> getBar();//  getBar()
+  public final @org.jetbrains.annotations.NotNull() Out<Open> getZoo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() Open>>>);//  getZoo(@org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() Out<? extends @org.jetbrains.annotations.NotNull() Open>>>)
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Out<@org.jetbrains.annotations.NotNull() Open>>> getDeepOpen();//  getDeepOpen()
+  public final @org.jetbrains.annotations.NotNull() Out<Out<Out<Open>>> getDeepOpen();//  getDeepOpen()
 
   public  ContainerForPropertyAndAccessors();//  .ctor()
 

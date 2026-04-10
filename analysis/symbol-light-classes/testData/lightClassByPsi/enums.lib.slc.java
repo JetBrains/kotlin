@@ -47,6 +47,9 @@ public abstract enum IntArithmetics /* IntArithmetics*/ implements java.util.fun
   PLUS,
   TIMES;
 
+  @java.lang.Override()
+  public int applyAsInt(int, int);//  applyAsInt(int, int)
+
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() IntArithmetics @org.jetbrains.annotations.NotNull() [] values();//  values()
 
@@ -54,8 +57,6 @@ public abstract enum IntArithmetics /* IntArithmetics*/ implements java.util.fun
   public static @org.jetbrains.annotations.NotNull() IntArithmetics valueOf(@org.jetbrains.annotations.NotNull() java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   private  IntArithmetics();//  .ctor()
-
-  public int applyAsInt(int, int);//  applyAsInt(int, int)
 }
 
 public abstract enum ProtocolState /* ProtocolState*/ {

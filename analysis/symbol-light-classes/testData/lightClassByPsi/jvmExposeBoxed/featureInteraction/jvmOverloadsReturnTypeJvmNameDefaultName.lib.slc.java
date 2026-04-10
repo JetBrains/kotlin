@@ -1,15 +1,15 @@
 public final class Baz /* Baz*/ {
-  @kotlin.jvm.JvmName()
+  @kotlin.jvm.JvmName(name = "jvmMemberLevel")
   @kotlin.jvm.JvmOverloads()
-  public final int memberLevel();//  memberLevel()
+  public final int jvmMemberLevel();//  jvmMemberLevel()
 
-  @kotlin.jvm.JvmName()
+  @kotlin.jvm.JvmName(name = "jvmMemberLevel")
   @kotlin.jvm.JvmOverloads()
-  public final int memberLevel(int);//  memberLevel(int)
+  public final int jvmMemberLevel(int);//  jvmMemberLevel(int)
 
-  @kotlin.jvm.JvmName()
+  @kotlin.jvm.JvmName(name = "jvmMemberLevel")
   @kotlin.jvm.JvmOverloads()
-  public final int memberLevel(int, int);//  memberLevel(int, int)
+  public final int jvmMemberLevel(int, int);//  jvmMemberLevel(int, int)
 
   public  Baz();//  .ctor()
 }
@@ -18,10 +18,12 @@ public final class Baz /* Baz*/ {
 public final class IntWrapper /* IntWrapper*/ {
   private final int s;
 
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
-
+  @java.lang.Override()
   public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
 
+  @java.lang.Override()
   public int hashCode();//  hashCode()
+
+  @java.lang.Override()
+  public java.lang.String toString();//  toString()
 }

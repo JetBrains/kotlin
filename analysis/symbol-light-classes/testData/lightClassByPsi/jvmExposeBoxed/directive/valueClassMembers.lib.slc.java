@@ -15,6 +15,15 @@ public final class ValueClass /* pack.ValueClass*/ {
 
   private static final int companionProperty;
 
+  @java.lang.Override()
+  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
+
+  @java.lang.Override()
+  public int hashCode();//  hashCode()
+
+  @java.lang.Override()
+  public java.lang.String toString();//  toString()
+
   @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() pack.OriginalClass getOriginal();//  getOriginal()
@@ -35,13 +44,6 @@ public final class ValueClass /* pack.ValueClass*/ {
   @kotlin.jvm.JvmExposeBoxed()
   public final void funWithoutParameters();//  funWithoutParameters()
 
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
-
-  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
-
-  public int hashCode();//  hashCode()
-
   class Companion ...
 
   class RegularObject ...
@@ -49,11 +51,11 @@ public final class ValueClass /* pack.ValueClass*/ {
 
 public static final class Companion /* pack.ValueClass.Companion*/ {
   @kotlin.jvm.JvmExposeBoxed()
-  @org.jetbrains.annotations.NotNull()
+  @org.jetbrains.annotations.Nullable()
   public final @org.jetbrains.annotations.Nullable() pack.ValueClass companionFunctionWithValueClassType();//  companionFunctionWithValueClassType()
 
   @kotlin.jvm.JvmExposeBoxed()
-  @org.jetbrains.annotations.NotNull()
+  @org.jetbrains.annotations.Nullable()
   public final @org.jetbrains.annotations.Nullable() pack.ValueClass getCompanionPropertyWithValueClassType();//  getCompanionPropertyWithValueClassType()
 
   private  Companion();//  .ctor()

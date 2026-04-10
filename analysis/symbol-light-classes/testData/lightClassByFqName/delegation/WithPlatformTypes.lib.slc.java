@@ -1,4 +1,5 @@
 public final class WithPlatformTypes /* WithPlatformTypes*/ implements p.J {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @<error>() @org.jetbrains.annotations.NotNull() java.lang.String foo(@org.jetbrains.annotations.NotNull() @<error>() @org.jetbrains.annotations.NotNull() java.lang.String);//  foo(@<error>() @org.jetbrains.annotations.NotNull() java.lang.String)
 

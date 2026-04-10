@@ -6,15 +6,17 @@ public final class StringWrapper /* pack.StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() pack.StringWrapper.Companion Companion;
 
-  @kotlin.jvm.JvmStatic()
-  public static final void regularStaticFunction();//  regularStaticFunction()
-
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
-
+  @java.lang.Override()
   public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
 
+  @java.lang.Override()
   public int hashCode();//  hashCode()
+
+  @java.lang.Override()
+  public java.lang.String toString();//  toString()
+
+  @kotlin.jvm.JvmStatic()
+  public static final void regularStaticFunction();//  regularStaticFunction()
 
   public static final int getRegularStaticVariable();//  getRegularStaticVariable()
 

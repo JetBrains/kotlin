@@ -5,28 +5,35 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
 public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.collections.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
   private final int size;
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> iterator();//  iterator()
+  public @org.jetbrains.annotations.NotNull() java.util.Iterator<java.lang.Integer> iterator();//  iterator()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer> subList(int, int);//  subList(int, int)
+  public @org.jetbrains.annotations.NotNull() java.util.List<java.lang.Integer> subList(int, int);//  subList(int, int)
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> listIterator();//  listIterator()
+  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<java.lang.Integer> listIterator();//  listIterator()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> listIterator(int);//  listIterator(int)
+  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<java.lang.Integer> listIterator(int);//  listIterator(int)
+
+  @java.lang.Override()
+  public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public boolean isEmpty();//  isEmpty()
 
   public  SList2();//  .ctor()
 
   public boolean contains(int);//  contains(int)
-
-  public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
-
-  public boolean isEmpty();//  isEmpty()
 
   public int getSize();//  getSize()
 
@@ -36,28 +43,35 @@ public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jet
 }
 
 public class SList3 /* test.SList3*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.collections.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> iterator();//  iterator()
+  public @org.jetbrains.annotations.NotNull() java.util.Iterator<java.lang.Integer> iterator();//  iterator()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer> subList(int, int);//  subList(int, int)
+  public @org.jetbrains.annotations.NotNull() java.util.List<java.lang.Integer> subList(int, int);//  subList(int, int)
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> listIterator();//  listIterator()
+  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<java.lang.Integer> listIterator();//  listIterator()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> listIterator(int);//  listIterator(int)
+  public @org.jetbrains.annotations.NotNull() java.util.ListIterator<java.lang.Integer> listIterator(int);//  listIterator(int)
+
+  @java.lang.Override()
+  public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public boolean isEmpty();//  isEmpty()
 
   public  SList3();//  .ctor()
 
   public boolean contains(int);//  contains(int)
-
-  public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
-
-  public boolean isEmpty();//  isEmpty()
 
   public int getSize();//  getSize()
 
