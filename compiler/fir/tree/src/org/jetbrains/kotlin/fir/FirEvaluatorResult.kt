@@ -27,9 +27,12 @@ sealed class FirEvaluatorResult {
 }
 
 
-
-inline fun <reified T : FirElement> FirEvaluatorResult.unwrapOr(action: (FirEvaluatorResult) -> Unit): T? {
-    if (this is FirEvaluatorResult.Evaluated) return result as? T
-    action(this)
-    return null
+inline fun <reified T : FirElement> FirEvaluatorResult.unwrapOr(action: (FirEvaluatorResult.NotEvaluated) -> Unit): T? {
+    when (this) {
+        is FirEvaluatorResult.Evaluated -> return result as? T
+        is FirEvaluatorResult.NotEvaluated -> {
+            action(this)
+            return null
+        }
+    }
 }
