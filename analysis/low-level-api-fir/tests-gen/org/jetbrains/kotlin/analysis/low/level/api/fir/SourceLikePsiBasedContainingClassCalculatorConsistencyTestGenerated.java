@@ -88,6 +88,12 @@ public class SourceLikePsiBasedContainingClassCalculatorConsistencyTestGenerated
   }
 
   @Test
+  @TestMetadata("genericFromOuterClassInInnerClass.kt")
+  public void testGenericFromOuterClassInInnerClass() {
+    run("genericFromOuterClassInInnerClass.kt");
+  }
+
+  @Test
   @TestMetadata("incompleteFunction.kt")
   public void testIncompleteFunction() {
     run("incompleteFunction.kt");

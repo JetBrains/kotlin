@@ -9,16 +9,21 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractPsiBasedContainin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryLikeSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLContainingClassCalculator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.processAllCallables
+import org.jetbrains.kotlin.fir.scopes.processAllClassifiers
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -47,6 +52,23 @@ abstract class AbstractPsiBasedContainingClassCalculatorConsistencyTest : Abstra
                         checkDeclaration(element, allowedPsiPresence)
                     }
 
+                    if (element is FirClass) {
+                        val typeScope = element.symbol.unsubstitutedScope(
+                            resolutionFacade.useSiteFirSession,
+                            resolutionFacade.getScopeSessionFor(resolutionFacade.useSiteFirSession),
+                            false,
+                            FirResolvePhase.STATUS,
+                        )
+
+                        typeScope.processAllCallables {
+                            checkDeclaration(it.fir, allowedPsiPresence)
+                        }
+
+                        typeScope.processAllClassifiers {
+                            checkDeclaration(it.fir, allowedPsiPresence)
+                        }
+                    }
+
                     element.acceptChildren(this)
                 }
             })
@@ -65,6 +87,10 @@ abstract class AbstractPsiBasedContainingClassCalculatorConsistencyTest : Abstra
     private fun checkDeclaration(fir: FirDeclaration, allowedPsiPresence: Set<String>) {
         val symbol = fir.symbol
         val session = fir.moduleData.session
+        // Ignore library sessions since they don't use LLFirProvider
+        if (session is LLFirLibraryLikeSession) {
+            return
+        }
 
         val compilerFirProvider = FirProviderImpl(session, session.kotlinScopeProvider)
         val compilerContainingSymbol = compilerFirProvider.getContainingClass(symbol)

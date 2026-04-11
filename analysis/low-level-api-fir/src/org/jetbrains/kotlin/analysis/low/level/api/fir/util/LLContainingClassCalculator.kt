@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,11 +9,13 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtFakeSourceElementKind.*
 import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.isLazyResolvable
 import org.jetbrains.kotlin.fir.getContainingClassLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -113,6 +115,16 @@ internal object LLContainingClassCalculator {
                     return computeContainingClass(symbol, body?.parent)
                 }
             }
+
+            // TODO(KT-85643): KtRealSourceElementKind should be converted to KtFakeSourceElementKind once the issue is fixed
+            is KtRealSourceElementKind if symbol.origin is FirDeclarationOrigin.SubstitutionOverride -> return when (val psi = source.psi) {
+                // Substituted callables usually have the containing psi as a source element
+                // Note: KtCallableDeclaration cannot be used since if present it points to the original callables which has no relation
+                // to the containing class
+                is KtClassLikeDeclaration -> computeContainingClass(symbol, psi)
+                else -> null
+            }
+
             else -> {
                 if (symbol is FirClassLikeSymbol<*>) {
                     val selfClass = source.psi as? KtClassOrObject
