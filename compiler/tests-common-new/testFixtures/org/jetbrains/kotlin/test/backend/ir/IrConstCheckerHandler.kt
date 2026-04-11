@@ -53,7 +53,7 @@ private class IrConstChecker : IrTypeVisitorVoid() {
 
     private fun checkAnnotations(container: IrAnnotationContainer) {
         fun IrElement.isConst(): Boolean {
-            return this is IrConst || this is IrGetEnumValue || this is IrClassReference || (this is IrConstructorCall && type.isAnnotation())
+            return this is IrConst || this is IrGetEnumValue || this is IrClassReference || this is IrAnnotation
         }
 
         container.annotations.forEach { annotation ->

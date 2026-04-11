@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fileClasses.JvmSimpleFileClassInfo
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -191,12 +192,12 @@ private fun parseJvmNameOnFileNoResolve(file: IrFile): ParsedJvmFileClassAnnotat
     return ParsedJvmFileClassAnnotations(jvmName, jvmPackageName, isMultifileClass)
 }
 
-private fun findAnnotationEntryOnFileNoResolve(file: IrFile, shortName: String): IrConstructorCall? =
+private fun findAnnotationEntryOnFileNoResolve(file: IrFile, shortName: String): IrAnnotation? =
     file.annotations.firstOrNull {
         it.type.classFqName?.shortName()?.asString() == shortName
     }
 
-private fun getLiteralStringFromAnnotation(annotationCall: IrConstructorCall): String? {
+private fun getLiteralStringFromAnnotation(annotationCall: IrAnnotation): String? {
     return annotationCall.arguments.getOrNull(0)?.let {
         when {
             it is IrConst && it.kind == IrConstKind.String -> it.value as String

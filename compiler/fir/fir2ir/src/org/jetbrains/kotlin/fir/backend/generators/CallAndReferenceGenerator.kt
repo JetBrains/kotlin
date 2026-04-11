@@ -1084,7 +1084,7 @@ class CallAndReferenceGenerator(
             return when (this) {
                 is IrErrorExpression -> true
                 is IrGetClass -> this.argument.type is IrErrorType
-                is IrConstructorCall -> {
+                is IrAnnotation -> {
                     for ([i, expression] in this.arguments.withIndex()) {
                         if (expression.cleanUp()) {
                             this.arguments[i] = null
@@ -1552,7 +1552,7 @@ class CallAndReferenceGenerator(
                 }
             }
 
-            is IrConstructorCall if statement is FirAnnotationCall -> {
+            is IrAnnotation if statement is FirAnnotationCall -> {
                 // annotation calls don't have receivers
             }
 

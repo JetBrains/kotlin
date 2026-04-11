@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.getAnnotation
@@ -28,7 +29,7 @@ internal fun IrAnnotationContainer.isJsExportIgnoreDeclaration(): Boolean {
 internal val IrDeclarationWithName.exportedJsExportName: String
     get() = getAnnotation(JsStandardClassIds.Annotations.JsName.asSingleFqName())?.getSingleConstStringArgument() ?: name.toString()
 
-internal fun IrConstructorCall.getSingleConstStringArgument() =
+internal fun IrAnnotation.getSingleConstStringArgument() =
     (arguments[0] as IrConst).value as String
 
 fun IrModuleFragment.collectJsExportNames(): Map<IrFile, Map<IrDeclarationWithName, String>> =

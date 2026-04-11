@@ -37,7 +37,7 @@ internal fun IrExpectActualMatchingContext.areIrExpressionConstValuesEqual(
             }
         }
 
-        a is IrConstructorCall && b is IrConstructorCall -> {
+        a is IrAnnotation && b is IrAnnotation -> {
             equalBy(a, b) { it.arguments.size } &&
                     areCompatibleExpectActualTypes(a.type, b.type) &&
                     a.arguments.zip(b.arguments).all { [argA, argB] ->

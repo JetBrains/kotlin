@@ -180,7 +180,7 @@ fun Stability.forEach(callback: (Stability) -> Unit) {
 fun IrAnnotationContainer.hasStableMarker(): Boolean =
     annotations.any { it.isStableMarker() }
 
-private fun IrConstructorCall.isStableMarker(): Boolean {
+private fun IrAnnotation.isStableMarker(): Boolean {
     val owner = annotationClass?.owner ?: return false
     return owner.hasAnnotation(ComposeFqNames.StableMarker) || owner.classId in KnownStableConstructs.stableMarkers
 }

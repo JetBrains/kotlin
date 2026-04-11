@@ -1471,7 +1471,7 @@ class IrSourcePrinterVisitor(
             }
         }
 
-    private fun renderTypeAnnotations(annotations: List<IrConstructorCall>) =
+    private fun renderTypeAnnotations(annotations: List<IrAnnotation>) =
         if (annotations.isEmpty())
             ""
         else
@@ -1479,10 +1479,10 @@ class IrSourcePrinterVisitor(
                 "@[${renderAsAnnotation(it)}]"
             }
 
-    private fun renderAsAnnotation(irAnnotation: IrConstructorCall): String =
+    private fun renderAsAnnotation(irAnnotation: IrAnnotation): String =
         StringBuilder().also { it.renderAsAnnotation(irAnnotation) }.toString()
 
-    private fun StringBuilder.renderAsAnnotation(irAnnotation: IrConstructorCall) {
+    private fun StringBuilder.renderAsAnnotation(irAnnotation: IrAnnotation) {
         val annotationClassName = try {
             irAnnotation.symbol.owner.parentAsClass.name.asString()
         } catch (e: Exception) {
@@ -1562,7 +1562,7 @@ class IrSourcePrinterVisitor(
     private fun StringBuilder.renderAsAnnotationArgument(irElement: IrElement?) {
         when (irElement) {
             null -> append("<null>")
-            is IrConstructorCall -> renderAsAnnotation(irElement)
+            is IrAnnotation -> renderAsAnnotation(irElement)
             is IrConst -> {
                 append('\'')
                 append(irElement.value.toString())

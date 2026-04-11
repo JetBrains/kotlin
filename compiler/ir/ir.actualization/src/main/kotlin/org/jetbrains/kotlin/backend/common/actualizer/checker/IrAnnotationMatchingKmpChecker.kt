@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.backend.common.actualizer.checker
 
 import org.jetbrains.kotlin.backend.common.actualizer.IrExpectActualMap
 import org.jetbrains.kotlin.backend.common.actualizer.reportActualAnnotationsNotMatchExpect
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.util.fileOrNull
@@ -36,7 +35,7 @@ internal object IrAnnotationMatchingKmpChecker : IrExpectActualChecker {
             diagnosticsReporter.reportActualAnnotationsNotMatchExpect(
                 incompatibility.expectSymbol as IrSymbol,
                 incompatibility.actualSymbol as IrSymbol,
-                incompatibility.type.mapAnnotationType { it.annotationSymbol as IrConstructorCall },
+                incompatibility.type.mapAnnotationType { it.annotationSymbol as IrAnnotation },
                 reportOn,
             )
         }

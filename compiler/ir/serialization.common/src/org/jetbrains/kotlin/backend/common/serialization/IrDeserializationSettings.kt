@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrType
@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.ir.types.IrType
  *   only inline functions and their local functions ([DeserializeFunctionBodies.ONLY_INLINE]), or don't deserialize
  *   function bodies at all ([DeserializeFunctionBodies.NONE]).
  * @property nullableAnyAsAnnotationConstructorCallType If set, then this type will be used as the type of the
- *   annotation [IrConstructorCall] instead of the lazy type that is computed by [IrConstructorCall.symbol].
- *   This setting is necessary for deserialization of unbound IR, where [IrConstructorCall.symbol] can happen
+ *   annotation [IrAnnotation] instead of the lazy type that is computed by [IrAnnotation.symbol].
+ *   This setting is necessary for deserialization of unbound IR, where [IrAnnotation.symbol] can happen
  *   to be unbound resulting in "X is unbound" crash on the first attempt to read annotation's type.
  *   See [org.jetbrains.kotlin.backend.common.serialization.IrBodyDeserializer.IrAnnotationType] for more details.
  * @property fixSwappedKProperty2TypeParameterOrder If `true`, the type parameter order of `KProperty2`/`KMutableProperty2`

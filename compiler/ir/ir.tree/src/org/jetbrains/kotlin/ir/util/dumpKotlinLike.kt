@@ -127,7 +127,7 @@ enum class VisibilityPrintingStrategy {
  */
 interface CustomKotlinLikeDumpStrategy {
 
-    fun shouldPrintAnnotation(annotation: IrConstructorCall, container: IrAnnotationContainer): Boolean = true
+    fun shouldPrintAnnotation(annotation: IrAnnotation, container: IrAnnotationContainer): Boolean = true
 
     /**
      * Customize how a class name is rendered in expressions. The default returns the simple name.
@@ -483,7 +483,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p(this, Variance.INVARIANT) { label }
     }
 
-    private fun filterAnnotations(annotations: List<IrConstructorCall>, container: IrAnnotationContainer): List<IrConstructorCall> =
+    private fun filterAnnotations(annotations: List<IrAnnotation>, container: IrAnnotationContainer): List<IrAnnotation> =
         annotations.filter { options.customDumpStrategy.shouldPrintAnnotation(it, container) }
 
     private fun IrAnnotationContainer.printAnnotationsWithNoIndent() {
@@ -501,7 +501,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
     }
 
-    private fun IrConstructorCall.printAnAnnotationWithNoIndent(prefix: String = "") {
+    private fun IrAnnotation.printAnAnnotationWithNoIndent(prefix: String = "") {
         p.printWithNoIndent("@" + (if (prefix.isEmpty()) "" else "$prefix:"))
         visitConstructorCall(this, null)
     }

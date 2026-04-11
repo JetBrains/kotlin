@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -34,10 +35,10 @@ object JsAnnotations {
     val JsPolyfillFqn = FqName("kotlin.js.JsPolyfill")
 }
 
-fun IrConstructorCall.getSingleConstStringArgument() =
+fun IrAnnotation.getSingleConstStringArgument() =
     (arguments[0] as IrConst).value as String
 
-fun IrConstructorCall.getSingleConstBooleanArgument() =
+fun IrAnnotation.getSingleConstBooleanArgument() =
     (arguments[0] as IrConst).value as Boolean
 
 fun IrAnnotationContainer.getJsModule(): String? =
@@ -149,7 +150,7 @@ private val associatedObjectKeyAnnotationFqName = FqName("kotlin.reflect.Associa
 val IrClass.isAssociatedObjectAnnotatedAnnotation: Boolean
     get() = isAnnotationClass && annotations.any { it.isAnnotationWithEqualFqName(associatedObjectKeyAnnotationFqName) }
 
-fun IrConstructorCall.associatedObject(): IrClass? {
+fun IrAnnotation.associatedObject(): IrClass? {
     if (!symbol.owner.constructedClass.isAssociatedObjectAnnotatedAnnotation) return null
     val klass = ((arguments[0] as? IrClassReference)?.symbol as? IrClassSymbol)?.owner ?: return null
     return if (klass.isObject) klass else null
