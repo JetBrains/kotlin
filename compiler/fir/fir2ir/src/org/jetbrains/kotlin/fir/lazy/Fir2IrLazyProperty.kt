@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.unwrapOr
+import org.jetbrains.kotlin.fir.resultOrNull
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -140,7 +140,7 @@ class Fir2IrLazyProperty(
         symbols.backingFieldSymbol == null -> null
         fir.hasExplicitBackingField -> {
             val backingFieldType = fir.backingField?.returnTypeRef?.toIrType()
-            val evaluatedInitializer = fir.evaluatedInitializer?.unwrapOr<FirExpression> {}
+            val evaluatedInitializer = fir.evaluatedInitializer?.resultOrNull<FirExpression>()
             val initializer = fir.backingField?.initializer ?: evaluatedInitializer ?: fir.initializer
             val visibility = fir.backingField?.visibility ?: fir.visibility
             callablesGenerator.createBackingField(
@@ -183,7 +183,7 @@ class Fir2IrLazyProperty(
                 fir.initializer,
                 type
             ).also { field ->
-                val evaluatedInitializer = fir.evaluatedInitializer?.unwrapOr<FirExpression> {}
+                val evaluatedInitializer = fir.evaluatedInitializer?.resultOrNull<FirExpression>()
                 field.initializer = toIrInitializer(evaluatedInitializer ?: fir.initializer)
             }
         }

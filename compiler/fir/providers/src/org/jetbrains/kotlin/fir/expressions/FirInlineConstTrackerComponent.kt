@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.unwrapOr
+import org.jetbrains.kotlin.fir.resultOrNull
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 
 open class FirInlineConstTrackerComponent(val inlineConstTracker: InlineConstTracker?) : FirSessionComponent {
@@ -26,7 +26,7 @@ open class FirInlineConstTrackerComponent(val inlineConstTracker: InlineConstTra
         val owner = field.containingClassLookupTag()?.classId?.asString()
             ?.replace(".", "$")?.replace("/", ".")
             ?: return
-        val evaluatedConstant = result.unwrapOr<FirLiteralExpression> { return } ?: return
+        val evaluatedConstant = result.resultOrNull<FirLiteralExpression>() ?: return
         inlineConstTracker.report(
             filePath = filePath,
             owner = owner,

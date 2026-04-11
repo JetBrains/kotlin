@@ -316,7 +316,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                                     val constType = initializer.resolvedType.toIrType()
                                     field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
                                 } else if (property.isConst) {
-                                    val evaluatedInitializer = property.evaluatedInitializer?.unwrapOr<FirLiteralExpression> {}
+                                    val evaluatedInitializer = property.evaluatedInitializer?.resultOrNull<FirLiteralExpression>()
                                     // The evaluated initializer can be missing in case of an error. It will be reported as diagnostic.
                                     val expression = if (evaluatedInitializer != null) {
                                         evaluatedInitializer.toIrConst(evaluatedInitializer.resolvedType.toIrType())
@@ -785,7 +785,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 if (!skipDefaultParameter && defaultValue != null) {
                     this.defaultValue = when {
                         forcedDefaultValueConversion && defaultValue !is FirExpressionStub -> {
-                            val valueToConvert = valueParameter.evaluatedInitializer?.unwrapOr<FirExpression> {} ?: defaultValue
+                            val valueToConvert = valueParameter.evaluatedInitializer?.resultOrNull<FirExpression>() ?: defaultValue
                             valueToConvert.asCompileTimeIrInitializerForAnnotationParameter()
                         }
                         useStubForDefaultValueStub || defaultValue !is FirExpressionStub ->

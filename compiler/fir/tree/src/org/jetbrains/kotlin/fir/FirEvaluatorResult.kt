@@ -26,13 +26,8 @@ sealed class FirEvaluatorResult {
     data object RecursionInInitializer : CompileTimeException()
 }
 
-
-inline fun <reified T : FirElement> FirEvaluatorResult.unwrapOr(action: (FirEvaluatorResult.NotEvaluated) -> Unit): T? {
-    when (this) {
-        is FirEvaluatorResult.Evaluated -> return result as? T
-        is FirEvaluatorResult.NotEvaluated -> {
-            action(this)
-            return null
-        }
-    }
+inline fun <reified T : FirElement> FirEvaluatorResult.resultOrNull(): T? {
+    if (this !is FirEvaluatorResult.Evaluated) return null
+    if (this.result !is T) return null
+    return this.result
 }

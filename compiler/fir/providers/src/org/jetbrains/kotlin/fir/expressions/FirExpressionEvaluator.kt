@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.unwrapOr
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.CompileTimeType
@@ -144,11 +143,11 @@ object FirExpressionEvaluator {
         session: FirSession, firFile: FirFile? = null, variable: FirVariable?
     ): FirEvaluatorResult {
         val evaluated = this.evaluate(session, firFile)
-        val expression = evaluated.unwrapOr<FirLiteralExpression> { return evaluated }
+        val expression = evaluated.resultOrNull<FirLiteralExpression>() ?: return evaluated
 
         // Convert literal expression to the variable's type
         val expectedType = variable?.returnTypeRef?.coneType ?: return evaluated
-        return expression?.value?.adjustTypeAndConvertToLiteral(expression, expectedType)?.wrap() ?: evaluated
+        return expression.value?.adjustTypeAndConvertToLiteral(expression, expectedType)?.wrap() ?: evaluated
     }
 
     private inline fun <T> FirCallableSymbol<*>.visit(block: () -> T): T {

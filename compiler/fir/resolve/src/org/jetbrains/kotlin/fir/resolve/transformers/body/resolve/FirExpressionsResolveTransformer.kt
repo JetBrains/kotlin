@@ -1829,7 +1829,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 source = annotationCall.argumentMapping.source
                 mapping.putAll(annotationCall.argumentMapping.mapping)
                 for ((name, result) in evaluationResult) {
-                    mapping[name] = result.unwrapOr<FirExpression> { } ?: continue
+                    mapping[name] = result.resultOrNull<FirExpression>() ?: continue
                 }
             }
         )

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.unwrapOr
+import org.jetbrains.kotlin.fir.resultOrNull
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -240,7 +239,7 @@ fun FirExpression.extractEnumValueArgumentInfo(): EnumValueArgumentInfo? {
 @OptIn(PrivateForInline::class, PrivateConstantEvaluatorAPI::class)
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 inline fun <reified T : FirElement> FirExpression.evaluateAs(session: FirSession): @kotlin.internal.NoInfer T? {
-    return FirExpressionEvaluator.evaluateExpression(this, session)?.unwrapOr<T> {}
+    return FirExpressionEvaluator.evaluateExpression(this, session)?.resultOrNull<T>()
 }
 
 // --------------------------- other utilities ---------------------------

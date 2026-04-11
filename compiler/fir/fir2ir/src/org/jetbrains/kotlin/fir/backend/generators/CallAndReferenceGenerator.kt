@@ -1409,7 +1409,7 @@ class CallAndReferenceGenerator(
 
         @OptIn(PrivateConstantEvaluatorAPI::class)
         val evaluated = FirExpressionEvaluator.evaluateExpression(firArg, session)
-        val evaluatedLiteral = evaluated?.unwrapOr<FirLiteralExpression> { return } ?: return
+        val evaluatedLiteral = evaluated?.resultOrNull<FirLiteralExpression>() ?: return
         if (evaluatedLiteral.kind != ConstantValueKind.String) return
         val irConst = evaluatedLiteral.toIrConst(evaluatedLiteral.resolvedType.toIrType()).apply {
             startOffset = irArg.startOffset
