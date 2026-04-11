@@ -845,7 +845,6 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 FirArrayOfCallTransformer().transformFunctionCall(initialExpression, session) as FirExpression
             else initialExpression
 
-        // KT-70839 K2 kapt: consider using IR evaluator instead of FIR for non-const property initializers
         @OptIn(PrivateConstantEvaluatorAPI::class, PrivateForInline::class)
         val result = try {
             expression.evaluateAs<FirElement>(session)
