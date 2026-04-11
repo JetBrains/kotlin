@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.arguments.allowTestsOnlyLanguageFeatures
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
+import org.jetbrains.kotlin.konan.test.configuration.NativeFirstStageWithBackendSettingsEnvironmentConfigurator
 import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStageUpToSerialization
 import org.jetbrains.kotlin.konan.test.handlers.FileCheckHandler
 import org.jetbrains.kotlin.konan.test.handlers.NativeBoxRunner
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.konan.test.services.DisabledNativeTestSkipper
 import org.jetbrains.kotlin.konan.test.services.FileCheckTestSkipper
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.konan.test.suppressors.NativeTestsSuppressor
-import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.nativeArtifactsHandlersStep
@@ -29,12 +29,10 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.objcinterop.ObjCInteropFacade
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
 
@@ -49,7 +47,7 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractNativeCoreTest() {
         useAdditionalService(::LibraryProvider)
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::NativeFirstStageEnvironmentConfigurator,
+            ::NativeFirstStageWithBackendSettingsEnvironmentConfigurator,
             ::NativeSecondStageEnvironmentConfigurator,
         )
         useDirectives(NativeEnvironmentConfigurationDirectives, TestDirectives, LanguageSettingsDirectives)

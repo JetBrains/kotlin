@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.cliBasedFacadesEnabled
 import java.io.File
 
-class NativeFirstStageEnvironmentConfigurator(
+open class NativeFirstStageEnvironmentConfigurator(
     testServices: TestServices,
     customNativeHome: File? = null
 ) : NativeEnvironmentConfigurator(testServices, customNativeHome) {
