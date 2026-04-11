@@ -22,13 +22,13 @@ fun <T> id(it: T) = it
 fun const42() = 42
 fun <T> consume(it: T) {}
 
-annotation class RefInt(val e: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> [::skip])
+annotation class RefInt(val e: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[::skip]<!>)
 annotation class RefIntArray(val e: IntArray = [<!ARGUMENT_TYPE_MISMATCH!>::skip<!>])
-annotation class RefArrayString(val e: Array<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> [::skip])
-annotation class RefCorrect(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<() -> Unit><!> = [::skip])
-annotation class RefCorrectWithParam(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<(Int) -> Unit><!> = [::consume])
-annotation class RefCorrectWithReturn(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<() -> Int><!> = [::const42])
-annotation class RefCorrectWithReturnAndParam(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<(Int) -> Int><!> = [::id])
+annotation class RefArrayString(val e: Array<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[::skip]<!>)
+annotation class RefCorrect(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<() -> Unit><!> = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[::skip]<!>)
+annotation class RefCorrectWithParam(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<(Int) -> Unit><!> = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[::consume]<!>)
+annotation class RefCorrectWithReturn(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<() -> Int><!> = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[::const42]<!>)
+annotation class RefCorrectWithReturnAndParam(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<(Int) -> Int><!> = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[::id]<!>)
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, callableReference, collectionLiteral,
 functionDeclaration, integerLiteral, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, typeParameter */

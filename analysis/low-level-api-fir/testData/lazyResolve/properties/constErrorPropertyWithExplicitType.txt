@@ -61,19 +61,19 @@ FILE: [ResolvedTo(IMPORTS)] constErrorPropertyWithExplicitType.kt
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] constErrorPropertyWithExplicitType.kt
     public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Int| { LAZY_BLOCK }
-    public final const [ResolvedTo(CONSTANT_EVALUATION)] val nonConstantInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/foo|())
+    public final const [ResolvedTo(CONSTANT_EVALUATION)] [EvaluatedValue=NotConst] val nonConstantInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/foo|())
         public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int|
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] constErrorPropertyWithExplicitType.kt
     public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Int| { LAZY_BLOCK }
-    public final const [ResolvedTo(ANNOTATION_ARGUMENTS)] val nonConstantInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/foo|())
+    public final const [ResolvedTo(ANNOTATION_ARGUMENTS)] [EvaluatedValue=NotConst] val nonConstantInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/foo|())
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] constErrorPropertyWithExplicitType.kt
     public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Int| { LAZY_BLOCK }
-    public final const [ResolvedTo(BODY_RESOLVE)] val nonConstantInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/foo|())
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=NotConst] val nonConstantInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/foo|())
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
 FILE RAW TO BODY:
@@ -81,5 +81,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] constErrorPropertyWithExplicitType.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
         ^foo Int(0)
     }
-    public final const [ResolvedTo(BODY_RESOLVE)] val nonConstantInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/foo|())
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=NotConst] val nonConstantInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/foo|())
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

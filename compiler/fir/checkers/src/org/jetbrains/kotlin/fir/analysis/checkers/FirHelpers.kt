@@ -1125,3 +1125,14 @@ fun FirExpression.hasIntegerLiteralTypeAmbiguity(): Boolean {
 
     return maybeIntegerLiteralExpression?.kind?.let { it == ConstantValueKind.Int || it == ConstantValueKind.UnsignedInt } == true
 }
+
+context(context: CheckerContext)
+fun canBeEvaluated(expression: FirExpression, allowErrors: Boolean = true): Boolean {
+    @OptIn(PrivateConstantEvaluatorAPI::class)
+    val evaluationResult = FirExpressionEvaluator.evaluateExpression(expression, context.session)
+    return when (evaluationResult) {
+        is FirEvaluatorResult.Evaluated -> true
+        is FirEvaluatorResult.ResolutionError -> allowErrors
+        else -> false
+    }
+}
