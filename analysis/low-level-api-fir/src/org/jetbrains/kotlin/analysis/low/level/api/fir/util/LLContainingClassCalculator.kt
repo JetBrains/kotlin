@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind.*
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.containingClassLookupTag
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
+@OptIn(KtExperimentalApi::class)
 internal object LLContainingClassCalculator {
     /**
      * Returns a containing class symbol for the given symbol, computing it solely from the source information
@@ -57,67 +58,38 @@ internal object LLContainingClassCalculator {
         }
 
         val source = symbol.source as? KtPsiSourceElement ?: return null
-        when (val kind = source.kind) {
-            is KtFakeSourceElementKind -> {
-                if (symbol is FirBackingFieldSymbol) {
-                    if (kind == DefaultAccessor) {
-                        return computeContainingClass(symbol, (source.psi as? KtDeclaration)?.containingClassOrObject)
-                    }
+        return when (source.kind) {
+            ImplicitConstructor,
+            EnumGeneratedDeclaration,
+            ReplEvalFunction,
+                -> computeContainingClass(symbol, source.psi)
+
+            DefaultAccessor,
+            DelegatedPropertyAccessor,
+            PropertyFromParameter,
+                -> computeContainingClass(symbol, (source.psi as? KtDeclaration)?.containingClassOrObject)
+
+            DataClassGeneratedMembers -> {
+                val containingClass = when (val psi = source.psi) {
+                    is KtClassOrObject -> psi
+                    is KtParameter -> psi.containingClassOrObject // component() functions point to 'KtParameter's
+                    is KtPrimaryConstructor -> psi.containingClassOrObject // copy() functions point to either KtClass or KtPrimaryConstructor
+                    else -> null
                 }
 
-                if (symbol is FirConstructorSymbol && kind == ImplicitConstructor) {
-                    return computeContainingClass(symbol, source.psi)
-                }
-
-                if (symbol is FirPropertyAccessorSymbol) {
-                    if (kind == DefaultAccessor) {
-                        val containingProperty = source.psi
-                        return if (containingProperty is KtProperty || containingProperty is KtParameter) {
-                            computeContainingClass(symbol, (containingProperty as KtDeclaration).containingClassOrObject)
-                        } else {
-                            null
-                        }
-                    }
-
-                    if (kind == DelegatedPropertyAccessor) {
-                        val containingProperty = source.psi as? KtProperty
-                        return computeContainingClass(symbol, containingProperty?.containingClassOrObject)
-                    }
-
-                    if (kind == PropertyFromParameter) {
-                        val containingParameter = source.psi as? KtParameter
-                        return computeContainingClass(symbol, containingParameter?.containingClassOrObject)
-                    }
-                }
-
-                if (symbol is FirPropertySymbol && kind == PropertyFromParameter) {
-                    val containingParameter = source.psi as? KtParameter
-                    return computeContainingClass(symbol, containingParameter?.containingClassOrObject)
-                }
-
-                if (kind == EnumGeneratedDeclaration) {
-                    return computeContainingClass(symbol, source.psi)
-                }
-
-                if (kind == DataClassGeneratedMembers) {
-                    val containingClass = when (val psi = source.psi) {
-                        is KtClassOrObject -> psi
-                        is KtParameter -> psi.containingClassOrObject // component() functions point to 'KtParameter's
-                        is KtPrimaryConstructor -> psi.containingClassOrObject // copy() functions point to either KtClass or KtPrimaryConstructor
-                        else -> null
-                    }
-                    return computeContainingClass(symbol, containingClass)
-                }
-
-                if (symbol is FirDanglingModifierSymbol && kind == DanglingModifierList) {
-                    val modifierList = source.psi as? KtModifierList
-                    val body = modifierList?.parent as? KtClassBody
-                    return computeContainingClass(symbol, body?.parent)
-                }
+                computeContainingClass(symbol, containingClass)
             }
 
+            DanglingModifierList -> {
+                val modifierList = source.psi as? KtModifierList
+                val body = modifierList?.parent as? KtClassBody
+                computeContainingClass(symbol, body?.parent)
+            }
+
+            is KtFakeSourceElementKind -> null
+
             // TODO(KT-85643): KtRealSourceElementKind should be converted to KtFakeSourceElementKind once the issue is fixed
-            is KtRealSourceElementKind if symbol.origin is FirDeclarationOrigin.SubstitutionOverride -> return when (val psi = source.psi) {
+            is KtRealSourceElementKind if symbol.origin is FirDeclarationOrigin.SubstitutionOverride -> when (val psi = source.psi) {
                 // Substituted callables usually have the containing psi as a source element
                 // Note: KtCallableDeclaration cannot be used since if present it points to the original callables which has no relation
                 // to the containing class
@@ -125,28 +97,23 @@ internal object LLContainingClassCalculator {
                 else -> null
             }
 
-            else -> {
-                if (symbol is FirClassLikeSymbol<*>) {
-                    val selfClass = source.psi as? KtClassOrObject
-                    return computeContainingClass(symbol, selfClass?.containingClassOrObject)
+            is KtRealSourceElementKind -> when (symbol) {
+                is FirCallableSymbol<*>, is FirClassLikeSymbol<*> -> when (val selfCallable = source.psi) {
+                    is KtCallableDeclaration, is KtEnumEntry, is KtClassLikeDeclaration -> {
+                        computeContainingClass(symbol, selfCallable.containingClassOrObject)
+                    }
+
+                    is KtPropertyAccessor -> {
+                        val containingProperty = selfCallable.property
+                        computeContainingClass(symbol, containingProperty.containingClassOrObject)
+                    }
+
+                    else -> null
                 }
 
-                if (symbol is FirCallableSymbol<*>) {
-                    return when (val selfCallable = source.psi) {
-                        is KtCallableDeclaration, is KtEnumEntry -> {
-                            computeContainingClass(symbol, selfCallable.containingClassOrObject)
-                        }
-                        is KtPropertyAccessor -> {
-                            val containingProperty = selfCallable.property
-                            computeContainingClass(symbol, containingProperty.containingClassOrObject)
-                        }
-                        else -> null
-                    }
-                }
+                else -> null
             }
         }
-
-        return null
     }
 
     private fun canHaveContainingClassSymbol(symbol: FirBasedSymbol<*>): Boolean = when (symbol) {
@@ -159,12 +126,16 @@ internal object LLContainingClassCalculator {
     }
 
     private fun computeContainingClass(symbol: FirBasedSymbol<*>, psi: PsiElement?): FirClassSymbol<*>? {
-        if (psi !is KtClassOrObject) {
+        if (psi !is KtClassOrObject && (psi !is KtScript || !psi.isReplSnippet)) {
             return null
         }
 
         val module = symbol.llFirModuleData.ktModule
         val resolutionFacade = module.getResolutionFacade(module.project)
-        return psi.resolveToFirSymbolOfType<FirClassSymbol<*>>(resolutionFacade)
+        return when (val symbol = psi.resolveToFirSymbol(resolutionFacade)) {
+            is FirClassSymbol<*> -> symbol
+            is FirReplSnippetSymbol -> symbol.snippetClassSymbol
+            else -> null
+        }
     }
 }
