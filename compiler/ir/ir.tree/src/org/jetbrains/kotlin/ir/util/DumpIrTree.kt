@@ -263,7 +263,7 @@ class DumpIrTreeVisitor(
     }
 
     private fun dumpAnnotations(element: IrAnnotationContainer) {
-        element.annotations.filterOutSourceRetentions(options).dumpItems("annotations") { irAnnotation: IrConstructorCall ->
+        element.annotations.filterOutSourceRetentions(options).dumpItems("annotations") { irAnnotation: IrAnnotation ->
             printer.println(elementRenderer.renderAsAnnotation(irAnnotation))
         }
     }

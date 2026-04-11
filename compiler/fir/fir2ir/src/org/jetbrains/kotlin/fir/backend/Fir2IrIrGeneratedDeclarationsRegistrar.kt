@@ -724,7 +724,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                     dispatchReceiver = receiver
                 }
             }
-            is IrConstructorCall -> this.toFirAnnotation()
+            is IrAnnotation -> this.toFirAnnotation()
             is IrVararg -> {
                 val varargElements = this.elements.map { element ->
                     when (element) {
@@ -762,7 +762,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         }
     }
 
-    private fun IrConstructorCall.toFirAnnotation(): FirAnnotation {
+    private fun IrAnnotation.toFirAnnotation(): FirAnnotation {
         val annotationClassId = this.symbol.owner.constructedClass.classId!!
         return buildAnnotation {
             annotationTypeRef = annotationClassId
@@ -817,7 +817,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             return extractGeneratedIrDeclarations(declaration).isNotEmpty()
         }
 
-        private fun extractGeneratedIrDeclarations(declaration: FirDeclaration): List<IrConstructorCall> {
+        private fun extractGeneratedIrDeclarations(declaration: FirDeclaration): List<IrAnnotation> {
             when (declaration.origin) {
                 is FirDeclarationOrigin.Synthetic,
                 is FirDeclarationOrigin.Delegated

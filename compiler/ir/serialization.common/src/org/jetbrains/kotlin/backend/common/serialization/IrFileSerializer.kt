@@ -480,8 +480,8 @@ open class IrFileSerializer(
      *   bound IR produced by Fir2Ir and unbound IR obtained through deserialization of inline function
      *   body, there can be two symbols (one bound without a signature and another unbound but with a signature)
      *   both pointing effectively to the same declaration.
-     * - [IrTypeDeduplicationKey.annotations] is just a list of [IrConstructorCall]s that cannot be
-     *   fully compared: The [IrConstructorCallImpl.equals] function resolves to [Any.equals], which
+     * - [IrTypeDeduplicationKey.annotations] is just a list of [IrAnnotation]s that cannot be
+     *   fully compared: The [IrAnnotationCallImpl.equals] function resolves to [Any.equals], which
      *   compares only object references.
      *
      * However, [IrTypeDeduplicationKey] can be used as a good approximation to store lesser number of records
@@ -492,7 +492,7 @@ open class IrFileSerializer(
         val classifier: IrClassifierSymbol?,
         val nullability: SimpleTypeNullability?,
         val arguments: List<IrTypeArgumentDeduplicationKey>?,
-        val annotations: List<IrConstructorCall>,
+        val annotations: List<IrAnnotation>,
     )
 
     private data class IrTypeArgumentDeduplicationKey(

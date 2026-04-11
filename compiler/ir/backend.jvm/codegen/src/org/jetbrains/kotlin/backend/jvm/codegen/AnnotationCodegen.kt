@@ -56,7 +56,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
 
     private val annotationDescriptorsAlreadyPresent = mutableSetOf<String>()
 
-    fun genAnnotations(annotated: IrDeclaration, annotations: List<IrConstructorCall> = annotated.annotations) {
+    fun genAnnotations(annotated: IrDeclaration, annotations: List<IrAnnotation> = annotated.annotations) {
         for (annotation in annotations) {
             val applicableTargets = annotation.annotationClass.getAnnotationTargets().orEmpty()
             if (annotated is IrSimpleFunction &&
@@ -161,7 +161,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
         visitor.visitEnd()
     }
 
-    private fun genAnnotation(annotation: IrConstructorCall, path: TypePath?, isTypeAnnotation: Boolean): String? {
+    private fun genAnnotation(annotation: IrAnnotation, path: TypePath?, isTypeAnnotation: Boolean): String? {
         val annotationClass = annotation.annotationClass
         val retentionPolicy = annotationClass.getJvmAnnotationRetention()
         if (retentionPolicy == RetentionPolicy.SOURCE && !context.state.classBuilderMode.generateSourceRetentionAnnotations) return null
@@ -189,7 +189,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
         return asmTypeDescriptor
     }
 
-    private fun genAnnotationArguments(annotation: IrConstructorCall, annotationVisitor: AnnotationVisitor) {
+    private fun genAnnotationArguments(annotation: IrAnnotation, annotationVisitor: AnnotationVisitor) {
         val annotationClass = annotation.annotationClass
         for (param in annotation.symbol.owner.parameters) {
             val value = annotation.arguments[param]
@@ -223,7 +223,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
     ) {
         when (value) {
             is IrConst -> annotationVisitor.visit(name, value.value)
-            is IrConstructorCall -> {
+            is IrAnnotation -> {
                 val callee = value.symbol.owner
                 when {
                     callee.parentAsClass.isAnnotationClass -> {
@@ -317,7 +317,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
                     false
             }
 
-        val IrConstructorCall.annotationClass: IrClass get() = symbol.owner.parentAsClass
+        val IrAnnotation.annotationClass: IrClass get() = symbol.owner.parentAsClass
     }
 
     internal fun generateTypeAnnotations(type: IrType, position: TypeAnnotationPosition) {

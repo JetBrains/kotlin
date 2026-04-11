@@ -171,7 +171,7 @@ fun IrFunction.getJsCode(): JsFunction? {
     return null
 }
 
-private fun parseJsFromAnnotation(declaration: IrDeclaration, annotationClassId: ClassId): Pair<IrConstructorCall, JsFunction>? {
+private fun parseJsFromAnnotation(declaration: IrDeclaration, annotationClassId: ClassId): Pair<IrAnnotation, JsFunction>? {
     val annotation = declaration.getAnnotation(annotationClassId.asSingleFqName())
         ?: return null
     val jsCode = annotation.arguments[0]
@@ -187,7 +187,7 @@ private fun parseJsFromAnnotation(declaration: IrDeclaration, annotationClassId:
 }
 
 context(reportingContext: ErrorReportingContext)
-private fun parseSourceMap(sourceMap: String, file: IrFile?, annotation: IrConstructorCall): SourceMap? {
+private fun parseSourceMap(sourceMap: String, file: IrFile?, annotation: IrAnnotation): SourceMap? {
     if (sourceMap.isEmpty()) return null
     return when (val result = SourceMapParser.parse(sourceMap)) {
         is SourceMapSuccess -> result.value

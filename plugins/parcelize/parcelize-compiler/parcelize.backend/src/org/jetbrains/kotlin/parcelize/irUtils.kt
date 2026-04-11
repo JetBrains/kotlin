@@ -241,7 +241,7 @@ internal fun IrAnnotationContainer.hasAnyAnnotation(fqNames: List<FqName>): Bool
     return false
 }
 
-internal fun IrAnnotationContainer.getAnyAnnotation(fqNames: List<FqName>): IrConstructorCall? {
+internal fun IrAnnotationContainer.getAnyAnnotation(fqNames: List<FqName>): IrAnnotation? {
     for (fqName in fqNames) {
         val annotation = getAnnotation(fqName)
         if (annotation != null) {

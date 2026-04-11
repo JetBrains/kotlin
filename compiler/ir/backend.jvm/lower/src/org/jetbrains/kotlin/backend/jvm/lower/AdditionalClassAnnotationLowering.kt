@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrVararg
@@ -127,7 +127,7 @@ internal class AdditionalClassAnnotationLowering(private val context: JvmBackend
             }
     }
 
-    private fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
+    private fun IrAnnotation.getValueArgument(name: Name): IrExpression? {
         val parameter = symbol.owner.parameters.find { it.name == name } ?: return null
         return arguments[parameter]
     }
@@ -137,7 +137,7 @@ internal class AdditionalClassAnnotationLowering(private val context: JvmBackend
         return loadAnnotationTargets(targetEntry)
     }
 
-    private fun loadAnnotationTargets(targetEntry: IrConstructorCall): Set<KotlinTarget>? {
+    private fun loadAnnotationTargets(targetEntry: IrAnnotation): Set<KotlinTarget>? {
         val valueArgument = targetEntry.getValueArgument(Name.identifier(Target::allowedTargets.name))
                 as? IrVararg ?: return null
         return valueArgument.elements.filterIsInstance<IrGetEnumValue>().mapNotNull {

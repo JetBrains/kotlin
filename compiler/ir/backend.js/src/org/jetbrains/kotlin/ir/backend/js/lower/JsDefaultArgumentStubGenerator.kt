@@ -223,7 +223,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         }
     }
 
-    private fun IrConstructorCall.isAnnotation(name: FqName): Boolean {
+    private fun IrAnnotation.isAnnotation(name: FqName): Boolean {
         return symbol.owner.parentAsClass.fqNameWhenAvailable == name
     }
 

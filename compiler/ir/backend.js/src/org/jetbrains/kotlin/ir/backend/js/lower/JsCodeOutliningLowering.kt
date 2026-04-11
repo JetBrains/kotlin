@@ -261,7 +261,7 @@ private class JsCodeOutlineTransformer(
         }
     }
 
-    private fun addSpecialAnnotation(outlinedFunction: IrSimpleFunction): IrConstructorCall {
+    private fun addSpecialAnnotation(outlinedFunction: IrSimpleFunction): IrAnnotation {
         val builder = loweringContext.createIrBuilder(outlinedFunction.symbol)
         val annotation = builder.irAnnotation(
             symbols.jsOutlinedFunctionAnnotationSymbol.constructors.first(),

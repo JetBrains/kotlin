@@ -595,8 +595,8 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         irIfThen(context.irBuiltIns.unitType, irNot(irIs(irGet(parameter), type)), irReturn(defaultValue))
 
 
-    val ignoredMethodAnnotationsFilter: Function1<IrConstructorCall, Boolean>
-    val userIgnoredAnnotationsFilter: Function1<IrConstructorCall, Boolean>
+    val ignoredMethodAnnotationsFilter: Function1<IrAnnotation, Boolean>
+    val userIgnoredAnnotationsFilter: Function1<IrAnnotation, Boolean>
 
     init {
         val userIgnoredAnnotations =
@@ -637,10 +637,10 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         EXACT_ANNOTATION_FQ_NAME,
     )
 
-    fun IrConstructorCall.isKotlinSpecialTypeAnnotation() =
+    fun IrAnnotation.isKotlinSpecialTypeAnnotation() =
         symbol.owner.parent.kotlinFqName in kotlinSpecialTypeAnnotations
 
-    fun IrConstructorCall.isThrowsAnnotation() =
+    fun IrAnnotation.isThrowsAnnotation() =
         symbol.owner.parent.kotlinFqName == JvmStandardClassIds.THROWS_ANNOTATION_FQ_NAME
 
     // Copies annotations from the bridge target to the bridge function
