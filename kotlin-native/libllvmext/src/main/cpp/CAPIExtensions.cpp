@@ -117,22 +117,38 @@ struct KotlinAlloc : PassInfoMixin<KotlinAlloc> {
   }
 
   bool runImpl(Module &M) {
-    auto CalleeImpl = M.getOrInsertFunction(
+    auto AllocInstance = M.getOrInsertFunction(
       "AllocInstance",
       PointerType::get(M.getContext(), 0),
       PointerType::get(M.getContext(), 0),
       PointerType::get(M.getContext(), 0)
     );
+    auto AllocArrayInstance = M.getOrInsertFunction(
+      "AllocArrayInstance",
+      PointerType::get(M.getContext(), 0),
+      PointerType::get(M.getContext(), 0),
+      Type::getInt32Ty(M.getContext()),
+      PointerType::get(M.getContext(), 0)
+    );
     bool Changed = false;
     for (auto &F : M) {
-      for (auto &BB : F) {
-        for (auto &I : BB) {
-          if (auto *CI = dyn_cast<CallInst>(&I)) {
-            if (auto *Callee = CI->getCalledFunction()) {
-              if (Callee->getName() == "llvm.kotlin.alloc") {
-                CI->setCalledFunction(CalleeImpl);
-                Changed = true;
-              }
+      Changed = runImpl(F, AllocInstance, AllocArrayInstance) || Changed;
+    }
+    return Changed;
+  }
+
+  bool runImpl(Function &F, FunctionCallee AllocInstance, FunctionCallee AllocArrayInstance) {
+    bool Changed = false;
+    for (auto &BB : F) {
+      for (auto &I : BB) {
+        if (auto *CI = dyn_cast<CallInst>(&I)) {
+          if (auto *Callee = CI->getCalledFunction()) {
+            if (Callee->getName() == "llvm.kotlin.alloc.obj") {
+              CI->setCalledFunction(AllocInstance);
+              Changed = true;
+            } else if (Callee->getName() == "llvm.kotlin.alloc.arr") {
+              CI->setCalledFunction(AllocArrayInstance);
+              Changed = true;
             }
           }
         }

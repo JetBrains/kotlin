@@ -594,9 +594,16 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
             ).toTypedArray()
     )
 
-    val llvmKotlinAlloc = llvmIntrinsic(
-            "llvm.kotlin.alloc",
+    val llvmKotlinAllocObj = llvmIntrinsic(
+            "llvm.kotlin.alloc.obj",
             functionType(pointerType, isVarArg = false, pointerType, pointerType),
+            returnsObjectType = true,
+            "nounwind"
+    )
+
+    val llvmKotlinAllocArr = llvmIntrinsic(
+            "llvm.kotlin.alloc.arr",
+            functionType(pointerType, isVarArg = false, pointerType, int32Type, pointerType),
             returnsObjectType = true,
             "nounwind"
     )

@@ -883,7 +883,7 @@ internal abstract class FunctionGenerationContext(
         if (lifetime == Lifetime.STACK)
             stackLocalsManager.alloc(irClass)
         else
-            call(llvm.llvmKotlinAlloc, listOf(codegen.typeInfoForAllocation(irClass)), lifetime, resultSlot = resultSlot)
+            call(llvm.llvmKotlinAllocObj, listOf(codegen.typeInfoForAllocation(irClass)), lifetime, resultSlot = resultSlot)
 
     fun allocArray(
         irClass: IrClass,
@@ -903,7 +903,8 @@ internal abstract class FunctionGenerationContext(
                 stackLocalsManager.allocArray(irClass, count)
             }
             else -> {
-                call(llvm.allocArrayFunction, listOf(typeInfo, count), lifetime, exceptionHandler, resultSlot = resultSlot)
+                // TODO: exception, when `count < 0`
+                call(llvm.llvmKotlinAllocArr, listOf(typeInfo, count), lifetime, exceptionHandler, resultSlot = resultSlot)
             }
         }
     }

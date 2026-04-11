@@ -279,6 +279,8 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "llvm.uadd.sat.*",
         "llvm.aarch64.neon.*",
 
+        "llvm.kotlin.alloc.*",
+
         "SetConsoleOutputCP",
         "SetConsoleCP",
         "QueryPerformanceCounter",
