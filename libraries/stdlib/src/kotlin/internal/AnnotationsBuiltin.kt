@@ -17,12 +17,14 @@ internal annotation class PureReifiable
 
 /**
  * Reports `REIFIED_TYPE_UNSAFE_SUBSTITUTION` when the reified type argument has type
- * parameters that will be erased at runtime and are not constrained by the first type
- * argument of the extension receiver's declared type.
+ * parameters that will be erased at runtime and are not constrained by the receiver type.
+ *
+ * [receiverTypeArg] specifies the index of the receiver's type argument to use as the
+ * constraint. Negative (default) uses the receiver type itself.
  */
 @Target(AnnotationTarget.TYPE_PARAMETER)
 @Retention(AnnotationRetention.BINARY)
-internal annotation class WarnOnErasureUnconstrainedByReceiverTypesFirstTypeArg
+internal annotation class WarnOnErasureUnconstrainedBy(val receiverTypeArg: Int = -1)
 
 /**
  * Specifies that the corresponding built-in method exists depending on platform.

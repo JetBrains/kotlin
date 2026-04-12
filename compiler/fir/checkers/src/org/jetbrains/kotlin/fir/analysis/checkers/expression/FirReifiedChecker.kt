@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isCastErased
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.allReceiverExpressions
 import org.jetbrains.kotlin.fir.expressions.arguments
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.AbstractTypeChecker.findCorrespondingSupertypes
@@ -67,10 +70,8 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
                     isArray = false,
                     isPlaceHolder = isPlaceHolder,
                     fullyExpandedType = typeArgument,
-                    erasureWarningTypeConstraint = typeParameter.getAnnotationByClassId(
-                        StandardClassIds.Annotations.WarnOnErasureUnconstrainedByReceiverTypesFirstTypeArg, context.session
-                    )?.let {
-                        resolveReceiverConstraint(expression, callableSymbol)
+                    erasureWarningTypeConstraint = findWarnOnErasure(typeParameter)?.let {
+                        resolveReceiverConstraint(expression, callableSymbol, it)
                             ?: context.session.builtinTypes.anyType.coneType
                     },
                 )
@@ -116,16 +117,34 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
     }
 
     /**
-     * Resolves a constraint type from the extension receiver by extracting its first type argument
-     * through the declared receiver type's class hierarchy.
+     * Returns the `receiverTypeArg` of `@WarnOnErasureUnconstrainedBy` if present, null otherwise.
+     */
+    context(context: CheckerContext)
+    private fun findWarnOnErasure(typeParameter: FirTypeParameterSymbol): Int? {
+        val annotation = typeParameter.getAnnotationByClassId(
+            StandardClassIds.Annotations.WarnOnErasureUnconstrainedBy, context.session
+        ) ?: return null
+        return ((annotation.findArgumentByName(Name.identifier("receiverTypeArg"))
+            as? FirLiteralExpression)?.value as? Number)?.toInt() ?: -1
+    }
+
+    /**
+     * Resolves a constraint type from the extension receiver.
+     * A negative [receiverTypeArgIndex] returns the receiver type itself;
+     * a non-negative value extracts that type argument from the receiver's resolved supertype.
      */
     context(context: CheckerContext)
     private fun resolveReceiverConstraint(
         expression: FirQualifiedAccessExpression,
         callableSymbol: FirCallableSymbol<*>,
+        receiverTypeArgIndex: Int,
     ): ConeKotlinType? {
         val receiverType = expression.extensionReceiver?.resolvedType ?: return null
         val rigidReceiverType = receiverType.lowerBoundIfFlexible()
+
+        if (receiverTypeArgIndex < 0) {
+            return rigidReceiverType
+        }
 
         val declaredReceiverType = callableSymbol.resolvedReceiverType ?: return null
         val declaredReceiverClassSymbol = declaredReceiverType.toRegularClassSymbol(context.session) ?: return null
@@ -141,7 +160,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             declaredReceiverClassSymbol.defaultType().typeConstructor(context.session.typeContext),
         ).firstOrNull() as? ConeKotlinType ?: return null
 
-        return correspondingReceiverType.typeArguments.firstOrNull()?.type
+        return correspondingReceiverType.typeArguments.getOrNull(receiverTypeArgIndex)?.type
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

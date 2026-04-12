@@ -69,12 +69,12 @@ fun testSequenceReceiver(seq: Sequence<MyResult<String, Exception>>) {
     seq.filterIsInstance<MySuccess<String>>()
 }
 
-// === Tests for non-collection receivers ===
+// === Tests for explicit receiverTypeArg = 0 on non-collection receivers ===
 
 class Holder<out T>(val value: T)
 
 @Suppress(<!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>, "INVISIBLE_MEMBER")
-inline fun <reified @kotlin.internal.WarnOnErasureUnconstrainedByReceiverTypesFirstTypeArg T> Holder<*>.checkValue(): Boolean = value is T
+inline fun <reified @kotlin.internal.WarnOnErasureUnconstrainedBy(0) T> Holder<*>.checkValue(): Boolean = value is T
 
 fun testNonCollectionTypedReceiver(holder: Holder<MyResult<String, Exception>>) {
     // Should NOT warn: Holder's type arg MyResult<String, Exception> constrains MySuccess's R to String
@@ -89,16 +89,16 @@ fun testNonCollectionStarReceiver(holder: Holder<*>) {
     holder.checkValue<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>MySuccess<String><!>>()
 }
 
-// === Tests for receiver type itself as constraint ===
+// === Tests for default receiverTypeArg (receiver type itself as constraint) ===
 
 @Suppress(<!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>, "INVISIBLE_MEMBER")
-inline fun <reified @kotlin.internal.WarnOnErasureUnconstrainedByReceiverTypesFirstTypeArg T> MyBase<*>.checkSelf(): Boolean = this is T
+inline fun <reified @kotlin.internal.WarnOnErasureUnconstrainedBy T> MyBase<*>.checkSelf(): Boolean = this is T
 
 fun testReceiverTypeConstraint(base: MyBase<String>) {
-    // Incorrectly warns: constraint is String (first type arg of MyBase), not MyBase<String> itself
-    base.checkSelf<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>MyDerived<String><!>>()
+    // Should NOT warn: MyBase<String> constrains MyDerived's T to String through hierarchy
+    base.checkSelf<MyDerived<String>>()
 
-    // Should warn: String cannot constrain List's type argument
+    // Should warn: MyBase<String> cannot constrain List's type argument
     base.checkSelf<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>List<String><!>>()
 }
 

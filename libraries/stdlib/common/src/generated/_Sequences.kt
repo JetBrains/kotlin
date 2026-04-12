@@ -474,7 +474,7 @@ public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterIndexedTo(d
  * 
  * @sample samples.collections.Collections.Filtering.filterIsInstance
  */
-public inline fun <reified @kotlin.internal.WarnOnErasureUnconstrainedByReceiverTypesFirstTypeArg R> Sequence<*>.filterIsInstance(): Sequence<@kotlin.internal.NoInfer R> {
+public inline fun <reified @kotlin.internal.WarnOnErasureUnconstrainedBy(0) R> Sequence<*>.filterIsInstance(): Sequence<@kotlin.internal.NoInfer R> {
     @Suppress("UNCHECKED_CAST")
     return filter { it is R } as Sequence<R>
 }
@@ -487,7 +487,7 @@ public inline fun <reified @kotlin.internal.WarnOnErasureUnconstrainedByReceiver
  * @sample samples.collections.Collections.Filtering.filterIsInstanceTo
  */
 @IgnorableReturnValue
-public inline fun <reified @kotlin.internal.WarnOnErasureUnconstrainedByReceiverTypesFirstTypeArg R, C : MutableCollection<in R>> Sequence<*>.filterIsInstanceTo(destination: C): C {
+public inline fun <reified @kotlin.internal.WarnOnErasureUnconstrainedBy(0) R, C : MutableCollection<in R>> Sequence<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
     return destination
 }

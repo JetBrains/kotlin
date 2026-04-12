@@ -227,7 +227,7 @@ object StandardClassIds {
         val InlineOnly = "InlineOnly".internalId()
 
         val OnlyInputTypes = "OnlyInputTypes".internalId()
-        val WarnOnErasureUnconstrainedByReceiverTypesFirstTypeArg = "WarnOnErasureUnconstrainedByReceiverTypesFirstTypeArg".internalId()
+        val WarnOnErasureUnconstrainedBy = "WarnOnErasureUnconstrainedBy".internalId()
 
         val RestrictsSuspension = "RestrictsSuspension".coroutinesId()
 
