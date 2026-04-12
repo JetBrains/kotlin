@@ -822,7 +822,7 @@ object Filtering : TemplateGroupBase() {
         doc { "Appends all elements that are instances of specified type parameter R to the given [destination]." }
         sample("samples.collections.Collections.Filtering.filterIsInstanceTo")
         annotation("@IgnorableReturnValue")
-        typeParam("reified @kotlin.internal.WarnOnErased R")
+        typeParam("reified @kotlin.internal.WarnOnErasureUnconstrainedByReceiverTypesFirstTypeArg R")
         typeParam("C : MutableCollection<in R>")
         inline()
         genericStarProjection = true
@@ -840,7 +840,7 @@ object Filtering : TemplateGroupBase() {
     } builder {
         doc { "Returns a list containing all elements that are instances of specified type parameter R." }
         sample("samples.collections.Collections.Filtering.filterIsInstance")
-        typeParam("reified @kotlin.internal.WarnOnErased R")
+        typeParam("reified @kotlin.internal.WarnOnErasureUnconstrainedByReceiverTypesFirstTypeArg R")
         returns("List<@kotlin.internal.NoInfer R>")
         inline()
         genericStarProjection = true

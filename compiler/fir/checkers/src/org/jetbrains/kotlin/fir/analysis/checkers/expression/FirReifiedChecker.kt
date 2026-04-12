@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isCastErased
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.allReceiverExpressions
@@ -21,7 +22,9 @@ import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -29,6 +32,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.text
+import org.jetbrains.kotlin.types.AbstractTypeChecker.findCorrespondingSupertypes
+import org.jetbrains.kotlin.types.model.typeConstructor
 
 object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -62,6 +67,12 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
                     isArray = false,
                     isPlaceHolder = isPlaceHolder,
                     fullyExpandedType = typeArgument,
+                    erasureWarningTypeConstraint = typeParameter.getAnnotationByClassId(
+                        StandardClassIds.Annotations.WarnOnErasureUnconstrainedByReceiverTypesFirstTypeArg, context.session
+                    )?.let {
+                        resolveReceiverConstraint(expression, callableSymbol)
+                            ?: context.session.builtinTypes.anyType.coneType
+                    },
                 )
             } else if (
                 varargTypeParameter == typeParameter && typeArgument.isTypeVisibilityBroken(checkTypeArguments = false) && isInferred
@@ -104,6 +115,35 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         else -> unsupportedKindOfNothingAsReifiedOrInArray(languageVersionSettings) != null
     }
 
+    /**
+     * Resolves a constraint type from the extension receiver by extracting its first type argument
+     * through the declared receiver type's class hierarchy.
+     */
+    context(context: CheckerContext)
+    private fun resolveReceiverConstraint(
+        expression: FirQualifiedAccessExpression,
+        callableSymbol: FirCallableSymbol<*>,
+    ): ConeKotlinType? {
+        val receiverType = expression.extensionReceiver?.resolvedType ?: return null
+        val rigidReceiverType = receiverType.lowerBoundIfFlexible()
+
+        val declaredReceiverType = callableSymbol.resolvedReceiverType ?: return null
+        val declaredReceiverClassSymbol = declaredReceiverType.toRegularClassSymbol(context.session) ?: return null
+        if (declaredReceiverClassSymbol.typeParameterSymbols.isEmpty()) return null
+
+        val typeCheckerState = context.session.typeContext.newTypeCheckerState(
+            errorTypesEqualToAnything = false,
+            stubTypesEqualToAnything = false,
+        )
+        val correspondingReceiverType = findCorrespondingSupertypes(
+            typeCheckerState,
+            rigidReceiverType,
+            declaredReceiverClassSymbol.defaultType().typeConstructor(context.session.typeContext),
+        ).firstOrNull() as? ConeKotlinType ?: return null
+
+        return correspondingReceiverType.typeArguments.firstOrNull()?.type
+    }
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkArgumentAndReport(
         typeArgument: ConeKotlinType,
@@ -113,6 +153,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         isArray: Boolean,
         isPlaceHolder: Boolean,
         fullyExpandedType: ConeKotlinType = typeArgument.fullyExpandedType(),
+        erasureWarningTypeConstraint: ConeKotlinType? = null,
     ) {
         if (fullyExpandedType.classId == StandardClassIds.Array) {
             // Type aliases can transform type arguments arbitrarily (drop, nest, etc...).
@@ -150,8 +191,8 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         } else if (typeArgument is ConeIntersectionType) {
             reporter.reportOn(source, FirErrors.TYPE_INTERSECTION_AS_REIFIED, typeParameter, typeArgument.intersectedTypes)
         } else if (isExplicit
-            && typeParameter.resolvedAnnotationClassIds.any { it == StandardClassIds.Annotations.WarnOnErased }
-            && isCastErased(context.session.builtinTypes.anyType.coneType, typeArgument)
+            && erasureWarningTypeConstraint != null
+            && isCastErased(erasureWarningTypeConstraint, typeArgument)
         ) {
             val erasedType = (typeArgument as? ConeClassLikeType)?.replaceArgumentsWithStarProjections() ?: typeArgument
             reporter.reportOn(source, FirErrors.REIFIED_TYPE_UNSAFE_SUBSTITUTION, typeArgument, erasedType)

@@ -16,12 +16,13 @@ package kotlin.internal
 internal annotation class PureReifiable
 
 /**
- * When applied to a reified type parameter, the compiler reports a warning if the type argument
- * has generic type parameters that will be erased at runtime (e.g. `List<String>` erased to `List<*>`).
+ * Reports `REIFIED_TYPE_UNSAFE_SUBSTITUTION` when the reified type argument has type
+ * parameters that will be erased at runtime and are not constrained by the first type
+ * argument of the extension receiver's declared type.
  */
 @Target(AnnotationTarget.TYPE_PARAMETER)
 @Retention(AnnotationRetention.BINARY)
-internal annotation class WarnOnErased
+internal annotation class WarnOnErasureUnconstrainedByReceiverTypesFirstTypeArg
 
 /**
  * Specifies that the corresponding built-in method exists depending on platform.
