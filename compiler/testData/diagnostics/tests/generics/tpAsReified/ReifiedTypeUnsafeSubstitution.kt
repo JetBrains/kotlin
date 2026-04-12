@@ -69,5 +69,43 @@ fun testSequenceReceiver(seq: Sequence<MyResult<String, Exception>>) {
     seq.filterIsInstance<MySuccess<String>>()
 }
 
+// === Tests for non-collection receivers ===
+
+class Holder<out T>(val value: T)
+
+@Suppress(<!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>, "INVISIBLE_MEMBER")
+inline fun <reified @kotlin.internal.WarnOnErasureUnconstrainedByReceiverTypesFirstTypeArg T> Holder<*>.checkValue(): Boolean = value is T
+
+fun testNonCollectionTypedReceiver(holder: Holder<MyResult<String, Exception>>) {
+    // Should NOT warn: Holder's type arg MyResult<String, Exception> constrains MySuccess's R to String
+    holder.checkValue<MySuccess<String>>()
+
+    // Should warn: Holder's type arg MyResult<String, Exception> doesn't constrain List's type arg
+    holder.checkValue<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>List<String><!>>()
+}
+
+fun testNonCollectionStarReceiver(holder: Holder<*>) {
+    // Should warn: Holder<*> provides no type arg constraint
+    holder.checkValue<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>MySuccess<String><!>>()
+}
+
+// === Tests for receiver type itself as constraint ===
+
+@Suppress(<!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>, "INVISIBLE_MEMBER")
+inline fun <reified @kotlin.internal.WarnOnErasureUnconstrainedByReceiverTypesFirstTypeArg T> MyBase<*>.checkSelf(): Boolean = this is T
+
+fun testReceiverTypeConstraint(base: MyBase<String>) {
+    // Incorrectly warns: constraint is String (first type arg of MyBase), not MyBase<String> itself
+    base.checkSelf<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>MyDerived<String><!>>()
+
+    // Should warn: String cannot constrain List's type argument
+    base.checkSelf<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>List<String><!>>()
+}
+
+fun testReceiverTypeStarConstraint(base: MyBase<*>) {
+    // Should warn: MyBase<*> has star projection, cannot constrain MyDerived's T
+    base.checkSelf<<!REIFIED_TYPE_UNSAFE_SUBSTITUTION!>MyDerived<String><!>>()
+}
+
 /* GENERATED_FIR_TAGS: functionDeclaration, inline, isExpression, nullableType, reified, starProjection, stringLiteral,
 typeParameter */
