@@ -29,11 +29,9 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.js.config.propertyLazyInitialization
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -173,10 +171,4 @@ class WasmBackendContext(
     }
 
     val wasmCoroutinesStackSwitching = configuration.wasmCoroutinesStackSwitching
-
-    override fun loweredSuspendFunctionReturnType(function: IrFunction): IrType = when {
-        wasmCoroutinesStackSwitching -> function.returnType
-        function.returnType.isNullable() -> irBuiltIns.anyNType
-        else -> irBuiltIns.anyType
-    }
 }

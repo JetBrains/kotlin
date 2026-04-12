@@ -14,11 +14,9 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLowerings
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 /**
@@ -60,9 +58,6 @@ interface CommonBackendContext : LoweringContext, BackendContextHolder {
 
     val shouldGenerateHandlerParameterForDefaultBodyFun
         get() = false
-
-    fun loweredSuspendFunctionReturnType(function: IrFunction): IrType =
-        if (function.returnType.isNullable()) irBuiltIns.anyNType else irBuiltIns.anyType
 }
 
 /**

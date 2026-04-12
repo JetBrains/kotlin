@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowering
+import org.jetbrains.kotlin.backend.common.lower.coroutines.defaultLoweredSuspendFunctionReturnType
 import org.jetbrains.kotlin.backend.common.lower.FinallyBlocksLowering
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.ReturnableBlockTransformer
@@ -342,7 +343,10 @@ open class JsSuspendFunctionsLowering(
 
     override fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression {
         val functionReturnType = (delegatingCall as? IrCall)?.symbol?.owner?.let { function ->
-            super.context.loweredSuspendFunctionReturnType(function)
+            defaultLoweredSuspendFunctionReturnType(
+                function,
+                this@JsSuspendFunctionsLowering.context
+            )
         } ?: delegatingCall.type
 
         if (!needUnboxingOrUnit(functionReturnType, expectedType)) return delegatingCall
