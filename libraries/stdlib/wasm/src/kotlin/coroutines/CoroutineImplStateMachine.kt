@@ -11,9 +11,8 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 
 @SinceKotlin("1.3")
 @UsedFromCompilerGeneratedCode
-internal abstract class CoroutineImplStateMachine(private val resultContinuation: Continuation<Any?>?) : CoroutineImpl<Any?>() {
+internal abstract class CoroutineImplStateMachine(resultContinuation: Continuation<Any?>?) : CoroutineImpl<Any?, Any?>(resultContinuation) {
 
-    override val _context: CoroutineContext? = resultContinuation?.context
 
     override fun resumeWith(result: Result<Any?>) {
         var current = this
