@@ -16,12 +16,13 @@ import kotlin.wasm.internal.resumeWithImpl
 @SinceKotlin("1.3")
 @UsedFromCompilerGeneratedCode
 internal abstract class CoroutineImplStackSwitching<T, R>(
-    protected val resultContinuation: Continuation<R>,
+    resultContinuation: Continuation<R>,
     val rethrowExceptions: Boolean = false
-) : CoroutineImpl<T>() {
+) : CoroutineImpl<T, R>(resultContinuation) {
 
     internal var wasSuspended = false
 
+    protected val _resultContinuation = resultContinuation
     override val _context: CoroutineContext = resultContinuation.context
 
     @Suppress("UNCHECKED_CAST")
@@ -45,7 +46,7 @@ internal abstract class CoroutineImplStackSwitching<T, R>(
 
         releaseIntercepted() // this state machine instance is terminating
 
-        val completion = resultContinuation
+        val completion = _resultContinuation
 
         // top-level completion reached -- invoke and return
         if (exception != null) {
@@ -73,9 +74,9 @@ internal class WasmContinuation<T, R>(
             isResumed = true
 
             val resultValue = if (isFreshInstance && exception == null) {
-                require(result == Unit || result == resultContinuation)
+                require(result == Unit || result == _resultContinuation)
                 isFreshInstance = false
-                resultContinuation
+                _resultContinuation
             } else result
             val resumeResult: ResumeIntrinsicResult = exception?.let {
                 resumeThrowImpl(it, wasmContBox)
