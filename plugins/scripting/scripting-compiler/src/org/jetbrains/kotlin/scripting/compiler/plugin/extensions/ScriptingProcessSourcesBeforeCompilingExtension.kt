@@ -179,6 +179,17 @@ class KotlinScriptExpressionExplainTransformer(
                 statement
             }
         }
+        is IrComposite -> {
+            if (statement.origin == IrStatementOrigin.DESTRUCTURING_DECLARATION) {
+                // Only the first statement of a destructing declaration should be transformed. Otherwise, the backend got confused.
+                // The first statement is the assignment to the destructuring var anyway, so we don't lose information here.
+                statement.statements[0] = explainStatement(statement.statements[0], builder, explanationsProp, declaration, "")
+                statement
+            } else {
+                statement.statements.transformInPlace { explainStatement(it, builder, explanationsProp, declaration, "") }
+                statement
+            }
+        }
         is IrExpression -> {
             if (statement is IrTypeOperatorCall && statement.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
                 statement.argument = explainWithFallBack(statement.argument, declaration, statementName, builder, explanationsProp)
