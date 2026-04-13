@@ -81,7 +81,6 @@ class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
               So that cache allows us to avoid creating too many classloaders for same JDK and reduce severity of that leak
             */
             if (isAtLeastJava9()) {
-                // TODO: Crema fails on this because of the issues with JRT not being properly initialized (jrt provider is not registered)
                 // If the runtime JDK is set to 9+ it has JrtFileSystemProvider,
                 // but to load proper jrt-fs (one that is pointed by jdkHome) we should provide "java.home" path
                 FileSystems.newFileSystem(rootUri, mapOf("java.home" to jdkHome.absolutePath))
