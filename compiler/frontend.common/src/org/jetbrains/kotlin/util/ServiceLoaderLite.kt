@@ -48,15 +48,8 @@ object ServiceLoaderLite {
         val implementations = mutableListOf<Service>()
 
         for (className in findImplementations(service, files)) {
-            try {
-                System.err.println("[ServiceLoaderLite] Loading implementation: $className for service ${service.name}")
-                val instance = Class.forName(className, false, classLoader).getDeclaredConstructor().newInstance()
-                implementations += service.cast(instance)
-                System.err.println("[ServiceLoaderLite] Successfully loaded: $className")
-            } catch (e: Throwable) {
-                System.err.println("[ServiceLoaderLite] Failed to load: $className — ${e::class.simpleName}: ${e.message}")
-                e.printStackTrace()
-            }
+            val instance = Class.forName(className, false, classLoader).newInstance()
+            implementations += service.cast(instance)
         }
 
         return implementations

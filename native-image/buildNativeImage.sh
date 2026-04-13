@@ -76,6 +76,7 @@ $NATIVE_IMAGE_BIN \
   -H:+AllowJRTFileSystem \
   -H:+RuntimeClassLoading \
   -H:EnableURLProtocols=jar \
+  -H:Preserve=package=kotlin.* \
   --verbose \
   -cp $CLASSPATH \
   -o kotlinc-native \

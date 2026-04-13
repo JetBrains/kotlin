@@ -336,6 +336,12 @@
       "type": "kotlinx.coroutines.scheduling.CoroutineScheduler"
     },
     {
+      "type": "org.jetbrains.annotations.NotNull"
+    },
+    {
+      "type": "org.jetbrains.annotations.Nullable"
+    },
+    {
       "type": "org.jetbrains.kotlin.backend.jvm.extensions.ClassBuilderExtensionAdapter",
       "methods": [
         {
@@ -359,6 +365,12 @@
           ]
         },
         {
+          "name": "setManuallyConfiguredFeatures",
+          "parameterTypes": [
+            "java.lang.String[]"
+          ]
+        },
+        {
           "name": "setPluginClasspaths",
           "parameterTypes": [
             "java.lang.String[]"
@@ -373,7 +385,21 @@
       "type": "org.jetbrains.kotlin.cli.common.arguments.Freezable"
     },
     {
-      "type": "org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments"
+      "type": "org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments",
+      "methods": [
+        {
+          "name": "setClasspath",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setDestination",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
     },
     {
       "type": "org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings",
@@ -400,12 +426,6 @@
     },
     {
       "type": "org.jetbrains.kotlin.com.intellij.codeInsight.multiverse.MultiverseEnabler"
-    },
-    {
-      "type": "org.jetbrains.annotations.Nullable"
-    },
-    {
-      "type": "org.jetbrains.annotations.NotNull"
     },
     {
       "type": "org.jetbrains.kotlin.com.intellij.openapi.application.ApplicationManager",
@@ -454,6 +474,29 @@
       "type": "org.jetbrains.kotlin.com.intellij.util.QueryExecutor"
     },
     {
+      "type": "org.jetbrains.kotlin.compiler.plugin.CliOption",
+      "unsafeAllocated": true,
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException",
+      "allDeclaredConstructors": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.compiler.plugin.PluginCliOptionProcessingException",
+      "allDeclaredConstructors": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.compiler.plugin.PluginProcessingException",
+      "allDeclaredConstructors": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.config.CompilerConfigurationKey",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
+    },
+    {
       "type": "org.jetbrains.kotlin.extensions.CompilerConfigurationExtension"
     },
     {
@@ -482,6 +525,402 @@
           "parameterTypes": []
         }
       ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtAnnotation"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtAnnotationEntry"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtAnnotationEntry[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtAnnotation[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtBackingField"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtBackingField[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtCallExpression"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtCallExpression[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtClass"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtClassBody"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtClassBody[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtClassInitializer"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtClassInitializer[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtClassLiteralExpression"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtClassLiteralExpression[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtClass[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtCollectionLiteralExpression"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtCollectionLiteralExpression[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtCompanionBlock"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtCompanionBlock[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtConstantExpression"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtConstantExpression[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtConstructorCalleeExpression"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtConstructorCalleeExpression[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtContextReceiver"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtContextReceiverList"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtContextReceiverList[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtContextReceiver[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtContractEffect"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtContractEffectList"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtContractEffectList[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtContractEffect[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtDeclarationModifierList"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtDeclarationModifierList[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtDotQualifiedExpression"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtDotQualifiedExpression[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtDynamicType"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtDynamicType[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtEnumEntry"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtEnumEntrySuperclassReferenceExpression"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtEnumEntrySuperclassReferenceExpression[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtEnumEntry[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtFileAnnotationList"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtFileAnnotationList[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtFunctionType"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtFunctionTypeReceiver"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtFunctionTypeReceiver[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtFunctionType[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtImportAlias"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtImportAlias[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtImportDirective"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtImportDirective[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtImportList"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtImportList[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtInitializerList"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtInitializerList[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtIntersectionType"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtIntersectionType[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtLambdaArgument"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtLambdaArgument[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtNameReferenceExpression"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtNameReferenceExpression[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtNamedFunction"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtNamedFunction[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtNullableType"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtNullableType[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtObjectDeclaration"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtObjectDeclaration[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtPackageDirective"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtPackageDirective[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtParameter"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtParameterList"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtParameterList[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtParameter[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtPrimaryConstructor"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtPrimaryConstructor[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtProperty"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtPropertyAccessor"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtPropertyAccessor[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtProperty[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtScript"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtScriptInitializer"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtScriptInitializer[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtScript[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtSecondaryConstructor"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtSecondaryConstructor[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtStringInterpolationPrefix"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtStringInterpolationPrefix[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtStringTemplateExpression"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtStringTemplateExpression[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtSuperTypeCallEntry"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtSuperTypeCallEntry[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtSuperTypeEntry"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtSuperTypeEntry[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtSuperTypeList"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtSuperTypeList[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtTypeAlias"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtTypeAlias[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtTypeArgumentList"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtTypeArgumentList[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtTypeConstraint"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtTypeConstraintList"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtTypeConstraintList[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtTypeConstraint[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtTypeParameter"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtTypeParameterList"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtTypeParameterList[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtTypeParameter[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtTypeProjection"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtTypeProjection[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtTypeReference"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtTypeReference[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtUserType"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtUserType[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtValueArgument"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtValueArgumentList"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtValueArgumentList[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtValueArgumentName"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtValueArgumentName[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtValueArgument[]"
     },
     {
       "type": "org.jetbrains.kotlin.psi.impl.KotlinElementTypeProviderImpl",
@@ -523,6 +962,24 @@
     },
     {
       "type": "org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInsLoaderImpl"
+    },
+    {
+      "type": "org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginOptions",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "sun.management.VMManagementImpl",
@@ -590,6 +1047,37 @@
           "org.jetbrains.kotlin.com.intellij.psi.util.PsiModificationTracker$Listener"
         ]
       }
+    },
+    {
+      "type": "org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar$ExtensionStorage",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.config.CompilerConfiguration",
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar$ExtensionRegistrarContext",
+      "allDeclaredConstructors": true,
+      "allDeclaredMethods": true
     }
   ],
   "resources": [
