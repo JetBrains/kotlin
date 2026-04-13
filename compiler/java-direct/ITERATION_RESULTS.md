@@ -401,6 +401,41 @@ The problem: for protobuf classes with hundreds of type references within the sa
 
 ---
 
+## Iteration 62: Resolution Performance — tryResolve Cache - 2026-04-13
+
+### Root Cause Analysis
+After Iteration 61 reduced `tryResolveCalls` from 2.4M to 79,416, a second round of diagnostic counters revealed that **82% of those 79K calls were duplicates** — only 14,283 unique ClassIds were probed. The duplication comes from recursive prefix splitting in `resolveNestedClassToClassId`: for a name like `com.google.protobuf.Foo`, the code tries "com" as a class for each prefix length, and each attempt calls `resolveSimpleNameToClassId` which probes same-package, java.lang, and star-import ClassIds — all returning the same result.
+
+Counter data (v2):
+| Counter | Value | Insight |
+|---------|-------|---------|
+| `tryResolveCalls` | 79,416 | Total callback invocations |
+| `tryResolveUnique` | 14,283 | Only 18% unique ClassIds |
+| `findLocalClassCalls` | 19,352 | 91% from resolveSimpleNameToClassId |
+| `findInnerFromSupertypesCalls` | 46,579 | 2.4 per findLocalClass, mostly wasted |
+| `classifierQualifiedNameCalls` | 1,493 | Not lazy — re-resolves every access |
+
+### Fix
+**`JavaResolutionContext.kt`**: Added a `HashMap<ClassId, Boolean>` cache scoped to each `resolve()` invocation. The `tryResolve` callback is wrapped with `cache.getOrPut(classId) { tryResolve(classId) }` before being passed to `resolveNestedClassToClassId` / `resolveSimpleNameToClassId`.
+
+This is safe because:
+- The callback (`session.symbolProvider.getClassLikeSymbolByClassId`) is deterministic within a single `resolve()` call
+- The cache is local to the invocation (no cross-call leakage)
+- The `HashMap` is lightweight — median size ~10 entries per invocation
+
+Expected impact: eliminates ~65K redundant FIR symbol provider lookups (82% of 79K).
+
+### Test Results
+- Box: 1168/1168, Phased: 1454/1456, Total failing: 2 (no change — same 2 won't-fix)
+- Performance test (`testMetadata_new_jvm`): passes
+
+### Remaining Optimization Opportunities
+Counter data identified further candidates for future iterations:
+- `findInnerFromSupertypesCalls: 46,579` — supertype hierarchy walks from `findLocalClass`, mostly returning null. Could be addressed by caching `findLocalClass` results per resolution context.
+- `classifierQualifiedName` is `get()` not `lazy` — re-resolves on every access (1,493 calls). Making it lazy would save redundant `findLocalClass` + `split('.')` calls.
+
+---
+
 ## Future Iteration Template
 
 ~~~markdown
