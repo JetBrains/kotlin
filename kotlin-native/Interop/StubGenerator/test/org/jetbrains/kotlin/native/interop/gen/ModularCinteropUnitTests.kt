@@ -760,6 +760,79 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         )
     }
 
+    /**
+     * Reproduces the Xcode 26 header shape where one module emits a full SWIFT_ENUM
+     * definition and another emits SWIFT_ENUM_FWD_DECL for the same enum.
+     */
+
+    @Test
+    fun `KT-85666 multimodular import - xcode26 style enum definition plus forward declaration in another module`() {
+        val files = testFiles()
+
+        files.file("module.modulemap", """
+        module internal { header "internal.h" }
+        module core { header "core.h" }
+    """.trimIndent())
+
+        files.file("internal.h", """
+        #import <Foundation/Foundation.h>
+
+        #if !defined(SWIFT_ENUM)
+        # define SWIFT_ENUM(_type, _name, _extensibility) enum _name : _type _extensibility
+        #endif
+
+        typedef SWIFT_ENUM(NSInteger, DDCoreLoggerLevel, closed) {
+            DDCoreLoggerLevelNone = 0,
+            DDCoreLoggerLevelDebug = 1,
+            DDCoreLoggerLevelWarn = 2,
+            DDCoreLoggerLevelError = 3,
+            DDCoreLoggerLevelCritical = 4,
+        };
+
+        void internalConsume(enum DDCoreLoggerLevel level);
+    """.trimIndent())
+
+        files.file("core.h", """
+        #import <Foundation/Foundation.h>
+
+        #if !defined(SWIFT_ENUM_FWD_DECL)
+        # if __has_feature(objc_fixed_enum)
+        #  define SWIFT_ENUM_FWD_DECL(_type, _name) enum _name : _type;
+        # else
+        #  define SWIFT_ENUM_FWD_DECL(_type, _name) typedef _type _name;
+        # endif
+        #endif
+
+        SWIFT_ENUM_FWD_DECL(NSInteger, DDCoreLoggerLevel)
+
+        void coreConsume(enum DDCoreLoggerLevel level);
+    """.trimIndent())
+
+        val def = files.file("dup_enum.def", """
+        language = Objective-C
+        modules = internal core
+    """.trimIndent())
+
+        val index = buildNativeIndex(
+                buildNativeLibraryFrom(def, argsWithFmodulesAndSearchPath(files.directory)),
+                verbose = false
+        ).index
+
+        assertEquals(
+                listOf("enum DDCoreLoggerLevel"),
+                index.enums.map { it.spelling }
+        )
+
+        val enumDecl = index.enums.single()
+
+        assertEquals(
+                listOf("internalConsume" to enumDecl, "coreConsume" to enumDecl),
+                index.functions.map {
+                    it.name to assertIs<EnumType>(it.parameters.single().type).def
+                }
+        )
+    }
+
     private fun argsWithFmodules(vararg arguments: String): Array<String> = arrayOf("-compiler-option", "-fmodules") + arguments
     private fun argsWithFmodulesAndSearchPath(searchPath: File) = argsWithFmodules("-compiler-option", "-I${searchPath}")
 
