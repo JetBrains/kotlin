@@ -57,7 +57,7 @@ internal object HeapTypeTags {
     const val CONT = 10u
     const val NO_CONT = 11u
     const val HEAP_CONT_TYPE = 12u
-
+    const val HEAP_CONT_FUNC_TYPE = 13u
 }
 
 internal object InstructionTags {
@@ -106,6 +106,7 @@ internal object ImmediateTags {
     const val TAG_INDEX = 29u
     const val VALUE_TYPE_VECTOR = 30u
     const val CONT_HANDLE = 31u
+    const val CONT_TYPE = 32u
     const val BLOCK_TYPE_NULL_VALUE = 129u
 }
 

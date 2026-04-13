@@ -69,7 +69,6 @@ internal suspend fun <T> suspendCoroutineUninterceptedOrReturnStackSwitching(blo
 
 @Suppress("UNUSED_PARAMETER")
 @UsedFromCompilerGeneratedCode
-@PublishedApi
 @ExcludedFromCodegen
 internal fun <T> suspendIntrinsic(block: (Continuation<T>) -> Any?): Any? {
     implementedAsIntrinsic
@@ -96,21 +95,18 @@ internal fun <R, P, T> suspendFunction2ToContrefImpl(f: (suspend R.(P) -> T), re
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-@PublishedApi
 internal fun <T> suspendFunction0ToContref(f: (suspend () -> T)): contref1 {
     implementedAsIntrinsic
 }
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-@PublishedApi
 internal fun <R, T> suspendFunction1ToContref(f: (suspend R.() -> T), receiver: R): contref1 {
     implementedAsIntrinsic
 }
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-@PublishedApi
 internal fun <R, P, T> suspendFunction2ToContref(f: (suspend R.(P) -> T), receiver: R, param: P): contref1 {
     implementedAsIntrinsic
 }

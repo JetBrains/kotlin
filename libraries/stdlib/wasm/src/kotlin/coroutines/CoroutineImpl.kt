@@ -13,6 +13,7 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 internal abstract class CoroutineImpl<T, R>(protected val resultContinuation: Continuation<R>?) : Continuation<T> {
     protected var state = 0
     protected var exceptionState = 0
+
     @UsedFromCompilerGeneratedCode
     internal var result: Any? = null
     protected var exception: Throwable? = null
@@ -26,25 +27,6 @@ internal abstract class CoroutineImpl<T, R>(protected val resultContinuation: Co
     public fun intercepted(): Continuation<T> = intercepted_
         ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
             .also { intercepted_ = it }
-
-
-    protected fun releaseIntercepted() {
-        val intercepted = intercepted_
-        if (intercepted != null && intercepted !== this) {
-            context[ContinuationInterceptor]!!.releaseInterceptedContinuation(intercepted)
-        }
-        this.intercepted_ = CompletedContinuation // just in case
-    }
-
-    protected abstract fun doResume(): Any?
-
-    public open fun create(completion: Continuation<*>): Continuation<Unit> {
-        throw UnsupportedOperationException("create(Continuation) has not been overridden")
-    }
-
-    public open fun create(value: Any?, completion: Continuation<*>): Continuation<Unit> {
-        throw UnsupportedOperationException("create(Any?;Continuation) has not been overridden")
-    }
 
     // remove after bootstrap
     @Suppress("UNCHECKED_CAST")
@@ -75,7 +57,7 @@ internal abstract class CoroutineImpl<T, R>(protected val resultContinuation: Co
                     currentException = exception
                 }
 
-                releaseIntercepted()
+                releaseIntercepted() // this instance is terminating
 
                 val completion = resultContinuation!!
 
@@ -93,6 +75,24 @@ internal abstract class CoroutineImpl<T, R>(protected val resultContinuation: Co
                 }
             }
         }
+    }
+
+    protected fun releaseIntercepted() {
+        val intercepted = intercepted_
+        if (intercepted != null && intercepted !== this) {
+            context[ContinuationInterceptor]!!.releaseInterceptedContinuation(intercepted)
+        }
+        this.intercepted_ = CompletedContinuation // just in case
+    }
+
+    protected abstract fun doResume(): Any?
+
+    public open fun create(completion: Continuation<*>): Continuation<Unit> {
+        throw UnsupportedOperationException("create(Continuation) has not been overridden")
+    }
+
+    public open fun create(value: Any?, completion: Continuation<*>): Continuation<Unit> {
+        throw UnsupportedOperationException("create(Any?;Continuation) has not been overridden")
     }
 }
 
