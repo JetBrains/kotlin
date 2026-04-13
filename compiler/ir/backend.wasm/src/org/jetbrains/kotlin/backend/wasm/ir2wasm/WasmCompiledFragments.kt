@@ -101,6 +101,8 @@ fun WasmCompiledTypesFileFragment.makeProjection(onTypes: ModuleReferencedTypes)
         definedGcTypes.filterTo(newFragment.definedGcTypes) { it.key in onTypes.gcTypes }
         definedVTableGcTypes.filterTo(newFragment.definedVTableGcTypes) { it.key in onTypes.gcTypes }
         definedFunctionTypes.filterTo(newFragment.definedFunctionTypes) { it.key in onTypes.functionTypes }
+        newFragment.contTypes.putAll(contTypes)
+        newFragment.contFunctionTypes.putAll(contFunctionTypes)
     }
 
 fun WasmCompiledDeclarationsFileFragment.makeProjection(onDeclarations: ModuleReferencedDeclarations): WasmCompiledDeclarationsFileFragment =

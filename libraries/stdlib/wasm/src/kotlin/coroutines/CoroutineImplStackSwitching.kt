@@ -8,6 +8,7 @@ package kotlin.coroutines
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.ResumeIntrinsicResult
+import kotlin.wasm.internal.WasmStackSwitchingOnly
 import kotlin.wasm.internal.reftypes.contref1
 import kotlin.wasm.internal.resumeThrowImpl
 import kotlin.wasm.internal.resumeWithImpl
@@ -60,6 +61,7 @@ internal abstract class CoroutineImplStackSwitching<T, R>(
     }
 }
 
+@WasmStackSwitchingOnly
 internal class WasmContinuation<T, R>(
     internal var wasmContBox: contref1,
     completion: Continuation<R>,

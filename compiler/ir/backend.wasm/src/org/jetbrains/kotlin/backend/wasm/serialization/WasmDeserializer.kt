@@ -236,6 +236,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 HeapTypeTags.HEAP_GC_TYPE -> GcHeapTypeSymbol(deserializeIdSignature())
                 HeapTypeTags.HEAP_VT_TYPE -> VTableHeapTypeSymbol(deserializeIdSignature())
                 HeapTypeTags.HEAP_FUNC_TYPE -> FunctionHeapTypeSymbol(deserializeIdSignature())
+                HeapTypeTags.HEAP_CONT_TYPE -> ContHeapTypeSymbol(deserializeInt())
                 HeapTypeTags.CONT -> WasmHeapType.Simple.Cont
                 HeapTypeTags.NO_CONT -> WasmHeapType.Simple.NoCont
                 else -> tagError(tag)

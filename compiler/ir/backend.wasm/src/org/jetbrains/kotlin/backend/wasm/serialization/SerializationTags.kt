@@ -56,6 +56,7 @@ internal object HeapTypeTags {
     const val HEAP_FUNC_TYPE = 9u
     const val CONT = 10u
     const val NO_CONT = 11u
+    const val HEAP_CONT_TYPE = 12u
 
 }
 

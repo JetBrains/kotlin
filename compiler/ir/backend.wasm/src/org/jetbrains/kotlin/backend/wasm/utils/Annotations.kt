@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.wasm.ir.WasmImportDescriptor
 import org.jetbrains.kotlin.wasm.ir.WasmSymbol
 
 private val excludedFromCodegenFqName = FqName("kotlin.wasm.internal.ExcludedFromCodegen")
+private val wasmStackSwitchingOnlyFqName = FqName("kotlin.wasm.internal.WasmStackSwitchingOnly")
 private val wasmImportFqName: FqName = FqName("kotlin.wasm.WasmImport")
 private val wasmOpFqName = FqName("kotlin.wasm.internal.WasmOp")
 private val wasmNoOpCastFqName = FqName("kotlin.wasm.internal.WasmNoOpCast")
@@ -35,6 +36,9 @@ private val jsBuiltinFqName = FqName("kotlin.wasm.internal.JsBuiltin")
 
 fun IrAnnotationContainer.hasExcludedFromCodegenAnnotation(): Boolean =
     hasAnnotation(excludedFromCodegenFqName)
+
+fun IrAnnotationContainer.hasWasmStackSwitchingOnlyAnnotation(): Boolean =
+    hasAnnotation(wasmStackSwitchingOnlyFqName)
 
 fun IrFunction.getWasmImportDescriptor(): WasmImportDescriptor? {
     val annotation = getAnnotation(wasmImportFqName)
