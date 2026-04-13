@@ -186,13 +186,11 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents) : Fir2IrComponents by c {
         }
 
         private fun generateImplicitCast(original: IrExpression, castType: IrType): IrExpression {
-            val typeOperator = if (original.type is IrDynamicType) {
-                IrTypeOperator.IMPLICIT_DYNAMIC_CAST
+            return if (original.type is IrDynamicType) {
+                implicitCast(original, original.type, IrTypeOperator.IMPLICIT_DYNAMIC_CAST)
             } else {
-                IrTypeOperator.IMPLICIT_CAST
+                implicitCast(original, castType, IrTypeOperator.IMPLICIT_CAST)
             }
-
-            return implicitCast(original, castType, typeOperator)
         }
 
         context(c: Fir2IrComponents)
