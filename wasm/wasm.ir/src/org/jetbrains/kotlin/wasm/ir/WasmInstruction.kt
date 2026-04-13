@@ -35,7 +35,21 @@ private open class WasmInstr2(
     val immediate2: WasmImmediate,
 ) : WasmInstr1(operator, immediate1) {
     override fun forEachImmediates(body: (WasmImmediate) -> Unit) {
-        body(immediate1); body(immediate2)
+        when (operator) {
+            WasmOp.RESUME -> {
+                body(immediate1)
+                body(WasmImmediate.ConstU8(1.toUByte()))
+                body(immediate2)
+            }
+            WasmOp.RESUME_THROW_REF -> {
+                body(immediate1)
+                body(WasmImmediate.ConstU8(1.toUByte()))
+                body(immediate2)
+            }
+            else -> {
+                body(immediate1); body(immediate2)
+            }
+        }
     }
 
     override val immediatesCount: Int get() = 2
@@ -48,7 +62,17 @@ private open class WasmInstr3(
     val immediate3: WasmImmediate,
 ) : WasmInstr2(operator, immediate1, immediate2) {
     override fun forEachImmediates(body: (WasmImmediate) -> Unit) {
-        body(immediate1); body(immediate2); body(immediate3)
+        when (operator) {
+            WasmOp.RESUME_THROW -> {
+                body(immediate1)
+                body(immediate2)
+                body(WasmImmediate.ConstU8(1.toUByte()))
+                body(immediate3)
+            }
+            else -> {
+                body(immediate1); body(immediate2); body(immediate3)
+            }
+        }
     }
 
     override val immediatesCount: Int get() = 3
