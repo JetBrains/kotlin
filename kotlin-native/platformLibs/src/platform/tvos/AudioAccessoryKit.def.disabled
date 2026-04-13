@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.AudioAccessoryKit
+
+modules = AudioAccessoryKit
+compilerOpts = -framework AudioAccessoryKit
+linkerOpts = -framework AudioAccessoryKit
+#Disabled: Not officially available for tvos

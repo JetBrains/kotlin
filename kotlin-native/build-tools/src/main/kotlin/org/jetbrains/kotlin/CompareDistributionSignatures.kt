@@ -68,14 +68,12 @@ open class CompareDistributionSignatures @Inject constructor(
     @get:PathSensitive(PathSensitivity.NONE)
     protected val oldDistributionRoot: DirectoryProperty = objectFactory.directoryProperty()
 
-    @Internal
     private val oldDistribution: Provider<NativeDistribution> = oldDistributionRoot.asNativeDistribution()
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.NONE)
     protected val newDistributionRoot: DirectoryProperty = objectFactory.directoryProperty()
 
-    @Internal
     private val newDistribution: Provider<NativeDistribution> = newDistributionRoot.asNativeDistribution()
 
     enum class OnMismatchMode {

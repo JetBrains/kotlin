@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.AccessoryNotifications
+
+modules = AccessoryNotifications
+compilerOpts = -framework AccessoryNotifications
+linkerOpts = -framework AccessoryNotifications
+#Disabled: Swift-only framework

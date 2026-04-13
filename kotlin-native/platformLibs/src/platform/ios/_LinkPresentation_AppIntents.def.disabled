@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._LinkPresentation_AppIntents
+
+modules = _LinkPresentation_AppIntents
+compilerOpts = -framework _LinkPresentation_AppIntents
+linkerOpts = -framework _LinkPresentation_AppIntents
+#Disabled: Unavailable

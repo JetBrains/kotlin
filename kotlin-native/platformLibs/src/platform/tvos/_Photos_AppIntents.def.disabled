@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._Photos_AppIntents
+
+modules = _Photos_AppIntents
+compilerOpts = -framework _Photos_AppIntents
+linkerOpts = -framework _Photos_AppIntents
+#Disabled: Unavailable

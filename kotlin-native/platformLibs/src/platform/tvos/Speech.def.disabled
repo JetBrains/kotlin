@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.Speech
+
+modules = Speech
+compilerOpts = -framework Speech
+linkerOpts = -framework Speech
+#Disabled: Not officially available for tvos
