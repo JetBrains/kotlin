@@ -181,6 +181,39 @@ java.io.File("<JD_TMP>/debug.log").appendText("DEBUG: $message\n")
 
 `println()` is swallowed by Gradle — never use it for debugging.
 
+**AtomicLong counters + shutdown hook** (for performance profiling — thread-safe, survives Gradle output swallowing):
+```kotlin
+import java.util.concurrent.atomic.AtomicLong
+
+object ResolutionCounters {
+    val someCallCount = AtomicLong()
+    val otherCallCount = AtomicLong()
+
+    init {
+        Runtime.getRuntime().addShutdownHook(Thread {
+            java.io.File("/tmp/jd_resolution_counters.txt").writeText(buildString {
+                appendLine("someCallCount: ${someCallCount.get()}")
+                appendLine("otherCallCount: ${otherCallCount.get()}")
+            })
+        })
+    }
+}
+
+// Usage at call sites:
+ResolutionCounters.someCallCount.incrementAndGet()
+```
+After the test run, read `/tmp/jd_resolution_counters.txt`. The shutdown hook fires in the forked JVM after all tests complete. `AtomicLong` is thread-safe for parallel test execution. **Always remove counters after investigation** — they are diagnostic-only.
+
+To measure **unique vs duplicate** calls (cache-hit potential), wrap a callback with a `HashSet`:
+```kotlin
+val seen = HashSet<ClassId>()
+val counting: (ClassId) -> Boolean = { id ->
+    counters.totalCalls.incrementAndGet()
+    if (seen.add(id)) counters.uniqueCalls.incrementAndGet()
+    originalCallback(id)
+}
+```
+
 ---
 
 ## Iteration Process
