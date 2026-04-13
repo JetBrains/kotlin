@@ -25,11 +25,13 @@ import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.kotlinErrorsDir
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
+import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer.Companion.addMetricFromFusKotlinProfileFile
+import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer.Companion.createValidateAndAnonymizeCopy
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.String
 
-internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildService.Parameters>, AutoCloseable, OperationCompletionListener {
+internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildService.Parameters>, AutoCloseable,
+    OperationCompletionListener {
     protected val buildId = parameters.buildId.get()
     private val log = Logging.getLogger(this.javaClass)
     private val errorWasReported = AtomicBoolean(false)
@@ -50,7 +52,11 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
         private val serviceName =
             "${BuildFinishBuildService::class.java.canonicalName}_${BuildFinishBuildService::class.java.classLoader.hashCode()}"
 
-        fun registerIfAbsent(project: Project, buildUidService: Provider<BuildUidService>, kotlinPluginVersion: String): Provider<BuildFinishBuildService>? {
+        fun registerIfAbsent(
+            project: Project,
+            buildUidService: Provider<BuildUidService>,
+            kotlinPluginVersion: String,
+        ): Provider<BuildFinishBuildService>? {
             if (!project.buildServiceShouldBeCreated) {
                 return null
             }
@@ -88,21 +94,19 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
             log: Logger,
         ): Errors {
             try {
-                val metricContainer = MetricsContainer()
+                val metricContainer = MetricsContainer.createMetricsContainerForProfileFile()
 
                 fusReportDirectory.listFiles()
                     .filter { it.name.startsWith(buildUid) && (it.name.endsWith("plugin-profile") || it.name.endsWith("kotlin-profile")) }
                     .forEach {
-                        MetricsContainer.readFromFile(it) {
-                            metricContainer.populateFromMetricsContainer(it)
-                        }
+                        metricContainer.addMetricFromFusKotlinProfileFile(it)
                     }
 
                 val fusFile = fusReportDirectory.resolve("$buildUid.profile")
                 fusFile.writer().buffered().use {
                     it.appendLine("Build: $buildUid")
                     it.appendLine("Kotlin version: $kotlinVersion")
-                    metricContainer.flush(it)
+                    metricContainer.createValidateAndAnonymizeCopy().flush(it)
                 }
 
                 if (!fusReportDirectory.resolve("$buildUid.finish-profile").createNewFile()) {

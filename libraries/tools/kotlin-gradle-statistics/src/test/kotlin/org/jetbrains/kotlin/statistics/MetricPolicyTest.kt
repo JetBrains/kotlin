@@ -60,13 +60,13 @@ class MetricPolicyTest {
 
     @Test
     fun versionStringValidation() {
-        val separator = ConcatMetricContainer.SEPARATOR
-        val container = MetricsContainer()
+        val separator = "0123"
+        val container = MetricsContainer(metricValuesSeparator = separator)
         fun whenAdded(newValue: String, expected: String) {
             container.report(StringMetrics.MPP_PLATFORMS, newValue)
-            val currentValue = container.getMetric(StringMetrics.MPP_PLATFORMS)!!.toStringRepresentation()
+            val currentValue = container.getStringMetricPresentation(StringMetrics.MPP_PLATFORMS)!!
             assertEquals(expected, currentValue)
-            val regex = StringMetrics.MPP_PLATFORMS.anonymization.validationRegexp()
+            val regex = StringMetrics.MPP_PLATFORMS.anonymization.validationRegexp(separator)
             assertTrue(currentValue.matches(Regex(regex)), "'${currentValue}' should match '${regex}'")
         }
         whenAdded("js", "js")

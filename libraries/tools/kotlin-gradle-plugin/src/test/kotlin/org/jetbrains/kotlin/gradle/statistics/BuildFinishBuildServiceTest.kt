@@ -9,9 +9,11 @@ import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFinishBuildService
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
+import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertTrue
 
 class BuildFinishBuildServiceTest {
@@ -31,6 +33,11 @@ class BuildFinishBuildServiceTest {
                 unknown-metric=1
 
                 ${NumericalMetrics.COMPILATION_DURATION}=10
+                ${StringMetrics.OS_VERSION}=1.0.0-SNAPSHOT
+                ${StringMetrics.IDES_INSTALLED}=invalid_version,AS,WC
+                ${BooleanMetrics.ENABLED_COMPILER_REFERENCE_INDEX}=true
+                ${BooleanMetrics.KOTLIN_PROGRESSIVE_MODE}=true
+ 
                 BUILD FINISHED
             """.trimIndent()
         )
@@ -39,6 +46,9 @@ class BuildFinishBuildServiceTest {
                 unknown-metric=1
                 wrong format
                 ${NumericalMetrics.COMPILATION_DURATION}=10
+                ${StringMetrics.OS_VERSION}=invalid_version
+                ${BooleanMetrics.ENABLED_COMPILER_REFERENCE_INDEX}=invalid
+                ${BooleanMetrics.KOTLIN_PROGRESSIVE_MODE}=invalid
                 BUILD FINISHED
             """.trimIndent()
         )
@@ -51,6 +61,10 @@ class BuildFinishBuildServiceTest {
         fusDir.resolve("$buildId.kajfsjfh.kotlin-profile").writeText(
             """
                 ${BooleanMetrics.BUILD_SCAN_BUILD_REPORT}=true
+                ${StringMetrics.OS_VERSION}=2.0.0-SNAPSHOT
+                ${StringMetrics.IDES_INSTALLED}=IU
+                ${BooleanMetrics.ENABLED_COMPILER_REFERENCE_INDEX}=false
+                ${BooleanMetrics.KOTLIN_PROGRESSIVE_MODE}=false
                 BUILD FINISHED
             """.trimIndent()
         )
@@ -72,6 +86,10 @@ class BuildFinishBuildServiceTest {
         assertTrue("Profile file should contain valid metrics") {
             profileContent.contains("${NumericalMetrics.COMPILATION_DURATION}=20")
         }
+        assertContains(profileContent, "${StringMetrics.OS_VERSION}=2.0.0-snapshot")
+        assertContains(profileContent, "${StringMetrics.IDES_INSTALLED}=AS;IU;WC;UNEXPECTED-VALUE")
+        assertContains(profileContent,"${BooleanMetrics.ENABLED_COMPILER_REFERENCE_INDEX}=true")
+        assertContains(profileContent,"${BooleanMetrics.KOTLIN_PROGRESSIVE_MODE}=false")
         assertTrue("Profile file should not contain metrics from another build") {
             !profileContent.contains(BooleanMetrics.TESTS_EXECUTED.name)
         }
