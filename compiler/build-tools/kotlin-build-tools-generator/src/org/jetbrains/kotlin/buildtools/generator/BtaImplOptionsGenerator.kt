@@ -118,7 +118,7 @@ internal class BtaImplOptionsGenerator(
                         addModifiers(KModifier.OVERRIDE)
                         returns(ClassName(targetPackage, implClassName))
                         addStatement(
-                            "return %T(adapter).also { newArgs -> newArgs.applyArgumentStrings(toArgumentStrings()) }",
+                            "return %T(adapter).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }",
                             ClassName(targetPackage, implClassName)
                         )
                     }

@@ -171,7 +171,7 @@ internal class JvmCompilerArgumentsImpl(
 
   public operator fun contains(key: JvmCompilerArgument<*>): Boolean = key.id in optionsMap
 
-  override fun deepCopy(): JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(adapter).also { newArgs -> newArgs.applyArgumentStrings(toArgumentStrings()) }
+  override fun deepCopy(): JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(adapter).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
   override fun build(): JvmCompilerArguments = deepCopy()
 
