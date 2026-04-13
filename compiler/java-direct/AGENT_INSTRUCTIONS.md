@@ -61,6 +61,15 @@ Replace `$JD_TMP` with the actual path value at runtime.
 ## Ground Rules
 
 - **Use JetBrains MCP tools** for all project file operations (see `.ai/guidelines.md`)
+
+### MCP Token Efficiency
+
+- **Search before reading**: prefer `search_in_files_by_text` / `search_in_files_by_regex` over `get_file_text_by_path` for large files — search tools return only matching lines
+- **Oversized results**: when an MCP call exceeds the token limit, the result is auto-saved to `~/.claude/projects/.../tool-results/<tool>-<timestamp>.txt` — filter it with `grep`/`jq` via Bash instead of loading the full file into context
+- **Narrow queries first**: locate the relevant section via search, then read only that region
+
+### Other Rules
+
 - **NEVER create git commits** — all changes must be reviewed by the user first
 - **NEVER run `-Pkotlin.test.update.test.data=true`** — it corrupts shared test data in `compiler/testData/` AND `compiler/fir/analysis-tests/testData/`
 - **NEVER modify test data** to make java-direct tests pass — fix the implementation
