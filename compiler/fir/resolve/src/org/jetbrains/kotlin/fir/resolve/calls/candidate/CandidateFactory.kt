@@ -39,6 +39,8 @@ class CandidateFactory private constructor(
     @OptIn(FirExtensionApiInternals::class)
     private val callRefinementExtensions = context.session.extensionService.callRefinementExtensions.takeIf { it.isNotEmpty() }
 
+    private val companionBlocksAndExtensionsEnabled = LanguageFeature.CompanionBlocksAndExtensions.isEnabled()
+
     companion object {
         private fun buildBaseSystem(context: ResolutionContext, callInfo: CallInfo): ConstraintStorage {
             callInfo.containingCandidateForCollectionLiteral?.let {
@@ -148,7 +150,7 @@ class CandidateFactory private constructor(
                     )
                 }
             }
-        } else if (objectsByName && symbol.isRegularClassWithoutCompanion(callInfo.session)) {
+        } else if (objectsByName && shouldAddNoCompanionDiagnostic(callInfo, symbol)) {
             result.addDiagnostic(NoCompanionObject)
         }
         if (callInfo.origin == FirFunctionCallOrigin.Operator) {
@@ -174,11 +176,19 @@ class CandidateFactory private constructor(
             result.addDiagnostic(givenExtensionReceiver.toInaccessibleReceiverDiagnostic())
         }
 
-        if (LanguageFeature.CompanionBlocksAndExtensions.isDisabled() && result.symbol.requiresCompanionBlockOrExtensionLf()) {
+        if (!companionBlocksAndExtensionsEnabled && result.symbol.requiresCompanionBlockOrExtensionLf()) {
             result.addDiagnostic(UnsupportedCompanionBlockOrExtensionCall)
         }
 
         return result
+    }
+
+    private fun shouldAddNoCompanionDiagnostic(
+        callInfo: CallInfo,
+        symbol: FirBasedSymbol<FirDeclaration>,
+    ): Boolean {
+        if (callInfo.isImplicitInvokeReceiver && companionBlocksAndExtensionsEnabled) return false
+        return symbol.isRegularClassWithoutCompanion(callInfo.session)
     }
 
     private fun FirBasedSymbol<*>.requiresCompanionBlockOrExtensionLf(): Boolean {
