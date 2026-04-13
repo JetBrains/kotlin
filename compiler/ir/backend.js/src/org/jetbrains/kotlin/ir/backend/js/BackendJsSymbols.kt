@@ -32,6 +32,7 @@ abstract class BackendWebSymbols(
     abstract val throwISE: IrSimpleFunctionSymbol
     abstract val throwIAE: IrSimpleFunctionSymbol
 
+    // TODO (Stack Switching): make open after bootstrap for Stack Switching coroutines implementation in K/Wasm
     val coroutineImpl: IrClassSymbol = ClassIds.coroutineImpl.classSymbol()
     override val continuationClass = ClassIds.continuation.classSymbol()
     override val coroutineSuspendedGetter by CallableIds.coroutineSuspended.getterSymbol()
