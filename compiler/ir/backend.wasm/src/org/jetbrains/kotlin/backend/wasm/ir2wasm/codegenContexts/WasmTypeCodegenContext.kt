@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
+import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.backend.wasm.utils.redefinitionError
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -14,13 +15,32 @@ import org.jetbrains.kotlin.wasm.ir.WasmFunctionType
 import org.jetbrains.kotlin.wasm.ir.WasmStructDeclaration
 import org.jetbrains.kotlin.wasm.ir.WasmTypeDeclaration
 
+private const val ENCODE_BYTE_COUNT = 9
+private const val MASK_7 = 0x7FUL
+
+/**
+ * Encodes the low 63 bits of [value] into 9 UTF-8-safe bytes.
+ * Each output byte is in range 0..127, so the result is valid UTF-8.
+ */
+private fun encode63BitsToUtf8String(value: ULong): String {
+    var current = value
+    val result = ByteArray(ENCODE_BYTE_COUNT) {
+        val codePoint = (current and MASK_7).toByte()
+        current = current shr 7
+        codePoint
+    }
+    return String(result, Charsets.UTF_8)
+}
+
 open class WasmTypeCodegenContext(
     private val wasmFileFragment: WasmCompiledTypesFileFragment,
     idSignatureRetriever: IdSignatureRetriever,
 ) : WasmCodegenContext(idSignatureRetriever) {
 
-    fun getDeclarationTag(declaration: IrDeclaration): String =
-        declaration.symbol.getReferenceKey().toString()
+    fun getDeclarationTag(declaration: IrDeclaration): String {
+        val referenceString = declaration.symbol.getReferenceKey().toString()
+        return encode63BitsToUtf8String(cityHash64(referenceString.toByteArray()))
+    }
 
     fun defineGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration) {
         if (wasmFileFragment.definedGcTypes.put(irClass.getReferenceKey(), wasmType) != null) {

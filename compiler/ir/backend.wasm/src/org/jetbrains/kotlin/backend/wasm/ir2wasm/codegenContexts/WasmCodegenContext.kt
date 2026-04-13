@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 enum class WasmServiceImportExportKind(val prefix: String) {
     VTABLE($$"__vt$"),
     ITABLE($$"__it$"),
-    RTTI($$"$__rt$"),
+    RTTI($$"__rt$"),
     FUNC($$"__fn$")
 }
 
