@@ -5,35 +5,40 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
-import org.jetbrains.kotlin.arguments.serialization.json.KotlinPartialLinkageLogLevelAsNameSerializer
 
-@Serializable(with = KotlinPartialLinkageLogLevelAsNameSerializer::class)
+@Serializable
 enum class PartialLinkageLogLevel(
     val levelName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
+    @SerialName("silent")
     SILENT(
         levelName = "silent",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_0,
         )
     ),
+    @SerialName("info")
     INFO(
         levelName = "info",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
     ),
+    @SerialName("warning")
     WARNING(
         levelName = "warning",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
     ),
+    @SerialName("error")
     ERROR(
         levelName = "error",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -44,3 +49,5 @@ enum class PartialLinkageLogLevel(
     override val stringRepresentation: String
         get() = levelName
 }
+
+typealias PartialLinkageLogLevelWithReleaseVersions = @Contextual PartialLinkageLogLevel

@@ -5,18 +5,20 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
-import org.jetbrains.kotlin.arguments.serialization.json.KotlinVersionAsNameSerializer
 
 @Suppress("EnumEntryName")
-@Serializable(with = KotlinVersionAsNameSerializer::class)
+@Serializable
 enum class KotlinVersion(
     val versionName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
+    @SerialName("1.0")
     v1_0(
         versionName = "1.0",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -26,6 +28,7 @@ enum class KotlinVersion(
             removedVersion = KotlinReleaseVersion.v1_4_0,
         )
     ),
+    @SerialName("1.1")
     v1_1(
         versionName = "1.1",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -35,6 +38,7 @@ enum class KotlinVersion(
             removedVersion = KotlinReleaseVersion.v1_4_0,
         )
     ),
+    @SerialName("1.2")
     v1_2(
         versionName = "1.2",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -44,6 +48,7 @@ enum class KotlinVersion(
             removedVersion = KotlinReleaseVersion.v1_5_0,
         )
     ),
+    @SerialName("1.3")
     v1_3(
         versionName = "1.3",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -53,6 +58,7 @@ enum class KotlinVersion(
             removedVersion = KotlinReleaseVersion.v1_9_0,
         )
     ),
+    @SerialName("1.4")
     v1_4(
         versionName = "1.4",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -62,6 +68,7 @@ enum class KotlinVersion(
             removedVersion = KotlinReleaseVersion.v2_1_0,
         )
     ),
+    @SerialName("1.5")
     v1_5(
         versionName = "1.5",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -71,6 +78,7 @@ enum class KotlinVersion(
             removedVersion = KotlinReleaseVersion.v2_1_0,
         )
     ),
+    @SerialName("1.6")
     v1_6(
         versionName = "1.6",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -80,6 +88,7 @@ enum class KotlinVersion(
             removedVersion = KotlinReleaseVersion.v2_1_0,
         )
     ),
+    @SerialName("1.7")
     v1_7(
         versionName = "1.7",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -89,6 +98,7 @@ enum class KotlinVersion(
             removedVersion = KotlinReleaseVersion.v2_2_0,
         )
     ),
+    @SerialName("1.8")
     v1_8(
         versionName = "1.8",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -98,6 +108,7 @@ enum class KotlinVersion(
             removedVersion = KotlinReleaseVersion.v2_3_0,
         )
     ),
+    @SerialName("1.9")
     v1_9(
         versionName = "1.9",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -107,6 +118,7 @@ enum class KotlinVersion(
             removedVersion = KotlinReleaseVersion.v2_4_0,
         )
     ),
+    @SerialName("2.0")
     v2_0(
         versionName = "2.0",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -115,6 +127,7 @@ enum class KotlinVersion(
             deprecatedVersion = KotlinReleaseVersion.v2_3_0,
         )
     ),
+    @SerialName("2.1")
     v2_1(
         versionName = "2.1",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -123,6 +136,7 @@ enum class KotlinVersion(
             deprecatedVersion = KotlinReleaseVersion.v2_4_0,
         )
     ),
+    @SerialName("2.2")
     v2_2(
         versionName = "2.2",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -130,6 +144,7 @@ enum class KotlinVersion(
             stabilizedVersion = KotlinReleaseVersion.v2_2_0,
         )
     ),
+    @SerialName("2.3")
     v2_3(
         versionName = "2.3",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -137,6 +152,7 @@ enum class KotlinVersion(
             stabilizedVersion = KotlinReleaseVersion.v2_3_0,
         )
     ),
+    @SerialName("2.4")
     v2_4(
         versionName = "2.4",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -144,6 +160,7 @@ enum class KotlinVersion(
             stabilizedVersion = KotlinReleaseVersion.v2_4_0,
         )
     ),
+    @SerialName("2.5")
     v2_5(
         versionName = "2.5",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -155,3 +172,5 @@ enum class KotlinVersion(
     override val stringRepresentation: String
         get() = versionName
 }
+
+typealias KotlinVersionWithReleaseVersions = @Contextual KotlinVersion

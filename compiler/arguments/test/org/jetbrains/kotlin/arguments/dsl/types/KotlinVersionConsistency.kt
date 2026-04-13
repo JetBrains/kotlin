@@ -84,6 +84,6 @@ class KotlinVersionConsistency {
             }
     }
 
-    private fun LanguageVersion.toKotlinVersion() = kotlinVersions.single { it.versionName == versionString }
-    private fun LanguageVersion.toKotlinVersionOrNull() = kotlinVersions.singleOrNull { it.versionName == versionString }
+    private fun LanguageVersion.toKotlinVersion() = kotlinVersions.values.single { it.versionName == versionString }
+    private fun LanguageVersion.toKotlinVersionOrNull() = kotlinVersions.values.singleOrNull { it.versionName == versionString }
 }

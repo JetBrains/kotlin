@@ -5,29 +5,33 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
-import org.jetbrains.kotlin.arguments.serialization.json.KotlinJspecifyAnnotationsModeAsNameSerializer
 
-@Serializable(with = KotlinJspecifyAnnotationsModeAsNameSerializer::class)
+@Serializable
 enum class JspecifyAnnotationsMode(
     val modeName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
+    @SerialName("ignore")
     IGNORE(
         modeName = "ignore",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_30,
         )
     ),
+    @SerialName("strict")
     STRICT(
         modeName = "strict",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_30,
         )
     ),
+    @SerialName("warn")
     WARN(
         modeName = "warn",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -38,3 +42,5 @@ enum class JspecifyAnnotationsMode(
     override val stringRepresentation: String
         get() = modeName
 }
+
+typealias JspecifyAnnotationsModeWithReleaseVersions = @Contextual JspecifyAnnotationsMode

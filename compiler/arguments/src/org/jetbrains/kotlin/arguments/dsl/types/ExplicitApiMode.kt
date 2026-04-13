@@ -5,29 +5,33 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
-import org.jetbrains.kotlin.arguments.serialization.json.KotlinExplicitApiModeAsModeSerializer
 
-@Serializable(with = KotlinExplicitApiModeAsModeSerializer::class)
+@Serializable
 enum class ExplicitApiMode(
     val modeName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
+    @SerialName("strict")
     strict(
         modeName = "strict",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0
         )
     ),
+    @SerialName("warning")
     warning(
         modeName = "warning",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0
         )
     ),
+    @SerialName("disable")
     disable(
         modeName = "disable",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -39,3 +43,5 @@ enum class ExplicitApiMode(
     override val stringRepresentation: String
         get() = modeName
 }
+
+typealias ExplicitApiModeWithReleaseVersions = @Contextual ExplicitApiMode

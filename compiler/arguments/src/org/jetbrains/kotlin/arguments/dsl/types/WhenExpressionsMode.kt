@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
-import org.jetbrains.kotlin.arguments.serialization.json.KotlinWhenExpressionsModeAsNameSerializer
 
-@Serializable(with = KotlinWhenExpressionsModeAsNameSerializer::class)
+@Serializable
 enum class WhenExpressionsMode(
     val modeName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
+    @SerialName("indy")
     INDY(
         modeName = "indy",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -23,6 +25,7 @@ enum class WhenExpressionsMode(
             stabilizedVersion = KotlinReleaseVersion.v2_2_20,
         )
     ),
+    @SerialName("inline")
     INLINE(
         modeName = "inline",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -34,3 +37,5 @@ enum class WhenExpressionsMode(
     override val stringRepresentation: String
         get() = modeName
 }
+
+typealias WhenExpressionsModeWithReleaseVersions = @Contextual WhenExpressionsMode

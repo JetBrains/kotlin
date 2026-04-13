@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
-import org.jetbrains.kotlin.arguments.serialization.json.KotlinSourceMapEmbedSourcesAsNameSerializer
 
-@Serializable(with = KotlinSourceMapEmbedSourcesAsNameSerializer::class)
+@Serializable
 enum class SourceMapEmbedSources(
     val modeName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
+    @SerialName("always")
     ALWAYS(
         modeName = "always",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -23,6 +25,7 @@ enum class SourceMapEmbedSources(
             stabilizedVersion = KotlinReleaseVersion.v1_1_4,
         )
     ),
+    @SerialName("never")
     NEVER(
         modeName = "never",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -30,6 +33,7 @@ enum class SourceMapEmbedSources(
             stabilizedVersion = KotlinReleaseVersion.v1_1_4,
         )
     ),
+    @SerialName("inlining")
     INLINING(
         modeName = "inlining",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -41,3 +45,5 @@ enum class SourceMapEmbedSources(
     override val stringRepresentation: String
         get() = modeName
 }
+
+typealias SourceMapEmbedSourcesWithReleaseVersions = @Contextual SourceMapEmbedSources

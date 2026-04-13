@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
-import org.jetbrains.kotlin.arguments.serialization.json.KotlinJsMainCallModeAsNameSerializer
 
-@Serializable(with = KotlinJsMainCallModeAsNameSerializer::class)
+@Serializable
 enum class JsMainCallMode(
     val modeName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
+    @SerialName("call")
     CALL(
         modeName = "call",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -23,6 +25,7 @@ enum class JsMainCallMode(
             stabilizedVersion = KotlinReleaseVersion.v1_0_0,
         )
     ),
+    @SerialName("noCall")
     NO_CALL(
         modeName = "noCall",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -34,3 +37,5 @@ enum class JsMainCallMode(
     override val stringRepresentation: String
         get() = modeName
 }
+
+typealias JsMainCallModeWithReleaseVersions = @Contextual JsMainCallMode

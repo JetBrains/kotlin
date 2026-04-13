@@ -5,29 +5,33 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
-import org.jetbrains.kotlin.arguments.serialization.json.KotlinNameBasedDestructuringModeAsNameSerializer
 
-@Serializable(with = KotlinNameBasedDestructuringModeAsNameSerializer::class)
+@Serializable
 enum class NameBasedDestructuringMode(
     val modeName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
+    @SerialName("only-syntax")
     ONLY_SYNTAX(
         modeName = "only-syntax",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_0,
         )
     ),
+    @SerialName("name-mismatch")
     NAME_MISMATCH(
         modeName = "name-mismatch",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_0,
         )
     ),
+    @SerialName("complete")
     COMPLETE(
         modeName = "complete",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -38,3 +42,5 @@ enum class NameBasedDestructuringMode(
     override val stringRepresentation: String
         get() = modeName
 }
+
+typealias NameBasedDestructuringModeWithReleaseVersions = @Contextual NameBasedDestructuringMode

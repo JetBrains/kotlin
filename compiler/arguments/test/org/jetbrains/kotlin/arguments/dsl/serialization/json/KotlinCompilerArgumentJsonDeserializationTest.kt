@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.arguments.dsl.serialization.json
 
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArguments
+import org.jetbrains.kotlin.arguments.dsl.types.allKotlinTypeSerializersModule
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -19,7 +20,9 @@ class KotlinCompilerArgumentJsonDeserializationTest {
             .resolve("resources")
             .resolve("kotlin-compiler-arguments.json")
         val json = jsonFile.readText()
-
-        Json.decodeFromString<KotlinCompilerArguments>(json)
+        val context = Json {
+            serializersModule = allKotlinTypeSerializersModule
+        }
+        context.decodeFromString<KotlinCompilerArguments>(json)
     }
 }

@@ -5,29 +5,33 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
-import org.jetbrains.kotlin.arguments.serialization.json.KotlinAnnotationDefaultTargetModeAsNameSerializer
 
-@Serializable(with = KotlinAnnotationDefaultTargetModeAsNameSerializer::class)
+@Serializable
 enum class AnnotationDefaultTargetMode(
     val modeName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
+    @SerialName("first-only")
     FIRST_ONLY(
         modeName = "first-only",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
     ),
+    @SerialName("first-only-warn")
     FIRST_ONLY_WARN(
         modeName = "first-only-warn",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
     ),
+    @SerialName("param-property")
     PARAM_PROPERTY(
         modeName = "param-property",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -38,3 +42,5 @@ enum class AnnotationDefaultTargetMode(
     override val stringRepresentation: String
         get() = modeName
 }
+
+typealias AnnotationDefaultTargetModeWithReleaseVersions = @Contextual AnnotationDefaultTargetMode

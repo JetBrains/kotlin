@@ -5,23 +5,26 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
-import org.jetbrains.kotlin.arguments.serialization.json.KotlinWasmTargetAsNameSerializer
 
-@Serializable(with = KotlinWasmTargetAsNameSerializer::class)
+@Serializable
 enum class WasmTarget(
     val targetName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
+    @SerialName("wasm-js")
     WASM_JS(
         targetName = "wasm-js",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
     ),
+    @SerialName("wasm-wasi")
     WASM_WASI(
         targetName = "wasm-wasi",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -32,3 +35,5 @@ enum class WasmTarget(
     override val stringRepresentation: String
         get() = targetName
 }
+
+typealias WasmTargetWithReleaseVersions = @Contextual WasmTarget

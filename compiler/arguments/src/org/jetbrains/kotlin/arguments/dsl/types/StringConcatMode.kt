@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
-import org.jetbrains.kotlin.arguments.serialization.json.KotlinStringConcatModeAsNameSerializer
 
-@Serializable(with = KotlinStringConcatModeAsNameSerializer::class)
+@Serializable
 enum class StringConcatMode(
     val modeName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
+    @SerialName("indy-with-constants")
     INDY_WITH_CONSTANTS(
         modeName = "indy-with-constants",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -23,6 +25,7 @@ enum class StringConcatMode(
             stabilizedVersion = KotlinReleaseVersion.v1_4_20,
         )
     ),
+    @SerialName("indy")
     INDY(
         modeName = "indy",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -30,6 +33,7 @@ enum class StringConcatMode(
             stabilizedVersion = KotlinReleaseVersion.v1_4_20,
         )
     ),
+    @SerialName("inline")
     INLINE(
         modeName = "inline",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -41,3 +45,5 @@ enum class StringConcatMode(
     override val stringRepresentation: String
         get() = modeName
 }
+
+typealias StringConcatModeWithReleaseVersions = @Contextual StringConcatMode

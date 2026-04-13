@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
-import org.jetbrains.kotlin.arguments.serialization.json.KotlinJsModuleKindAsNameSerializer
 
-@Serializable(with = KotlinJsModuleKindAsNameSerializer::class)
+@Serializable
 enum class JsModuleKind(
     val kindName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
+    @SerialName("plain")
     PLAIN(
         kindName = "plain",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -23,6 +25,7 @@ enum class JsModuleKind(
             stabilizedVersion = KotlinReleaseVersion.v1_0_4,
         )
     ),
+    @SerialName("amd")
     AMD(
         kindName = "amd",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -30,6 +33,7 @@ enum class JsModuleKind(
             stabilizedVersion = KotlinReleaseVersion.v1_0_4,
         )
     ),
+    @SerialName("commonjs")
     COMMONJS(
         kindName = "commonjs",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -37,6 +41,7 @@ enum class JsModuleKind(
             stabilizedVersion = KotlinReleaseVersion.v1_0_4,
         )
     ),
+    @SerialName("umd")
     UMD(
         kindName = "umd",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -44,6 +49,7 @@ enum class JsModuleKind(
             stabilizedVersion = KotlinReleaseVersion.v1_0_4,
         )
     ),
+    @SerialName("es")
     ES(
         kindName = "es",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -55,3 +61,5 @@ enum class JsModuleKind(
     override val stringRepresentation: String
         get() = kindName
 }
+
+typealias JsModuleKindWithReleaseVersions = @Contextual JsModuleKind

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.arguments.serialization.json
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
+import org.jetbrains.kotlin.arguments.dsl.types.allKotlinTypeSerializersModule
 import java.io.File
 
 fun main(args: Array<String>) {
@@ -16,6 +17,7 @@ fun main(args: Array<String>) {
     val format = Json {
         prettyPrint = true
         encodeDefaults = true
+        serializersModule = allKotlinTypeSerializersModule
     }
 
     val jsonArguments = format.encodeToString(kotlinCompilerArguments)

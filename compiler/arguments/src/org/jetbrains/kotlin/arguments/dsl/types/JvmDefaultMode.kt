@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
-import org.jetbrains.kotlin.arguments.serialization.json.KotlinJvmDefaultModeAsNameSerializer
 
-@Serializable(with = KotlinJvmDefaultModeAsNameSerializer::class)
+@Serializable
 enum class JvmDefaultMode(
     val modeName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
+    @SerialName("enable")
     ENABLE(
         modeName = "enable",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -23,6 +25,7 @@ enum class JvmDefaultMode(
             stabilizedVersion = KotlinReleaseVersion.v2_2_0,
         )
     ),
+    @SerialName("no-compatibility")
     NO_COMPATIBILITY(
         modeName = "no-compatibility",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -30,6 +33,7 @@ enum class JvmDefaultMode(
             stabilizedVersion = KotlinReleaseVersion.v2_2_0,
         )
     ),
+    @SerialName("disable")
     DISABLE(
         modeName = "disable",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -41,3 +45,5 @@ enum class JvmDefaultMode(
     override val stringRepresentation: String
         get() = modeName
 }
+
+typealias JvmDefaultModeWithReleaseVersions = @Contextual JvmDefaultMode

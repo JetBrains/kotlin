@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
-import org.jetbrains.kotlin.arguments.serialization.json.KotlinJsEcmaVersionAsNameSerializer
 
-@Serializable(with = KotlinJsEcmaVersionAsNameSerializer::class)
+@Serializable
 enum class JsEcmaVersion(
     val versionName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
+    @SerialName("es5")
     ES5(
         versionName = "es5",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -23,6 +25,7 @@ enum class JsEcmaVersion(
             stabilizedVersion = KotlinReleaseVersion.v1_0_0,
         )
     ),
+    @SerialName("es2015")
     ES2015(
         versionName = "es2015",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -34,3 +37,5 @@ enum class JsEcmaVersion(
     override val stringRepresentation: String
         get() = versionName
 }
+
+typealias JsEcmaVersionWithReleaseVersions = @Contextual JsEcmaVersion

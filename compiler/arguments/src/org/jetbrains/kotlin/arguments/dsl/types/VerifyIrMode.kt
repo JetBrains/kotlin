@@ -5,29 +5,33 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersionLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
-import org.jetbrains.kotlin.arguments.serialization.json.KotlinVerifyIrModeAsNameSerializer
 
-@Serializable(with = KotlinVerifyIrModeAsNameSerializer::class)
+@Serializable
 enum class VerifyIrMode(
     val modeName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 ) : WithKotlinReleaseVersionsMetadata, WithStringRepresentation {
+    @SerialName("none")
     NONE(
         modeName = "none",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
     ),
+    @SerialName("warning")
     WARNING(
         modeName = "warning",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
     ),
+    @SerialName("error")
     ERROR(
         modeName = "error",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -38,3 +42,5 @@ enum class VerifyIrMode(
     override val stringRepresentation: String
         get() = modeName
 }
+
+typealias VerifyIrModeWithReleaseVersions = @Contextual VerifyIrMode
