@@ -65,6 +65,9 @@ internal class BtaImplOptionsGenerator(
                 if (parentClass != null) {
                     superclass(parentClass)
                     addSuperclassConstructorParameter("adapter")
+                    if (!generateCompatLayer) {
+                        addSuperclassConstructorParameter("restrictedArgViolations")
+                    }
                 } else {
                     property(
                         "internalArguments",
@@ -117,8 +120,9 @@ internal class BtaImplOptionsGenerator(
                     function("deepCopy") {
                         addModifiers(KModifier.OVERRIDE)
                         returns(ClassName(targetPackage, implClassName))
+                        val constructorArgs = if (!generateCompatLayer) "adapter, restrictedArgViolations.toList()" else "adapter"
                         addStatement(
-                            "return %T(adapter).also { newArgs -> newArgs.applyArgumentStrings(toArgumentStrings()) }",
+                            "return %T($constructorArgs).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }",
                             ClassName(targetPackage, implClassName)
                         )
                     }
@@ -185,6 +189,20 @@ internal class BtaImplOptionsGenerator(
                 .initializer("adapter")
                 .build()
         )
+
+        if (!generateCompatLayer) {
+            addParameter(
+                ParameterSpec.builder(
+                    "restrictedArgViolations",
+                    ClassName("kotlin.collections", "List")
+                        .parameterizedBy(
+                            ClassName(targetPackage, "RestrictedArgViolation")
+                        )
+                )
+                    .defaultValue("%M()", MemberName("kotlin.collections", "emptyList"))
+                    .build()
+            )
+        }
     }
 
     private fun TypeSpec.Builder.generateOptions(
@@ -658,7 +676,10 @@ internal class BtaImplOptionsGenerator(
                 ClassName("kotlin.collections", "MutableList").parameterizedBy(restrictedArgViolationClass),
                 KModifier.PROTECTED,
             ) {
-                initializer("%M()", MemberName("kotlin.collections", "mutableListOf"))
+                initializer(
+                    "restrictedArgViolations.%M()",
+                    MemberName("kotlin.collections", "toMutableList"),
+                )
             }
             addProperty(
                 PropertySpec.builder(

@@ -135,7 +135,8 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class JvmCompilerArgumentsImpl(
   private val adapter: JvmCompilerArgumentValueAdapter? = null,
-) : CommonCompilerArgumentsImpl(adapter),
+  restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
+) : CommonCompilerArgumentsImpl(adapter, restrictedArgViolations),
     JvmCompilerArguments,
     JvmCompilerArguments.Builder,
     DeepCopyable<JvmCompilerArgumentsImpl> {
@@ -174,7 +175,7 @@ internal class JvmCompilerArgumentsImpl(
 
   public operator fun contains(key: JvmCompilerArgument<*>): Boolean = key.id in optionsMap
 
-  override fun deepCopy(): JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(adapter).also { newArgs -> newArgs.applyArgumentStrings(toArgumentStrings()) }
+  override fun deepCopy(): JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(adapter, restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
   override fun build(): JvmCompilerArguments = deepCopy()
 
