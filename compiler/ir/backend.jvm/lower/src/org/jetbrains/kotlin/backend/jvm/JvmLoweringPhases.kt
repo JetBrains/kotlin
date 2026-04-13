@@ -18,7 +18,6 @@ private val jvmModulePhases1 = createModulePhases(
     ::JvmUpgradeCallableReferences,
     ::ExternalPackageParentPatcherLowering,
     ::FragmentSharedVariablesLowering,
-    ::JvmK1IrValidationBeforeLoweringPhase,
     ::ProcessOptionalAnnotations,
     ::JvmExpectDeclarationRemover,
     ::ConstEvaluationLowering,
