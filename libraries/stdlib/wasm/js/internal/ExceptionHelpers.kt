@@ -32,3 +32,8 @@ internal fun throw0(v: JsAny?): Nothing = implementedAsIntrinsic
 internal fun getKotlinException(v: JsAny?): Throwable {
     return (v as? JsError)?.kotlinException?.get() ?: JsException(v)
 }
+
+@Suppress("unused")
+@UsedFromCompilerGeneratedCode
+internal fun getJsError(t: Throwable): JsAny? =
+    if (t is JsException) t.thrownValue else t.jsError

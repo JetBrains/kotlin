@@ -381,6 +381,8 @@ class BackendWasmSymbols(
 
         val throw0 = CallableIds.throw0.functionSymbol()
 
+        val getJsError = CallableIds.getJsError.functionSymbol()
+
         val jsConcat = CallableIds.jsConcat.functionSymbol()
     }
 
@@ -582,6 +584,7 @@ private object CallableIds {
     val throwValue = "throwValue".wasmCallableId
     val throw0 = "throw0".wasmCallableId
     val invokeOnExportedFunctionExit = "invokeOnExportedFunctionExit".wasmCallableId
+    val getJsError = "getJsError".wasmCallableId
 
     val isNotFirstWasmExportCall = "isNotFirstWasmExportCall".wasmCallableId
     val EmptyContinuation = "EmptyContinuation".wasmCallableId
