@@ -131,7 +131,7 @@ class ScriptingWithExplanationCompilerTest {
 
     @Test // KT-85105
     fun testScriptExplainWithObjectLiteral() {
-        runScriptAndValidateExplain("$TEST_DATA_DIR/objectLiteral.kts", expectedExitCode = ExitCode.COMPILATION_ERROR)
+        runScriptAndValidateExplain("$TEST_DATA_DIR/objectLiteral.kts", expectedExitCode = ExitCode.OK)
     }
 }
 
