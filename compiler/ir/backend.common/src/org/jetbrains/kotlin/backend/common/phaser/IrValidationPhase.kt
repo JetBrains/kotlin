@@ -37,39 +37,26 @@ abstract class IrValidationPhase<Context : LoweringContext>(val context: Context
     }
 }
 
-abstract class IrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Context) : IrValidationPhase<Context>(context) {
+class KlibIrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Context) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(checkTreeConsistency = true)
             .withBasicChecks()
-            .withCheckers(IrValueAccessScopeChecker)
+            .withCheckers(IrValueAccessScopeChecker, IrExpressionBodyInFunctionChecker)
             //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
             //.withCheckers(IrTypeParameterScopeChecker) // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305)
             .applyIf(context.configuration.enableIrVisibilityChecks) {
-                withCheckers(IrVisibilityChecker.Strict)
-            }
-            .applyIf(context.configuration.enableIrNestedOffsetsChecks) {
-                withCheckers(IrNestedOffsetRangeChecker)
-            }
-            .applyIf(context.configuration.enableIrVarargTypesChecks) {
-                withVarargChecks()
-            }
-}
-
-class KlibIrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Context) : IrValidationBeforeLoweringPhase<Context>(context) {
-    override val defaultValidationConfig: IrValidatorConfig
-        get() = super.defaultValidationConfig
-            .applyIf(context.configuration.enableIrVisibilityChecks) {
-                withCheckers(IrCrossFileFieldUsageChecker)
+                withCheckers(IrVisibilityChecker.Relaxed, IrCrossFileFieldUsageChecker)
                     // FIXME(KT-71243): This checker should be added unconditionally, but currently the ExplicitBackingFields feature de-facto allows specifying
                     //  non-private visibilities for fields.
                     .applyIf(!context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields)) {
                         withCheckers(IrFieldVisibilityChecker)
                     }
             }
-            .withCheckers(IrExpressionBodyInFunctionChecker)
-            .withoutCheckers(IrVisibilityChecker.Strict)
-            .applyIf(context.configuration.enableIrVisibilityChecks) {
-                withCheckers(IrVisibilityChecker.Relaxed)
+            .applyIf(context.configuration.enableIrNestedOffsetsChecks) {
+                withCheckers(IrNestedOffsetRangeChecker)
+            }
+            .applyIf(context.configuration.enableIrVarargTypesChecks) {
+                withVarargChecks()
             }
 }
 
