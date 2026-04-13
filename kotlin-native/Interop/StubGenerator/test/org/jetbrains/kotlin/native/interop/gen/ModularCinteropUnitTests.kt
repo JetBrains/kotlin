@@ -760,6 +760,98 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         )
     }
 
+    /**
+     * Reproduces the Xcode 26 header shape where one module emits a full SWIFT_ENUM
+     * definition and another emits SWIFT_ENUM_FWD_DECL for the same enum.
+     */
+    @Test
+    fun `KT-85705 multimodular import - xcode26 style enum definition plus forward declaration in another module`() {
+        val files = testFiles()
+
+        files.file("module.modulemap", """
+            module internal { header "internal.h" }
+            module core { header "core.h" }
+        """.trimIndent())
+
+        files.file("internal.h", """
+            #import <Foundation/Foundation.h>
+    
+            #pragma clang attribute push(__attribute__((external_source_symbol(language="Swift", defined_in="DatadogInternal",generated_declaration))), apply_to=any(function,enum,objc_interface,objc_category,objc_protocol))
+    
+            typedef enum DDCoreLoggerLevel : NSInteger DDCoreLoggerLevel; enum __attribute__((enum_extensibility(closed))) DDCoreLoggerLevel : NSInteger {
+              DDCoreLoggerLevelNone = 0,
+              DDCoreLoggerLevelDebug = 1,
+              DDCoreLoggerLevelWarn = 2,
+              DDCoreLoggerLevelError = 3,
+              DDCoreLoggerLevelCritical = 4,
+            };
+    
+            void internalConsume(enum DDCoreLoggerLevel level);
+            
+            #pragma clang attribute pop
+        """.trimIndent())
+
+        files.file("core.h", """
+            #import <Foundation/Foundation.h>
+    
+            #pragma clang attribute push(__attribute__((external_source_symbol(language="Swift", defined_in="DatadogCore",generated_declaration))), apply_to=any(function,enum,objc_interface,objc_category,objc_protocol))
+            
+            enum DDCoreLoggerLevel : NSInteger;
+    
+            void coreConsume(enum DDCoreLoggerLevel level);
+            
+            #pragma clang attribute pop
+        """.trimIndent())
+
+        fun test(internalFirst: Boolean) {
+            val modules = if (internalFirst) "internal core" else "core internal"
+            val def = files.file("dup_enum.def", """
+                    language = Objective-C
+                    modules = $modules
+                """.trimIndent())
+
+            val index = buildNativeIndex(
+                    buildNativeLibraryFrom(def, argsWithFmodulesAndSearchPath(files.directory)),
+                    verbose = false
+            ).index
+
+            // TODO KT-85705: there should be only one enum.
+            assertEquals(
+                    listOf("enum DDCoreLoggerLevel", "enum DDCoreLoggerLevel"),
+                    index.enums.map { it.spelling }
+            )
+
+            val (internalEnum, coreEnum) = (if (internalFirst) index.enums else index.enums.reversed()).toList()
+
+            assertEquals(
+                    listOf(
+                            "DDCoreLoggerLevelNone",
+                            "DDCoreLoggerLevelDebug",
+                            "DDCoreLoggerLevelWarn",
+                            "DDCoreLoggerLevelError",
+                            "DDCoreLoggerLevelCritical",
+                    ),
+                    internalEnum.constants.map { it.name }
+            )
+
+            assertEquals(
+                    emptyList(),
+                    coreEnum.constants.map { it.name }
+            )
+
+            assertEquals(
+                    listOf("internalConsume" to internalEnum, "coreConsume" to coreEnum)
+                            .let { if (internalFirst) it else it.reversed() },
+                    index.functions.map {
+                        it.name to assertIs<EnumType>(it.parameters.single().type).def
+                    }
+            )
+        }
+
+        test(internalFirst = true)
+        test(internalFirst = false)
+    }
+
     private fun argsWithFmodules(vararg arguments: String): Array<String> = arrayOf("-compiler-option", "-fmodules") + arguments
     private fun argsWithFmodulesAndSearchPath(searchPath: File) = argsWithFmodules("-compiler-option", "-I${searchPath}")
 
