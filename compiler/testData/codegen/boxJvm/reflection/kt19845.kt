@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // ISSUE: KT-19845
 // WITH_REFLECT
 
@@ -12,6 +13,7 @@ class AnnotatedClass
 
 fun box(): String {
     val s = buildString {
+        // KClass.annotations is JVM-only member
         (AnnotatedClass::class.annotations.single() as A).bs.forEach {
             append(it.i)
         }
