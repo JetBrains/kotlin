@@ -370,8 +370,6 @@ internal interface StackLocalsManager {
 
     fun allocArray(irClass: IrClass, count: LLVMValueRef): LLVMValueRef
 
-    fun clean(refsOnly: Boolean)
-
     fun enterScope()
     fun exitScope()
 }
@@ -386,19 +384,10 @@ internal class StackLocalsManagerImpl(
     private fun isRootScope() = scopeDepth == 0
 
     private class StackLocal(
-            val arraySize: Int?,
-            val irClass: IrClass,
             val stackAllocationPtr: LLVMValueRef,
             val objHeaderPtr: LLVMValueRef,
-            val gcRootSetSlot: LLVMValueRef?
-    ) {
-        val isArray
-            get() = arraySize != null
-    }
-
-    private val stackLocals = mutableListOf<StackLocal>()
-
-    fun isEmpty() = stackLocals.isEmpty()
+            val gcRootSetSlot: LLVMValueRef
+    )
 
     private fun FunctionGenerationContext.createRootSetSlot() =
             alloca(llvm.pointerType, true)
@@ -416,17 +405,32 @@ internal class StackLocalsManagerImpl(
             val typeInfo = codegen.typeInfoForAllocation(irClass)
             setTypeInfoForStackObject(runtime.objHeaderType, objectHeader, typeInfo)
             val gcRootSetSlot = createRootSetSlot()
-            StackLocal(null, irClass, stackSlot, objectHeader, gcRootSetSlot)
+            StackLocal(stackSlot, objectHeader, gcRootSetSlot)
         }
 
-        stackLocals += stackLocal
         if (!isRootScope()) {
-            clean(stackLocal, false)
+            clean(classInfo, stackLocal.stackAllocationPtr)
         }
-        if (stackLocal.gcRootSetSlot != null) {
-            storeStackRef(stackLocal.objHeaderPtr, stackLocal.gcRootSetSlot)
-        }
+        storeStackRef(stackLocal.objHeaderPtr, stackLocal.gcRootSetSlot)
         stackLocal.objHeaderPtr
+    }
+
+    private fun clean(classInfo: ClassLlvmDeclarations, stackAllocationPtr: LLVMValueRef) = with(functionGenerationContext) {
+        val type = classInfo.bodyType.llvmBodyType
+        for ((fieldSymbol, fieldIndex) in classInfo.fieldIndices.entries.sortedBy{ e -> e.value }) {
+
+            if (fieldSymbol.owner.type.binaryTypeIsReference()) {
+                val fieldPtr = structGep(type, stackAllocationPtr, fieldIndex, "")
+                call(llvm.zeroHeapRefFunction, listOf(fieldPtr))
+            }
+        }
+
+        val bodyPtr = ptrToInt(stackAllocationPtr, codegen.intPtrType)
+        val bodySize = LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8
+        val serviceInfoSize = runtime.pointerSize
+        val serviceInfoSizeLlvm = LLVMConstInt(codegen.intPtrType, serviceInfoSize.toLong(), 1)!!
+        val bodyWithSkippedServiceInfoPtr = intToPtr(add(bodyPtr, serviceInfoSizeLlvm), llvm.pointerType)
+        memset(bodyWithSkippedServiceInfoPtr, 0, bodySize - serviceInfoSize)
     }
 
     // Returns generated special type for local array.
@@ -461,8 +465,8 @@ internal class StackLocalsManagerImpl(
     )
 
     override fun allocArray(irClass: IrClass, count: LLVMValueRef) = with(functionGenerationContext) {
+        val constCount = extractConstUnsignedInt(count).toInt()
         val stackLocal = appendingTo(bbInitStackLocals) {
-            val constCount = extractConstUnsignedInt(count).toInt()
             val arrayType = localArrayType(irClass, constCount)
             val typeInfo = codegen.typeInfoValue(irClass)
             val arraySlot = LLVMBuildAlloca(builder, arrayType, "")!!
@@ -477,58 +481,26 @@ internal class StackLocalsManagerImpl(
                     constCount * LLVMSizeOfTypeInBits(codegen.llvmTargetData, arrayToElementType[irClass.symbol]).toInt() / 8
             )
             val gcRootSetSlot = createRootSetSlot()
-            StackLocal(constCount, irClass, arraySlot, arrayHeaderSlot, gcRootSetSlot)
+            StackLocal(arraySlot, arrayHeaderSlot, gcRootSetSlot)
         }
 
-        stackLocals += stackLocal
         val result = stackLocal.objHeaderPtr
         if (!isRootScope()) {
-            clean(stackLocal, false)
+            cleanArray(irClass, constCount, stackLocal.stackAllocationPtr, stackLocal.objHeaderPtr)
         }
-        if (stackLocal.gcRootSetSlot != null) {
-            storeStackRef(result, stackLocal.gcRootSetSlot)
-        }
+        storeStackRef(result, stackLocal.gcRootSetSlot)
         result
     }
 
-    override fun clean(refsOnly: Boolean) = stackLocals.forEach { clean(it, refsOnly) }
-
-    private fun clean(stackLocal: StackLocal, refsOnly: Boolean) = with(functionGenerationContext) {
-        if (stackLocal.isArray) {
-            if (stackLocal.irClass.symbol == context.irBuiltIns.arrayClass) {
-                call(llvm.zeroArrayRefsFunction, listOf(stackLocal.objHeaderPtr))
-            } else if (!refsOnly) {
-                val arrayType = localArrayType(stackLocal.irClass, stackLocal.arraySize!!)
-                memset(structGep(arrayType, stackLocal.stackAllocationPtr, 1, "arrayBody"),
-                        0,
-                        stackLocal.arraySize * LLVMSizeOfTypeInBits(codegen.llvmTargetData, arrayToElementType[stackLocal.irClass.symbol]).toInt() / 8
-                )
-            }
+    private fun cleanArray(irClass: IrClass, arraySize: Int, stackAllocationPtr: LLVMValueRef, objHeaderPtr: LLVMValueRef) = with(functionGenerationContext) {
+        if (irClass.symbol == context.irBuiltIns.arrayClass) {
+            call(llvm.zeroArrayRefsFunction, listOf(objHeaderPtr))
         } else {
-            val info = llvmDeclarations.forClass(stackLocal.irClass)
-            val type = info.bodyType.llvmBodyType
-            for ((fieldSymbol, fieldIndex) in info.fieldIndices.entries.sortedBy{ e -> e.value }) {
-
-                if (fieldSymbol.owner.type.binaryTypeIsReference()) {
-                    val fieldPtr = structGep(type, stackLocal.stackAllocationPtr, fieldIndex, "")
-                    if (refsOnly)
-                        storeHeapRef(llvm.kNull, fieldPtr)
-                    else
-                        call(llvm.zeroHeapRefFunction, listOf(fieldPtr))
-                }
-            }
-
-            if (!refsOnly) {
-                val bodyPtr = ptrToInt(stackLocal.stackAllocationPtr, codegen.intPtrType)
-                val bodySize = LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8
-                val serviceInfoSize = runtime.pointerSize
-                val serviceInfoSizeLlvm = LLVMConstInt(codegen.intPtrType, serviceInfoSize.toLong(), 1)!!
-                val bodyWithSkippedServiceInfoPtr = intToPtr(add(bodyPtr, serviceInfoSizeLlvm), llvm.pointerType)
-                memset(bodyWithSkippedServiceInfoPtr, 0, bodySize - serviceInfoSize)
-            }
-        }
-        if (stackLocal.gcRootSetSlot != null) {
-            storeStackRef(llvm.kNull, stackLocal.gcRootSetSlot)
+            val arrayType = localArrayType(irClass, arraySize)
+            memset(structGep(arrayType, stackAllocationPtr, 1, "arrayBody"),
+                    0,
+                    arraySize * LLVMSizeOfTypeInBits(codegen.llvmTargetData, arrayToElementType[irClass.symbol]).toInt() / 8
+            )
         }
     }
 
