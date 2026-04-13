@@ -1,0 +1,15 @@
+val testRef2: KFunction1<@ParameterName(name = "arg") Float, Float>
+  field = ::foo
+  get
+
+val testRef1: Float
+  field = bar(f = ::foo)
+  get
+
+fun bar(f: Function1<Float, Float>): Float {
+  return f.invoke(p1 = 1.0F)
+}
+
+fun foo(arg: Float): Float {
+  return arg
+}

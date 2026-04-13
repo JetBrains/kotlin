@@ -1,0 +1,32 @@
+FILE fqName:<root> fileName:/kt37403.kt
+  PROPERTY name:testRef2 visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:testRef2 type:kotlin.reflect.KFunction1<@[ParameterName(name = "arg")] kotlin.Float, kotlin.Float> visibility:private [final,static]
+      EXPRESSION_BODY
+        FUNCTION_REFERENCE 'public final fun foo (arg: kotlin.Float): kotlin.Float declared in <root>' type=kotlin.reflect.KFunction1<@[ParameterName(name = "arg")] kotlin.Float, kotlin.Float> origin=null reflectionTarget=<same>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testRef2> visibility:public modality:FINAL returnType:kotlin.reflect.KFunction1<@[ParameterName(name = "arg")] kotlin.Float, kotlin.Float>
+      correspondingProperty: PROPERTY name:testRef2 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-testRef2> (): kotlin.reflect.KFunction1<@[ParameterName(name = "arg")] kotlin.Float, kotlin.Float> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testRef2 type:kotlin.reflect.KFunction1<@[ParameterName(name = "arg")] kotlin.Float, kotlin.Float> visibility:private [final,static]' type=kotlin.reflect.KFunction1<@[ParameterName(name = "arg")] kotlin.Float, kotlin.Float> origin=null
+  PROPERTY name:testRef1 visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:testRef1 type:kotlin.Float visibility:private [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun bar (f: kotlin.Function1<kotlin.Float, kotlin.Float>): kotlin.Float declared in <root>' type=kotlin.Float origin=null
+          ARG f: FUNCTION_REFERENCE 'public final fun foo (arg: kotlin.Float): kotlin.Float declared in <root>' type=kotlin.reflect.KFunction1<@[ParameterName(name = "arg")] kotlin.Float, kotlin.Float> origin=null reflectionTarget=<same>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testRef1> visibility:public modality:FINAL returnType:kotlin.Float
+      correspondingProperty: PROPERTY name:testRef1 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-testRef1> (): kotlin.Float declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testRef1 type:kotlin.Float visibility:private [final,static]' type=kotlin.Float origin=null
+  FUN name:bar visibility:public modality:FINAL returnType:kotlin.Float
+    VALUE_PARAMETER kind:Regular name:f index:0 type:kotlin.Function1<kotlin.Float, kotlin.Float>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun bar (f: kotlin.Function1<kotlin.Float, kotlin.Float>): kotlin.Float declared in <root>'
+        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Float origin=INVOKE
+          ARG <this>: GET_VAR 'f: kotlin.Function1<kotlin.Float, kotlin.Float> declared in <root>.bar' type=kotlin.Function1<kotlin.Float, kotlin.Float> origin=VARIABLE_AS_FUNCTION
+          ARG p1: CONST Float type=kotlin.Float value=1.0
+  FUN name:foo visibility:public modality:FINAL returnType:kotlin.Float
+    VALUE_PARAMETER kind:Regular name:arg index:0 type:kotlin.Float
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun foo (arg: kotlin.Float): kotlin.Float declared in <root>'
+        GET_VAR 'arg: kotlin.Float declared in <root>.foo' type=kotlin.Float origin=null
