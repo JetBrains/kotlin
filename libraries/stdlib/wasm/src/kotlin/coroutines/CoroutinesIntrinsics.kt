@@ -6,6 +6,7 @@
 package kotlin.coroutines.intrinsics
 
 import kotlin.coroutines.*
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.*
 
 /**
@@ -153,6 +154,7 @@ private inline fun <T> createCoroutineFromSuspendFunction(
 
 @PublishedApi
 @Suppress("UNCHECKED_CAST")
+@UsedFromCompilerGeneratedCode
 internal fun <T> createSimpleCoroutineFromSuspendFunction(
     completion: Continuation<T>
 ): CoroutineImpl = object : CoroutineImpl(completion as Continuation<Any?>) {
@@ -161,3 +163,22 @@ internal fun <T> createSimpleCoroutineFromSuspendFunction(
         return result
     }
 }
+
+// Is replaced by Stack Switching or State Machine implementation
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+@UsedFromCompilerGeneratedCode
+internal fun <T> createCoroutineUninterceptedIntrinsic0(
+    f: suspend () -> T,
+    completion: Continuation<T>
+): Continuation<Unit> = EmptyContinuation
+
+// Is replaced by Stack Switching or State Machine implementation
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+@UsedFromCompilerGeneratedCode
+internal fun <R, T> createCoroutineUninterceptedIntrinsic1(
+    f: suspend R.() -> T,
+    receiver: R,
+    completion: Continuation<T>
+): Continuation<Unit> = EmptyContinuation
