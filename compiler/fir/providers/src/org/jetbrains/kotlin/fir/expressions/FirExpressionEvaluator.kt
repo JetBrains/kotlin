@@ -348,17 +348,12 @@ object FirExpressionEvaluator {
 
             return when (propertySymbol) {
                 is FirPropertySymbol -> {
-                    // Check for the resolved type. In case of cyclic resolution error, we will get an exception from `getReferencedClassSymbol`.
-                    if (propertySymbol.fir.returnTypeRef !is FirResolvedTypeRef) return NotConst
-
-                    val classKindOfParent = (propertySymbol.getReferencedClassSymbol(session) as? FirRegularClassSymbol)?.classKind
-                    if (classKindOfParent == ClassKind.ENUM_CLASS) return EnumNotConst
+                    val validation = validate(propertySymbol, propertyAccessExpression)
+                    if (validation != null) return validation
 
                     val isConstWithoutInitializer = propertySymbol.isCompileTimeBuiltinProperty(session)
 
                     when {
-                        propertySymbol is FirLocalPropertySymbol -> NotConst
-                        propertyAccessExpression.getExpandedType(session).classId == StandardClassIds.KClass -> NotKClassLiteral
                         isConstWithoutInitializer -> when {
                             propertySymbol.callableId?.isStringLength == true || propertySymbol.callableId?.isCharCode == true -> {
                                 val unaryArg = evaluateOr<FirExpression>(propertyAccessExpression.explicitReceiver) { return it }
@@ -388,16 +383,6 @@ object FirExpressionEvaluator {
                             else -> NotConst
                         }
                         propertySymbol.isConst -> {
-                            // even if called on CONSTANT_EVALUATION, it's safe to call resolvedInitializer, as intializers of const vals
-                            // are resolved at previous IMPLICIT_TYPES_BODY_RESOLVE phase
-                            if (propertySymbol.resolvedInitializer == null) return ResolutionError
-
-                            val receivers = listOf(propertyAccessExpression.dispatchReceiver, propertyAccessExpression.extensionReceiver)
-                            if (receivers.count { it != null } == 2) return NotConst
-
-                            // We are not interested in the result, but we must check the receivers anyway
-                            receivers.filterNotNull().forEach { receiver -> evaluateOr<FirElement>(receiver) { return it } }
-
                             // Return only Evaluated value. For errors, we want to do it again to make it more precise.
                             propertySymbol.fir.evaluatedInitializer
                                 ?.takeIf { it is Evaluated || !calledOnCheckerStage }
@@ -405,14 +390,6 @@ object FirExpressionEvaluator {
                                 ?.let { return it }
                             evaluateWithSourceCopy(propertySymbol.resolvedInitializer)
                         }
-                        !calledOnCheckerStage -> NotConst
-                        // if it called at checkers stage it's safe to call resolvedInitializer
-                        // even if it will trigger BODY_RESOLVE phase, we don't violate phase contracts
-                        propertySymbol.resolvedInitializer is FirLiteralExpression -> when {
-                            propertySymbol.isVal -> NotConstValInConstExpression
-                            else -> NotConst
-                        }
-                        propertySymbol.resolvedInitializer is FirGetClassCall -> NotKClassLiteral
                         else -> NotConst
                     }
                 }
@@ -425,6 +402,48 @@ object FirExpressionEvaluator {
                     }
                 }
                 is FirEnumEntrySymbol -> propertyAccessExpression.wrap()
+                else -> NotConst
+            }
+        }
+
+        private fun validate(propertySymbol: FirPropertySymbol, propertyAccessExpression: FirPropertyAccessExpression): NotEvaluated? {
+            // Check for the resolved type. In case of cyclic resolution error, we will get an exception from `getReferencedClassSymbol`.
+            if (propertySymbol.fir.returnTypeRef !is FirResolvedTypeRef) return NotConst
+
+            val classKindOfParent = (propertySymbol.getReferencedClassSymbol(session) as? FirRegularClassSymbol)?.classKind
+            if (classKindOfParent == ClassKind.ENUM_CLASS) return EnumNotConst
+
+            val isConstWithoutInitializer = propertySymbol.isCompileTimeBuiltinProperty(session)
+
+            return when {
+                propertySymbol is FirLocalPropertySymbol -> NotConst
+                propertyAccessExpression.getExpandedType(session).classId == StandardClassIds.KClass -> NotKClassLiteral
+                isConstWithoutInitializer -> when {
+                    propertySymbol.callableId?.isStringLength == true || propertySymbol.callableId?.isCharCode == true -> null
+                    propertySymbol.callableId?.callableName == StandardNames.NAME -> null
+                    else -> NotConst
+                }
+                propertySymbol.isConst -> {
+                    // even if called on CONSTANT_EVALUATION, it's safe to call resolvedInitializer, as intializers of const vals
+                    // are resolved at previous IMPLICIT_TYPES_BODY_RESOLVE phase
+                    if (propertySymbol.resolvedInitializer == null) return ResolutionError
+
+                    val receivers = listOf(propertyAccessExpression.dispatchReceiver, propertyAccessExpression.extensionReceiver)
+                    if (receivers.count { it != null } == 2) return NotConst
+
+                    // We are not interested in the result, but we must check the receivers anyway
+                    receivers.filterNotNull().forEach { receiver -> evaluateOr<FirElement>(receiver) { return it } }
+
+                    null
+                }
+                !calledOnCheckerStage -> NotConst
+                // if it called at checkers stage it's safe to call resolvedInitializer
+                // even if it will trigger BODY_RESOLVE phase, we don't violate phase contracts
+                propertySymbol.resolvedInitializer is FirLiteralExpression -> when {
+                    propertySymbol.isVal -> NotConstValInConstExpression
+                    else -> NotConst
+                }
+                propertySymbol.resolvedInitializer is FirGetClassCall -> NotKClassLiteral
                 else -> NotConst
             }
         }
