@@ -139,8 +139,16 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 TypeDeclarationTags.FUNCTION -> deserializeFunctionType()
                 TypeDeclarationTags.STRUCT -> deserializeStructDeclaration()
                 TypeDeclarationTags.ARRAY -> deserializeArrayDeclaration()
+                TypeDeclarationTags.CONT -> deserializeContDeclaration()
                 else -> tagError(tag)
             }
+        }
+
+    private fun deserializeContDeclaration(): WasmContType =
+        deserializeNamedModuleField { _, _ ->
+            val arity = deserializeInt()
+            val funType = deserializeHeapType() as WasmHeapType.Type.FunctionType
+            WasmContType(arity, funType)
         }
 
     private fun deserializeStructDeclaration(): WasmStructDeclaration =
@@ -217,6 +225,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 TypeTags.UNREACHABLE_TYPE -> WasmUnreachableType
                 TypeTags.V12 -> WasmV128
                 TypeTags.ARRAY_REF -> WasmArrayRef
+                TypeTags.CONT_TYPE -> WasmContRefType
                 else -> tagError(tag)
             }
         }
@@ -235,6 +244,10 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 HeapTypeTags.HEAP_GC_TYPE -> GcHeapTypeSymbol(deserializeIdSignature())
                 HeapTypeTags.HEAP_VT_TYPE -> VTableHeapTypeSymbol(deserializeIdSignature())
                 HeapTypeTags.HEAP_FUNC_TYPE -> FunctionHeapTypeSymbol(deserializeIdSignature())
+                HeapTypeTags.HEAP_CONT_TYPE -> ContHeapTypeSymbol(deserializeInt())
+                HeapTypeTags.HEAP_CONT_FUNC_TYPE -> ContFunctionHeapTypeSymbol(deserializeInt())
+                HeapTypeTags.CONT -> WasmHeapType.Simple.Cont
+                HeapTypeTags.NO_CONT -> WasmHeapType.Simple.NoCont
                 else -> tagError(tag)
             }
         }
@@ -308,6 +321,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 ImmediateTags.GC_TYPE -> GcTypeSymbol(deserializeIdSignature())
                 ImmediateTags.VT_TYPE -> VTableTypeSymbol(deserializeIdSignature())
                 ImmediateTags.FUNC_TYPE -> FunctionTypeSymbol(deserializeIdSignature())
+                ImmediateTags.CONT_TYPE -> ContTypeSymbol(deserializeInt())
 
                 ImmediateTags.GLOBAL_FIELD -> FieldGlobalSymbol(deserializeIdSignature())
                 ImmediateTags.GLOBAL_VTABLE -> VTableGlobalSymbol(deserializeIdSignature())
@@ -328,9 +342,22 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 ImmediateTags.VALUE_TYPE_VECTOR -> WasmImmediate.ValTypeVector(deserializeList(::deserializeType))
                 // This is the special case of BlockType.Value, which accepts a nullable WasmType. If is null, MSB is set to 1.
                 ImmediateTags.BLOCK_TYPE_NULL_VALUE -> WasmImmediate.BlockType.Value(null)
+                ImmediateTags.CONT_HANDLE -> deserializeWasmContHandle()
                 else -> tagError(tag)
             }
         }
+
+    private fun deserializeWasmContHandle(): WasmImmediate.ContHandle {
+        val type = withTag { tag ->
+            when (tag) {
+                ImmediateContTags.ON -> WasmImmediate.ContHandle.ContHandleType.ON
+                ImmediateContTags.ON_SWITCH -> WasmImmediate.ContHandle.ContHandleType.ON_SWITCH
+                else -> tagError(tag)
+            }
+        }
+        val immediates = deserializeList(::deserializeImmediate)
+        return WasmImmediate.ContHandle(type, immediates)
+    }
 
     private fun deserializeImmediateCatch(): WasmImmediate.Catch {
         val type = withTag { tag ->
@@ -638,6 +665,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         definedGcTypes = deserializeGcTypes(),
         definedVTableGcTypes = deserializeVTableGcTypes(),
         definedFunctionTypes = deserializeFunctionTypes(),
+        contTypes = deserializeMap(::deserializeInt, ::deserializeContDeclaration),
+        contFunctionTypes = deserializeMap(::deserializeInt, ::deserializeFunctionType),
     )
 
     fun deserializeCompiledDeclarationsFragment() = WasmCompiledDeclarationsFileFragment(
