@@ -41,6 +41,7 @@ import java.nio.channels.OverlappingFileLockException
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import org.jetbrains.kotlin.backend.common.legacyKlibReverseTopoSort
+import org.jetbrains.kotlin.konan.config.konanHome
 
 internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String, KotlinLibrary>): List<KotlinLibrary> {
     val allDependencies = mutableSetOf<KotlinLibrary>()
@@ -409,6 +410,9 @@ class CacheBuilder(
             filesToCache: List<String>,
     ) {
         compilationSpawner.spawn(config.additionalCacheFlags /* TODO: Some way to put them directly to CompilerConfiguration? */) {
+            config.configuration.konanHome?.let {
+                this.konanHome = it
+            }
             val libraryPath = library.libraryFile.absolutePath
             val libraries = dependencies.filter { !it.isFromKotlinNativeDistribution }.map { it.libraryFile.absolutePath }
             val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.libraryFile.absolutePath to it.second }

@@ -119,7 +119,7 @@ abstract class NativeEnvironmentConfigurator(
         customNativeHome?.let {
             configuration.konanHome = it.absolutePath
 
-            // TODO KT-84799: remove the line after dropping forward testing against 2.3 compiler
+            // TODO KT-84799: remove the line after dropping forward and backward testing against 2.3 compiler
             System.setProperty("kotlin.native.home", it.absolutePath)
         }
 

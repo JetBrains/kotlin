@@ -48,7 +48,8 @@ open class AbstractCustomNativeCompilerFirstStageTest : AbstractNativeCoreTest()
 
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::NativeFirstStageEnvironmentConfigurator,
+            ::NativeFirstStageEnvironmentConfigurator.bind(customNativeCompilerSettings.nativeHome),
+            ::NativeSecondStageEnvironmentConfigurator,
         )
         useAdditionalSourceProviders(
             ::NativeLauncherAdditionalSourceProvider,

@@ -97,9 +97,16 @@ tasks.withType<Test>().configureEach {
                 .filterNot { it.isBlank() }
                 .flatMap {
                     listOf(
+                        // libcallbacks was renamed after 2.3.0
+                        // different versions of different stages will try to access different names of the libs during testing
+                        // keep both old and new names here
+                        """permission java.io.FilePermission "$it/libcallbacks.dylib", "read";""",
+                        """permission java.io.FilePermission "$it/libcallbacks.so", "read";""",
+                        """permission java.io.FilePermission "$it/libcallbacks.dll", "read";""",
                         """permission java.io.FilePermission "$it/libkotlinxcinteropjvmcallbacks.dylib", "read";""",
                         """permission java.io.FilePermission "$it/libkotlinxcinteropjvmcallbacks.so", "read";""",
                         """permission java.io.FilePermission "$it/libkotlinxcinteropjvmcallbacks.dll", "read";""",
+
                         """permission java.io.FilePermission "$it/libclangstubs.dylib", "read";""",
                         """permission java.io.FilePermission "$it/libclangstubs.so", "read";""",
                         """permission java.io.FilePermission "$it/libclangstubs.dll", "read";""",
