@@ -126,7 +126,7 @@ class ScriptingWithExplanationCompilerTest {
 
     @Test // KT-85103
     fun testScriptExplainDestructuringDeclarations() {
-        runScriptAndValidateExplain("$TEST_DATA_DIR/destructuringDecls.kts", expectedExitCode = ExitCode.COMPILATION_ERROR)
+        runScriptAndValidateExplain("$TEST_DATA_DIR/destructuringDecls.kts", expectedExitCode = ExitCode.OK)
     }
 
     @Test // KT-85105
