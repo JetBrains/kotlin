@@ -10,7 +10,6 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.ir.ClassGlobalHierarchyInfo
 import org.jetbrains.kotlin.backend.konan.ir.isAbstract
@@ -383,19 +382,13 @@ internal class StackLocalsManagerImpl(
     override fun exitScope() { scopeDepth-- }
     private fun isRootScope() = scopeDepth == 0
 
-    private class StackLocal(
-            val stackAllocationPtr: LLVMValueRef,
-            val objHeaderPtr: LLVMValueRef,
-            val gcRootSetSlot: LLVMValueRef
-    )
-
     private fun FunctionGenerationContext.createRootSetSlot() =
             alloca(llvm.pointerType, true)
 
     override fun alloc(irClass: IrClass): LLVMValueRef = with(functionGenerationContext) {
         val classInfo = llvmDeclarations.forClass(irClass)
         val type = classInfo.bodyType.llvmBodyType
-        val stackLocal = appendingTo(bbInitStackLocals) {
+        val (objHeaderPtr, gcRootSetSlot) = appendingTo(bbInitStackLocals) {
             val stackSlot = LLVMBuildAlloca(builder, type, "")!!
             LLVMSetAlignment(stackSlot, classInfo.alignment)
 
@@ -405,33 +398,16 @@ internal class StackLocalsManagerImpl(
             val typeInfo = codegen.typeInfoForAllocation(irClass)
             setTypeInfoForStackObject(runtime.objHeaderType, objectHeader, typeInfo)
             val gcRootSetSlot = createRootSetSlot()
-            StackLocal(stackSlot, objectHeader, gcRootSetSlot)
+            objectHeader to gcRootSetSlot
         }
 
         if (!isRootScope()) {
-            clean(classInfo, stackLocal.stackAllocationPtr)
+            zeroObjectBody(classInfo, objHeaderPtr)
         }
-        storeStackRef(stackLocal.objHeaderPtr, stackLocal.gcRootSetSlot)
-        stackLocal.objHeaderPtr
+        storeStackRef(objHeaderPtr, gcRootSetSlot)
+        objHeaderPtr
     }
 
-    private fun clean(classInfo: ClassLlvmDeclarations, stackAllocationPtr: LLVMValueRef) = with(functionGenerationContext) {
-        val type = classInfo.bodyType.llvmBodyType
-        for ((fieldSymbol, fieldIndex) in classInfo.fieldIndices.entries.sortedBy{ e -> e.value }) {
-
-            if (fieldSymbol.owner.type.binaryTypeIsReference()) {
-                val fieldPtr = structGep(type, stackAllocationPtr, fieldIndex, "")
-                call(llvm.zeroHeapRefFunction, listOf(fieldPtr))
-            }
-        }
-
-        val bodyPtr = ptrToInt(stackAllocationPtr, codegen.intPtrType)
-        val bodySize = LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8
-        val serviceInfoSize = runtime.pointerSize
-        val serviceInfoSizeLlvm = LLVMConstInt(codegen.intPtrType, serviceInfoSize.toLong(), 1)!!
-        val bodyWithSkippedServiceInfoPtr = intToPtr(add(bodyPtr, serviceInfoSizeLlvm), llvm.pointerType)
-        memset(bodyWithSkippedServiceInfoPtr, 0, bodySize - serviceInfoSize)
-    }
 
     // Returns generated special type for local array.
     // It's needed to prevent changing variables order on stack.
@@ -465,8 +441,9 @@ internal class StackLocalsManagerImpl(
     )
 
     override fun allocArray(irClass: IrClass, count: LLVMValueRef) = with(functionGenerationContext) {
+        val classInfo = llvmDeclarations.forClass(irClass)
         val constCount = extractConstUnsignedInt(count).toInt()
-        val stackLocal = appendingTo(bbInitStackLocals) {
+        val (objHeaderPtr, gcRootSetSlot) = appendingTo(bbInitStackLocals) {
             val arrayType = localArrayType(irClass, constCount)
             val typeInfo = codegen.typeInfoValue(irClass)
             val arraySlot = LLVMBuildAlloca(builder, arrayType, "")!!
@@ -481,27 +458,28 @@ internal class StackLocalsManagerImpl(
                     constCount * LLVMSizeOfTypeInBits(codegen.llvmTargetData, arrayToElementType[irClass.symbol]).toInt() / 8
             )
             val gcRootSetSlot = createRootSetSlot()
-            StackLocal(arraySlot, arrayHeaderSlot, gcRootSetSlot)
+            arrayHeaderSlot to gcRootSetSlot
         }
 
-        val result = stackLocal.objHeaderPtr
         if (!isRootScope()) {
-            cleanArray(irClass, constCount, stackLocal.stackAllocationPtr, stackLocal.objHeaderPtr)
+            zeroObjectBody(classInfo, objHeaderPtr)
         }
-        storeStackRef(result, stackLocal.gcRootSetSlot)
-        result
+        storeStackRef(objHeaderPtr, gcRootSetSlot)
+        objHeaderPtr
     }
 
-    private fun cleanArray(irClass: IrClass, arraySize: Int, stackAllocationPtr: LLVMValueRef, objHeaderPtr: LLVMValueRef) = with(functionGenerationContext) {
-        if (irClass.symbol == context.irBuiltIns.arrayClass) {
-            call(llvm.zeroArrayRefsFunction, listOf(objHeaderPtr))
-        } else {
-            val arrayType = localArrayType(irClass, arraySize)
-            memset(structGep(arrayType, stackAllocationPtr, 1, "arrayBody"),
-                    0,
-                    arraySize * LLVMSizeOfTypeInBits(codegen.llvmTargetData, arrayToElementType[irClass.symbol]).toInt() / 8
-            )
-        }
+    private fun zeroObjectBody(classInfo: ClassLlvmDeclarations, objHeaderPtr: LLVMValueRef) = with(functionGenerationContext) {
+        val hasWritableTypeInfo = runtime.writableTypeInfoType != null
+        /* zeroObjectBody */
+        val index = 17 + if (hasWritableTypeInfo) 1 else 0
+        val zeroObjectBody = structGep(runtime.typeInfoType, classInfo.typeInfo.llvm, index)
+        val zeroObjectBodyType = LlvmFunctionSignature(
+                LlvmRetType(llvm.voidType, isObjectType = false),
+                listOf(LlvmParamType(llvm.pointerType)),
+                functionAttributes = listOf(LlvmFunctionAttribute.NoUnwind),
+        )
+        // Not using `call`, because it won't detect nounwind attribute
+        LlvmCallable(zeroObjectBody, zeroObjectBodyType).buildCall(builder, listOf(objHeaderPtr))
     }
 
     private fun setTypeInfoForStackObject(headerType: LLVMTypeRef, header: LLVMValueRef, typeInfoPointer: LLVMValueRef) = with(functionGenerationContext) {

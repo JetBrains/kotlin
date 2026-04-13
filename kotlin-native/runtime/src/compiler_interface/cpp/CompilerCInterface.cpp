@@ -87,6 +87,11 @@ touchFunction(Kotlin_mm_createRetainedExternalRCRef)
 touchFunction(Kotlin_mm_releaseExternalRCRef)
 touchFunction(Kotlin_mm_disposeExternalRCRef)
 
+touchFunction(Kotlin_zeroObjectBody)
+touchFunction(Kotlin_zeroEmptyObjectBody)
+touchFunction(Kotlin_zeroObjectArrayBody)
+touchFunction(Kotlin_zeroPrimitiveArrayBody)
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

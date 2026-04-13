@@ -6,6 +6,8 @@
 #include "Memory.h"
 #include "MemoryPrivate.hpp"
 
+#include <cstring>
+
 #include "Allocator.hpp"
 #include "CallsChecker.hpp"
 #include "Exceptions.h"
@@ -16,6 +18,7 @@
 #include "KAssert.h"
 #include "Natives.h"
 #include "ObjectOps.hpp"
+#include "ObjectTraversal.hpp"
 #include "Porting.h"
 #include "ReferenceOps.hpp"
 #include "Runtime.h"
@@ -431,6 +434,34 @@ RUNTIME_NOTHROW extern "C" void Kotlin_processArrayInMark(void* state, ObjHeader
 RUNTIME_NOTHROW extern "C" void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object) {
     // Empty object. Nothing to do.
     // TODO: Try to generate it in the code generator.
+}
+
+RUNTIME_NOTHROW extern "C" void Kotlin_zeroObjectBody(ObjHeader* object) {
+    auto* typeInfo = object->type_info();
+    RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
+    traverseClassObjectFields(object, [](mm::RefFieldAccessor field) noexcept {
+        field = nullptr;
+    });
+    memset(reinterpret_cast<char*>(object + 1), 0, typeInfo->instanceSize_);
+}
+
+RUNTIME_NOTHROW extern "C" void Kotlin_zeroEmptyObjectBody(ObjHeader* object) {
+    auto* typeInfo = object->type_info();
+    RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
+    memset(reinterpret_cast<char*>(object + 1), 0, typeInfo->instanceSize_);
+}
+
+RUNTIME_NOTHROW extern "C" void Kotlin_zeroObjectArrayBody(ObjHeader* object) {
+    traverseArrayOfObjectsElements(object->array(), [](mm::RefFieldAccessor field) noexcept {
+        field = nullptr;
+    });
+}
+
+RUNTIME_NOTHROW extern "C" void Kotlin_zeroPrimitiveArrayBody(ObjHeader* object) {
+    auto* typeInfo = object->type_info();
+    RuntimeAssert(typeInfo->IsArray(), "Must be an array");
+    ArrayHeader* arr = object->array();
+    memset(reinterpret_cast<char*>(arr + 1), 0, -typeInfo->instanceSize_ * arr->count_);
 }
 
 extern "C" OBJ_GETTER(makePermanentWeakReferenceImpl, ObjHeader*);

@@ -468,4 +468,9 @@ RUNTIME_NOTHROW extern "C" void Kotlin_processObjectInMark(void* state, ObjHeade
 RUNTIME_NOTHROW extern "C" void Kotlin_processArrayInMark(void* state, ObjHeader* object);
 RUNTIME_NOTHROW extern "C" void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object);
 
+RUNTIME_NOTHROW extern "C" void Kotlin_zeroObjectBody(ObjHeader* object);
+RUNTIME_NOTHROW extern "C" void Kotlin_zeroEmptyObjectBody(ObjHeader* object);
+RUNTIME_NOTHROW extern "C" void Kotlin_zeroObjectArrayBody(ObjHeader* object);
+RUNTIME_NOTHROW extern "C" void Kotlin_zeroPrimitiveArrayBody(ObjHeader* object);
+
 #endif // RUNTIME_MEMORY_H

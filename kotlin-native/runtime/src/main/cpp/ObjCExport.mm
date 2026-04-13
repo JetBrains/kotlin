@@ -670,12 +670,14 @@ static const TypeInfo* createTypeInfo(
       result->flags_ |= TF_IMMUTABLE;
     }
     result->processObjectInMark = superType->processObjectInMark;
+    result->zeroObjectBody = superType->zeroObjectBody;
   } else {
     result->instanceSize_ = fieldsInfo->instanceSize_;
     result->instanceAlignment_ = fieldsInfo->instanceAlignment_;
     result->objOffsets_ = fieldsInfo->objOffsets_;
     result->objOffsetsCount_ = fieldsInfo->objOffsetsCount_;
     result->processObjectInMark = fieldsInfo->processObjectInMark;
+    result->zeroObjectBody = superType->zeroObjectBody;
   }
 
   result->classId_ = superType->classId_;

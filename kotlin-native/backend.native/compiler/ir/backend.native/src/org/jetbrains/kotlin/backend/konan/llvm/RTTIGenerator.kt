@@ -98,6 +98,7 @@ internal class RTTIGenerator(
             writableTypeInfo: WritableTypeInfoPointer?,
             associatedObjects: ConstPointer?,
             processObjectInMark: ConstPointer?,
+            zeroObjectBody: ConstPointer?,
             requiredAlignment: Int,
     ) : Struct(
                     runtime.typeInfoType,
@@ -136,6 +137,7 @@ internal class RTTIGenerator(
                     associatedObjects,
 
                     processObjectInMark,
+                    zeroObjectBody,
                     llvm.constInt32(requiredAlignment),
     )
 
@@ -259,6 +261,11 @@ internal class RTTIGenerator(
                 processObjectInMark = when {
                     irClass.symbol == context.irBuiltIns.arrayClass -> llvm.Kotlin_processArrayInMark.toConstPointer()
                     else -> genProcessObjectInMark(llvmDeclarations.bodyType)
+                },
+                zeroObjectBody = when {
+                    irClass.symbol == context.irBuiltIns.arrayClass -> llvm.Kotlin_zeroObjectArrayBody.toConstPointer()
+                    irClass.isArray -> llvm.Kotlin_zeroPrimitiveArrayBody.toConstPointer()
+                    else -> genZeroObjectBody(llvmDeclarations.bodyType)
                 },
                 requiredAlignment = llvmDeclarations.alignment
         )
@@ -495,6 +502,20 @@ internal class RTTIGenerator(
         }
     }
 
+    private fun genZeroObjectBody(classType: ObjectBodyType): ConstPointer {
+        val indicesOfObjectFields = classType.sortedIndicesOfObjectFields
+        return when {
+            indicesOfObjectFields.isEmpty() -> {
+                // TODO: Try to generate it here instead of importing from the runtime.
+                llvm.Kotlin_zeroEmptyObjectBody.toConstPointer()
+            }
+            else -> {
+                // TODO: specialize for "small" objects
+                llvm.Kotlin_zeroObjectBody.toConstPointer()
+            }
+        }
+    }
+
     // TODO: extract more code common with generate().
     fun generateSyntheticInterfaceImpl(
             irClass: IrClass,
@@ -563,6 +584,7 @@ internal class RTTIGenerator(
                 writableTypeInfo = writableTypeInfo,
                 associatedObjects = null,
                 processObjectInMark = genProcessObjectInMark(bodyType),
+                zeroObjectBody = genZeroObjectBody(bodyType),
                 requiredAlignment = runtime.objectAlignment
         ), vtable)
 

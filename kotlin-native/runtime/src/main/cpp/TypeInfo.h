@@ -135,6 +135,8 @@ struct TypeInfo {
     // TODO: Consider providing a generic traverse method instead.
     void (*processObjectInMark)(void* state, ObjHeader* object);
 
+    void (*zeroObjectBody)(ObjHeader* object);
+
     // Required alignment of instance
     uint32_t instanceAlignment_;
 
