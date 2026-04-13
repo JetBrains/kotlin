@@ -45,7 +45,7 @@ internal abstract class CoroutineImplStackSwitching<T, R>(
             this.exception = exception
         }
 
-        releaseIntercepted() // this state machine instance is terminating
+        releaseIntercepted() // this instance is terminating
 
         val completion = _resultContinuation
 

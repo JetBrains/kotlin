@@ -137,12 +137,13 @@ private class WasmTypeDeclaratorByFingerprint(
         private val k1 = 0xb492b66fbe98f273U
         private val k2 = 0x9ae16a3b2f90404fU
         private val k3 = 0xc949d7c7509e6557U
+        private val k4 = 0x94d049bb133111ebUL // TODO: consider cityHash constant
 
         private val structHash = Hash128Bits(k0, k1)
         private val function1Hash = Hash128Bits(k1, k2)
         private val function2Hash = Hash128Bits(k2, k3)
-        private val arrayHash = Hash128Bits(k3, k0)
-        private val contHash = Hash128Bits(4U, 4U)
+        private val arrayHash = Hash128Bits(k3, k4)
+        private val contHash = Hash128Bits(k4, k0)
     }
 
     private fun combine(hash: Hash128Bits, type: WasmType): Hash128Bits {

@@ -49,7 +49,7 @@ class WasmJsSymbolsTest : AbstractSymbolsValidationTest(
 }
 
 class WasmJsSymbolValidationHandler(testServices: TestServices) : IrSecondPhaseSymbolValidationHandler(testServices) {
-    override val blackList: List<String> = listOf("createDynamicKType", "invokeOnExportedFunctionExit")
+    override val blackList: List<String> = listOf("createDynamicKType", "invokeOnExportedFunctionExit", "coroutineImpl")
 
     override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
         val configurationJs = CompilerConfiguration.create().apply { put(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS) }
@@ -78,7 +78,7 @@ class WasmWasiSymbolsTest : AbstractSymbolsValidationTest(
 }
 
 class WasmWasiSymbolValidationHandler(testServices: TestServices) : IrSecondPhaseSymbolValidationHandler(testServices) {
-    override val blackList: List<String> = listOf("createDynamicKType", "jsRelatedSymbols")
+    override val blackList: List<String> = listOf("createDynamicKType", "jsRelatedSymbols", "coroutineImpl")
 
     override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
         val configurationWasi = CompilerConfiguration.create().apply { put(WasmConfigurationKeys.WASM_TARGET, WasmTarget.WASI) }

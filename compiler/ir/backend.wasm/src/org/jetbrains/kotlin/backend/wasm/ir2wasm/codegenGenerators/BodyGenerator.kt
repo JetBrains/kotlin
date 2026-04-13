@@ -81,7 +81,7 @@ class BodyGenerator(
         //
         // Also see KotlinNothingValueExceptionLowering.kt
         if (expression.type.isNothing() &&
-                !(expression is IrCall && !expression.symbol.owner.returnType.isNothing())) {
+            !(expression is IrCall && !expression.symbol.owner.returnType.isNothing())) {
             // TODO Ideally, we should generate unreachable only for specific cases and preferable on declaration site. 
             body.buildUnreachableAfterNothingType()
         }
@@ -810,7 +810,6 @@ class BodyGenerator(
 
             val klassSymbol = klass.symbol
             val vTableGcTypeReference = typeCodegenContext.referenceVTableGcType(klassSymbol)
-            val vTableHeapTypeReference = typeCodegenContext.referenceVTableHeapType(klassSymbol)
             val functionTypeReference = typeCodegenContext.referenceFunctionType(function.symbol)
 
             if (!klass.isInterface) {
@@ -831,43 +830,7 @@ class BodyGenerator(
                 body.buildInstr(WasmOp.CALL_REF, location, functionTypeReference)
             } else {
                 generateExpression(call.dispatchReceiver!!)
-
-                val specialITableSlot = backendContext.specialSlotITableTypes.indexOf(klassSymbol)
-                if (specialITableSlot != -1) {
-                    body.commentGroupStart { "Special Interface call: ${function.fqNameWhenAvailable}" }
-                    generateSpecialITableFromAny(location)
-                    body.buildStructGet(
-                        Synthetics.GcTypes.specialSlotITableType,
-                        specialITableSlot,
-                        location
-                    )
-                } else if (klassSymbol.isFunction()) {
-                    val functionalInterfaceSlot = getFunctionalInterfaceSlot(klass)
-
-                    body.commentGroupStart { "Functional Interface call: ${function.fqNameWhenAvailable}" }
-                    generateSpecialITableFromAny(location)
-                    body.buildStructGet(
-                        Synthetics.GcTypes.specialSlotITableType,
-                        backendContext.specialSlotITableTypes.size,
-                        location
-                    )
-                    body.buildConstI32(functionalInterfaceSlot, location)
-                    body.buildInstr(
-                        WasmOp.ARRAY_GET,
-                        location,
-                        Synthetics.GcTypes.wasmAnyArrayType
-                    )
-                } else {
-                    body.commentGroupStart { "Interface call: ${function.fqNameWhenAvailable}" }
-                    body.buildConstI64(serviceCodegenContext.referenceTypeId(klassSymbol), location)
-                    body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.getInterfaceVTable), location)
-                }
-
-                body.buildRefCastStatic(vTableHeapTypeReference, location)
-                val vfSlot = wasmModuleMetadataCache.getInterfaceMetadata(klassSymbol).methods
-                    .indexOfFirst { it.function == function }
-                body.buildStructGet(vTableGcTypeReference, vfSlot, location)
-
+                generateInterfaceVTableLookup(function, klassSymbol, location)
                 body.buildInstr(
                     WasmOp.CALL_REF,
                     location,
@@ -886,29 +849,55 @@ class BodyGenerator(
         }
     }
 
-    private fun castAnyToInvokable(function: IrFunction, parentClass: IrClass, location: SourceLocation) {
-        require(function is IrSimpleFunction && function.isOverridable)
-        val realOverrideTargetClass = function.parentAsClass
-        val klass = when {
-            !realOverrideTargetClass.isInterface || parentClass.isInterface -> realOverrideTargetClass
-            else -> parentClass
+    /**
+     * Resolves an interface virtual method reference via vtable lookup.
+     * Expects the dispatch receiver to already be on the stack.
+     * Leaves the function reference on the stack (does NOT emit CALL_REF).
+     * Opens a commentGroup — caller must call commentGroupEnd().
+     */
+    private fun generateInterfaceVTableLookup(
+        function: IrSimpleFunction,
+        klassSymbol: IrClassSymbol,
+        location: SourceLocation,
+    ) {
+        val vTableGcTypeReference = typeCodegenContext.referenceVTableGcType(klassSymbol)
+        val vTableHeapTypeReference = typeCodegenContext.referenceVTableHeapType(klassSymbol)
+
+        val specialITableSlot = backendContext.specialSlotITableTypes.indexOf(klassSymbol)
+        if (specialITableSlot != -1) {
+            body.commentGroupStart { "Special Interface call: ${function.fqNameWhenAvailable}" }
+            generateSpecialITableFromAny(location)
+            body.buildStructGet(
+                Synthetics.GcTypes.specialSlotITableType,
+                specialITableSlot,
+                location
+            )
+        } else if (klassSymbol.isFunction()) {
+            val functionalInterfaceSlot = getFunctionalInterfaceSlot(klassSymbol.owner)
+
+            body.commentGroupStart { "Functional Interface call: ${function.fqNameWhenAvailable}" }
+            generateSpecialITableFromAny(location)
+            body.buildStructGet(
+                Synthetics.GcTypes.specialSlotITableType,
+                backendContext.specialSlotITableTypes.size,
+                location
+            )
+            body.buildConstI32(functionalInterfaceSlot, location)
+            body.buildInstr(
+                WasmOp.ARRAY_GET,
+                location,
+                Synthetics.GcTypes.wasmAnyArrayType
+            )
+        } else {
+            body.commentGroupStart { "Interface call: ${function.fqNameWhenAvailable}" }
+            body.buildConstI64(serviceCodegenContext.referenceTypeId(klassSymbol), location)
+            body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.getInterfaceVTable), location)
         }
 
-        val klassSymbol = klass.symbol
-        val vTableGcHeapTypeReference = typeCodegenContext.referenceVTableHeapType(klassSymbol)
-        val vTableGcTypeReference = typeCodegenContext.referenceVTableGcType(klassSymbol)
-
-        require(klass.isInterface)
-        require(!klassSymbol.isFunction())
-        body.commentGroupStart { "Interface call: ${function.fqNameWhenAvailable}" }
-        body.buildConstI64(serviceCodegenContext.referenceTypeId(klassSymbol), location)
-        body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.getInterfaceVTable), location)
-
-        body.buildRefCastStatic(vTableGcHeapTypeReference, location)
+        body.buildRefCastStatic(vTableHeapTypeReference, location)
         val vfSlot = wasmModuleMetadataCache.getInterfaceMetadata(klassSymbol).methods
             .indexOfFirst { it.function == function }
         body.buildStructGet(vTableGcTypeReference, vfSlot, location)
-        body.commentGroupEnd()
     }
 
     private fun generateRefCast(fromType: IrType, toType: IrType, isRefNullCast: Boolean, location: SourceLocation) {
@@ -1199,6 +1188,55 @@ class BodyGenerator(
                 body.buildDrop(location)
             }
 
+            wasmSymbols.wasmArrayCopy -> {
+                val immediate = typeCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
+                body.buildInstr(WasmOp.ARRAY_COPY, location, immediate, immediate)
+            }
+
+            wasmSymbols.getWasmAbiVersion -> {
+                body.buildConstI32(WASM_ABI_VERSION, location)
+            }
+
+            wasmSymbols.wasmArrayNewData0 -> {
+                val arrayGcType = typeCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
+                body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(0))
+            }
+
+            wasmSymbols.wasmArrayNewData -> {
+                val arrayGcType = typeCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
+                val dataIdx = (call.arguments[2] as? IrConst)?.value as? Int
+                    ?: error("An argument for dataIdx should be a compile time const with type Int")
+                body.buildDrop(location)
+                body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(dataIdx))
+            }
+
+            wasmSymbols.wasmArrayNewData0CharArray -> {
+                val arrayGcType = typeCodegenContext.referenceGcType(
+                    wasmSymbols.wasmArrayNewData0CharArray.owner.returnType.getRuntimeClass(irBuiltIns).symbol,
+                )
+                body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(0))
+            }
+
+            wasmSymbols.callAssociatedObjectGetter -> {
+                val tryGetAssociatedObjectType =
+                    typeCodegenContext.referenceFunctionType(backendContext.wasmSymbols.tryGetAssociatedObject)
+
+                body.buildRefCastStatic(
+                    toType = Synthetics.HeapTypes.associatedObjectGetterWrapper,
+                    location = location,
+                )
+
+                body.buildStructGet(
+                    struct = Synthetics.GcTypes.associatedObjectGetterWrapper,
+                    fieldId = CLASS_ASSOCIATED_OBJECT_GETTER_WRAPPER_FIELD_ID,
+                    location = location
+                )
+                body.buildInstr(
+                    op = WasmOp.CALL_REF,
+                    location = location,
+                    tryGetAssociatedObjectType,
+                )
+            }
 
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendIntrinsic -> {
                 body.buildSuspend(contTagId, location)
@@ -1270,55 +1308,6 @@ class BodyGenerator(
                 body.buildContBind(contType, bindContType, location)
             }
 
-            wasmSymbols.wasmArrayCopy -> {
-                val immediate = typeCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
-                body.buildInstr(WasmOp.ARRAY_COPY, location, immediate, immediate)
-            }
-
-            wasmSymbols.getWasmAbiVersion -> {
-                body.buildConstI32(WASM_ABI_VERSION, location)
-            }
-
-            wasmSymbols.wasmArrayNewData0 -> {
-                val arrayGcType = typeCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
-                body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(0))
-            }
-
-            wasmSymbols.wasmArrayNewData -> {
-                val arrayGcType = typeCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
-                val dataIdx = (call.arguments[2] as? IrConst)?.value as? Int
-                    ?: error("An argument for dataIdx should be a compile time const with type Int")
-                body.buildDrop(location)
-                body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(dataIdx))
-            }
-
-            wasmSymbols.wasmArrayNewData0CharArray -> {
-                val arrayGcType = typeCodegenContext.referenceGcType(
-                    wasmSymbols.wasmArrayNewData0CharArray.owner.returnType.getRuntimeClass(irBuiltIns).symbol,
-                )
-                body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(0))
-            }
-
-            wasmSymbols.callAssociatedObjectGetter -> {
-                val tryGetAssociatedObjectType =
-                    typeCodegenContext.referenceFunctionType(backendContext.wasmSymbols.tryGetAssociatedObject)
-
-                body.buildRefCastStatic(
-                    toType = Synthetics.HeapTypes.associatedObjectGetterWrapper,
-                    location = location,
-                )
-
-                body.buildStructGet(
-                    struct = Synthetics.GcTypes.associatedObjectGetterWrapper,
-                    fieldId = CLASS_ASSOCIATED_OBJECT_GETTER_WRAPPER_FIELD_ID,
-                    location = location
-                )
-                body.buildInstr(
-                    op = WasmOp.CALL_REF,
-                    location = location,
-                    tryGetAssociatedObjectType,
-                )
-            }
 
             else -> {
                 return false
@@ -1466,9 +1455,9 @@ class BodyGenerator(
             return
         }
 
-        val expectedClassErased = expectedType.getRuntimeClass(irBuiltIns)
-
         if (isBuiltInWasmRefType(actualType)) return
+
+        val expectedClassErased = expectedType.getRuntimeClass(irBuiltIns)
 
         // TYPE -> EXTERNAL -> TRUE
         if (expectedClassErased.isExternal) return
@@ -1648,6 +1637,17 @@ class BodyGenerator(
             init.getSourceLocation()
         }
         body.buildSetLocal(varName, location)
+    }
+
+    private fun castAnyToInvokable(function: IrFunction, parentClass: IrClass, location: SourceLocation) {
+        require(function is IrSimpleFunction && function.isOverridable)
+        val realOverrideTargetClass = function.parentAsClass
+        val klass = when {
+            !realOverrideTargetClass.isInterface || parentClass.isInterface -> realOverrideTargetClass
+            else -> parentClass
+        }
+        generateInterfaceVTableLookup(function, klass.symbol, location)
+        body.commentGroupEnd()
     }
 
     // Return true if function is recognized as intrinsic.

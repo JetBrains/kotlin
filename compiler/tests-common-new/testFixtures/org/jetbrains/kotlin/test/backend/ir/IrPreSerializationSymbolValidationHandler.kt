@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -81,7 +80,7 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
             is BackendWasmSymbols.CoroutinesStateMachineIntrinsics -> validateContainer(result)
             is IrType -> validateRecursive(result.classifierOrNull, klass)
             null, is FqName, is Name, is String, is PrimitiveBinaryType, is BoxCache, is PrimitiveType, is UnsignedType,
-            is IrFactory, is LanguageVersionSettings, is IrExternalPackageFragment, is SymbolFinder, is Boolean, is ClassId -> Unit // do nothing
+            is IrFactory, is LanguageVersionSettings, is IrExternalPackageFragment, is SymbolFinder -> Unit // do nothing
             else -> error("Unexpected type: ${result::class.qualifiedName}")
         }
     }

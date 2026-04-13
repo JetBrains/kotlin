@@ -160,9 +160,8 @@ class WasmCompiledModuleFragment(
         val resumeBlockType = WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(zeroArgContHeapType)))
         definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.resumeBlockType.type] = resumeBlockType
 
-        val finalResumeBlockType = definedDeclarations.functionTypes.getValue(Synthetics.FunctionHeapTypes.resumeBlockType.type)
         for (fragment in wasmCompiledCodeFileFragments) {
-            fragment.definedTypes.resumeBlockTypeSymbol.bind(finalResumeBlockType)
+            fragment.definedTypes.resumeBlockTypeSymbol.bind(resumeBlockType)
         }
     }
 
@@ -319,13 +318,7 @@ class WasmCompiledModuleFragment(
             WasmTag(Synthetics.FunctionHeapTypes.wasmContFunctionType)
         }
 
-        val tags = listOfNotNull(exceptionTag, contTagType)
-        val limit = if (wasmCoroutinesStackSwitching) 2 else 1
-
-        require(tags.size <= limit) {
-            "Expected at most $limit tag(s), but found ${tags.size}."
-        }
-        return tags
+        return listOfNotNull(exceptionTag, contTagType)
     }
 
     private fun getTypes(definedDeclarations: DefinedDeclarationsResolver): List<RecursiveTypeGroup> {
@@ -341,7 +334,7 @@ class WasmCompiledModuleFragment(
             }
         }
 
-        //Rebind cont function types to canonical (if equal to a functionTypes entry)
+        // Rebind cont function types to canonical (if equal to a functionTypes entry)
         val contFunctionTypes = definedDeclarations.contFunctionTypes
         for (contFunctionType in contFunctionTypes) {
             val canonicalSignature = reversedFunctionTypeMap.getValue(contFunctionType.value)
