@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -77,7 +78,7 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
 
                 return IrCallImpl(
                     expression.startOffset, expression.endOffset,
-                    newFun.returnType,
+                    getReturnType(expression, newFun),
                     newFun.symbol,
                     origin = expression.origin,
                     superQualifierSymbol = expression.superQualifierSymbol,
@@ -88,6 +89,10 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                 }
             }
         })
+    }
+
+    protected open fun getReturnType(expression: IrCall, newFun: IrSimpleFunction): IrType {
+        return newFun.returnType
     }
 
     // IMPORTANT: May return null only if partial linkage is turned on.
