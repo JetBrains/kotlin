@@ -43,7 +43,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         // To be refactored later, after
         // CompileKotlinAgainstCustomBinariesTest.testReleaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck is fixed.
         val rootDir =
-            File("compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck")
+            File("../../compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck")
 
         doTestPreReleaseKotlinLibrary(
             rootDir = rootDir,

@@ -32,228 +32,228 @@ public class SwiftExportWithResultValidationTest extends AbstractSwiftExportWith
   @Test
   @TestMetadata("annotations")
   public void testAnnotations() {
-    runTest("testData/generation/annotations/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/annotations/");
   }
 
   @Test
   @TestMetadata("any")
   public void testAny() {
-    runTest("testData/generation/any/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/any/");
   }
 
   @Test
   @TestMetadata("classes")
   public void testClasses() {
-    runTest("testData/generation/classes/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/classes/");
   }
 
   @Test
   @TestMetadata("consuming_dependencies")
   public void testConsuming_dependencies() {
-    runTest("testData/generation/consuming_dependencies/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/consuming_dependencies/");
   }
 
   @Test
   @TestMetadata("contextParameters")
   public void testContextParameters() {
-    runTest("testData/generation/contextParameters/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/contextParameters/");
   }
 
   @Test
   @TestMetadata("empty")
   public void testEmpty() {
-    runTest("testData/generation/empty/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/empty/");
   }
 
   @Test
   @TestMetadata("enums")
   public void testEnums() {
-    runTest("testData/generation/enums/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/enums/");
   }
 
   @Test
   @TestMetadata("exceptions")
   public void testExceptions() {
-    runTest("testData/generation/exceptions/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/exceptions/");
   }
 
   @Test
   @TestMetadata("extension_package_keyword")
   public void testExtension_package_keyword() {
-    runTest("testData/generation/extension_package_keyword/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/extension_package_keyword/");
   }
 
   @Test
   @TestMetadata("external_types")
   public void testExternal_types() {
-    runTest("testData/generation/external_types/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/external_types/");
   }
 
   @Test
   @TestMetadata("functionAndClassWithSameName")
   public void testFunctionAndClassWithSameName() {
-    runTest("testData/generation/functionAndClassWithSameName/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/functionAndClassWithSameName/");
   }
 
   @Test
   @TestMetadata("functional_type")
   public void testFunctional_type() {
-    runTest("testData/generation/functional_type/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/functional_type/");
   }
 
   @Test
   @TestMetadata("functions")
   public void testFunctions() {
-    runTest("testData/generation/functions/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/functions/");
   }
 
   @Test
   @TestMetadata("generics")
   public void testGenerics() {
-    runTest("testData/generation/generics/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/generics/");
   }
 
   @Test
   @TestMetadata("hiddenFromObjectiveC")
   public void testHiddenFromObjectiveC() {
-    runTest("testData/generation/hiddenFromObjectiveC/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/hiddenFromObjectiveC/");
   }
 
   @Test
   @TestMetadata("identifiers")
   public void testIdentifiers() {
-    runTest("testData/generation/identifiers/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/identifiers/");
   }
 
   @Test
   @TestMetadata("inheritance")
   public void testInheritance() {
-    runTest("testData/generation/inheritance/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/inheritance/");
   }
 
   @Test
   @TestMetadata("inner_classes")
   public void testInner_classes() {
-    runTest("testData/generation/inner_classes/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/inner_classes/");
   }
 
   @Test
   @TestMetadata("list")
   public void testList() {
-    runTest("testData/generation/list/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/list/");
   }
 
   @Test
   @TestMetadata("map")
   public void testMap() {
-    runTest("testData/generation/map/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/map/");
   }
 
   @Test
   @TestMetadata("no_package")
   public void testNo_package() {
-    runTest("testData/generation/no_package/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/no_package/");
   }
 
   @Test
   @TestMetadata("nothing_type")
   public void testNothing_type() {
-    runTest("testData/generation/nothing_type/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/nothing_type/");
   }
 
   @Test
   @TestMetadata("nullable_type")
   public void testNullable_type() {
-    runTest("testData/generation/nullable_type/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/nullable_type/");
   }
 
   @Test
   @TestMetadata("overrides")
   public void testOverrides() {
-    runTest("testData/generation/overrides/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/overrides/");
   }
 
   @Test
   @TestMetadata("package_flattening")
   public void testPackage_flattening() {
-    runTest("testData/generation/package_flattening/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/package_flattening/");
   }
 
   @Test
   @TestMetadata("package_flattening_invalid_target")
   public void testPackage_flattening_invalid_target() {
-    runTest("testData/generation/package_flattening_invalid_target/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/package_flattening_invalid_target/");
   }
 
   @Test
   @TestMetadata("package_flattening_missing_target")
   public void testPackage_flattening_missing_target() {
-    runTest("testData/generation/package_flattening_missing_target/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/package_flattening_missing_target/");
   }
 
   @Test
   @TestMetadata("protocols")
   public void testProtocols() {
-    runTest("testData/generation/protocols/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/protocols/");
   }
 
   @Test
   @TestMetadata("ranges")
   public void testRanges() {
-    runTest("testData/generation/ranges/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/ranges/");
   }
 
   @Test
   @TestMetadata("set")
   public void testSet() {
-    runTest("testData/generation/set/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/set/");
   }
 
   @Test
   @TestMetadata("stdlibTypes")
   public void testStdlibTypes() {
-    runTest("testData/generation/stdlibTypes/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/stdlibTypes/");
   }
 
   @Test
   @TestMetadata("transitiveExport")
   public void testTransitiveExport() {
-    runTest("testData/generation/transitiveExport/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/transitiveExport/");
   }
 
   @Test
   @TestMetadata("type_reference")
   public void testType_reference() {
-    runTest("testData/generation/type_reference/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/type_reference/");
   }
 
   @Test
   @TestMetadata("typealiases")
   public void testTypealiases() {
-    runTest("testData/generation/typealiases/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/typealiases/");
   }
 
   @Test
   @TestMetadata("unsupportedDeclarationsReporting")
   public void testUnsupportedDeclarationsReporting() {
-    runTest("testData/generation/unsupportedDeclarationsReporting/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/unsupportedDeclarationsReporting/");
   }
 
   @Test
   @TestMetadata("vararg")
   public void testVararg() {
-    runTest("testData/generation/vararg/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/vararg/");
   }
 
   @Test
   @TestMetadata("vararg_with_package_flattening")
   public void testVararg_with_package_flattening() {
-    runTest("testData/generation/vararg_with_package_flattening/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/vararg_with_package_flattening/");
   }
 
   @Test
   @TestMetadata("variables")
   public void testVariables() {
-    runTest("testData/generation/variables/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/variables/");
   }
 }

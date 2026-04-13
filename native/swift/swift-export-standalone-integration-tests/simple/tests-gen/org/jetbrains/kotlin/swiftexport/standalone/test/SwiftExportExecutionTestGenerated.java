@@ -32,156 +32,156 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   @Test
   @TestMetadata("autoimport")
   public void testAutoimport() {
-    runTest("testData/execution/autoimport/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/autoimport/");
   }
 
   @Test
   @TestMetadata("char")
   public void testChar() {
-    runTest("testData/execution/char/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/char/");
   }
 
   @Test
   @TestMetadata("classMappings")
   public void testClassMappings() {
-    runTest("testData/execution/classMappings/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/classMappings/");
   }
 
   @Test
   @TestMetadata("enums")
   public void testEnums() {
-    runTest("testData/execution/enums/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/enums/");
   }
 
   @Test
   @TestMetadata("exceptions")
   public void testExceptions() {
-    runTest("testData/execution/exceptions/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/exceptions/");
   }
 
   @Test
   @TestMetadata("external_types")
   public void testExternal_types() {
-    runTest("testData/execution/external_types/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/external_types/");
   }
 
   @Test
   @TestMetadata("functional_type")
   public void testFunctional_type() {
-    runTest("testData/execution/functional_type/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/functional_type/");
   }
 
   @Test
   @TestMetadata("generics")
   public void testGenerics() {
-    runTest("testData/execution/generics/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/generics/");
   }
 
   @Test
   @TestMetadata("inheritance")
   public void testInheritance() {
-    runTest("testData/execution/inheritance/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/inheritance/");
   }
 
   @Test
   @TestMetadata("innerClass")
   public void testInnerClass() {
-    runTest("testData/execution/innerClass/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/innerClass/");
   }
 
   @Test
   @TestMetadata("list")
   public void testList() {
-    runTest("testData/execution/list/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/list/");
   }
 
   @Test
   @TestMetadata("map")
   public void testMap() {
-    runTest("testData/execution/map/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/map/");
   }
 
   @Test
   @TestMetadata("never_type")
   public void testNever_type() {
-    runTest("testData/execution/never_type/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/never_type/");
   }
 
   @Test
   @TestMetadata("null_type")
   public void testNull_type() {
-    runTest("testData/execution/null_type/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/null_type/");
   }
 
   @Test
   @TestMetadata("nullable_never_type")
   public void testNullable_never_type() {
-    runTest("testData/execution/nullable_never_type/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/nullable_never_type/");
   }
 
   @Test
   @TestMetadata("operators")
   public void testOperators() {
-    runTest("testData/execution/operators/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/operators/");
   }
 
   @Test
   @TestMetadata("properties")
   public void testProperties() {
-    runTest("testData/execution/properties/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/properties/");
   }
 
   @Test
   @TestMetadata("protocols")
   public void testProtocols() {
-    runTest("testData/execution/protocols/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/protocols/");
   }
 
   @Test
   @TestMetadata("ranges")
   public void testRanges() {
-    runTest("testData/execution/ranges/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/ranges/");
   }
 
   @Test
   @TestMetadata("referenceTypes")
   public void testReferenceTypes() {
-    runTest("testData/execution/referenceTypes/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/referenceTypes/");
   }
 
   @Test
   @TestMetadata("set")
   public void testSet() {
-    runTest("testData/execution/set/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/set/");
   }
 
   @Test
   @TestMetadata("smokes")
   public void testSmokes() {
-    runTest("testData/execution/smokes/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/smokes/");
   }
 
   @Test
   @TestMetadata("specialTypes")
   public void testSpecialTypes() {
-    runTest("testData/execution/specialTypes/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/specialTypes/");
   }
 
   @Test
   @TestMetadata("stdlibTypes")
   public void testStdlibTypes() {
-    runTest("testData/execution/stdlibTypes/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/stdlibTypes/");
   }
 
   @Test
   @TestMetadata("valueClass")
   public void testValueClass() {
-    runTest("testData/execution/valueClass/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/valueClass/");
   }
 
   @Test
   @TestMetadata("vararg")
   public void testVararg() {
-    runTest("testData/execution/vararg/");
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/vararg/");
   }
 }

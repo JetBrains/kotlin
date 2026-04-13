@@ -24,12 +24,12 @@ import java.util.regex.Pattern;
 @ExtendWith(SwiftExportWithCoroutinesTestSupport.class)
 public class SwiftExportCoroutinesWithResultValidationTest extends AbstractSwiftExportWithResultValidationTest {
   private void run(String fileName) {
-    runTest("native/swift/swift-export-standalone-integration-tests/coroutines/testData/generation/" + fileName);
+    runTest("testData/generation/" + fileName);
   }
 
   @Test
   public void testAllFilesPresentInGeneration() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone-integration-tests/coroutines/testData/generation"), Pattern.compile("^([^.]+)$"), null, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/generation"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
   @Test
