@@ -77,6 +77,13 @@ $NATIVE_IMAGE_BIN \
   -H:+RuntimeClassLoading \
   -H:EnableURLProtocols=jar \
   -H:Preserve=package=kotlin.* \
+  -H:Preserve=package=java.lang.* \
+  -H:Preserve=package=java.nio.* \
+  -H:Preserve=package=java.io.* \
+  -H:Preserve=package=java.net.* \
+  -H:Preserve=package=java.util.* \
+  -H:Preserve=package=java.security.* \
+  -H:Preserve=package=jdk.internal.jimage.* \
   --verbose \
   -cp $CLASSPATH \
   -o kotlinc-native \

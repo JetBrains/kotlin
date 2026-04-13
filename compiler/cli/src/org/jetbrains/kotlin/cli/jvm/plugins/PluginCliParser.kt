@@ -230,12 +230,12 @@ object PluginCliParser {
         configuration: CompilerConfiguration,
         parentDisposable: Disposable,
     ) {
-        val pluginClasspathsList = pluginClasspaths?.toList() ?: emptyList()
-        val classLoader = createClassLoader(pluginClasspathsList, parentDisposable)
+        val classLoader = createClassLoader(pluginClasspaths ?: emptyList(), parentDisposable)
         val componentRegistrars = ServiceLoaderLite.loadImplementations(ComponentRegistrar::class.java, classLoader)
         configuration.addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
 
         val compilerPluginRegistrars = ServiceLoaderLite.loadImplementations(CompilerPluginRegistrar::class.java, classLoader)
+
         val registrarsById = compilerPluginRegistrars
             .filter {
                 try {

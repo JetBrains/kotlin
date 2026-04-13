@@ -150,9 +150,6 @@
       "type": "java.util.Set"
     },
     {
-      "type": "jdk.internal.jrtfs.JrtFileSystemProvider"
-    },
-    {
       "type": "kotlin.Any"
     },
     {
