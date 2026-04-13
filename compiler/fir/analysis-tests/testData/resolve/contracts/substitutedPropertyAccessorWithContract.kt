@@ -1,8 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // ISSUE: KT-85661
-// IGNORE_NON_REVERSED_RESOLVE
-// IGNORE_PARTIAL_BODY_ANALYSIS
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
