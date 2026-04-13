@@ -25,6 +25,10 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Generate wasm using the old EH proposal",
     )
 
+    val WASM_COROUTINES_STACK_SWITCHING by directive(
+        description = "Use WebAssembly Stack Switching proposal for compiling Kotlin Coroutines"
+    )
+
     val WASM_FAILS_IN_SINGLE_MODULE_MODE by directive(
         description = "Ignore failed test in single module mode",
     )
