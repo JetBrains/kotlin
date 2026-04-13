@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.wasm.lower
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.utils.hasExcludedFromCodegenAnnotation
+import org.jetbrains.kotlin.backend.wasm.utils.hasWasmStackSwitchingOnlyAnnotation
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -17,6 +18,8 @@ import org.jetbrains.kotlin.ir.util.addChild
 /**
  * Move intrinsics marked with @ExcludedFromCodegen to special excluded files.
  * All references to these declarations must be lowered or treated in a special way in a codegen.
+ *
+ * Also excludes declarations marked with @WasmStackSwitchingOnly when stack switching coroutines are not enabled.
  */
 class ExcludeDeclarationsFromCodegen(private val context: WasmBackendContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
@@ -29,6 +32,14 @@ class ExcludeDeclarationsFromCodegen(private val context: WasmBackendContext) : 
             val parentFile = declaration.parent as? IrFile
             if (parentFile?.hasExcludedFromCodegenAnnotation() == true)
                 return true
+
+            // Exclude stack-switching-only declarations when stack switching is not enabled
+            if (!context.wasmCoroutinesStackSwitching) {
+                if (declaration.hasWasmStackSwitchingOnlyAnnotation())
+                    return true
+                if (parentFile?.hasWasmStackSwitchingOnlyAnnotation() == true)
+                    return true
+            }
 
             return false
         }
