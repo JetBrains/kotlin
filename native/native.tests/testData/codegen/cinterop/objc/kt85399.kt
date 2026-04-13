@@ -1,10 +1,6 @@
 // TARGET_BACKEND: NATIVE
 // DISABLE_NATIVE: isAppleTarget=false
 
-// KT-85399
-// IGNORE_NATIVE: optimizationMode=DEBUG
-// IGNORE_NATIVE: optimizationMode=NO
-
 // MODULE: cinterop
 // FILE: lib.def
 language = Objective-C
