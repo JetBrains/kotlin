@@ -1,0 +1,9 @@
+/kt33857.kt:(189,205): error: Conflicting overloads:
+fun component1(): Int
+
+/kt33857.kt:(223,239): error: Conflicting overloads:
+fun component1(): Int
+
+/kt33857.kt:(376,379): error: Operator call 'component1()' is ambiguous for destructuring of type 'A'. Applicable candidates:
+fun component1(): Int
+fun component1(): Int

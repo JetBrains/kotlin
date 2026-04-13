@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-33857
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 // KT-33857: COMPONENT_FUNCTION_AMBIGUITY diagnostic for destructuring in for loop
 class A {
