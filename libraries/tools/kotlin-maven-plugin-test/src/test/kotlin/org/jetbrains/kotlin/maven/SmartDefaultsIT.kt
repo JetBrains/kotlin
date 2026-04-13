@@ -42,6 +42,29 @@ class SmartDefaultsIT : KotlinMavenTestBase() {
     }
 
     @MavenTest
+    @DisplayName("KT-84163: Smart defaults respects Maven <sourceDirectory> and <testSourceDirectory> overrides")
+    fun testSmartDefaultsBuildSourceDirOverrides(mavenVersion: TestVersions.Maven) {
+        testProject("test-smart-defaults-build-source-dirs", mavenVersion) {
+            build("compile", "test-compile") {
+                assertSmartDefaultsEnabled()
+                // Custom source root must be compiled
+                assertFileExists("target/classes/sample/CustomMain.class")
+                // Default src/main/kotlin must NOT be compiled (user overrode <sourceDirectory>)
+                assertFileDoesNotExist("target/classes/sample/DefaultMain.class") {
+                    "Default main source root (src/main/kotlin) was compiled even though <sourceDirectory> was overridden"
+                }
+
+                // Custom test source root must be compiled
+                assertFileExists("target/test-classes/sample/CustomTest.class")
+                // Default src/test/kotlin must NOT be compiled (user overrode <testSourceDirectory>)
+                assertFileDoesNotExist("target/test-classes/sample/DefaultTest.class") {
+                    "Default test source root (src/test/kotlin) was compiled even though <testSourceDirectory> was overridden"
+                }
+            }
+        }
+    }
+
+    @MavenTest
     @DisplayName("Smart defaults respects user-configured source directories")
     fun testSmartDefaultsCustomSourceDirs(mavenVersion: TestVersions.Maven) {
         testProject("test-smart-defaults-custom-source-dirs", mavenVersion) {
