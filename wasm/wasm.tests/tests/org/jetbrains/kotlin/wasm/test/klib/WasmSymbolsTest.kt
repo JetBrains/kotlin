@@ -49,6 +49,7 @@ class WasmJsSymbolsTest : AbstractSymbolsValidationTest(
 }
 
 class WasmJsSymbolValidationHandler(testServices: TestServices) : IrSecondPhaseSymbolValidationHandler(testServices) {
+    // TODO (Stack Switching): add coroutineImpl when enabling stack switching coroutines
     override val blackList: List<String> = listOf("createDynamicKType", "invokeOnExportedFunctionExit")
 
     override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
@@ -78,6 +79,7 @@ class WasmWasiSymbolsTest : AbstractSymbolsValidationTest(
 }
 
 class WasmWasiSymbolValidationHandler(testServices: TestServices) : IrSecondPhaseSymbolValidationHandler(testServices) {
+    // TODO (Stack Switching): add coroutineImpl when enabling stack switching coroutines
     override val blackList: List<String> = listOf("createDynamicKType", "jsRelatedSymbols")
 
     override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
