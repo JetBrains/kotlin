@@ -1,0 +1,23 @@
+FILE: kt43707.kt
+    public final class Contravariance<in T> : R|kotlin/Any| {
+        public constructor<in T>(): R|Contravariance<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        lval result: R|Contravariance<*>?| = when () {
+            Boolean(true) ->  {
+                R|/findElement|()
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+
+        lval result2: R|Contravariance<*>?| = R|/findElement|()
+        lval result3: R|Contravariance<*>| = R|/findElement|() ?: ^foo Unit
+    }
+    public final fun findElement(): R|Contravariance<*>?| {
+        R|kotlin/TODO|()
+    }

@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-43707
 // WITH_STDLIB
+// FIR_DUMP
 
 // KT-43707: Nothing type is inferred for contravariant type when split or merged with null
 class Contravariance<in T>
