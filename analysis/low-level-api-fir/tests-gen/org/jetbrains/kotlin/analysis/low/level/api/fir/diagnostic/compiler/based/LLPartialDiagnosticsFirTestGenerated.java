@@ -4570,6 +4570,18 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       public void testInPlaceAfterVararg() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contracts/inPlaceAfterVararg.kt");
       }
+
+      @Test
+      @TestMetadata("substitutedFunctionWithContract.kt")
+      public void testSubstitutedFunctionWithContract() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contracts/substitutedFunctionWithContract.kt");
+      }
+
+      @Test
+      @TestMetadata("substitutedPropertyAccessorWithContract.kt")
+      public void testSubstitutedPropertyAccessorWithContract() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contracts/substitutedPropertyAccessorWithContract.kt");
+      }
     }
 
     @Nested
