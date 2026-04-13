@@ -227,6 +227,17 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         }
 
     @Argument(
+        value = "-Xjava-direct",
+        description = "experimental direct java support.",
+    )
+    @Enables(LanguageFeature.JavaDirect)
+    var javaDirect: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xjava-package-prefix",
         description = "Package prefix for Java files.",
     )
